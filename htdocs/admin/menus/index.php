@@ -288,11 +288,11 @@ if ($conf->use_javascript_ajax)
 	*/
 	//il faut d'abord declarer un element racine de l'arbre
 
-	$data[] = array(0,-1,"racine");
+	$data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
 
 	//puis tous les elements enfants
 
-	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
+	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler = '".$menu_handler."'";
 	$sql.= " AND entity = ".$conf->entity;
@@ -310,15 +310,15 @@ if ($conf->use_javascript_ajax)
 		{
 			if (! empty($menu['langs'])) $langs->load($menu['langs']);
 			$titre = $langs->trans($menu['titre']);
-			$data[] = array($menu['rowid'],$menu['fk_menu'],$titre);
+			$data[] = array('rowid'=>$menu['rowid'],'fk_menu'=>$menu['fk_menu'],'title'=>$titre,'mainmenu'=>$menu['mainmenu'],'leftmenu'=>$menu['leftmenu'],'fk_mainmenu'=>$menu['fk_mainmenu'],'fk_leftmenu'=>$menu['fk_leftmenu']);
 			$i++;
 		}
 	}
 
 	// Appelle de la fonction recursive (ammorce)
 	// avec recherche depuis la racine.
-	// array($menu['rowid'],$menu['fk_menu'],$titre);
-	tree_recur($data,0,0);
+	//var_dump($data);
+	tree_recur($data,$data[0],0);
 
 	print '</td>';
 
