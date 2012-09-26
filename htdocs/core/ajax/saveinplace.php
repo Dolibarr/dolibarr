@@ -69,6 +69,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	if ($element == 'propal') $element = 'propale';
 	else if ($element == 'fichinter') $element = 'ficheinter';
 	else if ($element == 'product') $element = 'produit';
+	else if ($element == 'member') $element = 'adherent';
 	else if ($element == 'order_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'commande';
