@@ -869,7 +869,7 @@ div.blockvmenusearch
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
-    margin: 12px 0px 8px 2px;
+    margin: 1px 0px 8px 2px;
 	background: #E3E6E8;
 
 <?php if ($usecss3) { ?>
