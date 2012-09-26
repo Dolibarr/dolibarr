@@ -512,7 +512,7 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND r.entity in (0,".(!empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		$sql.= " AND r.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -557,11 +557,14 @@ class User extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
 		$sql.= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = gr.fk_id";
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
+			$sql.= " AND gu.entity IN (0,".$conf->entity.")";
+		} else {
+			$sql.= " AND r.entity = ".$conf->entity;
+		}
 		$sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql.= " AND gu.fk_user = ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
-		$sql.= " AND r.entity = ".$conf->entity;
-		$sql.= " AND gu.entity IN (0,".$conf->entity.")";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
 		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
@@ -1418,7 +1421,7 @@ class User extends CommonObject
 		}
 		if (! empty($dolibarr_main_force_https)
 			|| (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
-		
+
 		// TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{

@@ -132,6 +132,8 @@ function product_prepare_head($object, $user)
 		}
 	}
 
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
+
 	return $head;
 }
 
