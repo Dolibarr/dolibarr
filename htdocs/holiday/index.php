@@ -292,7 +292,9 @@ if (! empty($holiday->holiday))
 		print '<td>'.$validator->getNomUrl('1').'</td>';
 		print '<td style="text-align: center;">'.$infos_CP['date_debut'].'</td>';
 		print '<td style="text-align: center;">'.$infos_CP['date_fin'].'</td>';
-		print '<td>'.$holiday->getOpenDays(strtotime($infos_CP['date_debut']),strtotime($infos_CP['date_fin'])).' '.$langs->trans('Jours').'</td>';
+		print '<td>';
+		$nbopenedday=num_open_day($infos_CP['date_debut'],$infos_CP['date_fin'],0,1);
+		print $nbopenedday.' '.$langs->trans('Jours');
 		print '<td align="center"><a href="./fiche.php?id='.$infos_CP['rowid'].'">'.$statut.'</a></td>';
 		print '</tr>'."\n";
 

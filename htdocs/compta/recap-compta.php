@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,14 +133,15 @@ if ($socid > 0)
 				$totalpaye = $fac->getSommePaiement();
 
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
 				print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id.'">'.img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
 
 				print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
 				print '<td align="right">'.price($fac->total_ttc)."</td>\n";
-				$solde = $solde + $fac->total_ttc;
+				if (($fac->statut == 3 ) || ($fac->statut == 2 && ! $fact->close_code) )  $solde = $solde = $solde + $totalpaye;
+				else $solde = $solde + $fac->total_ttc;
 
 				print '<td align="right">&nbsp;</td>';
 				print '<td align="right">'.price($solde)."</td>\n";

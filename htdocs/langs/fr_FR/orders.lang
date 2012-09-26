@@ -152,3 +152,6 @@ OrderByFax=Fax
 OrderByEMail=EMail
 OrderByWWW=En ligne
 OrderByPhone=Téléphone
+
+CreateInvoiceForThisCustomer=Créer une facture à partir de plusieurs commande de ce client
+CloseProcessedOrdersAutomatically=Classer automatiquement à "Traitées" les commandes sélectionnées.

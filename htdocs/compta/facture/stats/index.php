@@ -214,11 +214,11 @@ complete_head_from_modules($conf,$langs,$object,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
-if (empty($socid))
-{
-	print '<table class="notopnoleftnopadd" width="100%"><tr>';
-	print '<td align="center" valign="top">';
+print '<table class="notopnoleftnopadd" width="100%"><tr>';
+print '<td align="center" valign="top">';
 
+//if (empty($socid))
+//{
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -244,7 +244,7 @@ if (empty($socid))
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
-}
+//}
 
 print '<table class="border" width="100%">';
 print '<tr height="24">';

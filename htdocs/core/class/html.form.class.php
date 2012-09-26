@@ -3152,7 +3152,7 @@ class Form
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes
      *	@param	int			$empty			0=Fields required, 1=Empty input is allowed
-     *	@param	string		$form_name 		Form name. Used by popup dates.
+     *	@param	string		$form_name 		Not used
      *	@param	int			$d				1=Show days, month, years
      * 	@param	int			$addnowbutton	Add a button "Now"
      * 	@param	int			$nooutput		Do not output html string but return it

@@ -183,6 +183,13 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
+.valignmiddle {
+	vertical-align: middle;
+}
+.centpercent {
+	width: 100%;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */

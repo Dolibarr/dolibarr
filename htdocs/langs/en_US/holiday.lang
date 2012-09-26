@@ -84,7 +84,8 @@ NewSoldeCP=New Balance
 alreadyCPexist=A request for holidays has already been done on this period.
 UserName=Name
 Employee=Employee
-
+FirstDayOfHoliday=First day of holiday
+LastDayOfHoliday=Last day of holiday
 
 ## Configuration du Module ##
 ConfCP=Configuration of holidays module

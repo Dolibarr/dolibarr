@@ -109,8 +109,8 @@ class Holiday extends CommonObject
         }
         $sql.= " NOW(),";
         $sql.= " '".addslashes($this->description)."',";
-        $sql.= " '".$this->date_debut."',";
-        $sql.= " '".$this->date_fin."',";
+        $sql.= " '".$this->db->idate($this->date_debut)."',";
+        $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " '1',";
         if(is_numeric($this->fk_validator)) {
             $sql.= " '".$this->fk_validator."'";
@@ -196,17 +196,17 @@ class Holiday extends CommonObject
 
                 $this->rowid    = $obj->rowid;
                 $this->fk_user = $obj->fk_user;
-                $this->date_create = $obj->date_create;
+                $this->date_create = $this->db->jdate($obj->date_create);
                 $this->description = $obj->description;
-                $this->date_debut = $obj->date_debut;
-                $this->date_fin = $obj->date_fin;
+                $this->date_debut = $this->db->jdate($obj->date_debut);
+                $this->date_fin = $this->db->jdate($obj->date_fin);
                 $this->statut = $obj->statut;
                 $this->fk_validator = $obj->fk_validator;
-                $this->date_valid = $obj->date_valid;
+                $this->date_valid = $this->db->jdate($obj->date_valid);
                 $this->fk_user_valid = $obj->fk_user_valid;
-                $this->date_refuse = $obj->date_refuse;
+                $this->date_refuse = $this->db->jdate($obj->date_refuse);
                 $this->fk_user_refuse = $obj->fk_user_refuse;
-                $this->date_cancel = $obj->date_cancel;
+                $this->date_cancel = $this->db->jdate($obj->date_cancel);
                 $this->fk_user_cancel = $obj->fk_user_cancel;
                 $this->detail_refuse = $obj->detail_refuse;
 
@@ -289,17 +289,17 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['rowid'] = $obj->rowid;
                 $tab_result[$i]['fk_user'] = $obj->fk_user;
-                $tab_result[$i]['date_create'] = $obj->date_create;
+                $tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
                 $tab_result[$i]['description'] = $obj->description;
-                $tab_result[$i]['date_debut'] = $obj->date_debut;
-                $tab_result[$i]['date_fin'] = $obj->date_fin;
+                $tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
+                $tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
                 $tab_result[$i]['statut'] = $obj->statut;
                 $tab_result[$i]['fk_validator'] = $obj->fk_validator;
-                $tab_result[$i]['date_valid'] = $obj->date_valid;
+                $tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
                 $tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
-                $tab_result[$i]['date_refuse'] = $obj->date_refuse;
+                $tab_result[$i]['date_refuse'] = $this->db->jdate($obj->date_refuse);
                 $tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
-                $tab_result[$i]['date_cancel'] = $obj->date_cancel;
+                $tab_result[$i]['date_cancel'] = $this->db->jdate($obj->date_cancel);
                 $tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
                 $tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
 
@@ -430,12 +430,12 @@ class Holiday extends CommonObject
         $sql.= " description= '".addslashes($this->description)."',";
 
         if(!empty($this->date_debut)) {
-            $sql.= " date_debut = '".$this->date_debut."',";
+            $sql.= " date_debut = '".$this->db->idate($this->date_debut)."',";
         } else {
             $error++;
         }
         if(!empty($this->date_fin)) {
-            $sql.= " date_fin = '".$this->date_fin."',";
+            $sql.= " date_fin = '".$this->db->idate($this->date_fin)."',";
         } else {
             $error++;
         }
@@ -450,7 +450,7 @@ class Holiday extends CommonObject
             $error++;
         }
         if(!empty($this->date_valid)) {
-            $sql.= " date_valid = '".$this->date_valid."',";
+            $sql.= " date_valid = '".$this->db->idate($this->date_valid)."',";
         } else {
             $sql.= " date_valid = NULL,";
         }
@@ -460,7 +460,7 @@ class Holiday extends CommonObject
             $sql.= " fk_user_valid = NULL,";
         }
         if(!empty($this->date_refuse)) {
-            $sql.= " date_refuse = '".$this->date_refuse."',";
+            $sql.= " date_refuse = '".$this->db->idate($this->date_refuse)."',";
         } else {
             $sql.= " date_refuse = NULL,";
         }
@@ -470,7 +470,7 @@ class Holiday extends CommonObject
             $sql.= " fk_user_refuse = NULL,";
         }
         if(!empty($this->date_cancel)) {
-            $sql.= " date_cancel = '".$this->date_cancel."',";
+            $sql.= " date_cancel = '".$this->db->idate($this->date_cancel)."',";
         } else {
             $sql.= " date_cancel = NULL,";
         }
@@ -1213,56 +1213,6 @@ class Holiday extends CommonObject
 
     }
 
-
-    /**
-     *	Retourne le nombre de jours ouvrés entre deux dates
-     *  Prise en compte des jours fériés en France
-     *
-     *  @param	date	$date_start     Start date
-     *  @param	date	$date_stop		Stop date
-     *  @return	int						Nb of days
-     */
-
-    function getOpenDays($date_start, $date_stop) {
-
-        // Tableau des jours feriés
-        $arr_bank_holidays = array();
-
-        // On boucle dans le cas où l'année de départ serait différente de l'année d'arrivée
-        $diff_year = date('Y', $date_stop) - date('Y', $date_start);
-
-        for ($i = 0; $i <= $diff_year; $i++) {
-            $year = (int) date('Y', $date_start) + $i;
-            // Liste des jours feriés
-            $arr_bank_holidays[] = '1_1_'.$year; // Jour de l'an
-            $arr_bank_holidays[] = '1_5_'.$year; // Fete du travail
-            $arr_bank_holidays[] = '8_5_'.$year; // Victoire 1945
-            $arr_bank_holidays[] = '14_7_'.$year; // Fete nationale
-            $arr_bank_holidays[] = '15_8_'.$year; // Assomption
-            $arr_bank_holidays[] = '1_11_'.$year; // Toussaint
-            $arr_bank_holidays[] = '11_11_'.$year; // Armistice 1918
-            $arr_bank_holidays[] = '25_12_'.$year; // Noel
-            // Récupération de paques. Permet ensuite d'obtenir le jour de l'ascension et celui de la pentecote
-            $easter = easter_date($year);
-            $arr_bank_holidays[] = date('j_n_'.$year, $easter + 86400); // Paques
-            $arr_bank_holidays[] = date('j_n_'.$year, $easter + (86400*39)); // Ascension
-            $arr_bank_holidays[] = date('j_n_'.$year, $easter + (86400*50)); // Pentecote
-        }
-
-        $nb_days_open = 0;
-
-        while ($date_start <= $date_stop) {
-            // Si le jour suivant n'est ni un dimanche (0) ou un samedi (6), ni un jour férié, on incrémente les jours ouvrés
-            if (!in_array(date('w', $date_start), array(0, 6)) && !in_array(date('j_n_'.date('Y', $date_start), $date_start), $arr_bank_holidays)) {
-                $nb_days_open++;
-            }
-
-            $date_start = mktime(date('H', $date_start), date('i', $date_start), date('s', $date_start), date('m', $date_start), date('d', $date_start) + 1, date('Y', $date_start));
-        }
-
-        // On retourne le nombre de jours ouvrés
-        return $nb_days_open;
-    }
 
     /**
      *  Liste les évènements de congés payés enregistré

@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin          	<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin          	<regis@dolibarr.fr>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
@@ -39,15 +39,19 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/p
 $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
-$langs->load('orderstoinvoice@orderstoinvoice');
-
-$sref=GETPOST('sref');
-$sref_client=GETPOST('sref_client');
-$sall=GETPOST('sall');
-$socid=GETPOST('socid','int');
 
 if (! $user->rights->facture->creer)
 	accessforbidden();
+
+$id				= (GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
+$ref			= GETPOST('ref','alpha');
+$action			= GETPOST('action','alpha');
+$confirm		= GETPOST('confirm','alpha');
+$sref			= GETPOST('sref');
+$sref_client	= GETPOST('sref_client');
+$sall			= GETPOST('sall');
+$socid			= GETPOST('socid','int');
+
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -120,19 +124,15 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 		$_POST['originid']=$orders_id[0];
 
 	}
-	$sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
-	$projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
-	$id				=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
-	$ref			=GETPOST('ref');
-	$socid			=GETPOST('socid');
-	$action			=GETPOST('action');
-	$confirm		=GETPOST('confirm');
-	$lineid			=GETPOST('lineid');
-	$userid			=GETPOST('userid');
-	$search_ref		=GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
+
+	$projectid		= GETPOST('projectid','int')?GETPOST('projectid','int'):0;
+	$lineid			= GETPOST('lineid','int');
+	$userid			= GETPOST('userid','int');
+	$search_ref		= GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
+	$closeOrders	= GETPOST('autocloseorders') != '' ? true : false;
 
 	// Security check
-	$fieldid = isset($_GET["ref"])?'facnumber':'rowid';
+	$fieldid = GETPOST('ref','alpha')?'facnumber':'rowid';
 	if ($user->societe_id) $socid=$user->societe_id;
 	$result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
@@ -216,8 +216,10 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 							$result=$srcobject->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
-								$srcobject->classer_facturee();
-								$srcobject->setStatut(3);
+								if($closeOrders) {
+									$srcobject->classer_facturee();
+									$srcobject->setStatut(3);
+								}
 								$lines = $srcobject->lines;
 								if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 								$fk_parent_line=0;
@@ -384,6 +386,7 @@ if ($action == 'create')
 	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
+	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';
 	print '<table class="border" width="100%">';
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
@@ -403,6 +406,7 @@ if ($action == 'create')
 	print $desc;
 	print '</td></tr>'."\n";
 	print '</table>';
+	
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date(0,'','','','',"add",1,1);
@@ -445,7 +449,7 @@ if ($action == 'create')
 		$result=$srcobject->fetch($sel);
 		if ($result > 0)
 		{
-			$commandes.= $srcobject->ref." ";
+			$commandes.= $srcobject->ref.", ";
 		}
 	}
 	print $commandes;
@@ -463,8 +467,6 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-	print '</td></tr>';
-
 
 	while ($i < $n)
 	{
@@ -473,10 +475,12 @@ if ($action == 'create')
 		$i++;
 	}
 
-	print "</table>\n";
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
+	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></center>';
 	print "</form>\n";
+	
+	print '</td></tr>';
+	print "</table>\n";
 }
 
 
@@ -502,29 +506,12 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.fk_soc = s.rowid';
-	// Which invoice to show
-	if ($viewstatut <> '')
-	{
-		if ($viewstatut < 4 && $viewstatut > -2)
-		{
-			$sql.= ' AND c.fk_statut ='.$viewstatut; // brouillon, validee, en cours, annulee
-			if ($viewstatut == 3)
-			{
-				$sql.= ' AND c.facture = 0'; // need to create invoice
-			}
-		}
-		if ($viewstatut == 4)
-		{
-			$sql.= ' AND c.facture = 1'; // invoice created
-		}
-		if ($viewstatut == -2)	// To process
-		{
-			//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-			$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
-		}
-	}
-	$sql.= ' AND s.entity = '.$conf->entity;
+	$sql.= ' WHERE c.entity = '.$conf->entity;
+	$sql.= ' AND c.fk_soc = s.rowid';
+
+	// Show orders with status validated, shipping started and delivered (well any order we can bill)
+	$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";
+
 	if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($sref)
@@ -559,19 +546,21 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		{
 			$title = $langs->trans('ListOfOrders');
 		}
-		$title.=' - '.$langs->trans('StatusOrderToBillShort');
+		$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 		$num = $db->num_rows($resql);
 		print_fiche_titre($title);
 		$i = 0;
 		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
 		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
-		// Company
-		print '<h3>';
-		$companystatic->id=$socid;
-		$companystatic->nom=$soc->nom;
 
-		print $companystatic->getNomUrl(1,'customer');
-		print '</h3>';
+		if (! empty($socid))
+		{
+			// Company
+			$companystatic->id=$socid;
+			$companystatic->nom=$soc->nom;
+			print '<h3>'.$companystatic->getNomUrl(1,'customer').'</h3>';
+		}
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Ref'),'orderstoinvoice.php','c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
@@ -683,7 +672,9 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';
 		print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
-		print '<input type="submit" class="butAction" value='.$langs->trans("GenerateBill").'>';
+		print '<input type="submit" class="button" value='.$langs->trans("GenerateBill").'>';
+		print '<center><br><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
+		print '</div>';
 		print '</form>';
 		$db->free($resql);
 	}

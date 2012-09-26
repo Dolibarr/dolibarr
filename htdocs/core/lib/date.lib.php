@@ -601,7 +601,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 }
 
 /**
- *	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
+ *	Fonction retournant le nombre de jour feries samedis et dimanches entre 2 dates entrees en timestamp
  *	Called by function num_open_day
  *
  *	@param	    timestamp	$timestampStart     Timestamp de debut
@@ -733,11 +733,12 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 
 /**
  *	Fonction retournant le nombre de jour entre deux dates
+ *  Example: 2012-01-01 2012-01-02 => 1 if lastday=0, 2 if lastday=1
  *
  *	@param	   timestamp	$timestampStart     Timestamp de debut
  *	@param	   timestamp	$timestampEnd       Timestamp de fin
- *	@param     int			$lastday            On prend en compte le dernier jour, 0: non, 1:oui
- *	@return    int								Nombre de jours
+ *	@param     int			$lastday            Last day is included, 0: non, 1:oui
+ *	@return    int								Number of days
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 {
@@ -751,8 +752,9 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 		{
 			$bit = 1;
 		}
-		$nbjours = round(($timestampEnd - $timestampStart)/(60*60*24)-$bit);
+		$nbjours = (int) floor(($timestampEnd - $timestampStart)/(60*60*24)) + 1 - $bit;
 	}
+	//print ($timestampEnd - $timestampStart) - $lastday;
 	return $nbjours;
 }
 
@@ -762,21 +764,28 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
  *	@param	   timestamp	$timestampStart     Timestamp de debut
  *	@param	   timestamp	$timestampEnd       Timestamp de fin
  *	@param     int			$inhour             0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
- *	@param     int			$lastday            On prend en compte le dernier jour, 0: non, 1:oui
+ *	@param     int			$lastday            We include last day, 0: non, 1:oui
  *	@return    int								Nombre de jours ou d'heures
  */
 function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {
 	global $langs;
 
+	dol_syslog('num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday);
+	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
 	if ($timestampStart < $timestampEnd)
 	{
-		$bit = 0;
-		if ($lastday == 1) $bit = 1;
-		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $bit) - num_public_holiday($timestampStart, $timestampEnd);
+		//print num_between_day($timestampStart, $timestampEnd, $lastday).' - '.num_public_holiday($timestampStart, $timestampEnd);
+		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $lastday);
 		$nbOpenDay.= " ".$langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
 		return $nbOpenDay;
+	}
+	elseif ($timestampStart == $timestampEnd)
+	{
+		$nbOpenDay=$lastday;
+		if ($inhour == 1) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
+		return $nbOpenDay=1;
 	}
 	else
 	{
