@@ -102,7 +102,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		{
         	$invoice_source->fetch($object->fk_facture_source);
 		}
-		$alreadypayed=price($object->getSommePaiement(),0,$outputlangs);
+		$sumpayed = $object->getSommePaiement();
+		$alreadypayed=price($sumpayed,0,$outputlangs);
 
         return array(
             'object_id'=>$object->id,
@@ -128,7 +129,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_note'=>$object->note_public,
         	// Payments
             'object_already_payed'=>$alreadypayed,
-            'object_remain_to_pay'=>price($object->total_ttc - $alreadypayed,0,$outputlangs)
+            'object_remain_to_pay'=>price($object->total_ttc - $sumpayed,0,$outputlangs)
         );
     }
 
