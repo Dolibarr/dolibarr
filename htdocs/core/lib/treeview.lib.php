@@ -198,20 +198,20 @@ function tree_showline($tab,$rang)
 		}
 	}
 
-	print '<li id=li'.$tab[0].'>';
+	print '<li id=li'.$tab['rowid'].'>';
 
 	// Content of line
-	print '<strong> &nbsp;<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.$tab[2].'</a></strong>';
-	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$tab[0].'"').'</a></div>';
-	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab[0].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$tab[0].'"').'</a></div>';
-	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab[0].'">'.img_delete('default',0,'class="menuDel" id="del'.$tab[0].'"').'</a></div>';
-	print '<div class="menuFleche"><a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab[0].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler.'&action=down&menuId='.$tab[0].'">'.img_picto("Descendre","1downarrow").'</a></div>';
+	print '<strong> &nbsp;<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab['rowid'].'">'.$tab['title'].'</a></strong>';
+	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$tab['rowid'].'"').'</a></div>';
+	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$tab['rowid'].'"').'</a></div>';
+	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$tab['rowid'].'"').'</a></div>';
+	print '<div class="menuFleche"><a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler.'&action=down&menuId='.$tab['rowid'].'">'.img_picto("Descendre","1downarrow").'</a></div>';
 
 	print '</li>';
 	echo "\n";
 
 	$rangLast = $rang;
-	$idLast = $tab[0];
+	$idLast = $tab['rowid'];
 }
 
 
@@ -219,13 +219,13 @@ function tree_showline($tab,$rang)
  *  Recursive function to output menu tree
  *
  *  @param	array	$tab    Array of elements
- *  @param  int	    $pere   Id of parent
+ *  @param  int	    $pere   Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
  *  @param  int	    $rang   Level of element
  *  @return	void
  */
 function tree_recur($tab,$pere,$rang)
 {
-	if ($pere == 0) print '<ul class="arbre">';
+	if (empty($pere['rowid'])) print '<ul class="arbre">';
 
 	if ($rang > 10)	return;	// Protection contre boucle infinie
 
@@ -233,18 +233,27 @@ function tree_recur($tab,$pere,$rang)
 	$sizeoftab=count($tab);
 	for ($x=0; $x < $sizeoftab; $x++)
 	{
+		//var_dump($tab[$x]);exit;
 		// If an element has $pere for parent
-		if ($tab[$x][1]==$pere)
+		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid'])
 		{
 			// We shot it with an offset
 			tree_showline($tab[$x],$rang);
 
 			// And now we search all its sons of lower level
-			tree_recur($tab,$tab[$x][0],$rang+1);
+			tree_recur($tab,$tab[$x],$rang+1);
+		}
+		elseif (! empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'])
+		{
+			// We shot it with an offset
+			tree_showline($tab[$x],$rang);
+
+			// And now we search all its sons of lower level
+			tree_recur($tab,$tab[$x],$rang+1);
 		}
 	}
 
-	if ($pere == 0) print '</ul>';
+	if (empty($pere['rowid'])) print '</ul>';
 }
 
 ?>
