@@ -80,7 +80,7 @@ UserSetup= Configuration gestion des utilisateurs
 MenuSetup= Administration des menus par base de données
 MenuLimits= Limites et précision
 MenuIdParent= Id du menu parent
-DetailMenuIdParent= Id du menu parent (0 pour un menu du haut)
+DetailMenuIdParent= Id du menu parent (vide pour un menu du haut)
 DetailPosition= Numéro d'ordre déterminant la position du menu
 PersonalizedMenusNotSupported= Menus personnalisés non gérés
 AllMenus= Tous
@@ -218,7 +218,7 @@ OfficialWebSiteFr= Site web officiel francophone
 OfficialWiki= Wiki de documentation Dolibarr
 OfficialDemo= Démo en ligne Dolibarr
 OfficialMarketPlace=Place de marché officielle des modules et extensions complémentaires
-OfficialWebHostingService=Service d'hébergement officiel (SaaS)
+OfficialWebHostingService=Service d'hébergement partenaires (SaaS)
 ForDocumentationSeeWiki= Pour la documentation utilisateur, développeur ou les FAQs,<br>consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum= Pour tout autre question/aide, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1= Cette application, indépendante de Dolibarr, vous permet de vous aider à obtenir un service de support sur Dolibarr.

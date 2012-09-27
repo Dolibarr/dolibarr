@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -113,6 +113,23 @@ if ($action == 'add')
         exit;
     }
 
+    $leftmenu=''; $mainmenu='';
+    if (! empty($_POST['menuId']) && ! is_numeric($_POST['menuId']))
+    {
+	    $tmp=explode('&',$_POST['menuId']);
+	    foreach($tmp as $s)
+	    {
+	    	if (preg_match('/fk_mainmenu=/',$s))
+	    	{
+				$mainmenu=preg_replace('/fk_mainmenu=/','',$s);
+	    	}
+	    	if (preg_match('/fk_leftmenu=/',$s))
+	    	{
+	    		$leftmenu=preg_replace('/fk_leftmenu=/','',$s);
+	    	}
+	    }
+    }
+
     $langs->load("errors");
 
     $error=0;
@@ -146,7 +163,7 @@ if ($action == 'add')
         $action = 'create';
         $error++;
     }
-    if (! $error && ! $_POST['menuId'] && $_POST['type'] == 'left')
+    if (! $error && empty($_POST['menuId']) && $_POST['type'] == 'left')
     {
         $mesg='<div class="error">'.$langs->trans("ErrorLeftMenuMustHaveAParentId").'</div>';
         $action = 'create';
@@ -156,11 +173,9 @@ if ($action == 'add')
     if (! $error)
     {
         $menu = new Menubase($db);
-        $menu->fk_menu=$_POST['menuId'];
         $menu->menu_handler=$_POST['menu_handler'];
         $menu->type=$_POST['type'];
         $menu->titre=$_POST['titre'];
-        $menu->leftmenu=$_POST['leftmenu'];
         $menu->url=$_POST['url'];
         $menu->langs=$_POST['langs'];
         $menu->position=$_POST['position'];
@@ -168,6 +183,18 @@ if ($action == 'add')
         $menu->perms=$_POST['perms'];
         $menu->target=$_POST['target'];
         $menu->user=$_POST['user'];
+        if (is_numeric($_POST['menuId']))
+        {
+        	$menu->fk_menu=$_POST['menuId'];
+        }
+        else
+       {
+	       	if ($_POST['type'] == 'top') $menu->fk_menu=0;
+	       	else $menu->fk_menu=-1;
+        	$menu->fk_mainmenu=$mainmenu;
+        	$menu->fk_leftmenu=$leftmenu;
+       }
+
         $result=$menu->create($user);
         if ($result > 0)
         {
@@ -311,21 +338,21 @@ if ($action == 'create')
     }
     else
     {
-        print '<td><input type="text" size="8" id="menuId" name="menuId" value="'.($parent_rowid?$parent_rowid:'').'"></td>';
+        print '<td><input type="text" size="20" id="menuId" name="menuId" value="'.($_POST["menuId"]?$_POST["menuId"]:'').'"></td>';
     }
     print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 
     // Title
     print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.$_POST["titre"].'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
+    // URL
+    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$_POST["url"].'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+
     // Langs
     print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
     // Position
     print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.(isset($_POST["position"])?$_POST["position"]:100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
-
-    // URL
-    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$_POST["url"].'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Target
     print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
@@ -397,17 +424,17 @@ elseif ($action == 'edit')
     // Niveau
     //print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
-    // Titre
+    // Title
     print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.$menu->titre.'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+
+    // Url
+    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Langs
     print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$menu->langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
     // Position
     print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
-
-    // Url
-    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Target
     print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
