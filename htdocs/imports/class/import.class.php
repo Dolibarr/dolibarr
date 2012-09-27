@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ class Import
 	 *
 	 *    @param  	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	function Import($db)
 	{
 		$this->db=$db;
 	}
@@ -67,12 +68,13 @@ class Import
         $var=true;
         $i=0;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
         $modulesdir = dolGetModulesDirs();
 
         // Load list of modules
         foreach($modulesdir as $dir)
         {
+			// Search available exports
 			$handle=@opendir(dol_osencode($dir));
 			if (! is_resource($handle)) continue;
 
@@ -93,10 +95,10 @@ class Import
 				// Init load class
 				$file = $dir."/".$modulename.".class.php";
 				$classname = $modulename;
-				require_once $file;
+				require_once($file);
 				$module = new $classname($this->db);
 
-				if (isset($module->import_code) && is_array($module->import_code))
+				if (is_array($module->import_code))
 				{
 					foreach($module->import_code as $r => $value)
 					{
@@ -138,7 +140,7 @@ class Import
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i]=$module->import_tables_array[$r];
 						// Array of tables creator field to import (key=alias, value=creator field)
-						$this->array_import_tables_creator[$i]=(isset($module->import_tables_creator_array[$r])?$module->import_tables_creator_array[$r]:'');
+						$this->array_import_tables_creator[$i]=$module->import_tables_creator_array[$r];
 						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i]=$module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
@@ -150,9 +152,11 @@ class Import
 						// Tableau des alias a exporter (cle=champ, valeur=exemple)
 						$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
-						$this->array_import_convertvalue[$i]=(isset($module->import_convertvalue_array[$r])?$module->import_convertvalue_array[$r]:'');
+						$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
 						// Module
 						$this->array_import_module[$i]=$module;
+						// Array of keys for update
+						$this->array_import_update_keys[$i]=$module->import_update_keys_array[$r];
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;
@@ -188,7 +192,7 @@ class Import
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;
-		require_once $dir.$file;
+		require_once($dir.$file);
 		$objmodel = new $classname($this->db,$datatoimport);
 
 		$outputlangs=$langs;	// Lang for output
@@ -315,7 +319,7 @@ class Import
 			if (! $notrigger)
 			{
 				// Call triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('IMPORT_DELETE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
