@@ -964,7 +964,9 @@ abstract class DolibarrModules
                     // If we want to init permissions on admin users
                     if ($reinitadminperms)
                     {
-                        include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+                    	if (! class_exists('User')) {
+                    		require DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+                    	}
                         $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
                         dol_syslog(get_class($this)."::insert_permissions Search all admin users sql=".$sql);
                         $resqlseladmin=$this->db->query($sql,1);
