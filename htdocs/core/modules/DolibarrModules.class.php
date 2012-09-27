@@ -67,9 +67,6 @@ abstract class DolibarrModules
 
         $this->db->begin();
 
-        // Insert line in module table
-        if (! $err) $err+=$this->_dbactive();
-
         // Insert activation module constant
         if (! $err) $err+=$this->_active();
 
@@ -160,9 +157,6 @@ abstract class DolibarrModules
         $err=0;
 
         $this->db->begin();
-
-        // Remove line in activation module (entry in table llx_dolibarr_modules)
-        if (! $err) $err+=$this->_dbunactive();
 
         // Remove activation module line (constant MAIN_MODULE_MYMODULE in llx_const)
         if (! $err) $err+=$this->_unactive();
@@ -344,69 +338,6 @@ abstract class DolibarrModules
             // Traduction trouvee
             return $langs->trans($langstring);
         }
-    }
-
-    /**
-     *  Insert line in dolibarr_modules table.
-     *  Storage is made for information only, table is not required for Dolibarr usage
-     *
-     *  @return     int     Nb of errors (0 if OK)
-     */
-    function _dbactive()
-    {
-        global $conf;
-
-        $err = 0;
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
-        $sql.= " WHERE numero = ".$this->numero;
-        $sql.= " AND entity = ".$conf->entity;
-
-        dol_syslog(get_class($this)."::_dbactive sql=".$sql, LOG_DEBUG);
-        $this->db->query($sql);
-
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (";
-        $sql.= "numero";
-        $sql.= ", entity";
-        $sql.= ", active";
-        $sql.= ", active_date";
-        $sql.= ", active_version";
-        $sql.= ")";
-        $sql.= " VALUES (";
-        $sql.= $this->numero;
-        $sql.= ", ".$conf->entity;
-        $sql.= ", 1";
-        $sql.= ", '".$this->db->idate(dol_now())."'";
-        $sql.= ", '".$this->version."'";
-        $sql.= ")";
-
-        dol_syslog(get_class($this)."::_dbactive sql=".$sql, LOG_DEBUG);
-        $this->db->query($sql);
-
-        return $err;
-    }
-
-
-    /**
-     *  Remove line in dolibarr_modules table
-     *  Storage is made for information only, table is not required for Dolibarr usage
-     *
-     *  @return     int     Nb of errors (0 if OK)
-     */
-    function _dbunactive()
-    {
-        global $conf;
-
-        $err = 0;
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules";
-        $sql.= " WHERE numero = ".$this->numero;
-        $sql.= " AND entity IN (0, ".$conf->entity.")";
-
-        dol_syslog(get_class($this)."::_dbunactive sql=".$sql, LOG_DEBUG);
-        $this->db->query($sql);
-
-        return $err;
     }
 
 
