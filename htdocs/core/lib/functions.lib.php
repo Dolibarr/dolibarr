@@ -944,10 +944,10 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
     global $conf;
     //print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
-    // Clean parameters
-    if ($hour   == -1) $hour=0;
-    if ($minute == -1) $minute=0;
-    if ($second == -1) $second=0;
+	// Clean parameters
+	if ($hour   == -1 || empty($hour)) $hour=0;
+	if ($minute == -1 || empty($minute)) $minute=0;
+	if ($second == -1 || empty($second)) $second=0;
 
     // Check parameters
     if ($check)
