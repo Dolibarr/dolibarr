@@ -44,7 +44,7 @@
  */
 function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$showextcals=array())
 {
-	global $conf,$langs,$db;
+	global $conf,$user,$langs,$db;
 
 	// Filters
 	if ($canedit || ! empty($conf->projet->enabled))
@@ -97,7 +97,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '</td></tr>';
 			}
 
-			if (! empty($conf->projet->enabled))
+			if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 			{
 				print '<tr>';
 				print '<td nowrap="nowrap">';

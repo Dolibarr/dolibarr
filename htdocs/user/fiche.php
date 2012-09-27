@@ -90,19 +90,6 @@ $form = new Form($db);
 /**
  * Actions
  */
-if ($subaction == 'addrights' && $canedituser)
-{
-    $edituser = new User($db);
-    $edituser->fetch($id);
-    $edituser->addrights($_GET["rights"]);
-}
-
-if ($subaction == 'delrights' && $canedituser)
-{
-    $edituser = new User($db);
-    $edituser->fetch($id);
-    $edituser->delrights($_GET["rights"]);
-}
 
 if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser)
 {

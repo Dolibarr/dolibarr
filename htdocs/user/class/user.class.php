@@ -277,29 +277,32 @@ class User extends CommonObject
 	/**
 	 *  Ajoute un droit a l'utilisateur
 	 *
-	 * 	@param	int		$rid         id du droit a ajouter
-	 *  @param  string	$allmodule   Ajouter tous les droits du module allmodule
-	 *  @param  string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
-	 *  @return int   			     > 0 if OK, < 0 if KO
+	 * 	@param	int		$rid			id du droit a ajouter
+	 *  @param  string	$allmodule		Ajouter tous les droits du module allmodule
+	 *  @param  string	$allperms		Ajouter tous les droits du module allmodule, perms allperms
+	 *  @param	int		$entity			Entity to use
+	 *  @return int						> 0 if OK, < 0 if KO
 	 */
-	function addrights($rid,$allmodule='',$allperms='')
+	function addrights($rid, $allmodule='', $allperms='', $entity='')
 	{
 		global $conf;
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
+		$entity = (! empty($entity)?$entity:$conf->entity);
+
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
 		$err=0;
 		$whereforadd='';
 
 		$this->db->begin();
 
-		if ($rid)
+		if (! empty($rid))
 		{
 			// Si on a demande ajout d'un droit en particulier, on recupere
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$rid."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -334,7 +337,7 @@ class User extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE ".$whereforadd;
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -379,25 +382,27 @@ class User extends CommonObject
 	 *  @param	int		$rid        Id du droit a retirer
 	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
 	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
+	 *  @param	int		$entity			Entity to use
 	 *  @return int         		> 0 if OK, < 0 if OK
 	 */
-	function delrights($rid,$allmodule='',$allperms='')
+	function delrights($rid, $allmodule='', $allperms='', $entity='')
 	{
 		global $conf;
 
 		$err=0;
 		$wherefordel='';
+		$entity = (! empty($entity)?$entity:$conf->entity);
 
 		$this->db->begin();
 
-		if ($rid)
+		if (! empty($rid))
 		{
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE id = '".$rid."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result) {
@@ -431,7 +436,7 @@ class User extends CommonObject
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity = ".$entity;
 
 			$result=$this->db->query($sql);
 			if ($result)

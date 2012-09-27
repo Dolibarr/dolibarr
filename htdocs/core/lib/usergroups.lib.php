@@ -146,6 +146,29 @@ function group_prepare_head($object)
     return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @param	array	$aEntities	Entities array
+ * @return  array				Array of tabs
+ */
+function entity_prepare_head($object, $aEntities)
+{
+	global $mc;
+
+	$head = array();
+
+	foreach($aEntities as $entity)
+	{
+		$mc->getInfo($entity);
+		$head[$entity][0] = $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;entity='.$entity;
+		$head[$entity][1] = $mc->label;
+		$head[$entity][2] = $entity;
+	}
+
+	return $head;
+}
 
 /**
  * 	Show list of themes. Show all thumbs of themes
