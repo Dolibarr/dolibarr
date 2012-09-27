@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *		\brief      File to load import files with CSV format
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
+require_once(DOL_DOCUMENT_ROOT ."/core/modules/import/modules_import.php");
 
 
 /**
@@ -64,8 +65,8 @@ class ImportCsv extends ModeleImports
 		global $conf,$langs;
 		$this->db = $db;
 
-		$this->separator=',';	// Change also function cleansep
-		if (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->IMPORT_CSV_SEPARATOR_TO_USE;
+        $this->separator=(! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE))?$conf->global->IMPORT_CSV_SEPARATOR_TO_USE:',';
+
 		$this->enclosure='"';
 		$this->escape='"';
 
@@ -95,23 +96,21 @@ class ImportCsv extends ModeleImports
 	}
 
 	/**
-	 *	getDriverLabel
+	 * getDriverLabel
 	 *
-	 *	@param	string	$key	Key
-	 *	@return string	Label
+	 * @return string	Label
 	 */
-	function getDriverLabel($key='')
+	function getDriverLabel()
 	{
 		return $this->label;
 	}
 
 	/**
-	 *	getDriverDesc
+	 * getDriverDesc
 	 *
-	 *	@param	string	$key	Key
-	 *	@return string	Description
+	 * @return string	Description
 	 */
-	function getDriverDesc($key='')
+	function getDriverDesc()
 	{
 		return $this->desc;
 	}
@@ -127,23 +126,21 @@ class ImportCsv extends ModeleImports
 	}
 
 	/**
-	 *	getDriverVersion
+	 * getDriverVersion
 	 *
-	 *	@param	string	$key	Key
-	 *	@return string	Driver version
+	 * @return string	Driver version
 	 */
-	function getDriverVersion($key='')
+	function getDriverVersion()
 	{
 		return $this->version;
 	}
 
 	/**
-	 *	getDriverLabel
+	 * getDriverLabel
 	 *
-	 *	@param	string	$key	Key
-	 *	@return string	Label of external lib
+	 * @return string	Label of external lib
 	 */
-	function getLibLabel($key='')
+	function getLibLabel()
 	{
 		return $this->label_lib;
 	}
@@ -151,10 +148,9 @@ class ImportCsv extends ModeleImports
 	/**
 	 * getLibVersion
 	 *
-	 *	@param	string	$key	Key
-	 *	@return string	Version of external lib
+	 * @return string	Version of external lib
 	 */
-	function getLibVersion($key='')
+	function getLibVersion()
 	{
 		return $this->version_lib;
 	}
@@ -333,7 +329,7 @@ class ImportCsv extends ModeleImports
 	 * @param	string	$importid						Import key
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
+	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updateifexists=false)
 	{
 		global $langs,$conf,$user;
         global $thirdparty_static;    // Specifi to thirdparty import
@@ -601,8 +597,48 @@ class ImportCsv extends ModeleImports
 							{
 								//print '.';
 							}
-							else
-							{
+							elseif ($updateifexists) {
+                                  if (isset($objimport->array_import_update_keys) && is_array($objimport->array_import_update_keys[0][$tablename])) {
+  									$sql = "UPDATE ".$tablename." SET ";
+  									$fields = explode(',',$listfields);
+  									$values = explode(',',$listvalues);
+  									$keys = $objimport->array_import_update_keys[0][$tablename]; 
+  									$key_values = array(); 
+  									$i = 0; $deb = true;                         
+  									foreach ($fields as $field) {
+  										if (! $deb)
+  											$sql .= ', ';
+  										if ( ! in_array($field, $keys)) {
+  											$sql .= $field." = ".$values[$i];
+  											$deb = false;
+  										}
+  										else
+  											$key_values[$field] = $values[$i];
+  										$i++;
+  									}
+  									$sql .= " WHERE ";
+  									$i = 0;
+  									foreach ($keys as $key) {
+  										if ($i > 0)
+  											$sql .= ' AND ';
+  										$sql .= $key." = ".$key_values[$key];   
+  										$i++;
+  									}                                       
+  									if ( ! $this->db->query($sql)) {
+  										//print 'E';
+  										$this->errors[$error]['lib']=$this->db->lasterror();
+  										$this->errors[$error]['type']='SQL';
+  										$error++;
+  									}
+                                }
+    							else {          
+    								//print 'E';
+    								$this->errors[$error]['lib']=$langs->trans('UpdateNotDefinedInModuleDesc',$tablename);
+    								$this->errors[$error]['type']='MODULE';
+    								$error++;
+    							}
+							}
+							else {          
 								//print 'E';
 								$this->errors[$error]['lib']=$this->db->lasterror();
 								$this->errors[$error]['type']='SQL';
@@ -633,7 +669,7 @@ class ImportCsv extends ModeleImports
  */
 function cleansep($value)
 {
-	return str_replace(',','/',$value);
+	return str_replace($this->separator,'/',$value);
 };
 
 ?>
