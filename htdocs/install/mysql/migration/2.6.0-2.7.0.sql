@@ -4,7 +4,7 @@
 -- when current version is 2.6.0 or higher. 
 --
 
-alter table llx_tmp_caisse modify fk_tva int(11) NOT NULL;
+alter table llx_tmp_caisse modify fk_tva integer NOT NULL;
 
 drop table llx_facture_stats;
 drop table llx_stock_valorisation;
