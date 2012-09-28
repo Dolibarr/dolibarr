@@ -2,7 +2,7 @@
 <project name="dolibarr" default="hudson" basedir=".">
 
 <!-- Exclude/ignore paths -->
- <property name="ignorepaths" value="${basedir}/htdocs/conf,${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes" />
+ <property name="ignorepaths" value="${basedir}/htdocs/conf/*,${basedir}/htdocs/core/filemanagerdol/*,${basedir}/htdocs/includes/*" />
  <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*,**/zendgdata/*,**/reportico/*" />
  
  <target name="clean">
@@ -69,7 +69,7 @@
  <target name="phpcs">
  	<exec executable="phpcs" dir="${basedir}">
 		<arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
-					--ignore=${basedir}/htdocs/conf/,${basedir}/htdocs/core/filemanagerdol/,${basedir}/htdocs/includes/
+					--ignore=${ignorepaths},${ignoreregexp}
 					--report=checkstyle
 					--report-file=${basedir}/hudson/logs/checkstyle.xml
 					-v
