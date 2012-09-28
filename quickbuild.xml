@@ -20,7 +20,7 @@
   <parallel>
    <!-- <antcall target="phpmd"/> -->
    <antcall target="phpcpd"/>
-   <antcall target="phpcs"/>
+   <!-- <antcall target="phpcs"/> -->
    <antcall target="phploc"/>
   </parallel>
  </target>
@@ -89,5 +89,5 @@
   </exec>
  </target>
 
- <target name="hudson" depends="clean,phpunit,parallelTasks"/>
+ <target name="hudson" depends="clean,phpunit,phpcs,parallelTasks"/>
 </project>
