@@ -69,6 +69,7 @@
  <target name="phpcs">
  	<exec executable="phpcs" dir="${basedir}">
 		<arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
+					--ignore=${basedir}/htdocs/conf/,${basedir}/htdocs/core/filemanagerdol/,${basedir}/htdocs/includes/
 					--report=checkstyle
 					--report-file=${basedir}/hudson/logs/checkstyle.xml
 					-v

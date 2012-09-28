@@ -2,18 +2,6 @@
 <!DOCTYPE ruleset SYSTEM "ruleset.dtd">
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
-	
-	<exclude-pattern>*/conf/*</exclude-pattern>
-	<exclude-pattern>*/filemanagerdol/*</exclude-pattern>
-	<exclude-pattern>*/includes/*</exclude-pattern>
-	<exclude-pattern>*/includes/nusoap/*</exclude-pattern>
-	<exclude-pattern>*/includes/nusoap/lib/*</exclude-pattern>
-	<exclude-pattern>*/includes/nusoap/lib/Mail/*</exclude-pattern>
-	<exclude-pattern>*/PEAR/*</exclude-pattern>
-	<exclude-pattern>*/NET/*</exclude-pattern>
-	<exclude-pattern>*/HTTP/*</exclude-pattern>
-	<exclude-pattern>*/zendgdata/*</exclude-pattern>
-	<exclude-pattern>*/reportico/*</exclude-pattern>
 
 	<!-- List of all tests -->
 
