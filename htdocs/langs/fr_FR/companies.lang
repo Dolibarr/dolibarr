@@ -79,6 +79,7 @@ Poste= Poste
 DefaultLang=Langue par défaut
 VATIsUsed=Assujetti à TVA
 VATIsNotUsed=Non assujetti à TVA
+CopyAddressFromSoc=Copier l'adresse de la société
 ##### Local Taxes #####
 LocalTax1IsUsedES= Assujetti à RE
 LocalTax1IsNotUsedES= Non assujetti à RE
