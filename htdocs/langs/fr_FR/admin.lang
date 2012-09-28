@@ -218,7 +218,7 @@ OfficialWebSiteFr= Site web officiel francophone
 OfficialWiki= Wiki de documentation Dolibarr
 OfficialDemo= Démo en ligne Dolibarr
 OfficialMarketPlace=Place de marché officielle des modules et extensions complémentaires
-OfficialWebHostingService=Service d'hébergement officiel (SaaS)
+OfficialWebHostingService=Service d'hébergement partenaires (SaaS)
 ForDocumentationSeeWiki= Pour la documentation utilisateur, développeur ou les FAQs,<br>consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum= Pour tout autre question/aide, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1= Cette application, indépendante de Dolibarr, vous permet de vous aider à obtenir un service de support sur Dolibarr.
@@ -704,6 +704,7 @@ DictionnaryAvailability= Délai de livraison
 DictionnaryOrderMethods=Méthodes de commandes
 DictionnarySource=Origines des propales/commandes
 DictionnaryAccountancyplan=Plan comptable
+DictionnaryAccountancysystem=Modèles de plan comptable
 SetupSaved= Configuration sauvegardée
 BackToModuleList= Retour liste des modules
 BackToDictionnaryList= Retour liste des dictionnaires

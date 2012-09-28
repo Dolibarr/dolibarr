@@ -829,8 +829,6 @@ else
          */
         $productstatic=new Product($db);
 
-        // TODO move css and DAO
-
         // Title line for service
         print '<table class="notopnoleft allwidth">';	// Array with (n*2)+1 lines
         $cursorline=1;
@@ -997,7 +995,7 @@ else
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-                    print '<td align="right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                    print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
                     print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';

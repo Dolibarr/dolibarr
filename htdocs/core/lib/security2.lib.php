@@ -262,6 +262,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 
 	// Home message
+	$main_home='';
 	if (! empty($conf->global->MAIN_HOME))
 	{
 		$i=0;
@@ -270,8 +271,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$conf->global->MAIN_HOME=preg_replace('/__\('.$reg[1].'\)__/i',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
 			$i++;
 		}
+
+		$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
 	}
-	$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
 
 	// Google AD
 	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
