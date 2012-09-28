@@ -588,7 +588,7 @@ else
 				print "\n".'<script type="text/javascript" language="javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
-								document.formsoc.action.value="create";
+								document.formsoc.action.value="edit";
 								document.formsoc.submit();
 							});
 						
