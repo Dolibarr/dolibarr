@@ -3,14 +3,6 @@
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
 	
-	<!--
-    You can hard-code ignore patterns directly into your
-    custom standard so you don't have to specify the
-    patterns on the command line.
-    
-    The following two tags are equivalent to the command line
-    argument: --ignore=*/tests/*,*/data/*
-	-->
 	<exclude-pattern>*/conf/*</exclude-pattern>
 	<exclude-pattern>*/filemanagerdol/*</exclude-pattern>
 	<exclude-pattern>*/includes/*</exclude-pattern>
