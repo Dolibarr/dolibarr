@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2011-2012 Alexandre Spangaro	 <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,11 +20,9 @@
 
 create table llx_accountingsystem
 (
-  pcg_version       varchar(12)     PRIMARY KEY,
+  rowid             integer         AUTO_INCREMENT PRIMARY KEY,
+  pcg_version       varchar(12)     NOT NULL,
   fk_pays           integer         NOT NULL,
   label             varchar(128)    NOT NULL,
-  datec             varchar(12)     NOT NULL,
-  fk_author         varchar(20),
-  tms               timestamp,
   active            smallint        DEFAULT 0
 )ENGINE=innodb;
