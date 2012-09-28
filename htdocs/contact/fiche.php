@@ -377,14 +377,21 @@ else
 
             if ($conf->use_javascript_ajax)
             {
-                print "\n".'<script type="text/javascript" language="javascript">';
-                print 'jQuery(document).ready(function () {
+				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
 								document.formsoc.submit();
-                        	});
-						})';
-                print '</script>'."\n";
+							});
+						
+							$("#copyaddressfromsoc").click(function() {
+								$(\'textarea[name="address"]\').text("'.addslashes($objsoc->address).'");
+								$(\'input[name="zipcode"]\').val("'.addslashes($objsoc->zip).'");
+								$(\'input[name="town"]\').val("'.addslashes($objsoc->town).'");
+								$(\'select[name="country_id"]\').val("'.addslashes($objsoc->country_id).'");
+							});
+						})'."\n";
+				print '</script>'."\n";
             }
 
             print '<br>';
@@ -426,7 +433,9 @@ else
 
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '<tr><td>'.$langs->trans("Address");
+            if ($conf->use_javascript_ajax) print '<br /><a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
+            print '</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
             // Zip / Town
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
@@ -567,20 +576,30 @@ else
 	            $object->country_code =	$tmparray['code'];
 	            $object->country      =	$tmparray['label'];
             }
+			
+			$objsoc = new Societe($db);
+			$objsoc->fetch($object->socid);
 
             // Affiche les erreurs
             dol_htmloutput_errors($error,$errors);
 
             if ($conf->use_javascript_ajax)
             {
-                print '<script type="text/javascript" language="javascript">';
-                print 'jQuery(document).ready(function () {
+				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="edit";
 								document.formsoc.submit();
 							});
-						})';
-                print '</script>';
+						
+							$("#copyaddressfromsoc").click(function() {
+								$(\'textarea[name="address"]\').text("'.addslashes($objsoc->address).'");
+								$(\'input[name="zipcode"]\').val("'.addslashes($objsoc->zip).'");
+								$(\'input[name="town"]\').val("'.addslashes($objsoc->town).'");
+								$(\'select[name="country_id"]\').val("'.addslashes($objsoc->country_id).'");
+							});
+						})'."\n";
+				print '</script>'."\n";
             }
 
             print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" name="formsoc">';
@@ -621,7 +640,9 @@ else
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
 
             // Address
-            print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '<tr><td>'.$langs->trans("Address");
+			if ($conf->use_javascript_ajax) print '<br /><a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
+            print '</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
             // Zip / Town
             print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';

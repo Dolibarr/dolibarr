@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -633,7 +634,7 @@ class ImportCsv extends ModeleImports
  */
 function cleansep($value)
 {
-	return str_replace(',','/',$value);
+	return str_replace($this->separator,'/',$value);
 };
 
 ?>

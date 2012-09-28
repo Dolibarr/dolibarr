@@ -49,7 +49,7 @@ create table llx_facturedet
   date_end						datetime   DEFAULT NULL,			-- date fin si service
   info_bits						integer    DEFAULT 0,				-- TVA NPR ou non
   buy_price_ht					double(24,8) DEFAULT 0,				-- prix d'achat HT
-  fk_product_fournisseur_price	int(11)      DEFAULT NULL,			-- reference prix fournisseur
+  fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference prix fournisseur
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
   fk_export_compta				integer    DEFAULT 0 NOT NULL,
   special_code					integer UNSIGNED DEFAULT 0,			-- code pour les lignes speciales
