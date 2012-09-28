@@ -442,8 +442,9 @@ elseif ($action == 'update_line')
 
         $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
         $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
-
-        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type);
+        $remise_percent=GETPOST('remise_percent');
+        
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -480,10 +481,10 @@ elseif ($action == 'addline')
 
             $localtax1tx= get_localtax($tvatx, 1, $object->thirdparty);
             $localtax2tx= get_localtax($tvatx, 2, $object->thirdparty);
-
+            $remise_percent=GETPOST('remise_percent');
             $type = $product->type;
 
-            $result=$object->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $_POST['qty'], $idprod);
+            $result=$object->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $_POST['qty'], $idprod, $remise_percent);
 
         }
         if ($idprod == -1)
@@ -498,7 +499,8 @@ elseif ($action == 'addline')
         $tauxtva = price2num($_POST['tauxtva']);
         $localtax1tx= get_localtax($tauxtva, 1, $object->thirdparty);
         $localtax2tx= get_localtax($tauxtva, 2, $object->thirdparty);
-
+        $remise_percent=GETPOST('remise_percent');
+        
         if (! $_POST['dp_desc'])
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")).'</div>';
@@ -512,14 +514,14 @@ elseif ($action == 'addline')
                 $price_base_type = 'HT';
 
                 //$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
-                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
             else
             {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, 0, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, 0, $price_base_type, $type);
             }
         }
     }
@@ -541,7 +543,7 @@ elseif ($action == 'addline')
         unset($_POST['qty']);
         unset($_POST['type']);
         unset($_POST['idprodfournprice']);
-        unset($_POST['remmise_percent']);
+        unset($_POST['remise_percent']);
         unset($_POST['dp_desc']);
         unset($_POST['np_desc']);
         unset($_POST['pu']);
@@ -1519,10 +1521,12 @@ else
         $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
-        print '</table><br>';
+        print '</table>';
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
+        	print '<br>';
+        	
         	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
         	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         	$formcompany= new FormCompany($db);
@@ -1557,6 +1561,7 @@ else
                 print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
                 print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
+                print '<td align="right">'.$langs->trans('Discount').'</td>';
                 print '<td align="right">'.$langs->trans('TotalHTShort').'</td>';
                 print '<td align="right">'.$langs->trans('TotalTTCShort').'</td>';
                 print '<td>&nbsp;</td>';
@@ -1637,6 +1642,8 @@ else
 
                 print '<td align="right"><input size="1" name="qty" type="text" value="'.$object->lines[$i]->qty.'"></td>';
 
+                print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'">%</td>';
+                
                 print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 
                 print '<td align="right" nowrap="nowrap">&nbsp;</td>';
@@ -1693,6 +1700,8 @@ else
 
                 print '<td align="right">'.$object->lines[$i]->qty.'</td>';
 
+                print '<td align="right">'.(($object->lines[$i]->remise_percent > 0)?$object->lines[$i]->remise_percent.'%':'').'</td>';
+                
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
 
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
@@ -1726,6 +1735,7 @@ else
             print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
             print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
             print '<td align="right">'.$langs->trans('Qty').'</td>';
+            print '<td align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
             print '<td>&nbsp;</td>';
@@ -1773,8 +1783,9 @@ else
             print '<td align="right">';
             print '<input size="1" name="qty" type="text" value="1">';
             print '</td>';
-            print '<td align="right">&nbsp;</td>';
-            print '<td align="center">&nbsp;</td>';
+            print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'">%</td>';
+            print '<td>&nbsp;</td>';
+            print '<td>&nbsp;</td>';
             print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
             print '</form>';
 
@@ -1794,7 +1805,8 @@ else
                 }
                 print '</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">&nbsp;</td>';
+            	print '<td>&nbsp;</td>';
+                print '<td>&nbsp;</td>';
                 print '<td colspan="4">&nbsp;</td>';
                 print '</tr>';
 
@@ -1828,6 +1840,7 @@ else
 
                 print '</td>';
                 print '<td align="right"><input type="text" id="pqty" name="qty" value="1" size="1"></td>';
+            	print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'">%</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'"></td>';

@@ -21,6 +21,8 @@ DROP TABLE llx_dolibarr_modules;
 
 ALTER TABLE llx_facture_rec ADD COLUMN usenewprice        integer;
 
+ALTER TABLE llx_facture_fourn_det ADD COLUMN remise_percent	real       DEFAULT 0 after qty;
+
 ALTER TABLE llx_extrafields MODIFY COLUMN size varchar(8) DEFAULT NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN fk_mainmenu   varchar(24);
