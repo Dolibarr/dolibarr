@@ -2,6 +2,23 @@
 <!DOCTYPE ruleset SYSTEM "ruleset.dtd">
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
+	
+	<!--
+    You can hard-code ignore patterns directly into your
+    custom standard so you don't have to specify the
+    patterns on the command line.
+    
+    The following two tags are equivalent to the command line
+    argument: --ignore=*/tests/*,*/data/*
+	-->
+	<exclude-pattern>*/conf/*</exclude-pattern>
+	<exclude-pattern>*/filemanagerdol/*</exclude-pattern>
+	<exclude-pattern>*/includes/*</exclude-pattern>
+	<exclude-pattern>*/PEAR/*</exclude-pattern>
+	<exclude-pattern>*/NET/*</exclude-pattern>
+	<exclude-pattern>*/HTTP/*</exclude-pattern>
+	<exclude-pattern>*/zendgdata/*</exclude-pattern>
+	<exclude-pattern>*/reportico/*</exclude-pattern>
 
 	<!-- List of all tests -->
 
