@@ -34,7 +34,7 @@ delete from llx_accountingsystem;
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --
 
-insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-ABREGE', 1, 'The simple accountancy french plan', CURRENT_DATE, null, 0);
+insert into llx_accountingsystem (rowid, pcg_version, fk_pays, label, active) VALUES (1,'PCG99-ABREGE', 1, 'The simple accountancy french plan', 1);
 
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  1,'PCG99-ABREGE','CAPIT', 'CAPITAL', '101', '1', 'Capital', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  2,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '105', '1', 'Ecarts de réévaluation', '1');
@@ -143,7 +143,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 -- Descriptif des plans comptables FR PCG99-BASE
 --
 
-insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-BASE', 1, 'The base accountancy french plan', CURRENT_DATE, null, 0);
+insert into llx_accountingsystem (rowid, pcg_version, fk_pays, label, active) VALUES (2,'PCG99-BASE', 1, 'The base accountancy french plan', 1);
 
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (103,'PCG99-BASE','CAPIT', 'XXXXXX',   '10',  '1', 'Capital  et réserves', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (104,'PCG99-BASE','CAPIT', 'CAPITAL', '101', '10', 'Capital', '1');
