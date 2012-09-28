@@ -72,6 +72,7 @@
     			--report=checkstyle
                 --ignore=${ignorepaths},${ignoreregexp}
     			--report-file=${basedir}/hudson/logs/checkstyle.xml
+    			-v
                 htdocs
                 "/>
   </exec>
