@@ -67,15 +67,15 @@
    
  <!-- Generate checkstyle.xml -->
  <target name="phpcs">
-  <exec executable="phpcs" dir="${basedir}">
-    <arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
-    			--report=checkstyle
-                --ignore=${ignorepaths},${ignoreregexp}
-    			--report-file=${basedir}/hudson/logs/checkstyle.xml
-    			-v
-                htdocs
-                "/>
-  </exec>
+ 	<exec executable="phpcs" dir="${basedir}">
+		<arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
+					--ignore=${basedir}/htdocs/conf,${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes,**/PEAR/*,**/NET/*,**/HTTP/*,**/zendgdata/*,**/reportico/*
+					--report=checkstyle
+					--report-file=${basedir}/hudson/logs/checkstyle.xml
+					-v
+					htdocs
+					"/>
+	</exec>
  </target>
  
  <!-- Run unit tests and generate junit.xml and clover.xml -->
