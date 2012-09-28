@@ -82,7 +82,7 @@ UserSetup=Configuració gestió dels usuaris
 MenuSetup=Administració dels menús per base de dades
 MenuLimits=Límits i precisió
 MenuIdParent=Id del menú pare
-DetailMenuIdParent=IDr del menú pare (0 per a un menú superior)
+DetailMenuIdParent=IDr del menú pare (buit per a un menú superior)
 DetailPosition=Número d'ordre per a la posició del menú
 PersonalizedMenusNotSupported=Menús personalitzats no generats
 AllMenus=Tots
@@ -1304,6 +1304,8 @@ Sell=Venda
 InvoiceDateUsed=Data utilitzada de factura
 YourCompanyDoesNotUseVAT=La seva empresa està configurada com no subjecta a l'IVA (Inici - Configuració - Empresa/Institució), per la qual cosa no hi ha opció per a la parametrització de l'IVA.
 AccountancyCode=Codi comptable
+AccountancyCodeSell=Codi comptable vendes
+AccountancyCodeBuy=Codi comptable compres
 ##### Agenda #####
 AgendaSetup=Mòdul configuració d'accions i agenda
 PasswordTogetVCalExport=Clau d'autorització vCal export link
