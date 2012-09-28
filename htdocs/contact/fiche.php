@@ -377,13 +377,20 @@ else
 
             if ($conf->use_javascript_ajax)
             {
-                print "\n".'<script type="text/javascript" language="javascript">';
+                print "\n".'<script type="text/javascript" language="javascript">'."\n";
                 print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
 								document.formsoc.submit();
                         	});
-						})';
+						
+							$("#copyaddressfromsoc").click(function() {
+								$(\'textarea[name="address"]\').text("'.addslashes($objsoc->address).'");
+								$(\'input[name="zipcode"]\').val("'.addslashes($objsoc->zip).'");
+								$(\'input[name="town"]\').val("'.addslashes($objsoc->town).'");
+								$(\'select[name="country_id"]\').val("'.addslashes($objsoc->country_id).'");
+							});
+						})'."\n";
                 print '</script>'."\n";
             }
 
@@ -426,7 +433,9 @@ else
 
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '<tr><td>'.$langs->trans("Address");
+            if ($conf->use_javascript_ajax) print '<br /><a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a></td>';
+            print '<td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
             // Zip / Town
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
