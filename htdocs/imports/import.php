@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012 Christophe Battarel  		<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,8 @@ $import_name		= GETPOST('import_name');
 $hexa				= GETPOST('hexa');
 $importmodelid		= GETPOST('importmodelid');
 $excludefirstline	= (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 0);
+$separator			= (GETPOST('separator') ? GETPOST('separator') : (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)?$conf->global->IMPORT_CSV_SEPARATOR_TO_USE:','));
+$enclosure			= (GETPOST('enclosure') ? GETPOST('enclosure') : '"');
 
 $objimport=new Import($db);
 $objimport->load_arrays($user,($step==1?'':$datatoimport));
@@ -324,6 +327,8 @@ if ($step == 1 || ! $datatoimport)
 
 	$param='';
 	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($separator) $param.='&separator='.urlencode($separator);
+	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -388,6 +393,8 @@ if ($step == 2 && $datatoimport)
 {
 	$param='&datatoimport='.$datatoimport;
 	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($separator) $param.='&separator='.urlencode($separator);
+	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -459,6 +466,8 @@ if ($step == 3 && $datatoimport)
 {
 	$param='&datatoimport='.$datatoimport.'&format='.$format;
 	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($separator) $param.='&separator='.urlencode($separator);
+	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
 	$liste=$objmodelimport->liste_modeles($db);
 
@@ -532,6 +541,8 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" value="'.$step.'" name="step">';
 	print '<input type="hidden" value="'.$format.'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
+	print '<input type="hidden" value="'.$separator.'" name="separator">';
+	print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 	print "</tr>\n";
 
@@ -599,6 +610,10 @@ if ($step == 4 && $datatoimport)
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db,$datatoimport);
+	if ($model == 'csv') {
+	    $obj->separator = $separator;
+	    $obj->enclosure = $enclosure;
+	}
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -667,6 +682,8 @@ if ($step == 4 && $datatoimport)
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
 	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($separator) $param.='&separator='.urlencode($separator);
+	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -702,6 +719,25 @@ if ($step == 4 && $datatoimport)
     print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
 	print '</td></tr>';
 
+	// Separator and enclosure
+    if ($model == 'csv') {
+		print '<tr><td width="25%">'.$langs->trans("CsvOptions").'</td>';
+		print '<td>';
+		print '<form>';
+		print '<input type="hidden" value="'.$step.'" name="step">';
+		print '<input type="hidden" value="'.$format.'" name="format">';
+		print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
+		print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
+		print '<input type="hidden" value="'.$filetoimport.'" name="filetoimport">';
+		print $langs->trans("Separator").' : ';
+		print '<input type="text" size="1" name="separator" value="'.htmlentities($separator).'"/>';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
+		print '<input type="text" size="1" name="enclosure" value="'.htmlentities($enclosure).'"/>';
+		print '<input type="submit" value="'.$langs->trans('Update').'" />';
+		print '</form>';
+		print '</td></tr>';
+    }
+
 	// File to import
 	print '<tr><td width="25%">'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
@@ -726,6 +762,8 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
     print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
+	print '<input type="hidden" name="separator" value="'.$separator.'">';
+	print '<input type="hidden" name="enclosure" value="'.$enclosure.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectImportFields",img_picto('','uparrow','')).' ';
     $htmlother->select_import_model($importmodelid,'importmodelid',$datatoimport,1);
@@ -1002,6 +1040,9 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     	print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
+    	print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="hidden" value="'.$separator.'" name="separator">';
+		print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
 
 		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -1062,6 +1103,10 @@ if ($step == 5 && $datatoimport)
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db,$datatoimport);
+	if ($model == 'csv') {
+	    $obj->separator = $separator;
+	    $obj->enclosure = $enclosure;
+	}
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -1082,9 +1127,11 @@ if ($step == 5 && $datatoimport)
 
 	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 
-	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-	$param2='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-	if ($excludefirstline) $param.='&excludefirstline=1';
+	$param='&leftmenu=import&step=5&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
+	$param2 = $param;
+	if ($excludefirstline) {
+		$param.='&excludefirstline=1';
+	}
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -1144,7 +1191,7 @@ if ($step == 5 && $datatoimport)
 	print '</td><td>';
 	print '<input type="checkbox" name="excludefirstline" value="1"';
 	print ($excludefirstline?' checked="checked"':'');
-	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?leftmenu=import&excludefirstline='.($excludefirstline?'0':'1').'&step=5'.$param2.'\';">';
+	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?excludefirstline='.($excludefirstline?'0':'1').$param2.'\';">';
 	print ' '.$langs->trans("DoNotImportFirstLine");
 	print '</td></tr>';
 
@@ -1391,6 +1438,10 @@ if ($step == 6 && $datatoimport)
 	$classname = "Import".ucfirst($model);
 	require_once $dir.$file;
 	$obj = new $classname($db,$datatoimport);
+	if ($model == 'csv') {
+	    $obj->separator = $separator;
+	    $obj->enclosure = $enclosure;
+	}
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -1413,6 +1464,8 @@ if ($step == 6 && $datatoimport)
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
 	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($separator) $param.='&separator='.urlencode($separator);
+	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
