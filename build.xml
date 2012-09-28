@@ -69,10 +69,11 @@
    
  <!-- Generate checkstyle.xml -->
  <target name="phpcs">
-  <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
+  <exec executable="phpcs" dir="${basedir}">
     <arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
     			--report=checkstyle
                 --ignore=${ignorepaths},${ignoreregexp}
+                --report-file=${basedir}/hudson/logs/checkstyle.xml
                 htdocs
                 "/>
   </exec>
