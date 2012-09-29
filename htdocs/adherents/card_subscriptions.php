@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ $langs->load("mails");
 
 
 $action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST('rowid','int');
 $typeid=GETPOST('typeid','int');
 
@@ -87,7 +89,7 @@ if ($rowid)
  */
 
 // Create third party from a member
-if ($action == 'confirm_create_thirdparty' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
+if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer)
 {
 	if ($result > 0)
 	{
@@ -589,10 +591,10 @@ if ($rowid)
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans("LinkedToDolibarrUser");
     print '</td>';
-    if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
+    if ($action != 'editlogin' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'),1).'</a></td>';
     print '</tr></table>';
     print '</td><td class="valeur">';
-    if ($_GET['action'] == 'editlogin')
+    if ($action == 'editlogin')
     {
         /*$include=array();
          if (empty($user->rights->user->user->creer))    // If can edit only itself user, we can link to itself only
@@ -748,49 +750,40 @@ if ($rowid)
         if ($conf->use_javascript_ajax)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
-                        jQuery(".bankswitchclass").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
-                        jQuery(".bankswitchclass2").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
-                        jQuery("#none").click(function() {
-                            jQuery(".bankswitchclass").hide();
-                            jQuery(".bankswitchclass2").hide();
+            print '$(document).ready(function () {
+                        $(".bankswitchclass, .bankswitchclass2").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
+                        $("#none, #invoiceonly").click(function() {
+                            $(".bankswitchclass").hide();
+                            $(".bankswitchclass2").hide();
                         });
-                        jQuery("#bankdirect").click(function() {
-                            jQuery(".bankswitchclass").show();
-                            jQuery(".bankswitchclass2").show();
+                        $("#bankdirect, #bankviainvoice").click(function() {
+                            $(".bankswitchclass").show();
+                            $(".bankswitchclass2").show();
                         });
-                        jQuery("#bankviainvoice").click(function() {
-                            jQuery(".bankswitchclass").show();
-                            jQuery(".bankswitchclass2").show();
-                        });
-    	                jQuery("#invoiceonly").click(function() {
-                            jQuery(".bankswitchclass").hide();
-                            jQuery(".bankswitchclass2").hide();
-                        });
-                        jQuery("#selectoperation").change(function() {
-                            code=jQuery("#selectoperation option:selected").val();
-                            if (code == \'CHQ\')
+                        $("#selectoperation").change(function() {
+                            var code = $(this).val();
+                            if (code == "CHQ")
                             {
-                                jQuery(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
-                            	if (jQuery(\'#fieldchqemetteur\').val() == \'\')
+                                $(".fieldrequireddyn").addClass("fieldrequired");
+                            	if ($("#fieldchqemetteur").val() == "")
                             	{
-                                	jQuery(\'#fieldchqemetteur\').val(jQuery(\'#memberlabel\').val());
+                                	$("#fieldchqemetteur").val($("#memberlabel").val());
                             	}
                             }
                             else
                             {
-                                jQuery(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
+                                $(".fieldrequireddyn").removeClass("fieldrequired");
                             }
                         });
                         ';
-            if (GETPOST('paymentsave')) print 'jQuery("#'.GETPOST('paymentsave').'").attr(\'checked\',true);';
+            if (GETPOST('paymentsave')) print '$("#'.GETPOST('paymentsave').'").attr("checked",true);';
     	    print '});';
             print '</script>'."\n";
         }
 
 
 		// Confirm create third party
-		if ($_GET["action"] == 'create_thirdparty')
+		if ($action == 'create_thirdparty')
 		{
 			$name = $object->getFullName($langs);
 			if (! empty($name))
@@ -803,14 +796,14 @@ if ($rowid)
 			}
 
 			// Create a form array
-			$formquestion=array(			array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
+			$formquestion=array(array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
 			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 			if ($ret == 'html') print '<br>';
 		}
 
 
-        print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+        print '<form name="cotisation" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
@@ -888,15 +881,15 @@ if ($rowid)
                 print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('MoreActions');
                 print '</td>';
                 print '<td>';
-                print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(!$bankdirect&&!$bankviainvoice?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
+                print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($bankviainvoice)?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
                 if (! empty($conf->banque->enabled))
                 {
-                    print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.($bankdirect?' checked="checked"':'');
+                    print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(! empty($bankdirect)?' checked="checked"':'');
                     print '> '.$langs->trans("MoreActionBankDirect").'<br>';
                 }
                 if (! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
-                    print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.($invoiceonly?' checked="checked"':'');
+                    print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(empty($conf->global->ADHERENT_BANK_USE) || $invoiceonly?' checked="checked"':'');
                     if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
@@ -911,7 +904,7 @@ if ($rowid)
                 }
                 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
-                    print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice?' checked="checked"':'');
+                    print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice && !empty($conf->global->ADHERENT_BANK_USE)?' checked="checked"':'');
                     if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
