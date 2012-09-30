@@ -57,8 +57,6 @@ if ($action == 'setcomptamode')
 
 }
 
-$chartofaccounts = defined('CHARTOFACCOUNTS')?CHARTOFACCOUNTS:'';
-
 if ($action == 'setchart')
 {
 	$chartofaccounts = GETPOST('chartofaccounts','alpha');
@@ -176,7 +174,7 @@ if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting-
   print '<tr '.$bc[$var].'>';
   print "<td>".$langs->trans("Selectchartofaccounts")."</td>";
   print "<td>";
-  print '<select class="flat" name="chq" id="chq">';
+  print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
   print '<option value="0">'.$langs->trans("DoNotSuggestChart").'</option>';
   
   $sql = "SELECT rowid, pcg_version, fk_pays, label, active";
@@ -196,7 +194,7 @@ if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting-
   
           print '<option value="'.$row[0].'"';
           print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected="selected"':'';
-          print '>'.$row[1].'</option>';
+          print '>'.$row[1].' - '.$row[3].'</option>';
   
           $i++;
       }
