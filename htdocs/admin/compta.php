@@ -180,7 +180,7 @@ if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting-
   $sql = "SELECT rowid, pcg_version, fk_pays, label, active";
   $sql.= " FROM ".MAIN_DB_PREFIX."accountingsystem";
   $sql.= " WHERE active = 1";
-//  $sql.= " AND fk_pays = ".substr($conf->global->MAIN_INFO_SOCIETE_PAYS,0,1); Ne fonctionne pas avec un rowid pays > 9
+  $sql.= " AND fk_pays = ".$mysoc->country_id;
   $var=True;
   $resql=$db->query($sql);
   if ($resql)
