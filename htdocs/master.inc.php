@@ -74,6 +74,8 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 // Force db type (for test purpose)
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');
+// Force php strict mode (for debug)
+$conf->file->strict_mode = empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;
 // Force Multi-Company transverse mode
 $conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
 // Force entity in login page
