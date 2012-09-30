@@ -61,7 +61,7 @@ class modAccounting extends DolibarrModules
 		$this->special = 0;
 
 		// Config pages
-		$this->config_page_url = array("accounting.php");
+		$this->config_page_url = array("compta.php");
 
 		// Dependancies
 		$this->depends = array("modFacture","modBanque","modTax");
@@ -85,47 +85,47 @@ class modAccounting extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'accounting';
 
-		$this->rights[1][0] = 50401;
-		$this->rights[1][1] = 'Lire le plan de compte';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'plancompte';
-		$this->rights[1][5] = 'lire';
+		$this->rights[$r][0] = 50401;
+		$this->rights[$r][1] = 'Lire le plan de compte';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'plancompte';
+		$this->rights[$r][5] = 'lire';
 
-		$this->rights[2][0] = 50402;
-		$this->rights[2][1] = 'Creer/modifier un plan de compte';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'plancompte';
-		$this->rights[2][5] = 'creer';
+		$this->rights[$r][0] = 50402;
+		$this->rights[$r][1] = 'Creer/modifier un plan de compte';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'plancompte';
+		$this->rights[$r][5] = 'creer';
 
-		$this->rights[3][0] = 50403;
-		$this->rights[3][1] = 'Cloturer plan de compte';
-		$this->rights[3][2] = 'w';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'plancompte';
-		$this->rights[3][5] = 'cloturer';
+		$this->rights[$r][0] = 50403;
+		$this->rights[$r][1] = 'Cloturer plan de compte';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'plancompte';
+		$this->rights[$r][5] = 'cloturer';
 
-		$this->rights[4][0] = 50411;
-		$this->rights[4][1] = 'Lire les mouvements comptables';
-		$this->rights[4][2] = 'r';
-		$this->rights[4][3] = 1;
-		$this->rights[4][4] = 'mouvements';
-		$this->rights[4][5] = 'lire';
+		$this->rights[$r][0] = 50411;
+		$this->rights[$r][1] = 'Lire les mouvements comptables';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'lire';
 
-		$this->rights[5][0] = 50412;
-		$this->rights[5][1] = 'Creer/modifier/annuler les mouvements comptables';
-		$this->rights[5][2] = 'w';
-		$this->rights[5][3] = 0;
-		$this->rights[5][4] = 'mouvements';
-		$this->rights[5][5] = 'creer';
+		$this->rights[$r][0] = 50412;
+		$this->rights[$r][1] = 'Creer/modifier/annuler les mouvements comptables';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'creer';
 
-		$this->rights[6][0] = 50415;
-		$this->rights[6][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
-		$this->rights[6][2] = 'r';
-		$this->rights[6][3] = 0;
-		$this->rights[6][4] = 'comptarapport';
-		$this->rights[6][5] = 'lire';
+		$this->rights[$r][0] = 50415;
+		$this->rights[$r][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'comptarapport';
+		$this->rights[$r][5] = 'lire';
 	}
 
 
