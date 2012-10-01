@@ -53,10 +53,8 @@ if (! defined('LOG_DEBUG'))
     }
 }
 
-// Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
-error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
-//error_reporting(E_ALL | E_STRICT);
+// End of common declaration part
+if (defined('DOL_INC_FOR_VERSION_ERROR')) return;
 
 
 // Define vars
@@ -77,12 +75,19 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	exit;
 }
 
+// Force PHP error_reporting setup (Dolibarr may report warning without this)
+if (! empty($dolibarr_strict_mode))
+{
+	error_reporting(E_ALL | E_STRICT);
+}
+else
+{
+	if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
+	error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
+}
 
 // Disable php display errors
-if (! empty($dolibarr_main_prod))
-{
-	ini_set('display_errors','Off');
-}
+if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);
