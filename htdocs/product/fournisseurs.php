@@ -94,6 +94,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $ref_fourn=GETPOST("ref_fourn");
     if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
     $quantity=GETPOST("qty");
+	$remise_percent=price2num(GETPOST('remise_percent','alpha'));
     $tva_tx=price2num(GETPOST('tva_tx','alpha'));
 
 	if (empty($quantity))
@@ -153,10 +154,10 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			$supplier=new Fournisseur($db);
 			$result=$supplier->fetch($id_fourn);
 
-      if (isset($_POST['ref_fourn_price_id']))
-        $product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+			if (isset($_POST['ref_fourn_price_id']))
+				$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"]);
+			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent);
 			if ($ret < 0)
 			{
 				$error++;
@@ -346,7 +347,12 @@ if ($id || $ref)
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $form->select_PriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");
-                print '</td>';
+				print '</td>';
+				
+				// Discount qty min
+				print '<td>'.$langs->trans("DiscountQtyMin").'</td>';
+				print '<td><input class="flat" name="remise_percent" size="8" value="'.(GETPOST('remise_percent')?vatrate(GETPOST('remise_percent')):(isset($product->fourn_remise_percent)?vatrate($product->fourn_remise_percent):'')).'"> %';
+				print '</td>';
 				print '</tr>';
 
 				// Charges ????
@@ -407,6 +413,7 @@ if ($id || $ref)
 				// Charges ????
 				if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("Charges").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
+				print '<td class="liste_titre" align="right">'.$langs->trans("DiscountQtyMin").'</td>';
 				// Charges ????
 				if (! empty($conf->margin->enabled)) print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
 				print '<td class="liste_titre"></td>';
@@ -465,6 +472,11 @@ if ($id || $ref)
 						print '<td align="right">';
 						print price($productfourn->fourn_unitprice);
 						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
+						print '</td>';
+						
+						// Discount
+						print '<td align="right">';
+						print vatrate($productfourn->fourn_remise_percent, $langs);
 						print '</td>';
 
 						// Unit Charges ???
