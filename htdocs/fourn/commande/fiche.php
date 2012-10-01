@@ -1533,7 +1533,7 @@ if ($id > 0 || ! empty($ref))
                 print '<td colspan="3">';
 
                 $ajaxoptions=array(
-                		'update' => array('pqty' => 'qty'),
+                		'update' => array('pqty' => 'qty', 'p_remise_percent' => 'discount'),
                 		'option_disabled' => 'addPredefinedProductButton',
                 		'error' => $langs->trans("NoPriceDefinedForThisSupplier")
                 );
@@ -1554,7 +1554,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-                print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$soc->remise_client).'">%</td>';
+                print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$soc->remise_client).'">%</td>';
                 print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
                 print '</tr>';
 
