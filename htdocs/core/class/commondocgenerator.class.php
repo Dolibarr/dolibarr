@@ -168,13 +168,14 @@ abstract class CommonDocGenerator
 	/**
 	 * Rect pdf
 	 *
-	 * @param unknown_type $pdf
-	 * @param unknown_type $x
-	 * @param unknown_type $y
-	 * @param unknown_type $l
-	 * @param unknown_type $h
+	 * @param	PDF		$pdf			Object PDF
+	 * @param	float	$x				Abscissa of first point
+	 * @param	float	$y		        Ordinate of first point
+	 * @param	float	$l				??
+	 * @param	float	$h				??
 	 * @param	int		$hidetop		Hide top
 	 * @param	int		$hidebottom		Hide bottom
+	 * @return	void
 	 */
     function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
     {

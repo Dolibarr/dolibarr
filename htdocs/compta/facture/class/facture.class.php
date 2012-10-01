@@ -1880,6 +1880,7 @@ class Facture extends CommonInvoice
      *      @param		int			$fk_parent_line		Id of parent line
      * 		@param		int			$fk_fournprice		To calculate margin
      * 		@param		int			$pa_ht				Buying price of line
+     * 		@param		string		$label				Label of the line
      *    	@return    	int             				<0 if KO, Id of line if OK
      */
     function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='')
@@ -2035,6 +2036,7 @@ class Facture extends CommonInvoice
      * 		@param		int			$skip_update_total	???
      * 		@param		int			$fk_fournprice		To calculate margin
      * 		@param		int			$pa_ht				Buying price of line
+     * 		@param		string		$label				Label of the line
      *      @return    	int             				< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')

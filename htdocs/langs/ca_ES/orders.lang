@@ -141,6 +141,8 @@ OrderSource6=Revistes
 QtyOrdered=Qt. demanda
 AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la comanda
 SetDemandReason=Indicar origen de la comanda
+CreateInvoiceForThisCustomer=Crear una factura a partir de diverses comandes d'aquest client
+CloseProcessedOrdersAutomatically=Classificar automàticament com "Processades" les comandes seleccionades.
 
 # Document models
 PDFEinsteinDescription=Model de comanda complet (logo...)
