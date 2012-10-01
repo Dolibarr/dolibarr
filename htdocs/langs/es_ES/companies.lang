@@ -79,6 +79,7 @@ Poste=Puesto
 DefaultLang=Idioma por defecto
 VATIsUsed=Sujeto a IVA
 VATIsNotUsed=No sujeto a IVA
+CopyAddressFromSoc=Copiar dirección de la empresa
 ##### Local Taxes #####=
 LocalTax1IsUsedES=Sujeto a RE
 LocalTax1IsNotUsedES=No sujeto a RE
