@@ -1256,7 +1256,7 @@ MantisTestKo1=La conexión al servidor '%s' es correcta pero la base de datos' %
 MantisTestKo2=La conexión al servidor '%s' por el usuario '%s' a fallado.
 MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
 ##### Stock #####
-StockSetup=configuración del módulo Stock
+StockSetup=Configuración del módulo Stocks
 UserWarehouse=Utilizar los stocks personales de usuarios
 ##### Menu #####
 MenuDeleted=Menú eliminado
