@@ -157,15 +157,16 @@ class ProductFournisseur extends Product
         if (empty($buyprice)) $buyprice=0;
         if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
-   		if ($price_base_type == 'TTC')
+        if (empty($remise_percent)) $remise_percent=0;
+        if ($price_base_type == 'TTC')
 		{
-			$ttx = get_default_tva($fourn,$mysoc,$this->id);
+			//$ttx = get_default_tva($fourn,$mysoc,$this->id);	// We must use the VAT rate defined by user and not calculate it
+			$ttx = $tva_tx;
 			$buyprice = $buyprice/(1+($ttx/100));
 		}
         $buyprice=price2num($buyprice,'MU');
 		$charges=price2num($charges,'MU');
         $qty=price2num($qty);
-
  		$error=0;
 
 		$unitBuyPrice = price2num($buyprice/$qty,'MU');
@@ -190,6 +191,7 @@ class ProductFournisseur extends Product
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " charges = ".($charges != ''?price2num($charges):"null");
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+			// TODO Add price_base_type and price_ttc
 
 			dol_syslog(get_class($this).'::update_buyprice sql='.$sql);
 			$resql = $this->db->query($sql);
@@ -333,9 +335,11 @@ class ProductFournisseur extends Product
      *    List all supplier prices of a product
      *
      *    @param    int		$prodid	    Id of product
+     *    @param	string	$sortfield	Sort field
+     *    @param	string	$sortorder	Sort order
      *    @return	array				Array of Products with new properties to define supplier price
      */
-    function list_product_fournisseur_price($prodid)
+    function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='')
     {
         global $conf;
 
@@ -347,8 +351,8 @@ class ProductFournisseur extends Product
         $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND pfp.fk_product = ".$prodid;
-        $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
-
+        if (empty($sortfield)) $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
+        else $sql.= $this->db->order($sortfield,$sortorder);
         dol_syslog(get_class($this)."::list_product_fournisseur_price sql=".$sql, LOG_DEBUG);
 
         $resql = $this->db->query($sql);
@@ -469,14 +473,16 @@ class ProductFournisseur extends Product
      *	Display supplier of product
      *
      *	@param	int		$withpicto	Add picto
+     *	@param	string	$option		Target of link ('', 'customer', 'prospect', 'supplier')
      *	@return	string				String with supplier price
+	 *  TODO Remove this method. Use getNomUrl directly.
      */
-    function getSocNomUrl($withpicto=0)
+    function getSocNomUrl($withpicto=0,$option='supplier')
     {
         $cust = new Fournisseur($this->db);
         $cust->fetch($this->fourn_id);
 
-        return $cust->getNomUrl($withpicto);
+        return $cust->getNomUrl($withpicto,$option);
     }
 
     /**

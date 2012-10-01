@@ -3088,7 +3088,6 @@ class Form
 
         // Now we get list
         $num = $this->load_cache_vatrates($code_pays);
-
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')

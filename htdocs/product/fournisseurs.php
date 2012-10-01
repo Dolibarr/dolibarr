@@ -153,7 +153,6 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 		{
 			$supplier=new Fournisseur($db);
 			$result=$supplier->fetch($id_fourn);
-
 			if (isset($_POST['ref_fourn_price_id']))
 				$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
@@ -273,7 +272,7 @@ if ($id || $ref)
 
 				print '<table class="border" width="100%">';
 
-				print '<tr><td class="fieldrequired">'.$langs->trans("Supplier").'</td><td colspan="5">';
+				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Supplier").'</td><td>';
 				if ($rowid)
 				{
 					$supplier=new Fournisseur($db);
@@ -298,7 +297,7 @@ if ($id || $ref)
 				print '</td></tr>';
 
 				// Ref supplier
-				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td colspan="5">';
+				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td>';
 				if ($rowid)
 				{
 					print $product->fourn_ref;
@@ -310,18 +309,11 @@ if ($id || $ref)
 				print '</td>';
 				print '</tr>';
 
-				// Vat rate
-				print '<tr><td class="fieldrequired">'.$langs->trans("VATRate").'</td>';
-				print '<td colspan="3">';
-				//print $form->load_tva('tva_tx',$product->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
-				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.vatrate(GETPOST("tva_tx")?GETPOST("tva_tx"):$product->tva_tx).'">';
-				print '</td></tr>';
-
 				// Availability
 				if (! empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 				{
 					$langs->load("propal");
-					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
+					print '<tr><td>'.$langs->trans("Availability").'</td><td>';
 					$form->select_availability($product->fk_availability,"oselDispo",1);
 					print '</td></tr>'."\n";
 				}
@@ -340,18 +332,41 @@ if ($id || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
-				print '</td>';
+				print '</td></tr>';
+
+
+				// Vat rate
+				$default_vat='';
+
+				// We don't have supplier, so we try to guess.
+				// For this we build a fictive supplier with same properties than user but using vat)
+				$mysoc2=dol_clone($mysoc);
+				$mysoc2->tva_assuj=1;
+				$default_vat=get_default_tva($mysoc2, $mysoc, 0, $product->id);
+
+				print '<tr><td class="fieldrequired">'.$langs->trans("VATRateForSupplierProduct").'</td>';
+				print '<td>';
+				//print $form->load_tva('tva_tx',$product->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
+				if (! empty($socid))	// When update
+				{
+					$supplierselected=new Societe($db);
+					$supplierselected->fetch($socid);
+					$default_vat=get_default_tva($supplier, $mysoc, $product->id);
+				}
+				if ($action == 'add_price' && $socid) $default_vat=$product->tva_tx;	// If editing product-fourn
+				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
+				print '</td></tr>';
 
 				// Price qty min
-				print '<td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
+				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $form->select_PriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):$product->price_base_type), "price_base_type");
-				print '</td>';
-				
+				print '</td></tr>';
+
 				// Discount qty min
-				print '<td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="8" value="'.(GETPOST('remise_percent')?vatrate(GETPOST('remise_percent')):(isset($product->fourn_remise_percent)?vatrate($product->fourn_remise_percent):'')).'"> %';
+				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOST('remise_percent')?vatrate(GETPOST('remise_percent')):(isset($product->fourn_remise_percent)?vatrate($product->fourn_remise_percent):'')).'"> %';
 				print '</td>';
 				print '</tr>';
 
@@ -360,7 +375,7 @@ if ($id || $ref)
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("Charges").'</td>';
-					print '<td colspan="3"><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
+					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges')?price(GETPOST('charges')):(isset($product->fourn_charges)?price($product->fourn_charges):'')).'">';
 	        		print '</td>';
 					print '</tr>';
 				}
@@ -420,7 +435,7 @@ if ($id || $ref)
 				print "</tr>\n";
 
 				$product_fourn = new ProductFournisseur($db);
-				$product_fourn_list = $product_fourn->list_product_fournisseur_price($product->id);
+				$product_fourn_list = $product_fourn->list_product_fournisseur_price($product->id, $sortfield, $sortorder);
 
 				if (count($product_fourn_list)>0)
 				{
@@ -432,7 +447,7 @@ if ($id || $ref)
 
 						print "<tr ".$bc[$var].">";
 
-						print '<td>'.$productfourn->getSocNomUrl(1).'</td>';
+						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
 
 						// Supplier
 						print '<td align="left">'.$productfourn->fourn_ref.'</td>';
@@ -473,10 +488,10 @@ if ($id || $ref)
 						print price($productfourn->fourn_unitprice);
 						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
-						
+
 						// Discount
 						print '<td align="right">';
-						print vatrate($productfourn->fourn_remise_percent, $langs);
+						print price2num($productfourn->fourn_remise_percent).'%';
 						print '</td>';
 
 						// Unit Charges ???
