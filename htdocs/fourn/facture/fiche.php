@@ -1819,7 +1819,7 @@ else
                 print '<td colspan="4">';
 
                 $ajaxoptions=array(
-                		'update' => array('pqty' => 'qty'),
+                		'update' => array('pqty' => 'qty', 'p_remise_percent' => 'discount'),
                 		'disabled' => 'addPredefinedProductButton',
                 		'error' => $langs->trans("NoPriceDefinedForThisSupplier")
                 );
@@ -1840,7 +1840,7 @@ else
 
                 print '</td>';
                 print '<td align="right"><input type="text" id="pqty" name="qty" value="1" size="1"></td>';
-            	print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'">%</td>';
+            	print '<td align="right" nowrap="nowrap"><input size="1" id="p_remise_percent" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'">%</td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'"></td>';
