@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011-2012 Juanjo Menent	      <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/admin/compta.php
+ *	\file       htdocs/admin/accounting.php
  *	\ingroup    compta
  *	\brief      Page to setup accountancy module
  */
@@ -54,6 +55,24 @@ if ($action == 'setcomptamode')
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 
+}
+
+if ($action == 'setchart')
+{
+	$chartofaccounts = GETPOST('chartofaccounts','alpha');
+	
+	$res = dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
 if ($action == 'update' || $action == 'add')
@@ -130,6 +149,62 @@ print '</form>';
 
 print "</table>\n";
 
+/*
+ *  Define Chart of accounts
+ *
+ */
+if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting->enabled))
+{
+  print '<br>';
+  print_titre($langs->trans("Definechartofaccounts"));
+  
+  print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+  
+  print '<table class="noborder" width="100%">';
+  $var=True;
+  
+  print '<tr class="liste_titre">';
+  print '<td>';
+  print '<input type="hidden" name="action" value="setchart">';
+  print $langs->trans("Chartofaccounts").'</td>';
+  print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+  print "</tr>\n";
+  $var=!$var;
+  print '<tr '.$bc[$var].'>';
+  print "<td>".$langs->trans("Selectchartofaccounts")."</td>";
+  print "<td>";
+  print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
+  print '<option value="0">'.$langs->trans("DoNotSuggestChart").'</option>';
+  
+  $sql = "SELECT rowid, pcg_version, fk_pays, label, active";
+  $sql.= " FROM ".MAIN_DB_PREFIX."accountingsystem";
+  $sql.= " WHERE active = 1";
+  $sql.= " AND fk_pays = ".$mysoc->country_id;
+  $var=True;
+  $resql=$db->query($sql);
+  if ($resql)
+  {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      while ($i < $num)
+      {
+          $var=!$var;
+          $row = $db->fetch_row($resql);
+  
+          print '<option value="'.$row[0].'"';
+          print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected="selected"':'';
+          print '>'.$row[1].' - '.$row[3].'</option>';
+  
+          $i++;
+      }
+  }
+  print "</select>";
+  print "</td></tr>";
+  print "</table>";
+  print "</form>";
+}
+
 print "<br>\n";
 
 // Cas des autres parametres COMPTA_*
@@ -170,7 +245,7 @@ foreach ($list as $key)
 {
 	$var=!$var;
 
-	print '<form action="compta.php" method="POST">';
+	print '<form action="accounting.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="consttype" value="string">';

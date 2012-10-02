@@ -61,7 +61,7 @@ class modAccounting extends DolibarrModules
 		$this->special = 0;
 
 		// Config pages
-		$this->config_page_url = array("compta.php");
+		$this->config_page_url = array("accounting.php");
 
 		// Dependancies
 		$this->depends = array("modFacture","modBanque","modTax");
