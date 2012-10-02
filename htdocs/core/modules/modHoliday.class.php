@@ -20,16 +20,12 @@
  */
 
 /**
- * 	  \defgroup   holiday Payes     Module holiday Payes
- *    \brief      Module de gestion des congés payés
+ * 	  \defgroup   holiday 	Module holiday
+ *    \brief      Module de gestion des congés
+ *    \file       htdocs/includes/modules/modHoliday.class.php
+ *    \ingroup    holiday
+ *    \brief      Description and activation file for module holiday
  */
-
-/**
- *      \file       htdocs/includes/modules/modHoliday.class.php
- *      \ingroup    holiday
- *      \brief      Description and activation file for module holiday
- */
-
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 

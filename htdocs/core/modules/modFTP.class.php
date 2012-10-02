@@ -27,8 +27,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modFTP
- *      \brief      Description and activation class for module FTP
+/**
+ * 	Description and activation class for module FTP
  */
 class modFTP extends DolibarrModules
 {

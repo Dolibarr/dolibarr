@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   margin     Module Margin
+/**     \defgroup   margin     Module margin
  *      \brief      Module to manage margins
  *      \file       htdocs/includes/modules/modMargin.class.php
  *      \ingroup    margin

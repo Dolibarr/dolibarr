@@ -26,8 +26,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *       \class      modCashDesk
- *       \brief      Class to describe and enable module Point Of Sales
+ *	Class to describe and enable module Point Of Sales
  */
 class modCashDesk extends DolibarrModules
 {

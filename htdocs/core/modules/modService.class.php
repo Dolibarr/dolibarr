@@ -27,7 +27,6 @@
  *	\ingroup    service
  *	\brief      Fichier de description et activation du module Service
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 

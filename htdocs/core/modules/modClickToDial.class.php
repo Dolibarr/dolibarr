@@ -28,10 +28,8 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modClickToDial
- *	\brief      Classe de description et activation du module de Click to Dial
+ *	Classe de description et activation du module de Click to Dial
  */
-
 class modClickToDial extends DolibarrModules
 {
 

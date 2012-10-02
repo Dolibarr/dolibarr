@@ -22,14 +22,10 @@
 /**
  *	\defgroup   produit     Module products
  *	\brief      Module to manage catalog of predefined products
- */
-
-/**
  *	\file       htdocs/core/modules/modProduct.class.php
  *	\ingroup    produit
  *	\brief      File to describe module to manage catalog of predefined products
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 

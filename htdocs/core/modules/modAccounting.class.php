@@ -30,8 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modAccounting
- *	\brief      Classe de description et activation du module Comptabilite Expert
+ *	Classe de description et activation du module Comptabilite Expert
  */
 class modAccounting extends DolibarrModules
 {

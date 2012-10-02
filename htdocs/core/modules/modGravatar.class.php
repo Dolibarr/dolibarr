@@ -26,8 +26,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modGravatar
- *      \brief      Description and activation class for module Gravatar
+/**
+ * 	Description and activation class for module Gravatar
  */
 class modGravatar extends DolibarrModules
 {

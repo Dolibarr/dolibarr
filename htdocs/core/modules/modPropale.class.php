@@ -27,13 +27,11 @@
  *	\ingroup    propale
  *	\brief      Fichier de description et activation du module Propale
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  \class 		modPropale
- *	\brief      Classe de description et activation du module Propale
+ *	Classe de description et activation du module Propale
  */
 class modPropale extends DolibarrModules
 {
