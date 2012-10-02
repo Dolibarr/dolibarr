@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #------------------------------------------------------
 # Script to purge and init a database with demo values.
 # Note: "dialog" tool need to be available.
@@ -150,10 +150,10 @@ if [ "x$passwd" != "x" ]
 then
 	export passwd="-p$passwd"
 fi
-#echo "mysql -P$port -u$admin -p$passwd $base < $mydir/$dumpfile"
-#mysql -P$port -u$admin -p$passwd $base < $mydir/$dumpfile
+#echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
+#mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
-mysql -P$port -u$admin -p$passwd $base < $mydir/$dumpfile
+mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 
 echo "Dolibarr data demo has been loaded."
 echo
