@@ -493,13 +493,29 @@ if ($id > 0)
 
 			if ($num > 0)
 			{
-        		print '<table class="noborder" width="100%">';
+				// Check if there are orders billable
+				$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+				$sql2.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+				$sql2.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+				$sql2.= ', '.MAIN_DB_PREFIX.'commande as c';
+				$sql2.= ' WHERE c.fk_soc = s.rowid';
+				$sql2.= ' AND s.rowid = '.$object->id;
+				// Show orders with status validated, shipping started and delivered (well any order we can bill)
+				$sql2.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";
+			
+				$resql2=$db->query($sql2);
+				$num2 = $db->num_rows($resql2);
+				$db->free($resql2);
+				
+				print '<table class="noborder" width="100%">';
 
-			    print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td>';
-                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
-    			print '</tr></table></td>';
-    			print '</tr>';
+				print '<tr class="liste_titre">';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' ('.$num.')</a></td>';
+				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+				if($num2 > 0) print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.img_picto($langs->trans("CreateInvoiceForThisCustomer"),'object_bill').'</a></td>';
+				else print '<td width="20px" align="right"><a href="#">'.img_picto($langs->trans("NoOrdersToInvoice"),'object_bill').'</a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
 			}
 
 			$i = 0;
