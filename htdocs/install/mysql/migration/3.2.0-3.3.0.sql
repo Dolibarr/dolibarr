@@ -742,3 +742,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (436,'PCG99-BASE','PROD',  'XXXXXX',   '791','79', 'Transferts de charges d''exploitation ', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (437,'PCG99-BASE','PROD',  'XXXXXX',   '796','79', 'Transferts de charges financières', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (438,'PCG99-BASE','PROD',  'XXXXXX',   '797','79', 'Transferts de charges exceptionnelles', '1');
+
+-- Add discount in product supplier price
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise_percent DOUBLE NOT NULL DEFAULT 0 AFTER quantity;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFAULT 0 AFTER remise_percent; 
