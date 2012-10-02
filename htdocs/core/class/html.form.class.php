@@ -1408,7 +1408,7 @@ class Form
         $langs->load('stocks');
 
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
-        $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
+        $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
         $sql.= " s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
@@ -1435,7 +1435,7 @@ class Form
                 $sql .= " OR p.barcode LIKE '".$filterkey."'";
             }
         }
-        $sql.= " ORDER BY pfp.ref_fourn DESC";
+        $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
 
         // Build output string
         $outselect='';
@@ -1461,6 +1461,7 @@ class Form
                 $outref=$objp->ref;
                 $outval='';
                 $outqty=1;
+				$outdiscount=0;
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
                 if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
@@ -1489,6 +1490,7 @@ class Form
                     $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
                     $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
                     $outqty=$objp->quantity;
+					$outdiscount=$objp->remise_percent;
                     if ($objp->quantity == 1)
                     {
                         $opt.= strtolower($langs->trans("Unit"));
@@ -1503,6 +1505,11 @@ class Form
                     {
                         $opt.=" (".price($objp->unitprice).' '.$currencytext."/".strtolower($langs->trans("Unit")).")";
                         $outval.=" (".price($objp->unitprice).' '.$currencytextnoent."/".strtolower($langs->transnoentities("Unit")).")";
+                    }
+					if ($objp->remise_percent >= 1)
+                    {
+                        $opt.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
+                        $outval.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
                     }
                     if ($objp->duration)
                     {
@@ -1526,7 +1533,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
 
                 $i++;
             }
@@ -3081,7 +3088,6 @@ class Form
 
         // Now we get list
         $num = $this->load_cache_vatrates($code_pays);
-
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')

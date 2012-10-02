@@ -1084,10 +1084,11 @@ else
             print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
 
             $nblignes=8;
+            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
+            if ($showbarcode) $nblignes+=2;
             if ($object->type!=1) $nblignes++;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
-            if ($showbarcode) $nblignes+=2;
 
             // Photo
             if ($showphoto || $showbarcode)

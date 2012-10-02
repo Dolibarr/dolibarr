@@ -406,7 +406,7 @@ if ($action == 'create')
 	print $desc;
 	print '</td></tr>'."\n";
 	print '</table>';
-	
+
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date(0,'','','','',"add",1,1);
@@ -478,7 +478,7 @@ if ($action == 'create')
 	// Button "Create Draft"
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></center>';
 	print "</form>\n";
-	
+
 	print '</td></tr>';
 	print "</table>\n";
 }
@@ -672,7 +672,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';
 		print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
-		print '<input type="submit" class="button" value='.$langs->trans("GenerateBill").'>';
+		print '<input type="submit" class="butAction" value='.$langs->trans("GenerateBill").'>';
 		print '<center><br><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
 		print '</div>';
 		print '</form>';
