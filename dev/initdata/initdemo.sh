@@ -11,13 +11,14 @@
 #------------------------------------------------------
 
 
-export dumpfile=`ls mysqldump_dolibarr_*.sql | sort | tail -n 1`
 export mydir=`echo "$0" | sed -e 's/initdemo.sh//'`;
 if [ "x$mydir" = "x" ]
 then
     export mydir="."
 fi
 export id=`id -u`;
+export dumpfile=`ls $mydir/mysqldump_dolibarr_*.sql | sort | tail -n 1`
+export dumpfile=`basename $dumpfile`
 
 
 # ----------------------------- check if root
@@ -149,10 +150,10 @@ if [ "x$passwd" != "x" ]
 then
 	export passwd="-p$passwd"
 fi
-#echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
-#mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "mysql -P$port -u$admin ***** $base < $mydir/$dumpfile"
-mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
+#echo "mysql -P$port -u$admin -p$passwd $base < $mydir/$dumpfile"
+#mysql -P$port -u$admin -p$passwd $base < $mydir/$dumpfile
+echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
+mysql -P$port -u$admin -p$passwd $base < $mydir/$dumpfile
 
 echo "Dolibarr data demo has been loaded."
 echo

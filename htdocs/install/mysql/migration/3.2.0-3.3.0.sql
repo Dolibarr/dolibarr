@@ -272,6 +272,8 @@ ALTER TABLE llx_c_tva DROP COLUMN accountancy_code;
 ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_sell varchar(15) DEFAULT NULL AFTER active;
 ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER accountancy_code_sell;
 ALTER TABLE llx_c_chargessociales ADD COLUMN accountancy_code varchar(15) DEFAULT NULL AFTER code;
+
+-- Tables for accountancy expert
 DROP TABLE llx_accountingaccount;
 DROP TABLE llx_accountingsystem;
 
@@ -283,6 +285,8 @@ create table llx_accountingsystem
   label             varchar(128)    NOT NULL,
   active            smallint        DEFAULT 0
 )ENGINE=innodb;
+
+ALTER TABLE llx_accountingsystem ADD INDEX idx_accountingsystem_pcg_version (pcg_version);
 
 create table llx_accountingaccount
 (
@@ -298,6 +302,9 @@ create table llx_accountingaccount
 
 ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
 ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accountingsystem (pcg_version);
+
+
+-- Data for accountancy expert
 
 insert into llx_accountingsystem (rowid, pcg_version, fk_pays, label, active) VALUES (1,'PCG99-ABREGE', 1, 'The simple accountancy french plan', 1);
 
