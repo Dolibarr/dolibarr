@@ -337,22 +337,24 @@ class Translate
 	function getTradFromKey($key)
 	{
 		global $db;
+
+		//print 'xx'.$key;
 		$newstr=$key;
 		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
+			$newstr=$this->getLabelFromKey($db,$key,'c_currencies','code_iso','label',$reg[1]);
 		}
 		else if (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
+			$newstr=$this->getLabelFromKey($db,$key,'c_shipment_mode','code','libelle',$reg[1]);
 		}
         else if (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
+            $newstr=$this->getLabelFromKey($db,$key,'c_paiement','code','libelle',$reg[1]);
         }
         else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+            $newstr=$this->getLabelFromKey($db,$key,'c_civilite','code','civilite',$reg[1]);
         }
         else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
         {
@@ -617,17 +619,21 @@ class Translate
 	 *      Return a label for a key. Store key-label into cache variable $this->cache_labels to save SQL requests to get labels.
 	 *      This function can be used to get label in database but more often to get code from key id.
 	 *
-	 * 		@param	DoliBD	$db			Database handler
-	 * 		@param	string	$key		Key to get label (key in language file)
-	 * 		@param	string	$tablename	Table name without prefix
-	 * 		@param	string	$fieldkey	Field for key
-	 * 		@param	string	$fieldlabel	Field for label
-	 *      @return string				Label in UTF8 (but without entities)
+	 * 		@param	DoliBD	$db				Database handler
+	 * 		@param	string	$key			Key to get label (key in language file)
+	 * 		@param	string	$tablename		Table name without prefix
+	 * 		@param	string	$fieldkey		Field for key
+	 * 		@param	string	$fieldlabel		Field for label
+	 * 		@param	string	$keyindatabase	Key to get label (key in database table)
+	 *      @return string					Label in UTF8 (but without entities)
 	 */
-	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
+	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keydatabase='')
 	{
 		// If key empty
 		if ($key == '') return '';
+		if (empty($keydatabase)) $keydatabase=$key;
+
+        //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
 		// Check in language array
 		if ($this->transnoentities($key) != $key)
@@ -643,7 +649,7 @@ class Translate
 
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
-		$sql.= " WHERE ".$fieldkey." = '".$key."'";
+		$sql.= " WHERE ".$fieldkey." = '".$keydatabase."'";
 		dol_syslog(get_class($this).'::getLabelFromKey sql='.$sql,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
