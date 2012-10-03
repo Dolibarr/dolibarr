@@ -540,12 +540,8 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		{
 			$soc = new Societe($db);
 			$soc->fetch($socid);
-			$title = $langs->trans('ListOfOrders');
 		}
-		else
-		{
-			$title = $langs->trans('ListOfOrders');
-		}
+		$title = $langs->trans('ListOfOrders');
 		$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 		$num = $db->num_rows($resql);
 		print_fiche_titre($title);
