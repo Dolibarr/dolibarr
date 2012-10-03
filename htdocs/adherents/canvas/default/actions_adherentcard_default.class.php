@@ -18,11 +18,11 @@
  */
 
 /**
- *	\file       htdocs/contact/canvas/default/actions_adherentcard_default.class.php
- *	\ingroup    thirdparty
+ *	\file       htdocs/adherents/canvas/default/actions_adherentcard_default.class.php
+ *	\ingroup    member
  *	\brief      Fichier de la classe Thirdparty adherent card controller (default canvas)
  */
-include_once DOL_DOCUMENT_ROOT.'/adherent/canvas/actions_adherentcard_common.class.php';
+include_once DOL_DOCUMENT_ROOT.'/adherents/canvas/actions_adherentcard_common.class.php';
 
 /**
  *	\class      ActionsAdherentCardDefault
