@@ -953,8 +953,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("orders");
                 if (! empty($conf->facture->enabled)) $newmenu->add("/commande/liste.php?leftmenu=orders&amp;viewstatut=3", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
                 //                  if ($leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
-                if (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 1)
-     				if ($leftmenu=="orders") $newmenu->add("/commande/customer.php", $langs->trans("GenerateBill"), 1, $user->rights->commande->lire);
+                
+     			if ($leftmenu=="orders") $newmenu->add("/commande/customer.php", $langs->trans("GenerateBill"), 1, $user->rights->commande->lire);
             }
 
             // Donations
