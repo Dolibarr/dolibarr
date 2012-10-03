@@ -253,7 +253,7 @@ if ($type == 'directory')
         if ($section) $param.='&section='.$section;
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
         // If $section defined with value 0
-        if ($section == '0')
+        if ($section === '0')
         {
         	$filearray=array();
         	$textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
