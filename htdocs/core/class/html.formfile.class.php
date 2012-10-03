@@ -596,7 +596,7 @@ class FormFile
                 print '</a>';
                 print "</td>\n";
                 print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-                print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
+                print '<td align="center">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
                 // Preview
                 if (empty($useinecm))
                 {
@@ -804,7 +804,7 @@ class FormFile
         $upload_max_filesize		= $mul_upload_max_filesize * (int) $upload_max_filesize;
         // Max file size
         $max_file_size 				= (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-        
+
         // Include main
         include(DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_main.tpl.php');
 
