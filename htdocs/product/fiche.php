@@ -837,7 +837,8 @@ else
         // Note (private, no output on invoices, propales...)
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
-        $doleditor = new DolEditor('note', GETPOST('note'), '', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
+        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+        $doleditor = new DolEditor('note', GETPOST('note'), '', 180, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
         $doleditor->Create();
 
         print "</td></tr>";
