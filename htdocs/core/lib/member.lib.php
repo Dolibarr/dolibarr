@@ -106,8 +106,7 @@ function member_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Object	$object         Member
- *  @return array           		head
+ *  @return	array		head
  */
 function member_admin_prepare_head()
 {

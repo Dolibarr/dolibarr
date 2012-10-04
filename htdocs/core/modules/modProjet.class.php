@@ -26,13 +26,11 @@
  *	\ingroup    projet
  *	\brief      Fichier de description et activation du module Projet
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modProjet
- *	\brief      Classe de description et activation du module Projet
+ *	Classe de description et activation du module Projet
  */
 class modProjet extends DolibarrModules
 {

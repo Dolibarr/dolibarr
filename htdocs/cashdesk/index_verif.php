@@ -56,14 +56,13 @@ if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_BILL && 
 	exit;
 }
 
-if (! empty($_POST['txtUsername']) && ! empty($conf->banque->enabled) && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
+if (! empty($_POST['txtUsername']) && ! empty($conf->banque->enabled) && (empty($conf_fkaccount_cash) && empty($conf_fkaccount_cheque) && empty($conf_fkaccount_cb)))
 {
 	$langs->load("errors");
 	$retour=$langs->trans("ErrorModuleSetupNotComplete");
     header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
     exit;
 }
-
 
 
 // Check password

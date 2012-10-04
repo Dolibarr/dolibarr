@@ -71,7 +71,7 @@
 		<arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
 					--report=checkstyle
 					--report-file=${basedir}/hudson/logs/checkstyle.xml
-					-v
+					--ignore=${ignorepaths},${ignoreregexp}
 					htdocs
 					"/>
 	</exec>

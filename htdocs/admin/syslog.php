@@ -51,6 +51,7 @@ if ($action == 'set')
     $res = dolibarr_del_const($db,"SYSLOG_FILE_ON",0);
     $res = dolibarr_del_const($db,"SYSLOG_SYSLOG_ON",0);
     $res = dolibarr_del_const($db,"SYSLOG_FIREPHP_ON",0);
+    $res = dolibarr_del_const($db,"SYSLOG_CHROMEPHP_ON",0);
 
     $syslog_file_on=0;
     $syslog_syslog_on=0;

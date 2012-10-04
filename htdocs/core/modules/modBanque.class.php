@@ -31,10 +31,8 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modBanque
- *	\brief      Classe de description et activation du module Banque
+ *	Classe de description et activation du module Banque
  */
-
 class modBanque extends DolibarrModules
 {
 

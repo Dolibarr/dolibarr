@@ -17,8 +17,8 @@
  */
 
 /**
- * 	\defgroup   commissions     Module Commissions
- * 	\brief      Example of a module descriptor.
+ * 	\defgroup   commissions     Module commissions
+ * 	\brief      Module commissions
  * 	\file       htdocs/core/modules/modCommissions.class.php
  * 	\ingroup    commissions
  * 	\brief      Description and activation file for module Commissions

@@ -30,8 +30,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *      \class      modAgenda
- *      \brief      Classe de description et activation du module Adherent
+ *	Classe de description et activation du module Adherent
  */
 class modAgenda extends DolibarrModules
 {

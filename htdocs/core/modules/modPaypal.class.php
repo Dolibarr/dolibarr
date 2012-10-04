@@ -27,8 +27,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modPaypal
- *      \brief      Description and activation class for module Paypal
+/**
+ * 	Description and activation class for module Paypal
  */
 class modPaypal extends DolibarrModules
 {

@@ -1355,3 +1355,8 @@ TestGeoIPResult=Test de conversion IP -> Pays
 ProjectsNumberingModules=Modèles de numérotation des références projets
 ProjectsSetup=Configuration du module Projets
 ProjectsModelModule=Modèles de document de rapport projets
+#### Accountancy ####
+Chartofaccounts=Plan comptable
+Definechartofaccounts=Définir un plan comptable
+Selectchartofaccounts=Sélection d'un plan comptable
+DoNotSuggestChart=Ne pas suggérer de plan comptable

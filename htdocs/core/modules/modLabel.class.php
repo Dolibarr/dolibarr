@@ -28,10 +28,8 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modLabel
- *	\brief      Classe de description et activation du module Label
+ *	Classe de description et activation du module Label
  */
-
 class modLabel extends DolibarrModules
 {
 

@@ -272,6 +272,8 @@ ALTER TABLE llx_c_tva DROP COLUMN accountancy_code;
 ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_sell varchar(15) DEFAULT NULL AFTER active;
 ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER accountancy_code_sell;
 ALTER TABLE llx_c_chargessociales ADD COLUMN accountancy_code varchar(15) DEFAULT NULL AFTER code;
+
+-- Tables for accountancy expert
 DROP TABLE llx_accountingaccount;
 DROP TABLE llx_accountingsystem;
 
@@ -283,6 +285,8 @@ create table llx_accountingsystem
   label             varchar(128)    NOT NULL,
   active            smallint        DEFAULT 0
 )ENGINE=innodb;
+
+ALTER TABLE llx_accountingsystem ADD INDEX idx_accountingsystem_pcg_version (pcg_version);
 
 create table llx_accountingaccount
 (
@@ -298,6 +302,9 @@ create table llx_accountingaccount
 
 ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
 ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accountingsystem (pcg_version);
+
+
+-- Data for accountancy expert
 
 insert into llx_accountingsystem (rowid, pcg_version, fk_pays, label, active) VALUES (1,'PCG99-ABREGE', 1, 'The simple accountancy french plan', 1);
 
@@ -742,3 +749,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (436,'PCG99-BASE','PROD',  'XXXXXX',   '791','79', 'Transferts de charges d''exploitation ', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (437,'PCG99-BASE','PROD',  'XXXXXX',   '796','79', 'Transferts de charges financières', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (438,'PCG99-BASE','PROD',  'XXXXXX',   '797','79', 'Transferts de charges exceptionnelles', '1');
+
+-- Add discount in product supplier price
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise_percent DOUBLE NOT NULL DEFAULT 0 AFTER quantity;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFAULT 0 AFTER remise_percent; 

@@ -152,7 +152,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture))
 			{
-				$datefacture = dol_mktime(12, 0, 0, date("m"), date("d"), date("Y"));
+				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
 			}
 			if (! $error)
 			{
@@ -388,16 +388,21 @@ if ($action == 'create')
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';
 	print '<table class="border" width="100%">';
+
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
-	// Tiers
+
+	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>'."\n";
+
+	// Type
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding">'."\n";
+
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
 	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked="true"':'').'>';
@@ -406,7 +411,7 @@ if ($action == 'create')
 	print $desc;
 	print '</td></tr>'."\n";
 	print '</table>';
-	
+
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date(0,'','','','',"add",1,1);
@@ -443,16 +448,16 @@ if ($action == 'create')
 
 	dol_include_once('/commande/class/commande.class.php');
 	$srcobject = new Commande($db);
-	$commandes = $langs->trans("Orders").": ";
+	$listoforders = '';
 	foreach ($selected as $sel)
 	{
 		$result=$srcobject->fetch($sel);
 		if ($result > 0)
 		{
-			$commandes.= $srcobject->ref.", ";
+			$listoforders .= ($listoforders?', ':'').$srcobject->ref;
 		}
 	}
-	print $commandes;
+	print $langs->trans("Orders").": ".$listoforders;
 
 	print '</textarea></td></tr>';
 	// Private note
@@ -478,7 +483,7 @@ if ($action == 'create')
 	// Button "Create Draft"
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></center>';
 	print "</form>\n";
-	
+
 	print '</td></tr>';
 	print "</table>\n";
 }
@@ -540,12 +545,8 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		{
 			$soc = new Societe($db);
 			$soc->fetch($socid);
-			$title = $langs->trans('ListOfOrders');
 		}
-		else
-		{
-			$title = $langs->trans('ListOfOrders');
-		}
+		$title = $langs->trans('ListOfOrders');
 		$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 		$num = $db->num_rows($resql);
 		print_fiche_titre($title);
@@ -667,13 +668,13 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		/*
 		 * Boutons actions
 		*/
+		print '<center><br><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
 		print '<div align="right">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';
-		print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
-		print '<input type="submit" class="button" value='.$langs->trans("GenerateBill").'>';
-		print '<center><br><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
+		//print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
+		print '<input type="submit" class="butAction" value="'.$langs->trans("GenerateBill").'">';
 		print '</div>';
 		print '</form>';
 		$db->free($resql);

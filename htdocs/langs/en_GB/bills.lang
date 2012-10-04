@@ -16,3 +16,7 @@ ChequesReceipts=Cheques receipts
 ChequesArea=Cheques deposits area
 ChequeDeposits=Cheques deposits
 Cheques=Cheques
+
+# PaymentConditions
+PaymentConditionShortRECEP=Due on Receipt
+PaymentConditionRECEP=Due on Receipt
