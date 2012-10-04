@@ -2344,6 +2344,81 @@ class Societe extends CommonObject
         }
     }
 
+    /**
+     * 	Build and get $mysoc object
+     *
+     * 	@param	Conf	$conf		Conf object (possibility to use another entity)
+     * 	@return	void
+     */
+    function getMysoc($conf)
+    {
+    	global $langs;
+
+    	$this->id=0;
+    	$this->name=(! empty($conf->global->MAIN_INFO_SOCIETE_NOM))?$conf->global->MAIN_INFO_SOCIETE_NOM:'';
+    	$this->nom=$this->name; 									// deprecated
+    	$this->address=(! empty($conf->global->MAIN_INFO_SOCIETE_ADRESSE))?$conf->global->MAIN_INFO_SOCIETE_ADRESSE:'';
+    	$this->adresse=$this->address; 							// deprecated
+    	$this->zip=(! empty($conf->global->MAIN_INFO_SOCIETE_CP))?$conf->global->MAIN_INFO_SOCIETE_CP:'';
+    	$this->cp=$this->zip;										// deprecated
+    	$this->town=(! empty($conf->global->MAIN_INFO_SOCIETE_VILLE))?$conf->global->MAIN_INFO_SOCIETE_VILLE:'';
+    	$this->ville=$this->town;									// deprecated
+    	$this->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
+    	$this->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
+
+    	// We define country_id, country_code and country
+    	$country_id=$country_code=$country_label='';
+    	if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
+    	{
+    		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
+    		$country_id=$tmp[0];
+    		if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
+    		{
+    			$country_code=$tmp[1];
+    			$country_label=$tmp[2];
+    		}
+    		else                    // For backward compatibility
+    		{
+    			dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
+    			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+    			$country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
+    			$country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
+    		}
+    	}
+    	$this->pays_id=$country_id;		// TODO deprecated
+    	$this->country_id=$country_id;
+    	$this->pays_code=$country_code;	// TODO deprecated
+    	$this->country_code=$country_code;
+    	$this->country=$country_label;
+    	if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
+    	$this->pays=$this->country;    	// TODO deprecated
+
+    	$this->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
+    	$this->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
+    	$this->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
+    	$this->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;
+    	// Id prof generiques
+    	$this->idprof1=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
+    	$this->idprof2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
+    	$this->idprof3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
+    	$this->idprof4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
+    	$this->idprof5=empty($conf->global->MAIN_INFO_PROFID5)?'':$conf->global->MAIN_INFO_PROFID5;
+    	$this->idprof6=empty($conf->global->MAIN_INFO_PROFID6)?'':$conf->global->MAIN_INFO_PROFID6;
+    	$this->tva_intra=(! empty($conf->global->MAIN_INFO_TVAINTRA))?$conf->global->MAIN_INFO_TVAINTRA:'';	// VAT number, not necessarly INTRA.
+    	$this->capital=(! empty($conf->global->MAIN_INFO_CAPITAL))?$conf->global->MAIN_INFO_CAPITAL:'';
+    	$this->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
+    	$this->email=(! empty($conf->global->MAIN_INFO_SOCIETE_MAIL))?$conf->global->MAIN_INFO_SOCIETE_MAIL:'';
+    	$this->logo=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO))?$conf->global->MAIN_INFO_SOCIETE_LOGO:'';
+    	$this->logo_small=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL))?$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL:'';
+    	$this->logo_mini=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI))?$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI:'';
+
+    	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
+    	$this->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
+
+    	// Define if company use local taxes
+    	$this->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')?1:0);
+    	$this->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')?1:0);
+    }
 
     /**
      *  Initialise an instance with random values.
