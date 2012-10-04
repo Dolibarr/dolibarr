@@ -157,3 +157,4 @@ OrderByPhone=Phone
 
 CreateInvoiceForThisCustomer=Create an invoice for several orders of this customer
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders. 
+NoOrdersToInvoice=No orders to invoice
