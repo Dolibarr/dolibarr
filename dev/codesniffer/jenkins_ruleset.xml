@@ -101,9 +101,7 @@
 
 	<rule ref="Generic.NamingConventions.ConstructorName" />
 	<!-- Check if we use PHP4 constructor instead of __construct() -->
-	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
-        <severity>0</severity>
-	</rule>
+	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle" />
 
 	<rule ref="Generic.NamingConventions.UpperCaseConstantName" />
 

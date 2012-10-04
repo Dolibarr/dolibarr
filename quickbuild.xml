@@ -20,7 +20,7 @@
   <parallel>
    <!-- <antcall target="phpmd"/> -->
    <antcall target="phpcpd"/>
-   <antcall target="phpcs"/>
+   <!-- <antcall target="phpcs"/> -->
    <antcall target="phploc"/>
   </parallel>
  </target>
@@ -67,13 +67,14 @@
    
  <!-- Generate checkstyle.xml -->
  <target name="phpcs">
-  <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
-    <arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
-    			--report=checkstyle
-                --ignore=${ignorepaths},${ignoreregexp}
-                htdocs
-                "/>
-  </exec>
+ 	<exec executable="phpcs" dir="${basedir}">
+		<arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
+					--report=checkstyle
+					--report-file=${basedir}/hudson/logs/checkstyle.xml
+					--ignore=${ignorepaths},${ignoreregexp}
+					htdocs
+					"/>
+	</exec>
  </target>
  
  <!-- Run unit tests and generate junit.xml and clover.xml -->
@@ -88,5 +89,5 @@
   </exec>
  </target>
 
- <target name="hudson" depends="clean,phpunit,parallelTasks"/>
+ <target name="hudson" depends="clean,phpunit,phpcs,parallelTasks"/>
 </project>

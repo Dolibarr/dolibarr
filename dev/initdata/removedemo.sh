@@ -3,13 +3,29 @@
 # Script to remove setup of a Dolibarr installation.
 # Note: "dialog" tool need to be available.
 #
-# Regis Houssin - regis@dolibarr.fr
+# Regis Houssin       - regis@dolibarr.fr
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# WARNING: This script erase all data of database
+# WARNING: This script erase setup of instance, 
+# but not the database
 #------------------------------------------------------
 
-export mydir=`echo "$_" | sed -e 's/removedemo.sh//'`;
+
+export mydir=`echo "$0" | sed -e 's/removedemo.sh//'`;
+if [ "x$mydir" = "x" ]
+then
+    export mydir="./"
+fi
+export id=`id -u`;
+
+
+# ----------------------------- check if root
+if [ "x$id" != "x0" -a "x$id" != "x1001" ]
+then
+    echo "Script must be ran as root"
+    exit
+fi
+
 
 DIALOG=${DIALOG=dialog}
 DIALOG="$DIALOG --ascii-lines"
@@ -34,5 +50,5 @@ rm $mydir../../htdocs/conf/conf.php 2>/dev/null
 echo "Remove file $mydir../../install.lock"
 rm $mydir../../install.lock 2>/dev/null
 
-echo "Dolibarr demo has been removed (need to be installed again)."
+echo "Dolibarr setup has been removed (need to be installed again. database not dropped)."
 echo

@@ -704,6 +704,7 @@ DictionnaryAvailability= Délai de livraison
 DictionnaryOrderMethods=Méthodes de commandes
 DictionnarySource=Origines des propales/commandes
 DictionnaryAccountancyplan=Plan comptable
+DictionnaryAccountancysystem=Modèles de plan comptable
 SetupSaved= Configuration sauvegardée
 BackToModuleList= Retour liste des modules
 BackToDictionnaryList= Retour liste des dictionnaires
@@ -1354,3 +1355,8 @@ TestGeoIPResult=Test de conversion IP -> Pays
 ProjectsNumberingModules=Modèles de numérotation des références projets
 ProjectsSetup=Configuration du module Projets
 ProjectsModelModule=Modèles de document de rapport projets
+#### Accountancy ####
+Chartofaccounts=Plan comptable
+Definechartofaccounts=Définir un plan comptable
+Selectchartofaccounts=Sélection d'un plan comptable
+DoNotSuggestChart=Ne pas suggérer de plan comptable

@@ -387,7 +387,7 @@ class FactureFournisseur extends CommonInvoice
      */
     function fetch_lines()
     {
-        $sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_tx, f.tva';
+        $sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx, f.tva';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
@@ -421,6 +421,7 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->localtax1_tx		= $obj->localtax1_tx;
                     $this->lines[$i]->localtax2_tx		= $obj->localtax2_tx;
                     $this->lines[$i]->qty				= $obj->qty;
+                    $this->lines[$i]->remise_percent    = $obj->remise_percent;
                     $this->lines[$i]->tva				= $obj->tva;
                     $this->lines[$i]->total_ht			= $obj->total_ht;
                     $this->lines[$i]->total_tva			= $obj->total_tva;
@@ -1074,7 +1075,8 @@ class FactureFournisseur extends CommonInvoice
 
         $pu = price2num($pu);
         $qty  = price2num($qty);
-
+		$remise_percent=price2num($remise_percent);
+		
         // Check parameters
         if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
         if ($type < 0) return -1;
@@ -1116,6 +1118,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", pu_ht = ".price2num($pu_ht);
         $sql.= ", pu_ttc = ".price2num($pu_ttc);
         $sql.= ", qty = ".price2num($qty);
+        $sql.= ", remise_percent = ".price2num($remise_percent);
         $sql.= ", tva_tx = ".price2num($vatrate);
         $sql.= ", localtax1_tx = ".price2num($txlocaltax1);
         $sql.= ", localtax2_tx = ".price2num($txlocaltax2);

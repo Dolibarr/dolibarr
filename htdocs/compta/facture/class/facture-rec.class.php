@@ -410,6 +410,7 @@ class FactureRec extends Facture
      *	@param		int			$type				Type of line (0=product, 1=service)
      *	@param      int			$rang               Position of line
      *	@param		int			$special_code		Special code
+     *	@param		string		$label				Label of the line
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='')

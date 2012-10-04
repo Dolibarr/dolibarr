@@ -17,10 +17,10 @@
 -- ===================================================================
 
 CREATE TABLE llx_osc_categories (
-  rowid int(11) unsigned NOT NULL auto_increment,
-  dolicatid int(11) NOT NULL default '0',
-  osccatid int(11) NOT NULL default '0',
+  rowid integer unsigned NOT NULL auto_increment,
+  dolicatid integer NOT NULL default '0',
+  osccatid integer NOT NULL default '0',
   PRIMARY KEY  (rowid),
   UNIQUE KEY dolicatid (dolicatid),
   UNIQUE KEY osccatid (osccatid)
-) ENGINE=InnoDB COMMENT='Correspondance categorie Dolibarr categorie OSC';
+) ENGINE=InnoDB;

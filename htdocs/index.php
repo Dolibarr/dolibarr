@@ -46,7 +46,7 @@ $hookmanager->initHooks(array('index'));
 // Check if company name is defined (first install)
 if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
 {
-    header("Location: ".DOL_URL_ROOT."/admin/company.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
+    header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
     exit;
 }
 

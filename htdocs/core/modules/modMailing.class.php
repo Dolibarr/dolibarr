@@ -29,8 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modMailing
- *	\brief      Classe de description et activation du module Mailing
+ *	Classe de description et activation du module Mailing
  */
 class modMailing extends DolibarrModules
 {
@@ -75,35 +74,35 @@ class modMailing extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'mailing';
 		$r=0;
-		
+
 		$r++;
 		$this->rights[$r][0] = 221; // id de la permission
 		$this->rights[$r][1] = 'Consulter les mailings'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
-		
+
 		$r++;
 		$this->rights[$r][0] = 222;
 		$this->rights[$r][1] = 'Creer/modifier les mailings (sujet, destinataires...)';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
-		
+
 		$r++;
 		$this->rights[$r][0] = 223;
 		$this->rights[$r][1] = 'Valider les mailings (permet leur envoi)';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'valider';
-		
+
 		$r++;
 		$this->rights[$r][0] = 229;
 		$this->rights[$r][1] = 'Supprimer les mailings';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
-		
+
 		$r++;
 		$this->rights[$r][0] = 237;
 		$this->rights[$r][1] = 'View recipients and info';
@@ -111,7 +110,7 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'recipient';
-		
+
 		$r++;
 		$this->rights[$r][0] = 238;
 		$this->rights[$r][1] = 'Manually send mailings';
@@ -119,7 +118,7 @@ class modMailing extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'send';
-		
+
 		$r++;
 		$this->rights[$r][0] = 239;
 		$this->rights[$r][1] = 'Delete mailings after validation and/or sent';

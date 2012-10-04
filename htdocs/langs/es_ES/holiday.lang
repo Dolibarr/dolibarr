@@ -84,7 +84,8 @@ NewSoldeCP=Nuevo saldo
 alreadyCPexist=Ya se ha efectuado una petición de vacaciones para este periodo.
 UserName=Nombre Apellidos
 Employee=Empleado
-
+FirstDayOfHoliday=Primer día libre
+LastDayOfHoliday=Último día libre
 
 ## Configuration du Module ##
 ConfCP=Configuración del módulo Vacaciones

@@ -696,6 +696,7 @@ DictionnaryAvailability=Delivery delay
 DictionnaryOrderMethods=Ordering methods
 DictionnarySource=Origin of proposals/orders
 DictionnaryAccountancyplan=Chart of accounts
+DictionnaryAccountancysystem=Models for chart of accounts
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
 BackToDictionnaryList=Back to dictionaries list
@@ -1310,7 +1311,7 @@ CashDeskSetup=Point of sales module setup
 CashDeskThirdPartyForSell=Generic third party to use for sells
 CashDeskBankAccountForSell=Default account to use to receive cash payments
 CashDeskBankAccountForCheque= Default account to use to receive payments by cheque
-CashDeskBankAccountForCB= Default account to use to receive cash payments by credit cards
+CashDeskBankAccountForCB= Default account to use to receive payments by credit cards
 CashDeskIdWareHouse=Warehouse to use for sells
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup

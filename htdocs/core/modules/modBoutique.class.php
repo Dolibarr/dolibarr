@@ -30,8 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *		\class 		modBoutique
- *		\brief      Classe de description et activation du module OSCommerce
+ *	Classe de description et activation du module OSCommerce
  */
 class modBoutique extends DolibarrModules
 {

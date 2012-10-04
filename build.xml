@@ -21,7 +21,7 @@
   <parallel>
    <!-- <antcall target="phpmd"/> -->
    <antcall target="phpcpd"/>
-   <antcall target="phpcs"/>
+   <!-- <antcall target="phpcs"/> -->
    <antcall target="doxygen"/>
    <antcall target="phploc"/>
   </parallel>
@@ -69,9 +69,10 @@
    
  <!-- Generate checkstyle.xml -->
  <target name="phpcs">
-  <exec executable="phpcs" dir="${basedir}" output="${basedir}/hudson/logs/checkstyle.xml">
+  <exec executable="phpcs" dir="${basedir}">
     <arg line=" --standard=${basedir}/dev/codesniffer/jenkins_ruleset.xml
     			--report=checkstyle
+    			--report-file=${basedir}/hudson/logs/checkstyle.xml
                 --ignore=${ignorepaths},${ignoreregexp}
                 htdocs
                 "/>
@@ -97,5 +98,5 @@
   </exec>
  </target>
 
- <target name="hudson" depends="clean,phpunit,parallelTasks"/>
+ <target name="hudson" depends="clean,phpunit,phpcs,parallelTasks"/>
 </project>

@@ -32,8 +32,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modFicheinter
- *	\brief      Classe de description et activation du module Ficheinter
+ *	Classe de description et activation du module Ficheinter
  */
 class modFicheinter extends DolibarrModules
 {

@@ -49,9 +49,10 @@ For users:
 - New: Add a selection module for emailing to enter a recipient from gui.
 - New: Allow to search thirds and products from barcodes directly from the permanent mini search left box.
 - New: Allow to search product from barcodes directly from invoices, proposals... through AJAX.
+- New: Can make one invoice for several orders.
+- New: POS module can works with only one payment method (cach, chq, credit card). 
 New experimental modules:
 - New: Add margin and commissions management module.
-- New: Add holiday module.
 
 - Fix: [ bug #499 ]: Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does

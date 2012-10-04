@@ -17,11 +17,11 @@
 -- ===================================================================
 
 CREATE TABLE llx_osc_product (
-  rowid int(11) NOT NULL default '0',
+  rowid integer NOT NULL default '0',
   datem datetime default NULL,
-  fk_product int(11) NOT NULL default '0',
+  fk_product integer NOT NULL default '0',
   PRIMARY KEY  (rowid),
   UNIQUE KEY fk_product (fk_product)
-) ENGINE=InnoDB COMMENT='Table transition produit OSC - produit Dolibarr';
+) ENGINE=InnoDB;
 
 

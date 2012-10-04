@@ -27,8 +27,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modDeplacement
- *	\brief      Classe de description et activation du module Deplacement
+ *	Classe de description et activation du module Deplacement
  */
 class modDeplacement extends DolibarrModules
 {

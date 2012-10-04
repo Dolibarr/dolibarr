@@ -1880,6 +1880,7 @@ class Facture extends CommonInvoice
      *      @param		int			$fk_parent_line		Id of parent line
      * 		@param		int			$fk_fournprice		To calculate margin
      * 		@param		int			$pa_ht				Buying price of line
+     * 		@param		string		$label				Label of the line
      *    	@return    	int             				<0 if KO, Id of line if OK
      */
     function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='')
@@ -2035,6 +2036,7 @@ class Facture extends CommonInvoice
      * 		@param		int			$skip_update_total	???
      * 		@param		int			$fk_fournprice		To calculate margin
      * 		@param		int			$pa_ht				Buying price of line
+     * 		@param		string		$label				Label of the line
      *      @return    	int             				< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
@@ -2618,7 +2620,7 @@ class Facture extends CommonInvoice
      *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
      *
      *	@param		int		$socid		Id societe
-     *	@return    	array				Tableau des factures ($id => $ref)
+     *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
      */
     function list_qualified_avoir_invoices($socid=0)
     {
@@ -2626,7 +2628,7 @@ class Facture extends CommonInvoice
 
         $return = array();
 
-        $sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, pf.fk_paiement";
+        $sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, f.type, f.paye, pf.fk_paiement";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=1)";
@@ -2640,7 +2642,7 @@ class Facture extends CommonInvoice
         if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
         $sql.= " ORDER BY f.facnumber";
 
-        dol_syslog(get_class($this)."::list_qualified_avoir_invoices sql=$sql");
+        dol_syslog(get_class($this)."::list_qualified_avoir_invoices sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2653,7 +2655,7 @@ class Facture extends CommonInvoice
                 {
                     //$ref=$obj->facnumber;
                     $paymentornot=($obj->fk_paiement?1:0);
-                    $return[$obj->rowid]=$paymentornot;
+                    $return[$obj->rowid]=array('ref'=>$obj->facnumber,'status'=>$obj->fk_statut,'type'=>$obj->type,'paye'=>$obj->paye,'paymentornot'=>$paymentornot);
                 }
             }
 

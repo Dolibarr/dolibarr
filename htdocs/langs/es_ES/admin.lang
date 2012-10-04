@@ -83,7 +83,7 @@ UserSetup=Configuración gestión de los usuarios
 MenuSetup=Administración de los menús por base de datos
 MenuLimits=Límites y precisión
 MenuIdParent=Id del menú padre
-DetailMenuIdParent=ID del menú padre (0 para un menú superior)
+DetailMenuIdParent=ID del menú padre (vacío para un menú superior)
 DetailPosition=Número de orden para la posición del menú
 PersonalizedMenusNotSupported=Menús personalizados no generados
 AllMenus=Todos
@@ -1256,7 +1256,7 @@ MantisTestKo1=La conexión al servidor '%s' es correcta pero la base de datos' %
 MantisTestKo2=La conexión al servidor '%s' por el usuario '%s' a fallado.
 MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
 ##### Stock #####
-StockSetup=configuración del módulo Stock
+StockSetup=Configuración del módulo Stocks
 UserWarehouse=Utilizar los stocks personales de usuarios
 ##### Menu #####
 MenuDeleted=Menú eliminado
@@ -1308,7 +1308,10 @@ InvoiceDateUsed=Fecha usada de factura
 YourCompanyDoesNotUseVAT=Su empresa está configurada como no sujeta al IVA (Inicio - Configuración - Empresa/Institución), por lo que no hay opción para la paremetrización del IVA.
 AccountancyCode=Código contable
 Deductible=Deducible
+AccountancyCodeSell=Código contable ventas
+AccountancyCodeBuy=Código contable compras
 ##### Agenda #####
+
 AgendaSetup=Módulo configuración de acciones y agenda
 PasswordTogetVCalExport=Clave de autorización vcal export link
 PastDelayVCalExport=No exportar los eventos de más de

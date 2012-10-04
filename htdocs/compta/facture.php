@@ -1851,15 +1851,20 @@ if ($action == 'create')
         exit;
     }
     $optionsav="";
-    foreach ($facids as $key => $value)
+    $newinvoice_static=new Facture($db);
+    foreach ($facids as $key => $valarray)
     {
-        $newinvoice=new Facture($db);
-        $newinvoice->fetch($key);
+        $newinvoice_static->id=$key;
+        $newinvoice_static->ref=$valarray['ref'];
+        $newinvoice_static->statut=$valarray['status'];
+        $newinvoice_static->type=$valarray['type'];
+        $newinvoice_static->paye=$valarray['paye'];
+
         $optionsav.='<option value="'.$key.'"';
         if ($key == $_POST['fac_avoir']) $optionsav.=' selected="selected"';
         $optionsav.='>';
-        $optionsav.=$newinvoice->ref;
-        $optionsav.=' ('.$newinvoice->getLibStatut(1,$value).')';
+        $optionsav.=$newinvoice_static->ref;
+        $optionsav.=' ('.$newinvoice_static->getLibStatut(1,$valarray['paymentornot']).')';
         $optionsav.='</option>';
     }
 
