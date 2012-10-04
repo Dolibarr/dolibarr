@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -953,8 +954,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("orders");
                 if (! empty($conf->facture->enabled)) $newmenu->add("/commande/liste.php?leftmenu=orders&amp;viewstatut=-3", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
                 //                  if ($leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
-				// Does this link is required now we have link into "Orders to bill" list ?
-     			//if ($leftmenu=="orders") $newmenu->add("/commande/customer.php", $langs->trans("GenerateBill"), 1, $user->rights->commande->lire);
             }
 
             // Donations
