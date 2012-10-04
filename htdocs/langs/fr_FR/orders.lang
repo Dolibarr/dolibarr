@@ -156,5 +156,7 @@ OrderByEMail=EMail
 OrderByWWW=En ligne
 OrderByPhone=Téléphone
 
-CreateInvoiceForThisCustomer=Créer une facture à partir de plusieurs commande de ce client
+CreateInvoiceForThisCustomer=Facturer commandes
+NoOrdersToInvoice=Pas de commandes facturables
 CloseProcessedOrdersAutomatically=Classer automatiquement à "Traitées" les commandes sélectionnées.
+MenuOrdersToBill2=Commandes facturables

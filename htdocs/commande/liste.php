@@ -328,7 +328,20 @@ if ($resql)
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
-		print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
+		
+		// If module invoices enabled and user with invoice creation permissions
+		if (! empty($conf->facture->enabled))
+		{
+			if ($user->rights->facture->creer)
+			{
+		
+				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->facturee == 0))
+				{
+			
+					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
+				}
+			}
+		}
 		print '</td>';
 
 		print '<td>'.$objp->ref_client.'</td>';
