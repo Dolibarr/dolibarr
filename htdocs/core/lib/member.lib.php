@@ -96,6 +96,9 @@ function member_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
+
 	return $head;
 }
 
