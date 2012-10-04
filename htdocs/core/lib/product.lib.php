@@ -123,6 +123,7 @@ function product_prepare_head($object, $user)
 
 
 	// More tabs from canvas
+	// TODO Is this still used ?
 	if (isset($object->onglets) && is_array($object->onglets))
 	{
 		foreach ($object->onglets as $onglet)
