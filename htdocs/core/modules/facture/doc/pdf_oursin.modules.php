@@ -434,7 +434,7 @@ class pdf_oursin extends ModelePDFFactures
                 $pdf->SetXY($tab3_posx+21, $tab3_top+$y);
                 $pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);
                 $pdf->SetXY($tab3_posx+40, $tab3_top+$y);
-                $oper = $outputlangs->getTradFromKey("PaymentTypeShort" . $row->code);
+                $oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort" . $row->code);
 
                 $pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
                 $pdf->SetXY($tab3_posx+58, $tab3_top+$y);
