@@ -327,6 +327,7 @@ class Translate
 
 	/**
 	 * Return translated value of key. Search in lang file, then into database.
+	 * Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
 	 * WARNING: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), getLabelFromKey must
 	 * not be called with same value than input.
@@ -334,7 +335,7 @@ class Translate
 	 * @param	string		$key		Key to translate
 	 * @return 	string					Translated string
 	 */
-	function getTradFromKey($key)
+	private function getTradFromKey($key)
 	{
 		global $db;
 
@@ -342,19 +343,19 @@ class Translate
 		$newstr=$key;
 		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
-			$newstr=$this->getLabelFromKey($db,$key,'c_currencies','code_iso','label',$reg[1]);
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 		}
 		else if (preg_match('/^SendingMethod([0-9A-Z]+)$/i',$key,$reg))
 		{
-			$newstr=$this->getLabelFromKey($db,$key,'c_shipment_mode','code','libelle',$reg[1]);
+			$newstr=$this->getLabelFromKey($db,$reg[1],'c_shipment_mode','code','libelle');
 		}
         else if (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$key,'c_paiement','code','libelle',$reg[1]);
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_paiement','code','libelle');
         }
         else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$key,'c_civilite','code','civilite',$reg[1]);
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
         }
         else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
         {
@@ -616,29 +617,28 @@ class Translate
 
 
 	/**
-	 *      Return a label for a key. Store key-label into cache variable $this->cache_labels to save SQL requests to get labels.
-	 *      This function can be used to get label in database but more often to get code from key id.
+	 *      Return a label for a key.
+	 *      Search into translation array, then into cache, then if still not found, search into database.
+	 *      Store key-label found into cache variable $this->cache_labels to save SQL requests to get labels.
 	 *
 	 * 		@param	DoliBD	$db				Database handler
 	 * 		@param	string	$key			Key to get label (key in language file)
 	 * 		@param	string	$tablename		Table name without prefix
 	 * 		@param	string	$fieldkey		Field for key
 	 * 		@param	string	$fieldlabel		Field for label
-	 * 		@param	string	$keyindatabase	Key to get label (key in database table)
 	 *      @return string					Label in UTF8 (but without entities)
 	 */
-	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keydatabase='')
+	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
 	{
 		// If key empty
 		if ($key == '') return '';
-		if (empty($keydatabase)) $keydatabase=$key;
 
         //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
-		// Check in language array
-		if ($this->transnoentities($key) != $key)
+		// Check if in language array (this can call getTradFromKey)
+		if ($this->transnoentitiesnoconv($key) != $key)
 		{
-			return $this->transnoentities($key);    // Found in language array
+			return $this->transnoentitiesnoconv($key);    // Found in language array
 		}
 
 		// Check in cache
@@ -649,7 +649,7 @@ class Translate
 
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
-		$sql.= " WHERE ".$fieldkey." = '".$keydatabase."'";
+		$sql.= " WHERE ".$fieldkey." = '".$key."'";
 		dol_syslog(get_class($this).'::getLabelFromKey sql='.$sql,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)

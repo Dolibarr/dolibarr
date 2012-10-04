@@ -509,7 +509,6 @@ if ($id > 0 || ! empty($ref))
 				// Payment type
 				print "<td nowrap>";
 				$label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
-				// $label=$langs->getTradFromKey("PaymentTypeShort".$objp->fk_type);
 
 				if ($objp->fk_type == 'SOLD') $label='&nbsp;';
 				print $label;
