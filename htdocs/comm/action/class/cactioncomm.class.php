@@ -18,14 +18,13 @@
 
 /**
  *       \file       htdocs/comm/action/class/cactioncomm.class.php
- *       \ingroup    commercial
+ *       \ingroup    agenda
  *       \brief      File of class to manage type of agenda events
  */
 
 
 /**
- *      \class      CActionComm
- *	    \brief      Class to manage different types of events
+ *		Class to manage different types of events
  */
 class CActionComm
 {

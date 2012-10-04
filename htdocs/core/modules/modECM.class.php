@@ -26,8 +26,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modECM
- *      \brief      Description and activation class for module ECM
+/**
+ * 	Description and activation class for module ECM
  */
 class modECM extends DolibarrModules
 {

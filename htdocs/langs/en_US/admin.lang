@@ -1311,7 +1311,7 @@ CashDeskSetup=Point of sales module setup
 CashDeskThirdPartyForSell=Generic third party to use for sells
 CashDeskBankAccountForSell=Default account to use to receive cash payments
 CashDeskBankAccountForCheque= Default account to use to receive payments by cheque
-CashDeskBankAccountForCB= Default account to use to receive cash payments by credit cards
+CashDeskBankAccountForCB= Default account to use to receive payments by credit cards
 CashDeskIdWareHouse=Warehouse to use for sells
 ##### Bookmark #####
 BookmarkSetup=Bookmark module setup

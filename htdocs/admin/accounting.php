@@ -1,6 +1,9 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011-2012 Juanjo Menent	      <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +20,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/accounting.php
- *      \ingroup    accounting
- *      \brief      Page de configuration du module comptabilite expert
+ *	\file       htdocs/admin/accounting.php
+ *	\ingroup    compta
+ *	\brief      Page to setup accountancy module
  */
 
 require '../main.inc.php';
@@ -29,43 +32,81 @@ $langs->load('admin');
 $langs->load('compta');
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
-
+$action = GETPOST('action','alpha');
 
 $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 
-if ($_POST['action'] == 'setcomptamode')
+if ($action == 'setcomptamode')
 {
-  $compta_mode = $_POST['compta_mode'];
-  if (! dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity)) { print $db->error(); }
+	$compta_mode = GETPOST('compta_mode','alpha');
+	
+	$res = dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+
+}
+
+if ($action == 'setchart')
+{
+	$chartofaccounts = GETPOST('chartofaccounts','alpha');
+	
+	$res = dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts,'chaine',0,'',$conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
+if ($action == 'update' || $action == 'add')
+{
+	$constname = GETPOST('constname','alpha');
+	$constvalue = GETPOST('constvalue','alpha');
+	$consttype = GETPOST('consttype','alpha');
+	$constnote = GETPOST('constnote','alpha');
+	
+	$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
+	
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
 }
 
 
-$form = new Form($db);
-$typeconst=array('yesno','texte','chaine');
-
-
-if ($_POST['action'] == 'update' || $_POST['action'] == 'add')
-{
-	if (! dolibarr_set_const($db, $_POST['constname'], $_POST['constvalue'], $typeconst[$_POST['consttype']], 0, isset($_POST['constnote']) ? $_POST['constnote'] : '',$conf->entity));
-	{
-	  	print $db->error();
-	}
-}
-
-
-if ($_GET['action'] == 'delete')
+/*if ($action == 'delete')
 {
 	if (! dolibarr_del_const($db, $_GET['constname'],$conf->entity));
 	{
-	  	print $db->error();
+		print $db->error();
 	}
-}
-
+}*/
 
 /*
- * View
+ * Affichage page
  */
 
 llxHeader();
@@ -81,92 +122,162 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 // Cas du parametre COMPTA_MODE
-print '<form action="compta.php" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
-print '<td><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
+print '<td align="right"><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
 print "</tr>\n";
 print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'))."</td></tr>\n";
+print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
+// Write info on way to count VAT
+if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
+{
+	//	print "<br>\n";
+	//	print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
+}
+else
+{
+	//	print "<br>\n";
+	//	print nl2br($langs->trans('OptionModeTrueInfoExpert'));
+}
+print "</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
-print '<td colspan="2">'.$langs->trans('OptionModeVirtualDesc')."</td></tr>\n";
+print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 print '</form>';
 
 print "</table>\n";
 
+/*
+ *  Define Chart of accounts
+ *
+ */
+if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting->enabled))
+{
+  print '<br>';
+  print_titre($langs->trans("Definechartofaccounts"));
+  
+  print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+  print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+  
+  print '<table class="noborder" width="100%">';
+  $var=True;
+  
+  print '<tr class="liste_titre">';
+  print '<td>';
+  print '<input type="hidden" name="action" value="setchart">';
+  print $langs->trans("Chartofaccounts").'</td>';
+  print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+  print "</tr>\n";
+  $var=!$var;
+  print '<tr '.$bc[$var].'>';
+  print "<td>".$langs->trans("Selectchartofaccounts")."</td>";
+  print "<td>";
+  print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
+  print '<option value="0">'.$langs->trans("DoNotSuggestChart").'</option>';
+  
+  $sql = "SELECT rowid, pcg_version, fk_pays, label, active";
+  $sql.= " FROM ".MAIN_DB_PREFIX."accountingsystem";
+  $sql.= " WHERE active = 1";
+  $sql.= " AND fk_pays = ".$mysoc->country_id;
+  $var=True;
+  $resql=$db->query($sql);
+  if ($resql)
+  {
+      $num = $db->num_rows($resql);
+      $i = 0;
+      while ($i < $num)
+      {
+          $var=!$var;
+          $row = $db->fetch_row($resql);
+  
+          print '<option value="'.$row[0].'"';
+          print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected="selected"':'';
+          print '>'.$row[1].' - '.$row[3].'</option>';
+  
+          $i++;
+      }
+  }
+  print "</select>";
+  print "</td></tr>";
+  print "</table>";
+  print "</form>";
+}
+
 print "<br>\n";
 
-// Cas des autres param�tres COMPTA_*
-/*
-$sql ="SELECT rowid, name, value, type, note";
-$sql.=" FROM ".MAIN_DB_PREFIX."const";
-$sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
+// Cas des autres parametres COMPTA_*
+$list=array('COMPTA_PRODUCT_BUY_ACCOUNT','COMPTA_PRODUCT_SOLD_ACCOUNT','COMPTA_SERVICE_BUY_ACCOUNT','COMPTA_SERVICE_SOLD_ACCOUNT',
+'COMPTA_VAT_ACCOUNT','COMPTA_ACCOUNT_CUSTOMER','COMPTA_ACCOUNT_SUPPLIER'
+);
+
+/*$sql = "SELECT rowid, name, value, type, note";
+$sql.= " FROM ".MAIN_DB_PREFIX."const";
+$sql.= " WHERE name LIKE 'COMPTA_%'";
+$sql.= " AND name NOT IN ('COMPTA_MODE')";
+$sql.= " AND entity = ".$conf->entity;
 $result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$var=true;
-
-	if ($num)
-	{
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
-		print "</tr>\n";
-	}
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 		$var=!$var;
-
-		print '<form action="compta.php" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-
-		print '<tr '.$bc[$var].' class="value">';
-		print '<td>'.stripslashes(nl2br($obj->note))."</td>\n";
-
-		print '<td>';
-		if ($obj->type == 'yesno')
-		{
-			print $form->selectyesno('constvalue',$obj->value,1);
-		}
-		elseif ($obj->type == 'texte')
-		{
-			print '<textarea name="constvalue" cols="35" rows="5" wrap="soft">';
-			print $obj->value;
-			print "</textarea>\n";
-		}
-		else
-		{
-			print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
-		}
-		print '</td><td>';
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
-		print "</td></tr>\n";
-
-		print '</form>';
-
+		$list[$obj->name]=$obj->value;
 		$i++;
 	}
+}*/
 
-	if ($num)
-	{
-		print "</table>\n";
-	}
+$num=count($list);
+if ($num)
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
+	print "</tr>\n";
 }
-*/
 
+foreach ($list as $key)
+{
+	$var=!$var;
+
+	print '<form action="accounting.php" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="consttype" value="string">';
+	print '<input type="hidden" name="constname" value="'.$key.'">';
+	
+	print '<tr '.$bc[$var].' class="value">';
+
+	// Param
+	$libelle = $langs->trans($key); 
+	print '<td>'.$libelle;
+	//print ' ('.$key.')';
+	print "</td>\n";
+
+	// Value
+	print '<td>';
+	print '<input type="text" size="20" name="constvalue" value="'.$conf->global->$key.'">';
+	print '</td><td>';
+	print '<input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
+	print "</td></tr>\n";
+	print '</form>';
+	
+	$i++;
+}
+
+if ($num)
+{
+	print "</table>\n";
+}
+
+dol_htmloutput_mesg($mesg);
 
 $db->close();
 
-
 llxFooter();
-
 ?>

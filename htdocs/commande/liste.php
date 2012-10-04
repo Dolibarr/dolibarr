@@ -126,7 +126,7 @@ if ($sall)
 }
 if ($viewstatut <> '')
 {
-	if ($viewstatut < 4 && $viewstatut > -2)
+	if ($viewstatut < 4 && $viewstatut > -3)
 	{
 		$sql.= ' AND c.fk_statut ='.$viewstatut; // brouillon, validee, en cours, annulee
 		if ($viewstatut == 3)
@@ -142,6 +142,11 @@ if ($viewstatut <> '')
 	{
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 		$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
+	}
+	if ($viewstatut == -3)	// To bill
+	{
+		$sql.= ' AND c.fk_statut in (1,2,3)';
+		$sql.= ' AND c.facture = 0'; // invoice not created
 	}
 }
 if ($ordermonth > 0)
@@ -215,6 +220,8 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderCanceledShort');
 	if ($viewstatut == -2)
 	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
+	if ($viewstatut == -3)
+	$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
 	if ($ordermonth)      $param.='&ordermonth='.$ordermonth;
@@ -233,6 +240,7 @@ if ($resql)
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print '<table class="noborder" width="100%">';
 
@@ -297,7 +305,7 @@ if ($resql)
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		print '<td class="nobordernopadding" nowrap="nowrap">';
-		print $generic_commande->getNomUrl(1,$objp->fk_statut);
+		print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
 		print '</td>';
 
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';

@@ -23,6 +23,11 @@
  *       \ingroup    agenda
  *       \brief      File of class to parse ical calendars
  */
+
+
+/**
+ *		Class to parse ICal calendars
+ */
 class ICal
 {
     var $file_text; // Text in file

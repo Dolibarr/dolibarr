@@ -30,8 +30,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- * 	\class modExpedition
- *	\brief      Classe de description et activation du module Expedition
+ *	Classe de description et activation du module Expedition
  */
 class modExpedition extends DolibarrModules
 {

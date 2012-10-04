@@ -56,6 +56,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	global $object;
 
 	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
+	//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
 
 	$loaddate=($mode==1||$mode==2)?true:false;
 	$loadsize=($mode==1||$mode==3)?true:false;

@@ -27,10 +27,9 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modExternalRss
- *		\brief      Classe de description et activation du module externalrss
+/**
+ *	Classe de description et activation du module externalrss
  */
-
 class modExternalRss extends DolibarrModules
 {
 
@@ -130,10 +129,10 @@ class modExternalRss extends DolibarrModules
     function remove($options='')
     {
 		$sql = array();
-		
+
 		// Delete old declarations of RSS box
 		$this->boxes[0][1] = "box_external_rss.php";
-		
+
 		return $this->_remove($sql,$options);
     }
 

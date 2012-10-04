@@ -29,8 +29,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	\class      modDon
- *	\brief      Classe de description et activation du module Don
+ *	Classe de description et activation du module Don
  */
 class modDon  extends DolibarrModules
 {

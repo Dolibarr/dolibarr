@@ -28,10 +28,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	\class      modBarcode
- *	\brief      Classe de description et activation du module Barcode
+ *	Classe de description et activation du module Barcode
  */
-
 class modBarcode extends DolibarrModules
 {
 

@@ -23,13 +23,11 @@
  *      \ingroup    workflow
  *      \brief      File to describe and activate module Workflow
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *  \class      modWorkflow
- *  \brief      Classe de description et activation du module Workflow
+ *	Classe de description et activation du module Workflow
  */
 class modWorkflow extends DolibarrModules
 {
