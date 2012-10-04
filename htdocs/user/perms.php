@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -365,17 +366,21 @@ if ($result)
         	print img_picto($langs->trans("Active"),'tick');
         	print '</td>';
         }
-        else if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission own by group
+        
+        else if (is_array($permsgroupbyentity[$entity]))
         {
-        	if ($caneditperms)
-        	{
-        		print '<td align="center">';
-        		print $form->textwithtooltip($langs->trans("Inherited"),$langs->trans("PermissionInheritedFromAGroup"));
-        		print '</td>';
-        	}
-        	print '<td align="center" nowrap="nowrap">';
-        	print img_picto($langs->trans("Active"),'tick');
-        	print '</td>';
+	        if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission own by group
+	        {
+	        	if ($caneditperms)
+	        	{
+	        		print '<td align="center">';
+	        		print $form->textwithtooltip($langs->trans("Inherited"),$langs->trans("PermissionInheritedFromAGroup"));
+	        		print '</td>';
+	        	}
+	        	print '<td align="center" nowrap="nowrap">';
+	        	print img_picto($langs->trans("Active"),'tick');
+	        	print '</td>';
+	        }
         }
         else
         {
