@@ -194,72 +194,9 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
 	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+
 	$mysoc=new Societe($db);
-
-	$mysoc->id=0;
-	$mysoc->name=(! empty($conf->global->MAIN_INFO_SOCIETE_NOM))?$conf->global->MAIN_INFO_SOCIETE_NOM:'';
-	$mysoc->nom=$mysoc->name; 									// deprecated
-	$mysoc->address=(! empty($conf->global->MAIN_INFO_SOCIETE_ADRESSE))?$conf->global->MAIN_INFO_SOCIETE_ADRESSE:'';
-	$mysoc->adresse=$mysoc->address; 							// deprecated
-	$mysoc->zip=(! empty($conf->global->MAIN_INFO_SOCIETE_CP))?$conf->global->MAIN_INFO_SOCIETE_CP:'';
-	$mysoc->cp=$mysoc->zip;										// deprecated
-	$mysoc->town=(! empty($conf->global->MAIN_INFO_SOCIETE_VILLE))?$conf->global->MAIN_INFO_SOCIETE_VILLE:'';
-	$mysoc->ville=$mysoc->town;									// deprecated
-	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
-	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
-
-    // We define country_id, country_code and country
-	$country_id=$country_code=$country_label='';
-    if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
-    {
-        $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
-        $country_id=$tmp[0];
-        if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
-        {
-            $country_code=$tmp[1];
-            $country_label=$tmp[2];
-        }
-        else                    // For backward compatibility
-        {
-            dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
-            include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-            $country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
-            $country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
-        }
-    }
-    $mysoc->pays_id=$country_id;		// TODO deprecated
-    $mysoc->country_id=$country_id;
-    $mysoc->pays_code=$country_code;	// TODO deprecated
-    $mysoc->country_code=$country_code;
-    $mysoc->country=$country_label;
-    if (is_object($langs)) $mysoc->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
-    $mysoc->pays=$mysoc->country;    	// TODO deprecated
-
-	$mysoc->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
-    $mysoc->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;
-	$mysoc->fax=empty($conf->global->MAIN_INFO_SOCIETE_FAX)?'':$conf->global->MAIN_INFO_SOCIETE_FAX;
-	$mysoc->url=empty($conf->global->MAIN_INFO_SOCIETE_WEB)?'':$conf->global->MAIN_INFO_SOCIETE_WEB;
-	// Id prof generiques
-	$mysoc->idprof1=empty($conf->global->MAIN_INFO_SIREN)?'':$conf->global->MAIN_INFO_SIREN;
-	$mysoc->idprof2=empty($conf->global->MAIN_INFO_SIRET)?'':$conf->global->MAIN_INFO_SIRET;
-	$mysoc->idprof3=empty($conf->global->MAIN_INFO_APE)?'':$conf->global->MAIN_INFO_APE;
-	$mysoc->idprof4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
-	$mysoc->idprof5=empty($conf->global->MAIN_INFO_PROFID5)?'':$conf->global->MAIN_INFO_PROFID5;
-	$mysoc->idprof6=empty($conf->global->MAIN_INFO_PROFID6)?'':$conf->global->MAIN_INFO_PROFID6;
-	$mysoc->tva_intra=(! empty($conf->global->MAIN_INFO_TVAINTRA))?$conf->global->MAIN_INFO_TVAINTRA:'';	// VAT number, not necessarly INTRA.
-	$mysoc->capital=(! empty($conf->global->MAIN_INFO_CAPITAL))?$conf->global->MAIN_INFO_CAPITAL:'';
-	$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
-	$mysoc->email=(! empty($conf->global->MAIN_INFO_SOCIETE_MAIL))?$conf->global->MAIN_INFO_SOCIETE_MAIL:'';
-	$mysoc->logo=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO))?$conf->global->MAIN_INFO_SOCIETE_LOGO:'';
-	$mysoc->logo_small=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL))?$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL:'';
-	$mysoc->logo_mini=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI))?$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI:'';
-
-	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
-	$mysoc->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
-
-	// Define if company use local taxes
-	$mysoc->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')?1:0);
-	$mysoc->localtax2_assuj=((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')?1:0);
+	$mysoc->getMysoc($conf);
 
 	// For some countries, we need to invert our address with customer address
 	if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;

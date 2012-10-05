@@ -161,18 +161,16 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 	// reorder lines
 	if ($result) $object->line_order(true);
 
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
+		// Define output language
+		$outputlangs = $langs;
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		{
+			$outputlangs = new Translate("",$conf);
+			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+			$outputlangs->setDefaultLang($newlang);
+		}
 		$ret=$object->fetch($id);    // Reload to get new records
 		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	}
@@ -187,20 +185,18 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	$result=$object->valid($user);
 	if ($result >= 0)
 	{
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
-            $ret=$object->fetch($object->id);    // Reload to get new records
-		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+			// Define output language
+			$outputlangs = $langs;
+			if (! empty($conf->global->MAIN_MULTILANGS))
+			{
+				$outputlangs = new Translate("",$conf);
+				$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$ret=$object->fetch($id);    // Reload to get new records
+			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 		}
 	}
 	else
@@ -366,17 +362,19 @@ else if ($action == 'add' && $user->rights->propal->creer)
     		{
     			$db->commit();
 
-    			// Define output language
-    			$outputlangs = $langs;
-    			$newlang='';
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-    			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    			if (! empty($newlang))
+    			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
     			{
-    				$outputlangs = new Translate("",$conf);
-    				$outputlangs->setDefaultLang($newlang);
+    				// Define output language
+    				$outputlangs = $langs;
+    				if (! empty($conf->global->MAIN_MULTILANGS))
+    				{
+    					$outputlangs = new Translate("",$conf);
+    					$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+    					$outputlangs->setDefaultLang($newlang);
+    				}
+    				$ret=$object->fetch($id);    // Reload to get new records
+    				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
     			}
-    			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
     			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     			exit;
@@ -600,18 +598,19 @@ if ($action == 'modif' && $user->rights->propal->creer)
 {
 	$object->set_draft($user);
 
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-	if (! empty($newlang))
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
+		// Define output language
+		$outputlangs = $langs;
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		{
+			$outputlangs = new Translate("",$conf);
+			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$ret=$object->fetch($id);    // Reload to get new records
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	}
-
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 }
 
 else if ($action == "setabsolutediscount" && $user->rights->propal->creer)
@@ -795,20 +794,18 @@ else if ($action == "addline" && $user->rights->propal->creer)
 
 			if ($result > 0)
 			{
-				// Define output language
-				$outputlangs = $langs;
-				$newlang='';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-				if (! empty($newlang))
-				{
-					$outputlangs = new Translate("",$conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
-                    $ret=$object->fetch($id);    // Reload to get new records
-				    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+					// Define output language
+					$outputlangs = $langs;
+					if (! empty($conf->global->MAIN_MULTILANGS))
+					{
+						$outputlangs = new Translate("",$conf);
+						$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$ret=$object->fetch($id);    // Reload to get new records
+					propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 				}
 
 				unset($_POST['qty']);
@@ -922,15 +919,12 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			{
 				// Define output language
 				$outputlangs = $langs;
-				$newlang='';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-				if (! empty($newlang))
+				if (! empty($conf->global->MAIN_MULTILANGS))
 				{
 					$outputlangs = new Translate("",$conf);
+					$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
-
 				$ret=$object->fetch($id);    // Reload to get new records
 				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 			}
@@ -971,15 +965,15 @@ else if ($action == 'builddoc' && $user->rights->propal->creer)
 
 	// Define output language
 	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-	if (! empty($newlang))
+	if (! empty($conf->global->MAIN_MULTILANGS))
 	{
 		$outputlangs = new Translate("",$conf);
+		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
 		$outputlangs->setDefaultLang($newlang);
 	}
+	$ret=$object->fetch($id);    // Reload to get new records
 	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -1056,17 +1050,19 @@ else if ($action == 'up' && $user->rights->propal->creer)
 {
 	$object->line_up(GETPOST('rowid'));
 
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-	if (! empty($newlang))
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
+		// Define output language
+		$outputlangs = $langs;
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		{
+			$outputlangs = new Translate("",$conf);
+			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$ret=$object->fetch($id);    // Reload to get new records
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
@@ -1076,17 +1072,19 @@ else if ($action == 'down' && $user->rights->propal->creer)
 {
 	$object->line_down(GETPOST('rowid'));
 
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-	if (! empty($newlang))
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
+		// Define output language
+		$outputlangs = $langs;
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		{
+			$outputlangs = new Translate("",$conf);
+			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$ret=$object->fetch($id);    // Reload to get new records
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	}
-	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;

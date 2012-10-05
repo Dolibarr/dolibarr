@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -328,7 +329,20 @@ if ($resql)
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
-		print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
+		
+		// If module invoices enabled and user with invoice creation permissions
+		if (! empty($conf->facture->enabled))
+		{
+			if ($user->rights->facture->creer)
+			{
+		
+				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->facturee == 0))
+				{
+			
+					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
+				}
+			}
+		}
 		print '</td>';
 
 		print '<td>'.$objp->ref_client.'</td>';
