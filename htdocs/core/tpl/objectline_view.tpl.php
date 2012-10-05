@@ -102,8 +102,10 @@
 	<?php } ?>
 
 	<td align="right" nowrap="nowrap">
-	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
-		else echo '&nbsp;';	?>
+	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
+			if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
+			echo $line->qty;
+		} else echo '&nbsp;';	?>
 	</td>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
