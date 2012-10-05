@@ -106,6 +106,7 @@
 
 	<td align="right">
 	<?php if (($line->info_bits & 2) != 2) { ?>
+		<?php if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." "; ?>
 		<input size="3" type="text" class="flat" name="qty" value="<?php echo $line->qty; ?>">
 	<?php } else { ?>
 		&nbsp;

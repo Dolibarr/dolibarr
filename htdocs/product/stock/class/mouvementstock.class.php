@@ -193,7 +193,7 @@ class MouvementStock
 
 			if (! $error)
 			{
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = stock + ".$qty;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = IFNULL(stock, 0) + ".$qty;
 				$sql.= " WHERE rowid = ".$fk_product;
 
 				dol_syslog("MouvementStock::_create sql=".$sql);
