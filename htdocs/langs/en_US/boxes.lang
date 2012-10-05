@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 BoxLastRssInfos=Rss information
 BoxLastProducts=Last %s products/services
+BoxProductsAlertStock=Products in stock alert
 BoxLastProductsInContract=Last %s contracted products/services
 BoxLastSupplierBills=Last supplier's invoices
 BoxLastCustomerBills=Last customer's invoices
@@ -25,6 +26,7 @@ BoxTitleLastBooks=Last %s recorded books
 BoxTitleNbOfCustomers=Number of clients
 BoxTitleLastRssInfos=Last %s news from %s
 BoxTitleLastProducts=Last %s modified products/services
+BoxTitleProductsAlertStock=Products in stock alert
 BoxTitleLastCustomerOrders=Last %s modified customer orders
 BoxTitleLastSuppliers=Last %s recorded suppliers
 BoxTitleLastCustomers=Last %s recorded customers

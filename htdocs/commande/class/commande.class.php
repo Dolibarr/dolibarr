@@ -2754,7 +2754,7 @@ class Commande extends CommonOrder
         $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.localtax1_tx, l.localtax2_tx,';
         $sql.= ' l.date_start, l.date_end,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
-        $sql.= ' p.description as product_desc';
+        $sql.= ' p.description as product_desc, p.stock as stock_reel';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
         $sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -2790,6 +2790,7 @@ class Commande extends CommonOrder
                 $this->lines[$i]->total_ttc			= $obj->total_ttc;
                 $this->lines[$i]->fk_parent_line	= $obj->fk_parent_line;
                 $this->lines[$i]->special_code		= $obj->special_code;
+				$this->lines[$i]->stock				= $obj->stock_reel;
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);

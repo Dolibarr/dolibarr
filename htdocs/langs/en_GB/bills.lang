@@ -1,8 +1,6 @@
 # Dolibarr language file - en_GB - main
 CHARSET=UTF-8
 PrettyLittleSentence=Accept the amount of payments due by cheques issued in my name as a Member of an accounting association approved by the Fiscal Administration.
-PaymentTypeCHQ=Cheque
-PaymentTypeShortCHQ=Cheque
 ChequeNumber=Cheque N°
 ChequeOrTransferNumber=Cheque/Transfer N°
 ChequeMaker=Cheque transmitter
@@ -20,3 +18,21 @@ Cheques=Cheques
 # PaymentConditions
 PaymentConditionShortRECEP=Due on Receipt
 PaymentConditionRECEP=Due on Receipt
+
+# PaymentType
+PaymentTypeVIR=Bank transfer
+PaymentTypeShortVIR=Bank transfer
+PaymentTypePRE=Direct debit
+PaymentTypeShortPRE=Direct debit
+PaymentTypeLIQ=Cash
+PaymentTypeShortLIQ=Cash
+PaymentTypeCB=Credit card
+PaymentTypeShortCB=Credit card
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
+PaymentTypeTIP=TIP
+PaymentTypeShortTIP=TIP
+PaymentTypeVAD=On line payment
+PaymentTypeShortVAD=On line payment
+PaymentTypeTRA=Bill payment
+PaymentTypeShortTRA=Bill
