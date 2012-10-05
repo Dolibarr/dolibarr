@@ -182,9 +182,32 @@ $langs->load("cashdesk");
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("PaymentMode"); ?></legend>
 		<table>
 			<tr>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Cash"); ?>" onclick="javascript: verifClic('ESP');" /></td>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("CreditCard"); ?>" onclick="javascript: verifClic('CB');" /></td>
-			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Cheque"); ?>" onclick="javascript: verifClic('CHQ');" /></td>
+			<?php
+			print '<td>';
+			if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) || $conf->global->CASHDESK_ID_BANKACCOUNT_CASH < 0)
+			{
+				$langs->load("errors");
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+			}
+			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
+			print '</td>';
+			print '<td>';
+			if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE) || $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE < 0)
+			{
+				$langs->load("errors");
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+			}
+			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
+			print '</td>';
+			print '<td>';
+			if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB) || $conf->global->CASHDESK_ID_BANKACCOUNT_CB < 0)
+			{
+				$langs->load("errors");
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cheque").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+			}
+			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cheque").'" onclick="javascript: verifClic(\'CHQ\');" />';
+			print '</td>';
+			?>
 			</tr>
 		</table>
 		<table>

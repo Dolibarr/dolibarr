@@ -141,8 +141,10 @@ OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
 SetDemandReason=Indicar origen del pedido
-CreateInvoiceForThisCustomer=Crear una factura a partir de varios pedidos de este cliente
+CreateInvoiceForThisCustomer=Facturar pedidos
+NoOrdersToInvoice=Sin pedidos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
+MenuOrdersToBill2=Pedidos facturables
 
 # Document models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)

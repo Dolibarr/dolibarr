@@ -348,7 +348,7 @@ p.titre {
 	height: 40px;
 }
 
-.bouton_mode_reglement {
+.bouton_mode_reglement, .bouton_mode_reglement_disabled {
 	width: 150px;
 	height: 40px;
 }

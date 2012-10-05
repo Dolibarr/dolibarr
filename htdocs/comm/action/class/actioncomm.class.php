@@ -20,15 +20,15 @@
 
 /**
  *       \file       htdocs/comm/action/class/actioncomm.class.php
- *       \ingroup    commercial
+ *       \ingroup    agenda
  *       \brief      File of class to manage agenda events (actions)
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      ActionComm
- *	    \brief      Class to manage agenda events (actions)
+/**
+ *		Class to manage agenda events (actions)
  */
 class ActionComm extends CommonObject
 {

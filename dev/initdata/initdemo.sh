@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #------------------------------------------------------
 # Script to purge and init a database with demo values.
 # Note: "dialog" tool need to be available.
@@ -11,13 +11,14 @@
 #------------------------------------------------------
 
 
-export dumpfile=`ls mysqldump_dolibarr_*.sql | sort | tail -n 1`
 export mydir=`echo "$0" | sed -e 's/initdemo.sh//'`;
 if [ "x$mydir" = "x" ]
 then
     export mydir="."
 fi
 export id=`id -u`;
+export dumpfile=`ls $mydir/mysqldump_dolibarr_*.sql | sort | tail -n 1`
+export dumpfile=`basename $dumpfile`
 
 
 # ----------------------------- check if root
@@ -151,7 +152,7 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "mysql -P$port -u$admin ***** $base < $mydir/$dumpfile"
+echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 
 echo "Dolibarr data demo has been loaded."

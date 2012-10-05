@@ -26,8 +26,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modPayBox
- *      \brief      Description and activation class for module Paybox
+/**
+ * 	Description and activation class for module Paybox
  */
 class modPayBox extends DolibarrModules
 {

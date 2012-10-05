@@ -27,8 +27,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	\class      modSyslog
- *	\brief      Class to enable/disable module Logs
+ *	Class to enable/disable module Logs
  */
 class modSyslog extends DolibarrModules
 {

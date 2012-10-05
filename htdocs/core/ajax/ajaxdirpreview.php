@@ -247,11 +247,17 @@ if ($type == 'directory')
     {
         $relativepath=$ecmdir->getRelativePath();
         $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+
         $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
         if ($section) $param.='&section='.$section;
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
-
+        // If $section defined with value 0
+        if ($section === '0')
+        {
+        	$filearray=array();
+        	$textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        }
         $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
     }
 

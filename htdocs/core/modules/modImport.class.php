@@ -27,8 +27,8 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-/**     \class      modImport
- *		\brief      Classe de description et activation du module Import
+/**
+ *	Classe de description et activation du module Import
  */
 class modImport extends DolibarrModules
 {

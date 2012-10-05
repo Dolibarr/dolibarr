@@ -235,6 +235,7 @@ class RssParser
                 //var_dump($opts);exit;
                 $context = stream_context_create($opts);
 
+                // FIXME avoid error if no connection
                 $str = file_get_contents($this->_urlRSS, false, $context);
             }
             catch (Exception $e) {

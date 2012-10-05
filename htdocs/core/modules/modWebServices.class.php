@@ -22,14 +22,11 @@
  *       \ingroup    webservices
  *       \brief      File to describe webservices module
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *       \class      modWebServices
- *       \brief      Class to describe a WebServices module
+ *	Class to describe a WebServices module
  */
-
 class modWebServices extends DolibarrModules
 {
 
