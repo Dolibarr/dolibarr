@@ -51,6 +51,7 @@ class User extends CommonObject
 	var $firstname;
 	var $note;
 	var $email;
+	var $job;
 	var $signature;
 	var $office_phone;
 	var $office_fax;
@@ -138,7 +139,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
@@ -193,28 +194,29 @@ class User extends CommonObject
 				$this->prenom 		= $obj->firstname;	// TODO deprecated
 				$this->firstname 	= $obj->firstname;
 
-				$this->login = $obj->login;
+				$this->login		= $obj->login;
 				$this->pass_indatabase = $obj->pass;
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
-				$this->pass = $obj->pass;
-				$this->pass_temp = $obj->pass_temp;
-				$this->office_phone = $obj->office_phone;
+				$this->pass			= $obj->pass;
+				$this->pass_temp	= $obj->pass_temp;
+				$this->office_phone	= $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
-				$this->email = $obj->email;
-				$this->signature = $obj->signature;
-				$this->admin = $obj->admin;
-				$this->note = $obj->note;
-				$this->statut = $obj->statut;
-				$this->photo = $obj->photo;
-				$this->openid = $obj->openid;
-				$this->lang = $obj->lang;
-				$this->entity = $obj->entity;
+				$this->email		= $obj->email;
+				$this->job			= $obj->job;
+				$this->signature	= $obj->signature;
+				$this->admin		= $obj->admin;
+				$this->note			= $obj->note;
+				$this->statut		= $obj->statut;
+				$this->photo		= $obj->photo;
+				$this->openid		= $obj->openid;
+				$this->lang			= $obj->lang;
+				$this->entity		= $obj->entity;
 
-				$this->datec  = $this->db->jdate($obj->datec);
-				$this->datem  = $this->db->jdate($obj->datem);
-				$this->datelastlogin     = $this->db->jdate($obj->datel);
-				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->datec				= $this->db->jdate($obj->datec);
+				$this->datem				= $this->db->jdate($obj->datem);
+				$this->datelastlogin		= $this->db->jdate($obj->datel);
+				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
 				$this->webcal_login         = $obj->webcal_login;
 				$this->phenix_login         = $obj->phenix_login;
@@ -1070,6 +1072,7 @@ class User extends CommonObject
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->email        = trim($this->email);
+		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
@@ -1101,7 +1104,8 @@ class User extends CommonObject
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
-		$sql.= ", signature = '".addslashes($this->signature)."'";
+		$sql.= ", job = '".$this->db->escape($this->job)."'";
+		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
 		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
 		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";

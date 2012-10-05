@@ -756,3 +756,6 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFA
 
 -- Stock calculation on product
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
+
+-- Add possibility to defined position/job of a user
+ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
