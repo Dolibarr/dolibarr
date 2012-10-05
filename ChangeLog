@@ -50,7 +50,9 @@ For users:
 - New: Allow to search thirds and products from barcodes directly from the permanent mini search left box.
 - New: Allow to search product from barcodes directly from invoices, proposals... through AJAX.
 - New: Can make one invoice for several orders.
-- New: POS module can works with only one payment method (cach, chq, credit card). 
+- New: POS module can works with only one payment method (cach, chq, credit card).
+- New: Add possibility to defined position/job of a user
+
 New experimental modules:
 - New: Add margin and commissions management module.
 

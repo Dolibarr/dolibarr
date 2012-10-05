@@ -183,12 +183,16 @@ if ($action == 'add' && $canadduser)
         $edituser->office_fax	= $_POST["office_fax"];
         $edituser->user_mobile	= $_POST["user_mobile"];
         $edituser->email		= $_POST["email"];
-        $edituser->webcal_login	= $_POST["webcal_login"];
+        $edituser->job			= $_POST["job"];
         $edituser->signature	= $_POST["signature"];
-        $edituser->phenix_login	= $_POST["phenix_login"];
-        $edituser->phenix_pass	= $_POST["phenix_pass"];
         $edituser->note			= $_POST["note"];
         $edituser->ldap_sid		= $_POST["ldap_sid"];
+
+        // FIXME external module
+        $edituser->webcal_login	= $_POST["webcal_login"];
+        $edituser->phenix_login	= $_POST["phenix_login"];
+        $edituser->phenix_pass	= $_POST["phenix_pass"];
+
         // If multicompany is off, admin users must all be on entity 0.
         if (! empty($conf->multicompany->enabled))
         {
@@ -301,11 +305,15 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->office_fax	= $_POST["office_fax"];
             $edituser->user_mobile	= $_POST["user_mobile"];
             $edituser->email		= $_POST["email"];
+            $edituser->job			= $_POST["job"];
             $edituser->signature	= $_POST["signature"];
             $edituser->openid		= $_POST["openid"];
+
+            // FIXME external module
             $edituser->webcal_login	= $_POST["webcal_login"];
             $edituser->phenix_login	= $_POST["phenix_login"];
             $edituser->phenix_pass	= $_POST["phenix_pass"];
+
             if (! empty($conf->multicompany->enabled))
             {
             	if (! empty($_POST["superadmin"]))
@@ -637,6 +645,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         print '<input size="30" type="text" name="prenom" value="'.GETPOST('prenom').'">';
     }
+    print '</td></tr>';
+
+    // Position/Job
+    print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
+    print '<td>';
+    print '<input size="30" type="text" name="job" value="'.GETPOST('job').'">';
     print '</td></tr>';
 
     // Login
@@ -994,6 +1008,11 @@ else
             // Firstname
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td>'.$fuser->prenom.'</td>';
+            print '</tr>'."\n";
+
+            // Position/Job
+            print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>'.$fuser->job.'</td>';
             print '</tr>'."\n";
 
             // Login
@@ -1486,6 +1505,12 @@ else
                 print '<input type="hidden" name="prenom" value="'.$fuser->prenom.'">';
                 print $fuser->prenom;
             }
+            print '</td></tr>';
+
+            // Position/Job
+            print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>';
+            print '<input size="30" type="text" name="job" value="'.$fuser->job.'">';
             print '</td></tr>';
 
             // Login

@@ -752,4 +752,6 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 
 -- Add discount in product supplier price
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise_percent DOUBLE NOT NULL DEFAULT 0 AFTER quantity;
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFAULT 0 AFTER remise_percent; 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN remise DOUBLE NOT NULL DEFAULT 0 AFTER remise_percent;
+
+ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
