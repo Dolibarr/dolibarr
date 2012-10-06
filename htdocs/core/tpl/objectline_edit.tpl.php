@@ -105,8 +105,12 @@
 	<?php } ?>
 
 	<td align="right">
-	<?php if (($line->info_bits & 2) != 2) { ?>
-		<?php if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." "; ?>
+	<?php if (($line->info_bits & 2) != 2) {
+		// I comment this because it shows info even when not required
+		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
+		// must also not be output for most entities (proposal, intervention, ...)
+		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
+	?>
 		<input size="3" type="text" class="flat" name="qty" value="<?php echo $line->qty; ?>">
 	<?php } else { ?>
 		&nbsp;
@@ -330,7 +334,7 @@ $(document).ready(function() {
 
 <?php } ?>
 
-	<?php if (! empty($conf->margin->enabled)) { ?>         
+	<?php if (! empty($conf->margin->enabled)) { ?>
 	$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
 		if (data && data.length > 0) {
 			var options = '';
