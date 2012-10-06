@@ -49,20 +49,20 @@ $langs->load("main");
 			case 'ESP':
 				echo $langs->trans("Cash");
 				$filtre='courant=2';
-				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
-					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
+					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"];
 				break;
 			case 'CB':
 				echo $langs->trans("CreditCard");
 				$filtre='courant=1';
-				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
-					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))
+					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CB"];
 				break;
 			case 'CHQ':
 				echo $langs->trans("Cheque");
 				$filtre='courant=1';
-				if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
-					$selected = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+				if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))
+					$selected = $_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"];
 				break;
 			case 'DIF':
 				echo $langs->trans("Reported");

@@ -111,6 +111,34 @@ if (! empty($conf->stock->enabled))
 	print '</td>';
 	print "</tr>\n";
 }
+
+print "<tr>";
+print '<td class="label1">'.$langs->trans("CashDeskBankAccountForSell").'</td>';
+print '<td>';
+$defaultknown=0;
+if (! empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && $conf->global->CASHDESK_ID_BANKACCOUNT_CASH > 0) $defaultknown=1;	// If a particular stock is defined, we disable choice
+print $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH,'CASHDESK_ID_BANKACCOUNT_CASH',0,"courant=2",($defaultknown?0:2));
+print '</td>';
+print "</tr>\n";
+
+print "<tr>";
+print '<td class="label1">'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
+print '<td>';
+$defaultknown=0;
+if (! empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE) && $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE > 0) $defaultknown=1;	// If a particular stock is defined, we disable choice
+print $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE,'CASHDESK_ID_BANKACCOUNT_CHEQUE',0,"courant=1",($defaultknown?0:2));
+print '</td>';
+print "</tr>\n";
+
+print "<tr>";
+print '<td class="label1">'.$langs->trans("CashDeskBankAccountForCB").'</td>';
+print '<td>';
+$defaultknown=0;
+if (! empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB) && $conf->global->CASHDESK_ID_BANKACCOUNT_CB > 0) $defaultknown=1;	// If a particular stock is defined, we disable choice
+print $form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB,'CASHDESK_ID_BANKACCOUNT_CB',0,"courant=1",($defaultknown?0:2));
+print '</td>';
+print "</tr>\n";
+
 ?>
 
 	<tr>
