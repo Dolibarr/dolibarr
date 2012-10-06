@@ -383,13 +383,14 @@ else
 								document.formsoc.action.value="create";
 								document.formsoc.submit();
 							});
-						
+
 							$("#copyaddressfromsoc").click(function() {
 								$(\'textarea[name="address"]\').text("'.addslashes($objsoc->address).'");
 								$(\'input[name="zipcode"]\').val("'.addslashes($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.addslashes($objsoc->town).'");
 								$(\'select[name="country_id"]\').val("'.addslashes($objsoc->country_id).'");
-							});
+								$(\'select[name="state_id"]\').val("'.addslashes($objsoc->state_id).'");
+            				});
 						})'."\n";
 				print '</script>'."\n";
             }
@@ -419,7 +420,7 @@ else
                 }
                 else {
                     print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
-                    print $form->select_company(GETPOST('socid','int'),'socid','',1);
+                    print $form->select_company($socid,'socid','',1);
                     print '</td></tr>';
                 }
             }
@@ -434,20 +435,27 @@ else
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Address");
-            if ($conf->use_javascript_ajax) print '<br /><a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
-            print '</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '</td><td colspan="2"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+
+            $rowspan=3;
+    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
+
+            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
+	        if ($conf->use_javascript_ajax && $socid) print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
+            print '</td>';
+            print '</tr>';
 
             // Zip / Town
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="2">';
             print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
             print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
             if (dol_strlen(trim($object->fk_pays)) == 0) $object->fk_pays = $objsoc->country_id;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="2">';
             print $form->select_country((isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
@@ -455,13 +463,13 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+                print '<tr><td>'.$langs->trans('State').'</td><td colspan="2">';
                 if ($object->country_id)
                 {
                     print $formcompany->select_state(isset($_POST["state_id"])?$_POST["state_id"]:$object->state_id,$object->country_code,'state_id');
                 }
                 else
-                {
+              {
                     print $countrynotdefined;
                 }
                 print '</td></tr>';
@@ -576,7 +584,7 @@ else
 	            $object->country_code =	$tmparray['code'];
 	            $object->country      =	$tmparray['label'];
             }
-			
+
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 
@@ -591,13 +599,14 @@ else
 								document.formsoc.action.value="edit";
 								document.formsoc.submit();
 							});
-						
+
 							$("#copyaddressfromsoc").click(function() {
 								$(\'textarea[name="address"]\').text("'.addslashes($objsoc->address).'");
 								$(\'input[name="zipcode"]\').val("'.addslashes($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.addslashes($objsoc->town).'");
 								$(\'select[name="country_id"]\').val("'.addslashes($objsoc->country_id).'");
-							});
+								$(\'select[name="state_id"]\').val("'.addslashes($objsoc->state_id).'");
+            				});
 						})'."\n";
 				print '</script>'."\n";
             }
@@ -641,17 +650,23 @@ else
 
             // Address
             print '<tr><td>'.$langs->trans("Address");
-			if ($conf->use_javascript_ajax) print '<br /><a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
-            print '</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '</td><td colspan="2"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+
+            $rowspan=3;
+    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
+
+            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
+            if ($conf->use_javascript_ajax) print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
+            print '</td></tr>';
 
             // Zip / Town
-            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="2">';
             print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
             print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
-            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="2">';
             print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
@@ -659,7 +674,7 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+                print '<tr><td>'.$langs->trans('State').'</td><td colspan="2">';
                 print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'state_id');
                 print '</td></tr>';
             }

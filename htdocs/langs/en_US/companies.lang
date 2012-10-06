@@ -77,7 +77,7 @@ Poste= Position
 DefaultLang=Language by default
 VATIsUsed=VAT is used
 VATIsNotUsed=VAT is not used
-CopyAddressFromSoc=Copy address from company
+CopyAddressFromSoc=Fill address with thirdparty address
 ##### Local Taxes #####
 LocalTax1IsUsedES= RE is used
 LocalTax1IsNotUsedES= RE is not used
