@@ -38,6 +38,7 @@ NumberOfUnit=Nombre de pièces
 UnitPurchaseValue=Prix d'achat unitaire
 TotalStock=Total en stock
 StockTooLow=Stock insuffisant
+StockLowerThanLimit=Stock inférieur au seuil d'alerte
 EnhancedValue=Valorisation
 PMPValue=Valorisation (PMP)
 PMPValueShort=PMP
