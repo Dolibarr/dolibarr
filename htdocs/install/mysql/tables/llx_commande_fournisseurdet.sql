@@ -1,7 +1,7 @@
 -- ===================================================================
--- Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2007      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2007-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -43,5 +43,6 @@ create table llx_commande_fournisseurdet
   product_type		         integer      DEFAULT 0,
   date_start                 datetime     DEFAULT NULL,       -- date debut si service
   date_end                   datetime     DEFAULT NULL,       -- date fin si service
-  info_bits	                 integer      DEFAULT 0     -- TVA NPR ou non
+  info_bits	                 integer      DEFAULT 0,     -- TVA NPR ou non
+  import_key				 varchar(14)
 )ENGINE=innodb;
