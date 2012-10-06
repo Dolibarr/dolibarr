@@ -1,6 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2003-2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2004      Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,5 +34,6 @@ create table llx_entrepot
   fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   valo_pmp        float(12,4),					-- valoristaion du stock en PMP
-  fk_user_author  integer
+  fk_user_author  integer,
+  import_key	  varchar(14)
 )ENGINE=innodb;
