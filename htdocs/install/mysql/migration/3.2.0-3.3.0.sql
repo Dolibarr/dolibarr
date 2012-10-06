@@ -759,3 +759,9 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 
 -- Add possibility to defined position/job of a user
 ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
+
+-- New Imports
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN import_key varchar(14) AFTER info_bits;
+ALTER TABLE llx_entrepot ADD COLUMN import_key varchar(14) AFTER fk_user_author;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN import_key varchar(14) AFTER fk_user;
+ALTER TABLE llx_product_stock ADD COLUMN import_key varchar(14) AFTER pmp;

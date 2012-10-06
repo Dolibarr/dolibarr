@@ -53,6 +53,7 @@ For users:
 - New: POS module can works with only one payment method (cach, chq, credit card).
 - New: Add possibility to defined position/job of a user
 - New: [ task #210 ] Can choose cash account during POS login
+- New: [ task #104 ] Can create an invoice from several orders
 
 New experimental modules:
 - New: Add margin and commissions management module.
