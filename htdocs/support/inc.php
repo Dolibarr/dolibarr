@@ -72,6 +72,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
+
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
 	$result=include_once $conffile;	// Load conf file

@@ -48,11 +48,6 @@ $formadmin=new FormAdmin('');	// Note: $db does not exist yet but we don't need 
 pHeader("", "check");   // Etape suivante = check
 
 
-print '<center>';
-print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
-print DOL_VERSION.'<br><br>';
-print '</center>';
-
 // Ask installation language
 print '<br><br><center>';
 print '<table>';

@@ -21,9 +21,9 @@ font-size:13px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
 /* background-color: #F4F4F4; */
-margin-left: 20px;
-margin-right: 20px;
-margin-top: 20px;
+margin-left: 30px;
+margin-right: 30px;
+margin-top: 15px;
 margin-bottom: 10px;
 }
 
@@ -61,6 +61,14 @@ padding: 0px 0px 0px 0px;
 margin: 0px 0px 0px 0px;
 }
 
+input[type=text] {
+    border: 1px solid #ACBCBB;
+}
+input[type=text]:focus, textarea:focus, select:focus {
+    border: 1px solid #ACBCBB;
+	box-shadow: 0 0 5px #C091AF;
+}
+
 table.main {
 background: #F0F0F0 url(background.png) repeat-x; 
 text-align: left;
@@ -84,6 +92,10 @@ padding-left: 4px;
 padding-right: 4px;
 color: #000000;
 border: 1px solid #888888 !important;
+}
+
+tr.listofchoices {
+    height: 42px;	
 }
 
 .blinkwait {
@@ -165,8 +177,8 @@ font-size: 13px;
 
 h3 {
 margin-top: 10px;
-font-size:18px;
-font-weight: bold;
+font-size:16px;
+font-weight: normal;
 color: #4965B3;
 }
 
@@ -183,7 +195,7 @@ td.label {
 color: #5945A3;
 padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
-border-bottom: 1px solid #8CACBB;
+border-bottom: 1px solid #CCCCDB;
 }
 
 /* Class for parameters example */
@@ -193,7 +205,7 @@ padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
 text-decoration:none;
 font-size: 11px;
-border-bottom: 1px solid #8CACBB;
+border-bottom: 1px solid #CCCCDB;
 }
 
 table {
@@ -218,4 +230,22 @@ ul {
 	margin: 0;
 	padding-top: 0;
 	padding-bottom: 0;
+}
+
+
+.button {
+	background-color: #FFFFFF;
+    background-position: bottom;
+    border: 1px solid #C0C0C0;
+    padding: 0.3em 0.7em;
+    margin: 0em 0.5em;
+    -moz-border-radius:0px 5px 0px 5px;
+    -webkit-border-radius:0px 5px 0px 5px;
+    border-radius:0px 5px 0px 5px;
+    -moz-box-shadow: 2px 2px 3px #CCC;
+    -webkit-box-shadow: 2px 2px 3px #CCC;
+    box-shadow: 2px 2px 3px #CCC;
+}
+a.button:hover {
+    text-decoration:none;
 }

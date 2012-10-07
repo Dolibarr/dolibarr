@@ -28,6 +28,7 @@
 if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
 require_once '../filefunc.inc.php';
 
+
 // Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_PATH'))
@@ -80,7 +81,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
-    	
+
 		// Clean parameters
     	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
     	$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
@@ -300,18 +301,21 @@ function conf($dolibarr_main_document_root)
 /**
  * Show HTML header of install pages
  *
- * @param	string		$soutitre	Title
- * @param 	string		$next		Next
- * @param 	string		$action     Action code ('set' or 'upgrade')
- * @param 	string		$param		Param
+ * @param	string		$soutitre			Title
+ * @param 	string		$next				Next
+ * @param 	string		$action    			Action code ('set' or 'upgrade')
+ * @param 	string		$param				Param
+ * @param	string		$forcejqueryurl		Set jquery relative URL (must end with / if defined)
  * @return	void
  */
-function pHeader($soutitre,$next,$action='set',$param='')
+function pHeader($soutitre,$next,$action='set',$param='',$forcejqueryurl='')
 {
     global $conf;
     global $langs;
     $langs->load("main");
     $langs->load("admin");
+
+    $jquerytheme='smoothness';
 
     // On force contenu dans format sortie
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -321,12 +325,30 @@ function pHeader($soutitre,$next,$action='set',$param='')
     print '<head>'."\n";
     print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/smoothness/jquery-ui-latest.custom.css" type="text/css">'."\n";
-    print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
+
+    print '<!-- Includes CSS for JQuery -->'."\n";
+    if ($forcejqueryurl) print '<link rel="stylesheet" type="text/css" href="'.$forcejquerydir.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+    else if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+    else print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+
+    print '<!-- Includes JS for JQuery -->'."\n";
+    if ($forcejqueryurl) print '<script type="text/javascript" src="'.$forcejqueryurl.'jquery.min.js"></script>'."\n";
+    else if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
+    if ($forcejqueryurl) print '<script type="text/javascript" src="'.$forcejqueryurl.'jquery-ui.min.js"></script>'."\n";
+    else if (constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
+
     print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
     print '</head>'."\n";
+
     print '<body>'."\n";
+
+    print '<center>';
+    print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+    print DOL_VERSION.'<br><br>';
+    print '</center>';
+
     print '<span class="titre">'.$langs->trans("DolibarrSetup");
     if ($soutitre) {
         print ' - '.$soutitre;
@@ -348,9 +370,10 @@ function pHeader($soutitre,$next,$action='set',$param='')
  * @param 	string	$nonext				No button "Next step"
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
+ * @param	string	$withpleasewait		Add also please wait tags
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
+function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
 {
     global $conf,$langs;
 
@@ -365,7 +388,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
         print '<div class="nextbutton" id="nextbutton"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
-        print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
+        if ($withpleasewait) print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
     }
     if ($setuplang)
     {

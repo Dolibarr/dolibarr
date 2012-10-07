@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
@@ -51,12 +51,6 @@ dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
 pHeader('','');     // No next step for navigation buttons. Next step is defined by clik on links.
 
-
-
-print '<center>';
-print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
-print DOL_VERSION.'<br><br>';
-print '</center>';
 
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
@@ -372,7 +366,7 @@ else
 		print '<td class="listofchoices" align="center">';
 		if ($allowinstall)
 		{
-			print '<a href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+			print '<a class="button" href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
 		}
 		else
 		{
@@ -391,9 +385,9 @@ else
 		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade=false;
 		$migrationscript=array( //array('from'=>'2.0.0', 'to'=>'2.1.0'),
 								//array('from'=>'2.1.0', 'to'=>'2.2.0'),
-								array('from'=>'2.2.0', 'to'=>'2.4.0'),
-								array('from'=>'2.4.0', 'to'=>'2.5.0'),
-								array('from'=>'2.5.0', 'to'=>'2.6.0'),
+								//array('from'=>'2.2.0', 'to'=>'2.4.0'),
+								//array('from'=>'2.4.0', 'to'=>'2.5.0'),
+								//array('from'=>'2.5.0', 'to'=>'2.6.0'),
 								array('from'=>'2.6.0', 'to'=>'2.7.0'),
 								array('from'=>'2.7.0', 'to'=>'2.8.0'),
 								array('from'=>'2.8.0', 'to'=>'2.9.0'),
@@ -448,7 +442,7 @@ else
 			if ($allowupgrade)
 			{
 				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
-				print '<a href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+				print '<a class="button" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{
