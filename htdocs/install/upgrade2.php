@@ -319,6 +319,19 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
+        // Script for VX (X<3.3) -> V3.3
+        $afterversionarray=explode('.','3.2.9');
+        $beforeversionarray=explode('.','3.3.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	migrate_categorie_association($db,$langs,$conf);
+
+        	// Reload modules
+        	migrate_reload_modules($db,$langs,$conf);
+
+        	// Reload menus
+        	migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
 
         print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
 
@@ -3352,6 +3365,98 @@ function migrate_mode_reglement($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+/**
+ * Migrate categorie association
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_categorie_association($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationCategorieAssociation')."</b><br>\n";
+
+	$error = 0;
+
+	if ($db->DDLInfoTable(MAIN_DB_PREFIX."categorie_association"))
+	{
+		dolibarr_install_syslog("upgrade2::migrate_categorie_association");
+
+		$db->begin();
+
+		$sqlSelect = "SELECT fk_categorie_mere, fk_categorie_fille";
+		$sqlSelect.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+
+		$resql = $db->query($sqlSelect);
+		if ($resql)
+		{
+			$i = 0;
+			$num = $db->num_rows($resql);
+
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+
+					$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."categorie SET ";
+					$sqlUpdate.= "fk_parent = ".$obj->fk_categorie_mere;
+					$sqlUpdate.= " WHERE rowid = ".$obj->fk_categorie_fille;
+
+					$result=$db->query($sqlUpdate);
+					if (! $result)
+					{
+						$error++;
+						dol_print_error($db);
+					}
+					print ". ";
+					$i++;
+				}
+			}
+			else
+			{
+				print $langs->trans('AlreadyDone')."<br>\n";
+			}
+
+			if (! $error)
+			{
+				// TODO DROP table in the next release
+				/*
+				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX."categorie_association";
+				if ($db->query($sqlDrop))
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
+				}
+				*/
+
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+		else
+		{
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+	else
+	{
+		print $langs->trans('AlreadyDone')."<br>\n";
+	}
+
+	print '</td></tr>';
+}
 
 /**
  * Migration directory

@@ -765,3 +765,11 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN import_key varchar(14) AFTER 
 ALTER TABLE llx_entrepot ADD COLUMN import_key varchar(14) AFTER fk_user_author;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN import_key varchar(14) AFTER fk_user;
 ALTER TABLE llx_product_stock ADD COLUMN import_key varchar(14) AFTER pmp;
+
+-- [ task #146 ] Remove table llx_categorie_association
+ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
+ALTER TABLE llx_categorie ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL AFTER rowid;
+ALTER TABLE llx_categorie MODIFY COLUMN label varchar(255) NOT NULL;
+ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (entity, fk_parent, label, type);
+ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
+ALTER TABLE llx_categorie ADD INDEX idx_categorie_label (label);

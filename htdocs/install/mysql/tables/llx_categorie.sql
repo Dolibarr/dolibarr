@@ -1,7 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2005      Brice Davoleau    <e1davole@iu-vannes.fr>
--- Copyright (C) 2005      Matthieu Valleton <mv@seeschloss.org>
--- Copyright (C) 2005-2009 Regis Houssin     <regis@dolibarr.fr>		
+-- Copyright (C) 2005		Brice Davoleau		<e1davole@iu-vannes.fr>
+-- Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
+-- Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>		
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,13 +21,15 @@
 create table llx_categorie
 (
 	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
-	label 		    varchar(255),                       -- category name
-	type	        tinyint DEFAULT 1 NOT NULL,         -- category type (product, supplier, customer)
-	entity          integer DEFAULT 1 NOT NULL,	        -- multi company id
-	description 	text,                               -- description of the category
-	fk_soc          integer DEFAULT NULL,					-- attribution of the category has a company (for product only)
-	visible         tinyint DEFAULT 1 NOT NULL,           -- determine if the products are visible or not
-    import_key      varchar(14)                  -- Import key
+	entity          integer DEFAULT 1 NOT NULL,			-- multi company id
+	fk_parent		integer DEFAULT 0 NOT NULL,
+	label 		    varchar(255) NOT NULL,				-- category name
+	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer)
+	description 	text,								-- description of the category
+	fk_soc          integer DEFAULT NULL,				-- attribution of the category has a company (for product only)
+	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not
+    import_key      varchar(14)							-- Import key
+    
 )ENGINE=innodb;
 
 -- 
@@ -36,12 +38,4 @@ create table llx_categorie
 -- 0 : product
 -- 1 : supplier
 -- 2 : customer
---
-
---
--- List of codes for the field entity
---
--- 1 : first company category type
--- 2 : second company category type
--- 3 : etc...
 --

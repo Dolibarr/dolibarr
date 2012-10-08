@@ -45,7 +45,7 @@ $socid=GETPOST('socid','int');
 $nom=GETPOST('nom');
 $description=GETPOST('description');
 $visible=GETPOST('visible');
-$catMere=GETPOST('catMere');
+$parent=GETPOST('parent');
 
 if ($origin)
 {
@@ -113,7 +113,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object->visible		= $visible;
 	$object->type			= $type;
 
-	if ($catMere != "-1") $object->id_mere = $catMere;
+	if ($parent != "-1") $object->fk_parent = $parent;
 
 	if (! $object->label)
 	{
@@ -222,7 +222,7 @@ if ($user->rights->categorie->creer)
 
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-		print $form->select_all_categories($type,$catorigin);
+		print $form->select_all_categories($type, $catorigin);
 		print '</td></tr>';
 
 		print '</table>';

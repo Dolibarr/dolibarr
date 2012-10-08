@@ -154,13 +154,16 @@ print '</tr>';
 
 // Define fullpathselected ( _x_y_z ) of $section parameter
 $fullpathselected='';
-foreach($fulltree as $key => $val)
+if (! empty($section))
 {
-	//print $val['id']."-".$section."<br>";
-	if ($val['id'] == $section)
+	foreach($fulltree as $key => $val)
 	{
-		$fullpathselected=$val['fullpath'];
-		break;
+		//print $val['id']."-".$section."<br>";
+		if ($val['id'] == $section)
+		{
+			$fullpathselected=$val['fullpath'];
+			break;
+		}
 	}
 }
 //print "fullpathselected=".$fullpathselected."<br>";
@@ -169,7 +172,7 @@ foreach($fulltree as $key => $val)
 $expandedsectionarray=array();
 if (isset($_SESSION['dol_catexpandedsectionarray'.$type])) $expandedsectionarray=explode(',',$_SESSION['dol_catexpandedsectionarray'.$type]);
 
-if ($section && $_GET['sectionexpand'] == 'true')
+if (! empty($section) && $_GET['sectionexpand'] == 'true')
 {
 	// We add all sections that are parent of opened section
 	$pathtosection=explode('_',$fullpathselected);
@@ -182,7 +185,7 @@ if ($section && $_GET['sectionexpand'] == 'true')
 	}
 	$_SESSION['dol_catexpandedsectionarray'.$type]=join(',',$expandedsectionarray);
 }
-if ($section && $_GET['sectionexpand'] == 'false')
+if (! empty($section) && $_GET['sectionexpand'] == 'false')
 {
 	// We removed all expanded sections that are child of the closed section
 	$oldexpandedsectionarray=$expandedsectionarray;
@@ -207,10 +210,7 @@ foreach($fulltree as $key => $val)
 	$showline=0;
 
 	// If directory is son of expanded directory, we show line
-	if (isset($val['id_mere']) && in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
-	// If directory is brother of selected directory, we show line
-	// FIXME $ecmdirstatic not exist or not instantiate ?
-	//elseif (isset($val['id_mere']) && $val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
+	if (isset($val['fk_parent']) && in_array($val['fk_parent'],$expandedsectionarray)) $showline=4;
 	// If directory is parent of selected directory or is selected directory, we show line
 	elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
 	// If we are level one we show line
@@ -239,8 +239,6 @@ foreach($fulltree as $key => $val)
 		print '<td valign="top">';
 		//print $val['fullpath']."(".$showline.")";
 		$n='2';
-		// FIXME $b not define ?
-		//if ($b == 0 || ! in_array($val['id'],$expandedsectionarray)) $n='3';
 		if (! in_array($val['id'],$expandedsectionarray)) $n='3';
 		if (! in_array($val['id'],$expandedsectionarray)) $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
 		else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
@@ -269,7 +267,7 @@ foreach($fulltree as $key => $val)
 
 		// Description
 		print '<td>';
-		print dol_trunc($categstatic->get_desc($val['id']),48);
+		print dol_trunc($val['description'],48);
 		print '</td>';
 
 		// Link to category card
