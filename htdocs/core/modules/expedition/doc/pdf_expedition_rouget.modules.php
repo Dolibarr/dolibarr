@@ -525,8 +525,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$text=$linkedobject->ref;
 				if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
 				$Yoff = $Yoff+8;
-				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
-				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
+				$pdf->SetXY($this->page_largeur - $this->marge_droite - 100,$Yoff);
+				$pdf->MultiCell(100, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
 				$Yoff = $Yoff+4;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - 60,$Yoff);
 				$pdf->MultiCell(60, 2, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->commande->date,"daytext",false,$outputlangs,true), 0, 'R');
@@ -576,7 +576,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external','SHIPPING');
+			$arrayidcontact=$object->$origin->getIdContact('external','SHIPPING');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
