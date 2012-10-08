@@ -375,7 +375,7 @@ display_errors = On
 ; Even when display_errors is on, errors that occur during PHP's startup
 ; sequence are not displayed.  It's strongly recommended to keep
 ; display_startup_errors off, except for when debugging.
-display_startup_errors = Off
+display_startup_errors = On
 
 ; Log errors into a log file (server-specific log, stderr, or error_log (below))
 ; As stated above, you're strongly advised to use error logging in place of
@@ -534,7 +534,7 @@ doc_root =
 user_dir =
 
 ; Directory in which the loadable extensions (modules) reside.
-extension_dir = "WAMPROOT/bin/php/php5.3.1/ext/"
+extension_dir = "WAMPROOT/bin/php/phpWAMPPHPVERSION/ext/"
 
 ; Whether or not to enable the dl() function.  The dl() function does NOT work
 ; properly in multithreaded servers, such as IIS or Zeus, and is automatically
@@ -657,7 +657,7 @@ extension=php_bz2.dll
 extension=php_curl.dll
 ;extension=php_dba.dll
 ;extension=php_dbase.dll
-extension=php_exif.dll
+;extension=php_exif.dll
 ;extension=php_fdf.dll
 extension=php_gd2.dll
 ;extension=php_gettext.dll
@@ -677,7 +677,7 @@ extension=php_mysql.dll
 extension=php_mysqli.dll
 ;extension=php_oci8.dll
 extension=php_openssl.dll
-extension=php_pdo.dll
+;extension=php_pdo.dll              ; for php 5.2.11
 ;extension=php_pdo_firebird.dll
 ;extension=php_pdo_mssql.dll
 extension=php_pdo_mysql.dll
@@ -685,19 +685,19 @@ extension=php_pdo_mysql.dll
 ;extension=php_pdo_oci8.dll
 ;extension=php_pdo_odbc.dll
 ;extension=php_pdo_pgsql.dll
-;extension=php_pdo_sqlite.dll
-extension=php_pgsql.dll
+extension=php_pdo_sqlite.dll
+;extension=php_pgsql.dll
 ;extension=php_pspell.dll
-extension=php_shmop.dll
+;extension=php_shmop.dll
 ;extension=php_snmp.dll
 extension=php_soap.dll
 extension=php_sockets.dll
-extension=php_sqlite.dll
+;extension=php_sqlite.dll
 ;extension=php_sybase_ct.dll
 ;extension=php_tidy.dll
 ;extension=php_xmlrpc.dll
 ;extension=php_xsl.dll
-extension=php_zip.dll
+;extension=php_zip.dll
 ;extension=php_xdebug-2.0.5-5.2.dll
 
 
@@ -710,7 +710,8 @@ extension=php_zip.dll
 ; date.timezone = UTC          => You have local = greenwich.
 ; date.timzeone = Europe/Paris => To use TZ+1
 ; See http://php.net/date.timezone
-;date.timezone =
+date.timezone = UTC
+;date.timezone = USERTIMEZONE
 
 ;date.default_latitude = 31.7667
 ;date.default_longitude = 35.2333

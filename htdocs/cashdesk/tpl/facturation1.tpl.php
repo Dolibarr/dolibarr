@@ -184,7 +184,7 @@ $langs->load("cashdesk");
 			<tr>
 			<?php
 			print '<td>';
-			if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) || $conf->global->CASHDESK_ID_BANKACCOUNT_CASH < 0)
+			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CASH']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
@@ -192,7 +192,7 @@ $langs->load("cashdesk");
 			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
 			print '</td>';
 			print '<td>';
-			if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE) || $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE < 0)
+			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
@@ -200,7 +200,7 @@ $langs->load("cashdesk");
 			else print '<input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
 			print '</td>';
 			print '<td>';
-			if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB) || $conf->global->CASHDESK_ID_BANKACCOUNT_CB < 0)
+			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cheque").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';

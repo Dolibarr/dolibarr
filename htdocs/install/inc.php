@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 // Just to define version DOL_VERSION
 if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
 require_once '../filefunc.inc.php';
+
 
 // Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
@@ -80,7 +82,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
-    	
+
 		// Clean parameters
     	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
     	$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
@@ -300,20 +302,34 @@ function conf($dolibarr_main_document_root)
 /**
  * Show HTML header of install pages
  *
- * @param	string		$soutitre	Title
- * @param 	string		$next		Next
- * @param 	string		$action     Action code ('set' or 'upgrade')
- * @param 	string		$param		Param
+ * @param	string		$subtitle			Title
+ * @param 	string		$next				Next
+ * @param 	string		$action    			Action code ('set' or 'upgrade')
+ * @param 	string		$param				Param
+ * @param	string		$forcejqueryurl		Set jquery relative URL (must end with / if defined)
  * @return	void
  */
-function pHeader($soutitre,$next,$action='set',$param='')
+function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 {
     global $conf;
     global $langs;
     $langs->load("main");
     $langs->load("admin");
 
-    // On force contenu dans format sortie
+    if ($forcejqueryurl)
+    {
+        $jQueryCustomPath = $forcejqueryurl;
+        $jQueryUiCustomPath = $forcejqueryurl;
+    }
+    else
+    {
+        $jQueryCustomPath = (defined('JS_JQUERY') && constant('JS_JQUERY')) ? JS_JQUERY : false;
+        $jQueryUiCustomPath = (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) ? JS_JQUERY_UI : false;
+    }
+
+    $jquerytheme='smoothness';
+
+    // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
@@ -321,15 +337,30 @@ function pHeader($soutitre,$next,$action='set',$param='')
     print '<head>'."\n";
     print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/smoothness/jquery-ui-latest.custom.css" type="text/css">'."\n";
-    print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
+
+    print '<!-- Includes CSS for JQuery -->'."\n";
+    if ($jQueryUiCustomPath) print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+    else print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+
+    print '<!-- Includes JS for JQuery -->'."\n";
+    if ($jQueryCustomPath) print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
+    if ($jQueryUiCustomPath) print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
+
     print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
     print '</head>'."\n";
+
     print '<body>'."\n";
+
+    print '<div style="text-align:center">';
+    print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+    print DOL_VERSION;
+    print '</div><br><br>';
+
     print '<span class="titre">'.$langs->trans("DolibarrSetup");
-    if ($soutitre) {
-        print ' - '.$soutitre;
+    if ($subtitle) {
+        print ' - '.$subtitle;
     }
     print '</span>'."\n";
 
@@ -348,9 +379,10 @@ function pHeader($soutitre,$next,$action='set',$param='')
  * @param 	string	$nonext				No button "Next step"
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
+ * @param	string	$withpleasewait		Add also please wait tags
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
+function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
 {
     global $conf,$langs;
 
@@ -365,7 +397,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='')
         print '<div class="nextbutton" id="nextbutton"><input type="submit" value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
-        print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
+        if ($withpleasewait) print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
     }
     if ($setuplang)
     {

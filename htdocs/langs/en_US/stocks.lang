@@ -38,6 +38,7 @@ NumberOfUnit=Number of units
 UnitPurchaseValue=Unit purchase price
 TotalStock=Total in stock
 StockTooLow=Stock too low
+StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Value
 PMPValue=Weighted average price
 PMPValueShort=WAP

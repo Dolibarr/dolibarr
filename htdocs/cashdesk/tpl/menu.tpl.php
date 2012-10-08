@@ -29,23 +29,23 @@ if (!empty($_SESSION["CASHDESK_ID_THIRDPARTY"]))
 	$company->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
 	$companyLink = $company->getNomUrl(1);
 }
-if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
+if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]))
 {
 	$bankcash=new Account($db);
-	$bankcash->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
+	$bankcash->fetch($_SESSION["CASHDESK_ID_BANKACCOUNT_CASH"]);
 	$bankcash->label=$bankcash->ref;
 	$bankcashLink = $bankcash->getNomUrl(1);
 }
-if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB))
+if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))
 {
 	$bankcb=new Account($db);
-	$bankcb->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CB);
+	$bankcb->fetch($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]);
 	$bankcbLink = $bankcb->getNomUrl(1);
 }
-if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
+if (!empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]))
 {
 	$bankcheque=new Account($db);
-	$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
+	$bankcheque->fetch($_SESSION["CASHDESK_ID_BANKACCOUNT_CHEQUE"]);
 	$bankchequeLink = $bankcheque->getNomUrl(1);
 }
 if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled))

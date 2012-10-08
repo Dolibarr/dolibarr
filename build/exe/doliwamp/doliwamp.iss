@@ -81,7 +81,7 @@ Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
-Name: "{app}\bin\apache\apache2.2.14\logs"
+Name: "{app}\bin\apache\apache2.2.11\logs"
 
 [Files]
 ; Stop/start
@@ -100,10 +100,11 @@ Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; F
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.2.6, php 5.2.5 (5.2.11+5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45 or 5.1.36
+; Value OK: apache 2.2.6, php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45 or 5.1.36
+; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45 or 5.1.36
 Source: "C:\Program Files\Wamp\apps\phpmyadmin3.2.0.1\*.*"; DestDir: "{app}\apps\phpmyadmin3.2.0.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files\Wamp\bin\apache\apache2.2.14\*.*"; DestDir: "{app}\bin\apache\apache2.2.14"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files\Wamp\bin\php\php5.3.1\*.*"; DestDir: "{app}\bin\php\php5.3.1"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\Program Files\Wamp\bin\apache\apache2.2.11\*.*"; DestDir: "{app}\bin\apache\apache2.2.11"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\Program Files\Wamp\bin\php\php5.3.0\*.*"; DestDir: "{app}\bin\php\php5.3.0"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 ; Mysql data files (does not overwrite if exists)
 Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
@@ -117,9 +118,9 @@ Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".
 Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin3.2.0.1"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.2.14\conf"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.2.11\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.3.1"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.3.0"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
@@ -194,8 +195,8 @@ end;
 procedure InitializeWizard();
 begin
   //version des applis, a modifier pour chaque version de WampServer 2
-  apacheVersion := '2.2.14';
-  phpVersion := '5.3.1' ;
+  apacheVersion := '2.2.11';
+  phpVersion := '5.3.0' ;
   mysqlVersion := '5.0.45';
   phpmyadminVersion := '3.2.0.1';
 
@@ -383,8 +384,6 @@ begin
 
     phpDllCopy := 'php5activescript.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-    phpDllCopy := 'php5isapi.dll';
-    filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'php5nsapi.dll';
     filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
     phpDllCopy := 'php5ts.dll';
@@ -532,7 +531,14 @@ begin
 	      end;
 	      if browser = 'iexplore.exe' then
 	      begin
-	        GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+            if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
+            begin
+               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer','exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+	        end
+	        else
+	        begin
+               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+	        end;
 	      end;
 	
 	      LoadStringFromFile (srcFile, srcContents);
@@ -629,10 +635,11 @@ begin
 		    if not FileExists (destFile) and FileExists (srcFile) then
 		    begin
 		      LoadStringFromFile (srcFile, srcContents);
-		
+
 		      //installDir et version de php
 		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
+              StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
 		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		
@@ -871,6 +878,7 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
+              StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
 		
@@ -886,6 +894,7 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
+              StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
 		

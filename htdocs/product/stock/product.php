@@ -243,11 +243,16 @@ if ($id > 0 || $ref)
         print '</td>';
         print '</tr>';
 
+        // Stock
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
+        print '</td></tr>';
+
         // Real stock
         $product->load_stock();
 		print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
 		print '<td>'.$product->stock_reel;
-		if ($product->seuil_stock_alerte && ($product->stock_reel < $product->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockTooLow"));
+		if ($product->seuil_stock_alerte && ($product->stock_reel < $product->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 		print '</td>';
 		print '</tr>';
 
@@ -276,7 +281,7 @@ if ($id > 0 || $ref)
 			print "<td>".$product->stock_theorique;
 			if ($product->stock_theorique < $product->seuil_stock_alerte)
 			{
-				print ' '.img_warning($langs->trans("StockTooLow"));
+				print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 			}
 			print '</td>';
 			print '</tr>';
@@ -312,11 +317,6 @@ if ($id > 0 || $ref)
 			}
 			print '</td></tr>';
 		}
-
-        // Stock
-        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
-        print '</td></tr>';
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";

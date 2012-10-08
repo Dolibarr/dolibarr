@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -25,8 +25,8 @@
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
  */
-include_once 'inc.php';
 
+include_once 'inc.php';
 
 $err=0;
 
@@ -36,17 +36,19 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 $langs->load("errors");
 
+dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
+
 // You can force preselected values of the config step of Dolibarr by adding a file
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
-if (! isset($force_install_noedit))				$force_install_noedit='';
+if (! isset($force_install_noedit))			$force_install_noedit='';	// 1=To block var specific to distrib, 2 to block all technical parameters
 if (! isset($force_install_type))				$force_install_type='';
 if (! isset($force_install_dbserver))			$force_install_dbserver='';
 if (! isset($force_install_port))				$force_install_port='';
 if (! isset($force_install_database))			$force_install_database='';
-if (! isset($force_install_prefix))				$force_install_prefix='';
-if (! isset($force_install_createdatabase))		$force_install_createdatabase='';
+if (! isset($force_install_prefix))			$force_install_prefix='';
+if (! isset($force_install_createdatabase))	$force_install_createdatabase='';
 if (! isset($force_install_databaselogin))		$force_install_databaselogin='';
 if (! isset($force_install_databasepass))		$force_install_databasepass='';
 if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin='';
@@ -54,18 +56,20 @@ if (! isset($force_install_databaserootpass))	$force_install_databaserootpass=''
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
-if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";	// Must be after inc.php
+if (@file_exists($forcedfile)) {
+	$useforcedwizard=true; include_once $forcedfile;
+}
 
-dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
-
+//$force_install_message='This is the message';
+//$force_install_noedit=1;
 
 
 /*
  *	View
  */
 
-pHeader($langs->trans("ConfigurationFile"),"etape1");
+pHeader($langs->trans("ConfigurationFile"),"etape1","set","",($force_dolibarr_js_JQUERY?$force_dolibarr_js_JQUERY.'/':''));
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -77,11 +81,27 @@ if (! is_writable($conffile))
 
 if (! empty($force_install_message))
 {
-    print '<b>'.$langs->trans($force_install_message).'</b><br>';
+    print '<div><table><tr><td valign="middle"><img src="../theme/common/information.png" style="height:40px;"></td><td valign="middle">'.$langs->trans($force_install_message).'</td></tr></table>';
+
+    /*print '<script type="text/javascript">';
+    print '	jQuery(document).ready(function() {
+				jQuery("#linktoshowtechnicalparam").click(function() {
+					jQuery(".hidewhenedit").hide();
+					jQuery(".hidewhennoedit").show();
+				});';
+    			if ($force_install_noedit) print 'jQuery(".hidewhennoedit").hide();';
+	print '});';
+    print '</script>';
+
+    print '<br><a href="#" id="linktoshowtechnicalparam" class="hidewhenedit">'.$langs->trans("ShowEditTechnicalParameters").'</a><br>';
+    */
 }
 
 ?>
-<table class="nobordernopadding">
+<div>
+
+
+<table class="nobordernopadding<?php if ($force_install_noedit) print ' hidewhennoedit'; ?>">
 
 	<tr>
 		<td colspan="3" class="label" align="center">
@@ -449,6 +469,7 @@ if (! empty($force_install_message))
 	</tr>
 
 </table>
+</div>
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
@@ -480,7 +501,7 @@ jQuery(document).ready(function() {
 	jQuery("#db_create_user").click(function() {
 		init_needroot();
 	});
-	<?php if ($force_install_noedit) { ?>
+	<?php if ($force_install_noedit && empty($force_install_databasepass)) { ?>
 	jQuery("#db_pass").focus();
 	<?php } ?>
 });

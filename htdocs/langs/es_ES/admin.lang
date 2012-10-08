@@ -346,11 +346,12 @@ OldVATRates=Tasa de IVA antigua
 NewVATRates=Tasa de IVA nueva
 PriceBaseTypeToChange=Cambiar el precio cuya referencia de base es
 MassConvert=Convertir masivamente
-String=Cadena
+String=Cadena de texto
 TextLong=Texto largo
 Int=Numérico entero
 Float=Decimal
 DateAndTime=Fecha y hora
+Unique=Único
 
 # Modules
 Module0Name=Usuarios y grupos
@@ -839,6 +840,11 @@ SetupDescription5=Las otras entradas de configuración gestionan parámetros opc
 EventsSetup=Configuración del registro de eventos
 LogEvents=Auditoría de la seguridad de eventos
 Audit=Auditoría
+InfoDolibarr=Info Dolibarr
+InfoOS=Info SO
+InfoWebServer=Info servidor
+InfoDatabase=Info base de datos
+InfoPHP=Info PHP
 ListEvents=Auditoría de eventos
 ListOfSecurityEvents=Listado de eventos de seguridad Dolibarr
 SecurityEventsPurged=Eventos de seguridad purgados

@@ -160,6 +160,7 @@ LinkedElementsInvalidDeleted=<b>%s</b> liaisons invalides ont été supprimées
 NothingToDelete=Aucune liaison invalide trouvée
 SourceType=Source
 TargetType=Cible
+ShowEditTechnicalParameters=Cliquer ici pour afficher/éditer les paramètres techniques (mode expert)
 
 #########
 # upgrade
