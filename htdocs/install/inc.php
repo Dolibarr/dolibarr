@@ -328,15 +328,15 @@ function pHeader($soutitre,$next,$action='set',$param='',$forcejqueryurl='')
 
     print '<!-- Includes CSS for JQuery -->'."\n";
     if ($forcejqueryurl) print '<link rel="stylesheet" type="text/css" href="'.$forcejquerydir.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
-    else if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+    else if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
     else print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
 
     print '<!-- Includes JS for JQuery -->'."\n";
     if ($forcejqueryurl) print '<script type="text/javascript" src="'.$forcejqueryurl.'jquery.min.js"></script>'."\n";
-    else if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
+    else if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
     else print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
     if ($forcejqueryurl) print '<script type="text/javascript" src="'.$forcejqueryurl.'jquery-ui.min.js"></script>'."\n";
-    else if (constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js"></script>'."\n";
+    else if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js"></script>'."\n";
     else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
 
     print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";

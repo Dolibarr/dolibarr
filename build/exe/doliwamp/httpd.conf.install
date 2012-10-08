@@ -39,7 +39,7 @@ MaxRequestsPerChild  0
 # at a local disk.  If you wish to share the same ServerRoot for multiple
 # httpd daemons, you will need to change at least LockFile and PidFile.
 #
-ServerRoot "WAMPROOT/bin/apache/apache2.2.14"
+ServerRoot "WAMPROOT/bin/apache/apacheWAMPAPACHEVERSION"
 
 #
 # Listen: Allows you to bind Apache to specific IP addresses and/or

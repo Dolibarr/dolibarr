@@ -501,7 +501,7 @@ jQuery(document).ready(function() {
 	jQuery("#db_create_user").click(function() {
 		init_needroot();
 	});
-	<?php if ($force_install_noedit) { ?>
+	<?php if ($force_install_noedit && empty($force_install_databasepass)) { ?>
 	jQuery("#db_pass").focus();
 	<?php } ?>
 });
