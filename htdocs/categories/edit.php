@@ -38,7 +38,7 @@ $socid=GETPOST('socid','int');
 $nom=GETPOST('nom');
 $description=GETPOST('description');
 $visible=GETPOST('visible');
-$catMere=GETPOST('catMere');
+$parent=GETPOST('parent');
 
 if ($id == "")
 {
@@ -66,20 +66,20 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	$categorie->socid          = ($socid ? $socid : 'null');
 	$categorie->visible        = $visible;
 
-	if ($catMere != "-1")
-		$categorie->id_mere = $catMere;
+	if ($parent != "-1")
+		$categorie->fk_parent = $parent;
 	else
-		$categorie->id_mere = "";
+		$categorie->fk_parent = "";
 
 
-	if (! $categorie->label)
+	if (empty($categorie->label))
 	{
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 	}
-	if (! $categorie->description)
+	if (empty($categorie->description))
 	{
-		$_GET["action"] = 'create';
+		$action = 'create';
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
 	}
 	if (empty($categorie->error))
@@ -149,7 +149,7 @@ print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
-print $form->select_all_categories($type,$object->id_mere,'catMere',64,$object->id);
+print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
 print '</td></tr>';
 
 print '</table>';

@@ -2133,22 +2133,20 @@ class Form
      *
      *    @param	int		$type				Type de categories (0=product, 1=supplier, 2=customer, 3=member)
      *    @param    string	$selected    		Id of category preselected
-     *    @param    string	$select_name		HTML field name
+     *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
      *    @return	void
      */
-    function select_all_categories($type, $selected='', $select_name="", $maxlength=64, $excludeafterid=0)
+    function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
     {
         global $langs;
         $langs->load("categories");
 
-        if ($select_name=="") $select_name="catMere";
-
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
-        $output = '<select class="flat" name="'.$select_name.'">';
+        $output = '<select class="flat" name="'.$htmlname.'">';
         if (is_array($cate_arbo))
         {
             if (! count($cate_arbo)) $output.= '<option value="-1" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
