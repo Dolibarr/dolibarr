@@ -90,6 +90,7 @@ class modProduct extends DolibarrModules
 		// Boxes
 		$this->boxes = array();
 		$this->boxes[0][1] = "box_produits.php";
+		$this->boxes[0][2] = "box_produits_alerte_stock.php";
 
 		// Permissions
 		$this->rights = array();
