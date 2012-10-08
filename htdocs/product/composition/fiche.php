@@ -41,7 +41,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel','alpha');
 $key=GETPOST('key');
-$catMere=GETPOST('catMere');
+$parent=GETPOST('parent');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -144,9 +144,9 @@ if ($action == 'search')
 			$sql.= " OR p.label LIKE '%".$key."%')";
 		}
 	}
-	if (! empty($conf->categorie->enabled) && $catMere != -1 and $catMere)
+	if (! empty($conf->categorie->enabled) && ! empty($parent) && $parent != -1)
 	{
-		$sql.= " AND cp.fk_categorie ='".$db->escape($catMere)."'";
+		$sql.= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql.= " ORDER BY p.ref ASC";
 
@@ -366,7 +366,7 @@ if ($id || $ref)
 		if (! empty($conf->categorie->enabled))
 		{
 			print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
-			print '<td>'.$form->select_all_categories(0,$catMere).'</td></tr>';
+			print '<td>'.$form->select_all_categories(0, $parent).'</td></tr>';
 		}
 
 		print '</table>';

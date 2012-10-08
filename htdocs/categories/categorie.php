@@ -39,7 +39,7 @@ $type	= GETPOST('type');
 $mesg	= GETPOST('mesg');
 
 $removecat = GETPOST('removecat','int');
-$catMere=GETPOST('catMere','int');
+$parent=GETPOST('parent','int');
 
 $dbtablename = '';
 
@@ -122,7 +122,7 @@ if ($removecat > 0)
 }
 
 // Add object into a category
-if ($catMere > 0)
+if ($parent > 0)
 {
 	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
@@ -151,7 +151,7 @@ if ($catMere > 0)
 		$elementtype = 'member';
 	}
 	$cat = new Categorie($db);
-	$result=$cat->fetch($catMere);
+	$result=$cat->fetch($parent);
 
 	$result=$cat->add_type($object,$elementtype);
 	if ($result >= 0)
