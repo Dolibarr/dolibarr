@@ -1127,7 +1127,7 @@ if ($step == 5 && $datatoimport)
 
 	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
 
-	$param='&leftmenu=import&step=5&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
+	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param;
 	if ($excludefirstline) {
 		$param.='&excludefirstline=1';
@@ -1191,7 +1191,7 @@ if ($step == 5 && $datatoimport)
 	print '</td><td>';
 	print '<input type="checkbox" name="excludefirstline" value="1"';
 	print ($excludefirstline?' checked="checked"':'');
-	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?excludefirstline='.($excludefirstline?'0':'1').$param2.'\';">';
+	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?step=5&excludefirstline='.($excludefirstline?'0':'1').$param2.'\';">';
 	print ' '.$langs->trans("DoNotImportFirstLine");
 	print '</td></tr>';
 
