@@ -174,74 +174,43 @@ MigrationContract=Migration de données sur les contrats
 MigrationSuccessfullUpdate=Mise à jour réussie
 MigrationUpdateFailed=La mise à jour a échoué
 MigrationRelationshipTables=Migration des tables de liaison (%s)
-
-# Payments Update
 MigrationPaymentsUpdate=Mise à jour des paiements (lien n-n paiements-factures)
 MigrationPaymentsNumberToUpdate=%s paiement(s) a mettre à jour
 MigrationProcessPaymentUpdate=Mise à jour paiement(s) %s
 MigrationPaymentsNothingToUpdate=Pas ou plus de paiement orphelin à corriger.
 MigrationPaymentsNothingUpdatable=Pas ou plus de paiement orphelin corrigible.
-
-# Contracts Update
 MigrationContractsUpdate=Mise à jour des contrats sans détail (gestion du contrat + détail de contrat)
 MigrationContractsNumberToUpdate=%s contrat(s) a mettre à jour
 MigrationContractsLineCreation=Création ligne contrat pour contrat ref %s
 MigrationContractsNothingToUpdate=Pas ou plus de contrats (liés à un produit) sans ligne de détail à corriger.
 MigrationContractsFieldDontExist=Le champs fk_facture n'existe plus. Pas d'opération à faire.
-
-# Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Mise à jour des dates de contrats non renseignées
 MigrationContractsEmptyDatesUpdateSuccess=Ok pour date de contrat
 MigrationContractsEmptyDatesNothingToUpdate=Pas ou plus de date de contrats à renseigner.
 MigrationContractsEmptyCreationDatesUpdateSuccess=Ok pour date création
 MigrationContractsEmptyCreationDatesNothingToUpdate=Pas ou plus de date de création à renseigner.
-
-# Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Mise à jour dates contrat incorrectes (pour contrats avec détail en service)
 MigrationContractsInvalidDateFix=Correction contrat %s (Date contrat=%s, Date mise service min=%s)
 MigrationContractsInvalidDatesNumber=%s contrats modifiés
 MigrationContractsInvalidDatesNothingToUpdate=Pas ou plus de contrats à corriger.
-
-# Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Mise à jour des dates de création de contrat qui ont une valeur incohérente
 MigrationContractsIncoherentCreationDateUpdateSuccess=Ok
 MigrationContractsIncoherentCreationDateNothingToUpdate=Pas ou plus de date de contrats à corriger.
-
-# Reopening Contracts
 MigrationReopeningContracts=Réouverture des contrats qui ont au moins un service actif non fermé
 MigrationReopenThisContract=Réouverture contrat %s
 MigrationReopenedContractsNumber=%s contrats modifiés
 MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à ré-ouvrir.
-
-# Migration transfert
 MigrationBankTransfertsUpdate=Mise à jour des liens entre écriture bancaire et un transfert entre compte
 MigrationBankTransfertsNothingToUpdate=Aucun lien non à jour
-
-# Migration delivery
 MigrationShipmentOrderMatching=Mise à jour bon expédition
 MigrationDeliveryOrderMatching=Mise à jour bon réception
 MigrationDeliveryDetail=Mise à jour bon réception
-
-# Migration stock
 MigrationStockDetail=Mise à jour valeur en stock des produits
-
-# Migration menus
 MigrationMenusDetail=Mise à jour table des menus dynamiques
-
-# Migration delivery address
 MigrationDeliveryAddress=Mise à jour des adresses de livraison dans les bons d'expédition
-
-# Migration project task actors
 MigrationProjectTaskActors=Migration de la table llx_projet_task_actors
-
-# Migration project user resp
 MigrationProjectUserResp=Migration du champ fk_user_resp de llx_projet vers llx_element_contact
-
-# Migration project task time
 MigrationProjectTaskTime=Mise à jour du temps consommé en secondes
-
-# Migration Acctioncom
 MigrationActioncommElement=Mise à jour des données des actions des éléments
-
-# Migration payment mode
 MigrationPaymentMode=Migration des modes de paiement
+MigrationCategorieAssociation=Migration des categories

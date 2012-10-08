@@ -169,73 +169,42 @@ MigrationContract=Data migration for contracts
 MigrationSuccessfullUpdate=Upgrade successful
 MigrationUpdateFailed=Failed upgrade process
 MigrationRelationshipTables=Data migration for relationship tables (%s)
-
-# Payments Update
 MigrationPaymentsUpdate=Payment data correction
 MigrationPaymentsNumberToUpdate=%s payment(s) to update
 MigrationProcessPaymentUpdate=Update payment(s) %s
 MigrationPaymentsNothingToUpdate=No more things to do
 MigrationPaymentsNothingUpdatable=No more payments that can be corrected
-
-# Contracts Update
 MigrationContractsUpdate=Contract data correction
 MigrationContractsNumberToUpdate=%s contract(s) to update
 MigrationContractsLineCreation=Create contract line for contract ref %s
 MigrationContractsNothingToUpdate=No more things to do
 MigrationContractsFieldDontExist=Field fk_facture does not exists anymore. Nothing to do.
-
-# Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Contract empty date correction
 MigrationContractsEmptyDatesUpdateSuccess=Contract emtpy date correction done successfuly
 MigrationContractsEmptyDatesNothingToUpdate=No contract empty date to correct
 MigrationContractsEmptyCreationDatesNothingToUpdate=No contract creation date to correct
-
-# Contracts Invalid Dates Update
 MigrationContractsInvalidDatesUpdate=Bad value date contract correction
 MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=%s)
 MigrationContractsInvalidDatesNumber=%s contracts modified
 MigrationContractsInvalidDatesNothingToUpdate=No date with bad value to correct
-
-# Contracts Incoherent Dates Update
 MigrationContractsIncoherentCreationDateUpdate=Bad value contract creation date correction
 MigrationContractsIncoherentCreationDateUpdateSuccess=Bad value contract creation date correction done succesfuly
 MigrationContractsIncoherentCreationDateNothingToUpdate=No bad value for contract creation date to correct
-
-# Reopening Contracts
 MigrationReopeningContracts=Open contract closed by error
 MigrationReopenThisContract=Reopen contract %s
 MigrationReopenedContractsNumber=%s contracts modified
 MigrationReopeningContractsNothingToUpdate=No closed contract to open
-
-# Migration transfer
 MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfer
 MigrationBankTransfertsNothingToUpdate=All links are up to date
-
-# Migration delivery
 MigrationShipmentOrderMatching=Sendings receipt update
 MigrationDeliveryOrderMatching=Delivery receipt update
 MigrationDeliveryDetail=Delivery update
-
-# Migration stock
 MigrationStockDetail=Update stock value of products
-
-# Migration menus
 MigrationMenusDetail=Update dynamic menus tables
-
-# Migration delivery address
 MigrationDeliveryAddress=Update delivery address in shipments
-
-# Migration project task actors
 MigrationProjectTaskActors=Data migration for llx_projet_task_actors table
-
-# Migration project user resp
 MigrationProjectUserResp=Data migration field fk_user_resp of llx_projet to llx_element_contact
-
-# Migration project task time
 MigrationProjectTaskTime=Update time spent in seconds
-
-# Migration Acctioncom
 MigrationActioncommElement=Update data on actions
-
-# Migration payment mode
 MigrationPaymentMode=Data migration for payment mode
+MigrationCategorieAssociation=Migration of categories
