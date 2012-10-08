@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,23 +302,34 @@ function conf($dolibarr_main_document_root)
 /**
  * Show HTML header of install pages
  *
- * @param	string		$soutitre			Title
+ * @param	string		$subtitle			Title
  * @param 	string		$next				Next
  * @param 	string		$action    			Action code ('set' or 'upgrade')
  * @param 	string		$param				Param
  * @param	string		$forcejqueryurl		Set jquery relative URL (must end with / if defined)
  * @return	void
  */
-function pHeader($soutitre,$next,$action='set',$param='',$forcejqueryurl='')
+function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 {
     global $conf;
     global $langs;
     $langs->load("main");
     $langs->load("admin");
 
+    if ($forcejqueryurl)
+    {
+        $jQueryCustomPath = $forcejqueryurl;
+        $jQueryUiCustomPath = $forcejqueryurl;
+    }
+    else
+    {
+        $jQueryCustomPath = (defined('JS_JQUERY') && constant('JS_JQUERY')) ? JS_JQUERY : false;
+        $jQueryUiCustomPath = (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) ? JS_JQUERY_UI : false;
+    }
+
     $jquerytheme='smoothness';
 
-    // On force contenu dans format sortie
+    // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
@@ -327,31 +339,28 @@ function pHeader($soutitre,$next,$action='set',$param='',$forcejqueryurl='')
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";
-    if ($forcejqueryurl) print '<link rel="stylesheet" type="text/css" href="'.$forcejquerydir.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
-    else if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
+    if ($jQueryUiCustomPath) print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
     else print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
 
     print '<!-- Includes JS for JQuery -->'."\n";
-    if ($forcejqueryurl) print '<script type="text/javascript" src="'.$forcejqueryurl.'jquery.min.js"></script>'."\n";
-    else if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
-    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
-    if ($forcejqueryurl) print '<script type="text/javascript" src="'.$forcejqueryurl.'jquery-ui.min.js"></script>'."\n";
-    else if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js"></script>'."\n";
-    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
+    if ($jQueryCustomPath) print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
+    if ($jQueryUiCustomPath) print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
+    else print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
 
     print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
     print '</head>'."\n";
 
     print '<body>'."\n";
 
-    print '<center>';
+    print '<div style="text-align:center">';
     print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
-    print DOL_VERSION.'<br><br>';
-    print '</center>';
+    print DOL_VERSION;
+    print '</div><br><br>';
 
     print '<span class="titre">'.$langs->trans("DolibarrSetup");
-    if ($soutitre) {
-        print ' - '.$soutitre;
+    if ($subtitle) {
+        print ' - '.$subtitle;
     }
     print '</span>'."\n";
 
