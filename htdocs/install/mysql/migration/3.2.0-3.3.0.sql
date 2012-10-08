@@ -767,6 +767,8 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN import_key varchar(14) AFTE
 ALTER TABLE llx_product_stock ADD COLUMN import_key varchar(14) AFTER pmp;
 
 -- [ task #146 ] Remove table llx_categorie_association
+ALTER TABLE llx_categorie_association DROP FOREIGN KEY fk_categorie_asso_fk_categorie_mere;
+ALTER TABLE llx_categorie_association DROP FOREIGN KEY fk_categorie_asso_fk_categorie_fille;
 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 ALTER TABLE llx_categorie ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL AFTER rowid;
 ALTER TABLE llx_categorie MODIFY COLUMN label varchar(255) NOT NULL;
