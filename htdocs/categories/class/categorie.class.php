@@ -45,6 +45,7 @@ class Categorie
 	var $description;
 	var $socid;
 	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
 
@@ -114,6 +115,7 @@ class Categorie
 		$error=0;
 
 		// Clean parameters
+		$this->import_key = trim($this->import_key);
 		if (empty($this->visible)) $this->visible=0;
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
@@ -128,21 +130,30 @@ class Categorie
 		$this->db->begin();
 
 		dol_syslog(get_class($this).'::create sql='.$sql);
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (fk_parent, label, description,";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
+		$sql.= "fk_parent,";
+		$sql.= " label,";
+		$sql.= " description,";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= "fk_soc,";
 		}
 		$sql.= " visible,";
 		$sql.= " type,";
+		$sql.= " import_key";
 		$sql.= " entity";
-		$sql.= ")";
-		$sql.= " VALUES (".$this->fk_parent.",'".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
+		$sql.= ") VALUES (";
+		$sql.= $this->fk_parent.",";
+		$sql.= "'".$this->db->escape($this->label)."',";
+		$sql.= "'".$this->db->escape($this->description)."',";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
-		$sql.= "'".$this->visible."',".$this->type.",".$conf->entity;
+		$sql.= "'".$this->visible."',";
+		$sql.= $this->type.",";
+		$sql.= (! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":'null').",";
+		$sql.= $conf->entity;
 		$sql.= ")";
 
 		dol_syslog(get_class($this).'::create sql='.$sql);
