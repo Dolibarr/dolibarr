@@ -871,6 +871,8 @@ class Societe extends CommonObject
     	{
     		foreach($filters as $field => $value)
     		{
+    			if (! $exact)
+    				$value = '%'.str_replace('*', '%', $value).'%';
     			if (! $case)
     				$sql.= " AND ".$field." LIKE '".$this->db->escape($value)."'";
     			else
