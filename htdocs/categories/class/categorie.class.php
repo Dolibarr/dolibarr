@@ -114,6 +114,8 @@ class Categorie
 		$error=0;
 
 		// Clean parameters
+		$this->label = trim($this->label);
+		$this->description = trim($this->description);
 		$this->import_key = trim($this->import_key);
 		if (empty($this->visible)) $this->visible=0;
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
