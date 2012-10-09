@@ -140,7 +140,7 @@ class Categorie
 		}
 		$sql.= " visible,";
 		$sql.= " type,";
-		$sql.= " import_key";
+		$sql.= " import_key,";
 		$sql.= " entity";
 		$sql.= ") VALUES (";
 		$sql.= $this->fk_parent.",";
