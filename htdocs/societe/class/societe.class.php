@@ -842,9 +842,10 @@ class Societe extends CommonObject
      * 	@param		array		$filters	Array of couple field name/value to filter the companies with the same name
      * 	@param		boolean		$exact		Exact string search (true/false)
      * 	@param		boolean		$case		Case sensitive (true/false)
+     * 	@param		string		$clause		Clause for filters
      * 	@return		array		Array of thirdparties object
      */
-    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false)
+    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $clause = 'AND')
     {
     	$thirdparties = array();
 
@@ -858,6 +859,7 @@ class Societe extends CommonObject
     		elseif ($type == 3)
     			$sql.= " AND fournisseur = 1";
     	}
+    	$sql.= "(";
     	if (! empty($name))
     	{
     		if (! $exact)
@@ -874,11 +876,12 @@ class Societe extends CommonObject
     			if (! $exact)
     				$value = '%'.str_replace('*', '%', $value).'%';
     			if (! $case)
-    				$sql.= " AND ".$field." LIKE '".$this->db->escape($value)."'";
+    				$sql.= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
     			else
-    				$sql.= " AND ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+    				$sql.= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
     		}
     	}
+    	$sql.= ")";
 
     	$res  = $this->db->query($sql);
     	if ($res)
