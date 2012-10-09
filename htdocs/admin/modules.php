@@ -32,10 +32,11 @@ $langs->load("errors");
 $langs->load("admin");
 
 $mode=isset($_GET["mode"])?GETPOST("mode"):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
-$mesg=GETPOST("mesg");
-$action=GETPOST('action');
+$action=GETPOST('action','alpha');
+$value=GETPOST('value');
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 $specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional', 4=>'marketplace');
 
@@ -46,19 +47,17 @@ $specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional'
 
 if ($action == 'set' && $user->admin)
 {
-    $result=activateModule($_GET["value"]);
-    $mesg='';
-    if ($result) $mesg=$result;
-    header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
+    $result=activateModule($value);
+    if ($result) setEventMessage($result, 'errors');
+    header("Location: modules.php?mode=".$mode);
 	exit;
 }
 
 if ($action == 'reset' && $user->admin)
 {
-    $result=unActivateModule($_GET["value"]);
-    $mesg='';
-    if ($result) $mesg=$result;
-    header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
+    $result=unActivateModule($value);
+    if ($result) setEventMessage($result, 'errors');
+    header("Location: modules.php?mode=".$mode);
 	exit;
 }
 
@@ -129,7 +128,8 @@ foreach ($modulesdir as $dir)
 		        	if (! empty($modNameLoaded[$modName]))
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
-		                dol_syslog($mesg, LOG_ERR);
+		        		setEventMessage($mesg, 'warnings');
+		        		dol_syslog($mesg, LOG_ERR);
 						continue;
 		        	}
 
@@ -267,9 +267,6 @@ $h++;
 
 
 dol_fiche_head($head, $mode, $langs->trans("Modules"));
-
-
-dol_htmloutput_errors($mesg);
 
 
 if ($mode != 'marketplace')
