@@ -1006,7 +1006,7 @@ class Categorie
 	 */
 	function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
-		$cats = array ();
+		$cats = array();
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -1017,13 +1017,13 @@ class Categorie
 			if (! $exact)
 				$nom = '%'.str_replace('*', '%', $nom).'%';
 			if (! $case)
-				$sql.= "AND label LIKE '".$this->db->escape($nom)."'";
+				$sql.= " AND label LIKE '".$this->db->escape($nom)."'";
 			else
-				$sql.= "AND label LIKE BINARY '".$this->db->escape($nom)."'";
+				$sql.= " AND label LIKE BINARY '".$this->db->escape($nom)."'";
 		}
 		if ($id)
 		{
-			$sql.="AND rowid = '".$id."'";
+			$sql.=" AND rowid = '".$id."'";
 		}
 
 		$res  = $this->db->query($sql);
