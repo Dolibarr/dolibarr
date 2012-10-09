@@ -862,7 +862,16 @@ class Societe extends CommonObject
     	if (! empty($name))
     	{
     		if (! $exact)
-    			$name = '%'.str_replace('*', '%', $name).'%';
+    		{
+    			if (preg_match('/^([\*]+)[^*]+([\*]+)$/', $name))
+    			{
+    				$name = str_replace('*', '%', $name);
+    			}
+    			else
+    			{
+    				$name = '%'.$name.'%';
+    			}
+    		}
     		$sql.= " AND ";
     		if (is_array($filters) && ! empty($filters))
     			$sql.= "(";
@@ -876,7 +885,16 @@ class Societe extends CommonObject
     		foreach($filters as $field => $value)
     		{
     			if (! $exact)
-    				$value = str_replace('*', '%', $value);
+    			{
+    				if (preg_match('/^([\*]+)[^*]+([\*]+)$/', $value))
+    				{
+    					$value = str_replace('*', '%', $value);
+    				}
+    				else
+    				{
+    					$value = '%'.$value.'%';
+    				}
+    			}
     			if (! $case)
     				$sql.= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
     			else
