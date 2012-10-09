@@ -845,7 +845,7 @@ class Societe extends CommonObject
      * 	@param		string		$clause		Clause for filters
      * 	@return		array		Array of thirdparties object
      */
-    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $clause = 'AND')
+    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
     {
     	$thirdparties = array();
 
@@ -875,10 +875,18 @@ class Societe extends CommonObject
     		$sql.= " AND ";
     		if (is_array($filters) && ! empty($filters))
     			$sql.= "(";
-    		if (! $case)
-    			$sql.= "nom LIKE '".$this->db->escape($name)."'";
+    		if ($similar)
+    		{
+    			// For test similitude
+    			$sql.= "(LOCATE('".$name."', nom) > 0 OR LOCATE(nom, '".$name."') > 0)";
+    		}
     		else
-    			$sql.= "nom LIKE BINARY '".$this->db->escape($name)."'";
+    		{
+    			if (! $case)
+    				$sql.= "nom LIKE '".$this->db->escape($name)."'";
+    			else
+    				$sql.= "nom LIKE BINARY '".$this->db->escape($name)."'";
+    		}
     	}
     	if (is_array($filters) && ! empty($filters))
     	{
