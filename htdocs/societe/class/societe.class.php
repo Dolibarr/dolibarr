@@ -863,7 +863,7 @@ class Societe extends CommonObject
     	{
     		if (! $exact)
     		{
-    			if (preg_match('/^([\*]+)[^*]+([\*]+)$/', $name))
+    			if (preg_match('/^([\*])?[^*]+([\*])?$/', $name, $regs) && count($regs) > 1)
     			{
     				$name = str_replace('*', '%', $name);
     			}
@@ -886,7 +886,7 @@ class Societe extends CommonObject
     		{
     			if (! $exact)
     			{
-    				if (preg_match('/^([\*]+)[^*]+([\*]+)$/', $value))
+    				if (preg_match('/^([\*])?[^*]+([\*])?$/', $value, $regs) && count($regs) > 1)
     				{
     					$value = str_replace('*', '%', $value);
     				}
