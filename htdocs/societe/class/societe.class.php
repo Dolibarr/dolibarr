@@ -185,6 +185,7 @@ class Societe extends CommonObject
         $this->nom=$this->name; // For backward compatibility
         if (empty($this->client))      $this->client=0;
         if (empty($this->fournisseur)) $this->fournisseur=0;
+        $this->import_key = trim($this->import_key);
 
         dol_syslog(get_class($this)."::create ".$this->name);
 
@@ -210,14 +211,15 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
             $sql.= ", ".(! empty($this->ref_int) ? "'".$this->ref_int."'":"null");
             $sql.= ", ".(! empty($this->ref_ext) ? "'".$this->ref_ext."'":"null");
-            $sql.= ", 0)";
+            $sql.= ", 0";
+            $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
 
             dol_syslog(get_class($this)."::create sql=".$sql);
             $result=$this->db->query($sql);
@@ -832,6 +834,69 @@ class Societe extends CommonObject
         return $result;
     }
 
+    /**
+     * 	Search and fetch thirparties by name
+     *
+     * 	@param		string		$name		Name
+     * 	@param		int			$type		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
+     * 	@param		array		$filters	Array of couple field name/value to filter the companies with the same name
+     * 	@param		boolean		$exact		Exact string search (true/false)
+     * 	@param		boolean		$case		Case sensitive (true/false)
+     * 	@return		array		Array of thirdparties object
+     */
+    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false)
+    {
+    	$thirdparties = array();
+
+    	// Generation requete recherche
+    	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
+    	$sql.= " WHERE entity IN (".getEntity('category',1).")";
+    	if (! empty($type))
+    	{
+    		if ($type == 1 || $type == 2)
+    			$sql.= " AND client = ".$type;
+    		elseif ($type == 3)
+    			$sql.= " AND fournisseur = 1";
+    	}
+    	if (! empty($name))
+    	{
+    		if (! $exact)
+    			$name = '%'.str_replace('*', '%', $name).'%';
+    		if (! $case)
+    			$sql.= " AND nom LIKE '".$this->db->escape($name)."'";
+    		else
+    			$sql.= " AND nom LIKE BINARY '".$this->db->escape($name)."'";
+    	}
+    	if (is_array($filters) && ! empty($filters))
+    	{
+    		foreach($filters as $field => $value)
+    		{
+    			if (! $case)
+    				$sql.= " AND ".$field." LIKE '".$this->db->escape($value)."'";
+    			else
+    				$sql.= " AND ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+    		}
+    	}
+
+    	$res  = $this->db->query($sql);
+    	if ($res)
+    	{
+    		while ($rec = $this->db->fetch_array($res))
+    		{
+    			$soc = new Societe($this->db);
+    			$soc->fetch($rec['rowid']);
+    			$thirdparties[] = $soc;
+    		}
+
+    		return $thirdparties;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error().' sql='.$sql;
+    		dol_syslog(get_class($this)."::searchByName ".$this->error, LOG_ERR);
+    		return -1;
+    	}
+    }
 
     /**
      *    Delete a third party from database and all its dependencies (contacts, rib...)
