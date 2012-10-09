@@ -878,7 +878,7 @@ class Societe extends CommonObject
     		if ($similar)
     		{
     			// For test similitude
-    			$sql.= "(LOCATE('".$name."', nom) > 0 OR LOCATE(nom, '".$name."') > 0)";
+    			$sql.= "(LOCATE('".$this->db->escape($name)."', nom) > 0 OR LOCATE(nom, '".$this->db->escape($name)."') > 0)";
     		}
     		else
     		{
