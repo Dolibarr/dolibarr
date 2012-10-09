@@ -859,15 +859,17 @@ class Societe extends CommonObject
     		elseif ($type == 3)
     			$sql.= " AND fournisseur = 1";
     	}
-    	$sql.= "(";
     	if (! empty($name))
     	{
     		if (! $exact)
     			$name = '%'.str_replace('*', '%', $name).'%';
+    		$sql.= " AND ";
+    		if (is_array($filters) && ! empty($filters))
+    			$sql.= "(";
     		if (! $case)
-    			$sql.= " AND nom LIKE '".$this->db->escape($name)."'";
+    			$sql.= "nom LIKE '".$this->db->escape($name)."'";
     		else
-    			$sql.= " AND nom LIKE BINARY '".$this->db->escape($name)."'";
+    			$sql.= "nom LIKE BINARY '".$this->db->escape($name)."'";
     	}
     	if (is_array($filters) && ! empty($filters))
     	{
@@ -880,8 +882,9 @@ class Societe extends CommonObject
     			else
     				$sql.= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
     		}
+    		if (! empty($name))
+    			$sql.= ")";
     	}
-    	$sql.= ")";
 
     	$res  = $this->db->query($sql);
     	if ($res)
