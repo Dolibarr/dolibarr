@@ -31,8 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 
 /**
- *	\class      Categorie
- *	\brief      Class to manage categories
+ *	Class to manage categories
  */
 class Categorie
 {
@@ -72,7 +71,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog("Categorie::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -234,7 +233,7 @@ class Categorie
 		$sql .= ", fk_parent = ".$this->fk_parent;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog("Categorie::update sql=".$sql);
+		dol_syslog(get_class($this)."::update sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$this->db->commit();
@@ -268,7 +267,7 @@ class Categorie
 
 		$error=0;
 
-		dol_syslog("Categorie::remove");
+		dol_syslog(get_class($this)."::remove");
 
 		$this->db->begin();
 
@@ -548,7 +547,7 @@ class Categorie
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
 		$sql.= " AND c.type = ".$type;
 
-		dol_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -570,7 +569,7 @@ class Categorie
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)
-		dol_syslog("Categorie::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
 			$this->build_path_from_id_categ($key,0);	// Process a branch from the root category key (this category has no parent)
@@ -596,7 +595,7 @@ class Categorie
             }
         }
 
-		dol_syslog("Categorie::get_full_arbo dol_sort_array", LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
 		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		//$this->debug_cats();
@@ -613,12 +612,12 @@ class Categorie
 	 */
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
-		dol_syslog("Categorie::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
+		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		//if (! empty($this->cats[$id_categ]['fullpath']))
 		//{
 		// Already defined
-		//	dol_syslog("Categorie::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+		//	dol_syslog(get_class($this)."::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
 		//	return;
 		//}
 
@@ -648,7 +647,7 @@ class Categorie
 			// Protection when a category has itself as a child (should not happen)
 			if ($idchild == $id_categ)
 			{
-				dol_syslog("Categorie::build_path_from_id_categ bad couple (".$idchild.",".$id_categ.") in association table: An entry should not have itself has child", LOG_WARNING);
+				dol_syslog(get_class($this)."::build_path_from_id_categ bad couple (".$idchild.",".$id_categ.") in association table: An entry should not have itself has child", LOG_WARNING);
 				continue;
 			}
 
@@ -1003,7 +1002,7 @@ class Categorie
 	 * 	@param		string		$type		Type
 	 * 	@param		boolean		$exact		Exact string search (true/false)
 	 * 	@param		boolean		$case		Case sensitive (true/false)
-	 * 	@return		array		Array of category id
+	 * 	@return		array					Array of category id
 	 */
 	function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
@@ -1020,8 +1019,6 @@ class Categorie
 			if (! $case)
 				$sql.= "AND label LIKE '".$this->db->escape($nom)."'";
 			else
-				// FIXME Mysql "LIKE" is case insensitive by default and use LIKE BINARY for case sensitive
-				// Pgsql "LIKE" is case sensitive by default, and use ILIKE for case insensitive
 				$sql.= "AND label LIKE BINARY '".$this->db->escape($nom)."'";
 		}
 		if ($id)
@@ -1044,7 +1041,7 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog("Categorie::rechercher ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::rechercher ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
