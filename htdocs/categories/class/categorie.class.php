@@ -1001,10 +1001,11 @@ class Categorie
 	 * 	@param		int			$id			Id
 	 * 	@param		string		$nom		Name
 	 * 	@param		string		$type		Type
-	 * 	@param		boolean		$exact		Ture or false
+	 * 	@param		boolean		$exact		Exact string search (true/false)
+	 * 	@param		boolean		$case		Case sensitive (true/false)
 	 * 	@return		array		Array of category id
 	 */
-	function rechercher($id, $nom, $type, $exact = false)
+	function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
 		$cats = array ();
 
@@ -1015,10 +1016,13 @@ class Categorie
 		if ($nom)
 		{
 			if (! $exact)
-			{
 				$nom = '%'.str_replace('*', '%', $nom).'%';
-			}
-			$sql.= "AND label LIKE '".$nom."'";
+			if (! $case)
+				$sql.= "AND label LIKE '".$this->db->escape($nom)."'";
+			else
+				// FIXME Mysql "LIKE" is case insensitive by default and use LIKE BINARY for case sensitive
+				// Pgsql "LIKE" is case sensitive by default, and use ILIKE for case insensitive
+				$sql.= "AND label LIKE BINARY '".$this->db->escape($nom)."'";
 		}
 		if ($id)
 		{
