@@ -82,7 +82,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $param="search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
+    $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);

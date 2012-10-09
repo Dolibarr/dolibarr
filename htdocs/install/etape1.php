@@ -30,7 +30,7 @@ define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 include 'inc.php';
 
 $action=GETPOST('action','alpha');
-$setuplang=(GETPOST('selectlang')?GETPOST('selectlang'):'auto');
+$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -409,7 +409,7 @@ if (! $error && $db->connected && $action == "set")
     }
 
     // Table prefix
-    $main_db_prefix = ((! empty($db_prefix) && $db_prefix != '') ? $db_prefix : 'llx_');
+    $main_db_prefix = (! empty($db_prefix) ? $db_prefix : 'llx_');
 
     // Force https
     $main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
