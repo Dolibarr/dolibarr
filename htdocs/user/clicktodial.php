@@ -69,7 +69,7 @@ $form = new Form($db);
 llxHeader("","ClickToDial");
 
 
-if ($id)
+if ($id > 0)
 {
     $fuser = new User($db);
     $fuser->fetch($id);
@@ -113,7 +113,7 @@ if ($id)
 
     if ($action == 'edit')
     {
-        print '<form action="clicktodial.php?id='.$_GET["id"].'" method="post">';
+        print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
         print '<table class="border" width="100%">';
@@ -192,7 +192,7 @@ if ($id)
 
     if (! empty($user->admin) && $action <> 'edit')
     {
-        print '<a class="butAction" href="clicktodial.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
 
     print "</div>\n";
