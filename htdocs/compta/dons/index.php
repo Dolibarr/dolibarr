@@ -143,7 +143,7 @@ print '</td><td valign="top">';
 $max=10;
 
 /*
- * Last modified proposals
+ * Last modified donations
  */
 
 $sql = "SELECT c.rowid, c.ref, c.fk_statut, c.societe, c.nom,";
@@ -187,7 +187,7 @@ if ($resql)
             print '</td>';
 
             print '<td width="16" align="right" class="nobordernopadding">';
-            print price($obj->amount);
+            print price($obj->amount,1);
             print '</td>';
 
             // Date
@@ -206,7 +206,8 @@ else dol_print_error($db);
 
 print '</td></tr></table>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
