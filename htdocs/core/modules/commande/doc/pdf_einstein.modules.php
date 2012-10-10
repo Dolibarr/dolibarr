@@ -959,7 +959,15 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$posy+=5;
+		if ($object->ref_client)
+		{
+			$posy+=5;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		}
+
+		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');

@@ -28,17 +28,18 @@ require '../../main.inc.php';
 
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	if (! $user->rights->user->group_advance->read && ! $user->admin) accessforbidden();
+	if (! $user->rights->user->group_advance->read && ! $user->admin)
+		accessforbidden();
 }
 
 $langs->load("users");
 
-$sall=GETPOST("sall");
+$sall=GETPOST('sall');
 $search_group=GETPOST('search_group');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -67,9 +68,9 @@ else
 {
 	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 }
-if ($search_group)
+if (! empty($search_group))
 {
-    $sql .= " AND (g.nom LIKE '%".$db->escape($_POST["search_group"])."%' OR g.note LIKE '%".$db->escape($_POST["search_group"])."%')";
+    $sql .= " AND (g.nom LIKE '%".$db->escape($search_group)."%' OR g.note LIKE '%".$db->escape($search_group)."%')";
 }
 if ($sall) $sql.= " AND (g.nom LIKE '%".$db->escape($sall)."%' OR g.note LIKE '%".$db->escape($sall)."%')";
 $sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
@@ -81,7 +82,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $param="search_group=".$search_group."&amp;sall=".$sall;
+    $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);

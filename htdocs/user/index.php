@@ -24,24 +24,27 @@
  */
 
 require '../main.inc.php';
-if(! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
+if (! empty($conf->multicompany->enabled))
+	dol_include_once('/multicompany/class/actions_multicompany.class.php', 'Multicompany');
 
 
-if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
+if (! $user->rights->user->user->lire && ! $user->admin)
+	accessforbidden();
 
 $langs->load("users");
 $langs->load("companies");
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->societe_id > 0)
+	$socid = $user->societe_id;
 
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -78,10 +81,10 @@ else
 {
 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 }
-if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
-if ($search_user)
+if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
+if (! empty($search_user))
 {
-    $sql.= " AND (u.login LIKE '%".$search_user."%' OR u.name LIKE '%".$search_user."%' OR u.firstname LIKE '%".$search_user."%')";
+    $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.name LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
 }
 if ($sall) $sql.= " AND (u.login LIKE '%".$db->escape($sall)."%' OR u.name LIKE '%".$db->escape($sall)."%' OR u.firstname LIKE '%".$db->escape($sall)."%' OR u.email LIKE '%".$db->escape($sall)."%' OR u.note LIKE '%".$db->escape($sall)."%')";
 $sql.=$db->order($sortfield,$sortorder);
