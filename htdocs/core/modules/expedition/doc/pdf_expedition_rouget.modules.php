@@ -353,6 +353,10 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	{
 		global $conf;
 
+		// Force to disable hidetop and hidebottom
+		$hidebottom=0;
+		if ($hidetop) $hidetop=-1;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)

@@ -173,13 +173,13 @@ abstract class CommonDocGenerator
 	 * @param	float	$y		        Ordinate of first point
 	 * @param	float	$l				??
 	 * @param	float	$h				??
-	 * @param	int		$hidetop		Hide top
+	 * @param	int		$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 * @param	int		$hidebottom		Hide bottom
 	 * @return	void
 	 */
     function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
     {
-	    if (empty($hidetop)) $pdf->line($x, $y, $x+$l, $y);
+	    if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
 	    $pdf->line($x+$l, $y, $x+$l, $y+$h);
 	    if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
 	    $pdf->line($x, $y+$h, $x, $y);
