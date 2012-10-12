@@ -2181,6 +2181,7 @@ class Commande extends CommonObject
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$subprice;
             $this->line->info_bits=$info_bits;
+            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
             $this->line->total_localtax1=$total_localtax1;
@@ -3035,6 +3036,7 @@ class OrderLine
         if (empty($this->remise)) $this->remise=0;
         if (empty($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
+        if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->product_type)) $this->product_type=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
@@ -3060,6 +3062,7 @@ class OrderLine
         $sql.= " , total_localtax1=".price2num($this->total_localtax1);
         $sql.= " , total_localtax2=".price2num($this->total_localtax2);
         $sql.= " , info_bits=".$this->info_bits;
+        $sql.= " , special_code=".$this->special_code;
         if ($this->date_start) { $sql.= " , date_start='".$this->db->idate($this->date_start)."'"; }
         else { $sql.=' , date_start=null'; }
         if ($this->date_end) { $sql.= " , date_end='".$this->db->idate($this->date_end)."'"; }
