@@ -994,6 +994,10 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         $date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
         $price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
+        // Define special_code for special lines
+        $special_code=0;
+        //if (empty($_POST['qty'])) $special_code=3;	// Options should not exists on invoices
+
         // Ecrase $pu par celui du produit
         // Ecrase $desc par celui du produit
         // Ecrase $txtva par celui du produit
@@ -1135,7 +1139,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         			$pu_ttc,
         			$type,
         			-1,
-        			0,
+        			$special_code,
         			'',
         			0,
         			GETPOST('fk_parent_line'),

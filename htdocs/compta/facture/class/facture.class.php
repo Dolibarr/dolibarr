@@ -2119,6 +2119,7 @@ class Facture extends CommonInvoice
             $this->line->total_localtax2=(($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
             $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
             $this->line->info_bits			= $info_bits;
+            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
             $this->line->product_type		= $type;
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
@@ -3413,6 +3414,7 @@ class FactureLigne
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 		if (empty($this->remise_percent)) $this->remise_percent=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
+		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
@@ -3445,6 +3447,7 @@ class FactureLigne
         $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ",product_type=".$this->product_type;
         $sql.= ",info_bits='".$this->info_bits."'";
+        $sql.= ",special_code='".$this->special_code."'";
         if (empty($this->skip_update_total))
         {
         	$sql.= ",total_ht=".price2num($this->total_ht)."";
