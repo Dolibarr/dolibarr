@@ -738,6 +738,11 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
         $mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
         $result = -1 ;
     }
+
+    // Define special_code for special lines
+    $special_code=0;
+    if (empty($_POST['qty'])) $special_code=3;
+
     // Check minimum price
     if(! empty($_POST['productid']))
     {
