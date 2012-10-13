@@ -37,7 +37,11 @@ if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$type=$_GET["type"];
+$type=GETPOST('type', 'alpha');
+$search_lastname=GETPOST('search_nom')?GETPOST('search_nom'):GETPOST('search_lastname');			// For backward compatibility
+$search_firstname=GETPOST('search_prenom')?GETPOST('search_prenom'):GETPOST('search_firstname');	// For backward compatibility
+$search_company=GETPOST('search_societe')?GETPOST('search_societe'):GETPOST('search_company');		// For backward compatibility
+$contactname=GETPOST('contactname');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -91,29 +95,30 @@ if (dol_strlen($stcomm))
   $sql.= " AND s.fk_stcomm=$stcomm";
 }
 
+// FIXME $begin not exist
 if (dol_strlen($begin)) // filtre sur la premiere lettre du nom
 {
   $sql.= " AND upper(p.name) LIKE '".$begin."%'";
 }
 
-if (trim($_GET["search_nom"]))
+if (! empty($search_lastname))
 {
-  $sql.= " AND p.name LIKE '%".trim($_GET["search_nom"])."%'";
+  $sql.= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
 
-if (trim($_GET["search_prenom"]))
+if (! empty($search_firstname))
 {
-  $sql.= " AND p.firstname LIKE '%".trim($_GET["search_prenom"])."%'";
+  $sql.= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 
-if (trim($_GET["search_societe"]))
+if (! empty($search_company))
 {
-  $sql.= " AND s.nom LIKE '%".trim($_GET["search_societe"])."%'";
+  $sql.= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 
-if ($_GET["contactname"]) // acces a partir du module de recherche
+if (! empty($contactname)) // acces a partir du module de recherche
 {
-  $sql.= " AND (p.name LIKE '%".strtolower($_GET["contactname"])."%' OR lower(p.firstname) LIKE '%".strtolower($_GET["contactname"])."%') ";
+  $sql.= " AND (p.name LIKE '%".$db->escape(strtolower($contactname))."%' OR lower(p.firstname) LIKE '%".$db->escape(strtolower($contactname))."%') ";
   $sortfield = "p.name";
   $sortorder = "ASC";
 }
@@ -125,7 +130,7 @@ $resql = $db->query($sql);
 if ($resql)
 {
   $num = $db->num_rows($resql);
-  
+
   $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
   print_barre_liste($title.($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], "&amp;type=$type",$sortfield,$sortorder,"",$num);
 
@@ -140,9 +145,9 @@ if ($resql)
 
   print '<form action="'.$_SERVER["PHP_SELF"].'?type='.$_GET["type"].'" method="GET">';
   print '<tr class="liste_titre">';
-  print '<td class="liste_titre"><input class="flat" name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
-  print '<td class="liste_titre"><input class="flat" name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
-  print '<td class="liste_titre"><input class="flat" name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
+  print '<td class="liste_titre"><input class="flat" name="search_lastname" size="12" value="'.$search_lastname.'"></td>';
+  print '<td class="liste_titre"><input class="flat" name="search_firstname" size="12"  value="'.$search_firstname.'"></td>';
+  print '<td class="liste_titre"><input class="flat" name="search_company" size="12"  value="'.$search_company.'"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
   print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
   print "</tr>\n";
