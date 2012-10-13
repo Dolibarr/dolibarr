@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (! empty($conf->tax->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if (! empty($conf->commande->enabled))
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->commande->enabled))
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (! empty($conf->tax->enabled))
+	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 // L'espace compta/treso doit toujours etre actif car c'est un espace partage
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
@@ -40,7 +43,11 @@ if (! empty($conf->tax->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/social
 
 $langs->load("compta");
 $langs->load("bills");
-if (! empty($conf->commande->enabled)) $langs->load("orders");
+if (! empty($conf->commande->enabled))
+	$langs->load("orders");
+
+$action=GETPOST('action', 'alpha');
+$bid=GETPOST('bid', 'int');
 
 // Security check
 $socid='';
@@ -55,7 +62,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
+if ($action == 'add_bookmark')
 {
 	$now=dol_now();
 
@@ -71,9 +78,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 	}
 }
 
-if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
+if ($action == 'del_bookmark' && ! empty($bid))
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$db->escape($bid);
 	$result = $db->query($sql);
 }
 

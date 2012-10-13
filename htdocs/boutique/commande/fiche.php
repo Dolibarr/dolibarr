@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.
 
 $langs->load("products");
 
-
+$id=GETPOST('id', 'int');
 
 /*
  *	View
@@ -39,11 +39,11 @@ $langs->load("products");
 llxHeader();
 
 
-if ($_GET['id'])
+if ($id > 0)
 {
 	$commande = new BoutiqueCommande($db);
-	$result = $commande->fetch($_GET['id']);
-	if ( $result )
+	$result = $commande->fetch($id);
+	if ($result)
 	{
 		print '<div class="titre">'.$langs->trans("OrderCard").': '.$commande->id.'</div><br>';
 
@@ -69,7 +69,7 @@ if ($_GET['id'])
 		 */
 		$sql = "SELECT orders_id, products_id, products_model, products_name, products_price, final_price, products_quantity";
 		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_products";
-		$sql .= " WHERE orders_id = " . $_GET['id'];
+		$sql .= " WHERE orders_id = " . $commande->id;
 		//$commande->id;
 		//	echo $sql;
 		$resql=$dbosc->query($sql);

@@ -37,14 +37,15 @@ $langs->load("bills");
 
 if (! $user->rights->banque->consolidate) accessforbidden();
 
-
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('account', 'int');
 
 /*
  * Actions
  */
 
 // Conciliation
-if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
+if ($action == 'rappro' && $user->rights->banque->consolidate)
 {
 	// Definition, nettoyage parametres
     $num_releve=trim($_POST["num_releve"]);
@@ -77,7 +78,7 @@ if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
 /*
  * Action suppression ecriture
  */
-if ($_GET["action"] == 'del')
+if ($action == 'del')
 {
 	$accline=new AccountLine($db);
 	$accline->fetch($_GET["rowid"]);
@@ -127,13 +128,13 @@ $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 
 $acct = new Account($db);
-$acct->fetch($_GET["account"]);
+$acct->fetch($id);
 
 $now=dol_now();
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
+$sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
 $sql.= " ORDER BY dateo ASC";
 $sql.= " LIMIT 1000";	// Limit to avoid page overload
 
@@ -163,7 +164,7 @@ if ($resql)
     $var=True;
     $num = $db->num_rows($resql);
 
-    print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
+    print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>');
     print '<br>';
 
     dol_htmloutput_mesg($mesg);
@@ -172,7 +173,7 @@ if ($resql)
     $nbmax=5;
     $liste="";
     $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
-    $sql.= " WHERE fk_account=".$_GET["account"]." AND num_releve IS NOT NULL";
+    $sql.= " WHERE fk_account=".$acct->id." AND num_releve IS NOT NULL";
     $sql.= $db->order("num_releve","DESC");
     $sql.= $db->plimit($nbmax+1);
     print $langs->trans("LastAccountStatements").' : ';
@@ -186,7 +187,7 @@ if ($resql)
             $objr = $db->fetch_object($resqlr);
             $last_releve = $objr->num_releve;
             $i++;
-            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+            $liste='<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$acct->id.'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
         }
         if ($numr >= $nbmax) $liste="... &nbsp; ".$liste;
         print $liste;
@@ -199,10 +200,10 @@ if ($resql)
     }
 
 
-	print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
+	print '<form method="post" action="rappro.php?account='.$acct->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-	print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
+	print "<input type=\"hidden\" name=\"account\" value=\"".$acct->id."\">";
 
     print $langs->trans("InputReceiptNumber").': ';
     print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):$objp->num_releve).'" size="10">';
@@ -251,9 +252,9 @@ if ($resql)
 			print '<td align="center" nowrap="nowrap">';
 			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
 			print ' <span>&nbsp; ';
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_add() ."</a></span>";
 			print '</td>';
 		}
@@ -380,7 +381,7 @@ if ($resql)
                 print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
                 print img_edit();
                 print '</a>&nbsp; ';
-                
+
                 $now=dol_now();
                 if ($db->jdate($objp->do) <= $now) {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';

@@ -51,10 +51,10 @@ $type=GETPOST("type");
 $view=GETPOST("view");
 
 $sall=GETPOST("contactname");
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
-$page = GETPOST("page");
-$userid=GETPOST('userid');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+$userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
 
 if (! $sortorder) $sortorder="ASC";
@@ -131,9 +131,9 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
 }
-if ($userid)    // propre au commercial
+if (! empty($userid))    // propre au commercial
 {
-    $sql .= " AND p.fk_user_creat=".$userid;
+    $sql .= " AND p.fk_user_creat=".$db->escape($userid);
 }
 
 // Filter to exclude not owned private contacts
