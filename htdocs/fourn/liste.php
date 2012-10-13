@@ -45,9 +45,9 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
-$page = GETPOST('page');
-$sortorder = GETPOST('sortorder');
-$sortfield = GETPOST('sortfield');
+$page = GETPOST('page','int');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;

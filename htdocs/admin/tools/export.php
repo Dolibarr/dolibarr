@@ -35,7 +35,7 @@ $file=GETPOST('filename_template','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST("page");
+$page = GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }

@@ -42,8 +42,8 @@ $filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filt
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page","int");
 if ($page == -1) { $page = 0; }
 $limit = $conf->liste_limit;

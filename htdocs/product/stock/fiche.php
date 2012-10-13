@@ -37,8 +37,8 @@ $langs->load("companies");
 
 $action=GETPOST('action');
 
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
@@ -536,7 +536,7 @@ else
 
 			print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
-			
+
 			print '</form>';
 
 		}

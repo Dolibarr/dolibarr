@@ -42,9 +42,9 @@ $socname	= GETPOST('socname');
 $accountid	= GETPOST('accountid');
 $paymentnum	= GETPOST('num_paiement');
 
-$sortfield	= GETPOST('sortfield');
-$sortorder	= GETPOST('sortorder');
-$page		= GETPOST('page');
+$sortfield	= GETPOST('sortfield','alpha');
+$sortorder	= GETPOST('sortorder','alpha');
+$page		= GETPOST('page','int');
 
 $amounts=array();
 $amountsresttopay=array();
