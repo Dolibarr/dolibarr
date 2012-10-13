@@ -250,7 +250,8 @@ if ($resql)
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
-	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+ 		$langs->load("commercial");
+ 		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
  	}
@@ -329,16 +330,16 @@ if ($resql)
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
-		
+
 		// If module invoices enabled and user with invoice creation permissions
 		if (! empty($conf->facture->enabled))
 		{
 			if ($user->rights->facture->creer)
 			{
-		
+
 				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->facturee == 0))
 				{
-			
+
 					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
 				}
 			}

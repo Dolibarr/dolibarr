@@ -502,11 +502,11 @@ if ($id > 0)
 				$sql2.= ' AND s.rowid = '.$object->id;
 				// Show orders with status validated, shipping started and delivered (well any order we can bill)
 				$sql2.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";
-			
+
 				$resql2=$db->query($sql2);
 				$orders2invoice = $db->num_rows($resql2);
 				$db->free($resql2);
-				
+
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
@@ -777,13 +777,17 @@ if ($id > 0)
 			if ($user->rights->facture->creer)
 			{
 				$langs->load("bills");
-				
-				if($orders2invoice > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a>';
-				else print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a>';
-				
+				$langs->load("orders");
+
+				if (! empty($conf->commande->enabled))
+				{
+					if($orders2invoice > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a>';
+					else print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a>';
+				}
+
 				if ($object->client != 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
 				else print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a>';
-							
+
 			}
 			else
 			{

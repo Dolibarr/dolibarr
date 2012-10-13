@@ -2732,12 +2732,12 @@ class Form
             if ($filter) $newfilter.=' AND ('.$filter.')';
             $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
-            print '<td>';
+            print '<td nowrap="nowrap">';
             if ($nbqualifiedlines > 0)
             {
-                print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("UseLine").'"';
-                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print '" title="'.$langs->trans("UseCreditNoteInInvoicePayment");
-                print '">';
+                print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
+                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+                print '>';
             }
             if ($more) print $more;
             print '</td>';

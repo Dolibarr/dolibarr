@@ -137,17 +137,22 @@ class Paiement extends CommonObject
 
         // Clean parameters
         $totalamount = 0;
+        $atleastonepaymentnotnull = 0;
 		foreach ($this->amounts as $key => $value)	// How payment is dispatch
 		{
 			$newvalue = price2num($value,'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
+			if (! empty($newvalue)) $atleastonepaymentnotnull++;
 		}
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
-        if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
-
+        if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
+        {
+        	$this->error='TotalAmountEmpty';
+        	return -1;
+        }
 
 		$this->db->begin();
 
