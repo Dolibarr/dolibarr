@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ require 'pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-// Security check
-if (isset($_GET["account"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$id=GETPOST('account');
+$ref=GETPOST('ref');
 
-$year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
+// Security check
+$fieldid = (! empty($ref)?$ref:$id);
+$fieldname = isset($ref)?'ref':'rowid';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
+
+$year_start=GETPOST('year_start');
 $year_current = strftime("%Y",time());
 if (! $year_start)
 {
@@ -55,14 +55,15 @@ $form = new Form($db);
 
 // Get account informations
 $acct = new Account($db);
-if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
+if ($id > 0 && ! preg_match('/,/', $id))	// if for a particular account and not a list
 {
-	$result=$acct->fetch($_GET["account"]);
+	$result=$acct->fetch($id);
+	$id=$acct->id;
 }
-if ($_GET["ref"])
+if (! empty($ref))
 {
-	$result=$acct->fetch(0,$_GET["ref"]);
-	$_GET["account"]=$acct->id;
+	$result=$acct->fetch(0, $ref);
+	$id=$acct->id;
 }
 
 
@@ -76,7 +77,8 @@ $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
 $sql.= " AND b.amount >= 0";
-if ($_GET["account"]) $sql .= " AND b.fk_account IN (".$_GET["account"].")";
+if (! empty($id))
+	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
 $sql.= " GROUP BY dm";
 
 $resql=$db->query($sql);
@@ -103,7 +105,8 @@ $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
 $sql.= " AND b.amount <= 0";
-if ($_GET["account"]) $sql.= " AND b.fk_account IN (".$_GET["account"].")";
+if (! empty($id))
+	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
 $sql.= " GROUP BY dm";
 
 $resql=$db->query($sql);
@@ -140,17 +143,17 @@ print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 if ($_GET["account"])
 {
-	if (! preg_match('/,/',$_GET["account"]))
+	if (! preg_match('/,/', $id))
 	{
 		print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
 	}
 	else
 	{
 		$bankaccount=new Account($db);
-		$listid=explode(',',$_GET["account"]);
-		foreach($listid as $key => $id)
+		$listid=explode(',', $id);
+		foreach($listid as $key => $aId)
 		{
-			$bankaccount->fetch($id);
+			$bankaccount->fetch($aId);
 			$bankaccount->label=$bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
 			if ($key < (count($listid)-1)) print ', ';
@@ -166,7 +169,7 @@ print '</td></tr>';
 // Label
 print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 print '<td colspan="3">';
-if ($_GET["account"])
+if (! empty($id))
 {
 	print $acct->label;
 }
@@ -254,7 +257,8 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
-if ($_GET["account"]) $sql.= " AND b.fk_account IN (".$_GET["account"].")";
+if (! empty($id))
+	$sql.= " AND b.fk_account IN (".$db->escape($id).")";
 
 $resql=$db->query($sql);
 if ($resql)
@@ -273,8 +277,6 @@ print "</table>";
 
 print "\n</div>\n";
 
-$db->close();
-
 llxFooter();
-
+$db->close();
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,37 +26,39 @@
 require 'pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action', 'alpha');
 
 $langs->load("companies");
 $langs->load("banks");
 $langs->load("bills");
 
+$id=GETPOST('account');
+$ref=GETPOST('ref');
+$dvid=GETPOST('dvid');
+$num=GETPOST('num');
+
 // Security check
-if (isset($_GET["account"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
+$fieldid = (! empty($ref)?$ref:$id);
+$fieldname = isset($ref)?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
 
-if ($user->rights->banque->consolidate && $action == 'dvnext')
+if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
 {
 	$al = new AccountLine($db);
-	$al->datev_next($_GET["dvid"]);
+	$al->datev_next($dvid);
 }
 
-if ($user->rights->banque->consolidate && $action == 'dvprev')
+if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 {
 	$al = new AccountLine($db);
-	$al->datev_previous($_GET["dvid"]);
+	$al->datev_previous($dvid);
 }
 
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if ($page == -1) { $page = 0; }
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
@@ -77,24 +79,19 @@ $form = new Form($db);
 
 // Load account
 $acct = new Account($db);
-if ($_GET["account"])
+if ($id > 0 || ! empty($ref))
 {
-	$acct->fetch($_GET["account"]);
-}
-if ($_GET["ref"])
-{
-	$acct->fetch(0,$_GET["ref"]);
-	$_GET["account"]=$acct->id;
+	$acct->fetch($id, $ref);
 }
 
-if (! isset($_GET["num"]))
+if (! isset($num))
 {
 	/*
 	 *	Vue liste tous releves confondus
 	 */
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.fk_account = ".$_GET["account"];
+	$sql.= " WHERE b.fk_account = ".$acct->id;
 	$sql.= " ORDER BY numr DESC";
 
 	$sql.= $db->plimit($conf->liste_limit+1,$offset);
@@ -130,7 +127,7 @@ if (! isset($_GET["num"]))
 
 
 
-		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&amp;account=".$_GET["account"], $sortfield, $sortorder,'',$numrows);
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&amp;account=".$acct->id, $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';
 		print "<tr class=\"liste_titre\">";
@@ -147,7 +144,7 @@ if (! isset($_GET["num"]))
 			}
 			else
 			{
-				print "<tr $bc[$var]><td><a href=\"releve.php?num=$objp->numr&amp;account=".$_GET["account"]."\">$objp->numr</a></td></tr>\n";
+				print "<tr $bc[$var]><td><a href=\"releve.php?num=$objp->numr&amp;account=".$acct->id."\">$objp->numr</a></td></tr>\n";
 			}
 			$i++;
 		}
@@ -173,8 +170,8 @@ else
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve < '".$_GET["num"]."'";
-		$sql.= " AND b.fk_account = ".$_GET["account"];
+		$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
+		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
 		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
@@ -195,8 +192,8 @@ else
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= " WHERE b.num_releve > '".$_GET["num"]."'";
-		$sql.= " AND b.fk_account = ".$_GET["account"];
+		$sql.= " WHERE b.num_releve > '".$db->escape($num)."'";
+		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
 		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
@@ -214,10 +211,8 @@ else
 	}
 	else {
 		// On veut le releve num
-		$num=$_GET["num"];
 		$found=true;
 	}
-	if (! $found) $num=$_GET["num"];
 
 	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a> &nbsp;";
 	$mesprevnext.= $langs->trans("AccountStatement")." $num";
@@ -244,7 +239,7 @@ else
 	// Calcul du solde de depart du releve
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.num_releve < '".$num."'";
+	$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
 	$sql.= " AND b.fk_account = ".$acct->id;
 
 	$resql=$db->query($sql);
@@ -259,7 +254,7 @@ else
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv";
 	$sql.= ", b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.num_releve='".$num."'";
+	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
 	if (!isset($num))	$sql.= " OR b.num_releve is null";
 	$sql.= " AND b.fk_account = ".$acct->id;
 	$sql.= " ORDER BY b.datev ASC";
@@ -289,10 +284,10 @@ else
 
 			// Date de valeur
 			print '<td align="center" valign="center" nowrap="nowrap">';
-			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_previous().'</a> ';
 			print dol_print_date($db->jdate($objp->dv),"day") .' ';
-			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
+			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_next().'</a>';
 			print "</td>\n";
 
