@@ -2017,27 +2017,27 @@ class Facture extends CommonInvoice
     }
 
     /**
-     *      Update a detail line
+     *  Update a detail line
      *
-     *      @param     	int			$rowid           	Id of line to update
-     *      @param     	string		$desc            	Description of line
-     *      @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
-     *      @param     	double		$qty             	Quantity
-     *      @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-     *      @param     	date		$date_start      	Date de debut de validite du service
-     *      @param     	date		$date_end        	Date de fin de validite du service
-     *      @param     	double		$txtva          	VAT Rate
-     * 		@param		double		$txlocaltax1		Local tax 1 rate
-     *  	@param		double		$txlocaltax2		Local tax 2 rate
-     * 	   	@param     	string		$price_base_type 	HT or TTC
-     * 	   	@param     	int			$info_bits 		    Miscellanous informations
-     * 		@param		int			$type				Type of line (0=product, 1=service)
-     * 		@param		int			$fk_parent_line		???
-     * 		@param		int			$skip_update_total	???
-     * 		@param		int			$fk_fournprice		To calculate margin
-     * 		@param		int			$pa_ht				Buying price of line
-     * 		@param		string		$label				Label of the line
-     *      @return    	int             				< 0 if KO, > 0 if OK
+     *  @param     	int			$rowid           	Id of line to update
+     *  @param     	string		$desc            	Description of line
+     *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
+     *  @param     	double		$qty             	Quantity
+     *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
+     *  @param     	date		$date_start      	Date de debut de validite du service
+     *  @param     	date		$date_end        	Date de fin de validite du service
+     *  @param     	double		$txtva          	VAT Rate
+     * 	@param		double		$txlocaltax1		Local tax 1 rate
+     *  @param		double		$txlocaltax2		Local tax 2 rate
+     * 	@param     	string		$price_base_type 	HT or TTC
+     * 	@param     	int			$info_bits 		    Miscellanous informations
+     * 	@param		int			$type				Type of line (0=product, 1=service)
+     * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+     * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+     * 	@param		int			$fk_fournprice		Id of origin supplier price
+     * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
+     * 	@param		string		$label				Label of the line
+     *  @return    	int             				< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
     {

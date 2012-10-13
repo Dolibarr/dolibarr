@@ -2156,10 +2156,10 @@ class Commande extends CommonOrder
      *  @param    	timestamp		$date_start        	Start date of the line
      *  @param    	timestamp		$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
-     *  @param		int				$fk_parent_line		Parent line id
-     *  @param		int				$skip_update_total	Skip update of total
-     *  @param		int				$fk_fournprice		Id supplier price
-     *  @param		int				$pa_ht				Buying price (without tax)
+     * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+     * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+     *  @param		int				$fk_fournprice		Id of origin supplier price
+     *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
