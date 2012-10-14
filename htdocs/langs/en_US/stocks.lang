@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 WarehouseCard=Warehouse card
 Warehouse=Warehouse
+Warehouses=Warehouses
 NewWarehouse=New warehouse / Stock area
 WarehouseEdit=Modify warehouse
 MenuNewWarehouse=New warehouse
