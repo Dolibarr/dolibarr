@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 WarehouseCard=Ficha almacén
 Warehouse=Almacén
+Warehouses=Almacenes
 NewWarehouse=Nuevo almacén o zona de almacenaje
 WarehouseEdit=Edición almacén
 MenuNewWarehouse=Nuevo almacén
