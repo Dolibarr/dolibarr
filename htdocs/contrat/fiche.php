@@ -626,16 +626,27 @@ if ($action == 'create')
     }
 
     print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
+
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor('note_public', GETPOST('note_public'), '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
+    print $doleditor->Create(1);
+    /*
     print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
     print GETPOST("note_public");
     print '</textarea></td></tr>';
+	*/
 
     if (! $user->societe_id)
     {
         print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+        $doleditor=new DolEditor('note', GETPOST('note'), '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
+        print $doleditor->Create(1);
+        /*
         print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
         print GETPOST("note");
-        print '</textarea></td></tr>';
+        print '</textarea>';*/
+        print '</td></tr>';
     }
 
     // Other attributes

@@ -50,13 +50,13 @@ $object->fetch($id,$ref);
 
 if ($action == 'setnote_public' && $user->rights->contrat->creer)
 {
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note_public(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_public')), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->contrat->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note')), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -104,7 +104,7 @@ if ($id > 0 || ! empty($ref))
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';
-	
+
 	print "</table>";
 
 	print '<br>';
