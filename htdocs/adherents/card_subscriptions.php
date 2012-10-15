@@ -400,12 +400,16 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     if (! $error)
                     {
                         $bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
-                        if (! $bank_line_id > 0)
+                        if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
+                            $errmsgs=$paiement->errors;
                             $error++;
                         }
+                    }
 
+                    if (! $error)
+                    {
                         // Update fk_bank for subscriptions
                         $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
