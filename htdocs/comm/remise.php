@@ -114,7 +114,7 @@ if ($socid > 0)
 
 	// Remise
 	print '<tr><td colspan="2" width="25%">';
-	print $langs->trans("CustomerRelativeDiscount").'</td><td colspan="2">'.$objsoc->remise_client."%</td></tr>";
+	print $langs->trans("CustomerRelativeDiscount").'</td><td colspan="2">'.price2num($objsoc->remise_client)."%</td></tr>";
 
 	print '</table>';
 	print '<br>';
@@ -184,7 +184,7 @@ if ($socid > 0)
 			$tag = !$tag;
 			print '<tr '.$bc[$tag].'>';
 			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
-			print '<td align="center">'.$obj->remise_client.' %</td>';
+			print '<td align="center">'.price2num($obj->remise_client).'%</td>';
 			print '<td align="left">'.$obj->note.'</td>';
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '</tr>';
