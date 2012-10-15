@@ -1298,7 +1298,9 @@ Buy=Buy
 Sell=Sell
 InvoiceDateUsed=Invoice date used
 YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Setup - Company/Foundation), so there is no VAT options to setup.
-AccountancyCode=Accountancy Code  
+AccountancyCode=Accountancy Code
+AccountancyCodeSell=Sale account. code
+AccountancyCodeBuy=Purchase account. code 
 ##### Agenda #####
 AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link

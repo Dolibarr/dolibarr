@@ -443,9 +443,10 @@ class Form
      *  @param	string	$selected       Id or Code or Label of preselected country
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
+     *  @param	string	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
-    function select_country($selected='',$htmlname='pays_id',$htmloption='')
+    function select_country($selected='',$htmlname='pays_id',$htmloption='',$maxlength=0)
     {
         global $conf,$langs;
 
@@ -495,7 +496,7 @@ class Form
                     {
                         $out.= '<option value="'.$row['rowid'].'">';
                     }
-                    $out.= $row['label'];
+                    $out.= dol_trunc($row['label'],$maxlength,'middle');
                     if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
                     $out.= '</option>';
                 }
