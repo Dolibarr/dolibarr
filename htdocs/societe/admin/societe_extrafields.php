@@ -70,7 +70,7 @@ print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 $head = societe_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $langs->trans("ThirdParty"), 0, 'company');
+dol_fiche_head($head, 'attributes', $langs->trans("ThirdParties"), 0, 'company');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
