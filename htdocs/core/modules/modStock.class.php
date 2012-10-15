@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,6 +131,34 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .=' AND e.entity = '.$conf->entity;
+		
+		
+		// Imports
+		//--------
+		
+		$r=0;
+		
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="Warehouses";	// Translation key
+		$this->import_icon[$r]=$this->picto;
+		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('e'=>MAIN_DB_PREFIX.'entrepot');
+		$this->import_tables_creator_array[$r]=array('e'=>'fk_user_author');
+		$this->import_fields_array[$r]=array('e.label'=>"LocationSummary*",
+				'e.description'=>"DescWareHouse",'e.lieu'=>"LieuWareHouse",
+				'e.address'=>"Address",'e.cp'=>'Zip','e.fk_pays'=>'CountryCode',
+				'e.statut'=>'Status'
+		);
+		
+		$this->import_convertvalue_array[$r]=array(
+				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cpays.class.php','class'=>'Cpays','method'=>'fetch','dict'=>'DictionnaryCountry')
+		);
+		$this->import_regex_array[$r]=array('e.statut'=>'^[0|1]');
+		$this->import_examplevalues_array[$r]=array('e.label'=>"ALM001",
+				'e.description'=>"Central Warehouse",'e.lieu'=>"Central",
+				'e.address'=>"Route 66",'e.cp'=>'28080','e.fk_pays'=>'US',
+				'e.statut'=>'1');
 	}
 
 	/**
