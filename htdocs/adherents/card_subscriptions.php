@@ -403,7 +403,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     if (! $error)
                     {
                         $bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
-                        if (! $bank_line_id > 0)
+                        if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
                             $errmsgs=$paiement->errors;
