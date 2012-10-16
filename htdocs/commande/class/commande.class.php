@@ -2156,10 +2156,10 @@ class Commande extends CommonOrder
      *  @param    	timestamp		$date_start        	Start date of the line
      *  @param    	timestamp		$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
-     *  @param		int				$fk_parent_line		Parent line id
-     *  @param		int				$skip_update_total	Skip update of total
-     *  @param		int				$fk_fournprice		Id supplier price
-     *  @param		int				$pa_ht				Buying price (without tax)
+     * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+     * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+     *  @param		int				$fk_fournprice		Id of origin supplier price
+     *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
@@ -2236,6 +2236,7 @@ class Commande extends CommonOrder
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$subprice;
             $this->line->info_bits=$info_bits;
+            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
             $this->line->total_localtax1=$total_localtax1;
@@ -3116,6 +3117,7 @@ class OrderLine
 		if (empty($this->remise)) $this->remise=0;
 		if (empty($this->remise_percent)) $this->remise_percent=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
+        if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (empty($this->pa_ht)) $this->pa_ht=0;
@@ -3151,6 +3153,7 @@ class OrderLine
 		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?$this->fk_fournprice:"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
 		$sql.= " , info_bits=".$this->info_bits;
+        $sql.= " , special_code=".$this->special_code;
 		$sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
 		$sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
 		$sql.= " , product_type=".$this->product_type;

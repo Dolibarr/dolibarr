@@ -37,8 +37,8 @@ $sall=GETPOST('search_all');
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
-$sortorder = GETPOST('sortorder');
-$sortfield = GETPOST('sortfield');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
 
 // Security check
 $orderid = GETPOST('orderid');

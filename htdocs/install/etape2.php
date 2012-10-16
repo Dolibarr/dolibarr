@@ -39,7 +39,7 @@ error_reporting(0);		// Disable all errors
 error_reporting($err);
 
 $action=GETPOST('action');
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
+$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");

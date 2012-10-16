@@ -30,7 +30,7 @@ define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 include 'inc.php';
 
 $action=GETPOST('action','alpha');
-$setuplang=(GETPOST('selectlang')?GETPOST('selectlang'):'auto');
+$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -259,8 +259,8 @@ if (! $error && $db->connected)
 
     print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
     print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultCollationConnection.'">';
-    $_POST['dolibarr_main_db_character_set']=$defaultCharacterSet;
-    $_POST['dolibarr_main_db_collation']=$defaultCollationConnection;
+    $db_character_set=$defaultCharacterSet;
+    $db_collation=$defaultCollationConnection;
 }
 
 
@@ -409,7 +409,7 @@ if (! $error && $db->connected && $action == "set")
     }
 
     // Table prefix
-    $main_db_prefix = ((! empty($db_prefix) && $db_prefix != '') ? $db_prefix : 'llx_');
+    $main_db_prefix = (! empty($db_prefix) ? $db_prefix : 'llx_');
 
     // Force https
     $main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
@@ -772,11 +772,11 @@ function write_master_file($masterfile,$main_dir)
 function write_conf_file($conffile)
 {
     global $conf,$langs;
-    global $_POST,$main_dir,$main_data_dir,$main_force_https,$main_use_alt_dir,$main_alt_dir_name,$main_db_prefix;
+    global $main_url,$main_dir,$main_data_dir,$main_force_https,$main_use_alt_dir,$main_alt_dir_name,$main_db_prefix;
     global $dolibarr_main_url_root,$dolibarr_main_document_root,$dolibarr_main_data_root,$dolibarr_main_db_host;
     global $dolibarr_main_db_port,$dolibarr_main_db_name,$dolibarr_main_db_user,$dolibarr_main_db_pass;
     global $dolibarr_main_db_type,$dolibarr_main_db_character_set,$dolibarr_main_db_collation,$dolibarr_main_authentication;
-    global $db_host,$db_port,$db_name,$db_user,$db_pass,$db_type;
+    global $db_host,$db_port,$db_name,$db_user,$db_pass,$db_type,$db_character_set,$db_collation;
     global $conffile,$conffiletoshow,$conffiletoshowshort;
     global $force_dolibarr_lib_ADODB_PATH, $force_dolibarr_lib_NUSOAP_PATH;
     global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
@@ -787,7 +787,7 @@ function write_conf_file($conffile)
 
     $error=0;
 
-    $key = md5(uniqid(mt_rand(),TRUE)); // Genere un hash d'un nombre aleatoire
+    $key = md5(uniqid(mt_rand(),TRUE)); // Generate random hash
 
     $fp = fopen("$conffile", "w");
     if($fp)
@@ -837,10 +837,10 @@ function write_conf_file($conffile)
 		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",($db_type)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",($_POST["dolibarr_main_db_character_set"])).'\';');
+		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",($db_character_set)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",($_POST["dolibarr_main_db_collation"])).'\';');
+		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",($db_collation)).'\';');
 		fputs($fp,"\n");
 
 		/* Authentication */

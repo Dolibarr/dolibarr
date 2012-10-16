@@ -47,9 +47,9 @@ if ($user->societe_id > 0)
 $mode=GETPOST("mode");
 $modesearch=GETPOST("mode_search");
 
-$page=GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
+$page=GETPOST("page",'int');
+$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield",'alpha');
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;

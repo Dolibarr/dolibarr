@@ -34,8 +34,8 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 $langs->load("users");
 
-$sall=GETPOST('sall', 'alpha');
-$search_group=GETPOST('search_group','alpha');
+$sall=GETPOST('sall');
+$search_group=GETPOST('search_group');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -82,7 +82,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $param="search_group=".$search_group."&amp;sall=".$sall;
+    $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);

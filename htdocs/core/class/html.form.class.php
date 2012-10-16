@@ -443,9 +443,10 @@ class Form
      *  @param	string	$selected       Id or Code or Label of preselected country
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
+     *  @param	string	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
-    function select_country($selected='',$htmlname='pays_id',$htmloption='')
+    function select_country($selected='',$htmlname='pays_id',$htmloption='',$maxlength=0)
     {
         global $conf,$langs;
 
@@ -495,7 +496,7 @@ class Form
                     {
                         $out.= '<option value="'.$row['rowid'].'">';
                     }
-                    $out.= $row['label'];
+                    $out.= dol_trunc($row['label'],$maxlength,'middle');
                     if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
                     $out.= '</option>';
                 }
@@ -2732,12 +2733,12 @@ class Form
             if ($filter) $newfilter.=' AND ('.$filter.')';
             $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
-            print '<td>';
+            print '<td nowrap="nowrap">';
             if ($nbqualifiedlines > 0)
             {
-                print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("UseLine").'"';
-                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print '" title="'.$langs->trans("UseCreditNoteInInvoicePayment");
-                print '">';
+                print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
+                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+                print '>';
             }
             if ($more) print $more;
             print '</td>';

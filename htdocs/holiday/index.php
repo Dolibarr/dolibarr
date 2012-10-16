@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
-$page = GETPOST("page");
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 

@@ -2017,27 +2017,27 @@ class Facture extends CommonInvoice
     }
 
     /**
-     *      Update a detail line
+     *  Update a detail line
      *
-     *      @param     	int			$rowid           	Id of line to update
-     *      @param     	string		$desc            	Description of line
-     *      @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
-     *      @param     	double		$qty             	Quantity
-     *      @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-     *      @param     	date		$date_start      	Date de debut de validite du service
-     *      @param     	date		$date_end        	Date de fin de validite du service
-     *      @param     	double		$txtva          	VAT Rate
-     * 		@param		double		$txlocaltax1		Local tax 1 rate
-     *  	@param		double		$txlocaltax2		Local tax 2 rate
-     * 	   	@param     	string		$price_base_type 	HT or TTC
-     * 	   	@param     	int			$info_bits 		    Miscellanous informations
-     * 		@param		int			$type				Type of line (0=product, 1=service)
-     * 		@param		int			$fk_parent_line		???
-     * 		@param		int			$skip_update_total	???
-     * 		@param		int			$fk_fournprice		To calculate margin
-     * 		@param		int			$pa_ht				Buying price of line
-     * 		@param		string		$label				Label of the line
-     *      @return    	int             				< 0 if KO, > 0 if OK
+     *  @param     	int			$rowid           	Id of line to update
+     *  @param     	string		$desc            	Description of line
+     *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
+     *  @param     	double		$qty             	Quantity
+     *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
+     *  @param     	date		$date_start      	Date de debut de validite du service
+     *  @param     	date		$date_end        	Date de fin de validite du service
+     *  @param     	double		$txtva          	VAT Rate
+     * 	@param		double		$txlocaltax1		Local tax 1 rate
+     *  @param		double		$txlocaltax2		Local tax 2 rate
+     * 	@param     	string		$price_base_type 	HT or TTC
+     * 	@param     	int			$info_bits 		    Miscellanous informations
+     * 	@param		int			$type				Type of line (0=product, 1=service)
+     * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+     * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+     * 	@param		int			$fk_fournprice		Id of origin supplier price
+     * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
+     * 	@param		string		$label				Label of the line
+     *  @return    	int             				< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
     {
@@ -2119,6 +2119,7 @@ class Facture extends CommonInvoice
             $this->line->total_localtax2=(($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
             $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
             $this->line->info_bits			= $info_bits;
+            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
             $this->line->product_type		= $type;
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
@@ -3413,6 +3414,7 @@ class FactureLigne
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 		if (empty($this->remise_percent)) $this->remise_percent=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
+		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->product_type)) $this->product_type=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
@@ -3445,6 +3447,7 @@ class FactureLigne
         $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ",product_type=".$this->product_type;
         $sql.= ",info_bits='".$this->info_bits."'";
+        $sql.= ",special_code='".$this->special_code."'";
         if (empty($this->skip_update_total))
         {
         	$sql.= ",total_ht=".price2num($this->total_ht)."";

@@ -234,6 +234,7 @@ if ($result)
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
+ 		$langs->load("commercial");
 	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';

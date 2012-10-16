@@ -19,7 +19,7 @@ For users:
 - New: Monaco is like France for default vat calculation
 - New: Can list elements (invoices, orders or proposals) on a particular
   user contact). This allow to view a "basket" of its elements.
-- New: Add bank account on payment list of invoice card.
+- New: Show bank account on payment list of invoice card.
 - New: Cloning project allow to clones task, notes, files, contacts. 
 - New: Enhance default style.
 - New: Can edit and resiliate member status from list.
@@ -31,14 +31,13 @@ For users:
   to mysqldump binary.
 - New: Can use extrafields on contacts/addresses.
 - New: Support unique field for extrafields.
-- New: Extra fields supports more types (now int, string, double, date, datetime).
+- New: Extra fields supports more types (int, string, double, date, datetime).
 - New: Can correct stock of a warehouse from warehouse card.
 - New: [ task #185 ]: Can input amount when correcting stock to recalculate PMP.
 - New: [ task #454 ]: Add "No category" into filters on category.
 - New: Auto check box on page to edit interface options of user.
 - New: More surface control on stock correction page.
 - New: Add great britain provinces.
-- New: Update libs/tools/logo for DoliWamp.
 - New: [ task #494 ] Send an email to foundation when a new member has auto-subscribed.
 - New: [ task #326 ]: Add a numbering module to suggest automatically a product ref.
 - New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates.
@@ -54,15 +53,16 @@ For users:
 - New: Add possibility to defined position/job of a user
 - New: [ task #210 ] Can choose cash account during POS login
 - New: [ task #104 ] Can create an invoice from several orders
-
+- New: Update libs/tools/logo for DoliWamp (now use PHP 5.3).
 New experimental modules:
-- New: Add margin and commissions management module.
+- New: Add margin management module.
+- New: Add commissions management module.
 
 - Fix: [ bug #499 ]: Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 - Fix: Errors weren't being shown in customer's & supplier's orders
-- Fix: Lastname wasn't being recorded in xinputuser emailing module
+- Fix: Lastname wasn't being recorded in xinputuser emailing module.
 
 For developers:
 - New: Add webservice for thirdparty creation and list.

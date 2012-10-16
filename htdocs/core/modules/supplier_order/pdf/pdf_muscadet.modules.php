@@ -814,7 +814,11 @@ if ($pageposafter > $pageposbefore) {
 	{
 		global $conf;
 
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+		// Force to disable hidetop and hidebottom
+		$hidebottom=0;
+		if ($hidetop) $hidetop=-1;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
         // Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);

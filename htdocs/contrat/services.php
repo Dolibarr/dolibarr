@@ -35,7 +35,7 @@ $langs->load("companies");
 $mode = GETPOST("mode");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page");
+$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;

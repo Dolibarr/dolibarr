@@ -28,6 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/boutique/client/class/boutiqueclient.class.php';
 
+$id=GETPOST('id', 'int');
+
 
 /*
  * Actions
@@ -43,10 +45,10 @@ include_once DOL_DOCUMENT_ROOT.'/boutique/client/class/boutiqueclient.class.php'
 
 llxHeader();
 
-if ($_GET['id'])
+if ($id > 0)
 {
 	$client = new BoutiqueClient($dbosc);
-	$result = $client->fetch($_GET['id']);
+	$result = $client->fetch($id);
 	if ( $result )
 	{
 		print '<div class="titre">'.$langs->trans("CustomerCard").': '.$client->name.'</div><br>';
@@ -62,7 +64,7 @@ if ($_GET['id'])
 		 */
 		$sql = "SELECT o.orders_id, o.customers_id, date_purchased, t.value as total";
 		$sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o, ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
-		$sql .= " WHERE o.customers_id = " . $_GET['id'];
+		$sql .= " WHERE o.customers_id = " . $client->id;
 		$sql .= " AND o.orders_id = t.orders_id AND t.class = 'ot_total'";
 		//echo $sql;
 		$resql=$dbosc->query($sql);

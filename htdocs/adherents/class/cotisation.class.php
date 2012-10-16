@@ -65,9 +65,9 @@ class Cotisation extends CommonObject
 	function create($userid)
 	{
 		global $langs;
-		
+
 		$now=dol_now();
-		
+
 		// Check parameters
 		if ($this->datef <= $this->dateh)
 		{
@@ -218,7 +218,7 @@ class Cotisation extends CommonObject
 				$result=$member->fetch($this->fk_adherent);
 				$result=$member->update_end_date($user);
 
-				if ($this->fk_bank)
+				if ($accountline->rowid > 0)	// If we found bank account line (this means this->fk_bank defined)
 				{
 					$result=$accountline->delete($user);		// Return false if refused because line is conciliated
 					if ($result > 0)

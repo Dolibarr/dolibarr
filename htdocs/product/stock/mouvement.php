@@ -48,9 +48,9 @@ $search_movement = isset($_REQUEST["search_movement"])?$_REQUEST["search_movemen
 $search_product = isset($_REQUEST["search_product"])?$_REQUEST["search_product"]:'';
 $search_warehouse = isset($_REQUEST["search_warehouse"])?$_REQUEST["search_warehouse"]:'';
 $search_user = isset($_REQUEST["search_user"])?$_REQUEST["search_user"]:'';
-$page = GETPOST("page");
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
+$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
 if ($page < 0) $page = 0;
 $offset = $conf->liste_limit * $page;
 

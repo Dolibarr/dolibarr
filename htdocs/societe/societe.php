@@ -51,9 +51,9 @@ $search_categ=trim(GETPOST("search_categ"));
 $mode=GETPOST("mode");
 $modesearch=GETPOST("mode_search");
 
-$sortfield=GETPOST("sortfield");
-$sortorder=GETPOST("sortorder");
-$page=GETPOST("page");
+$sortfield=GETPOST("sortfield",'alpha');
+$sortorder=GETPOST("sortorder",'alpha');
+$page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 if ($page == -1) { $page = 0 ; }

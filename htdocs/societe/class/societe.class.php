@@ -842,9 +842,10 @@ class Societe extends CommonObject
      * 	@param		array		$filters	Array of couple field name/value to filter the companies with the same name
      * 	@param		boolean		$exact		Exact string search (true/false)
      * 	@param		boolean		$case		Case sensitive (true/false)
+     * 	@param		string		$clause		Clause for filters
      * 	@return		array		Array of thirdparties object
      */
-    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false)
+    function searchByName($name, $type='0', $filters = array(), $exact = false, $case = false, $similar = false, $clause = 'AND')
     {
     	$thirdparties = array();
 
@@ -861,21 +862,54 @@ class Societe extends CommonObject
     	if (! empty($name))
     	{
     		if (! $exact)
-    			$name = '%'.str_replace('*', '%', $name).'%';
-    		if (! $case)
-    			$sql.= " AND nom LIKE '".$this->db->escape($name)."'";
+    		{
+    			if (preg_match('/^([\*])?[^*]+([\*])?$/', $name, $regs) && count($regs) > 1)
+    			{
+    				$name = str_replace('*', '%', $name);
+    			}
+    			else
+    			{
+    				$name = '%'.$name.'%';
+    			}
+    		}
+    		$sql.= " AND ";
+    		if (is_array($filters) && ! empty($filters))
+    			$sql.= "(";
+    		if ($similar)
+    		{
+    			// For test similitude
+    			$sql.= "(LOCATE('".$this->db->escape($name)."', nom) > 0 OR LOCATE(nom, '".$this->db->escape($name)."') > 0)";
+    		}
     		else
-    			$sql.= " AND nom LIKE BINARY '".$this->db->escape($name)."'";
+    		{
+    			if (! $case)
+    				$sql.= "nom LIKE '".$this->db->escape($name)."'";
+    			else
+    				$sql.= "nom LIKE BINARY '".$this->db->escape($name)."'";
+    		}
     	}
     	if (is_array($filters) && ! empty($filters))
     	{
     		foreach($filters as $field => $value)
     		{
+    			if (! $exact)
+    			{
+    				if (preg_match('/^([\*])?[^*]+([\*])?$/', $value, $regs) && count($regs) > 1)
+    				{
+    					$value = str_replace('*', '%', $value);
+    				}
+    				else
+    				{
+    					$value = '%'.$value.'%';
+    				}
+    			}
     			if (! $case)
-    				$sql.= " AND ".$field." LIKE '".$this->db->escape($value)."'";
+    				$sql.= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
     			else
-    				$sql.= " AND ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+    				$sql.= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
     		}
+    		if (! empty($name))
+    			$sql.= ")";
     	}
 
     	$res  = $this->db->query($sql);

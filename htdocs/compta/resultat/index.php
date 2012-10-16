@@ -506,7 +506,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		print '<td align="right">&nbsp;';
 		if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 		{
-			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
+			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
 			if (! isset($totsorties[$annee])) $totsorties[$annee]=0;
 			$totsorties[$annee]+=$decaiss_ttc[$case];
 		}
@@ -515,7 +515,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		print '<td align="right">&nbsp;';
 		if (isset($encaiss_ttc[$case]) && $encaiss_ttc[$case] != 0)
 		{
-			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price(price2num($encaiss_ttc[$case],'MT')).'</a>';
+			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price(price2num($encaiss_ttc[$case],'MT')).'</a>';
 			if (! isset($totentrees[$annee])) $totentrees[$annee]=0;
 			$totentrees[$annee]+=$encaiss_ttc[$case];
 		}

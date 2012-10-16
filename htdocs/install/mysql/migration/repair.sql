@@ -47,6 +47,7 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
+UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);

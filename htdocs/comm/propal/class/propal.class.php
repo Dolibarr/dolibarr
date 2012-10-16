@@ -168,7 +168,7 @@ class Propal extends CommonObject
 
         if (! $qty) $qty = 1;
 
-        dol_syslog("Propal::add_product $idproduct, $qty, $remise_percent");
+        dol_syslog(get_class($this)."::add_product $idproduct, $qty, $remise_percent");
         if ($idproduct > 0)
         {
             $prod=new Product($this->db);
@@ -314,7 +314,7 @@ class Propal extends CommonObject
     {
         global $conf;
 
-        dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
+        dol_syslog(get_class($this)."::addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -458,10 +458,10 @@ class Propal extends CommonObject
      *	@param	  	double		$price_base_type	HT ou TTC
      *	@param      int			$info_bits        	Miscellanous informations
      *	@param      int			$special_code      	Set special code ('' = we don't change it)
-     *	@param      int			$fk_parent_line    	Id of line parent
-     *  @param		int			$skip_update_total	Skip update total
-     *  @param		int			$fk_fournprice		Id supplier price
-     *  @param		int			$pa_ht				Buying price without tax
+     * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+     * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+     *  @param		int			$fk_fournprice		Id of origin supplier price
+     *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
      *  @return     int     		        		0 if OK, <0 if KO
@@ -567,13 +567,13 @@ class Propal extends CommonObject
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog("Propal::UpdateLine Error=".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
             }
         }
         else
         {
-            dol_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
+            dol_syslog(get_class($this)."::updateline Erreur -2 Propal en mode incompatible pour cette action");
             return -2;
         }
     }
@@ -1342,7 +1342,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Propal::set_availability Erreur SQL");
+                dol_syslog(get_class($this)."::set_availability Erreur SQL");
                 return -1;
             }
         }
@@ -1371,7 +1371,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Propal::set_demand_reason Erreur SQL");
+                dol_syslog(get_class($this)."::set_demand_reason Erreur SQL");
                 return -1;
             }
         }
@@ -1437,7 +1437,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Propal::set_remise_percent Error sql=$sql");
+                dol_syslog(get_class($this)."::set_remise_percent Error sql=$sql");
                 return -1;
             }
         }
@@ -1472,7 +1472,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Propal::set_remise_absolue Error sql=$sql");
+                dol_syslog(get_class($this)."::set_remise_absolue Error sql=$sql");
                 return -1;
             }
         }
@@ -1755,7 +1755,7 @@ class Propal extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
-            dol_syslog("Propal::InvoiceArrayList sql=".$sql);
+            dol_syslog(get_class($this)."::InvoiceArrayList sql=".$sql);
             $resql=$this->db->query($sql);
 
             if ($resql)

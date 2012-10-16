@@ -42,9 +42,9 @@ $socname	= GETPOST('socname');
 $accountid	= GETPOST('accountid');
 $paymentnum	= GETPOST('num_paiement');
 
-$sortfield	= GETPOST('sortfield');
-$sortorder	= GETPOST('sortorder');
-$page		= GETPOST('page');
+$sortfield	= GETPOST('sortfield','alpha');
+$sortorder	= GETPOST('sortorder','alpha');
+$page		= GETPOST('page','int');
 
 $amounts=array();
 $amountsresttopay=array();
@@ -68,6 +68,8 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
 
     $datepaye = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
     $paiement_id = 0;
+    $totalpaiement = 0;
+    $atleastonepaymentnotnull = 0;
 
     // Verifie si des paiements sont superieurs au montant facture
     foreach ($_POST as $key => $value)
@@ -77,6 +79,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
             $cursorfacid = substr($key,7);
             $amounts[$cursorfacid] = price2num(trim($_POST[$key]));
             $totalpaiement = $totalpaiement + $amounts[$cursorfacid];
+            if (! empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
             $tmpfacture=new Facture($db);
             $tmpfacture->fetch($cursorfacid);
             $amountsresttopay[$cursorfacid]=price2num($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
@@ -108,7 +111,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
         }
     }
 
-    if ($totalpaiement == 0)
+    if (empty($totalpaiement) && empty($atleastonepaymentnotnull))
     {
         $fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentAmount')).'</div>';
         $error++;
@@ -154,8 +157,8 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 
     if (! $error)
     {
-        $paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
-        if ($paiement_id < 0)
+    	$paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+    	if ($paiement_id < 0)
         {
             $errmsg=$paiement->error;
             $error++;

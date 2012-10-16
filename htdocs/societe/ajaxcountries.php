@@ -30,6 +30,8 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 
 require '../main.inc.php';
 
+$country=GETPOST('pays', 'alpha');
+
 
 /*
  * View
@@ -49,14 +51,14 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 dol_syslog(join(',',$_POST));
 
 // Generation liste des pays
-if(isset($_POST['pays']) && !empty($_POST['pays']))
+if (! empty($country))
 {
 	global $langs;
 	$langs->load("dict");
 
 	$sql = "SELECT rowid, code, libelle, active";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-	$sql.= " WHERE active = 1 AND libelle LIKE '%" . utf8_decode($_POST['pays']) . "%'";
+	$sql.= " WHERE active = 1 AND libelle LIKE '%" . $db->escape(utf8_decode($country)) . "%'";
 	$sql.= " ORDER BY libelle ASC";
 
 	$resql=$db->query($sql);
