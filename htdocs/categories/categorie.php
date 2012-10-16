@@ -61,6 +61,7 @@ if ($id || $ref)
 		$elementtype = 'fournisseur';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($id)?$id:(isset($socid)?$socid:'');
+		$dbtablename = '&societe';
 		$fieldid = 'rowid';
 	}
 	if ($type == 2) {
