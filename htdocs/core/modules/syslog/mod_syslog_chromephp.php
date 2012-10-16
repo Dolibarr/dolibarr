@@ -37,7 +37,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	{
 		try
 		{
-		    set_include_path('/usr/share/php/');
+		    set_include_path(SYSLOG_CHROMEPHP_INCLUDEPATH);
 		    $res = @include_once 'ChromePhp.class.php';
 		    restore_include_path();
 		    if ($res)
@@ -53,22 +53,22 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		return false;
 	}
 
-	// /**
-	//  * {@inheritDoc}
-	//  */
-	// public function configure()
-	// {
-	// 	global $langs;
+	/**
+	 * {@inheritDoc}
+	 */
+	public function configure()
+	{
+		global $langs;
 		
-	// 	return array(
-	// 		array(
-	// 			'name' => $langs->trans('IncludePath'),
-	// 			'constant' => 'SYSLOG_CHROMEPHP_INCLUDEPATH',
-	// 			'default' => '/usr/share/php',
-	// 			'attr' => 'size="40"'
-	// 		)
-	// 	);
-	// }
+		return array(
+			array(
+				'name' => $langs->trans('IncludePath'),
+				'constant' => 'SYSLOG_CHROMEPHP_INCLUDEPATH',
+				'default' => '/usr/share/php',
+				'attr' => 'size="40"'
+			)
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
