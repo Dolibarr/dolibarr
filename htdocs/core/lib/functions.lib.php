@@ -521,7 +521,7 @@ function dol_syslog($message, $level = LOG_INFO)
 	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
 
 	//We load SYSLOG handlers
-	if (defined('SYSLOG_HANDLERS')) $handlers = unserialize(SYSLOG_HANDLERS);
+	if (defined('SYSLOG_HANDLERS')) $handlers = json_decode(SYSLOG_HANDLERS);
 	else $handlers = array();
 
 	foreach ($handlers as $handler)

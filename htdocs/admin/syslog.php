@@ -37,7 +37,7 @@ $action = GETPOST("action");
 $syslogModules = array();
 $activeModules = array();
 
-if (defined('SYSLOG_HANDLERS')) $activeModules = unserialize(SYSLOG_HANDLERS);
+if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(SYSLOG_HANDLERS);
 
 $dir = dol_buildpath('/core/modules/syslog/');
 
@@ -105,7 +105,7 @@ if ($action == 'set')
 		}
 	}
 
-	dolibarr_set_const($db, 'SYSLOG_HANDLERS', serialize($activeModules), 'chaine');
+	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine');
 
     if (! $error)
 	{
