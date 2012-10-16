@@ -35,6 +35,12 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
+		// This function does not exists on some ISP (Ex: Free in France)
+		if (!function_exists('openlog'))
+		{
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -85,12 +91,6 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function export($content)
 	{
-		// This function does not exists on some ISP (Ex: Free in France)
-		if (!function_exists('openlog'))
-		{
-			throw new Exception('Function openlog is not available in this server');
-		}
-
 		if (defined("SYSLOG_FACILITY") && constant("SYSLOG_FACILITY"))
 		{
 			if (constant(constant('SYSLOG_FACILITY')))
