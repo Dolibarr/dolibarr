@@ -130,7 +130,7 @@ if ($filter == 'uptodate')
 }
 if ($filter == 'outofdate')
 {
-	$sql.=" AND datefin < '".$db->idate($now)."'";
+	$sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
 }
 // Insert categ filter
 if ($search_categ)
