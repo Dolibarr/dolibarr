@@ -59,13 +59,14 @@ class FormFile
      *  @param  int		$size           Length of input file area
      *  @param	Object	$object			Object to use (when attachment is done on an element)
      *  @param	string	$options		Options
+     *  @param	boolean	$useajax		Use ajax if enabled
      * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='')
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=true)
     {
         global $conf,$langs;
 
-        if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
+        if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax)
         {
             return $this->_formAjaxFileUpload($object);
         }
