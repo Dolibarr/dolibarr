@@ -202,7 +202,7 @@ foreach ($tabfac as $key => $val)
 	foreach ($tabttc[$key] as $k => $mt)
 	{
 	    print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td>";
-	    print '<td align="right">'.($mt<0?-price(-$mt):'')."</td>";
+	    print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
 	    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
 	}
 	print "</tr>";
