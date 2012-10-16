@@ -53,22 +53,22 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function configure()
-	{
-		global $langs;
+	// /**
+	//  * {@inheritDoc}
+	//  */
+	// public function configure()
+	// {
+	// 	global $langs;
 		
-		return array(
-			array(
-				'name' => $langs->trans('IncludePath'),
-				'constant' => 'SYSLOG_FIREPHP_INCLUDEPATH',
-				'default' => '/usr/share/php',
-				'attr' => 'size="40"'
-			)
-		);
-	}
+	// 	return array(
+	// 		array(
+	// 			'name' => $langs->trans('IncludePath'),
+	// 			'constant' => 'SYSLOG_FIREPHP_INCLUDEPATH',
+	// 			'default' => '/usr/share/php',
+	// 			'attr' => 'size="40"'
+	// 		)
+	// 	);
+	// }
 
 	/**
 	 * {@inheritDoc}
@@ -80,7 +80,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		$errors = array();
 
 		$oldinclude = get_include_path();
-		set_include_path(SYSLOG_FIREPHP_INCLUDEPATH);
+		set_include_path('/usr/share/php/');
 
 		if (!file_exists('FirePHPCore/FirePHP.class.php'))
 		{
