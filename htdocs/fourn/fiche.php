@@ -44,7 +44,7 @@ $action	= GETPOST('action');
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id) $id=$user->societe_id;
-$result = restrictedArea($user, 'societe&fournisseur', $id, '');
+$result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
 
 $object = new Fournisseur($db);
 
@@ -403,7 +403,7 @@ if ($object->fetch($id))
         // List of contacts
         show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?id='.$object->id);
     }
-    
+
     // Addresses list
     if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
     {
