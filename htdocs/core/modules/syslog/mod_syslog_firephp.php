@@ -27,7 +27,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $langs->trans('ClassNotFoundIntoPathWarning','FirePHPCore/FirePHP.class.php');
+		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning','FirePHPCore/FirePHP.class.php');
 	}
 
 	/**
@@ -47,7 +47,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		}
 		catch(Exception $e)
 		{
-		    print '<!-- FirePHP no available into PHP -->'."\n";
+		    print '<!-- FirePHP not available into PHP -->'."\n";
 		}
 
 		return -1;
