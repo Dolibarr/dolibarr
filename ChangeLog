@@ -54,6 +54,8 @@ For users:
 - New: [ task #210 ] Can choose cash account during POS login
 - New: [ task #104 ] Can create an invoice from several orders
 - New: Update libs/tools/logo for DoliWamp (now use PHP 5.3).
+- New: Added ODT Template tag {object_total_discount}
+
 New experimental modules:
 - New: Add margin management module.
 - New: Add commissions management module.
@@ -81,6 +83,7 @@ For developers:
   expedition, order supplier and order invoice (lines included), intervention card, project, tasks.
 - New: Add ChromePHP output into syslog module.
 - New: Add PRODUCT_PRICE_MODIFY trigger.
+- New: Created function to retrieve total amount of discount of an invoice/proposal...
 
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
