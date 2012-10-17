@@ -307,7 +307,7 @@ class modFournisseur extends DolibarrModules
             	
             $this->import_convertvalue_array[$r]=array(
             		'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
-            		'spd.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
+            		'sp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
             );
             $this->import_examplevalues_array[$r]=array('sp.fk_product'=>"PR123456",
             		'sp.fk_soc'=>"My Supplier",'sp.ref_fourn'=>"SupplierRef",'sp.price'=>"50",
