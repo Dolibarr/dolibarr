@@ -463,147 +463,86 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *  @return	void
  */
-function dol_syslog($message, $level=LOG_INFO)
+function dol_syslog($message, $level = LOG_INFO)
 {
-	global $conf,$user,$langs,$_REQUEST;
+	global $conf, $user, $langs;
+
+	// If syslog module enabled
+	if (empty($conf->syslog->enabled)) return false;
+
+	if (!defined('SYSLOG_HANDLERS') || !constant('SYSLOG_HANDLERS')) return false;
+
+	$logLevels = array(
+		LOG_EMERG,
+		LOG_ALERT,
+		LOG_CRIT,
+		LOG_ERR,
+		LOG_WARNING,
+		LOG_NOTICE,
+		LOG_INFO,
+		LOG_DEBUG
+	);
+
+	if (!in_array($level, $logLevels))
+	{
+		throw new Exception('Incorrect log level');
+	}
+
+	if ($level > $conf->global->SYSLOG_LEVEL) return false;
 
 	// If adding log inside HTML page is required
 	if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
 	{
-		$conf->logbuffer[]=dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
+		$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 	}
 
-	// If syslog module enabled
-	if (! empty($conf->syslog->enabled))
+	// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
+	if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
 	{
-		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
-		if ($level > $conf->global->SYSLOG_LEVEL) return;
+		print "\n\n<!-- Log start\n";
+		print $message."\n";
+		print "Log end -->\n";
+	}
 
-		// Translate error message if this is an error message (rare) and langs is loaded
-		if ($level == LOG_ERR)
+	$data = array(
+		'message' => $message,
+		'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
+		'level' => $level,
+		'user' => ((is_object($user) && $user->id) ? $user->login : false),
+		'ip' => false
+	);
+
+	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
+	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
+	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
+	else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
+	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
+	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
+
+	//We load SYSLOG handlers
+	if (defined('SYSLOG_HANDLERS')) $handlers = json_decode(SYSLOG_HANDLERS);
+	else $handlers = array();
+
+	foreach ($handlers as $handler)
+	{
+		$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+
+		if (!file_exists($file))
 		{
-			if (is_object($langs))
-			{
-				$langs->load("errors");
-				if ($message != $langs->trans($message)) $message = $langs->trans($message);
-			}
+			throw new Exception('Missing log handler');
 		}
 
-		// Add page/script name to log message
-		$script=isset($_SERVER['PHP_SELF'])?basename($_SERVER['PHP_SELF'],'.php').' ':'';
-		$message=$script.$message;
+		require_once $file;
 
-		// Add user to log message
-		$login='nologin';
-		if (is_object($user) && $user->id) $login=$user->login;
-		$message=sprintf("%-8s",$login)." ".$message;
+		$class = new $handler();
 
-		// Check if log is to a file (SYSLOG_FILE_ON defined)
-		if (defined("SYSLOG_FILE_ON") && constant("SYSLOG_FILE_ON"))
+		if (!$class instanceof LogHandlerInterface)
 		{
-			$filelog=SYSLOG_FILE;
-			$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
-			//print "filelog=".$filelog."\n";
-			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
-			else $file=fopen($filelog,"a+");
-
-			if ($file)
-			{
-				$ip='???';	// $ip contains information to identify computer that run the code
-				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];			// In most cases.
-				else if (! empty($_SERVER['SERVER_ADDR'])) $ip=$_SERVER['SERVER_ADDR'];		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-				else if (! empty($_SERVER['COMPUTERNAME'])) $ip=$_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but usefull if OS defined it).
-				else if (! empty($_SERVER['LOGNAME'])) $ip='???@'.$_SERVER['LOGNAME'];	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-
-				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
-				$liblevel=$liblevelarray[$level];
-				if (! $liblevel) $liblevel='UNDEF';
-
-				$message=dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-5s",$liblevel)." ".sprintf("%-15s",$ip)." ".$message;
-
-				fwrite($file,$message."\n");
-				fclose($file);
-				// This is for log file, we do not change permissions
-
-				// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-				if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
-				{
-					print "\n\n<!-- Log start\n";
-					print $message."\n";
-					print "Log end -->\n";
-				}
-			}
-			elseif (! defined("SYSLOG_FILE_NO_ERROR"))
-			{
-				// Do not use here a call to functions that make call to dol_syslog so making call to langs. A simple print is enough.
-				print "Error, failed to open file ".$filelog."\n";
-			}
+			throw new Exception('Log handler does not extend LogHandlerInterface');
 		}
 
-		// Check if log is to syslog (SYSLOG_SYSLOG_ON defined)
-		if (defined("SYSLOG_SYSLOG_ON") && constant("SYSLOG_SYSLOG_ON"))
-		{
-			if (function_exists('openlog'))	// This function does not exists on some ISP (Ex: Free in France)
-			{
-				$facility = LOG_USER;
-				if (defined("SYSLOG_FACILITY") && constant("SYSLOG_FACILITY"))
-				{
-					// Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
-					$facility = constant("SYSLOG_FACILITY");
-				}
-
-				openlog("dolibarr", LOG_PID | LOG_PERROR, (int) $facility);		// (int) is required to avoid error parameter 3 expected to be long
-				if (! $level) syslog(LOG_ERR, $message);
-				else          syslog($level, $message);
-				closelog();
-			}
-		}
-
-		// Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
-		if (defined("SYSLOG_FIREPHP_ON") && constant("SYSLOG_FIREPHP_ON") && ! empty($_SERVER["SERVER_NAME"]))     //! empty($_SERVER["SERVER_NAME"]) to be sure to enable this in Web mode only
-		{
-			try
-			{
-				// Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
-				// database or config file because we must be able to log data before database or config file read.
-				$oldinclude=get_include_path();
-				set_include_path('/usr/share/php/');
-				include_once 'FirePHPCore/FirePHP.class.php';
-				set_include_path($oldinclude);
-				ob_start();	// To be sure headers are not flushed until all page is completely processed
-				$firephp = FirePHP::getInstance(true);
-				if ($level == LOG_ERR) $firephp->error($message);
-				elseif ($level == LOG_WARNING) $firephp->warn($message);
-				elseif ($level == LOG_INFO) $firephp->log($message);
-				else $firephp->log($message);
-			}
-			catch(Exception $e)
-			{
-				// Do not use dol_syslog here to avoid infinite loop
-			}
-		}
-			// Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
-		if (defined("SYSLOG_CHROMEPHP_ON") && constant("SYSLOG_CHROMEPHP_ON") && ! empty($_SERVER["SERVER_NAME"]))     //! empty($_SERVER["SERVER_NAME"]) to be sure to enable this in Web mode only
-		{
-			try
-			{
-				// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once() a constant from
-				// database or config file because we must be able to log data before database or config file read.
-				$oldinclude=get_include_path();
-				set_include_path('/usr/share/php/');
-				include_once 'ChromePhp.php';
-				set_include_path($oldinclude);
-				ob_start();	// To be sure headers are not flushed until all page is completely processed
-				if ($level == LOG_ERR) ChromePhp::error($message);
-				elseif ($level == LOG_WARNING) ChromePhp::warn($message);
-				elseif ($level == LOG_INFO) ChromePhp::log($message);
-				else ChromePhp::log($message);
-			}
-			catch(Exception $e)
-			{
-				// Do not use dol_syslog here to avoid infinite loop
-			}
-		}
+		$class->export($data);
 	}
 }
 
