@@ -213,7 +213,7 @@ print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 $head = societe_admin_prepare_head(null);
 
-dol_fiche_head($head, 'general', $langs->trans("ThirdParty"), 0, 'company');
+dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
 
 dol_htmloutput_mesg($mesg);
 

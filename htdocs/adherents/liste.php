@@ -136,7 +136,7 @@ if ($filter == 'uptodate')
 }
 if ($filter == 'outofdate')
 {
-	$sql.=" AND datefin < '".$db->idate($now)."'";
+	$sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
 }
 
 // Count total nb of records with no order and no limits
