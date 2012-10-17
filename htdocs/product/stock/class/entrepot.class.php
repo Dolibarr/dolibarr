@@ -204,8 +204,15 @@ class Entrepot extends CommonObject
 			$sql.= " WHERE rowid = " . $this->id;
 
 			dol_syslog(get_class($this)."::delete sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
+			$resql1=$this->db->query($sql);
+
+			// Update denormalized fields because we change content of produt_stock
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product p SET p.stock= (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
+
+			dol_syslog(get_class($this)."::delete sql=".$sql);
+			$resql2=$this->db->query($sql);
+
+			if ($resql1 && $resql2)
 			{
 				$this->db->commit();
 				return 1;

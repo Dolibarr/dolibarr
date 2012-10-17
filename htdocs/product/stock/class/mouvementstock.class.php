@@ -194,6 +194,8 @@ class MouvementStock
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				$sql.= " WHERE rowid = ".$fk_product;
+				// May be this request is better:
+				// UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 				dol_syslog(get_class($this)."::_create sql=".$sql);
 				$resql=$this->db->query($sql);
