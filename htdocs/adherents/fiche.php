@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Philippe Grand       <philippe.grand@atoo-net.com>
@@ -742,11 +742,30 @@ else
 		{
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print 'jQuery(document).ready(function () {
-			jQuery("#selectcountry_id").change(function() {
-			document.formsoc.action.value="create";
-			document.formsoc.submit();
-		});
-		})';
+						jQuery("#selectcountry_id").change(function() {
+							document.formsoc.action.value="create";
+							document.formsoc.submit();
+						});
+						function initfieldrequired()
+						{
+							jQuery("#tdcompany").removeClass("fieldrequired");
+							jQuery("#tdlastname").removeClass("fieldrequired");
+							jQuery("#tdfirstname").removeClass("fieldrequired");
+							if (jQuery("#morphy").val() == \'mor\')
+							{
+								jQuery("#tdcompany").addClass("fieldrequired");
+							}
+							if (jQuery("#morphy").val() == \'phy\')
+							{
+								jQuery("#tdlastname").addClass("fieldrequired");
+								jQuery("#tdfirstname").addClass("fieldrequired");
+							}
+						}
+						jQuery("#morphy").change(function() {
+							initfieldrequired();
+						});
+						initfieldrequired();
+					})';
 			print '</script>'."\n";
 		}
 
@@ -765,12 +784,12 @@ else
 		// Moral-Physique
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature")."</span></td><td>\n";
+		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
 		print $form->selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
 		print "</td>\n";
 
 		// Type
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberType").'</span></td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("MemberType").'</td><td>';
 		$listetype=$adht->liste_array();
 		if (count($listetype))
 		{
@@ -781,7 +800,7 @@ else
 		print "</td>\n";
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(GETPOST('societe','alpha')?GETPOST('societe','alpha'):$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(GETPOST('societe','alpha')?GETPOST('societe','alpha'):$object->societe).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -789,11 +808,11 @@ else
 		print '</tr>';
 
 		// Lastname
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password
@@ -952,11 +971,30 @@ else
 		{
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print 'jQuery(document).ready(function () {
-			jQuery("#selectcountry_id").change(function() {
-			document.formsoc.action.value="edit";
-			document.formsoc.submit();
-		});
-		})';
+				jQuery("#selectcountry_id").change(function() {
+					document.formsoc.action.value="edit";
+					document.formsoc.submit();
+				});
+				function initfieldrequired()
+				{
+					jQuery("#tdcompany").removeClass("fieldrequired");
+					jQuery("#tdlastname").removeClass("fieldrequired");
+					jQuery("#tdfirstname").removeClass("fieldrequired");
+					if (jQuery("#morphy").val() == \'mor\')
+					{
+						jQuery("#tdcompany").addClass("fieldrequired");
+					}
+					if (jQuery("#morphy").val() == \'phy\')
+					{
+						jQuery("#tdlastname").addClass("fieldrequired");
+						jQuery("#tdfirstname").addClass("fieldrequired");
+					}
+				}
+				jQuery("#morphy").change(function() {
+					initfieldrequired();
+				});
+				initfieldrequired();
+			})';
 			print '</script>'."\n";
 		}
 
@@ -1003,7 +1041,7 @@ else
 		print '</td>';
 
 		// Type
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 		if ($user->rights->adherent->creer)
 		{
 			print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
@@ -1016,7 +1054,7 @@ else
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
 
 		// Civilite
 		print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
@@ -1025,17 +1063,17 @@ else
 		print '</tr>';
 
 		// Name
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->lastname).'"></td>';
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->lastname).'"></td>';
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
-			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$object->pass).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="30" value="'.(isset($_POST["pass"])?$_POST["pass"]:$object->pass).'"></td></tr>';
 		}
 
 		// Address
