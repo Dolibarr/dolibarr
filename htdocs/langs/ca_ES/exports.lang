@@ -119,3 +119,4 @@ ExportFieldAutomaticallyAdded=S'ha afegit automàticament el camp <b>%s</b>, ja 
 CsvOptions=Opcions de l'arxiu CSV
 Separator=Separador
 Enclosure=Delimitador de camps
+SuppliersProducts=Productes de proveïdors
