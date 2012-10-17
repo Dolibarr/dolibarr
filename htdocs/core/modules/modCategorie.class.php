@@ -157,6 +157,25 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
 		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
 		$this->export_sql_end[$r] .=' AND u.type = 3';	// Supplier categories
+		
+		// Imports
+		//--------
+		
+		$r=0;
+		
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="CatList";	// Translation key
+		$this->import_icon[$r]=$this->picto;
+		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('ca'=>MAIN_DB_PREFIX.'categorie');
+		$this->import_fields_array[$r]=array('ca.label'=>"Label*",
+				'ca.type'=>"Type*",'ca.description'=>"Description"
+		);
+		
+		$this->import_regex_array[$r]=array('ca.type'=>'^[0|1|2|3]');
+		$this->import_examplevalues_array[$r]=array('ca.label'=>"Supplier Category",
+				'ca.type'=>"1", 'ca.description'=>"Imported category");
 	}
 
 
