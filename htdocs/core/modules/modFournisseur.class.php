@@ -288,31 +288,6 @@ class modFournisseur extends DolibarrModules
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
             $this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
-            
-            
-            // Imports
-            //--------
-            // Import product suppliers
-            $r++;
-            $this->import_code[$r]=$this->rights_class.'_'.$r;
-            $this->import_label[$r]="SuppliersProducts";	// Translation key
-            $this->import_icon[$r]='product';
-            $this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-            $this->import_tables_array[$r]=array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
-            $this->import_tables_creator_array[$r]=array('sp'=>'fk_user');
-            $this->import_fields_array[$r]=array('sp.fk_product'=>"Product*",
-            		'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'RefSupplier', 'sp.price'=>"Price*",
-            		'sp.quantity'=>"Quantity*",'sp.unitprice'=>'UnitPrice*','sp.tva_tx'=>'VAT'
-            );
-            	
-            $this->import_convertvalue_array[$r]=array(
-            		'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
-            		'sp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
-            );
-            $this->import_examplevalues_array[$r]=array('sp.fk_product'=>"PR123456",
-            		'sp.fk_soc'=>"My Supplier",'sp.ref_fourn'=>"SupplierRef",'sp.price'=>"50",
-            		'sp.quantity'=>"1",'sp.unitprice'=>'50','sp.tva_tx'=>'21'
-            );
 
 	}
 
