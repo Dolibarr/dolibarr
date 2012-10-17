@@ -27,7 +27,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $langs->trans('ChromePHPIncludePathWarning');
+		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
 	}
 
 	/**
@@ -35,22 +35,24 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
+		global $conf;
 		try
 		{
-		    set_include_path(SYSLOG_CHROMEPHP_INCLUDEPATH);
+			if (empty($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH)) $conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH='/usr/share/php';
+			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
 		    $res = @include_once 'ChromePhp.class.php';
 		    restore_include_path();
 		    if ($res)
 		    {
-		        return true;
+		        return 1;
 		    }
 		}
 		catch(Exception $e)
 		{
-		    print '<!-- FirePHP no available into PHP -->'."\n";
+		    print '<!-- ChromePHP not available into PHP -->'."\n";
 		}
 
-		return false;
+		return -1;
 	}
 
 	/**
@@ -59,7 +61,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	public function configure()
 	{
 		global $langs;
-		
+
 		return array(
 			array(
 				'name' => $langs->trans('IncludePath'),
@@ -82,11 +84,11 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		$oldinclude = get_include_path();
 		set_include_path(SYSLOG_CHROMEPHP_INCLUDEPATH);
 
-		if (!file_exists('ChromePhp.php'))
+		if (!file_exists('ChromePhp.class.php'))
 		{
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.php');
+			$errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php');
 		}
-		
+
 		set_include_path($oldinclude);
 
 		return $errors;
@@ -106,7 +108,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
 			set_include_path(SYSLOG_CHROMEPHP_INCLUDEPATH);
-			include_once 'ChromePhp.php';
+			include_once 'ChromePhp.class.php';
 			set_include_path($oldinclude);
 			ob_start();	// To be sure headers are not flushed until all page is completely processed
 			if ($level == LOG_ERR) ChromePhp::error($message);

@@ -27,7 +27,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $langs->trans('FirePHPIncludePathWarning');
+		return $langs->trans('ClassNotFoundIntoPathWarning','FirePHPCore/FirePHP.class.php');
 	}
 
 	/**
@@ -42,7 +42,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		    restore_include_path();
 		    if ($res)
 		    {
-		        return true;
+		        return 1;
 		    }
 		}
 		catch(Exception $e)
@@ -50,7 +50,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		    print '<!-- FirePHP no available into PHP -->'."\n";
 		}
 
-		return false;
+		return -1;
 	}
 
 	// /**
@@ -59,7 +59,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	// public function configure()
 	// {
 	// 	global $langs;
-		
+
 	// 	return array(
 	// 		array(
 	// 			'name' => $langs->trans('IncludePath'),
@@ -86,7 +86,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		{
 			$errors[] = $langs->trans("ErrorFailedToOpenFile", 'FirePhp.php');
 		}
-		
+
 		set_include_path($oldinclude);
 
 		return $errors;

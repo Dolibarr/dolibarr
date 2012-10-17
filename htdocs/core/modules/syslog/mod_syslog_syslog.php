@@ -38,10 +38,10 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 		// This function does not exists on some ISP (Ex: Free in France)
 		if (!function_exists('openlog'))
 		{
-			return false;
+			return 0;
 		}
-		
-		return true;
+
+		return 1;
 	}
 
 	/**
@@ -66,7 +66,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	public function checkConfiguration()
 	{
 		global $langs;
-		
+
 		$errors = array();
 
 	    $facility = SYSLOG_FACILITY;
@@ -81,10 +81,10 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 		{
 		    $errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
 		}
-		
+
 		return $errors;
 	}
-	
+
 	/**
 	 * Export the message
 	 * @param  array $content Array containing the info about the message

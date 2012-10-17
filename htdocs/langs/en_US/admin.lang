@@ -911,6 +911,7 @@ TranslationSetup=Configuration de la traduction
 TranslationDesc=Choice of language visible on screen can be modified:<br>* Globally from menu <strong>Home - Setup - Display</strong><br>* For user only from tab <strong>User display</strong> of user card (click on login on top of screen). 
 TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b>
 YouMustEnableOneModule=You must at least enable 1 module
+ClassNotFoundIntoPathWarning=Class %s not found into PHP path
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

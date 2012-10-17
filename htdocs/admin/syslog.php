@@ -182,19 +182,25 @@ foreach ($syslogModules as $moduleName)
 {
 	$module = new $moduleName;
 
+	$moduleactive=$module->isActive();
+	if ($moduleactive == -1 && empty($conf->global->MAIN_FEATURES_LEVEL)) continue;		// Some modules are hidden if not activable and not into debug mode (end user must not see them)
+
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print '<td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').(!$module->isActive() ? 'disabled="disabled"' : '').'> ';
-	print $module->getName().'</td>';
+	print '<td width="140">';
+	print '<input '.$bc[$var].' type="checkbox" name="SYSLOG_HANDLERS[]" value="'.$moduleName.'" '.(in_array($moduleName, $activeModules) ? 'checked="checked"' : '').(!$moduleactive ? 'disabled="disabled"' : '').'> ';
+	print $module->getName();
+	print '</td>';
 
 	print '<td nowrap="nowrap">';
-	if ($module->configure())
+	$setuparray=$module->configure();
+	if ($setuparray)
 	{
-		foreach ($module->configure() as $option)
+		foreach ($setuparray as $option)
 		{
 			if (defined($option['constant'])) $value = constant($option['constant']);
 			else $value = (isset($option['default']) ? $option['default'] : '');
-			
+
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 		}
 	}

@@ -37,7 +37,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-		return true;
+		return 1;
 	}
 
 	/**
@@ -46,7 +46,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	public function configure()
 	{
 		global $langs;
-		
+
 		return array(
 			array(
 				'name' => $langs->trans('SyslogFilename'),
@@ -67,7 +67,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		$errors = array();
 
 		$filename = $this->getFilename();
-		
+
 		if (file_exists($filename) && is_writable($filename))
 		{
 			dol_syslog('admin/syslog: file '.$filename);
@@ -112,7 +112,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			LOG_INFO => 'INFO',
 			LOG_DEBUG => 'DEBUG'
 		);
-	
+
 		$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-5s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".$content['message'];
 
 		fwrite($filefd, $message."\n");
