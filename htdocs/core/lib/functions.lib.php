@@ -3484,15 +3484,25 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 /**
  *	Set event message in dol_events session
  *
- *	@param	string	$mesgstring		 Message
- *  @param  string	$style           Which style to use ('mesgs', 'warnings', 'errors')
+ *	@param	mixed	$mesgs			Message string or array
+ *  @param  string	$style      	Which style to use ('mesgs', 'warnings', 'errors')
  *  @return	void
  *  @see	dol_htmloutput_events
  */
-function setEventMessage($mesgstring, $style='mesgs')
+function setEventMessage($mesgs, $style='mesgs')
 {
 	if (! in_array($style,array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
-	$_SESSION['dol_events'][$style][] = $mesgstring;
+	if (! is_array($mesgs))		// If mesgs is a string
+	{
+		$_SESSION['dol_events'][$style][] = $mesgs;
+	}
+	else						// If mesgs is an array
+	{
+		foreach($mesgs as $mesg)
+		{
+			$_SESSION['dol_events'][$style][] = $mesg;
+		}
+	}
 }
 
 /**
