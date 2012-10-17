@@ -145,6 +145,7 @@ CodeNotDef=Not defined
 AddRemind=Dispatch available amount
 RemainToDivide= Remain to dispatch :
 WarningDepositsNotIncluded=Deposits invoices are not included in this version with this accountancy module.
+DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
 Pcg_version=Pcg version
 Pcg_type=Pcg type
 Pcg_subtype=Pcg subtype

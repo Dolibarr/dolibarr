@@ -275,7 +275,11 @@ else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
-    if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
+    if ($object->date_lim_reglement < $object->date)
+    {
+    	$object->date_lim_reglement=$object->date;
+    	setEventMessage($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"),'warnings');
+    }
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
