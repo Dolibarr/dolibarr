@@ -212,7 +212,7 @@ class ProductFournisseur extends Product
         {
 	        	// Delete price for this quantity
 	        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
-	        	$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+          		$sql.= " WHERE fk_soc = ".$fourn->id." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".$qty." AND entity = ".$conf->entity;
 				dol_syslog(get_class($this).'::update_buyprice sql='.$sql);
 	        	$resql=$this->db->query($sql);
 				if ($resql)
