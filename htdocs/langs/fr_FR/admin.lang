@@ -826,8 +826,8 @@ Delays_MAIN_DELAY_MEMBERS= Tolérance de retard avant alerte (en jours) sur coti
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT= Tolérance de retard avant alerte (en jours) sur chèques à déposer
 SetupDescription1= Toutes les options de l'espace configuration sont des options permettant de configurer Dolibarr avant de commencer son utilisation.
 SetupDescription2= Les 2 étapes indispensables de configuration sont les 2 premières dans le menu gauche, à savoir, la configuration de la société/institution et la configuration des modules:
-SetupDescription3= Les données du menu <b>Configuration -> Société/institution</b> sont requises car les informations saisies sont utilisées dans la plupart des écrans, en affichage, ou pour modifier le comportement de Dolibarr (comme par exemple des fonctions qui dépendent de votre pays).
-SetupDescription4= Les données du menu <b>Configuration -> Modules</b> sont indispensables car Dolibarr ERP/CRM est constitué d'un ensemble de modules tous plus ou moins indépendants. C'est après avoir activé les modules qui vous intéressent que vous verrez apparaitre les fonctionnalités dans les menus.
+SetupDescription3= Les données du menu <a href="%s">Configuration -> Société/institution</a> sont requises car les informations saisies sont utilisées dans la plupart des écrans, en affichage, ou pour modifier le comportement de Dolibarr (comme par exemple des fonctions qui dépendent de votre pays).
+SetupDescription4= Les données du menu <a href="%s">Configuration -> Modules</a> sont indispensables car Dolibarr ERP/CRM est constitué d'un ensemble de modules tous plus ou moins indépendants. C'est après avoir activé les modules qui vous intéressent que vous verrez apparaitre les fonctionnalités dans les menus.
 SetupDescription5= Les autres entrées de configuration gèrent des paramètres facultatifs.
 EventsSetup= Configuration du traçage des événements
 LogEvents= Événements d'audit de sécurité

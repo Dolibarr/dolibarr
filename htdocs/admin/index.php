@@ -53,15 +53,28 @@ print $langs->trans("AreaForAdminOnly").' ';
 //print "<br>";
 print $langs->trans("SetupDescription2")."<br><br>";
 
-print "<br>";
-print "<br>";
-//print '<hr style="color: #DDDDDD;">';
-print img_picto('','puce').' '.$langs->trans("SetupDescription3")."<br>";
 print '<br>';
-print "<br>";
 //print '<hr style="color: #DDDDDD;">';
-print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
-print "<br>";
+print img_picto('','puce').' '.$langs->trans("SetupDescription3",DOL_URL_ROOT.'/admin/company.php?mainmenu=home');
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
+{
+	$langs->load("errors");
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
+}
+print '<br>';
+print '<br>';
+print '<br>';
+//print '<hr style="color: #DDDDDD;">';
+print img_picto('','puce').' '.$langs->trans("SetupDescription4",DOL_URL_ROOT.'/admin/modules.php?mainmenu=home');
+if (count($conf->modules) <= 1)	// If only user module enabled
+{
+	$langs->load("errors");
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+	print '<br><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
+}
+print '<br>';
+print '<br>';
 print '<br>';
 //print '<hr style="color: #DDDDDD;">';
 print $langs->trans("SetupDescription5")."<br>";
