@@ -1480,7 +1480,7 @@ class Form
                 $outval.=$objRef.' ('.$objRefFourn.') - ';
                 $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
-
+                
                 if (! empty($objp->idprodfournprice))
                 {
                     $currencytext=$langs->trans("Currency".$conf->currency);
@@ -1488,24 +1488,28 @@ class Form
                     if (dol_strlen($currencytext) > 10) $currencytext=$conf->currency;   // If text is too long, we use the short code
                     if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->currency;   // If text is too long, we use the short code
 
-                    $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
-                    $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
+
                     $outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
                     if ($objp->quantity == 1)
                     {
-                        $opt.= strtolower($langs->trans("Unit"));
-                        $outval.=strtolower($langs->transnoentities("Unit"));
+	                    $opt.= price($objp->fprice).' '.$currencytext."/";
+                    	$outval.= price($objp->fprice).' '.$currencytextnoent."/";
+                    	$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
+                        $outval.=$langs->transnoentities("Unit");
                     }
                     else
                     {
-                        $opt.= strtolower($langs->trans("Units"));
-                        $outval.=strtolower($langs->transnoentities("Units"));
+    	                $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
+	                    $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
+                    	$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
+                        $outval.=$langs->transnoentities("Units");
                     }
+                   
                     if ($objp->quantity >= 1)
                     {
-                        $opt.=" (".price($objp->unitprice).' '.$currencytext."/".strtolower($langs->trans("Unit")).")";
-                        $outval.=" (".price($objp->unitprice).' '.$currencytextnoent."/".strtolower($langs->transnoentities("Unit")).")";
+                        $opt.=" (".price($objp->unitprice).' '.$currencytext."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+                        $outval.=" (".price($objp->unitprice).' '.$currencytextnoent."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
                     }
 					if ($objp->remise_percent >= 1)
                     {
@@ -1529,13 +1533,22 @@ class Form
                     $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
                 }
                 $opt .= "</option>\n";
-
+                
+               
                 // Add new entry
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
                 array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
-
+				// Exemple of var_dump $outjson
+				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
+				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
+				//      	 ["qty"]=>string(1) "1" ["discount"]=>string(1) "0" ["disabled"]=>bool(false)
+                //}
+                //var_dump($outval); var_dump(utf8_check($outval)); var_dump(json_encode($outval));
+                //$outval=array('label'=>'ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/ Unité (20,00 Euros/unité)');
+                //var_dump($outval); var_dump(utf8_check($outval)); var_dump(json_encode($outval));
+                
                 $i++;
             }
             $outselect.='</select>';

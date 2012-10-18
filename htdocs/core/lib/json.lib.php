@@ -33,7 +33,8 @@ if (! function_exists('json_encode'))
 	 */
 	function json_encode($elements)
 	{
-		return dol_json_encode($elements);
+		return 'ttt';
+		//return dol_json_encode($elements);
 	}
 }
 
