@@ -197,7 +197,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/*.php
 %_datadir/dolibarr/htdocs/*.txt
 
-%defattr(0664, -, -)
+%defattr(0664, root, www)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
 %config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
 %config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php

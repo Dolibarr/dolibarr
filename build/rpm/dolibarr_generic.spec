@@ -52,6 +52,7 @@ Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ld
 Requires: mysql, mysql-client 
 %else
 %if 0%{?suse_version}
+# Voir http://en.opensuse.org/openSUSE:Packaging_Conventions_RPM_Macros
 Group: Productivity/Office/Management
 Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, fonts-ttf-dejavu
 Requires: mysql-community-server, mysql-community-server-client 
@@ -260,7 +261,15 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/*.php
 %_datadir/dolibarr/htdocs/*.txt
 
-%defattr(0664, -, -)
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
+%defattr(0664, root, apache)
+%else
+%if 0%{?suse_version}
+%defattr(0664, root, www)
+%else
+%defattr(0664, root, -)
+%endif
+%endif
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
 %config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
 %config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php
