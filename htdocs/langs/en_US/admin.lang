@@ -350,7 +350,7 @@ DateAndTime=Date and hour
 Module0Name=Users & groups
 Module0Desc=Users and groups management
 Module1Name=Third parties
-Module1Desc=Companies and contact management
+Module1Desc=Companies and contact management (customers, prospects...)
 Module2Name=Commercial
 Module2Desc=Commercial management
 Module10Name=Accounting
@@ -817,8 +817,8 @@ Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed memb
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
 SetupDescription1=All parameters available in the setup area allow you to setup Dolibarr before starting using it.
 SetupDescription2=The 2 most important setup steps are the 2 first ones in the left setup menu, this means Company/foundation setup page and Modules setup page:
-SetupDescription3=Parameters in menu <b>Setup -> Company/foundation</b> are required because input information is used on Dolibarr displays and to modify Dolibarr behaviour (for example for features related to your country).
-SetupDescription4=Parameters in menu <b>Setup -> Modules</b> are required because Dolibarr is not a fixed ERP/CRM but a sum of several modules, all more or less independant. It's only after activating modules you're interesting in that you will see features appeared in menus.
+SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because input information is used on Dolibarr displays and to modify Dolibarr behaviour (for example for features related to your country).
+SetupDescription4=Parameters in menu <a href="%s">Setup -> Modules</a> are required because Dolibarr is not a fixed ERP/CRM but a sum of several modules, all more or less independant. It's only after activating modules you're interesting in that you will see features appeared in menus.
 SetupDescription5=Other menu entries manage optional parameters.
 EventsSetup=Setup for events logs
 LogEvents=Security audit events
@@ -911,6 +911,7 @@ TranslationSetup=Configuration de la traduction
 TranslationDesc=Choice of language visible on screen can be modified:<br>* Globally from menu <strong>Home - Setup - Display</strong><br>* For user only from tab <strong>User display</strong> of user card (click on login on top of screen). 
 TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b>
 YouMustEnableOneModule=You must at least enable 1 module
+ClassNotFoundIntoPathWarning=Class %s not found into PHP path
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

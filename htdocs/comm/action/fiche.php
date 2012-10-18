@@ -344,8 +344,8 @@ if ($action == 'update')
 
 	if ($result < 0)
 	{
-		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($actioncomm->error).'</div>';
+		setEventMessage($actioncomm->error,'errors');
+		setEventMessage($actioncomm->errors,'errors');
 	}
 	else
 	{

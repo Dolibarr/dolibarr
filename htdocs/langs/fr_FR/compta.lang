@@ -157,6 +157,7 @@ COMPTA_ACCOUNT_SUPPLIER=Compte comptable fournisseur par défaut (si non défini
 AddRemind=Ventiler montant disponible
 RemainToDivide=Reste à répartir :
 WarningDepositsNotIncluded=Les factures d'accomptes ne sont pas encore prises en compte dans cette version avec ce module de comptabilité.
+DatePaymentTermCantBeLowerThanObjectDate=La date limite de règlement ne peut être inférieure à la date de l'object
 Pcg_version=Version du plan
 Pcg_type=Classe de compte
 Pcg_subtype=Sous classe de compte

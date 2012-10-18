@@ -1591,9 +1591,6 @@ print '</table><br>';
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-	$formcompany= new FormCompany($db);
-
 	$blocname = 'contacts';
 	$title = $langs->trans('ContactsAddresses');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';

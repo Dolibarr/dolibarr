@@ -220,7 +220,7 @@ foreach ($tabfac as $key => $val)
 	    print "</td><td>".$langs->trans("ThirdParty");
 		print ' ('.$companystatic->getNomUrl(0,'supplier',16).')';
 	    print "</td>";
-	    print '<td align="right">'.($mt<0?-price(-$mt):'')."</td>";
+	    print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
 	    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
 	}
 	print "</tr>";

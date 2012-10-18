@@ -826,8 +826,8 @@ Delays_MAIN_DELAY_MEMBERS= Tolérance de retard avant alerte (en jours) sur coti
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT= Tolérance de retard avant alerte (en jours) sur chèques à déposer
 SetupDescription1= Toutes les options de l'espace configuration sont des options permettant de configurer Dolibarr avant de commencer son utilisation.
 SetupDescription2= Les 2 étapes indispensables de configuration sont les 2 premières dans le menu gauche, à savoir, la configuration de la société/institution et la configuration des modules:
-SetupDescription3= Les données du menu <b>Configuration -> Société/institution</b> sont requises car les informations saisies sont utilisées dans la plupart des écrans, en affichage, ou pour modifier le comportement de Dolibarr (comme par exemple des fonctions qui dépendent de votre pays).
-SetupDescription4= Les données du menu <b>Configuration -> Modules</b> sont indispensables car Dolibarr ERP/CRM est constitué d'un ensemble de modules tous plus ou moins indépendants. C'est après avoir activé les modules qui vous intéressent que vous verrez apparaitre les fonctionnalités dans les menus.
+SetupDescription3= Les données du menu <a href="%s">Configuration -> Société/institution</a> sont requises car les informations saisies sont utilisées dans la plupart des écrans, en affichage, ou pour modifier le comportement de Dolibarr (comme par exemple des fonctions qui dépendent de votre pays).
+SetupDescription4= Les données du menu <a href="%s">Configuration -> Modules</a> sont indispensables car Dolibarr ERP/CRM est constitué d'un ensemble de modules tous plus ou moins indépendants. C'est après avoir activé les modules qui vous intéressent que vous verrez apparaitre les fonctionnalités dans les menus.
 SetupDescription5= Les autres entrées de configuration gèrent des paramètres facultatifs.
 EventsSetup= Configuration du traçage des événements
 LogEvents= Événements d'audit de sécurité
@@ -918,6 +918,8 @@ PathDirectory= Répertoire
 SendmailOptionMayHurtBuggedMTA=La fonction d'envoi de mails par la méthode "PHP mail directe" génère une requete mail qui peut être mal interprété par certains serveurs buggués de réception de mail. Cela se traduit par des mails non lisibles chez les personnes hebergés par ces plateformes bugguées. C'est le cas des clients de certains fournisseurs d'accès internet (Ex: Orange). Ce n'est pas un problème ni dans Dolibarr ni dans PHP mais sur le serveur de réception. Vous pouvez toutefois ajouter l'option MAIN_FIX_FOR_BUGGED_MTA à 1 dans configuration - divers pour modifier Dolibarr afin de compenser le bug. Toutefois ce sont les serveurs respectueux du standard d'envoi de mail qui pourront avoir des problèmes. L'autre solution (recommandée) est d'utiliser la méthode d'envoi SMTP socket library qui n'a aucun de ces inconvénients.
 TranslationSetup=Translation setup
 TranslationDesc=Le choix de la langue affichée à l'écran se modifie:<br>* Soit de manière globale depuis le menu <strong>Accueil - Configuration - Affichage</strong><br>* Soit de manière spécifique à l'utilisateur depuis l'onglet <strong>Interface utilisateur</strong> de sa fiche utilisateur (cliquer sur le login en haut de l'écran). 
+ClassNotFoundIntoPathWarning=La class %s n'a pas été trouvée dans le path PHP
+
 ##### Module password generation= undefined
 PasswordGenerationStandard= Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés.
 PasswordGenerationNone= Ne propose pas de mots de passe générés. Le mot de passe est à saisir manuellement.

@@ -443,7 +443,7 @@ elseif ($action == 'update_line')
         $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
         $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
-        
+
         $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
@@ -500,7 +500,7 @@ elseif ($action == 'addline')
         $localtax1tx= get_localtax($tauxtva, 1, $object->thirdparty);
         $localtax2tx= get_localtax($tauxtva, 2, $object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
-        
+
         if (! $_POST['dp_desc'])
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")).'</div>';
@@ -842,9 +842,9 @@ elseif ($action == 'remove_file')
     }
 }
 
-if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fournisseur->facture->creer)
 {
-	if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
+	if ($action == 'addcontact')
 	{
 		$result = $object->fetch($id);
 
@@ -874,7 +874,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	}
 
 	// bascule du statut d'un contact
-	else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
+	else if ($action == 'swapstatut')
 	{
 		if ($object->fetch($id))
 		{
@@ -887,7 +887,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	}
 
 	// Efface un contact
-	else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
+	else if ($action == 'deletecontact')
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact($_GET["lineid"]);
@@ -1526,11 +1526,6 @@ else
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
         	print '<br>';
-        	
-        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-        	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-        	$formcompany= new FormCompany($db);
-
         	$blocname = 'contacts';
         	$title = $langs->trans('ContactsAddresses');
         	include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
@@ -1643,7 +1638,7 @@ else
                 print '<td align="right"><input size="1" name="qty" type="text" value="'.$object->lines[$i]->qty.'"></td>';
 
                 print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'">%</td>';
-                
+
                 print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 
                 print '<td align="right" nowrap="nowrap">&nbsp;</td>';
@@ -1701,7 +1696,7 @@ else
                 print '<td align="right">'.$object->lines[$i]->qty.'</td>';
 
                 print '<td align="right">'.(($object->lines[$i]->remise_percent > 0)?$object->lines[$i]->remise_percent.'%':'').'</td>';
-                
+
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
 
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';

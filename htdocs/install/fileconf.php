@@ -69,7 +69,7 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
-pHeader($langs->trans("ConfigurationFile"),"etape1","set","",($force_dolibarr_js_JQUERY?$force_dolibarr_js_JQUERY.'/':''));
+pHeader($langs->trans("ConfigurationFile"),"etape1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
 
 // Test if we can run a first install process
 if (! is_writable($conffile))

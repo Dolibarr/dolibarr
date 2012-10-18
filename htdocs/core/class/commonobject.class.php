@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2212,6 +2213,27 @@ abstract class CommonObject
         }
         dol_syslog(get_class($this).'::hasProductsOrServices we found '.$nb.' qualified lines of products/servcies');
         return $nb;
+    }
+
+    /**
+     * Function that returns the total amount of discounts applied.
+     * 
+     * @return false|float False is returned if the discount couldn't be retrieved
+     */
+    function getTotalDiscount()
+    {
+        $sql = 'SELECT (SUM(`subprice`) - SUM(`total_ht`)) as `discount` FROM '.MAIN_DB_PREFIX.$this->table_element.'det WHERE `'.$this->fk_element.'` = '.$this->id;
+
+        $query = $this->db->query($sql);
+        
+        if ($query)
+        {
+            $result = $this->db->fetch_object($query);
+
+            return price2num($result->discount);
+        }
+
+        return false;
     }
 
     /**
