@@ -1629,9 +1629,9 @@ else if ($action == 'remove_file')
 	}
 }
 
-if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
 {
-	if ($action == 'addcontact' && $user->rights->facture->creer)
+	if ($action == 'addcontact')
 	{
 		$result = $object->fetch($id);
 
@@ -1661,7 +1661,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	}
 
 	// bascule du statut d'un contact
-	else if ($action == 'swapstatut' && $user->rights->facture->creer)
+	else if ($action == 'swapstatut')
 	{
 		if ($object->fetch($id))
 		{
@@ -1674,7 +1674,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	}
 
 	// Efface un contact
-	else if ($action == 'deletecontact' && $user->rights->facture->creer)
+	else if ($action == 'deletecontact')
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact($lineid);
@@ -2980,10 +2980,6 @@ else if ($id > 0 || ! empty($ref))
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
-        	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-        	$formcompany= new FormCompany($db);
-
         	$blocname = 'contacts';
         	$title = $langs->trans('ContactsAddresses');
         	include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';

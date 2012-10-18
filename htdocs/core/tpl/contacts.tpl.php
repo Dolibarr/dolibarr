@@ -16,6 +16,13 @@
  *
  */
 
+if (! class_exists('Contact')) {
+	require DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+}
+if (! class_exists('FormCompany')) {
+	require DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+}
+
 $module = $object->element;
 
 // Special cases
@@ -25,6 +32,7 @@ elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur-
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
 elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
 
+$formcompany= new FormCompany($db);
 $companystatic=new Societe($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
