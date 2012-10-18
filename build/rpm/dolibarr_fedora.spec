@@ -171,6 +171,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/fichinter
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
+%_datadir/dolibarr/htdocs/holiday
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install

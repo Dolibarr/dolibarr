@@ -8,7 +8,11 @@
 
 Name: dolibarr
 Version: __VERSION__
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+Release: __RELEASE__%{?dist}
+%else
 Release: __RELEASE__
+%endif
 Summary: ERP and CRM software for small and medium companies or foundations 
 Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones o autónomos
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, auto-entrepreneurs ou associations
@@ -19,15 +23,47 @@ License: GPLv2+
 Vendor: Dolibarr dev team
 
 URL: http://www.dolibarr.org
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_redhat-fedora/%{name}-%{version}.tgz
+%else
+%if 0%{?mdkversion}
+Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_mandriva/%{name}-%{version}.tgz
+%else
+%if 0%{?suse_version}
+Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
+%else
 Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_generic/%{name}-%{version}.tgz
+%endif
+%endif
+%endif
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+Group: Applications/Productivity
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, php-adodb, php-nusoap, dejavu-sans-fonts
+Requires: mysql-server, mysql
+BuildRequires: desktop-file-utils
+%else
+%if 0%{?mdkversion}
+Group: Applications/Productivity
+Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ldap, php-imap, php-mysqli, php-openssl, fonts-ttf-dejavu 
+Requires: mysql, mysql-client 
+%else
+%if 0%{?suse_version}
+Group: Productivity/Office/Management
+Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, fonts-ttf-dejavu
+Requires: mysql-community-server, mysql-community-server-client 
+BuildRequires: update-desktop-files fdupes
+%else
 Group: Applications/Productivity
 Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap 
 Requires: mysql-server, mysql 
 Requires: php-mysql >= 4.1.0 
+%endif
+%endif
+%endif
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -86,7 +122,19 @@ cui hai bisogno ed essere facile da usare.
 %{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/conf.php
 %{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/apache.conf
 %{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/file_contexts.dolibarr
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+%{__install} -m 644 build/rpm/install.forced.php.fedora $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/install.forced.php
+%else
+%if 0%{?mdkversion}
+%{__install} -m 644 build/rpm/install.forced.php.mandriva $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/install.forced.php
+%else
+%if 0%{?suse_version}
+%{__install} -m 644 build/rpm/install.forced.php.opensuse $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/install.forced.php
+%else
 %{__install} -m 644 build/rpm/install.forced.php.generic $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/install.forced.php
+%endif
+%endif
+%endif
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
@@ -102,6 +150,19 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/adodbtime  
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
+%else
+%if 0%{?mdkversion}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
+%else
+%if 0%{?suse_version}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
+%endif
+%endif
+%endif
 
 # Lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
@@ -115,6 +176,14 @@ do
 	echo "%lang(${lang}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
   fi
 done >%{name}.lang
+
+%if 0%{?suse_version}
+# Enable this command to tag desktop file for suse
+%suse_update_desktop_file dolibarr
+
+# Enable this command to allow suse detection of duplicate files and create hardlinks instead
+%fdupes $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs
+%endif
 
 
 #---- clean
@@ -167,6 +236,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/fichinter
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
+%_datadir/dolibarr/htdocs/holiday
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
@@ -202,6 +272,16 @@ done >%{name}.lang
 
 # Define vars
 export docdir="/var/lib/dolibarr/documents"
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
+export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+export apacheuser='apache';
+export apachegroup='apache';
+%else
+%if 0%{?suse_version}
+export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+export apacheuser='wwwrun';
+export apachegroup='www';
+%else
 export installconfig="%{_sysconfdir}/dolibarr/install.forced.php"
 
 # Detect OS
@@ -231,6 +311,8 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -g
     export apachegroup='www-data';
 fi
 echo OS detected: $os
+%endif
+%endif
 
 # Remove dolibarr install/upgrade lock file if it exists
 %{__rm} -f $docdir/install.lock
@@ -239,6 +321,9 @@ echo OS detected: $os
 echo Create document directory $docdir
 %{__mkdir} -p $docdir
 
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+
+%else
 # Create install.forced.php into Dolibarr install directory
 if [ "x$os" = "xubuntu-debian" ]
 then
@@ -253,6 +338,7 @@ then
 	%{__cat} /usr/share/dolibarr/build/rpm/install.forced.php.generic | sed -e 's/__SUPERUSERLOGIN__/'$superuserlogin'/g' | sed -e 's/__SUPERUSERPASSWORD__/'$superuserpassword'/g' > $installconfig
 	%{__chmod} -R 660 $installconfig
 fi
+%endif
 
 # Set correct owner on config files
 %{__chown} -R root:$apachegroup /etc/dolibarr/*
@@ -274,18 +360,39 @@ then
 	grep -q -c "dolibarr_js_JQUERY" $config         || [ ! -d "/usr/share/javascript/jquery" ]    || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config
 	grep -q -c "dolibarr_js_JQUERY_UI" $config      || [ ! -d "/usr/share/javascript/jquery-ui" ] || echo "<?php \$dolibarr_js_JQUERY_UI='/javascript/jquery-ui'; ?>" >> $config
 	grep -q -c "dolibarr_js_JQUERY_FLOT" $config    || [ ! -d "/usr/share/javascript/flot" ]      || echo "<?php \$dolibarr_js_JQUERY_FLOT='/javascript/flot'; ?>" >> $config
-	grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config			
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+	grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config
+%else
+%if 0%{?mdkversion}
+	grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/TTF/dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config
+%else
+%if 0%{?suse_version}
+	grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/DejaVuSans-Bold.ttf'; ?>" >> $config			
+%else
+	grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config
+%endif
+%endif
+%endif
 fi
 
-# Create config for se $seconfig
+# Create config for SE Linux
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}
+%else
 if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
+%endif
+%if 0%{?mdkversion} || 0%{?suse_version}
+%else
     echo Add SE Linux permissions for dolibarr
     # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
     semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
     semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
     restorecon -R -v /etc/dolibarr
     restorecon -R -v /var/lib/dolibarr
+%endif
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}
+%else
 fi
+%endif
 
 # Create a config link dolibarr.conf
 if [ ! -L $apachelink ]; then
@@ -328,8 +435,14 @@ echo
 #---- postun (after uninstall)
 %postun
 
-# Detect OS
+# Define vars
 os='unknown';
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}
+export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
+%else
+%if 0%{?suse_version}
+export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
+%else
 if [ -d %{_sysconfdir}/httpd/conf.d ]; then
     export os='fedora-redhat';
     export apachelink="%{_sysconfdir}/httpd/conf.d/dolibarr.conf"
@@ -346,6 +459,8 @@ if [ -d %{_sysconfdir}/apache2/conf.d -a `grep ^www-data /etc/passwd | wc -l` -g
     export os='ubuntu-debian';
     export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
 fi
+%endif
+%endif
 
 # Remove apache link
 if [ -L $apachelink ] ;
