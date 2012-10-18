@@ -1260,9 +1260,9 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			}
 	}
 
-	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
 	{
-		if ($action == 'addcontact' && $user->rights->commande->creer)
+		if ($action == 'addcontact')
 		{
 			if ($object->id > 0)
 			{
@@ -1290,7 +1290,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		}
 
 		// bascule du statut d'un contact
-		else if ($action == 'swapstatut' && $user->rights->commande->creer)
+		else if ($action == 'swapstatut')
 		{
 			if ($object->id > 0)
 			{
@@ -1303,7 +1303,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		}
 
 		// Efface un contact
-		else if ($action == 'deletecontact' && $user->rights->commande->creer)
+		else if ($action == 'deletecontact')
 		{
 			$result = $object->delete_contact($lineid);
 
@@ -2101,9 +2101,6 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			{
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-				$formcompany= new FormCompany($db);
-
 				$blocname = 'contacts';
 				$title = $langs->trans('ContactsAddresses');
 				include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';

@@ -446,6 +446,30 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 	return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
+
+/** 
+ * Convert a string to lower. Never use strtolower because it does not works with UTF8 strings.
+ * 
+ * @param 	string		$utf8_string		String to encode
+ * @return 	string							String converted	
+ */
+function dol_strtolower($utf8_string)
+{
+	return mb_strtolower($utf8_string, "UTF-8");
+}
+
+/** 
+ * Convert a string to upper. Never use strtolower because it does not works with UTF8 strings.
+ * 
+ * @param 	string		$utf8_string		String to encode
+ * @return 	string							String converted	
+ */
+function dol_strtoupper($utf8_string)
+{
+	return mb_strtoupper($utf8_string, "UTF-8");
+}
+
+
 /**
  *	Write log message into outputs. Possible outputs can be:
  *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE

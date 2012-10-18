@@ -77,7 +77,8 @@ $contentlinevalues=array();
 $i = 0;
 foreach($fieldstarget as $code=>$label)
 {
-	$headerlinefields[]=$fieldstarget[$code].' ('.$code.')';
+	$withoutstar=preg_replace('/\*/','',$fieldstarget[$code]);
+	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
 	$contentlinevalues[]=$valuestarget[$code];
 }
 //var_dump($headerlinefields);
