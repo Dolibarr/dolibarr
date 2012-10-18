@@ -189,7 +189,7 @@ class modProduct extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r]=array('p.ref'=>'[^ ]','p.tosell'=>'^[0|1]$','p.tobuy'=>'^[0|1]$','p.fk_product_type'=>'^[0|1]$','p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$this->import_examplevalues_array[$r]=array('p.ref'=>"PR123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31');
+		$this->import_examplevalues_array[$r]=array('p.ref'=>"PREF123456",'p.label'=>"My product",'p.description'=>"This is a description example for record",'p.note'=>"Some note",'p.price'=>"100",'p.price_ttc'=>"110",'p.tva_tx'=>'10','p.tosell'=>"0 or 1",'p.tobuy'=>"0 or 1",'p.fk_product_type'=>"0 for product/1 for service",'p.finished'=>'','p.duration'=>"1y",'p.datec'=>'2008-12-31');
 		
 		
 		if (! empty($conf->fournisseur->enabled))
@@ -197,23 +197,27 @@ class modProduct extends DolibarrModules
 			// Import product suppliers
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
-			$this->import_label[$r]="SuppliersProducts";	// Translation key
+			$this->import_label[$r]="SuppliersPrices";	// Translation key
 			$this->import_icon[$r]='product';
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
 			$this->import_tables_creator_array[$r]=array('sp'=>'fk_user');
 			$this->import_fields_array[$r]=array('sp.fk_product'=>"Product*",
-					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'RefSupplier', 'sp.price'=>"Price*",
-					'sp.quantity'=>"Quantity*",'sp.unitprice'=>'UnitPrice*','sp.tva_tx'=>'VAT'
+					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate',
+					'sp.price'=>"PriceQtyMinHT*",
+					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this file not required and calculate it from price and qty
+					'sp.remise_percent'=>'DiscountQtyMin'
 			);
-		
+
 			$this->import_convertvalue_array[$r]=array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r]=array('sp.fk_product'=>"PR123456",
-					'sp.fk_soc'=>"My Supplier",'sp.ref_fourn'=>"SupplierRef",'sp.price'=>"50",
-					'sp.quantity'=>"1",'sp.unitprice'=>'50','sp.tva_tx'=>'21'
+			$this->import_examplevalues_array[$r]=array('sp.fk_product'=>"PREF123456",
+					'sp.fk_soc'=>"My Supplier",'sp.ref_fourn'=>"SupplierRef", 'sp.quantity'=>"1", 'sp.tva_tx'=>'21',
+					'sp.price'=>"50",
+					'sp.unitprice'=>'50',
+					'sp.remise_percent'=>'0'
 			);
 		}
 	}

@@ -733,7 +733,7 @@ if ($step == 4 && $datatoimport)
 		print '<input type="text" size="1" name="separator" value="'.htmlentities($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
 		print '<input type="text" size="1" name="enclosure" value="'.htmlentities($enclosure).'"/>';
-		print '<input type="submit" value="'.$langs->trans('Update').'" />';
+		print '<input type="submit" value="'.$langs->trans('Update').'" class="button" />';
 		print '</form>';
 		print '</td></tr>';
     }
