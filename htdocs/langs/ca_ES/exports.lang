@@ -116,3 +116,7 @@ Excel95FormatDesc=Arxiu amb format <b>Excel</b> (.xls)<br>Aquest és el format n
 Excel2007FormatDesc=Arxiu amb format <b>Excel</b> (.xlsx)<br>Aquest és el format natiu d'Excel 2007 (SpreadsheetML).
 TsvFormatDesc=Arxiu amb format <b>Valors separats per tabulador</b> (. Tsv)<br> Aquest és un format d'arxiu de text en què els camps són separats per un tabulador [tab].
 ExportFieldAutomaticallyAdded=S'ha afegit automàticament el camp <b>%s</b>, ja que evitarà que línies idèntiques siguin considerades com duplicades (amb aquest camp, cada línia tindrà un id propi).
+CsvOptions=Opcions de l'arxiu CSV
+Separator=Separador
+Enclosure=Delimitador de camps
+SuppliersProducts=Productes de proveïdors
