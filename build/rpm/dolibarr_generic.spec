@@ -165,6 +165,7 @@ cui hai bisogno ed essere facile da usare.
 %endif
 
 # Lang
+echo "%defattr(0644, root, root, 0644)" > %{name}.lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
   lang=$(basename $i)
@@ -175,7 +176,7 @@ do
   else
 	echo "%lang(${lang}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
   fi
-done >%{name}.lang
+done >>%{name}.lang
 
 %if 0%{?suse_version}
 # Enable this command to tag desktop file for suse

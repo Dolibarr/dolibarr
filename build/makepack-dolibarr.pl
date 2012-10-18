@@ -39,8 +39,9 @@ $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
 $FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${BUILD}";
 $FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
 $FILENAMEEXEDOLIWAMP="DoliWamp-$MAJOR.$MINOR.$BUILD";
-if (-d "/usr/src/redhat") { $RPMDIR="/usr/src/redhat"; } # redhat
-if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
+if (-d "/usr/src/redhat")   { $RPMDIR="/usr/src/redhat"; } # redhat
+if (-d "/usr/src/packages") { $RPMDIR="/usr/src/packages"; } # opensuse
+if (-d "/usr/src/RPM")      { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
@@ -449,6 +450,9 @@ if ($nboftargetok) {
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
 
             $FILENAMETGZ2="$PROJECT-$MAJOR.$MINOR.$REL1";
+
+            #print "Create directory $RPMDIR\n";
+            #$ret=`mkdir -p "$RPMDIR"`;
 
     		print "Remove target ".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm...\n";
     		unlink("$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm");

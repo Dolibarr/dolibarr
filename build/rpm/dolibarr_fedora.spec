@@ -108,6 +108,7 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
 # Lang
+echo "%defattr(0644, root, root, 0644)" > %{name}.lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
   lang=$(basename $i)
@@ -118,7 +119,7 @@ do
   else
 	echo "%lang(${lang}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
   fi
-done >%{name}.lang
+done >>%{name}.lang
 
 
 #---- clean
