@@ -120,3 +120,7 @@ CsvOptions=Options du fichier Csv
 Separator=Séparateur de champs
 Enclosure=Encadrement des chaines de textes
 SuppliersProducts=Produits Fournisseurs
+BankCode=Code banque
+DeskCode=Code guichet
+BankAccountNumber=Numéro compte
+BankAccountNumberKey=Clé RIB
