@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,11 @@ if ($resql)
         print '<td align="right">'.$obj->position."</td>";
 
         // Actions
-        print '<td align="right">';
+        print '<td align="right" nowrap="nowrap">';
+        if ($user->rights->bookmark->creer)
+        {
+        	print "<a href=\"".DOL_URL_ROOT."/bookmarks/fiche.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
+        }
         if ($user->rights->bookmark->supprimer)
         {
             print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&bid=$obj->bid\">".img_delete()."</a>";
