@@ -115,3 +115,6 @@
 [submodule "htdocs/custom/ecmplus"]
 	path = htdocs/custom/ecmplus
 	url = gitolite@doliforge.org:ecmplus/ecmplus.git
+[submodule "htdocs/custom/googlemaps"]
+	path = htdocs/custom/googlemaps
+	url = gitolite@doliforge.org:googlemaps/googlemaps.git
