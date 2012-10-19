@@ -120,3 +120,7 @@ CsvOptions=Csv Options
 Separator=Separator
 Enclosure=Enclosure
 SuppliersProducts=Suppliers Products
+BankCode=Bank code
+DeskCode=Desk code
+BankAccountNumber=Account number
+BankAccountNumberKey=Key
