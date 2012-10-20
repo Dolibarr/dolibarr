@@ -34,11 +34,11 @@ if (empty($conf->global->EXTERNALSITE_URL))
 	llxFooter();
 }
 
-$mainmenu=GETPOST('mainmenu');
-$leftmenu=GETPOST('leftmenu');
-$idmenu=GETPOST('idmenu');
-$theme=GETPOST('theme');
-$codelang=GETPOST('lang');
+$mainmenu=GETPOST('mainmenu', 'alpha');
+$leftmenu=GETPOST('leftmenu', 'alpha');
+$idmenu=GETPOST('idmenu', 'int');
+$theme=GETPOST('theme', 'alpha');
+$codelang=GETPOST('lang', 'alpha');
 
 print "
 <html>

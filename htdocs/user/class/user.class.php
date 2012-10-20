@@ -282,7 +282,7 @@ class User extends CommonObject
 	 *  @param  string	$allperms    Ajouter tous les droits du module allmodule, perms allperms
 	 *  @return int   			     > 0 if OK, < 0 if KO
 	 */
-	function addrights($rid,$allmodule='',$allperms='')
+	function addrights($rid, $allmodule='', $allperms='')
 	{
 		global $conf;
 
@@ -292,13 +292,13 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		if ($rid)
+		if (! empty($rid))
 		{
 			// Si on a demande ajout d'un droit en particulier, on recupere
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE id = '".$rid."'";
+			$sql.= " WHERE id = '".$this->escape($rid)."'";
 			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
@@ -314,21 +314,21 @@ class User extends CommonObject
 			}
 
 			// Where pour la liste des droits a ajouter
-			$whereforadd="id=".$rid;
+			$whereforadd="id=".$this->escape($rid);
 			// Ajout des droits induits
-			if ($subperms)   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
-			else if ($perms) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			if (! empty($subperms))   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
+			else if (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
 		}
 		else {
 			// On a pas demande un droit en particulier mais une liste de droits
 			// sur la base d'un nom de module de de perms
 			// Where pour la liste des droits a ajouter
-			if ($allmodule) $whereforadd="module='$allmodule'";
-			if ($allperms)  $whereforadd=" AND perms='$allperms'";
+			if (! empty($allmodule)) $whereforadd="module='".$this->escape($allmodule)."'";
+			if (! empty($allperms))  $whereforadd=" AND perms='".$this->escape($allperms)."'";
 		}
 
 		// Ajout des droits trouves grace au critere whereforadd
-		if ($whereforadd)
+		if (! empty($whereforadd))
 		{
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
@@ -381,7 +381,7 @@ class User extends CommonObject
 	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
 	 *  @return int         		> 0 if OK, < 0 if OK
 	 */
-	function delrights($rid,$allmodule='',$allperms='')
+	function delrights($rid, $allmodule='', $allperms='')
 	{
 		global $conf;
 
@@ -390,13 +390,13 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		if ($rid)
+		if (! empty($rid))
 		{
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE id = '".$rid."'";
+			$sql.= " WHERE id = '".$this->escape($rid)."'";
 			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
@@ -412,7 +412,7 @@ class User extends CommonObject
 			}
 
 			// Where pour la liste des droits a supprimer
-			$wherefordel="id=".$rid;
+			$wherefordel="id=".$this->escape($rid);
 			// Suppression des droits induits
 			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
 			if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$module')";
@@ -420,12 +420,12 @@ class User extends CommonObject
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
-			if ($allmodule) $wherefordel="module='$allmodule'";
-			if ($allperms)  $wherefordel=" AND perms='$allperms'";
+			if (! empty($allmodule)) $wherefordel="module='".$this->escape($allmodule)."'";
+			if (! empty($allperms))  $wherefordel=" AND perms='".$this->escape($allperms)."'";
 		}
 
 		// Suppression des droits selon critere defini dans wherefordel
-		if ($wherefordel)
+		if (! empty($wherefordel))
 		{
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";

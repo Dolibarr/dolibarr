@@ -33,9 +33,10 @@ $langs->load("users");
 $langs->load("admin");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
-$confirm=GETPOST("confirm");
-$module=GETPOST("module");
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$module=GETPOST('module', 'alpha');
+$rights=GETPOST('rights', 'int');
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -60,14 +61,14 @@ if ($action == 'addrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
     $result=$editgroup->fetch($id);
-    if ($result > 0) $editgroup->addrights($_GET["rights"],$module);
+    if ($result > 0) $editgroup->addrights($rights, $module);
 }
 
 if ($action == 'delrights' && $caneditperms)
 {
     $editgroup = new Usergroup($db);
     $result=$editgroup->fetch($id);
-    if ($result > 0) $editgroup->delrights($_GET["rights"],$module);
+    if ($result > 0) $editgroup->delrights($rights, $module);
 }
 
 
@@ -160,7 +161,7 @@ if ($id)
     {
     	$sql.= " AND r.entity IN (0,".$conf->entity.")";
     }
-        
+
     $sql.= " AND ugr.fk_usergroup = ".$fgroup->id;
 
     $result=$db->query($sql);
@@ -250,7 +251,7 @@ if ($id)
         $i = 0;
         $var = true;
         $oldmod = '';
-        
+
         $num = $db->num_rows($result);
 
         while ($i < $num)

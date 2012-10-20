@@ -34,7 +34,8 @@ $langs->load("admin");
 $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$module=GETPOST('module');
+$module=GETPOST('module', 'alpha');
+$rights=GETPOST('rights', 'int');
 
 if (! isset($id) || empty($id)) accessforbidden();
 
@@ -70,7 +71,7 @@ if ($action == 'addrights' && $caneditperms)
 {
     $edituser = new User($db);
 	$edituser->fetch($id);
-    $edituser->addrights($_GET["rights"],$module);
+    $edituser->addrights($rights, $module);
 
 	// Si on a touche a ses propres droits, on recharge
 	if ($id == $user->id)
@@ -84,7 +85,7 @@ if ($action == 'delrights' && $caneditperms)
 {
     $edituser = new User($db);
 	$edituser->fetch($id);
-    $edituser->delrights($_GET["rights"],$module);
+    $edituser->delrights($rights, $module);
 
 	// Si on a touche a ses propres droits, on recharge
 	if ($id == $user->id)

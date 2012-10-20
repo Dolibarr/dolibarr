@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 
 // If not defined, we select menu "home"
-if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
+$_GET['mainmenu']=GETPOST('mainmenu', 'alpha')?GETPOST('mainmenu', 'alpha'):'home';
 $action=GETPOST('action');
 
 

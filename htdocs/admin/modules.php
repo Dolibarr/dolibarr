@@ -31,9 +31,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 $langs->load("errors");
 $langs->load("admin");
 
-$mode=isset($_GET["mode"])?GETPOST("mode"):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
+$mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $mesg=GETPOST("mesg");
-$action=GETPOST('action');
+$action=GETPOST('action', 'alpha');
+$value=GETPOST('value', 'alpha');
 
 if (!$user->admin) accessforbidden();
 
@@ -44,7 +45,7 @@ if (!$user->admin) accessforbidden();
 
 if ($action == 'set' && $user->admin)
 {
-    $result=activateModule($_GET["value"]);
+    $result=activateModule($value);
     $mesg='';
     if ($result) $mesg=$result;
     Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
@@ -53,7 +54,7 @@ if ($action == 'set' && $user->admin)
 
 if ($action == 'reset' && $user->admin)
 {
-    $result=unActivateModule($_GET["value"]);
+    $result=unActivateModule($value);
     $mesg='';
     if ($result) $mesg=$result;
     Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
@@ -128,9 +129,9 @@ foreach ($modulesdir as $dir)
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
 		                dol_syslog($mesg, LOG_ERR);
-						continue;		        		
+						continue;
 		        	}
-		        	
+
 		            try
 		            {
 		                $res=include_once($dir.$file);
