@@ -765,6 +765,7 @@ ALTER TABLE llx_commande_fournisseurdet ADD COLUMN import_key varchar(14) AFTER 
 ALTER TABLE llx_entrepot ADD COLUMN import_key varchar(14) AFTER fk_user_author;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN import_key varchar(14) AFTER fk_user;
 ALTER TABLE llx_product_stock ADD COLUMN import_key varchar(14) AFTER pmp;
+ALTER TABLE llx_societe_rib ADD COLUMN import_key varchar(14) AFTER adresse_proprio;
 
 -- [ task #146 ] Remove table llx_categorie_association
 ALTER TABLE llx_categorie_association DROP FOREIGN KEY fk_categorie_asso_fk_categorie_mere;

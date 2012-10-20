@@ -28,12 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 $langs->load("other");
 
-$action=GETPOST("action");
-$title=GETPOST("title");
-$url=GETPOST("url");
-$target=GETPOST("target");
-$userid=GETPOST("userid");
-$position=GETPOST("position");
+$id=GETPOST("id");
+$action=GETPOST("action","alpha");
+$title=GETPOST("title","alpha");
+$url=GETPOST("url","alpha");
+$target=GETPOST("target","alpha");
+$userid=GETPOST("userid","int");
+$position=GETPOST("position","int");
+$backtopage=GETPOST('backtopage','alpha');
 
 
 /*
@@ -42,10 +44,10 @@ $position=GETPOST("position");
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
-	if ($_POST["cancel"])
+	if (GETPOST("cancel"))
 	{
-		$urlsource=(! empty($_REQUEST["urlsource"]))?$_REQUEST["urlsource"]:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php');
-		header("Location: ".$urlsource);
+		if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php'));
+		header("Location: ".$backtopage);
 		exit;
 	}
 
@@ -71,8 +73,8 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 		if ($res > 0)
 		{
-			$urlsource=! empty($_REQUEST["urlsource"])?urldecode($_REQUEST["urlsource"]):DOL_URL_ROOT.'/bookmarks/liste.php';
-			header("Location: ".$urlsource);
+			if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):DOL_URL_ROOT.'/bookmarks/liste.php');
+			header("Location: ".$backtopage);
 			exit;
 		}
 		else
@@ -96,7 +98,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 	}
 }
 
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
 	$bookmark=new Bookmark($db);
 	$bookmark->id=$_GET["bid"];
@@ -133,10 +135,10 @@ if ($action == 'create')
 	 * Fact bookmark creation mode
 	 */
 
-	print '<form action="fiche.php" method="post" enctype="multipart/form-data">'."\n";
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">'."\n";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-
+	
 	print_fiche_titre($langs->trans("NewBookmark"));
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
@@ -176,24 +178,25 @@ if ($action == 'create')
 }
 
 
-if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
+if ($id > 0 && ! preg_match('/^add/i',$action))
 {
 	/*
 	 * Fact bookmark mode or visually edition
 	 */
 	$bookmark=new Bookmark($db);
-	$bookmark->fetch($_GET["id"]);
+	$bookmark->fetch($id);
 
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
 
-	if ($_GET["action"] == 'edit')
+	if ($action == 'edit')
 	{
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$bookmark->id.'">';
 		print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/fiche.php?id='.$bookmark->id.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
 
 	print '<table class="border" width="100%">';
@@ -201,17 +204,17 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$bookmark->ref.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BookmarkTitle").'</td><td>';
-	if ($_GET["action"] == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
+	if ($action == 'edit') print '<input class="flat" name="title" size="30" value="'.(isset($_POST["title"])?$_POST["title"]:$bookmark->title).'">';
 	else print $bookmark->title;
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("UrlOrLink").'</td><td>';
-	if ($_GET["action"] == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
+	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$bookmark->url).'">';
 	else print '<a href="'.(preg_match('/^http/i',$bookmark->url)?$bookmark->url:DOL_URL_ROOT.$bookmark->url).'"'.($bookmark->target?' target="_blank"':'').'>'.$bookmark->url.'</a>';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-	if ($_GET["action"] == 'edit')
+	if ($action == 'edit')
 	{
 		$liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
 		print $form->selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$bookmark->target);
@@ -224,7 +227,7 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	if ($_GET["action"] == 'edit' && $user->admin)
+	if ($action == 'edit' && $user->admin)
 	{
 		$form->select_users(isset($_POST['userid'])?$_POST['userid']:($bookmark->fk_user?$bookmark->fk_user:''),'userid',1);
 	}
@@ -245,7 +248,7 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	if ($_GET["action"] == 'edit') print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
+	if ($action == 'edit') print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
 	else print $bookmark->position;
 	print '</td></tr>';
 
@@ -254,9 +257,9 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 
 	print '</table>';
 
-	if ($_GET["action"] == 'edit') print '<br><div align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	if ($action == 'edit') print '<br><div align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 	
-	if ($_GET["action"] == 'edit') print '</form>';
+	if ($action == 'edit') print '</form>';
 
 	dol_fiche_end();
 
@@ -264,13 +267,13 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit
-	if ($user->rights->bookmark->creer && $_GET["action"] != 'edit')
+	if ($user->rights->bookmark->creer && $action != 'edit')
 	{
 		print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?id=".$bookmark->id."&amp;action=edit\">".$langs->trans("Edit")."</a>\n";
 	}
 
 	// Remove
-	if ($user->rights->bookmark->supprimer && $_GET["action"] != 'edit')
+	if ($user->rights->bookmark->supprimer && $action != 'edit')
 	{
 		print "  <a class=\"butActionDelete\" href=\"liste.php?bid=".$bookmark->id."&amp;action=delete\">".$langs->trans("Delete")."</a>\n";
 	}
@@ -279,8 +282,8 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 
 }
 
-$db->close();
-
 
 llxFooter();
+
+$db->close();
 ?>

@@ -120,3 +120,7 @@ CsvOptions=Opcions de l'arxiu CSV
 Separator=Separador
 Enclosure=Delimitador de camps
 SuppliersProducts=Productes de proveïdors
+BankCode=Codi banc
+DeskCode=Codi oficina
+BankAccountNumber=Número compte
+BankAccountNumberKey=Dígit Control

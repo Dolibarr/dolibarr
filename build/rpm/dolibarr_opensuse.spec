@@ -104,6 +104,7 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
 # Lang
+echo "%defattr(0644, root, root, 0644)" > %{name}.lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
   lang=$(basename $i)
@@ -114,7 +115,7 @@ do
   else
 	echo "%lang(${lang}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
   fi
-done >%{name}.lang
+done >>%{name}.lang
 
 # Enable this command to tag desktop file for suse
 #%suse_update_desktop_file dolibarr
@@ -173,6 +174,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/fichinter
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
+%_datadir/dolibarr/htdocs/holiday
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
@@ -195,7 +197,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/*.php
 %_datadir/dolibarr/htdocs/*.txt
 
-%defattr(0664, -, -)
+%defattr(0664, root, www)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
 %config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
 %config(noreplace) %{_sysconfdir}/dolibarr/install.forced.php

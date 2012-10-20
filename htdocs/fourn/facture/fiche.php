@@ -188,7 +188,11 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
 {
     $object->fetch($id);
     $object->date_echeance=dol_mktime(12,0,0,$_POST['date_lim_reglementmonth'],$_POST['date_lim_reglementday'],$_POST['date_lim_reglementyear']);
-    if ($object->date_echeance < $object->date) $object->date_echeance=$object->date;
+    if ($object->date_echeance < $object->date)
+    {
+    	$object->date_echeance=$object->date;
+    	setEventMessage($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"),'warnings');
+    }
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }

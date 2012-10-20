@@ -35,8 +35,8 @@ $langs->load("admin");
 $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$rights=GETPOST('rights','int');
-$module=GETPOST('module');
+$module=GETPOST('module', 'alpha');
+$rights=GETPOST('rights', 'int');
 $entity=(GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity);
 
 if (! isset($id) || empty($id)) accessforbidden();
