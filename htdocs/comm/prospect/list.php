@@ -145,9 +145,20 @@ if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 // List of avaible states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
 $sts = array(-1,0,1,2,3);
 
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('prospectlist'));
+
+
 /*
  * Actions
  */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+
 if ($action == 'cstc')
 {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
@@ -255,9 +266,7 @@ if ($resql)
 
 
  	// Print the search-by-sale and search-by-categ filters
- 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'" id="formulaire_recherche">';
-
-	print '<table class="liste" width="100%">';
+ 	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
 	// Filter on categories
  	$moreforfilter='';
@@ -275,11 +284,12 @@ if ($resql)
  	}
  	if ($moreforfilter)
 	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="8">';
+		print '<div class="liste_titre">';
 	    print $moreforfilter;
-	    print '</td></tr>';
+	    print '</div>';
 	}
+
+	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
@@ -290,6 +300,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
+
+    $parameters=array();
+    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -348,6 +362,9 @@ if ($resql)
 	print '<input class="liste_titre" name="button_search" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 
+	$parameters=array();
+	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+
 	print "</tr>\n";
 
 	$i = 0;
@@ -399,6 +416,9 @@ if ($resql)
 		print $prospectstatic->getLibStatut(3);
         print '</td>';
 
+        $parameters=array('obj' => $obj);
+        $formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+
         print "</tr>\n";
 		$i++;
 	}
@@ -410,6 +430,9 @@ if ($resql)
 	print "</form>";
 
 	$db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 }
 else
 {

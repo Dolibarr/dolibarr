@@ -55,6 +55,17 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('supplierlist'));
+
+/*
+ * 	Actions
+ */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 
 /*
@@ -114,8 +125,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
-	print '<form action="liste.php" method="GET">';
-	print '<table class="liste" width="100%">';
+	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	// Filter on categories
 	$moreforfilter='';
@@ -127,11 +137,12 @@ if ($resql)
 	}
 	if ($moreforfilter)
 	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="6">';
+		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</td></tr>';
+		print '</div>';
 	}
+
+	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
@@ -140,6 +151,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
+
+    $parameters=array();
+    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -161,6 +176,9 @@ if ($resql)
 	print '</td>';
 
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+
+	$parameters=array();
+	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 
 	print '</tr>';
 
@@ -185,12 +203,19 @@ if ($resql)
 		print '<td align="right">';
 		print dol_print_date($db->jdate($obj->datec),'day').'</td>';
 		print '<td align="right">'.$thirdpartystatic->getLibStatut(3).'</td>';
+
+		$parameters=array('obj' => $obj);
+		$formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+
 		print "</tr>\n";
 		$i++;
 	}
 	print "</table>\n";
 	print "</form>\n";
 	$db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 }
 else
 {
