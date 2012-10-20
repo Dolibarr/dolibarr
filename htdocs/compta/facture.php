@@ -1986,6 +1986,11 @@ if ($action == 'create')
     $form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
     print '</td></tr>';
 
+	// Select bank account
+    print '<tr><td>'.$langs->trans('Selectbank').'</td><td colspan="2">';
+    $form->selectbank_account(isset($_POST['label'])?$_POST['label']:$_POST['label'],'label');
+    print '</td></tr>';
+
     // Project
     if (! empty($conf->projet->enabled))
     {
