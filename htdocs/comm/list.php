@@ -149,7 +149,7 @@ if ($result)
 
 	$i = 0;
 
-	print '<form method="GET" id="formList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	// Filter on categories
  	$moreforfilter='';
