@@ -298,7 +298,7 @@ class User extends CommonObject
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE id = '".$this->escape($rid)."'";
+			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
 			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
@@ -314,7 +314,7 @@ class User extends CommonObject
 			}
 
 			// Where pour la liste des droits a ajouter
-			$whereforadd="id=".$this->escape($rid);
+			$whereforadd="id=".$this->db->escape($rid);
 			// Ajout des droits induits
 			if (! empty($subperms))   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
 			else if (! empty($perms)) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
@@ -323,8 +323,8 @@ class User extends CommonObject
 			// On a pas demande un droit en particulier mais une liste de droits
 			// sur la base d'un nom de module de de perms
 			// Where pour la liste des droits a ajouter
-			if (! empty($allmodule)) $whereforadd="module='".$this->escape($allmodule)."'";
-			if (! empty($allperms))  $whereforadd=" AND perms='".$this->escape($allperms)."'";
+			if (! empty($allmodule)) $whereforadd="module='".$this->db->escape($allmodule)."'";
+			if (! empty($allperms))  $whereforadd=" AND perms='".$this->db->escape($allperms)."'";
 		}
 
 		// Ajout des droits trouves grace au critere whereforadd
@@ -396,7 +396,7 @@ class User extends CommonObject
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE id = '".$this->escape($rid)."'";
+			$sql.= " WHERE id = '".$this->db->escape($rid)."'";
 			$sql.= " AND entity = ".$conf->entity;
 
 			$result=$this->db->query($sql);
@@ -412,7 +412,7 @@ class User extends CommonObject
 			}
 
 			// Where pour la liste des droits a supprimer
-			$wherefordel="id=".$this->escape($rid);
+			$wherefordel="id=".$this->db->escape($rid);
 			// Suppression des droits induits
 			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
 			if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$module')";
@@ -420,8 +420,8 @@ class User extends CommonObject
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
-			if (! empty($allmodule)) $wherefordel="module='".$this->escape($allmodule)."'";
-			if (! empty($allperms))  $wherefordel=" AND perms='".$this->escape($allperms)."'";
+			if (! empty($allmodule)) $wherefordel="module='".$this->db->escape($allmodule)."'";
+			if (! empty($allperms))  $wherefordel=" AND perms='".$this->db->escape($allperms)."'";
 		}
 
 		// Suppression des droits selon critere defini dans wherefordel
