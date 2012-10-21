@@ -760,6 +760,10 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 -- Add possibility to defined position/job of a user
 ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
 
+
+INSERT INTO llx_const(name, entity, value) SELECT 'SYSLOG_HANDLERS', 1, '["mod_syslog_file"]' FROM llx_const WHERE name = 'SYSLOG_FILE_ON' and value = '1';
+
+
 -- New Imports
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN import_key varchar(14) AFTER info_bits;
 ALTER TABLE llx_entrepot ADD COLUMN import_key varchar(14) AFTER fk_user_author;
