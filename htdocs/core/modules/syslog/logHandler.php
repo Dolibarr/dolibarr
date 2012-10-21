@@ -7,10 +7,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
  */
 class LogHandler
 {
-	const STABLE = 'stable';
-	const DEVELOPMENT = 'development';
-	const EXPERIMENTAL = 'experimental';
-
 	/**
 	 * Content of the info tooltip.
 	 *
@@ -22,13 +18,13 @@ class LogHandler
 	}
 
 	/**
-	 * Version of the module
+	 * Version of the module ('x.y.z' or 'dolibarr' or 'experimental' or 'development')
 	 *
 	 * @return string
 	 */
 	public function getVersion()
 	{
-		return self::EXPERIMENTAL;
+		return 'development';
 	}
 
 	/**
