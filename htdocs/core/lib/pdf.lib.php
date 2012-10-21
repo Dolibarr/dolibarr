@@ -524,12 +524,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
- * 	@param	int			$marge_basse	Margin bottom
- * 	@param	int			$marge_gauche	Margin left
- * 	@param	int			$page_hauteur	Page height
+ * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
+ * 	@param	int			$marge_gauche	Margin left (no more used)
+ * 	@param	int			$page_hauteur	Page height (no more used)
  * 	@param	Object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company details
- * 	@return	void
+ * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version.
+ * 	@return	int							Return height of bottom margin including footer text
  */
 function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object,$showdetails=0)
 {
@@ -538,16 +538,18 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$outputlangs->load("dict");
 	$line='';
 
+	$dims=$pdf->getPageDimensions();
+
 	// Line of free text
 	if (! empty($conf->global->$paramfreetext))
 	{
 		// Make substitution
 		$substitutionarray=array(
-			'__FROM_NAME__' => $fromcompany->nom,
-			'__FROM_EMAIL__' => $fromcompany->email,
-			'__TOTAL_TTC__' => $object->total_ttc,
-			'__TOTAL_HT__' => $object->total_ht,
-			'__TOTAL_VAT__' => $object->total_vat
+		'__FROM_NAME__' => $fromcompany->nom,
+		'__FROM_EMAIL__' => $fromcompany->email,
+		'__TOTAL_TTC__' => $object->total_ttc,
+		'__TOTAL_HT__' => $object->total_ht,
+		'__TOTAL_VAT__' => $object->total_vat
 		);
 		complete_substitutions_array($substitutionarray,$outputlangs,$object);
 		$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
@@ -659,49 +661,52 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
 	//print 'nbofline='.$nbofline; exit;
 	//print 'e'.$line.'t'.dol_nboflines($line);exit;
-	$posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0) + ($line3?3:0) + ($line4?3:0);
+	$marginwithfooter=$marge_basse + ($nbofline*3) + (! empty($line1)?3:0) + (! empty($line2)?3:0) + (! empty($line3)?3:0) + (! empty($line4)?3:0);
+	$posy=$marginwithfooter+0;
 
 	if ($line)	// Free text
 	{
-		$pdf->SetXY($marge_gauche,-$posy);
+		$pdf->SetXY($dims['lm'],-$posy);
 		$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
-		if ($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT) { $width=200; $align='C'; }
+		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
+			$width=200; $align='C';
+		}
 		$pdf->MultiCell($width, 3, $line, 0, $align, 0);
 		$posy-=($nbofline*3);	// 6 of ligne + 3 of MultiCell
 	}
 
 	$pdf->SetY(-$posy);
-	$pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
+	$pdf->line($dims['lm'], $dims['hk']-$posy, $dims['wk']-$dims['rm'], $dims['hk']-$posy);
 	$posy--;
 
-	if ($line1)
+	if (! empty($line1))
 	{
 		$pdf->SetFont('','B',7);
-		$pdf->SetXY($marge_gauche,-$posy);
+		$pdf->SetXY($dims['lm'],-$posy);
 		$pdf->MultiCell(200, 2, $line1, 0, 'C', 0);
 		$posy-=3;
 		$pdf->SetFont('','',7);
 	}
 
-	if ($line2)
+	if (! empty($line2))
 	{
 		$pdf->SetFont('','B',7);
-		$pdf->SetXY($marge_gauche,-$posy);
+		$pdf->SetXY($dims['lm'],-$posy);
 		$pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
 		$posy-=3;
 		$pdf->SetFont('','',7);
 	}
 
-	if ($line3)
+	if (! empty($line3))
 	{
-		$pdf->SetXY($marge_gauche,-$posy);
+		$pdf->SetXY($dims['lm'],-$posy);
 		$pdf->MultiCell(200, 2, $line3, 0, 'C', 0);
 	}
 
-	if ($line4)
+	if (! empty($line4))
 	{
 		$posy-=3;
-		$pdf->SetXY($marge_gauche,-$posy);
+		$pdf->SetXY($dims['lm'],-$posy);
 		$pdf->MultiCell(200, 2, $line4, 0, 'C', 0);
 	}
 
@@ -712,7 +717,10 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
 		//print 'xxx'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
 	}
+
+	return $marginwithfooter;
 }
+
 
 /**
  *	Show linked objects for PDF generation
