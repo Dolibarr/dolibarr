@@ -127,7 +127,7 @@ if ($resql)
     print "</tr>\n";
     print '</form>';
 
-    $var=True;
+    $var=true;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
@@ -139,7 +139,7 @@ if ($resql)
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         //print '<td align="center">'.dol_print_date($obj->datec).'</td>';
-        print '<td align="center">'.dol_print_date($obj->date_contrat).'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat)).'</td>';
         //print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
         print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
