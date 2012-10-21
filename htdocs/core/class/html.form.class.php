@@ -3941,52 +3941,6 @@ class Form
 
         return $out;
     }
-	 /**
-     *	Return select bank account
-     *
-     */
-	function selectbank_account($db)
-    {
-		global $conf,$user,$langs;
-		if (! empty($conf->banque->enabled))
-		{
-			$sql = "SELECT rowid, label";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql.= " WHERE clos = 0";
-			$sql.= " AND courant = 1";
-			$sql.= " AND entity = ".$conf->entity;
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				if ($num > 0)
-				{
-					print '<select name="rib" class="flat" id="rib">';
-					
-					while ($i < $num)
-					{
-						$row = $this->db->fetch_row($resql);
-
-						print '<option value="'.$row[0].'"';
-						print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected="selected"':'';
-						print '>'.$row[1].'</option>';
-
-						$i++;
-					}
-					print "</select>";
-				}
-				else
-				{
-					print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
-				}
-			}
-		}
-		else
-		{
-			print $langs->trans("BankModuleNotActive");
-		}
-	}
 }
 
 ?>
