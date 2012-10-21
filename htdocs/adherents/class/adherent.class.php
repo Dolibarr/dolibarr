@@ -1377,6 +1377,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->add_to_mailman($this);
             if ($result < 0)
             {
+            	$this->error=$mailmanspip->error;
                 $err+=1;
             }
         }
@@ -1387,7 +1388,8 @@ class Adherent extends CommonObject
             $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
             {
-                $err+=1;
+            	$this->error=$mailmanspip->error;
+            	$err+=1;
             }
         }
         if ($err)
