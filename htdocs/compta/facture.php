@@ -1987,9 +1987,9 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Select bank account
-    print '<tr><td>'.$langs->trans('Selectbank').'</td><td colspan="2">';
-    $form->selectbank_account(isset($_POST['label'])?$_POST['label']:$_POST['label'],'label');
-    print '</td></tr>';
+    print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
+    $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);
+    print '</td</tr>';
 
     // Project
     if (! empty($conf->projet->enabled))
