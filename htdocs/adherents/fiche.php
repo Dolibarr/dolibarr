@@ -578,36 +578,53 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confir
 
 if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 'yes')
 {
-	$result=$object->validate($user);
+	$error=0;
+
+	$db->begin();
 
 	$adht = new AdherentType($db);
 	$adht->fetch($object->typeid);
 
+	$result=$object->validate($user);
+
 	if ($result >= 0 && ! count($object->errors))
 	{
 		// Send confirmation Email (selon param du type adherent sinon generique)
-		if ($object->email && $_POST["send_mail"])
+		if ($object->email && ! empty($_POST["send_mail"]))
 		{
 			$result=$object->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
 			if ($result < 0)
 			{
+				$error++;
 				$errmsg.=$object->error;
 			}
 		}
 
-		// Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
-		if ($object->add_to_abo() < 0)
+		// Add user to other systems (mailman, spip, etc...)
+		// TODO Move this into trigger on validate action
+		if (! $error && $object->add_to_abo() < 0)
 		{
-			// error
-			$errmsg.= $langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error."<br>\n";
+			$langs->load("errors");
+			$error++;
+			$errmsg.= $langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error." ".join(',',$object->errors)."<br>\n";
 		}
 	}
 	else
 	{
+		$error++;
 		if ($object->error) $errmsg=$object->error;
 		else $errmsgs=$object->errors;
-		$action='';
 	}
+
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
+	$action='';
 }
 
 if ($user->rights->adherent->supprimer && $action == 'confirm_resign')

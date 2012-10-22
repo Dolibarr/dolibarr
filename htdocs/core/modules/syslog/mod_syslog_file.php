@@ -19,7 +19,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function getVersion()
 	{
-		return self::STABLE;
+		return 'dolibarr';
 	}
 
 	/**
