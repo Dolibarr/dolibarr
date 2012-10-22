@@ -291,6 +291,8 @@ done >>%{name}.lang
 #---- post (after unzip during install)
 %post
 
+echo Run post script of packager dolibarr_generic.spec
+
 # Define vars
 export docdir="/var/lib/dolibarr/documents"
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion}

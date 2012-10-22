@@ -218,6 +218,8 @@ done >>%{name}.lang
 #---- post (after unzip during install)
 %post
 
+echo Run post script of packager dolibarr_opensuse.spec
+
 # Define vars
 export docdir="/var/lib/dolibarr/documents"
 export apachelink="%{_sysconfdir}/apache2/conf.d/dolibarr.conf"
