@@ -61,14 +61,18 @@
 	<tr <?php echo $bcnd[$var]; ?>>
 		<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 			<?php
+
+			echo '<span>';
 			echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-			if ((! empty($conf->product->enabled) && ! empty($conf->service->enabled)) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
+			echo '</span>';
 
 			if (is_object($hookmanager))
 			{
 				$parameters=array();
 				$reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 			}
+
+			if ((! empty($conf->product->enabled) && ! empty($conf->service->enabled)) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
 			// Editor wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

@@ -84,9 +84,9 @@ if (! empty($conf->margin->enabled)) {
 					'update_textarea' => array(
 							'product_desc' => 'desc'
 					),
-					'show' => array(
-							'price_base_type_area'
-					),
+					//'show' => array(
+							//'price_base_type_area'
+					//),
 					'disabled' => array(
 							'select_type'
 					)
@@ -236,7 +236,7 @@ $(document).ready(function() {
 					//$('#origin_price_ttc_cache').val(data.price_ttc);
 					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
-					$('#price_base_type_area').show();
+					//$('#price_base_type_area').show();
 
 					if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances['product_desc'] != "undefined") {
 						CKEDITOR.instances['product_desc'].setData(data.desc).focus();
