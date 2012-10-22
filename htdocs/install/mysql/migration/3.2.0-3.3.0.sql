@@ -781,3 +781,17 @@ ALTER TABLE llx_categorie MODIFY COLUMN label varchar(255) NOT NULL;
 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (entity, fk_parent, label, type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_label (label);
+
+-- [ task #559 ] Price by quantity management
+CREATE TABLE llx_product_price_by_qty
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_product_price	integer NOT NULL,
+  date_price		timestamp,
+  price			double (24,8) DEFAULT 0,
+  price_ttc		double (24,8) DEFAULT NULL,
+  qty_min		real DEFAULT 0,
+  qty_max		real DEFAULT 99999
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_price ADD price_by_qty INT NOT NULL DEFAULT 0;
