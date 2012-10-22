@@ -527,8 +527,11 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
-    print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+    print '<td>'.$langs->trans("Poste").'</td>';
+    print '<td>'.$langs->trans("PhonePro").'</td>';
+    print '<td>'.$langs->trans("PhoneMobile").'</td>';
+    print '<td>'.$langs->trans("Fax").'</td>'; // TODO Fax is obsolete, not used by several companies
+    print '<td>'.$langs->trans("EMail").'</td>';
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
@@ -536,7 +539,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -572,7 +575,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print dol_print_phone($obj->phone,$country_code,$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX');
+            print dol_print_phone($obj->phone_mobile,$country_code,$obj->rowid,$object->id,'AC_TEL');
+            print '</td>';
+            print '<td>';
+            print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX'); // TODO Fax is obsolete, not used by several companies
             print '</td>';
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
