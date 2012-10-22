@@ -762,7 +762,7 @@ ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
 
 
 -- Use entity 0 for all entities
-INSERT INTO llx_const(name, entity, value) SELECT __ENCRYPT('SYSLOG_HANDLERS')__, 0, __ENCRYPT('["mod_syslog_file"]')__ FROM llx_const WHERE __DECRYPT('name')__ = 'SYSLOG_FILE_ON' AND __DECRYPT('value')__ = '1';
+INSERT INTO llx_const(name, value, visible, entity) SELECT __ENCRYPT('SYSLOG_HANDLERS')__, __ENCRYPT('["mod_syslog_file"]')__, 0, 0 FROM llx_const WHERE __DECRYPT('name')__ = 'SYSLOG_FILE_ON' AND __DECRYPT('value')__ = '1';
 
 
 -- New Imports
