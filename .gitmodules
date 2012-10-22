@@ -118,3 +118,6 @@
 [submodule "htdocs/custom/googlemaps"]
 	path = htdocs/custom/googlemaps
 	url = gitolite@doliforge.org:googlemaps/googlemaps.git
+[submodule "htdocs/custom/abonnes"]
+	path = htdocs/custom/abonnes
+	url = gitolite@doliforge.org:publication/abonnes.git
