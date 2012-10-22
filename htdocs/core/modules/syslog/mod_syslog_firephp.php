@@ -17,7 +17,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	 */
 	public function getVersion()
 	{
-		return self::STABLE;
+		return 'dolibarr';
 	}
 
 	/**

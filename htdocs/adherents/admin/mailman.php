@@ -200,8 +200,6 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 
     print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
     print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
-
-    print '<br>';
 }
 else
 {

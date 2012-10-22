@@ -106,11 +106,12 @@ class MailmanSpip
     /**
      * Function used to connect to Mailman
      *
-     * @param  object 	$object 	Object with the data
-     * @param  string 	$url    	Mailman URL to be called with patterns
-     * @return mixed				Boolean or string
+     * @param	object 	$object 	Object with the data
+     * @param	string 	$url    	Mailman URL to be called with patterns
+     * @param	string	$list		Name of mailing-list
+     * @return 	mixed				Boolean or string
      */
-    function callMailman($object, $url)
+    private function callMailman($object, $url, $list)
     {
         global $conf;
 
@@ -137,6 +138,7 @@ class MailmanSpip
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
         @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         $result = curl_exec($ch);
         dol_syslog('result curl_exec='.$result);
@@ -329,7 +331,7 @@ class MailmanSpip
                 }
 
                 //We call Mailman to subscribe the user
-                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL);
+                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
 
 				if ($result === false)
 				{
@@ -373,14 +375,16 @@ class MailmanSpip
                 $tmp=explode(':',$list);
                 if (! empty($tmp[1]))
                 {
-                    if ($object->element == 'member' && $object->type != $tmp[1])    // Filter on member type label
+                    $list=$tmp[1];
+                	if ($object->element == 'member' && $object->type != $tmp[1])    // Filter on member type label
                     {
-                        continue;
+                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[0], LOG_DEBUG);
+                    	continue;
                     }
                 }
 
                 //We call Mailman to unsubscribe the user
-                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
+                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
 
 				if ($result === false)
 				{

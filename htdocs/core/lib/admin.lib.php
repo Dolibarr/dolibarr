@@ -254,7 +254,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 
             // Replace for encrypt data
-            if (preg_match_all('/__ENCRYPT\(\'([A-Za-z0-9_]+)\'\)__/i',$newsql,$reg))
+            if (preg_match_all('/__ENCRYPT\(\'([A-Za-z0-9_\"\[\]]+)\'\)__/i',$newsql,$reg))
             {
                 $num=count($reg[0]);
 

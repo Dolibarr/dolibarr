@@ -17,7 +17,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	 */
 	public function getVersion()
 	{
-		return self::STABLE;
+		return 'dolibarr';
 	}
 
 	/**

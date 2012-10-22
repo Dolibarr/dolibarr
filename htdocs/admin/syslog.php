@@ -60,8 +60,8 @@ if (is_dir($dir))
 				$module = new $file;
 
 				// Show modules according to features level
-				if ($module->getVersion() == $module::DEVELOPMENT  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-				if ($module->getVersion() == $module::EXPERIMENTAL && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+				if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+				if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 				$syslogModules[] = $file;
 			}
