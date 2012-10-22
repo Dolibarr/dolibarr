@@ -242,7 +242,7 @@ then
 	grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config			
 fi
 
-# Create config for se $seconfig
+# Create config for SE Linux
 echo Add SE Linux permissions for dolibarr
 # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
 semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
