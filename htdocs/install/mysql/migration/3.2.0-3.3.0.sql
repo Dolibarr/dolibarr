@@ -761,7 +761,8 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 ALTER TABLE llx_user ADD COLUMN job varchar(128) AFTER firstname;
 
 
-INSERT INTO llx_const(name, entity, value) SELECT 'SYSLOG_HANDLERS', 1, '["mod_syslog_file"]' FROM llx_const WHERE name = 'SYSLOG_FILE_ON' and value = '1';
+-- Use entity 0 for all entities
+INSERT INTO llx_const(name, entity, value) SELECT __ENCRYPT('SYSLOG_HANDLERS')__, 0, __ENCRYPT('["mod_syslog_file"]')__ FROM llx_const WHERE __DECRYPT('name')__ = 'SYSLOG_FILE_ON' AND __DECRYPT('value')__ = '1';
 
 
 -- New Imports
