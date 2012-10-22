@@ -61,6 +61,11 @@ class Product extends CommonObject
 	var $multiprices_ttc=array();
 	var $multiprices_base_type=array();
 	var $multiprices_tva_tx=array();
+	//! Price by quantity arrays
+	var $price_by_qty;
+	var $prices_by_qty=array();
+	var $prices_by_qty_id=array();
+	var $prices_by_qty_list=array();
 	//! Default VAT rate of product
 	var $tva_tx;
 	//! French VAT NPR (0 or 1)
@@ -214,6 +219,10 @@ class Product extends CommonObject
 
 		if (empty($this->price))     	$this->price = 0;
 		if (empty($this->price_min)) 	$this->price_min = 0;
+
+		// Price by quantity
+		if (empty($this->price_by_qty)) 	$this->price_by_qty = 0;
+
 		if (empty($this->status))    	$this->status = 0;
 		if (empty($this->status_buy))   $this->status_buy = 0;
 		if (empty($this->finished))  	$this->finished = 0;
@@ -802,9 +811,9 @@ class Product extends CommonObject
 
 		// Add new price
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,tosell,tva_tx,recuperableonly,";
-		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc) ";
+		$sql.= " localtax1_tx, localtax2_tx, price_min,price_min_ttc,price_by_qty) ";
 		$sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx.",".$this->tva_npr.",";
-		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc;
+		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty;
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."_log_price sql=".$sql);
@@ -941,9 +950,10 @@ class Product extends CommonObject
 	 *  @param		double	$newminprice	New price min
 	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
+	 *  @param     	int		$newpsq         1 if it has price by quantity
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function updatePrice($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0)
+	function updatePrice($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
 	{
 		global $conf,$langs;
 
@@ -1031,6 +1041,9 @@ class Product extends CommonObject
 				//Local taxes
 				$this->localtax1_tx = $localtax1;
 				$this->localtax2_tx = $localtax2;
+
+				// Price by quantity
+				$this->price_by_qty = $newpsq;
 
 				$this->_log_price($user,$level);
 
@@ -1166,7 +1179,7 @@ class Product extends CommonObject
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-						$sql.= " price_base_type, tva_tx, tosell";
+						$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql.= " WHERE price_level=".$i;
 						$sql.= " AND fk_product = '".$this->id."'";
@@ -1183,12 +1196,96 @@ class Product extends CommonObject
 							$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
 							$this->multiprices_base_type[$i]=$result["price_base_type"];
 							$this->multiprices_tva_tx[$i]=$result["tva_tx"];
+
+							// Price by quantity
+							$this->prices_by_qty[$i]=$result["price_by_qty"];
+							$this->prices_by_qty_id[$i]=$result["rowid"];
+							// Récuperation de la liste des prix selon qty si flag positionné
+							if ($this->prices_by_qty[$i] == 1)
+							{
+								$sql = "SELECT rowid,price, price_ttc,qty_min,qty_max";
+								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
+								$sql.= " ORDER BY qty_min ASC";
+								$resultat=array();
+								$resql = $this->db->query($sql) ;
+								if ($resql)
+								{
+									$ii=0;
+									while ($result= $this->db->fetch_array($resql)) {
+										$resultat[$ii]=array();
+										$resultat[$ii]["rowid"]=$result["rowid"];
+										$resultat[$ii]["price"]= $result["price"];
+										$resultat[$ii]["price_ttc"]= $result["price_ttc"];
+										$resultat[$ii]["qty_min"]= $result["qty_min"];
+										$resultat[$ii]["qty_max"]= $result["qty_max"];
+										$ii++;
+									}
+									$this->prices_by_qty_list[$i]=$resultat;
+								}
+								else
+								{
+									dol_print_error($this->db);
+									return -1;
+								}
+							}
 						}
 						else
 						{
 							dol_print_error($this->db);
 							return -1;
 						}
+					}
+				} else if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+				{
+					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
+					$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
+					$sql.= " WHERE fk_product = '".$this->id."'";
+					$sql.= " ORDER BY date_price DESC";
+					$sql.= " LIMIT 1";
+					$resql = $this->db->query($sql);
+					if ($resql)
+					{
+						$result = $this->db->fetch_array($resql);
+
+						// Price by quantity
+						$this->prices_by_qty[0]=$result["price_by_qty"];
+						$this->prices_by_qty_id[0]=$result["rowid"];
+						// Récuperation de la liste des prix selon qty si flag positionné
+						if ($this->prices_by_qty[0] == 1)
+						{
+							$sql = "SELECT rowid,price, price_ttc,qty_min,qty_max";
+							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+							$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[0]."'";
+							$sql.= " ORDER BY qty_min ASC";
+							$resultat=array();
+							$resql = $this->db->query($sql) ;
+							if ($resql)
+							{
+								$ii=0;
+								while ($result= $this->db->fetch_array($resql)) {
+									$resultat[$ii]=array();
+									$resultat[$ii]["rowid"]=$result["rowid"];
+									$resultat[$ii]["price"]= $result["price"];
+									$resultat[$ii]["price_ttc"]= $result["price_ttc"];
+									$resultat[$ii]["qty_min"]= $result["qty_min"];
+									$resultat[$ii]["qty_max"]= $result["qty_max"];
+									$ii++;
+								}
+								$this->prices_by_qty_list[0]=$resultat;
+							}
+							else
+							{
+								dol_print_error($this->db);
+								return -1;
+							}
+						}
+					}
+					else
+					{
+						dol_print_error($this->db);
+						return -1;
 					}
 				}
 

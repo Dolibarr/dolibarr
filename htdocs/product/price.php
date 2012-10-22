@@ -51,7 +51,7 @@ $object = new Product($db);
 if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$result = $object->fetch($id);
-
+	
 	// MultiPrix
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -70,6 +70,8 @@ if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->
 				$newpricebase=$_POST["multiprices_base_type_".$i];
 				$newnpr=(preg_match('/\*/',$_POST["tva_tx_".$i]) ? 1 : 0);
 				$newvat=str_replace('*','',$_POST["tva_tx_".$i]);
+				$newpsq=GETPOST('psqflag');
+				$newpsq = empty($newpsq) ? 0 : $newpsq;
 				break;	// We found submited price
 			}
 		}
@@ -82,9 +84,11 @@ if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->
 		$newpricebase=$_POST["price_base_type"];
 		$newnpr=(preg_match('/\*/',$_POST["tva_tx"]) ? 1 : 0);
 		$newvat=str_replace('*','',$_POST["tva_tx"]);
+		$newpsq=GETPOST('psqflag');
+		$newpsq = empty($newpsq) ? 0 : $newpsq;
 	}
 
-	if ($object->updatePrice($object->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr) > 0)
+	if ($object->updatePrice($object->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
 	{
 		$action = '';
 		$mesg = '<div class="ok">'.$langs->trans("RecordSaved").'</div>';
@@ -100,6 +104,110 @@ else if ($action == 'delete' && $user->rights->produit->supprimer)
 	$result=$object->log_price_delete($user,$_GET["lineid"]);
 	if ($result < 0) $mesg='<div class="error">'.$object->error.'</div>';
 }
+
+/*****************************************************
+ * Price by quantity
+ *****************************************************/
+if ($action == 'activate_price_by_qty') { // Activating product price by quantity add a new price, specified as by quantity
+	$result = $object->fetch($id);
+	$level=GETPOST('level');
+	
+	$object->updatePrice($object->id, 0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+}
+
+if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+	$rowid = GETPOST('rowid');
+}
+
+if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par quantité
+	$result = $object->fetch($id);
+
+	// Récupération des variables
+	$rowid = GETPOST('rowid');
+	$priceid=GETPOST('priceid');
+	$newprice=price2num(GETPOST("price"),'MU');
+	//$newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management and discount management
+	$qtymin=GETPOST('qty_min');
+	$qtymax=GETPOST('qty_max');
+	
+	// Calcul des prix (HT  et TTC)
+	if ($newprice!='' || $newprice==0)
+	{
+		if ($object->price_base_type == 'TTC')
+		{
+			$price_ttc = price2num($newprice,'MU');
+			$price = price2num($newprice) / (1 + ($object->tva_tx / 100));
+			$price = price2num($price,'MU');
+
+			/*if ($newminprice!='' || $newminprice==0)
+			{
+				$price_min_ttc = price2num($newminprice,'MU');
+				$price_min = price2num($newminprice) / (1 + ($object->tva_tx / 100));
+				$price_min = price2num($price_min,'MU');
+			}
+			else
+			{
+				$price_min=0;
+				$price_min_ttc=0;
+			}*/
+		}
+		else
+		{
+			$price = price2num($newprice,'MU');
+			$price_ttc = price2num($newprice) * (1 + ($object->tva_tx / 100));
+			$price_ttc = price2num($price_ttc,'MU');
+
+			/*if ($newminprice!='' || $newminprice==0)
+			{
+				$price_min = price2num($newminprice,'MU');
+				$price_min_ttc = price2num($newminprice) * (1 + ($object->tva_tx / 100));
+				$price_min_ttc = price2num($price_min_ttc,'MU');
+				//print 'X'.$newminprice.'-'.$price_min;
+			}
+			else
+			{
+				$price_min=0;
+				$price_min_ttc=0;
+			}*/
+		}
+	}
+
+	// Ajout / mise à jour
+	if($rowid > 0) {
+		$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
+		$sql.= " price='".$price."',";
+		$sql.= " price_ttc=".$price_ttc.",";
+		$sql.= " qty_min=".$qtymin.",";
+		$sql.= " qty_max=".$qtymax;
+		$sql.= " WHERE rowid = ".GETPOST('rowid');
+		
+		$result = $db->query($sql);
+	} else {
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,price_ttc,qty_min,qty_max) values (";
+		$sql.= $priceid.','.$price.','.$price_ttc.','.$qtymin.','.$qtymax.')';
+
+		$result = $db->query($sql);
+	}
+}
+
+if ($action == 'delete_price_by_qty') {
+	$rowid = GETPOST('rowid');
+	
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+	$sql.= " WHERE rowid = ".GETPOST('rowid');
+	
+	$result = $db->query($sql);
+}
+
+if ($action == 'delete_all_price_by_qty') {
+	$priceid=GETPOST('priceid');
+	
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+	$sql.= " WHERE fk_product_price = ".$priceid;
+	
+	$result = $db->query($sql);
+}
+
 
 
 /*
@@ -230,6 +338,104 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				print price($object->multiprices_min["$i"]).' '.$langs->trans($object->multiprices_base_type["$i"]);
 			}
 			print '</td></tr>';
+			
+			// Price by quantity
+			/*if($conf->global->PRODUIT_PRICE_BY_QTY) {
+				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i.'</td><td>';
+				if($object->prices_by_qty[$i] == 1) {
+					print '<table width="50%" class="noborder">';
+
+					print '<tr class="liste_titre">';
+					print '<td>'.$langs->trans("PriceByQuantityRange").'</td>';
+					print '<td align="right">'.$langs->trans("HT").'</td>';
+					print '<td align="right">'.$langs->trans("TTC").'</td>';
+					print '<td>&nbsp;</td>';
+					print '</tr>';
+					foreach ($object->prices_by_qty_list[$i] as $j=> $prices) {
+						print '<tr class="'.($j % 2 == 0 ? 'pair':'impair').'">';
+						print '<td>'.$prices['qty_min'].' - '.$prices['qty_max'].'</td>';
+						print '<td align="right">'.price($prices['price']).'</td>';
+						print '<td align="right">'.price($prices['price_ttc']).'</td>';
+						print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print img_delete();
+						print '</a></td>';
+						print '</tr>';
+					}
+					print '</table>';
+				} else {
+					print $langs->trans("No");
+				}
+				print '</td></tr>';
+			}*/
+
+			// Price by quantity
+			if($conf->global->PRODUIT_PRICE_BY_QTY) {
+				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
+				print '</td><td>';
+				
+				if($object->prices_by_qty[$i] == 1) {
+					print '<table width="50%" class="noborder">';
+		
+					print '<tr class="liste_titre">';
+					print '<td>'.$langs->trans("PriceByQuantityRange").' '.$i.'</td>';
+					print '<td align="right">'.$langs->trans("HT").'</td>';
+					print '<td align="right">'.$langs->trans("TTC").'</td>';
+					print '<td>&nbsp;</td>';
+					print '</tr>';
+					foreach ($object->prices_by_qty_list[$i] as $ii=> $prices) {
+						if($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+							print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+							print '<input type="hidden" name="action" value="update_price_by_qty">';
+							print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">';
+							print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
+							print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
+							print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"> - ';
+							print '<input size="5" type="text" value="'.$prices['qty_max'].'" name="qty_max"></td>';
+							print '<td align="right"><input type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
+							print '<td align="right">&nbsp;</td>';
+							print '<td align="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
+							print '</tr>';
+							print '</form>';
+						} else {
+							print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
+							print '<td>'.$prices['qty_min'].' - '.$prices['qty_max'].'</td>';
+							print '<td align="right">'.price($prices['price']).'</td>';
+							print '<td align="right">'.price($prices['price_ttc']).'</td>';
+							print '<td align="center">';
+							if(($user->rights->produit->creer || $user->rights->service->creer)) {
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print img_edit().'</a>';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print img_delete().'</a>';
+							} else {
+								print '&nbsp;';
+							}
+							print '</td>';
+							print '</tr>';
+						}
+					}
+					if($action != 'edit_price_by_qty') {
+						print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+						print '<input type="hidden" name="action" value="update_price_by_qty">';
+						print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">';
+						print '<input type="hidden" value="0" name="rowid">';
+						print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
+						print '<td><input size="5" type="text" value="0" name="qty_min"> - ';
+						print '<input size="5" type="text" value="0" name="qty_max"></td>';
+						print '<td align="right"><input type="text" value="0.00000" name="price">&nbsp;'.$object->price_base_type.'</td>';
+						print '<td align="right">&nbsp;</td>';
+						print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
+						print '</tr>';
+						print '</form>';
+					}
+		
+					print '</table>';
+				} else {
+					print $langs->trans("No");
+					print '&nbsp;<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level='.$i.'">('.$langs->trans("Activate").')</a>';
+				}
+				print '</td></tr>';
+			}
 		}
 	}
 }
@@ -261,6 +467,76 @@ else
 		print price($object->price_min).' '.$langs->trans($object->price_base_type);
 	}
 	print '</td></tr>';
+	
+	// Price by quantity
+	if($conf->global->PRODUIT_PRICE_BY_QTY) {
+		print '<tr><td>'.$langs->trans("PriceByQuantity");
+		if($object->prices_by_qty[0] == 0) {
+			print '&nbsp;<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level=1">'.$langs->trans("Activate");
+		}
+		print '</td><td>';
+		
+		if($object->prices_by_qty[0] == 1) {
+			print '<table width="50%" class="noborder">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("PriceByQuantityRange").'</td>';
+			print '<td align="right">'.$langs->trans("HT").'</td>';
+			print '<td align="right">'.$langs->trans("TTC").'</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
+			foreach ($object->prices_by_qty_list[0] as $ii=> $prices) {
+				if($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+					print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+					print '<input type="hidden" name="action" value="update_price_by_qty">';
+					print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">';
+					print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
+					print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
+					print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"> - ';
+					print '<input size="5" type="text" value="'.$prices['qty_max'].'" name="qty_max"></td>';
+					print '<td align="right"><input type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
+					print '<td align="right">&nbsp;</td>';
+					print '<td align="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
+					print '</tr>';
+					print '</form>';
+				} else {
+					print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
+					print '<td>'.$prices['qty_min'].' - '.$prices['qty_max'].'</td>';
+					print '<td align="right">'.price($prices['price']).'</td>';
+					print '<td align="right">'.price($prices['price_ttc']).'</td>';
+					print '<td align="center">';
+					if(($user->rights->produit->creer || $user->rights->service->creer)) {
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print img_edit().'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print img_delete().'</a>';
+					} else {
+						print '&nbsp;';
+					}
+					print '</td>';
+					print '</tr>';
+				}
+			}
+			if($action != 'edit_price_by_qty') {
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+				print '<input type="hidden" name="action" value="update_price_by_qty">';
+				print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">';
+				print '<input type="hidden" value="0" name="rowid">';
+				print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
+				print '<td><input size="5" type="text" value="0" name="qty_min"> - ';
+				print '<input size="5" type="text" value="0" name="qty_max"></td>';
+				print '<td align="right"><input type="text" value="0.00000" name="price">&nbsp;'.$object->price_base_type.'</td>';
+				print '<td align="right">&nbsp;</td>';
+				print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
+				print '</tr>';
+				print '</form>';
+			}
+
+			print '</table>';
+		} else {
+			print $langs->trans("No");
+		}
+		print '</td></tr>';
+	}
 }
 
 // Status (to sell)
@@ -426,7 +702,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 
 // Liste des evolutions du prix
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.recuperableonly,";
-$sql.= " p.price_level, p.price_min, p.price_min_ttc,";
+$sql.= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
 $sql.= " p.date_price as dp, u.rowid as user_id, u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
@@ -464,7 +740,11 @@ if ($result)
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
-			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
+			print '<td align="center">'.$langs->trans("MultiPriceLevelsName").'</td>';
+		}
+		if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+		{
+			print '<td align="center">'.$langs->trans("Type").'</td>';
 		}
 
 		print '<td align="center">'.$langs->trans("PriceBase").'</td>';
@@ -491,6 +771,12 @@ if ($result)
 			if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			{
 				print '<td align="center">'.$objp->price_level."</td>";
+			}
+			// Price by quantity
+			if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+			{
+				$type = ($objp->price_by_qty == 1) ? 'PriceByQuantity' : 'Standard';
+				print '<td align="center">'.$langs->trans($type)."</td>";
 			}
 
 			print '<td align="center">'.$langs->trans($objp->price_base_type)."</td>";
