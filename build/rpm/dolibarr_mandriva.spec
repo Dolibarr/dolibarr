@@ -105,12 +105,14 @@ cui hai bisogno ed essere facile da usare.
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
 # Lang
-echo "%defattr(0644, root, root, 0644)" > %{name}.lang
+echo "%defattr(0644, root, root, 0755)" > %{name}.lang
+echo "%dir %{_datadir}/%{name}/htdocs/langs" >> %{name}.lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
   lang=$(basename $i)
   lang1=`expr substr $lang 1 2`; 
   lang2=`expr substr $lang 4 2 | tr "[:upper:]" "[:lower:]"`; 
+  echo "%dir %{_datadir}/%{name}/htdocs/langs/${lang}" >> %{name}.lang
   if [ "$lang1" = "$lang2" ] ; then
 	echo "%lang(${lang1}) %{_datadir}/%{name}/htdocs/langs/${lang}/*.lang"
   else
@@ -129,6 +131,9 @@ done >>%{name}.lang
 %files -f %{name}.lang
 
 %defattr(0755, root, root, 0755)
+
+%dir %_datadir/dolibarr
+
 %dir %_datadir/dolibarr/scripts
 %_datadir/dolibarr/scripts/*
 
@@ -137,6 +142,8 @@ done >>%{name}.lang
 
 %_datadir/pixmaps/dolibarr.png
 %_datadir/applications/dolibarr.desktop
+
+%dir %_datadir/dolibarr/build
 
 %dir %_datadir/dolibarr/build/rpm
 %_datadir/dolibarr/build/rpm/*
@@ -192,6 +199,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/*.php
 %_datadir/dolibarr/htdocs/*.txt
 
+%dir %{_sysconfdir}/dolibarr
+
 %defattr(0664, root, apache)
 %config(noreplace) %{_sysconfdir}/dolibarr/conf.php
 %config(noreplace) %{_sysconfdir}/dolibarr/apache.conf
@@ -241,8 +250,13 @@ fi
 
 # Create a config link dolibarr.conf
 if [ ! -L $apachelink ]; then
-    echo Create dolibarr web server config link $apachelink
-    ln -fs %{_sysconfdir}/dolibarr/apache.conf $apachelink
+    apachelinkdir=`dirname $apachelink`
+    if [ -d $apachelinkdir ]; then
+        echo Create dolibarr web server config link from %{_sysconfdir}/dolibarr/apache.conf to $apachelink
+        ln -fs %{_sysconfdir}/dolibarr/apache.conf $apachelink
+    else
+        echo Do not create link $apachelink - web server conf dir $apachelinkdir not found. web server package may not be installed
+    fi
 fi
 
 echo Set permission to $apacheuser:$apachegroup on /var/lib/dolibarr

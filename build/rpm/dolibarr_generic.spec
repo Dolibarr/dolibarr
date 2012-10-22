@@ -54,7 +54,7 @@ Requires: mysql, mysql-client
 %if 0%{?suse_version}
 # Voir http://en.opensuse.org/openSUSE:Packaging_Conventions_RPM_Macros
 Group: Productivity/Office/Management
-Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, fonts-ttf-dejavu
+Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, dejavu
 Requires: mysql-community-server, mysql-community-server-client 
 BuildRequires: update-desktop-files fdupes
 %else
@@ -168,7 +168,7 @@ cui hai bisogno ed essere facile da usare.
 %endif
 
 # Lang
-echo "%defattr(0644, root, root, 0644)" > %{name}.lang
+echo "%defattr(0644, root, root, 0755)" > %{name}.lang
 echo "%dir %{_datadir}/%{name}/htdocs/langs" >> %{name}.lang
 for i in $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/langs/*_*
 do
