@@ -33,6 +33,7 @@ $langs->load("companies");
 
 $socname                   = GETPOST("socname");
 $search_nom                = GETPOST("search_nom");
+$search_zipcode            = GETPOST("search_zipcode");
 $search_ville              = GETPOST("search_ville");
 $search_code_fournisseur   = GETPOST("search_code_fournisseur");
 $search_compta_fournisseur = GETPOST("search_compta_fournisseur");
@@ -78,7 +79,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
+$sql = "SELECT s.rowid as socid, s.nom, s.cp as zip, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -96,6 +97,7 @@ if ($socname)
 	$sortorder = "ASC";
 }
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_zipcode) $sql .= " AND s.cp LIKE '%".$db->escape($search_zipcode)."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
@@ -146,6 +148,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.cp","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
@@ -160,6 +163,8 @@ if ($resql)
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_zipcode" value="'.$search_zipcode.'"></td>';
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
 
@@ -197,7 +202,8 @@ if ($resql)
 		print '<td>';
         print $thirdpartystatic->getNomUrl(1,'supplier');
 		print "</td>\n";
-		print "<td>".$obj->ville."</td>\n";
+		print '<td>'.$obj->zip.'</td>'."\n";
+		print '<td>'.$obj->ville.'</td>'."\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
 		print '<td align="right">';
