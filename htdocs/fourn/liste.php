@@ -33,6 +33,7 @@ $langs->load("companies");
 
 $socname                   = GETPOST("socname");
 $search_nom                = GETPOST("search_nom");
+$search_zipcode            = GETPOST("search_zipcode");
 $search_ville              = GETPOST("search_ville");
 $search_code_fournisseur   = GETPOST("search_code_fournisseur");
 $search_compta_fournisseur = GETPOST("search_compta_fournisseur");
@@ -55,6 +56,17 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('supplierlist'));
+
+/*
+ * 	Actions
+ */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 
 /*
@@ -67,7 +79,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
+$sql = "SELECT s.rowid as socid, s.nom, s.cp as zip, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -85,6 +97,7 @@ if ($socname)
 	$sortorder = "ASC";
 }
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_zipcode) $sql .= " AND s.cp LIKE '%".$db->escape($search_zipcode)."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
@@ -114,8 +127,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
-	print '<form action="liste.php" method="GET">';
-	print '<table class="liste" width="100%">';
+	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 	// Filter on categories
 	$moreforfilter='';
@@ -127,24 +139,32 @@ if ($resql)
 	}
 	if ($moreforfilter)
 	{
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="6">';
+		print '<div class="liste_titre">';
 		print $moreforfilter;
-		print '</td></tr>';
+		print '</div>';
 	}
+
+	print '<table class="liste" width="100%">';
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.cp","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
+
+    $parameters=array();
+    $formconfirm=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_zipcode" value="'.$search_zipcode.'"></td>';
 
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
 
@@ -161,6 +181,9 @@ if ($resql)
 	print '</td>';
 
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+
+	$parameters=array();
+	$formconfirm=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 
 	print '</tr>';
 
@@ -179,18 +202,26 @@ if ($resql)
 		print '<td>';
         print $thirdpartystatic->getNomUrl(1,'supplier');
 		print "</td>\n";
-		print "<td>".$obj->ville."</td>\n";
+		print '<td>'.$obj->zip.'</td>'."\n";
+		print '<td>'.$obj->ville.'</td>'."\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
 		print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
 		print '<td align="right">';
 		print dol_print_date($db->jdate($obj->datec),'day').'</td>';
 		print '<td align="right">'.$thirdpartystatic->getLibStatut(3).'</td>';
+
+		$parameters=array('obj' => $obj);
+		$formconfirm=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+
 		print "</tr>\n";
 		$i++;
 	}
 	print "</table>\n";
 	print "</form>\n";
 	$db->free($resql);
+
+	$parameters=array('sql' => $sql);
+	$formconfirm=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 }
 else
 {
