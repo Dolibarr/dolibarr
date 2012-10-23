@@ -189,6 +189,7 @@ if (! $error)
             }
             elseif ($db->error && ! (! empty($_POST["db_create_database"]) && $db->connected))
             {
+            	// Note: you may experience error here with message "No such file or directory" when mysql was installed for the first time but not yet launched.
                 print '<div class="error">'.$db->error.'</div>';
                 if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
                 //print '<a href="#" onClick="javascript: history.back();">';

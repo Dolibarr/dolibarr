@@ -47,6 +47,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
 $search_nom=GETPOST("search_nom");
+$search_zipcode=GETPOST("search_zipcode");
 $search_ville=GETPOST("search_ville");
 $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
@@ -77,6 +78,7 @@ if (GETPOST("button_removefilter_x"))
     $search_sale='';
     $socname="";
     $search_nom="";
+    $search_zipcode="";
     $search_ville="";
     $search_idprof1='';
     $search_idprof2='';
@@ -96,7 +98,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.cp as zip, s.ville, st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta, s.status as status,";
 $sql.= " s.datec, s.datea, s.canvas";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -115,9 +117,10 @@ if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
 if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
-if ($search_nom)   $sql.= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
-if ($search_ville) $sql.= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
-if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape(strtolower($search_code))."%'";
+if ($search_nom)   $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
+if ($search_zipcode) $sql.= " AND s.cp LIKE '%".$db->escape($search_zipcode)."%'";
+if ($search_ville) $sql.= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
+if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 // Insert sale filter
 if ($search_sale)
@@ -176,6 +179,7 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.cp","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
@@ -191,6 +195,10 @@ if ($result)
 
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'" size="10">';
+	print '</td>';
+
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_zipcode" value="'.$search_zipcode.'" size="10">';
 	print '</td>';
 
 	print '<td class="liste_titre">';
@@ -234,6 +242,7 @@ if ($result)
         $thirdpartystatic->status=$obj->status;
         print $thirdpartystatic->getNomUrl(1);
 		print '</td>';
+		print '<td>'.$obj->zip.'</td>';
         print '<td>'.$obj->ville.'</td>';
         print '<td>'.$obj->code_client.'</td>';
         print '<td>'.$obj->code_compta.'</td>';

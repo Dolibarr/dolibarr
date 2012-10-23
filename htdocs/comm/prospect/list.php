@@ -40,6 +40,7 @@ $action				= GETPOST('action','alpha');
 $socname            = GETPOST("socname",'alpha');
 $stcomm             = GETPOST("stcomm",'int');
 $search_nom         = GETPOST("search_nom");
+$search_zipcode     = GETPOST("search_zipcode");
 $search_ville       = GETPOST("search_ville");
 $search_departement = GETPOST("search_departement");
 $search_datec       = GETPOST("search_datec");
@@ -173,7 +174,7 @@ if ($action == 'cstc')
 
 $formother=new FormOther($db);
 
-$sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
+$sql = "SELECT s.rowid, s.nom, s.cp as zip, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 // Updated by Matelli
@@ -194,6 +195,7 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
+if ($search_zipcode) $sql .= " AND s.cp LIKE '%".$db->escape(strtolower($search_zipcode))."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
 if ($search_departement) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_departement))."%'";
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
@@ -293,6 +295,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.cp","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("State"),$_SERVER["PHP_SELF"],"s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center"',$sortfield,$sortorder);
@@ -309,7 +312,11 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$search_nom.'">';
-	print '</td><td class="liste_titre">';
+	print '</td>';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_zipcode" size="10" value="'.$search_zipcode.'">';
+	print '</td>';
+	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ville" size="10" value="'.$search_ville.'">';
 	print '</td>';
  	print '<td class="liste_titre" align="center">';
@@ -386,6 +393,7 @@ if ($resql)
         $prospectstatic->status=$obj->status;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
+        print "<td>".$obj->zip."&nbsp;</td>";
 		print "<td>".$obj->ville."&nbsp;</td>";
 		print '<td align="center">'.$obj->departement.'</td>';
 		// Creation date
