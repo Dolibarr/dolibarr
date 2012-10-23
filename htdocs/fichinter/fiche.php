@@ -912,7 +912,7 @@ else if ($id > 0 || ! empty($ref))
     print '<tr><td valign="top">';
     print $form->editfieldkey("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
     print '</td><td colspan="3">';
-    print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
+    print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
     print '</td>';
     print '</tr>';
 
