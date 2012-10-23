@@ -189,7 +189,7 @@ class ProductFournisseur extends Product
 			$sql.= " tva_tx = ".$tva_tx.",";
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
-			$sql.= " charges = ".($charges != ''?price2num($charges):"null");
+			$sql.= " charges = ".$charges;
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
@@ -219,18 +219,20 @@ class ProductFournisseur extends Product
 		  		{
 		            // Add price for this quantity to supplier
 		            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
-		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, fk_availability, entity)";
+		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, entity)";
 		            $sql.= " values('".$this->db->idate($now)."',";
 		            $sql.= " ".$this->id.",";
 		            $sql.= " ".$fourn->id.",";
 		            $sql.= " '".$this->db->escape($ref_fourn)."',";
 		            $sql.= " ".$user->id.",";
-		            $sql.= " ".price2num($buyprice).",";
+		            $sql.= " ".$buyprice.",";
 		            $sql.= " ".$qty.",";
 					$sql.= " ".$remise_percent.",";
 					$sql.= " ".$remise.",";
 		            $sql.= " ".$unitBuyPrice.",";
 		            $sql.= " ".$tva_tx.",";
+		            $sql.= " ".$charges.",";
+		            $sql.= " ".$unitCharges.",";
 		            $sql.= " ".$availability.",";
 		            $sql.= $conf->entity;
 		            $sql.=")";
