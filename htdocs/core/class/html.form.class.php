@@ -292,8 +292,8 @@ class Form
             {
             	$tmp=explode(':',$inputType);
             	$inputType=$tmp[0];
-            	$rows=($tmp[1]?$tmp[1]:'8');
-            	$cols=($tmp[2]?$tmp[2]:'80');
+            	$rows=(empty($tmp[1])?'8':$tmp[1]);
+            	$cols=(empty($tmp[2])?'80':$tmp[2]);
             }
             else if (preg_match('/^ckeditor/',$inputType))
             {
