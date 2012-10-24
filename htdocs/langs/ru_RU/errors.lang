@@ -54,7 +54,6 @@ ErrorCantSaveADoneUserWithZeroPercentage=Не удается сохранить 
 ErrorRefAlreadyExists=Ссылки, используемые для создания, уже существует.
 ErrorPleaseTypeBankTransactionReportName=Введите название банка, где получение сделки (в формате ГГГГММ или ГГГГММДД)
 ErrorRecordHasChildren=Не удается удалить записи, поскольку он имеет некоторые хлеб.
-MenuManager=Меню менеджера
 ErrorUrlNotValid=Адрес веб-сайта, является неверным
 Error=Ошибка
 Errors=Ошибки

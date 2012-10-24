@@ -1,10 +1,13 @@
 # Dolibarr language file - fr_FR - errors
 CHARSET=UTF-8
-MenuManager=Gestionnaire de menu
+
+# No errors
+NoErrorCommitIsDone=Pas d'erreur, on valide
 
 # Errors
 Error=Erreur
 Errors=Erreurs
+ErrorButCommitIsDone=Erreurs trouvées mais on valide malgré tout
 ErrorBadEMail=e-mail %s invalide
 ErrorBadUrl=Url %s invalide
 ErrorLoginAlreadyExists=Le login %s existe déjà.

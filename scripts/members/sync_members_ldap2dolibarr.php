@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-/*
+/**
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -49,17 +49,52 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 
 $langs->load("main");
+$langs->load("errors");
+
+// List of fields to get from LDAP
+$required_fields = array(
+	$conf->global->LDAP_KEY_MEMBERS,
+	$conf->global->LDAP_FIELD_FULLNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_PHONE_PERSO,
+	$conf->global->LDAP_FIELD_MOBILE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_ADDRESS,
+	$conf->global->LDAP_FIELD_ZIP,
+	$conf->global->LDAP_FIELD_TOWN,
+	$conf->global->LDAP_FIELD_COUNTRY,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
+	$conf->global->LDAP_FIELD_BIRTHDATE,
+	$conf->global->LDAP_FIELD_MEMBER_STATUS,
+	$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
+	// Subscriptions
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+);
+
+// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
 
-if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
+if ($argv[3]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 
 print "***** $script_file ($version) *****\n";
 
-if (! isset($argv[1]) || ! is_numeric($argv[1])) {
-    print "Usage:  $script_file id_member_type\n";
+if (! isset($argv[2]) || ! is_numeric($argv[2])) {
+    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type [ldapserverhost]\n";
     exit;
 }
-$typeid=$argv[1];
+$typeid=$argv[2];
+if ($argv[1] == 'commitiferror') $forcecommit=1;
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
@@ -77,15 +112,17 @@ print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
 print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
+print "----- Options:\n";
+print "commitiferror=".$forcecommit."\n";
+print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
-print "Press a key to confirm...\n";
+print "Press a key to confirm...";
 $input = trim(fgets(STDIN));
-print "Warning, this operation may result in data loss if it failed.\n";
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
 
-if (! $conf->global->LDAP_MEMBER_DN)
+if (empty($conf->global->LDAP_MEMBER_DN))
 {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr");
 	exit(1);
@@ -134,41 +171,8 @@ if ($result >= 0)
 	$justthese=array();
 
 
-	// On d�sactive la synchro Dolibarr vers LDAP
+	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE=0;
-
-	// Liste des champs a r�cup�rer de LDAP
-	$required_fields = array(
-	$conf->global->LDAP_FIELD_FULLNAME,
-	$conf->global->LDAP_FIELD_LOGIN,
-	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-	$conf->global->LDAP_FIELD_PASSWORD,
-	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-	$conf->global->LDAP_FIELD_NAME,
-	$conf->global->LDAP_FIELD_FIRSTNAME,
-	$conf->global->LDAP_FIELD_MAIL,
-	$conf->global->LDAP_FIELD_PHONE,
-	$conf->global->LDAP_FIELD_PHONE_PERSO,
-	$conf->global->LDAP_FIELD_MOBILE,
-	$conf->global->LDAP_FIELD_FAX,
-	$conf->global->LDAP_FIELD_ADDRESS,
-	$conf->global->LDAP_FIELD_ZIP,
-	$conf->global->LDAP_FIELD_TOWN,
-	$conf->global->LDAP_FIELD_COUNTRY,
-	$conf->global->LDAP_FIELD_DESCRIPTION,
-	$conf->global->LDAP_FIELD_BIRTHDATE,
-	$conf->global->LDAP_FIELD_MEMBER_STATUS,
-	$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
-
-	// Subscriptions
-	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
-	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,
-	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,
-	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
-	);
-
-	// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-	$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
 	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 0);
 	if (is_array($ldaprecords))
@@ -301,6 +305,7 @@ if ($result >= 0)
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone",$error)."\n";
 			$db->rollback();
 		}
+		print "\n";
 	}
 	else
 	{
@@ -318,7 +323,14 @@ else
 return $error;
 
 
-function dolValidElement($element) {
+/**
+ * Function to say if a value is empty or not
+ *
+ * @param 	string	$element	Value to test
+ * @return	boolean				True of false
+ */
+function dolValidElement($element)
+{
 	return (trim($element) != '');
 }
 

@@ -15,7 +15,6 @@ WarningUntilDirRemoved=すべてのセキュリティ警告は、（のみの管
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
 // Reference language: en_US -> ja_JP
-MenuManager=メニューマネージャ
 Error=エラー
 Errors=エラー
 ErrorBadEMail=メールして%sが間違っている
