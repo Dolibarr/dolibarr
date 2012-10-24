@@ -85,7 +85,7 @@ de Recursos Empresariales (ERP) y Gestión de la Relación con los
 Clientes (CRM) así como para para otras diferentes actividades. 
 Dolibarr ha sido diseñado para suministrarle solamente las funcionalidades
 que necesita y haciendo hincapié en su facilidad de uso.
-    
+
 %description -l fr
 Logiciel ERP & CRM de gestion de PME/PMI, autoentrepreneurs, 
 artisans ou associations. Il permet de gérer vos clients, prospect, 
@@ -117,7 +117,11 @@ cui hai bisogno ed essere facile da usare.
 
 #---- install
 %install
+
+%if 0%{?sles_version}
+%else
 %{__rm} -rf $RPM_BUILD_ROOT
+%endif
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/conf.php
@@ -183,10 +187,9 @@ do
   fi
 done >>%{name}.lang
 
-%if 0%{?suse_version}
+%if 0%{?suse_version} || 0%{?sles_version}
 # Enable this command to tag desktop file for suse
-%suse_update_desktop_file dolibarr
-
+%suse_update_desktop_file dolibarr Office Finance
 # Enable this command to allow suse detection of duplicate files and create hardlinks instead
 %fdupes $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs
 %endif

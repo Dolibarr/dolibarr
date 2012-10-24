@@ -12,7 +12,10 @@ a package onto LaunchPad
 # To install all packagers tools:
 # sudo apt-get install bzr-builder bzr dpatch pbuilder debootstrap devscripts
 
+
 # Init local working env
+#----------------------------------
+
 - Create account on launchpad.org
 - Create Project
 - Link project to official SCM server
@@ -21,32 +24,53 @@ a package onto LaunchPad
 - Run from command line: 
     bzr launchpad-login yourlogin
     bzr whoami "Your Name <email@email.com>"
-- Create a file /.pbuilderrc with content
+    bzr whoami
+- Create a file ~/.pbuilderrc with content
     COMPONENTS="main universe multiverse restricted"
 - Create chroot ubuntu env
     sudo pbuilder create [--distribution sid|squeeze]
-- Edit file ~/.bashrc ti add
+- Edit file ~/.bashrc to add
 DEBFULLNAME="<Your name>" 
 DEBEMAIL="<Your email address>" 
 
-# Init package tools for launchpad
+
+# Push/declare sources to Launchpad
+#----------------------------------
+
 - Create a Bazaar directory
     mkdir bzr
-- Create debian directory and upload it onto bzr branch ~yourlogin/dolibarr/debian
+- Create a series 
+    Call it 'dev' or 'stable'
+    Add file with *: http://www.dolibarr.org/files/stable/package_debian-ubuntu/dolibarr_3.2.*.tar.gz
+    ??? Configure Series branch - Link to series ???
+    bzr init
+    bzr add
+    bzr commit -m "Init"
+    bzr push lp:~eldy/dolibarr/stable
+
+# Init package tools for launchpad
+#----------------------------------
+
+- Create debian directory and upload it onto bzr branch ~yourlogin/+junk/debian-[dev|stable]
     cd bzr
     mkdir debian
     cd debian
-    bzr init
     cp -pr dolibarr_root/debian bzr/debian
-    bzr add debian
-    bzr commit -m "Init"
-    bzr push lp:~eldy/dolibarr/debian
+    bzr init
+    bzr add
+    bzr commit -m "Init control files"
+    bzr push lp:~eldy/+junk/debian-[dev|stable]    (put here any branch name)
   or download it from launchpad bazaar:
     cd bzr
-    bzr branch lp:~eldy/dolibarr/debian
+    bzr branch lp:~eldy/+junk/debian-[dev|stable]
 - To update this debian directory, edit files into the bzr dir and run
+    bzr status
     bzr commit -m "Description of change"
-    bzr push lp:~eldy/dolibarr/debian
+    bzr push lp:~eldy/+junk/debian-[dev|stable]
+
+# Define a recipe into launchpad (a rule to build packages into a PPA)
+#----------------------------------
+
 - Create a file dolibarr.recipe with content
     cd bzr
     vi dolibarr.recipe
@@ -61,7 +85,9 @@ DEBEMAIL="<Your email address>"
     sudo pbuilder build <working-dir>/<project>_<version>.dsc
 
     
-# To get/download package:
+# To get/download package from PPA:
+#----------------------------------
+
 Add signing key of the Launchpad repository:
 > gpg --keyserver keyserver.ubuntu.com --recv-key A38BF8FD
 > sudo apt-key add ~/.gnupg/pubring.gpg
