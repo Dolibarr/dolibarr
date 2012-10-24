@@ -109,7 +109,8 @@ class ExtraFields
 	}
 
 	/**
-	 *	Add a new optionnal attribute
+	 *	Add a new optionnal attribute.
+	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
 	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
@@ -118,7 +119,7 @@ class ExtraFields
      *  @param	int		$unique				Is field unique or not
      *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
+	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
 	{
         $table='';
         if ($elementtype == 'member')  $table='adherent_extrafields';
