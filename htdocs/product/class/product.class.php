@@ -1203,7 +1203,7 @@ class Product extends CommonObject
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1)
 							{
-								$sql = "SELECT rowid,price, price_ttc,qty_min,qty_max";
+								$sql = "SELECT rowid,price, price_ttc,qty_min";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
 								$sql.= " ORDER BY qty_min ASC";
@@ -1218,7 +1218,6 @@ class Product extends CommonObject
 										$resultat[$ii]["price"]= $result["price"];
 										$resultat[$ii]["price_ttc"]= $result["price_ttc"];
 										$resultat[$ii]["qty_min"]= $result["qty_min"];
-										$resultat[$ii]["qty_max"]= $result["qty_max"];
 										$ii++;
 									}
 									$this->prices_by_qty_list[$i]=$resultat;
@@ -1255,7 +1254,7 @@ class Product extends CommonObject
 						// Récuperation de la liste des prix selon qty si flag positionné
 						if ($this->prices_by_qty[0] == 1)
 						{
-							$sql = "SELECT rowid,price, price_ttc,qty_min,qty_max";
+							$sql = "SELECT rowid,price, price_ttc,qty_min";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 							$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[0]."'";
 							$sql.= " ORDER BY qty_min ASC";
@@ -1270,7 +1269,6 @@ class Product extends CommonObject
 									$resultat[$ii]["price"]= $result["price"];
 									$resultat[$ii]["price_ttc"]= $result["price_ttc"];
 									$resultat[$ii]["qty_min"]= $result["qty_min"];
-									$resultat[$ii]["qty_max"]= $result["qty_max"];
 									$ii++;
 								}
 								$this->prices_by_qty_list[0]=$resultat;
