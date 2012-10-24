@@ -195,7 +195,7 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
-if ($search_zipcode) $sql .= " AND s.cp LIKE '%".$db->escape(strtolower($search_zipcode))."%'";
+if ($search_zipcode) $sql .= " AND s.cp LIKE '".$db->escape(strtolower($search_zipcode))."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
 if ($search_departement) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_departement))."%'";
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
@@ -244,7 +244,7 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_ville='.urlencode($search_ville);
+	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_zipcode='.urlencode($search_code).'&amp;search_ville='.urlencode($search_ville);
  	// Added by Matelli
  	// Store the status filter in the URL
  	if (isSet($search_cstc))

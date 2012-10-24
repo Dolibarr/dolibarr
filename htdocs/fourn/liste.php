@@ -97,7 +97,7 @@ if ($socname)
 	$sortorder = "ASC";
 }
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
-if ($search_zipcode) $sql .= " AND s.cp LIKE '%".$db->escape($search_zipcode)."%'";
+if ($search_zipcode) $sql .= " AND s.cp LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
@@ -122,7 +122,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code_fournisseur=".$search_code_fournisseur."&amp;search_ville=".$search_ville;
+	$param = "&amp;search_nom=".$search_nom."&amp;search_code_fournisseur=".$search_code_fournisseur."&amp;search_zipcode=".$search_zipcode."&amp;search_ville=".$search_ville;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
 
 	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
