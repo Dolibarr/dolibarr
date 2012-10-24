@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
  * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ class ExtraFields
      *  @param	int		$unique				Is field unique or not
      *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
+	function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
 	{
         $table='';
         if ($elementtype == 'member')  $table='adherent_extrafields';
