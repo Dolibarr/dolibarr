@@ -118,7 +118,7 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
-if ($search_zipcode) $sql.= " AND s.cp LIKE '%".$db->escape($search_zipcode)."%'";
+if ($search_zipcode) $sql.= " AND s.cp LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_ville) $sql.= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape($search_code)."%'";
 if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
@@ -144,7 +144,7 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
+	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_zipcode=".$search_zipcode."&amp;search_ville=".$search_ville;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
  	if ($search_sale != '')	$param.='&amp;search_sale='.$search_sale;
 
