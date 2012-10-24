@@ -36,6 +36,7 @@ create table llx_product_price
   localtax1_tx		double(6,3) DEFAULT 0,
   localtax2_tx		double(6,3) DEFAULT 0,
   fk_user_author	integer,
-  tosell			tinyint DEFAULT 1
+  tosell			tinyint DEFAULT 1,
+  price_by_qty		integer NOT NULL DEFAULT 0
 )ENGINE=innodb;
 
