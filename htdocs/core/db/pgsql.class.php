@@ -1025,23 +1025,35 @@ class DoliDBPgsql
 	 *
 	 *	@param	string	$table		Name of table
 	 *	@return	array				Tableau des informations des champs de la table
-	 *	TODO modify for postgresql
+	 *
 	 */
 	function DDLInfoTable($table)
 	{
-		/*
 		 $infotables=array();
 
-		 $sql="SHOW FULL COLUMNS FROM ".$table.";";
+		 $sql="SELECT ";
+		 $sql.="	infcol.column_name as \"Column\",";
+		 $sql.="	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
+		 $sql.="		ELSE infcol.udt_name";
+		 $sql.="	END as \"Type\",";
+		 $sql.="	infcol.collation_name as \"Collation\",";
+		 $sql.="	infcol.is_nullable as \"Null\",";
+		 $sql.="	'' as \"Key\",";
+		 $sql.="	infcol.column_default as \"Default\",";
+		 $sql.="	'' as \"Extra\",";
+		 $sql.="	'' as \"Privileges\"";
+		 $sql.="	FROM information_schema.columns infcol";
+		 $sql.="	WHERE table_schema='public' ";
+		 $sql.="	AND table_name='".$table."'";
+		 $sql.="	ORDER BY ordinal_position;";
 
 		 dol_syslog($sql,LOG_DEBUG);
-		 $result = $this->pg_query($this->db,$sql);
+		 $result = $this->query($sql);
 		 while($row = $this->fetch_row($result))
 		 {
 			$infotables[] = $row;
-			}
-			return $infotables;
-			*/
+		 }
+		return $infotables;
 	}
 
 
