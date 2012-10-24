@@ -60,15 +60,9 @@ ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Chil
 // STOP - Lines generated via parser
 
 
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-MenuManager=Menu manager
-ErrorUrlNotValid=Adressen på webstedet er forkert
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
 // Reference language: en_US
+ErrorUrlNotValid=Adressen på webstedet er forkert
 Error=Fejl
 Errors=Fejl
 ErrorBadEMail=EMail %s er forkert

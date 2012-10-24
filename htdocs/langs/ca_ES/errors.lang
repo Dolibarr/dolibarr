@@ -1,6 +1,5 @@
 # Dolibarr language file - ca_ES - errors 
 CHARSET=UTF-8
-MenuManager=Gestor de menú
 # Errors=
 Error=Error
 Errors=Errors

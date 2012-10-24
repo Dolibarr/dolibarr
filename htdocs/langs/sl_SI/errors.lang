@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - errors = 
 CHARSET = UTF-8
-MenuManager = Upravljanje z meniji
 Error = Napaka
 Errors = Napake
 ErrorBadEMail = EMail %s je napačen

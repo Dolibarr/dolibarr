@@ -60,13 +60,7 @@ ErrorRecordHasChildren=Poistaminen ei onnistunut kirjaa, koska se on noin lapsen
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
 // Reference language: en_US
-MenuManager=Valikko johtaja
 ErrorUrlNotValid=Www-sivuston osoite on virheellinen
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
 Error=Virhe
 Errors=Virheet
 ErrorBadEMail=EMail %s on väärä

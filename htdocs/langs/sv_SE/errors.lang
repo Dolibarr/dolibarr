@@ -8,7 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
 // Reference language: en_US
 CHARSET=UTF-8
-MenuManager=Meny chef
 Error=Fel
 Errors=Fel
 ErrorBadEMail=EMail %s är fel

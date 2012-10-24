@@ -44,7 +44,6 @@ ErrorLDAPMakeManualTest=En .ldif fil er opprettet i mappen %s. Prøv å lese den
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
 // Reference language: en_US
-MenuManager=Meny manager
 Error=Feil
 Errors=Feil
 ErrorBadEMail=E-post %s er feil

@@ -8,7 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
 CHARSET=UTF-8
-MenuManager=Διευθυντής Μενού
 Error=Σφάλμα
 Errors=Λάθη
 ErrorBadEMail=%s email είναι λάθος

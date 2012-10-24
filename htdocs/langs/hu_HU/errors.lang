@@ -13,7 +13,6 @@ ErrorLoginDisabled=A fiók le van tiltva
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
 // Reference language: en_US -> hu_HU
-MenuManager=Menükezelőben
 Error=Hiba
 Errors=Hibák
 ErrorBadEMail=E-mail %s rossz
