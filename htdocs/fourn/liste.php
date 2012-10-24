@@ -97,7 +97,7 @@ if ($socname)
 	$sortorder = "ASC";
 }
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
-if ($search_zipcode) $sql .= " AND s.cp LIKE '%".$db->escape($search_zipcode)."%'";
+if ($search_zipcode) $sql .= " AND s.cp LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
