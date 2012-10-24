@@ -87,8 +87,6 @@
 	    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 	}
 
-	//echo '<br>';	// Fix: No reason to start a content of the cells with br
-
 	// editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
