@@ -292,8 +292,8 @@ class Form
             {
             	$tmp=explode(':',$inputType);
             	$inputType=$tmp[0];
-            	if (! empty($tmp[1])) $rows=$tmp[1];
-            	if (! empty($tmp[2])) $cols=$tmp[2];
+            	$rows=(empty($tmp[1])?'8':$tmp[1]);
+            	$cols=(empty($tmp[2])?'80':$tmp[2]);
             }
             else if (preg_match('/^ckeditor/',$inputType))
             {
@@ -320,6 +320,10 @@ class Form
             if (! empty($savemethod))	$out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
             if (! empty($ext_element))	$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
             if (! empty($success))		$out.= '<input id="success_'.$htmlname.'" value="'.$success.'" type="hidden"/>'."\n";
+            if ($inputType == 'textarea') {
+            	$out.= '<input id="textarea_'.$htmlname.'_rows" value="'.$rows.'" type="hidden"/>'."\n";
+            	$out.= '<input id="textarea_'.$htmlname.'_cols" value="'.$cols.'" type="hidden"/>'."\n";
+            }
 
             $out.= '<span id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</span>'."\n";
             $out.= '<span id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(! empty($editvalue) ? $editvalue : $value).'</span>'."\n";
@@ -1480,7 +1484,7 @@ class Form
                 $outval.=$objRef.' ('.$objRefFourn.') - ';
                 $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
-                
+
                 if (! empty($objp->idprodfournprice))
                 {
                     $currencytext=$langs->trans("Currency".$conf->currency);
@@ -1505,7 +1509,7 @@ class Form
                     	$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
                         $outval.=$langs->transnoentities("Units");
                     }
-                   
+
                     if ($objp->quantity >= 1)
                     {
                         $opt.=" (".price($objp->unitprice).' '.$currencytext."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
@@ -1533,8 +1537,8 @@ class Form
                     $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
                 }
                 $opt .= "</option>\n";
-                
-               
+
+
                 // Add new entry
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
@@ -1548,7 +1552,7 @@ class Form
                 //var_dump($outval); var_dump(utf8_check($outval)); var_dump(json_encode($outval));
                 //$outval=array('label'=>'ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/ Unité (20,00 Euros/unité)');
                 //var_dump($outval); var_dump(utf8_check($outval)); var_dump(json_encode($outval));
-                
+
                 $i++;
             }
             $outselect.='</select>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,12 +52,12 @@ if ($actionsave)
     if ($i >= 3)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("SaveFailed")."</font>";
+        setEventMessage($langs->trans("SaveFailed"), 'errors');
     }
 }
 
@@ -95,7 +96,10 @@ print "</tr>";
 
 print "<tr class=\"impair\">";
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
-print "<td><input required=\"required\" type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
+print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="' . (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . '" size="40">';
+if (! empty($conf->use_javascript_ajax))
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+print '</td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -147,9 +151,24 @@ $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions5",$user->login,$user->login);
 print info_admin($message);
 
-dol_htmloutput_mesg($mesg);
+if (! empty($conf->use_javascript_ajax))
+{
+	print "\n".'<script type="text/javascript">';
+	print '$(document).ready(function () {
+            $("#generate_token").click(function() {
+            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+            		action: \'getrandompassword\',
+            		generic: true
+				},
+				function(token) {
+					$("#MAIN_AGENDA_XCAL_EXPORTKEY").val(token);
+				});
+            });
+    });';
+	print '</script>';
+}
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

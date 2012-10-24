@@ -11,7 +11,8 @@ with format RPM (for Redhat, OpenSuse, Mandriva, ...).
 # This is standard command to work on RPM packaging:
 #
 # To install all packagers tools:
-# yum -y install rpmlint fedora-packager mock koji hunspell-en hunspell-es hunspell-fr hunspell-it
+# Fedora: yum -y install rpmlint fedora-packager mock koji hunspell-en hunspell-es hunspell-fr hunspell-it
+# OpenSuse: yast --install update-desktop-files
 #
 # rpmlint file.rpm				    Test a package
 # mock -r fedora-15-i386 --rebuild ../SRPMS/hello-2.7-1.fc15.src.rpm

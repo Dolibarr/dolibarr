@@ -447,22 +447,22 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 }
 
 
-/** 
+/**
  * Convert a string to lower. Never use strtolower because it does not works with UTF8 strings.
- * 
+ *
  * @param 	string		$utf8_string		String to encode
- * @return 	string							String converted	
+ * @return 	string							String converted
  */
 function dol_strtolower($utf8_string)
 {
 	return mb_strtolower($utf8_string, "UTF-8");
 }
 
-/** 
+/**
  * Convert a string to upper. Never use strtolower because it does not works with UTF8 strings.
- * 
+ *
  * @param 	string		$utf8_string		String to encode
- * @return 	string							String converted	
+ * @return 	string							String converted
  */
 function dol_strtoupper($utf8_string)
 {

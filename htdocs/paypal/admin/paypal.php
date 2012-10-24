@@ -71,7 +71,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $error)
   	{
   		$db->commit();
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+  		setEventMessage($langs->trans("SetupSaved"));
   	}
   	else
   	{
@@ -100,37 +100,13 @@ dol_fiche_head($head, 'paypalaccount', $langs->trans("ModuleSetup"));
 
 print $langs->trans("PaypalDesc")."<br>\n";
 
-if ($conf->use_javascript_ajax)
-{
-    print "\n".'<script type="text/javascript" language="javascript">';
-    print '$(document).ready(function () {
-            $("#apidoc").hide();
-            $("#apidoca").click(function() {
-                $("#apidoca").hide();
-                $("#apidoc").show();
-            });
-
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#PAYPAL_SECURITY_TOKEN").val(token);
-				});
-            });
-    });';
-    print '</script>';
-}
-
 // Test if php curl exist
 if (! function_exists('curl_version'))
 {
 	$langs->load("errors");
-	$mesg='<div class="error">'.$langs->trans("ErrorPhpCurlNotInstalled").'</div>';
+	setEventMessage($langs->trans("ErrorPhpCurlNotInstalled"), 'errors');
 }
 
-dol_htmloutput_mesg($mesg);
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -235,7 +211,8 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("SecurityToken").'</td><td>';
 print '<input size="48" type="text" id="PAYPAL_SECURITY_TOKEN" name="PAYPAL_SECURITY_TOKEN" value="'.$conf->global->PAYPAL_SECURITY_TOKEN.'">';
-print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+if (! empty($conf->use_javascript_ajax))
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
 
 $var=!$var;
@@ -256,7 +233,8 @@ print '<br><br>';
 
 // Help doc
 print '<u>'.$langs->trans("InformationToFindParameters","Paypal").'</u>:<br>';
-if ($conf->use_javascript_ajax) print '<a href="#" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
+if (! empty($conf->use_javascript_ajax))
+	print '<a href="#" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
 
 $realpaypalurl='www.paypal.com';
 $sandboxpaypalurl='developer.paypal.com';
@@ -374,7 +352,29 @@ if (! empty($conf->adherent->enabled))
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
-llxFooter();
+if (! empty($conf->use_javascript_ajax))
+{
+	print "\n".'<script type="text/javascript">';
+	print '$(document).ready(function () {
+            $("#apidoc").hide();
+            $("#apidoca").click(function() {
+                $("#apidoca").hide();
+                $("#apidoc").show();
+            });
 
+            $("#generate_token").click(function() {
+            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+            		action: \'getrandompassword\',
+            		generic: true
+				},
+				function(token) {
+					$("#PAYPAL_SECURITY_TOKEN").val(token);
+				});
+            });
+    });';
+	print '</script>';
+}
+
+llxFooter();
 $db->close();
 ?>

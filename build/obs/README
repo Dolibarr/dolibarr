@@ -1,0 +1,19 @@
+README (English)
+##################################################
+OBS Package tools
+##################################################
+
+This directory contains files to explain how to publish
+a package onto OBS
+
+
+# Create a project onto OBS
+#----------------------------------
+https://build.opensuse.org
+
+
+Add attributes:
+OBS:Screenshots         URL of screenshot
+OBS:QualityCategory     Development|Testing|Stable|Private
+OBS:Maintained          1
+
