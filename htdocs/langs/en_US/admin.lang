@@ -1049,14 +1049,14 @@ LDAPServerUseTLS=Use TLS
 LDAPServerUseTLSExample=Your LDAP server use TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
+LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com)
 LDAPPassword=Administrator password
 LDAPUserDn=Users' DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=example,dc=com)
 LDAPGroupDn=Groups' DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=example,dc=com)
 LDAPServerExample=Server address (ex: localhost, 192.168.0.2, ldaps://ldap.example.com/)
-LDAPServerDnExample=Complete DN (ex: dc=company,dc=com)
+LDAPServerDnExample=Complete DN (ex: dc=example,dc=com)
 LDAPPasswordExample=Admin password
 LDAPDnSynchroActive=Users and groups synchronization
 LDAPDnSynchroActiveExample=LDAP to Dolibarr or Dolibarr to LDAP synchronization
@@ -1066,9 +1066,9 @@ LDAPDnContactActiveExample=Activated/Unactivated synchronization
 LDAPDnMemberActive=Members' synchronization
 LDAPDnMemberActiveExample=Activated/Unactivated synchronization
 LDAPContactDn=Dolibarr contacts' DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=example,dc=com)
 LDAPMemberDn=Dolibarr members DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=example,dc=com)
 LDAPMemberObjectClassList=List of objectClass
 LDAPMemberObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
 LDAPUserObjectClassList=List of objectClass
@@ -1078,12 +1078,13 @@ LDAPGroupObjectClassListExample=List of objectClass defining record attributes (
 LDAPContactObjectClassList=List of objectClass
 LDAPContactObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
 LDAPMemberTypeDn=Dolibarr members type DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=example,dc=com)
 LDAPTestConnect=Test LDAP connection
 LDAPTestSynchroContact=Test contacts synchronization
 LDAPTestSynchroUser=Test user synchronization
 LDAPTestSynchroGroup=Test group synchronization
 LDAPTestSynchroMember=Test member synchronization
+LDAPTestSearch= Test a LDAP search
 LDAPSynchroOK=Synchronization test successful
 LDAPSynchroKO=Failed synchronization test
 LDAPSynchroKOMayBePermissions=Failed synchronization test. Check that connexion to server is correctly configured and allows LDAP udpates
@@ -1093,8 +1094,8 @@ LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s,
 LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=%s)
 LDAPUnbindSuccessfull=Disconnect successfull
 LDAPUnbindFailed=Disconnect failed
-LDAPConnectToDNSuccessfull=Connection au DN (%s) rï¿½ussie
-LDAPConnectToDNFailed=Connection au DN (%s) ï¿½chouï¿½e
+LDAPConnectToDNSuccessfull=Connection to DN (%s) successful
+LDAPConnectToDNFailed=Connection to DN (%s) failed
 LDAPSetupForVersion3=LDAP server configured for version 3
 LDAPSetupForVersion2=LDAP server configured for version 2
 LDAPDolibarrMapping=Dolibarr Mapping
@@ -1105,7 +1106,7 @@ LDAPFilterConnection=Search filter
 LDAPFilterConnectionExample=Example : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Example : samaccountname
-LDAPFieldFullname=First name
+LDAPFieldFullname=Full name
 LDAPFieldFullnameExample=Example : cn
 LDAPFieldPassword=Password
 LDAPFieldPasswordNotCrypted=Password not crypted
@@ -1116,7 +1117,7 @@ LDAPFieldCommonNameExample=Example : cn
 LDAPFieldName=Name
 LDAPFieldNameExample=Example : sn
 LDAPFieldFirstName=First name
-LDAPFieldFirstNameExample=Example : givenname
+LDAPFieldFirstNameExample=Example : givenName
 LDAPFieldMail=Email address
 LDAPFieldMailExample=Example : mail
 LDAPFieldPhone=Professional phone number

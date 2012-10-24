@@ -487,12 +487,12 @@ LDAPServerUseTLS=Use TLS
 LDAPServerUseTLSExample=Your LDAP server use TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
+LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com)
 LDAPPassword=Administrator password
 LDAPUserDn=Users' DN
-LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=com)
+LDAPUserDnExample=Complete DN (ex: ou=users,dc=example,dc=com)
 LDAPGroupDn=Groups' DN
-LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=society,dc=com)
+LDAPGroupDnExample=Complete DN (ex: ou=groups,dc=example,dc=com)
 LDAPServerExample=Server address (ex: localhost, 192.168.0.2, ldaps://ldap.example.com/)
 LDAPServerDnExample=Complete DN (ex: dc=company,dc=com)
 LDAPPasswordExample=Admin password
@@ -504,9 +504,9 @@ LDAPDnContactActiveExample=Activated/Unactivated synchronization
 LDAPDnMemberActive=Members' synchronization
 LDAPDnMemberActiveExample=Activated/Unactivated synchronization
 LDAPContactDn=Dolibarr contacts' DN
-LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
+LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=example,dc=com)
 LDAPMemberDn=Dolibarr member's DN
-LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=com)
+LDAPMemberDnExample=Complete DN (ex: ou=members,dc=example,dc=com)
 LDAPMemberObjectClassList=List of objectClass
 LDAPMemberObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
 LDAPUserObjectClassList=List of objectClass
@@ -516,7 +516,7 @@ LDAPGroupObjectClassListExample=List of objectClass defining record attributes (
 LDAPContactObjectClassList=List of objectClass
 LDAPContactObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
 LDAPMemberTypeDn=Dolibarr member's type DN
-LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=com)
+LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=example,dc=com)
 LDAPTestConnect=Test LDAP connection
 LDAPTestSynchroContact=Test contact's synchronization
 LDAPTestSynchroUser=Test user's synchronization
@@ -550,7 +550,7 @@ LDAPFieldCommonNameExample=Example : cn
 LDAPFieldName=Name
 LDAPFieldNameExample=Example : sn
 LDAPFieldFirstName=First name
-LDAPFieldFirstNameExample=Example : givenname
+LDAPFieldFirstNameExample=Example : givenName
 LDAPFieldMail=Email address
 LDAPFieldMailExample=Example : mail
 LDAPFieldPhone=Professional phone number
