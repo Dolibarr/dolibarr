@@ -88,7 +88,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 * @return string
 	 */
-	function getDriverLabel()
+	function getDriverLabel($key='')
 	{
 		return $this->label;
 	}
@@ -98,7 +98,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 * @return string
 	 */
-	function getDriverDesc()
+	function getDriverDesc($key='')
     {
         return $this->desc;
     }
@@ -118,7 +118,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 * @return string
 	 */
-	function getDriverVersion()
+	function getDriverVersion($key='')
 	{
 		return $this->version;
 	}
@@ -128,7 +128,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 * @return string
 	 */
-	function getLibLabel()
+	function getLibLabel($key='')
 	{
 		return $this->label_lib;
 	}
@@ -138,7 +138,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 * @return string
 	 */
-	function getLibVersion()
+	function getLibVersion($key='')
 	{
 		return $this->version_lib;
 	}
