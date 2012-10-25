@@ -1389,8 +1389,8 @@ class Form
 			}
 			else
 			{
-				$opt.= price($objp->price).' '.$currencytext."/".$objp->quantity;
-				$outval.= price($objp->price).' '.$currencytextnoent."/".$objp->quantity;
+				$opt.= price($objp->price * $objp->quantity).' '.$currencytext."/".$objp->quantity;
+				$outval.= price($objp->price * $objp->quantity).' '.$currencytextnoent."/".$objp->quantity;
 				$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Units");
 			}
