@@ -66,6 +66,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',GETPOST("fieldsid"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_TITLE',GETPOST("fieldtitle"),'chaine',0,'',$conf->entity)) $error++;
 
     // This one must be after the others
     $valkey='';
@@ -247,7 +248,15 @@ print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked="checked"':'')."></td>";
 print '</tr>';
 
-// Description
+// Title
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTitle").'</td><td>';
+print '<input size="25" type="text" name="fieldtitle" value="'.$conf->global->LDAP_FIELD_TITLE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldTitleExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_TITLE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_TITLE)?' checked="checked"':'')."></td>";
+print '</tr>';
+
+// Note
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Note").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
@@ -364,19 +373,22 @@ if (function_exists("ldap_connect"))
 		if ($result > 0)
 		{
 			$required_fields = array(
-			$conf->global->LDAP_KEY_USERS,
-            $conf->global->LDAP_FIELD_FULLNAME,
-			$conf->global->LDAP_FIELD_NAME,
-			$conf->global->LDAP_FIELD_FIRSTNAME,
-			$conf->global->LDAP_FIELD_LOGIN,
-			$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-			$conf->global->LDAP_FIELD_PASSWORD,
-			$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-			$conf->global->LDAP_FIELD_PHONE,
-			$conf->global->LDAP_FIELD_FAX,
-			$conf->global->LDAP_FIELD_MOBILE,
-			$conf->global->LDAP_FIELD_MAIL,
-			$conf->global->LDAP_FIELD_SID);
+				$conf->global->LDAP_KEY_USERS,
+	            $conf->global->LDAP_FIELD_FULLNAME,
+				$conf->global->LDAP_FIELD_NAME,
+				$conf->global->LDAP_FIELD_FIRSTNAME,
+				$conf->global->LDAP_FIELD_LOGIN,
+				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+				$conf->global->LDAP_FIELD_PASSWORD,
+				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+				$conf->global->LDAP_FIELD_PHONE,
+				$conf->global->LDAP_FIELD_FAX,
+				$conf->global->LDAP_FIELD_MOBILE,
+				$conf->global->LDAP_FIELD_MAIL,
+				$conf->global->LDAP_FIELD_TITLE,
+				$conf->global->LDAP_FIELD_DESCRIPTION,
+				$conf->global->LDAP_FIELD_SID
+			);
 
             // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
             $required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));

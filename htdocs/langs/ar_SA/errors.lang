@@ -9,7 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-MenuManager=قائمة مدير
 ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
 ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
 ErrorFailToDeleteFile=فشل إزالة الملف <b>'٪ ق.</b>

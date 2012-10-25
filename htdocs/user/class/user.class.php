@@ -797,7 +797,7 @@ class User extends CommonObject
 					// Set default rights
 					if ($this->set_default_rights() < 0)
 					{
-						$this->error=$this->db->error();
+						$this->error='ErrorFailedToSetDefaultRightOfUser';
 						$this->db->rollback();
 						return -5;
 					}

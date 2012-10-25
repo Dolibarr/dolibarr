@@ -8,7 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
 // Reference language: en_US -> he_IL
 CHARSET=UTF-8
-MenuManager=תפריט מנהל
 Error=שגיאה
 Errors=שגיאות
 ErrorBadEMail=%s אימייל הוא בסדר

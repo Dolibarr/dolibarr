@@ -5,7 +5,6 @@
  */
 // Reference language: en_US -> TR – errors
 CHARSET=UTF-8
-MenuManager=Menü yöneticisi
 
 # Hatalar
 Error=Hata

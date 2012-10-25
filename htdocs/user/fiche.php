@@ -473,6 +473,8 @@ if ($action == 'adduserldap')
     $conf->global->LDAP_FIELD_FAX,
     $conf->global->LDAP_FIELD_MOBILE,
     $conf->global->LDAP_FIELD_MAIL,
+    $conf->global->LDAP_FIELD_TITLE,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
     $conf->global->LDAP_FIELD_SID);
 
     $ldap = new Ldap();
@@ -546,12 +548,23 @@ if (($action == 'create') || ($action == 'adduserldap'))
         $result = $ldap->connect_bind();
         if ($result >= 0)
         {
-            $required_fields=array($conf->global->LDAP_KEY_USERS,
-            $conf->global->LDAP_FIELD_FULLNAME,
-            $conf->global->LDAP_FIELD_NAME,
-            $conf->global->LDAP_FIELD_FIRSTNAME,
-            $conf->global->LDAP_FIELD_LOGIN,
-            $conf->global->LDAP_FIELD_LOGIN_SAMBA);
+            $required_fields=array(
+				$conf->global->LDAP_KEY_USERS,
+	            $conf->global->LDAP_FIELD_FULLNAME,
+				$conf->global->LDAP_FIELD_NAME,
+				$conf->global->LDAP_FIELD_FIRSTNAME,
+				$conf->global->LDAP_FIELD_LOGIN,
+				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+				$conf->global->LDAP_FIELD_PASSWORD,
+				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+				$conf->global->LDAP_FIELD_PHONE,
+				$conf->global->LDAP_FIELD_FAX,
+				$conf->global->LDAP_FIELD_MOBILE,
+				$conf->global->LDAP_FIELD_MAIL,
+				$conf->global->LDAP_FIELD_TITLE,
+				$conf->global->LDAP_FIELD_DESCRIPTION,
+            	$conf->global->LDAP_FIELD_SID
+            );
 
             // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
             $required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));
