@@ -126,8 +126,10 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 	$rowid = GETPOST('rowid');
 	$priceid=GETPOST('priceid');
 	$newprice=price2num(GETPOST("price"),'MU');
-	//$newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management and discount management
+	//$newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
 	$qtymin=GETPOST('qty_min');
+	$remise_percent=price2num(GETPOST('remise_percent'));
+	$remise=0; // TODO : allow dicsoun by amount when available on documents
 	
 	// Calcul des prix (HT  et TTC)
 	if ($newprice!='' || $newprice==0)
@@ -176,13 +178,15 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
 		$sql.= " price='".$price."',";
 		$sql.= " price_ttc=".$price_ttc.",";
-		$sql.= " qty_min=".$qtymin;
+		$sql.= " qty_min=".$qtymin.",";
+		$sql.= " remise_percent=".$remise_percent.",";
+		$sql.= " remise=".$remise;
 		$sql.= " WHERE rowid = ".GETPOST('rowid');
 		
 		$result = $db->query($sql);
 	} else {
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,price_ttc,qty_min) values (";
-		$sql.= $priceid.','.$price.','.$price_ttc.','.$qtymin.')';
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,price_ttc,qty_min,remise_percent,remise) values (";
+		$sql.= $priceid.','.$price.','.$price_ttc.','.$qtymin.','.$remise_percent.','.$remise.')';
 
 		$result = $db->query($sql);
 	}
@@ -349,6 +353,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 					print '<td>'.$langs->trans("PriceByQuantityRange").' '.$i.'</td>';
 					print '<td align="right">'.$langs->trans("HT").'</td>';
 					print '<td align="right">'.$langs->trans("TTC").'</td>';
+					print '<td align="right">'.$langs->trans("Discount").'</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';
 					foreach ($object->prices_by_qty_list[$i] as $ii=> $prices) {
@@ -359,8 +364,9 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
 							print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
 							print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"></td>';
-							print '<td align="right"><input type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
-							print '<td align="right">&nbsp;</td>';
+							print '<td align="right" colspan="2"><input size="10" type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
+							//print '<td align="right">&nbsp;</td>';
+							print '<td align="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent"><&nbsp;%/td>';
 							print '<td align="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
 							print '</tr>';
 							print '</form>';
@@ -369,6 +375,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '<td>'.$prices['qty_min'].'</td>';
 							print '<td align="right">'.price($prices['price']).'</td>';
 							print '<td align="right">'.price($prices['price_ttc']).'</td>';
+							print '<td align="right">'.price($prices['remise_percent']).' %</td>';
 							print '<td align="center">';
 							if(($user->rights->produit->creer || $user->rights->service->creer)) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
@@ -382,15 +389,16 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '</tr>';
 						}
 					}
-					if($action != 'edit_price_by_qty') {
+					if($action != 'edit_price_by_qty' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 						print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 						print '<input type="hidden" name="action" value="update_price_by_qty">';
 						print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">';
 						print '<input type="hidden" value="0" name="rowid">';
 						print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
 						print '<td><input size="5" type="text" value="1" name="qty_min"></td>';
-						print '<td align="right"><input type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
-						print '<td align="right">&nbsp;</td>';
+						print '<td align="right" colspan="2"><input size="10" type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
+						//print '<td align="right">&nbsp;</td>';
+						print '<td align="right"><input size="5" type="text" value="0" name="remise_percent">&nbsp;%</td>';
 						print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
 						print '</tr>';
 						print '</form>';
@@ -449,6 +457,7 @@ else
 			print '<td>'.$langs->trans("PriceByQuantityRange").'</td>';
 			print '<td align="right">'.$langs->trans("HT").'</td>';
 			print '<td align="right">'.$langs->trans("TTC").'</td>';
+			print '<td align="right">'.$langs->trans("Discount").'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 			foreach ($object->prices_by_qty_list[0] as $ii=> $prices) {
@@ -459,8 +468,9 @@ else
 					print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
 					print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
 					print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"></td>';
-					print '<td align="right"><input type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
-					print '<td align="right">&nbsp;</td>';
+					print '<td align="right" colspan="2"><input size="10" type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
+					//print '<td align="right">&nbsp;</td>';
+					print '<td align="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent">&nbsp;%</td>';
 					print '<td align="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
 					print '</tr>';
 					print '</form>';
@@ -469,6 +479,7 @@ else
 					print '<td>'.$prices['qty_min'].'</td>';
 					print '<td align="right">'.price($prices['price']).'</td>';
 					print '<td align="right">'.price($prices['price_ttc']).'</td>';
+					print '<td align="right">'.price($prices['remise_percent']).' %</td>';
 					print '<td align="center">';
 					if(($user->rights->produit->creer || $user->rights->service->creer)) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
@@ -489,8 +500,9 @@ else
 				print '<input type="hidden" value="0" name="rowid">';
 				print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
 				print '<td><input size="5" type="text" value="1" name="qty_min"></td>';
-				print '<td align="right"><input type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
-				print '<td align="right">&nbsp;</td>';
+				print '<td align="right" colspan="2"><input size="10" type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
+				//print '<td align="right">&nbsp;</td>';
+				print '<td align="right"><input size="5" type="text" value="0" name="remise_percent">&nbsp;%</td>';
 				print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
 				print '</tr>';
 				print '</form>';

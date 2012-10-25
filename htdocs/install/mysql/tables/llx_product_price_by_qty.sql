@@ -26,5 +26,7 @@ create table llx_product_price_by_qty
   date_price		timestamp,
   price			double (24,8) DEFAULT 0,
   price_ttc		double (24,8) DEFAULT 0,
+  remise_percent	double NOT NULL DEFAULT 0,
+  remise		double NOT NULL DEFAULT 0,
   qty_min		real DEFAULT 1
 )ENGINE=innodb;

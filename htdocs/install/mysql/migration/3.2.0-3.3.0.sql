@@ -800,3 +800,6 @@ ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_le
 ALTER TABLE llx_product_price_by_qty ADD INDEX idx_product_price_by_qty_fk_product_price (fk_product_price);
 
 ALTER TABLE llx_product_price_by_qty ADD CONSTRAINT fk_product_price_by_qty_fk_product_price FOREIGN KEY (fk_product_price) REFERENCES llx_product_price (rowid);
+
+ALTER TABLE `llx_product_price_by_qty` ADD `remise_percent` DOUBLE NOT NULL DEFAULT '0' AFTER `price_ttc` ,
+ADD `remise` DOUBLE NOT NULL DEFAULT '0' AFTER `remise_percent`;
