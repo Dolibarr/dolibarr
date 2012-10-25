@@ -1522,7 +1522,7 @@ else
         }
 
         // Other options
-        $parameters=array();
+        $parameters=array('colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
         print '</table>';
