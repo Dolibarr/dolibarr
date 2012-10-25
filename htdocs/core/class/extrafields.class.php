@@ -38,9 +38,11 @@ class ExtraFields
 	var $attribute_label;
 	// Tableau contenant le nom des champs en clef et la taille de ces champs en value
 	var $attribute_size;
-	// Tableau contenant le statut unique ou non
+	// Array to store if attribute is unique or not
 	var $attribute_unique;
-
+	// Array to store if attribute is required or not
+	var $attribute_required;
+	
 	var $error;
 	var $errno;
 
@@ -67,6 +69,7 @@ class ExtraFields
 		$this->attribute_size = array();
 		$this->attribute_elementtype = array();
 		$this->attribute_unique = array();
+		$this->attribute_required = array();
 	}
 
     /**
@@ -79,20 +82,21 @@ class ExtraFields
      *  @param  int		$size               Size/length of attribute
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
+     *  @param	int		$required			Is field required or not
      *  @return int      					<=0 if KO, >0 if OK
      */
-    function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0)
+    function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0)
 	{
         if (empty($attrname)) return -1;
         if (empty($label)) return -1;
 
         // Create field into database
-        $result=$this->create($attrname,$type,$size,$elementtype);
+        $result=$this->create($attrname,$type,$size,$elementtype, $unique);
         $err1=$this->errno;
         if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
         {
         	// Add declaration of field into table
-            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique);
+            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required);
             $err2=$this->errno;
             if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
             {
@@ -117,9 +121,10 @@ class ExtraFields
 	 *  @param	int		$length				Size/length of attribute
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
+     *  @param	int		$required			Is field required or not
      *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
+	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0)
 	{
         $table='';
         if ($elementtype == 'member')  $table='adherent_extrafields';
@@ -134,7 +139,7 @@ class ExtraFields
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$field_desc = array('type'=>$type, 'value'=>$length);
+			$field_desc = array('type'=>$type, 'value'=>$length, 'null'=>($required?'NOT NULL':'NULL'));
 			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
@@ -168,9 +173,10 @@ class ExtraFields
 	 *  @param	int		$size				Size/length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
+     *  @param	int		$required			Is field required or not
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0)
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0)
 	{
 		global $conf;
 
@@ -180,7 +186,7 @@ class ExtraFields
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -189,6 +195,7 @@ class ExtraFields
 			$sql.= " ".$conf->entity.",";
             $sql.= " '".$elementtype."',";
             $sql.= " '".$unique."'";
+            $sql.= " '".$required."'";
             $sql.=')';
 
 			dol_syslog(get_class($this)."::create_label sql=".$sql);
@@ -291,9 +298,10 @@ class ExtraFields
 	 *  @param	int		$length				Length of attribute
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
+     *  @param	int		$required			Is field required or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0)
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0)
 	{
         $table='';
         if ($elementtype == 'member')  $table='adherent_extrafields';
@@ -308,13 +316,13 @@ class ExtraFields
 
         if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$field_desc = array('type'=>$type, 'value'=>$length);
+			$field_desc = array('type'=>$type, 'value'=>$length, 'null'=>($required?'NOT NULL':'NULL'));
 			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required);
 				}
 				if ($result > 0)
 				{
@@ -359,9 +367,10 @@ class ExtraFields
      *  @param  int		$size		        Length of attribute
      *  @param  string	$elementtype		Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
+     *  @param	int		$required			Is field required or not
      *  @return	int							<=0 if KO, >0 if OK
      */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0)
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0)
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label $attrname,$label,$type,$size");
@@ -384,7 +393,8 @@ class ExtraFields
 			$sql.= " type,";
 			$sql.= " size,";
 			$sql.= " elementtype,";
-			$sql.= " fieldunique";
+			$sql.= " fieldunique,";
+			$sql.= " fieldrequired";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -393,6 +403,7 @@ class ExtraFields
 			$sql.= " '".$size."',";
             $sql.= " '".$elementtype."',";
             $sql.= " '".$unique."'";
+            $sql.= " '".$required."'";
             $sql.= ")";
 			dol_syslog(get_class($this)."::update_label sql=".$sql);
 			$resql2=$this->db->query($sql);
@@ -440,7 +451,7 @@ class ExtraFields
 
 		$array_name_label=array();
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity = ".$conf->entity;
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -461,6 +472,7 @@ class ExtraFields
 					$this->attribute_size[$tab->name]=$tab->size;
                     $this->attribute_elementtype[$tab->name]=$tab->elementtype;
                     $this->attribute_unique[$tab->name]=$tab->fieldunique;
+                    $this->attribute_required[$tab->name]=$tab->fieldrequired;
 				}
 			}
 			return $array_name_label;
@@ -489,6 +501,7 @@ class ExtraFields
         $size =$this->attribute_size[$key];
         $elementtype=$this->attribute_elementtype[$key];
         $unique=$this->attribute_unique[$key];
+        $required=$this->attribute_required[$key];
         if ($type == 'date')
         {
             $showsize=10;
@@ -550,6 +563,7 @@ class ExtraFields
         $size=$this->attribute_size[$key];
         $elementtype=$this->attribute_elementtype[$key];
         $unique=$this->attribute_unique[$key];
+        $required=$this->attribute_required[$key];
         if ($type == 'date')
         {
             $showsize=10;
