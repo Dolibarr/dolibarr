@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +84,7 @@ class modAccounting extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'accounting';
+		$r=0;
 
 		$this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Lire le plan de compte';
@@ -90,6 +92,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'plancompte';
 		$this->rights[$r][5] = 'lire';
+		$r++;
 
 		$this->rights[$r][0] = 50402;
 		$this->rights[$r][1] = 'Creer/modifier un plan de compte';
@@ -97,6 +100,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'plancompte';
 		$this->rights[$r][5] = 'creer';
+		$r++;
 
 		$this->rights[$r][0] = 50403;
 		$this->rights[$r][1] = 'Cloturer plan de compte';
@@ -104,6 +108,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'plancompte';
 		$this->rights[$r][5] = 'cloturer';
+		$r++;
 
 		$this->rights[$r][0] = 50411;
 		$this->rights[$r][1] = 'Lire les mouvements comptables';
@@ -111,6 +116,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'mouvements';
 		$this->rights[$r][5] = 'lire';
+		$r++;
 
 		$this->rights[$r][0] = 50412;
 		$this->rights[$r][1] = 'Creer/modifier/annuler les mouvements comptables';
@@ -118,6 +124,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
 		$this->rights[$r][5] = 'creer';
+		$r++;
 
 		$this->rights[$r][0] = 50415;
 		$this->rights[$r][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
@@ -125,6 +132,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
 		$this->rights[$r][5] = 'lire';
+		$r++;
 	}
 
 
