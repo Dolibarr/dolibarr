@@ -296,10 +296,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-// We suppose that a too long description is moved completely on next page
-if ($pageposafter > $pageposbefore) {
-	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
-}
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore) {
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+					}
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
@@ -910,9 +910,10 @@ if ($pageposafter > $pageposbefore) {
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	object		$hookmanager	Hookmanager object
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $hookmanager)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -994,6 +995,10 @@ if ($pageposafter > $pageposbefore) {
 		}
 
 		$posy+=2;
+		$pdf->SetTextColor(0,0,60);
+
+		// Show list of linked objects
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size, $hookmanager);
 
 		if ($showaddress)
 		{

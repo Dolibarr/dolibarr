@@ -959,11 +959,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-<<<<<<< HEAD
-	 *	@param	object		$hookmanager	Hookmanager object
-=======
 	 *  @param	object		$hookmanager	Hookmanager object
->>>>>>> refs/remotes/dolibarr/develop
 	 *  @return	void
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $hookmanager)

@@ -542,7 +542,7 @@ elseif ($action == 'addline')
     		$outputlangs = new Translate("",$conf);
     		$outputlangs->setDefaultLang($newlang);
     	}
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -593,7 +593,7 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
     }
 }
 
@@ -817,7 +817,7 @@ elseif ($action	== 'builddoc')
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    $result=supplier_invoice_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+    $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
