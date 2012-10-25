@@ -235,6 +235,7 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL DEFAULT '1';
 
 ALTER TABLE llx_extrafields ADD COLUMN fieldunique INTEGER DEFAULT 0;
+ALTER TABLE llx_extrafields ADD COLUMN fieldrequired INTEGER DEFAULT 0;
 
 create table llx_socpeople_extrafields
 (
