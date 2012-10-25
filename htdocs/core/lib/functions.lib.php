@@ -642,7 +642,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			}
 			else
 			{
-				$out.='<a id="'.$links[$i][2].'" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
 	}

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +89,8 @@ $entitytolang = array(
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
+$array_filtered=isset($_SESSION["export_filtered_fields"])?$_SESSION["export_filtered_fields"]:array();
+$array_filtervalue=isset($_SESSION["export_FilterValue_fields"])?$_SESSION["export_FilterValue_fields"]:array();
 $datatoexport=GETPOST("datatoexport");
 $action=GETPOST("action");
 $step=GETPOST("step")?GETPOST("step"):1;
@@ -132,7 +135,7 @@ if ($action=='selectfield')
 
         $array_selected[$field]=count($array_selected)+1;    // We tag the key $field as "selected"
         // We check if there is a dependency
-        if (! empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]]))
+        if (! empty($fieldsentitiesarray[$field]) && ! empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]]))
         {
             $tmp=$fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
             if (is_array($tmp)) $listofdependencies=$tmp;
@@ -174,6 +177,52 @@ if ($action=='unselectfield')
 	    $_SESSION["export_selected_fields"]=$array_selected;
     }
 }
+
+if ($action=='selectFilterfield')
+{
+	if ($_GET["field"]=='all')
+	{
+		$fieldsarray=$objexport->array_export_TypeFields[0];
+		foreach($fieldsarray as $key=>$val)
+		{
+			if (! empty($array_filtered[$key])) continue;		// If already selected, select next
+			$array_filtered[$key]=count($array_filtered)+1;
+			//print_r($array_selected);
+			$_SESSION["export_filtered_fields"]=$array_filtered;
+		}
+	}
+	else
+	{
+		$array_filtered[$_GET["field"]]=count($array_filtered)+1;
+		//print_r($array_selected);
+		$_SESSION["export_filtered_fields"]=$array_filtered;
+	}
+}
+
+if ($action=='unselectFilterfield')
+{
+	if ($_GET["field"]=='all')
+	{
+		$array_filtered=array();
+		$_SESSION["export_filtered_fields"]=$array_filtered;
+	}
+	else
+	{
+		unset($array_filtered[$_GET["field"]]);
+		// Renumber fields of array_selected (from 1 to nb_elements)
+		asort($array_filtered);
+		$i=0;
+		$array_filterted_save=$array_filtered;
+		foreach($array_filtered as $code=>$value)
+		{
+			$i++;
+			$array_filtered[$code]=$i;
+			//print "x $code x $i y<br>";
+		}
+		$_SESSION["export_filtered_fields"]=$array_filtered;
+	}
+}
+
 if ($action=='downfield' || $action=='upfield')
 {
     $pos=$array_selected[$_GET["field"]];
@@ -201,13 +250,17 @@ if ($action=='downfield' || $action=='upfield')
 if ($step == 1 || $action == 'cleanselect')
 {
     $_SESSION["export_selected_fields"]=array();
+    $_SESSION["export_FilterValue_fields"]=array();
+    $_SESSION["export_filtered_fields"]=array();
     $array_selected=array();
+    $array_filtervalue=array();
+    $array_filtered=array();
 }
 
 if ($action == 'builddoc')
 {
     // Build export file
-	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected);
+	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected, $array_filtervalue, $array_filtered);
 	if ($result < 0)
 	{
 	    $mesg='<div class="error">'.$objexport->error.'</div>';
@@ -242,9 +295,21 @@ if ($action == 'add_export_model')
 			$hexa.=$key;
 		}
 
+		$hexafilter='';
+		$hexafiltervalue='';
+		foreach($array_filtered as $key=>$val)
+		{
+			if ($hexafilter) $hexafilter.=',';
+			if ($hexafilter) $hexafiltervalue.=',';
+			$hexafilter.=$key;
+			$hexafiltervalue.=$array_filtervalue[$key];
+		}
+
 	    $objexport->model_name = $export_name;
 	    $objexport->datatoexport = $datatoexport;
 	    $objexport->hexa = $hexa;
+	    $objexport->hexafilter = $hexafilter;
+	    $objexport->hexafiltervalue = $hexafiltervalue;
 
 	    $result = $objexport->create($user);
 		if ($result >= 0)
@@ -270,7 +335,13 @@ if ($action == 'add_export_model')
 if ($step == 2 && $action == 'select_model')
 {
     $_SESSION["export_selected_fields"]=array();
+    $_SESSION["export_filtered_fields"]=array();
+    $_SESSION["export_FilterValue_fields"]=array();
+
     $array_selected=array();
+    $array_filtered=array();
+    $array_filtervalue=array();
+
     $result = $objexport->fetch($exportmodelid);
     if ($result > 0)
     {
@@ -282,7 +353,36 @@ if ($step == 2 && $action == 'select_model')
 			$i++;
 		}
 		$_SESSION["export_selected_fields"]=$array_selected;
+
+		$fieldsarray=explode(',',$objexport->hexafilter);
+		$fieldsarrayvalue=explode(',',$objexport->hexafiltervalue);
+		$i=1;
+		foreach($fieldsarray as $val)
+		{
+			$array_filtered[$val]=$i;
+			$array_filtervalue[$val]=$fieldsarrayvalue[$i-1];
+			$i++;
+		}
+		$_SESSION["export_filtered_fields"]=$array_filtered;
+		$_SESSION["export_FilterValue_fields"]=$array_filtervalue;
     }
+}
+
+// recuperation du filtrage issu du formulaire
+if ($step == 4 && $action == 'submitFormField')
+{
+	// on boucle sur les champs selectionne pour recuperer la valeur
+	if (is_array($objexport->array_export_TypeFields[0]))
+	{
+		$_SESSION["export_FilterValue_fields"]=array();
+		foreach($array_filtered as $code=>$value)
+		{
+			//print $code."=".$_POST[$objexport->array_export_fields[0][$code]];
+			$objexport->array_export_FilterValue[0][$code] = $_POST[$objexport->array_export_fields[0][$code]];
+		}
+		$_SESSION["export_FilterValue_fields"]=(! empty($objexport->array_export_FilterValue[0])?$objexport->array_export_FilterValue[0]:'');
+		$array_filtervalue=(! empty($objexport->array_export_FilterValue[0])?$objexport->array_export_FilterValue[0]:'');
+	}
 }
 
 
@@ -441,7 +541,7 @@ if ($step == 2 && $datatoexport)
     // Champs exportables
     $fieldsarray=$objexport->array_export_fields[0];
     // Select request if all fields are selected
-    $sqlmaxforexport=$objexport->build_sql(0,array());
+    $sqlmaxforexport=$objexport->build_sql(0, array(), array(), array());
 
 //    $this->array_export_module[0]=$module;
 //    $this->array_export_code[0]=$module->export_code[$r];
@@ -462,8 +562,8 @@ if ($step == 2 && $datatoexport)
         $i++;
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
-        $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
+        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td nowrap="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
@@ -479,7 +579,7 @@ if ($step == 2 && $datatoexport)
         $tablename=getablenamefromfield($code,$sqlmaxforexport);
         $htmltext ='<b>'.$langs->trans("Name").":</b> ".$text.'<br>';
         $htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
-        if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
+        if (isset($array_selected[$code]) && $array_selected[$code])
         {
             // Selected fields
             print '<td>&nbsp;</td>';
@@ -489,7 +589,7 @@ if ($step == 2 && $datatoexport)
             print $form->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
-            $bit=1;
+            //$bit=1; FIXME not used ?
         }
         else
         {
@@ -501,11 +601,11 @@ if ($step == 2 && $datatoexport)
             print '</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
-            $bit=0;
+            //$bit=0; FIXME not used ?
         }
 
         print '</tr>';
-        $save_select.=$bit;
+        //$save_select.=$bit; FIXME not used ?
     }
 
     print '</table>';
@@ -522,7 +622,15 @@ if ($step == 2 && $datatoexport)
 
     if (count($array_selected))
 	{
-		print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+		// If filters exist
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
+		{
+			print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+		}
+		else
+		{
+			print '<a class="butAction" href="export.php?step=4&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+		}
 	}
 	else
 	{
@@ -534,6 +642,179 @@ if ($step == 2 && $datatoexport)
 }
 
 if ($step == 3 && $datatoexport)
+{
+	llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+
+	/*
+	 * Affichage onglets
+	*/
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
+	$head[$h][1] = $langs->trans("Step")." 1";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport;
+	$head[$h][1] = $langs->trans("Step")." 2";
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
+	$head[$h][1] = $langs->trans("Step")." 3";
+	$hselected=$h;
+	$h++;
+
+	dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
+
+	print '<table width="100%" class="border">';
+
+	// Module
+	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
+	print '<td>';
+	//print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+	print $objexport->array_export_module[0]->getName();
+	print '</td></tr>';
+
+	// Lot de donnees a exporter
+	print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
+	print '<td>';
+	$icon=$objexport->array_export_icon[0];
+	$label=$objexport->array_export_label[0];
+	//print $value.'-'.$icon.'-'.$label."<br>";
+	print img_object($objexport->array_export_module[0]->getName(),$icon).' ';
+	print $label;
+	print '</td></tr>';
+
+	// Nbre champs exportes
+	print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
+	$list='';
+	foreach($array_selected as $code=>$value)
+	{
+		$list.=(! empty($list)?', ':'');
+		$list.=(isset($objexport->array_export_fields[0][$code])?$langs->trans($objexport->array_export_fields[0][$code]):'');
+	}
+	print '<td>'.$list.'</td></tr>';
+
+	print '</table>';
+	print '<br>';
+
+	// Combo list of export models
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="select_model">';
+	print '<input type="hidden" name="step" value="3">';
+	print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+	print '<table><tr><td colspan="2">';
+	print $langs->trans("SelectExportFields").' ';
+	$htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+	print '</td></tr></table>';
+	print '</form>';
+
+	// un formulaire en plus pour recuperer les filtres
+	print '<form action="export.php?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Entities").'</td>';
+	print '<td>'.$langs->trans("FilterableFields").'</td>';
+	print '<td align="center"></td>';
+	print '<td>'.$langs->trans("FilteredFields").'</td>';
+	print '<td width="25%">'.$langs->trans("FilteredFieldsValues").'</td>';
+	print '</tr>';
+
+	// Champs exportables
+	$fieldsarray=$objexport->array_export_fields[0];
+	// Champs filtrable
+	$Typefieldsarray=$objexport->array_export_TypeFields[0];
+	// valeur des filtres
+	$ValueFiltersarray=(! empty($objexport->array_export_FilterValue[0])?$objexport->array_export_FilterValue[0]:'');
+	// Select request if all fields are selected
+	$sqlmaxforexport=$objexport->build_sql(0, array(), array(), array());
+
+	$var=true;
+	$i = 0;
+	// on boucle sur les champs filtrable
+	foreach($Typefieldsarray as $code=>$label)
+	{
+		$var=!$var;
+		print "<tr $bc[$var]>";
+
+		$i++;
+
+		$entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
+		$entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+		$entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
+
+		print '<td nowrap="nowrap">';
+		// If value of entityicon=entitylang='icon:Label'
+		$tmparray=explode(':',$entityicon);
+		if (count($tmparray) >=2)
+		{
+			$entityicon=$tmparray[0];
+			$entitylang=$tmparray[1];
+		}
+		print img_object('',$entityicon).' '.$langs->trans($entitylang);
+		print '</td>';
+
+		$labelName=(! empty($fieldsarray[$code])?$fieldsarray[$code]:'');
+		$ValueFilter=(! empty($array_filtervalue[$code])?$array_filtervalue[$code]:'');
+		$text=$langs->trans($labelName);
+
+		$tablename=getablenamefromfield($code,$sqlmaxforexport);
+		$htmltext ='<b>'.$langs->trans("Name").':</b> '.$text.' ('.$label.')<br>';
+		$htmltext.='<b>'.$langs->trans("Table")." -> ".$langs->trans("Field").":</b> ".$tablename." -> ".preg_replace('/^.*\./','',$code)."<br>";
+		if (isset($array_filtered[$code]) && $array_filtered[$code])
+		{
+			// Selected fields
+			print '<td>&nbsp;</td>';
+			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=unselectFilterfield&field='.$code.'">'.img_left().'</a></td>';
+			print '<td>';
+			print $form->textwithpicto($text,$htmltext);
+			print '</td>';
+			//$bit=1; FIXME not used?
+			// ici le filtre
+			print '<td>';
+			$szInfoFiltre=$objexport->genDocFilter($label);
+			if ($szInfoFiltre)
+				print $form->textwithpicto($objexport->build_filterField($label, $labelName, $ValueFilter), $szInfoFiltre);
+			else
+				print $objexport->build_filterField($label, $labelName, $ValueFilter);
+			print '</td>';
+		}
+		else
+		{
+			// Fields not selected
+			print '<td>';
+			//print $text.'-'.$htmltext."<br>";
+			print $form->textwithpicto($text,$htmltext);
+			//print ' ('.$code.')';
+			print '</td>';
+			print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=selectFilterfield&field='.$code.'">'.img_right().'</a></td>';
+			print '<td colspan=2>&nbsp;</td>';
+			//$bit=0;  FIXME not used?
+		}
+
+		print '</tr>';
+		//$save_selectFilter.=$bit;  FIXME not used?
+	}
+
+	print '</table>';
+
+	print '</div>';
+
+	if ($mesg) print $mesg;
+
+	/*
+	 * Barre d'action
+	*
+	*/
+	print '<div class="tabsAction">';
+	// il n'est pas obligatoire de filtrer les champs
+	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
+	print '</div>';
+
+}
+
+if ($step == 4 && $datatoexport)
 {
     asort($array_selected);
 
@@ -552,8 +833,16 @@ if ($step == 3 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step")." 3";
+    // If filters exist
+    if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
+    	$head[$h][1] = $langs->trans("Step")." 3";
+    	$h++;
+    }
+
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&datatoexport='.$datatoexport;
+    $head[$h][1] = $langs->trans("Step")." 4";
     $hselected=$h;
     $h++;
 
@@ -585,11 +874,24 @@ if ($step == 3 && $datatoexport)
     }
     print '<td>'.$list.'</td></tr>';
 
+    // Number of filtered fields
+    if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
+    {
+    	print '<tr><td width="25%">'.$langs->trans("FilteredFields").'</td>';
+    	$list='';
+    	foreach($array_filtered as $code=>$value)
+    	{
+    		$list.=($list?', ':'');
+    		$list.="[".$langs->trans($objexport->array_export_fields[0][$code])."]='".$array_filtervalue[$code]."'";
+    	}
+    	print '<td>'.$list.'</td></tr>';
+    }
+
     print '</table>';
     print '<br>';
 
     // Select request if all fields are selected
-    $sqlmaxforexport=$objexport->build_sql(0,array());
+    $sqlmaxforexport=$objexport->build_sql(0, array(), array(), array());
 
     print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
 
@@ -609,8 +911,8 @@ if ($step == 3 && $datatoexport)
         print "<tr $bc[$var]>";
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
-        $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
+        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td nowrap="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
@@ -635,8 +937,8 @@ if ($step == 3 && $datatoexport)
         print '<td align="right" width="100">';
         print $value.' ';
         print '</td><td align="center" width="20">';
-        if ($value < count($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
-        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step=3&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
+        if ($value < count($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
+        if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';
 
         //print '<td>&nbsp;</td>';
@@ -660,7 +962,7 @@ if ($step == 3 && $datatoexport)
 
     if (count($array_selected))
     {
-        print '<a class="butAction" href="export.php?step=4&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+        print '<a class="butAction" href="export.php?step='.($step + 1).'&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
     }
 
     print '</div>';
@@ -725,7 +1027,7 @@ if ($step == 3 && $datatoexport)
 
 }
 
-if ($step == 4 && $datatoexport)
+if ($step == 5 && $datatoexport)
 {
     asort($array_selected);
 
@@ -744,12 +1046,20 @@ if ($step == 4 && $datatoexport)
     $head[$h][1] = $langs->trans("Step")." 2";
     $h++;
 
+    // si le filtrage est parametre pour l'export ou pas
+    if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
+    	$head[$h][1] = $langs->trans("Step")." 3";
+    	$h++;
+    }
+
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step")." 3";
+    $head[$h][1] = $langs->trans("Step")." 4";
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=4&datatoexport='.$datatoexport;
-    $head[$h][1] = $langs->trans("Step")." 4";
+    $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=5&datatoexport='.$datatoexport;
+    $head[$h][1] = $langs->trans("Step")." 5";
     $hselected=$h;
     $h++;
 
@@ -780,6 +1090,19 @@ if ($step == 4 && $datatoexport)
         $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
+
+    // Nbre champs filtres
+    if (is_array($objexport->array_export_TypeFields[0]))
+    {
+    	print '<tr><td width="25%">'.$langs->trans("FilteredFields").'</td>';
+    	$list='';
+    	foreach($array_filtered as $code=>$value)
+    	{
+    		$list.=($list?', ':'');
+    		$list.="[".$langs->trans($objexport->array_export_fields[0][$code])."]='".$array_filtervalue[$code]."'";
+    	}
+    	print '<td>'.$list.'</td></tr>';
+    }
 
     print '</table>';
     print '<br>';
@@ -830,7 +1153,7 @@ if ($step == 4 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
+    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
 
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
