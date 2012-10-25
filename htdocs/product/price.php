@@ -366,7 +366,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"></td>';
 							print '<td align="right" colspan="2"><input size="10" type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
 							//print '<td align="right">&nbsp;</td>';
-							print '<td align="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent"><&nbsp;%/td>';
+							print '<td align="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent">&nbsp;%</td>';
 							print '<td align="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
 							print '</tr>';
 							print '</form>';
