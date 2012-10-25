@@ -249,17 +249,17 @@ print '<td align="center" valign="top">';
 	print '<table class="border" width="100%">';
 	print '<tr><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
-	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
 	print $form->select_company($socid,'socid',$filter,1);
 	print '</td></tr>';
 	// User
-	print '<tr><td>'.$langs->trans("User").'/'.$langs->trans("SalesRepresentative").'</td><td>';
+	print '<tr><td align="left">'.$langs->trans("User").'/'.$langs->trans("SalesRepresentative").'</td><td align="left">';
 	print $form->select_users($userid,'userid',1);
 	print '</td></tr>';
 	// Year
-	print '<tr><td>'.$langs->trans("Year").'</td><td>';
+	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	arsort($arrayyears);
 	print $form->selectarray('year',$arrayyears,$year,0);

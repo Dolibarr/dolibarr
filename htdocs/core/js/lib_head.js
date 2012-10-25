@@ -718,9 +718,10 @@ function delConstant(url, code, input, entity) {
  * 
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton) {
+	var boxConfirm = box;
 	$("#confirm_" + code)
-			.attr("title", box.title)
-			.html(box.content)
+			.attr("title", boxConfirm.title)
+			.html(boxConfirm.content)
 			.dialog({
 				resizable: false,
 				height: 170,
@@ -737,9 +738,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 							}
 							// Close dialog
 							$(this).dialog("close");
-							// Execute another function
-							if (box.function) {
-								var fnName = box.function;
+							// Execute another method
+							if (boxConfirm.method) {
+								var fnName = boxConfirm.method;
 								if (window.hasOwnProperty(fnName)) {
 									window[fnName]();
 								}

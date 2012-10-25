@@ -124,3 +124,7 @@ BankCode=Code banque
 DeskCode=Code guichet
 BankAccountNumber=Numéro compte
 BankAccountNumberKey=Clé RIB
+## filters
+FilterableFields=Champs Filtrables
+FilteredFields=Champs Filtrés
+FilteredFieldsValues=Valeurs de filtrages
