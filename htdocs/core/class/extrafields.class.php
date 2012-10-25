@@ -115,22 +115,18 @@ class ExtraFields
 	 *	@param	string	$attrname			code of attribute
 	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param	int		$length				Size/length of attribute
-     *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+     *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
      *  @param	int		$unique				Is field unique or not
      *  @return int      	           		<=0 if KO, >0 if OK
 	 */
 	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
 	{
-        $table='';
+        $table=$elementtype.'_extrafields';
+
+        // Special case for not normalized table names
         if ($elementtype == 'member')  $table='adherent_extrafields';
-        if ($elementtype == 'company') $table='societe_extrafields';
-        if ($elementtype == 'contact') $table='socpeople_extrafields';
-        if ($elementtype == 'product') $table='product_extrafields';
-        if (empty($table))
-        {
-            print 'ErrorBarValueForParameters';
-            return -1;
-        }
+        elseif ($elementtype == 'company') $table='societe_extrafields';
+        elseif ($elementtype == 'contact') $table='socpeople_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -209,21 +205,17 @@ class ExtraFields
 	 *	Delete an optionnal attribute
 	 *
 	 *	@param	string	$attrname		Code of attribute to delete
-	 *  @param  string	$elementtype    Element type ('member', 'product', 'company', ...)
+	 *  @param  string	$elementtype    Element type ('member', 'product', 'company', 'contact', ...)
 	 *  @return int              		< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
 	function delete($attrname, $elementtype='member')
 	{
-	    $table='';
-	    if ($elementtype == 'member')  $table='adherent_extrafields';
-        if ($elementtype == 'company') $table='societe_extrafields';
-        if ($elementtype == 'contact') $table='socpeople_extrafields';
-        if ($elementtype == 'product') $table='product_extrafields';
-        if (empty($table))
-        {
-            print 'ErrorBarValueForParameters';
-            return -1;
-        }
+        $table=$elementtype.'_extrafields';
+
+        // Special case for not normalized table names
+        if ($elementtype == 'member')  $table='adherent_extrafields';
+        elseif ($elementtype == 'company') $table='societe_extrafields';
+        elseif ($elementtype == 'contact') $table='socpeople_extrafields';
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -289,22 +281,18 @@ class ExtraFields
 	 *  @param	string	$label				Label of attribute
 	 *  @param	string	$type				Type of attribute
 	 *  @param	int		$length				Length of attribute
-     *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+     *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
      *  @param	int		$unique				Is field unique or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0)
 	{
-        $table='';
+        $table=$elementtype.'_extrafields';
+
+        // Special case for not normalized table names
         if ($elementtype == 'member')  $table='adherent_extrafields';
-        if ($elementtype == 'company') $table='societe_extrafields';
-        if ($elementtype == 'contact') $table='socpeople_extrafields';
-        if ($elementtype == 'product') $table='product_extrafields';
-        if (empty($table))
-        {
-            print 'ErrorBarValueForParameters';
-            return -1;
-        }
+        elseif ($elementtype == 'company') $table='societe_extrafields';
+        elseif ($elementtype == 'contact') $table='socpeople_extrafields';
 
         if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
