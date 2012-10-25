@@ -8,7 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
 // Reference language: en_US
 CHARSET=UTF-8
-MenuManager=Valmynd framkvæmdastjóri
 Error=Villa
 Errors=Villur
 ErrorBadEMail=Netfang %s  er rangt

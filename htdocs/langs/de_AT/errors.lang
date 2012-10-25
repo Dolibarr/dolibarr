@@ -51,7 +51,6 @@ ErrorRefAlreadyExists=Die Nr. für den Erstellungsvorgang ist bereits vergeben
 ErrorPleaseTypeBankTransactionReportName=Bitte geben Sie den Bankbeleg zu dieser Transaktion ein (Format MMYYYY oder TTMMYYYY)
 ErrorRecordHasChildren=Kann diesen Eintrag nicht löschen da er noch über Kindelemente verfügt.
 
-MenuManager=Menüverwaltung
 ErrorUrlNotValid=Die angegebene Website-Adresse ist ungültig
 
 Error=Fehler

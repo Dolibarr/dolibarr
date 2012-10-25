@@ -7,8 +7,6 @@
 
 CHARSET=UTF-8
 
-MenuManager=Menü Verwaltung
-
 # Errors
 Error=Fehler
 Errors=Fehler
