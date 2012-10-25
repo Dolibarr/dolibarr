@@ -208,7 +208,7 @@ class modAdherent extends DolibarrModules
         $this->import_tables_creator_array[$r]=array('a'=>'fk_user_author');    // Fields to store import user id
         $this->import_fields_array[$r]=array('a.civilite'=>"UserTitle",'a.nom'=>"Lastname*",'a.prenom'=>"Firstname",'a.login'=>"Login*","a.pass"=>"Password","a.fk_adherent_type"=>"MemberType*",'a.morphy'=>'Nature*','a.societe'=>'Company','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status*",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription');
 		// Add extra fields
-		$sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'member'";
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'member'";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -216,7 +216,7 @@ class modAdherent extends DolibarrModules
 		    {
 		        $fieldname='extra.'.$obj->name;
 		        $fieldlabel=ucfirst($obj->label);
-		        $this->import_fields_array[$r][$fieldname]=$fieldlabel;
+		        $this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');
 		    }
 		}
 		// End add extra fields
