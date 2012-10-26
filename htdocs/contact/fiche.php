@@ -432,30 +432,36 @@ else
 
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td>';
 
+            $colspan=3;
+            if ($conf->use_javascript_ajax && $socid > 0) $colspan=2;
+            
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Address");
-            print '</td><td colspan="2"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '</td><td colspan="'.$colspan.'"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
-            $rowspan=3;
-    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
-
-            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
-	        if ($conf->use_javascript_ajax && $socid) print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
-            print '</td>';
+            if ($conf->use_javascript_ajax && $socid > 0)
+            {
+	            $rowspan=3; 
+	    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
+	
+	            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
+		        print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
+	            print '</td>';
+            }
             print '</tr>';
 
             // Zip / Town
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="'.$colspan.'">';
             print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
             print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
             if (dol_strlen(trim($object->fk_pays)) == 0) $object->fk_pays = $objsoc->country_id;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="2">';
+            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.$colspan.'">';
             print $form->select_country((isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td></tr>';
@@ -463,7 +469,7 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.$langs->trans('State').'</td><td colspan="2">';
+                print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.$colspan.'">';
                 if ($object->country_id)
                 {
                     print $formcompany->select_state(isset($_POST["state_id"])?$_POST["state_id"]:$object->state_id,$object->country_code,'state_id');
@@ -517,7 +523,9 @@ else
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
             		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-            		print '<tr><td>'.$label.'</td><td colspan="3">';
+            		print '<tr><td';
+            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+            		print '>'.$label.'</td><td colspan="3">';
             		print $extrafields->showInputField($key,$value);
             		print '</td></tr>'."\n";
             	}
@@ -732,7 +740,9 @@ else
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
             		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td>'.$label.'</td><td colspan="3">';
+            		print '<tr><td';
+            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+            		print '>'.$label.'</td><td colspan="3">';
             		print $extrafields->showInputField($key,$value);
             		print "</td></tr>\n";
             	}

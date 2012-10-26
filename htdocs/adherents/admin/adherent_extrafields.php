@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,8 @@ print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td align="right">'.$langs->trans("Size").'</td>';
-print '<td align="right">'.$langs->trans("Unique").'</td>';
+print '<td align="center">'.$langs->trans("Unique").'</td>';
+print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -101,7 +102,8 @@ foreach($extrafields->attribute_type as $key => $value)
 	print "<td>".$key."</td>\n";
 	print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
 	print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-    print '<td align="right">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
 	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
 	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=".$key."\">".img_delete()."</a></td>\n";
 	print "</tr>";
@@ -149,7 +151,7 @@ if ($action == 'edit' && ! empty($attrname))
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

@@ -1059,14 +1059,14 @@ LDAPServerUseTLS=Usuari TLS
 LDAPServerUseTLSExample=El seu servidor utilitza TLS
 LDAPServerDn=DN del servidor
 LDAPAdminDn=DN del administrador
-LDAPAdminDnExample=DN complet (ej: cn=adminldap,dc=my-domain,dc=com)
+LDAPAdminDnExample=DN complet (ej: cn=adminldap,dc=example,dc=com)
 LDAPPassword=Contrasenya de l'administrador
 LDAPUserDn=DN dels usuaris
-LDAPUserDnExample=DN complet (ej: ou=users,dc=my-domain,dc=com)
+LDAPUserDnExample=DN complet (ej: ou=users,dc=example,dc=com)
 LDAPGroupDn=DN dels grups
-LDAPGroupDnExample=DN complet (ej: ou=groups,dc=my-domain,dc=com)
+LDAPGroupDnExample=DN complet (ej: ou=groups,dc=example,dc=com)
 LDAPServerExample=Adreça del servidor (ej: localhost, 192.168.0.2, ldaps://ldap.example.com/)
-LDAPServerDnExample=DN complet (ej: dc=my-domain,dc=com)
+LDAPServerDnExample=DN complet (ej: dc=example,dc=com)
 LDAPPasswordExample=Contrasenya del administrador
 LDAPDnSynchroActive=Sincronització d'usuaris i grups
 LDAPDnSynchroActiveExample=Sincronització LDAP vers Dolibarr ó Dolibarr vers LDAP
@@ -1076,9 +1076,9 @@ LDAPDnContactActiveExample=Sincronització activada/desactivada
 LDAPDnMemberActive=Sincronització dels membres
 LDAPDnMemberActiveExample=Sincronització activada/desactivada
 LDAPContactDn=DN dels contactes Dolibarr
-LDAPContactDnExample=DN complet (ej: ou=contacts,dc=my-domain,dc=com)
+LDAPContactDnExample=DN complet (ej: ou=contacts,dc=example,dc=com)
 LDAPMemberDn=DN dels membres
-LDAPMemberDnExample=DN complet (ex: ou=members,dc=society,dc=com)
+LDAPMemberDnExample=DN complet (ex: ou=members,dc=example,dc=com)
 LDAPMemberObjectClassList=Llista de objectClass
 LDAPMemberObjectClassListExample=Llista de ObjectClass que defineixen els atributs d'un registre (ex: top, inetorgperson o top, user for active directory)
 LDAPUserObjectClassList=Llista de objectClass
@@ -1094,6 +1094,7 @@ LDAPTestSynchroContact=Provar la sincronització de contactes
 LDAPTestSynchroUser=Provar la sincronització d'usuaris
 LDAPTestSynchroGroup=Provar la sincronització de grups
 LDAPTestSynchroMember=Provar la sincronització de membres
+LDAPTestSearch=Provar una recerca LDAP
 LDAPSynchroOK=Prova de sincronització realitzada correctament
 LDAPSynchroKO=Prova de sincronització errònia
 LDAPSynchroKOMayBePermissions=Error de la prova de sincronització. Comproveu que la connexió al servidor sigui correcta i que permet les actualitzacions LDAP

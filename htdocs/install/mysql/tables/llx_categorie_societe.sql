@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>	
+-- Copyright (C) 2012 Juanjo Menent  <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,5 +20,6 @@
 create table llx_categorie_societe
 (
   fk_categorie  integer NOT NULL,
-  fk_societe    integer NOT NULL
+  fk_societe    integer NOT NULL,
+  import_key    varchar(14)
 )ENGINE=innodb;
