@@ -184,7 +184,7 @@ class modCategorie extends DolibarrModules
 			//Products
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
-			$this->import_label[$r]="CatSupList";	// Translation key
+			$this->import_label[$r]="CatProdList";	// Translation key
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cp'=>MAIN_DB_PREFIX.'categorie_product');
