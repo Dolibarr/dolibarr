@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2005 Brice Davoleau <e1davole@iu-vannes.fr>
--- Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>		
+-- Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+-- Copyright (C) 2012 Juanjo Menent <jmenent@2byte.es>		
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,5 +21,6 @@
 create table llx_categorie_product
 (
   fk_categorie  integer NOT NULL,
-  fk_product    integer NOT NULL
+  fk_product    integer NOT NULL,
+  import_key    varchar(14)
 )ENGINE=innodb;
