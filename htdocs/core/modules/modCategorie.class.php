@@ -198,37 +198,43 @@ class modCategorie extends DolibarrModules
 			$this->import_examplevalues_array[$r]=array('cp.fk_categorie'=>"Imported category",'cp.fk_product'=>"PREF123456");
 		}
 		
-		//Customers
-		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="Clientes por categoría";	// Translation key
-		$this->import_icon[$r]=$this->picto;
-		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('co'=>MAIN_DB_PREFIX.'categorie_societe');
-		$this->import_fields_array[$r]=array('co.fk_categorie'=>"Categorie*",'co.fk_societe'=>"Tercero*"
-		);
+		if (! empty($conf->societe->enabled))
+		{
+			//Customers
+			$r++;
+			$this->import_code[$r]=$this->rights_class.'_'.$r;
+			$this->import_label[$r]="CatCusList";	// Translation key
+			$this->import_icon[$r]=$this->picto;
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Categorie*",'cs.fk_societe'=>"ThirdParty*"
+			);
+			
+			$this->import_convertvalue_array[$r]=array(
+					'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
+					'cs.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
+			);
+			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_societe'=>"MyBigCompany");
+		}
 		
-		$this->import_convertvalue_array[$r]=array(
-				'co.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
-				'co.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
-		);
-		$this->import_examplevalues_array[$r]=array('co.fk_categorie'=>"Nombre categoría",'co.fk_societe'=>"Nombre cliente");
-		
-		// Suppliers
-		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="Proveedores por categoría";	// Translation key
-		$this->import_icon[$r]=$this->picto;
-		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('co'=>MAIN_DB_PREFIX.'categorie_fournisseur');
-		$this->import_fields_array[$r]=array('co.fk_categorie'=>"Categorie*",'co.fk_societe'=>"Tercero*"
-		);
-		
-		$this->import_convertvalue_array[$r]=array(
-				'co.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
-				'co.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
-		);
-		$this->import_examplevalues_array[$r]=array('co.fk_categorie'=>"Nombre categoria",'co.fk_societe'=>"Nombre proveedor");
+		if (! empty($conf->fournisseur->enabled))
+		{
+			// Suppliers
+			$r++;
+			$this->import_code[$r]=$this->rights_class.'_'.$r;
+			$this->import_label[$r]="CatSupList";	// Translation key
+			$this->import_icon[$r]=$this->picto;
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Categorie*",'co.fk_societe'=>"Supplier*"
+			);
+			
+			$this->import_convertvalue_array[$r]=array(
+					'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
+					'cs.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
+			);
+			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_societe'=>"MyBigCompany");
+		}
 	}
 
 
