@@ -207,7 +207,7 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
-			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Categorie*",'cs.fk_societe'=>"ThirdParty*"
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_societe'=>"ThirdParty*"
 			);
 			
 			$this->import_convertvalue_array[$r]=array(
@@ -226,7 +226,7 @@ class modCategorie extends DolibarrModules
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');
-			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Categorie*",'cs.fk_societe'=>"Supplier*"
+			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_societe'=>"Supplier*"
 			);
 			
 			$this->import_convertvalue_array[$r]=array(
