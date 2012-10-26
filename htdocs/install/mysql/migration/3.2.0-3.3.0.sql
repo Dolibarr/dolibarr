@@ -235,6 +235,7 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL DEFAULT '1';
 
 ALTER TABLE llx_extrafields ADD COLUMN fieldunique INTEGER DEFAULT 0;
+ALTER TABLE llx_extrafields ADD COLUMN fieldrequired INTEGER DEFAULT 0;
 
 create table llx_socpeople_extrafields
 (
@@ -771,6 +772,9 @@ ALTER TABLE llx_entrepot ADD COLUMN import_key varchar(14) AFTER fk_user_author;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN import_key varchar(14) AFTER fk_user;
 ALTER TABLE llx_product_stock ADD COLUMN import_key varchar(14) AFTER pmp;
 ALTER TABLE llx_societe_rib ADD COLUMN import_key varchar(14) AFTER adresse_proprio;
+
+-- Export filter
+ALTER TABLE llx_export_model ADD COLUMN filter text AFTER field;
 
 -- [ task #146 ] Remove table llx_categorie_association
 ALTER TABLE llx_categorie_association DROP FOREIGN KEY fk_categorie_asso_fk_categorie_mere;

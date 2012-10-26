@@ -965,7 +965,7 @@ if ($action == 'create')
             $objectsrc->fetch(GETPOST('originid'));
             $objectsrc->fetch_thirdparty();
 
-            $projectid			= (!empty($objectsrc->fk_project)?$object->fk_project:'');
+            $projectid			= (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
             //$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
 
             $soc = $objectsrc->client;

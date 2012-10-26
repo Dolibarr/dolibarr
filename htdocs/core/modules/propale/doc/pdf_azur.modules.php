@@ -525,7 +525,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if (isset($object->type) && $object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
+		if (! empty($conf->global->PROPALE_PDF_PAIEMENT_ENABLED) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -542,7 +542,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 
-		if (isset($object->type) && $object->type != 2)
+		if (! empty($conf->global->PROPALE_PDF_PAIEMENT_ENABLED))
 		{
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
