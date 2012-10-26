@@ -1062,12 +1062,12 @@ LDAPServerUseTLS=Usuario TLS
 LDAPServerUseTLSExample=Su servidor utiliza TLS
 LDAPServerDn=DN del servidor
 LDAPAdminDn=DN del administrador
-LDAPAdminDnExample=DN completo (ej: cn=adminldap,dc=my-domain,dc=com)
+LDAPAdminDnExample=DN completo (ej: cn=adminldap,dc=example,dc=com)
 LDAPPassword=Contraseña del administrador
 LDAPUserDn=DN de los usuarios
-LDAPUserDnExample=DN completo (ej: ou=users,dc=my-domain,dc=com)
+LDAPUserDnExample=DN completo (ej: ou=users,dc=example,dc=com)
 LDAPGroupDn=DN de los grupos
-LDAPGroupDnExample=DN completo (ej: ou=groups,dc=my-domain,dc=com)
+LDAPGroupDnExample=DN completo (ej: ou=groups,dc=example,dc=com)
 LDAPServerExample=Dirección del servidor (ej: localhost, 192.168.0.2, ldaps://ldap.example.com/)
 LDAPServerDnExample=DN completo (ej: dc=my-domain,dc=com)
 LDAPPasswordExample=Contraseña del administrador
@@ -1079,7 +1079,7 @@ LDAPDnContactActiveExample=Sincronización activada/desactivada
 LDAPDnMemberActive=Sincronización de los miembros
 LDAPDnMemberActiveExample=Sincronización activada/desactivada
 LDAPContactDn=DN de los contactos Dolibarr
-LDAPContactDnExample=DN completo (ej: ou=contacts,dc=my-domain,dc=com)
+LDAPContactDnExample=DN completo (ej: ou=contacts,dc=example,dc=com)
 LDAPMemberDn=DN de los miembros
 LDAPMemberDnExample=DN completo (ex: ou=members,dc=society,dc=com)
 LDAPMemberObjectClassList=Lista de objectClass
@@ -1091,12 +1091,13 @@ LDAPGroupObjectClassListExample=Lista de ObjectClass que definen los atributos d
 LDAPContactObjectClassList=Lista de objectClass
 LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPMemberTypeDn=DN de los tipos de miembros
-LDAPMemberTypeDnExample=DN complet (ej: ou=type_members,dc=society,dc=com)
+LDAPMemberTypeDnExample=DN complet (ej: ou=type_members,dc=example,dc=com)
 LDAPTestConnect=Probar la conexión LDAP
 LDAPTestSynchroContact=Probar la sincronización de contactos
 LDAPTestSynchroUser=Probar la sincronización de usuarios
 LDAPTestSynchroGroup=Probar la sincronización de grupos
 LDAPTestSynchroMember=Probar la sincronización de miembros
+LDAPTestSearch=Probar una búsqueda LDAP
 LDAPSynchroOK=Prueba de sincronización realizada correctamente
 LDAPSynchroKO=Prueba de sincronización erronea
 LDAPSynchroKOMayBePermissions=Error de la prueba de sincronización. Compruebe que la conexión al servidor sea correcta y que permite las actualizaciones LDAP
@@ -1129,7 +1130,7 @@ LDAPFieldCommonNameExample=Ejemplo : cn
 LDAPFieldName=Nombre
 LDAPFieldNameExample=Ejemplo : sn
 LDAPFieldFirstName=Nombre
-LDAPFieldFirstNameExample=Ejemplo : givenname
+LDAPFieldFirstNameExample=Ejemplo : givenName
 LDAPFieldMail=E-Mail
 LDAPFieldMailExample=Ejemplo : mail
 LDAPFieldPhone=Teléfono trabajo
