@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -583,9 +584,18 @@ class ImportCsv extends ModeleImports
 					    //var_dump($objimport->array_import_convertvalue); exit;
 
 						// Build SQL request
-						$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
-						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
-						$sql.=') VALUES('.$listvalues.", '".$importid."'";
+					if (! tablewithentity($tablename))
+						{
+							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
+							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
+							$sql.=') VALUES('.$listvalues.", '".$importid."'";
+						}
+						else
+						{
+							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key, entity';
+							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
+							$sql.=') VALUES('.$listvalues.", '".$importid."', ".$conf->entity ;						
+						}
 						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
 						$sql.=')';
 						dol_syslog("import_csv.modules sql=".$sql);
@@ -636,5 +646,35 @@ function cleansep($value)
 {
 	return str_replace(',','/',$value);
 };
+
+/**
+ * Returns if a table contains entity column
+ * 
+ * @param  string 	$table	Table name
+ * @return int				1 if table contains entity, 0 if not and -1 if error
+ */
+function tablewithentity($table)
+{
+	global $db;
+	$sql = "SHOW COLUMNS FROM ".$table." LIKE 'entity'";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$numrows=$db->num_rows($resql);
+		if ($numrows)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return -1;
+	}
+}
 
 ?>

@@ -240,13 +240,26 @@ class Entrepot extends CommonObject
 	 *	Load warehouse data
 	 *
 	 *	@param		int		$id     Warehouse id
+	 *	@param		string	$ref	Warehouse label
 	 *	@return		int				>0 if OK, <0 if KO
 	 */
-	function fetch($id)
+	function fetch($id, $ref='')
 	{
+		global $conf;
+			
 		$sql  = "SELECT rowid, label, description, statut, lieu, address, cp as zip, ville as town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
-		$sql .= " WHERE rowid = ".$id;
+	
+		if ($id) 
+		{
+			$sql.= " WHERE rowid = '".$id."'";
+		}
+		
+		else
+		{
+			$sql.= " WHERE entity = " .$conf->entity;
+			if ($ref) $sql.= " AND label = '".$this->db->escape($ref)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result = $this->db->query($sql);
