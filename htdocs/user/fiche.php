@@ -350,7 +350,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                     $message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
                 }
                 else
-                {
+              {
                     $message.='<div class="error">'.$edituser->error.'</div>';
                 }
             }
@@ -462,6 +462,7 @@ if ($action == 'adduserldap')
     $selecteduser = $_POST['users'];
 
     $required_fields = array(
+	$conf->global->LDAP_KEY_USERS,
     $conf->global->LDAP_FIELD_NAME,
     $conf->global->LDAP_FIELD_FIRSTNAME,
     $conf->global->LDAP_FIELD_LOGIN,
@@ -472,6 +473,8 @@ if ($action == 'adduserldap')
     $conf->global->LDAP_FIELD_FAX,
     $conf->global->LDAP_FIELD_MOBILE,
     $conf->global->LDAP_FIELD_MAIL,
+    $conf->global->LDAP_FIELD_TITLE,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
     $conf->global->LDAP_FIELD_SID);
 
     $ldap = new Ldap();
@@ -532,7 +535,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print "<br>";
     print "<br>";
 
-    dol_htmloutput_errors($message);
+    dol_htmloutput_mesg($message);
 
     if (! empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr'))
     {
@@ -545,18 +548,30 @@ if (($action == 'create') || ($action == 'adduserldap'))
         $result = $ldap->connect_bind();
         if ($result >= 0)
         {
-            $required_fields=array($conf->global->LDAP_KEY_USERS,
-            $conf->global->LDAP_FIELD_FULLNAME,
-            $conf->global->LDAP_FIELD_NAME,
-            $conf->global->LDAP_FIELD_FIRSTNAME,
-            $conf->global->LDAP_FIELD_LOGIN,
-            $conf->global->LDAP_FIELD_LOGIN_SAMBA);
+            $required_fields=array(
+				$conf->global->LDAP_KEY_USERS,
+	            $conf->global->LDAP_FIELD_FULLNAME,
+				$conf->global->LDAP_FIELD_NAME,
+				$conf->global->LDAP_FIELD_FIRSTNAME,
+				$conf->global->LDAP_FIELD_LOGIN,
+				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+				$conf->global->LDAP_FIELD_PASSWORD,
+				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+				$conf->global->LDAP_FIELD_PHONE,
+				$conf->global->LDAP_FIELD_FAX,
+				$conf->global->LDAP_FIELD_MOBILE,
+				$conf->global->LDAP_FIELD_MAIL,
+				$conf->global->LDAP_FIELD_TITLE,
+				$conf->global->LDAP_FIELD_DESCRIPTION,
+            	$conf->global->LDAP_FIELD_SID
+            );
 
             // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
             $required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
             // Get from LDAP database an array of results
             $ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
+
             if (is_array($ldapusers))
             {
                 $liste=array();
@@ -586,27 +601,27 @@ if (($action == 'create') || ($action == 'adduserldap'))
         }
 
         // Si la liste des users est rempli, on affiche la liste deroulante
-        if (is_array($liste))
+       	print "\n\n<!-- Form liste LDAP debut -->\n";
+
+       	print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+       	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+       	print '<table width="100%" class="border"><tr>';
+       	print '<td width="160">';
+       	print $langs->trans("LDAPUsers");
+       	print '</td>';
+       	print '<td>';
+       	print '<input type="hidden" name="action" value="adduserldap">';
+        if (is_array($liste) && count($liste))
         {
-        	print "\n\n<!-- Form liste LDAP debut -->\n";
-
-        	print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-        	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        	print '<table width="100%" class="border"><tr>';
-        	print '<td width="160">';
-        	print $langs->trans("LDAPUsers");
-        	print '</td>';
-        	print '<td>';
-        	print '<input type="hidden" name="action" value="adduserldap">';
         	print $form->selectarray('users', $liste, '', 1);
-        	print '</td><td align="center">';
-        	print '<input type="submit" class="button" value="'.$langs->trans('Get').'">';
-        	print '</td></tr></table>';
-        	print '</form>';
-
-        	print "\n<!-- Form liste LDAP fin -->\n\n";
-        	print '<br>';
         }
+       	print '</td><td align="center">';
+       	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled="disabled"').'>';
+       	print '</td></tr></table>';
+       	print '</form>';
+
+       	print "\n<!-- Form liste LDAP fin -->\n\n";
+       	print '<br>';
     }
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';

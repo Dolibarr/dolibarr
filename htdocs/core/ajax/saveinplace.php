@@ -66,21 +66,21 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		$subelement = $regs[2];
 	}
 
-	if ($element == 'propal') $element = 'propale';
-	else if ($element == 'fichinter') $element = 'ficheinter';
-	else if ($element == 'product') $element = 'produit';
-	else if ($element == 'member') $element = 'adherent';
+	if ($element == 'propal') $newelement = 'propale';
+	else if ($element == 'fichinter') $newelement = 'ficheinter';
+	else if ($element == 'product') $newelement = 'produit';
+	else if ($element == 'member') $newelement = 'adherent';
 	else if ($element == 'order_supplier') {
-		$element = 'fournisseur';
+		$newelement = 'fournisseur';
 		$subelement = 'commande';
 	}
 	else if ($element == 'invoice_supplier') {
-		$element = 'fournisseur';
+		$newelement = 'fournisseur';
 		$subelement = 'facture';
 	}
 
-	if (! empty($user->rights->$element->creer) || ! empty($user->rights->$element->write)
-	|| (isset($subelement) && (! empty($user->rights->$element->$subelement->creer) || ! empty($user->rights->$element->$subelement->write)))
+	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->write)
+	|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
 	|| ($element == 'payment' && $user->rights->facture->paiement)
 	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	{

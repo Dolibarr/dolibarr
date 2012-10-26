@@ -1,6 +1,5 @@
 # Dolibarr language file - nl_NL - errors 
 CHARSET = UTF-8
-MenuManager = Menubeheer
 Error = Fout
 Errors = Fouten
 ErrorBadEMail = Ongeldige e-mail %s

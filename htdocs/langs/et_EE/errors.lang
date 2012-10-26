@@ -8,7 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
 // Reference language: en_US -> et_EE
 CHARSET=UTF-8
-MenuManager=Menüü juht
 Error=Viga
 Errors=Vead
 ErrorBadEMail=E-post %s on vale

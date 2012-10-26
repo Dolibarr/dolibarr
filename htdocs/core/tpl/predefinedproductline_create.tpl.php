@@ -72,14 +72,17 @@ jQuery(document).ready(function() {
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
 
+	echo '<span>';
 	$form->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
-	print '<br>';
+	echo '</span>';
 
 	if (is_object($hookmanager))
 	{
         $parameters=array('fk_parent_line'=>$_POST["fk_parent_line"]);
 	    $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
+
+	echo '<br>';
 
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

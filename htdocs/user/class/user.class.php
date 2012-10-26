@@ -87,9 +87,6 @@ class User extends CommonObject
 	var $photo;
 	var $lang;
 
-	//! Liste des entrepots auquel a acces l'utilisateur
-	var $entrepots;
-
 	var $rights;                        // Array of permissions user->rights->permx
 	var $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
@@ -800,7 +797,7 @@ class User extends CommonObject
 					// Set default rights
 					if ($this->set_default_rights() < 0)
 					{
-						$this->error=$this->db->error();
+						$this->error='ErrorFailedToSetDefaultRightOfUser';
 						$this->db->rollback();
 						return -5;
 					}

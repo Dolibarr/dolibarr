@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -49,7 +49,7 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$error=0;
 	$db->begin();
-	
+
 	if (! dolibarr_set_const($db, 'LDAP_USER_DN',GETPOST("user"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_USER_OBJECT_CLASS',GETPOST("objectclass"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',GETPOST("filterconnection"),'chaine',0,'',$conf->entity)) $error++;
@@ -66,6 +66,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',GETPOST("fielddescription"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',GETPOST("fieldsid"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_TITLE',GETPOST("fieldtitle"),'chaine',0,'',$conf->entity)) $error++;
 
     // This one must be after the others
     $valkey='';
@@ -247,9 +248,17 @@ print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX)?' checked="checked"':'')."></td>";
 print '</tr>';
 
-// Description
+// Title
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTitle").'</td><td>';
+print '<input size="25" type="text" name="fieldtitle" value="'.$conf->global->LDAP_FIELD_TITLE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldTitleExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_TITLE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_TITLE)?' checked="checked"':'')."></td>";
+print '</tr>';
+
+// Note
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("Note").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_DESCRIPTION)?' checked="checked"':'')."></td>";
@@ -287,10 +296,19 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 
 	show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass);
 }
+elseif ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+{
+	$butlabel=$langs->trans("LDAPTestSearch");
+	$testlabel='testsearchuser';
+	$key=$conf->global->LDAP_KEY_USERS;
+	$dn=$conf->global->LDAP_USER_DN;
+	$objectclass=$conf->global->LDAP_USER_OBJECT_CLASS;
+	show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass);
+}
 
 if (function_exists("ldap_connect"))
 {
-	if ($_GET["action"] == 'testuser')
+	if ($action == 'testuser')
 	{
 		// Creation objet
 		$object=new User($db);
@@ -328,6 +346,87 @@ if (function_exists("ldap_connect"))
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn,$info));
+			print "\n<br>";
+		}
+		else
+		{
+			print img_picto('','error').' ';
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
+			print '</font><br>';
+			print $langs->trans("ErrorLDAPMakeManualTest",$conf->ldap->dir_temp).'<br>';
+		}
+	}
+
+	if ($action == 'testsearchuser')
+	{
+		// Creation objet
+		$object=new User($db);
+		$object->initAsSpecimen();
+
+		// TODO Mutualize code following with other ldap_xxxx.php pages
+
+		// Test synchro
+		$ldap=new Ldap();
+		$result=$ldap->connect_bind();
+
+		if ($result > 0)
+		{
+			$required_fields = array(
+				$conf->global->LDAP_KEY_USERS,
+	            $conf->global->LDAP_FIELD_FULLNAME,
+				$conf->global->LDAP_FIELD_NAME,
+				$conf->global->LDAP_FIELD_FIRSTNAME,
+				$conf->global->LDAP_FIELD_LOGIN,
+				$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+				$conf->global->LDAP_FIELD_PASSWORD,
+				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+				$conf->global->LDAP_FIELD_PHONE,
+				$conf->global->LDAP_FIELD_FAX,
+				$conf->global->LDAP_FIELD_MOBILE,
+				$conf->global->LDAP_FIELD_MAIL,
+				$conf->global->LDAP_FIELD_TITLE,
+				$conf->global->LDAP_FIELD_DESCRIPTION,
+				$conf->global->LDAP_FIELD_SID
+			);
+
+            // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+            $required_fields=array_unique(array_values(array_filter($required_fields, "dol_validElement")));
+
+            // Get from LDAP database an array of results
+            $ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
+            //$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, '', 1);
+
+            if (is_array($ldapusers))
+            {
+                $liste=array();
+                foreach ($ldapusers as $key => $ldapuser)
+                {
+                    // Define the label string for this user
+                    $label='';
+                    foreach ($required_fields as $value)
+                    {
+                        if ($value)
+                        {
+                            $label.=$value."=".$ldapuser[$value]." ";
+                        }
+                    }
+                    $liste[$key] = $label;
+                }
+
+            }
+            else
+           {
+                $mesg='<div class="error">'.$ldap->error.'</div>';
+            }
+
+			print "<br>\n";
+			print "LDAP search for user:<br>\n";
+			print "search: *<br>\n";
+			print "userDN: ".$conf->global->LDAP_USER_DN."<br>\n";
+			print "useridentifier: ".$conf->global->LDAP_KEY_USERS."<br>\n";
+			print "required_fields: ".join(',',$required_fields)."<br>\n";
+			print "=> ".count($liste)." records<br>\n";
 			print "\n<br>";
 		}
 		else

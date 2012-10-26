@@ -110,7 +110,7 @@ class InterfaceLdapsynchro
         if ($action == 'USER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        	if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+        	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
@@ -129,7 +129,7 @@ class InterfaceLdapsynchro
         elseif ($action == 'USER_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        	if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+        	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
@@ -160,7 +160,7 @@ class InterfaceLdapsynchro
         elseif ($action == 'USER_NEW_PASSWORD')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+            if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
             {
                 $ldap=new Ldap();
                 $ldap->connect_bind();
@@ -195,7 +195,7 @@ class InterfaceLdapsynchro
         elseif ($action == 'USER_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        	if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+        	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
@@ -214,7 +214,7 @@ class InterfaceLdapsynchro
         elseif ($action == 'USER_SETINGROUP')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+            if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
             {
                 $ldap=new Ldap();
                 $ldap->connect_bind();
@@ -252,7 +252,7 @@ class InterfaceLdapsynchro
         elseif ($action == 'USER_REMOVEFROMGROUP')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+            if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
             {
                 $ldap=new Ldap();
                 $ldap->connect_bind();
@@ -291,7 +291,7 @@ class InterfaceLdapsynchro
 		// Groupes
         elseif ($action == 'GROUP_CREATE')
         {
-        	if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+        	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
@@ -313,7 +313,7 @@ class InterfaceLdapsynchro
 		}
         elseif ($action == 'GROUP_MODIFY')
         {
-        	if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+        	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
@@ -343,7 +343,7 @@ class InterfaceLdapsynchro
 		}
         elseif ($action == 'GROUP_DELETE')
         {
-        	if (! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+        	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();

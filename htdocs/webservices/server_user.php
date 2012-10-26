@@ -220,7 +220,6 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
 'statut' => $user->statut,
 'photo' => $user->photo,
 'lang' => $user->lang,
-'entrepots' => $user->entrepots,
 //'rights' => $user->rights,
 'canvas' => $user->canvas
                     )

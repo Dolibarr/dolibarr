@@ -1521,7 +1521,22 @@ class Commande extends CommonOrder
         $nb=0;
         foreach($this->lines as $line)
         {
-            if ($line->fk_product_type == 0) $nb++;
+            if ($line->product_type == 0) $nb++;
+        }
+        return $nb;
+    }
+
+    /**
+     *	Return number of line with type service.
+     *
+     *	@return		int		<0 if KO, Nbr of service lines if OK
+     */
+    function getNbOfServicesLines()
+    {
+        $nb=0;
+        foreach($this->lines as $line)
+        {
+            if ($line->product_type == 1) $nb++;
         }
         return $nb;
     }

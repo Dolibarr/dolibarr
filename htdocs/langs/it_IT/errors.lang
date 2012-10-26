@@ -106,7 +106,6 @@ ErrorUrlNotValid				=L'indirizzo del sito è errato
 ErrorUserCannotBeDelete				=L'utente non può essere eliminato. Probabilmente è necessario al funzionamento di Dolibarr.
 ErrorWebServerUserHasNotPermission		=L'account utente <b>%s</b> utilizzato per eseguire il server web non ha i permessi necessari
 ErrorWrongValueForField				=Valore errato nel campo numero <b>%s</b> (il valore <b>'%s'</b>non corrisponde alla regex <b>%s</b>)
-MenuManager					=Gestore dei menu
 UserCannotBeDelete				=L'utente non può essere eliminato. Forse è associato ad alcuni elementi di Dolibarr.
 WarningAllowUrlFopenMustBeOn			=Il parametro <b>allow_url_fopen</b> deve essere impostato su <b>on</b> nel file <b>php.ini</b> perché questo modulo funzioni correttamente. È necessario modificare questo file manualmente.
 WarningBookmarkAlreadyExists			=Un segnalibro per questo link (URL) o con lo stesso titolo esiste già.
