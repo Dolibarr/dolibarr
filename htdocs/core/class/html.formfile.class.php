@@ -576,7 +576,7 @@ class FormFile
      *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this
      * 	@param	 Object	$object				Object on which document is linked to
      * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper
-     * 	@param	 string	$param				Parameters on sort links
+     * 	@param	 string	$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
      * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file
      * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided)
      * 	@param	 int	$permtodelete		Permission to delete
@@ -678,9 +678,10 @@ class FormFile
 						print '</td>';
 					}
 					// Delete or view link
+					// ($param must start with &)
 					print '<td align="right">';
-					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
+					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).$param.'">'.img_delete().'</a>';
 					else print '&nbsp;';
 					print "</td>";
 					print "</tr>\n";
