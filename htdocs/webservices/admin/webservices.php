@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.org>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 $actionsave=GETPOST("save");
-$mesg='';
 
 // Sauvegardes parametres
 if ($actionsave)
@@ -45,12 +46,12 @@ if ($actionsave)
     if ($i >= 1)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -80,7 +81,10 @@ print "</tr>";
 
 print '<tr class="impair">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess").'</td>';
-print '<td><input type="text" class="flat" name="WEBSERVICES_KEY" value="'. (GETPOST('WEBSERVICES_KEY')?GETPOST('WEBSERVICES_KEY'):(! empty($conf->global->WEBSERVICES_KEY)?$conf->global->WEBSERVICES_KEY:'')) . '" size="20"></td>';
+print '<td><input type="text" class="flat" id="WEBSERVICES_KEY" name="WEBSERVICES_KEY" value="'. (GETPOST('WEBSERVICES_KEY')?GETPOST('WEBSERVICES_KEY'):(! empty($conf->global->WEBSERVICES_KEY)?$conf->global->WEBSERVICES_KEY:'')) . '" size="40">';
+if (! empty($conf->use_javascript_ajax))
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+print '</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
@@ -91,8 +95,6 @@ print '<input type="submit" name="save" class="button" value="'.$langs->trans("S
 print '</center>';
 
 print '</form>';
-
-dol_htmloutput_mesg($mesg);
 
 print '<br><br>';
 
@@ -154,7 +156,24 @@ print '<br>';
 print '<br>';
 print $langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php');
 
-$db->close();
+if (! empty($conf->use_javascript_ajax))
+{
+	print "\n".'<script type="text/javascript">';
+	print '$(document).ready(function () {
+            $("#generate_token").click(function() {
+            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+            		action: \'getrandompassword\',
+            		generic: true
+				},
+				function(token) {
+					$("#WEBSERVICES_KEY").val(token);
+				});
+            });
+    });';
+	print '</script>';
+}
+
 
 llxFooter();
+$db->close();
 ?>

@@ -1382,8 +1382,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 				$objectsrc->fetch_thirdparty();
 
-				$projectid          = (!empty($objectsrc->fk_project)?$object->fk_project:'');
-				$ref_client         = (!empty($objectsrc->ref_client)?$object->ref_client:'');
+				$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
+				$ref_client         = (!empty($objectsrc->ref_client)?$objectsrc->ref_client:'');
 
 				$soc = $objectsrc->client;
 				$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));

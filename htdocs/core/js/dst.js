@@ -38,12 +38,17 @@ $(document).ready(function () {
 	} else {
 	    dst = "1"; // daylight savings time is observed
 	}
-	var tz=new Date().toTimeString().match(/\(.*\)/);
+	var now=new Date();
+	var tz=now.toTimeString().match(/\(.*\)/);
+	//alert('date=' + now + ' string=' + now.toTimeString());
 	var dst_first=DisplayDstSwitchDates('first');
 	var dst_second=DisplayDstSwitchDates('second');
 	//alert(dst);
 	$('#tz').val(std_time_offset);   				  // returns TZ
-	$('#tz_string').val(tz[0].replace('(','').replace(')',''));		// returns TZ string
+	// tz is null with IE
+	if (tz != null) {
+		$('#tz_string').val(tz[0].replace('(','').replace(')',''));		// returns TZ string
+	}
 	$('#dst_observed').val(dst);   				  // returns if DST is observed on summer
 	$('#dst_first').val(dst_first);   				  // returns DST first switch in year
 	$('#dst_second').val(dst_second);   			  // returns DST second switch in year
