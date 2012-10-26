@@ -476,7 +476,7 @@ class Export
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
 
-		if ($sqlquery) $sql = $sqlquery;
+		if (! empty($sqlquery)) $sql = $sqlquery;
         else $sql=$this->build_sql($indice, $array_selected, $array_filterValue, $array_filtered);
 
 		// Run the sql
