@@ -223,6 +223,28 @@ class modProduct extends DolibarrModules
 					'sp.remise_percent'=>'0'
 			);
 		}
+		
+		if (! empty($conf->stock->enabled))
+		{
+			// Import stocks
+			$r++;
+			$this->import_code[$r]=$this->rights_class.'_'.$r;
+			$this->import_label[$r]="Stocks";	// Translation key
+			$this->import_icon[$r]='stock';
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r]=array('ps'=>MAIN_DB_PREFIX.'product_stock');
+			$this->import_fields_array[$r]=array('ps.fk_product'=>"Product*",'ps.fk_entrepot'=>"Warehouse*",
+					'ps.reel'=>"Stock*",'ps.pmp'=>"PMP"
+			);
+			
+			$this->import_convertvalue_array[$r]=array(
+					'ps.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'product'),
+					'ps.fk_entrepot'=>array('rule'=>'fetchidfromref','classfile'=>'/product/stock/class/entrepot.class.php','class'=>'Entrepot','method'=>'fetch','element'=>'label')
+			);
+			$this->import_examplevalues_array[$r]=array('ps.fk_product'=>"PREF123456",'ps.fk_entrepot'=>"ALM001",
+					'ps.reel'=>"10",'ps.pmp'=>"25"
+			);
+		}
 	}
 
 
