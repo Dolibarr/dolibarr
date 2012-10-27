@@ -757,8 +757,11 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 			});
 }
 
-/* This is to allow to transform all select box into ajax autocomplete box
- * with just one line: $(function() { $( "#listmotifcons" ).combobox(); });
+/* 
+ * ================================================================= 
+ * This is to allow to transform all select box into ajax autocomplete box
+ * with just one line: $(function() { $( "#idofmylist" ).combobox(); });
+ * ================================================================= 
  */
 (function( $ ) {
 	$.widget( "ui.combobox", {

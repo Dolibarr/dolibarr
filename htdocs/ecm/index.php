@@ -168,7 +168,7 @@ if ($action == 'confirm_deletefile')
     {
         $langs->load("other");
     	$result=$ecmdir->fetch($section);
-    	if (! $result > 0)
+    	if (! ($result > 0))
     	{
     		dol_print_error($db,$ecmdir->error);
     		exit;
@@ -396,7 +396,7 @@ print $langs->trans("ECMAreaDesc")."<br>";
 print $langs->trans("ECMAreaDesc2")."<br>";
 print "<br>\n";
 
-// Confirm remove file
+// Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
 	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);

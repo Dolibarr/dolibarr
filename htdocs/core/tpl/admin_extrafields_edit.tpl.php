@@ -23,11 +23,13 @@
     	function init_typeoffields(type)
     	{
     		var size = jQuery("#size");
+    		var unique = jQuery("#unique");
+    		var required = jQuery("#required");
     		if (type == 'date') { size.attr('disabled','disabled'); }
     		else if (type == 'datetime') { size.attr('disabled','disabled'); }
     		else if (type == 'double') { size.removeAttr('disabled'); }
     		else if (type == 'int') { size.removeAttr('disabled'); }
-    		else if (type == 'text') { size.removeAttr('disabled'); }
+    		else if (type == 'text') { size.removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
     		else if (type == 'varchar') { size.removeAttr('disabled'); }
     		else size.val('').attr('disabled','disabled');
     	}
@@ -52,6 +54,7 @@
 $type=$extrafields->attribute_type[$attrname];
 $size=$extrafields->attribute_size[$attrname];
 $unique=$extrafields->attribute_unique[$attrname];
+$required=$extrafields->attribute_required[$attrname];
 ?>
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php print $type2label[$type]; ?>
@@ -60,7 +63,9 @@ $unique=$extrafields->attribute_unique[$attrname];
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
 <!-- Unique -->
-<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input type="checkbox" name="unique" <?php echo ($unique?' checked="true"':''); ?>"></td></tr>
+<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked="true"':''); ?>></td></tr>
+<!-- Required -->
+<tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo ($required?' checked="true"':''); ?>></td></tr>
 
 </table>
 

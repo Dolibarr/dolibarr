@@ -63,13 +63,24 @@ class Categorie
 	 * 	Load category into memory from database
 	 *
 	 * 	@param		int		$id		Id of category
+	 *  @param		strin	$label	Label of category
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id,$label='')
 	{
+		global $conf; 
+		
 		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE rowid = ".$id;
+		if ($id) 
+		{
+			$sql.= " WHERE rowid = '".$id."'";
+		}
+		
+		else
+		{
+			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity=".$conf->entity;;
+		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$resql = $this->db->query($sql);

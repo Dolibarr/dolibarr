@@ -23,12 +23,14 @@
     	function init_typeoffields(type)
     	{
     		var size = jQuery("#size");
-    		if (type == 'date') { size.val('').attr('disabled','disabled'); }
-    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); }
-    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); }
-    		else if (type == 'int') { size.val('10').removeAttr('disabled'); }
-    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); }
-    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); }
+    		var unique = jQuery("#unique");
+    		var required = jQuery("#required");
+    		if (type == 'date') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); }
+    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); }
+    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
+    		else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
+    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
+    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields('');
@@ -55,7 +57,9 @@
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size')?GETPOST('size'):''); ?>"></td></tr>
 <!-- Unique -->
-<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input type="checkbox" name="unique" <?php echo (GETPOST('unique')?' checked="true"':''); ?>"></td></tr>
+<tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo (GETPOST('unique')?' checked="true"':''); ?>></td></tr>
+<!-- Required -->
+<tr><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required" <?php echo (GETPOST('required')?' checked="true"':''); ?>></td></tr>
 </table>
 
 <div align="center"><br><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp;
