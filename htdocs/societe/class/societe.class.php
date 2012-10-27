@@ -1757,7 +1757,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_FOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
                 if ($res) break;
             }
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;

@@ -772,6 +772,9 @@ ALTER TABLE llx_entrepot ADD COLUMN import_key varchar(14) AFTER fk_user_author;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN import_key varchar(14) AFTER fk_user;
 ALTER TABLE llx_product_stock ADD COLUMN import_key varchar(14) AFTER pmp;
 ALTER TABLE llx_societe_rib ADD COLUMN import_key varchar(14) AFTER adresse_proprio;
+ALTER TABLE llx_categorie_product ADD COLUMN import_key varchar(14) AFTER fk_product;
+ALTER TABLE llx_categorie_societe ADD COLUMN import_key varchar(14) AFTER fk_societe;
+ALTER TABLE llx_categorie_fournisseur ADD COLUMN import_key varchar(14) AFTER fk_societe;
 
 -- Export filter
 ALTER TABLE llx_export_model ADD COLUMN filter text AFTER field;

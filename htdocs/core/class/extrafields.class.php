@@ -91,7 +91,7 @@ class ExtraFields
         if (empty($label)) return -1;
 
         // Create field into database
-        $result=$this->create($attrname,$type,$size,$elementtype, $unique);
+        $result=$this->create($attrname,$type,$size,$elementtype, $unique, $required);
         $err1=$this->errno;
         if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
         {
@@ -361,7 +361,7 @@ class ExtraFields
 	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0)
 	{
 		global $conf;
-		dol_syslog(get_class($this)."::update_label $attrname,$label,$type,$size");
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required);
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{

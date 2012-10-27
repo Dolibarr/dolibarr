@@ -290,10 +290,10 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 }
 
 /**
- * 	Convert a select html field into an ajax combobox
+ * 	Convert a html select field into an ajax combobox
  *
- * 	@param	string	$htmlname		Name of html field
- * 	@param	array	$event			Event options
+ * 	@param	string	$htmlname		Name of html select field
+ * 	@param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  *  @return	string					Return html string to convert a select field into a combo
  */
 function ajax_combobox($htmlname, $event=array())
