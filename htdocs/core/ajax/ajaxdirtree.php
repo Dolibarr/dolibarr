@@ -74,6 +74,7 @@ if ($modulepart == 'ecm')
 
 top_httphead();
 
+//print '<!-- selecteddir = '.$selecteddir.', openeddir = '.$openeddir.', modulepart='.$modulepart.' -->'."\n";
 $userstatic=new User($db);
 $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
