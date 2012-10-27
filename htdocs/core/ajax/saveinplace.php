@@ -54,6 +54,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	$loadmethod			= GETPOST('loadmethod','alpha',2);
 	$savemethod			= GETPOST('savemethod','alpha',2);
 	$savemethodname		= (! empty($savemethod) ? $savemethod : 'setValueFrom');
+	$newelement			= $element;
 
 	$view='';
 	$format='text';
