@@ -268,7 +268,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan(0, $result);
+    	$this->assertGreaterThanOrEqual(0, $result);
     	return $result;
     }
 
