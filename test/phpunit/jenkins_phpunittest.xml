@@ -7,7 +7,7 @@
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	colors="true"
-	processIsolation="true"
+	processIsolation="false"
 	stopOnFailure="true"
 	syntaxCheck="true">
 	<php>
