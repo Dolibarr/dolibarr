@@ -249,13 +249,13 @@ class FactureTest extends PHPUnit_Framework_TestCase
     /**
      * testFactureDelete
      *
-     * @param	Object	$localobject	Invoice
+     * @param	int		$id		Id of invoice
      * @return	int
      *
      * @depends	testFactureOther
      * The depends says test is run only if previous is ok
      */
-    public function testFactureDelete($localobject)
+    public function testFactureDelete($id)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -264,11 +264,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localobject=new Facture($this->savdb);
-    	$result=$localobject->fetch($localobject->id);
-		$result=$localobject->delete($localobject->id);
+    	$result=$localobject->fetch($id);
+		$result=$localobject->delete($id);
 
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertEquals($result, 1);
+		print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertLessThan(0, $result);
     	return $result;
     }
 
