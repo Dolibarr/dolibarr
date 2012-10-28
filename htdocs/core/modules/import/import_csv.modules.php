@@ -542,22 +542,10 @@ class ImportCsv extends ModeleImports
 						// Define $listfields and $listvalues to build SQL request
 						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
 						$listfields.=$fieldname;
-/*
-field type detection was made before conversions so it can be wrong
-						if ($arrayrecord[($key-1)]['type'] < 0)      $listvalues.=($newval=='0'?$newval:"null");
-						elseif ($arrayrecord[($key-1)]['type'] == 0) $listvalues.="''";
-						elseif ($arrayrecord[($key-1)]['type'] > 0)	 $listvalues.="'".$this->db->escape($newval)."'";
-*/
-/*
-lines below replace lines above and are much simple
-*/
-						if (!isset($newval)) $listvalues.="null";
-						elseif (empty($newval)) $listvalues.="''";
-						else $listvalues.="'".$this->db->escape($newval)."'";
-/*
-end of replace
-*/
 
+						if (empty($newval) && $arrayrecord[($key-1)]['type'] < 0)       $listvalues.=($newval=='0'?$newval:"null");
+						elseif (empty($newval) && $arrayrecord[($key-1)]['type'] == 0) $listvalues.="''";
+						else															 $listvalues.="'".$this->db->escape($newval)."'";
 					}
 					$i++;
 				}
@@ -606,7 +594,7 @@ end of replace
 						{
 							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key, entity';
 							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
-							$sql.=') VALUES('.$listvalues.", '".$importid."', ".$conf->entity ;						
+							$sql.=') VALUES('.$listvalues.", '".$importid."', ".$conf->entity ;
 						}
 						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
 						$sql.=')';
@@ -661,7 +649,7 @@ function cleansep($value)
 
 /**
  * Returns if a table contains entity column
- * 
+ *
  * @param  string 	$table	Table name
  * @return int				1 if table contains entity, 0 if not and -1 if error
  */
