@@ -93,7 +93,6 @@
 				--log-junit ${basedir}/hudson/logs/junit.xml
 				--coverage-clover ${basedir}/hudson/coverage/clover.xml
   				--coverage-html ${basedir}/hudson/coverage/
-  				-d max_execution_time=300
   				test/phpunit/AllTests.php
   				"/>
   </exec>
