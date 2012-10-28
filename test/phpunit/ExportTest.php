@@ -170,11 +170,12 @@ class ExportTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
+    /*
     public function testExportFilteredExport()
     {
     	global $conf,$user,$langs,$db;
 
-    	//$sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+    	$sql = "SELECT f.facnumber as f_facnumber, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
     	$objexport=new Export($db);
     	//$objexport->load_arrays($user,$datatoexport);
@@ -194,26 +195,26 @@ class ExportTest extends PHPUnit_Framework_TestCase
     	$model='csv';
 
     	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered);
+    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
 
     	$model='tsv';
 
     	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered);
+    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
 
     	$model='excel';
 
     	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered);
+    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
 
     	return true;
-    }
+    }*/
 
     /**
      * Test export function
