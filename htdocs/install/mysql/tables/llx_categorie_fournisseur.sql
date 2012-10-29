@@ -2,6 +2,7 @@
 -- Copyright (C) 2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2012 Laurent Destailleur	<eldy@users.sourceforge.net>
 -- Copyright (C) 2012 Regis Houssin			<regis@dolibarr.fr>
+-- Copyright (C) 2012 Juanjo Menent			<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,5 +22,6 @@
 create table llx_categorie_fournisseur
 (
   fk_categorie  integer NOT NULL,
-  fk_societe    integer NOT NULL
+  fk_societe    integer NOT NULL,
+  import_key    varchar(14)
 )ENGINE=innodb;

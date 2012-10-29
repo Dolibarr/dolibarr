@@ -64,7 +64,7 @@ if ($action == 'add')
     		// Type et taille non encore pris en compte => varchar(255)
     		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0));
+                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0));
     			if ($result > 0)
     			{
     				header("Location: ".$_SERVER["PHP_SELF"]);
@@ -119,7 +119,7 @@ if ($action == 'update')
 	    {
             if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0));
+    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0));
     			if ($result > 0)
     			{
     				header("Location: ".$_SERVER["PHP_SELF"]);

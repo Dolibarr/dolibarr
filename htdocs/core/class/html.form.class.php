@@ -654,7 +654,7 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options
+     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      * 	@return	string					HTML string with
      */
     function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
@@ -2315,8 +2315,8 @@ class Form
                 $autoOpen=false;
                 $dialogconfirm.='-'.$button;
             }
-            $pageyes=$page.'&action='.$action.'&confirm=yes';
-            $pageno=($useajax == 2?$page.'&confirm=no':'');
+            $pageyes=$page.(preg_match('/\?/',$page)?'&':'?').'action='.$action.'&confirm=yes';
+            $pageno=($useajax == 2 ? $page.(preg_match('/\?/',$page)?'&':'?').'confirm=no':'');
             // Add input fields into list of fields to read during submit (inputok and inputko)
             if (is_array($formquestion))
             {
@@ -2823,17 +2823,17 @@ class Form
     }
 
     /**
-     *    Output html select to select thirdparty
+     *  Output html select to select thirdparty
      *
-     *    @param	string	$page       Page
-     *    @param    string	$selected   Id preselected
-     *    @param    string	$htmlname	Name of HTML select
+     *  @param	string	$page       	Page
+     *  @param  string	$selected   	Id preselected
+     *  @param  string	$htmlname		Name of HTML select
      *  @param  string	$filter         Optionnal filters criteras
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     *  @param	array	$event			Event options
-     *    @return	void
+     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @return	void
      */
     function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
     {

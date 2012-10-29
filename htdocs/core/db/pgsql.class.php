@@ -1221,6 +1221,9 @@ class DoliDBPgsql
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
 		if ($field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') $sql.="(".$field_desc['value'].")";
 
+		// FIXME May not work with pgsql. May need to run a second request. If it works, just remove the FIXME tag
+		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
+		
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		return -1;

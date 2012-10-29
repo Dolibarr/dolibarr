@@ -576,7 +576,7 @@ class FormFile
      *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this
      * 	@param	 Object	$object				Object on which document is linked to
      * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper
-     * 	@param	 string	$param				Parameters on sort links
+     * 	@param	 string	$param				Parameters on sort links (param must start with &, example &aaa=bbb&ccc=ddd)
      * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file
      * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided)
      * 	@param	 int	$permtodelete		Permission to delete
@@ -678,9 +678,10 @@ class FormFile
 						print '</td>';
 					}
 					// Delete or view link
+					// ($param must start with &)
 					print '<td align="right">';
-					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
+					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).$param.'">'.img_delete().'</a>';
 					else print '&nbsp;';
 					print "</td>";
 					print "</tr>\n";
@@ -788,7 +789,7 @@ class FormFile
         $var=true;
         foreach($filearray as $key => $file)
         {
-            if (!is_dir($file['name'])
+        	if (!is_dir($file['name'])
             && $file['name'] != '.'
             && $file['name'] != '..'
             && $file['name'] != 'CVS'
@@ -820,10 +821,10 @@ class FormFile
                 }
                 else
                 {
-                    //print 'Fetch '.$idorref.'<br>';
+                    //print 'Fetch '.$id." - ".$ref.'<br>';
                     $result=$object_instance->fetch($id,$ref);
                     if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
-                    if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; }
+                    if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
 
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
@@ -855,6 +856,7 @@ class FormFile
                 print "</td></tr>\n";
             }
         }
+
         if (count($filearray) == 0)
         {
             print '<tr '.$bc[$var].'><td colspan="4">';

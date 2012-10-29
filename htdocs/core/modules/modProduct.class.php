@@ -223,6 +223,7 @@ class modProduct extends DolibarrModules
 					'sp.remise_percent'=>'0'
 			);
 		}
+
 	}
 
 

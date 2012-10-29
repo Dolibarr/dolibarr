@@ -88,7 +88,8 @@ print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td align="right">'.$langs->trans("Size").'</td>';
-print '<td align="right">'.$langs->trans("Unique").'</td>';
+print '<td align="center">'.$langs->trans("Unique").'</td>';
+print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -101,7 +102,8 @@ foreach($extrafields->attribute_type as $key => $value)
     print "<td>".$key."</td>\n";
     print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
     print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-    print '<td align="right">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
     print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
     print "</tr>";

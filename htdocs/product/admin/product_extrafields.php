@@ -101,7 +101,8 @@ print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td align="right">'.$langs->trans("Size").'</td>';
-print '<td align="right">'.$langs->trans("Unique").'</td>';
+print '<td align="center">'.$langs->trans("Unique").'</td>';
+print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -114,7 +115,8 @@ foreach($extrafields->attribute_type as $key => $value)
     print "<td>".$key."</td>\n";
     print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
     print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-    print '<td align="right">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
+    print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
     print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
     print "</tr>";
@@ -159,42 +161,7 @@ if ($action == 'edit' && ! empty($attrname))
     print "<br>";
     print_titre($langs->trans("FieldEdition", $attrname));
 
-    /*
-     * formulaire d'edition
-     */
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?attrname='.$attrname.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="attrname" value="'.$attrname.'">';
-    print '<input type="hidden" name="action" value="update">';
-    print '<table summary="listofattributes" class="border" width="100%">';
-
-    // Label
-    print '<tr>';
-    print '<td class="fieldrequired" required>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.$extrafields->attribute_label[$attrname].'"></td>';
-    print '</tr>';
-    // Code
-    print '<tr>';
-    print '<td class="fieldrequired" required>'.$langs->trans("AttributeCode").'</td>';
-    print '<td class="valeur">'.$attrname.'&nbsp;</td>';
-    print '</tr>';
-    // Type
-    $type=$extrafields->attribute_type[$attrname];
-    $size=$extrafields->attribute_size[$attrname];
-    print '<tr><td class="fieldrequired" required>'.$langs->trans("Type").'</td>';
-    print '<td class="valeur">';
-    print $type2label[$type];
-    print '<input type="hidden" name="type" value="'.$type.'">';
-    print '</td></tr>';
-    // Size
-    print '<tr><td class="fieldrequired" required>'.$langs->trans("Size").'</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';
-
-    print '</table>';
-
-    print '<center><br><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-    print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
-
-    print "</form>";
-
+    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 llxFooter();
