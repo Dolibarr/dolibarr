@@ -18,7 +18,7 @@ Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, auto-entrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
-License: GPLv2+
+License: GPL-2+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
@@ -119,11 +119,15 @@ cui hai bisogno ed essere facile da usare.
 %install
 
 %if 0%{?sles_version}
+%{__rm} -rf $RPM_BUILD_ROOT
+%{__mkdir} $RPM_BUILD_ROOT
+%{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}
+%{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %else
 %{__rm} -rf $RPM_BUILD_ROOT
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %endif
 
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %{__install} -m 644 build/rpm/conf.php $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/conf.php
 %{__install} -m 644 build/rpm/httpd-dolibarr.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/apache.conf
 %{__install} -m 644 build/rpm/file_contexts.dolibarr $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/file_contexts.dolibarr
@@ -145,7 +149,7 @@ cui hai bisogno ed essere facile da usare.
 %{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}
-#desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/%{name}.desktop
+desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/%{name}.desktop
 %endif
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
 
