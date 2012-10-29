@@ -1128,9 +1128,9 @@ else
             print "</tr>\n";
 
             // Signature
-            print '<tr><td valign="top">'.$langs->trans('Signature').'</td>';
-            print '<td>'.$fuser->signature.'</td>';
-            print "</tr>\n";
+            print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td>';
+            print dol_textishtml($fuser->signature)?$fuser->signature:dol_nl2br($fuser->signature,1,true);
+            print "</td></tr>\n";
 
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
