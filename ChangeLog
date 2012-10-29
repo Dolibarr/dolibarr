@@ -55,6 +55,7 @@ For users:
 - New: [ task #104 ] Can create an invoice from several orders
 - New: Update libs/tools/logo for DoliWamp (now use PHP 5.3).
 - New: Added ODT Template tag {object_total_discount}
+- New: Add new import options: Third parties bank details, warehouses and stocks, categories and suppliers prices
 
 New experimental modules:
 - New: Add margin management module.
