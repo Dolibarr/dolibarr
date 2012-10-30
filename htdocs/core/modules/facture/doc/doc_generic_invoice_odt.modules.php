@@ -157,8 +157,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
             'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
             'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
-            'line_date_start'=>$line->date_start,
-            'line_date_end'=>$line->date_end
+            'line_date_start'=>dol_print_date($line->date_start, 'day', false, $outputlangs),
+            'line_date_end'=>dol_print_date($line->date_end, 'day', false, $outputlangs),
         );
     }
 
