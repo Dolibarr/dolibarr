@@ -249,7 +249,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						$pdf->SetTextColor(0,0,0);
 
 						$pdf->setTopMargin($tab_top_newpage);
-						$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, $heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 						$pageposbefore=$pdf->getPage();
 
 						// Description of product line
@@ -595,6 +595,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   	@param	PDF			&$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
