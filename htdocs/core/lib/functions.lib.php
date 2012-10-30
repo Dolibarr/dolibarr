@@ -3333,6 +3333,28 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
+ *  Concat 2 descriptions (second one after first one)
+ *  text1 html + text2 html => text1 + '<br>' + text2
+ *  text1 html + text2 txt  => text1 + '<br>' + dol_nl2br(text2)
+ *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2
+ *  text1 txt  + text2 txt  => text1 + '\n' + text2
+ *
+ *  @param	string	$text1		Text 1
+ *  @param	string	$text2		Text 2
+ *  @param  string	$forxml     false=Use <br>, true=Use <br />
+ *  @return	string				Text 1 + new line + Text2
+ *  @see    dol_textishtml
+ */
+function dol_concatdesc($text1,$text2,$forxml=false)
+{
+	$ret='';
+	$ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
+	$ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
+	$ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
+	return $ret;
+}
+
+/**
  *  Make substition into a string
  *  There is two type of substitions:
  * 	- From $substitutionarray (oldval=>newval)

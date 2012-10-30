@@ -25,10 +25,10 @@
  *	\ingroup    ficheinter
  *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
  */
-require_once(DOL_DOCUMENT_ROOT."/core/modules/fichinter/modules_fichinter.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -84,25 +84,29 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // By default, if not defined
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if not defined
 
-		// Defini position des colonnes
+		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		object	$object				Object to generate
+     *  @param		int		$object				Id of object to generate
      *  @param		object	$outputlangs		Lang output object
-     *  @return	    int							1=ok, 0=ko
+     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int		$hidedetails		Do not show line details
+     *  @param		int		$hidedesc			Do not show desc
+     *  @param		int		$hideref			Do not show ref
+     *  @param		object	$hookmanager		Hookmanager object
+     *  @return     int             			1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$langs,$conf,$mysoc;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -112,6 +116,8 @@ class pdf_soleil extends ModelePDFFicheinter
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("interventions");
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if ($conf->ficheinter->dir_output)
 		{
@@ -134,6 +140,9 @@ class pdf_soleil extends ModelePDFFicheinter
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -157,34 +166,30 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("InterventionCard"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-				$pdf->SetAutoPageBreak(1,0);
 
 				// New page
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetTextColor(0,0,0);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
-				$tab_top = 100;
-				$tab_top_middlepage = 50;
-				$tab_top_newpage = 50;
-				$tab_height = 120;
+				$tab_top = 90;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_height = 130;
 				$tab_height_newpage = 150;
-				$tab_height_middlepage = 200;
-				$tab_height_endpage = 170;
 
 				// Affiche notes
 				if (! empty($object->note_public))
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
@@ -240,81 +245,64 @@ class pdf_soleil extends ModelePDFFicheinter
 					if ($valide > 0 || $object->specimen)
 					{
 						$curY = $nexY;
+						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+						$pdf->SetTextColor(0,0,0);
 
-						$pdf->SetFont('','B', $default_font_size - 1);
-						$pdf->SetXY($this->marge_gauche, $curY);
-						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
+						$pdf->setTopMargin($tab_top_newpage);
+						$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+						$pageposbefore=$pdf->getPage();
 
-						$curYold=$nexYold=$nexY;
-						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
-						$curY = $pdf->GetY();
-						$nexY+=3;
+						// Description of product line
+						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output).'</strong>';
+						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
-                        $pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
 
-						$pdf->SetXY($this->marge_gauche, $nexY);
-						$desc = dol_htmlentitiesbr($objectligne->desc,1);
+						$nexY = $pdf->GetY();
+						$pageposafter=$pdf->getPage();
+						$pdf->setPage($pageposbefore);
+						$pdf->setTopMargin($this->marge_haute);
+						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-						$curYold = $pdf->GetY();
-						$nexYold = $curYold;
-
-						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $desc, 0, 1, 0);
-
-						$stringheight=$pdf->getStringHeight('A', $txt);
-						$curY = $pdf->GetY();
-
-						$nexY+=(dol_nboflines_bis($objectligne->desc,0,$outputlangs->charset_output)*$stringheight);
-                        //print $curYold."-".$nexYold." +".dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)."*".$stringheight."= ".$curY."-".$nexY."<br>";
-
-						$nexY+=2;    // Passe espace entre les lignes
-
-						// Cherche nombre de lignes a venir pour savoir si place suffisante
-						if ($i < ($nblines - 1) && empty($hidedesc))	// If it's not last line
-						{
-							//on recupere la description du produit suivant
-							$follow_descproduitservice = $objectligne->desc;
-							//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-							$nblineFollowDesc = (dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*3);
-						}
-						else	// If it's last line
-						{
-							$nblineFollowDesc = 0;
+						// We suppose that a too long description is moved completely on next page
+						if ($pageposafter > $pageposbefore) {
+							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						// Test if a new page is required
-						if ($pagenb == 1)
+						$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
+
+						// Detect if some page were added automatically and output _tableau for past pages
+						while ($pagenb < $pageposafter)
 						{
-							$tab_top_in_current_page=$tab_top;
-							$tab_height_in_current_page=$tab_height;
-						}
-						else
-						{
-							$tab_top_in_current_page=$tab_top_newpage;
-							$tab_height_in_current_page=$tab_height_middlepage;
-						}
-						if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblines - 1))
-						{
+							$pdf->setPage($pagenb);
 							if ($pagenb == 1)
 							{
-								$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 							}
 							else
 							{
-								$this->_tableau($pdf, $tab_top_newpage, $tab_height_middlepage, $nexY, $outputlangs);
+								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 							}
-
-							$this->_pagefoot($pdf,$object,$outputlangs);
-
+							$this->_pagefoot($pdf,$object,$outputlangs,1);
+							$pagenb++;
+							$pdf->setPage($pagenb);
+							$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						}
+						if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
+						{
+							if ($pagenb == 1)
+							{
+								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+							}
+							else
+							{
+								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+							}
+							$this->_pagefoot($pdf,$object,$outputlangs,1);
 							// New page
 							$pdf->AddPage();
-				            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+							if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 							$pagenb++;
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
-							$pdf->SetFont('','', $default_font_size - 1);
-							$pdf->MultiCell(0, 3, '');		// Set interline to 3
-							$pdf->SetTextColor(0,0,0);
-
-							$nexY = $tab_top_newpage + 7;
 						}
 					}
 				}
@@ -322,16 +310,14 @@ class pdf_soleil extends ModelePDFFicheinter
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
-
-				$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
@@ -367,11 +353,18 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf;
+
+		// Force to disable hidetop and hidebottom
+		$hidebottom=0;
+		if ($hidetop) $hidetop=-1;
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 /*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
@@ -398,21 +391,24 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 */
-		$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
-		$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
-		$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
-		$pdf->SetXY(20,230);
-		$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+		// Output Rect
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
-		$pdf->SetXY(20,235);
-		$pdf->MultiCell(80,30, '', 1);
+		if (empty($hidebottom))
+		{
+			$pdf->SetXY(20,230);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
 
-		$pdf->SetXY(110,230);
-		$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+			$pdf->SetXY(20,235);
+			$pdf->MultiCell(80,25, '', 1);
 
-		$pdf->SetXY(110,235);
-		$pdf->MultiCell(80,30, '', 1);
+			$pdf->SetXY(110,230);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+
+			$pdf->SetXY(110,235);
+			$pdf->MultiCell(80,25, '', 1);
+		}
 	}
 
 	/**
@@ -556,7 +552,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
@@ -565,29 +561,31 @@ class pdf_soleil extends ModelePDFFicheinter
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');
 
 			// Show recipient
+			$widthrecbox=100;
+			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
 			$posy=42;
-			$posx=$this->page_largeur-$this->marge_droite-100;
+			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posx,$posy-5);
-			$pdf->Rect($posx, $posy, 100, $hautcadre);
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 			$pdf->SetTextColor(0,0,0);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(100,4, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, 'L');
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
-			$pdf->MultiCell(100,4, $carac_client, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 	}
 
@@ -599,9 +597,9 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @return	void
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs)
+	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FICHINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+		return pdf_pagefoot($pdf,$outputlangs,'FICHINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 	}
 
 }
