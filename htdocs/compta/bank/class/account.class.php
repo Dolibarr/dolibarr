@@ -975,18 +975,19 @@ class Account extends CommonObject
     }
 
     /**
-     * 	Return if a bank account is defined with detailed information (bank code, desk code, number and key)
+     * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
+     * More information on codes used by countries on page http://en.wikipedia.org/wiki/Bank_code
      *
-     * 	@return		int        0=Use only an account number
+     * @return		int        0=Use only an account number
      *                         1=Need Bank, Desk, Number and Key (France, Spain, ...)
-     *                         2=Neek Bank only (BSB for Australia)
+     *                         2=Neek Bank only (Sort code for Great Britain, BSB for Australia)
      */
     function useDetailedBBAN()
     {
         $country_code=$this->getCountryCode();
 
         if (in_array($country_code,array('FR','ES','GA'))) return 1; // France, Spain, Gabon
-        if (in_array($country_code,array('AU'))) return 2;           // Australia
+        if (in_array($country_code,array('AU','GB'))) return 2;      // Australia, Great Britain
         return 0;
     }
 
