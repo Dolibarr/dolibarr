@@ -151,7 +151,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			{
                 $pdf=pdf_getInstance($this->format);
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
-                $heightforfooter = 50;	// Height reserved to output the footer (value include bottom margin)
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -251,7 +251,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
@@ -425,7 +425,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				return 1;   // Pas d'erreur
+				return 1;
 			}
 			else
 			{
