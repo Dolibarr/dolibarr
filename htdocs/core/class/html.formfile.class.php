@@ -789,7 +789,7 @@ class FormFile
         $var=true;
         foreach($filearray as $key => $file)
         {
-            if (!is_dir($file['name'])
+        	if (!is_dir($file['name'])
             && $file['name'] != '.'
             && $file['name'] != '..'
             && $file['name'] != 'CVS'
@@ -821,10 +821,10 @@ class FormFile
                 }
                 else
                 {
-                    //print 'Fetch '.$idorref.'<br>';
+                    //print 'Fetch '.$id." - ".$ref.'<br>';
                     $result=$object_instance->fetch($id,$ref);
                     if ($result > 0)  { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]=dol_clone($object_instance); }    // Save object into a cache
-                    if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; }
+                    if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
                 }
 
                 if (! $found > 0 || ! is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) continue;    // We do not show orphelins files
@@ -856,6 +856,7 @@ class FormFile
                 print "</td></tr>\n";
             }
         }
+
         if (count($filearray) == 0)
         {
             print '<tr '.$bc[$var].'><td colspan="4">';

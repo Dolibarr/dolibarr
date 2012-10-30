@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
 
@@ -92,7 +93,8 @@ $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_sel
 $array_filtered=isset($_SESSION["export_filtered_fields"])?$_SESSION["export_filtered_fields"]:array();
 $array_filtervalue=isset($_SESSION["export_FilterValue_fields"])?$_SESSION["export_FilterValue_fields"]:array();
 $datatoexport=GETPOST("datatoexport");
-$action=GETPOST("action");
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 $step=GETPOST("step")?GETPOST("step"):1;
 $export_name=GETPOST("export_name");
 $hexa=GETPOST("hexa");
@@ -107,6 +109,8 @@ $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 $sqlusedforexport='';
+
+$upload_dir = $conf->export->dir_temp.'/'.$user->id;
 
 
 /*
@@ -272,6 +276,18 @@ if ($action == 'builddoc')
     }
 }
 
+// Delete file
+if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes')
+{
+	$file = $upload_dir . "/" . GETPOST('file');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
+	header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport);
+	exit;
+}
+
 if ($action == 'deleteprof')
 {
 	if ($_GET["id"])
@@ -378,7 +394,7 @@ if ($step == 4 && $action == 'submitFormField')
 		foreach($array_filtered as $code=>$value)
 		{
 			//print $code."=".$_POST[$objexport->array_export_fields[0][$code]];
-			$objexport->array_export_FilterValue[0][$code] = $_POST[$objexport->array_export_fields[0][$code]];
+			$objexport->array_export_FilterValue[0][$code] = (isset($objexport->array_export_fields[0][$code])?$_POST[$objexport->array_export_fields[0][$code]]:'');
 		}
 		$_SESSION["export_FilterValue_fields"]=(! empty($objexport->array_export_FilterValue[0])?$objexport->array_export_FilterValue[0]:'');
 		$array_filtervalue=(! empty($objexport->array_export_FilterValue[0])?$objexport->array_export_FilterValue[0]:'');
@@ -881,8 +897,10 @@ if ($step == 4 && $datatoexport)
     	$list='';
     	foreach($array_filtered as $code=>$value)
     	{
-    		$list.=($list?', ':'');
-    		$list.="[".$langs->trans($objexport->array_export_fields[0][$code])."]='".$array_filtervalue[$code]."'";
+    		if (isset($objexport->array_export_fields[0][$code])) {
+    			$list.=($list?', ':'');
+    			$list.="[".$langs->trans($objexport->array_export_fields[0][$code])."]='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
+    		}
     	}
     	print '<td>'.$list.'</td></tr>';
     }
@@ -1065,6 +1083,15 @@ if ($step == 5 && $datatoexport)
 
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"));
 
+    /*
+     * Confirmation suppression fichier
+     */
+    if ($action == 'remove_file')
+    {
+    	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+    	if ($ret == 'html') print '<br>';
+    }
+
     print '<table width="100%" class="border">';
 
     // Module
@@ -1098,8 +1125,10 @@ if ($step == 5 && $datatoexport)
     	$list='';
     	foreach($array_filtered as $code=>$value)
     	{
-    		$list.=($list?', ':'');
-    		$list.="[".$langs->trans($objexport->array_export_fields[0][$code])."]='".$array_filtervalue[$code]."'";
+    		if (isset($objexport->array_export_fields[0][$code])) {
+    			$list.=($list?', ':'');
+    			$list.="[".$langs->trans($objexport->array_export_fields[0][$code])."]='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
+    		}
     	}
     	print '<td>'.$list.'</td></tr>';
     }
@@ -1153,7 +1182,7 @@ if ($step == 5 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
+    $formfile->show_documents('export','',$upload_dir,$_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),1,1);
 
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';

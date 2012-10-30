@@ -494,7 +494,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
         // Show shipping date
-        if (isset($object->type) && $object->type != 2 && $object->date_livraison)
+        if ($object->date_livraison)
 		{
             $outputlangs->load("sendings");
 			$pdf->SetFont('','B', $default_font_size - 2);
@@ -508,7 +508,7 @@ class pdf_azur extends ModelePDFPropales
 
             $posy=$pdf->GetY()+1;
 		}
-        elseif (isset($object->type) && $object->type != 2 && ($object->availability_code || $object->availability))    // Show availability conditions
+        elseif ($object->availability_code || $object->availability)    // Show availability conditions
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -525,7 +525,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if (! empty($conf->global->PROPALE_PDF_PAIEMENT_ENABLED) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -541,10 +541,10 @@ class pdf_azur extends ModelePDFPropales
 			$posy=$pdf->GetY()+3;
 		}
 
-
-		if (! empty($conf->global->PROPALE_PDF_PAIEMENT_ENABLED))
+		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTERMCOND))
 		{
 			// Check a payment mode is defined
+			/* Not required on a proposal
 			if (empty($object->mode_reglement_code)
 			&& ! $conf->global->FACTURE_CHQ_NUMBER
 			&& ! $conf->global->FACTURE_RIB_NUMBER)
@@ -557,6 +557,7 @@ class pdf_azur extends ModelePDFPropales
 
 				$posy=$pdf->GetY()+1;
 			}
+			*/
 
 			// Show payment mode
 			if ($object->mode_reglement_code

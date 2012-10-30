@@ -3196,7 +3196,7 @@ class FactureLigne
             $this->rowid				= $objp->rowid;
             $this->fk_facture			= $objp->fk_facture;
             $this->fk_parent_line		= $objp->fk_parent_line;
-            $this->label				= $objp->label;
+            $this->label				= $objp->custom_label;
             $this->desc					= $objp->description;
             $this->qty					= $objp->qty;
             $this->subprice				= $objp->subprice;
