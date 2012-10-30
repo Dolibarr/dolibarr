@@ -2163,7 +2163,7 @@ class Propal extends CommonObject
         $this->mode_reglement_id   = 7;
         $this->mode_reglement_code = 'CHQ';
         $this->availability_id     = 1;
-        $this->availability_code   = 'DSP';
+        $this->availability_code   = 'AV_NOW';
         $this->demand_reason_id    = 1;
         $this->demand_reason_code  = 'SRC_00';
         $this->note_public='This is a comment (public)';
