@@ -68,8 +68,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxqtyordered=120;
-		$this->posxqtytoship=160;
+		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 70;
+		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 35;
 	}
 
 	/**
@@ -255,11 +255,11 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
-					$pdf->SetXY($this->posxqtyordered+5, $curY);
-					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked,'','C');
+					$pdf->SetXY($this->posxqtyordered, $curY);
+					$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked,'','C');
 
-					$pdf->SetXY($this->posxqtytoship+5, $curY);
-					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped,'','C');
+					$pdf->SetXY($this->posxqtytoship, $curY);
+					$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
 
 					$nexY+=2;    // Passe espace entre les lignes
 
@@ -374,21 +374,21 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Description"), '', 'L');
+			$pdf->MultiCell($this->posxqtyordered - $this->posxdesc, 2, $outputlangs->transnoentities("Description"), '', 'L');
 		}
 
 		$pdf->line($this->posxqtyordered-1, $tab_top, $this->posxqtyordered-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxqtyordered-1, $tab_top+1);
-			$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyOrdered"),'','C');
+			$pdf->SetXY($this->posxqtyordered, $tab_top+1);
+			$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 2, $outputlangs->transnoentities("QtyOrdered"),'','C');
 		}
 
 		$pdf->line($this->posxqtytoship-1, $tab_top, $this->posxqtytoship-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxqtytoship-1, $tab_top+1);
-			$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyToShip"),'','C');
+			$pdf->SetXY($this->posxqtytoship, $tab_top+1);
+			$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
 		}
 	}
 
