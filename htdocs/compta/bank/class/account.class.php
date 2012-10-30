@@ -978,16 +978,16 @@ class Account extends CommonObject
      * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
      * More information on codes used by countries on page http://en.wikipedia.org/wiki/Bank_code
      *
-     * @return		int        0=Use only an account number
-     *                         1=Need Bank, Desk, Number and Key (France, Spain, ...)
-     *                         2=Neek Bank only (Sort code for Great Britain, BSB for Australia)
+     * @return		int        0=No bank code need + Account number is enough
+     *                         1=Need 2 fields for bank code: Bank, Desk (France, Spain, ...) + Account number and key
+     *                         2=Neek 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
      */
     function useDetailedBBAN()
     {
         $country_code=$this->getCountryCode();
 
-        if (in_array($country_code,array('FR','ES','GA'))) return 1; // France, Spain, Gabon
-        if (in_array($country_code,array('AU','GB'))) return 2;      // Australia, Great Britain
+        if (in_array($country_code,array('CH','DE','FR','ES','GA','IT'))) return 1; // France, Spain, Gabon
+        if (in_array($country_code,array('AU','BE','CA','DK','GR','GB','ID','IE','IR','KR','NL','NZ','US'))) return 2;      // Australia, Great Britain...
         return 0;
     }
 
