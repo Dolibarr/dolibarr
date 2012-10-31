@@ -625,17 +625,20 @@ class FormCompany
      */
 	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $order='code', $showempty=0)
 	{
-		$lesTypes = $object->liste_type_contact($source, $order);
-		print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($showempty) print '<option value="0"></option>';
-		foreach($lesTypes as $key=>$value)
+		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			print '<option value="'.$key.'"';
-			if ($key == $selected)
-			    print ' selected';
-			print '>'.$value.'</option>';
+			$lesTypes = $object->liste_type_contact($source, $order);
+			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+			if ($showempty) print '<option value="0"></option>';
+			foreach($lesTypes as $key=>$value)
+			{
+				print '<option value="'.$key.'"';
+				if ($key == $selected)
+					print ' selected';
+				print '>'.$value.'</option>';
+			}
+			print "</select>\n";
 		}
-		print "</select>\n";
 	}
 
 	/**
