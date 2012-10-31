@@ -137,7 +137,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
  */
 function pdf_getPDFFont($outputlangs)
 {
-	$font='Helvetica'; // By default, for FPDI or ISO language on TCPDF
+	global $conf;
+
+	if (! empty($conf->global->MAIN_PDF_FORCE_FONT)) return $conf->global->MAIN_PDF_FORCE_FONT;
+
+	$font='Helvetica'; // By default, for FPDI, or ISO language on TCPDF
 	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
 	{
 		if ($outputlangs->trans('FONTFORPDF')!='FONTFORPDF')
