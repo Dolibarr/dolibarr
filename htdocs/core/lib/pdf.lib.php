@@ -678,7 +678,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->MultiCell($width, 3, $line, 0, $align, 0);
 		$posy-=$freetextheight;
 	}
-	
+
 	$pdf->SetY(-$posy);
 	$pdf->line($dims['lm'], $dims['hk']-$posy, $dims['wk']-$dims['rm'], $dims['hk']-$posy);
 	$posy--;
@@ -798,7 +798,6 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 		$labelproductservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1);
-
 		return $labelproductservice;
 	}
 }

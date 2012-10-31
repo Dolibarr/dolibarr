@@ -60,10 +60,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=10;
-		$this->marge_droite=20;
-		$this->marge_haute=10;
-		$this->marge_basse=10;
+		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
+		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
+		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
+		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
         // Recupere emmetteur
         $this->emetteur=$mysoc;
@@ -116,7 +116,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// Create PDF instance
         $pdf=pdf_getInstance($this->format);
         $heightforinfotot = 50;	// Height reserved to output the info and total part
-        $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+        $heightforfreetext= 5;	// Height reserved to output the free text on last page
+        $heightforfooter = $this->marge_basse + 10;	// Height reserved to output the footer (value include bottom margin)
         $pdf->SetAutoPageBreak(1,0);
 
         if (class_exists('TCPDF'))
