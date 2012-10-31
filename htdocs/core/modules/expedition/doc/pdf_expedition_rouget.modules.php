@@ -542,7 +542,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			// Sender properties
 			$carac_emetteur='';
 		 	// Add internal contact of proposal if defined
-			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+			$arrayidcontact=$object->$origin->getIdContact('internal','SALESREPFOLL');
 		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);
