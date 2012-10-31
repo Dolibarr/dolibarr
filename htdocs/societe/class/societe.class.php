@@ -2537,8 +2537,12 @@ class Societe extends CommonObject
         $this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now,'dayhourlog');
         $this->nom = $this->name;   // For backward compatibility
         $this->specimen=1;
+        $this->address='21 jump street';
         $this->zip='99999';
         $this->town='MyTown';
+        $this->state_id=1;
+        $this->state_code='AA';
+        $this->state='MyState';
         $this->country_id=1;
         $this->country_code='FR';
 

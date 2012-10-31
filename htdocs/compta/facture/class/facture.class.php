@@ -2879,8 +2879,8 @@ class Facture extends CommonInvoice
         $this->cond_reglement_id   = 1;
         $this->cond_reglement_code = 'RECEP';
         $this->date_lim_reglement=$this->calculate_date_lim_reglement();
-        $this->mode_reglement_id   = 7;
-        $this->mode_reglement_code = 'CHQ';
+        $this->mode_reglement_id   = 0;		// Not forced to show payment mode CHQ + VIR
+        $this->mode_reglement_code = '';	// Not forced to show payment mode CHQ + VIR
         $this->note_public='This is a comment (public)';
         $this->note_private='This is a comment (private)';
         $this->note='This is a comment (private)';

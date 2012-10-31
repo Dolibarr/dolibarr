@@ -696,7 +696,7 @@ function dol_format_address($object)
 		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$object->departement;
+			$ret.=", ".$object->state;
 		}
 		if ($object->zip) $ret .= ', '.$object->zip;
 	}
@@ -705,7 +705,7 @@ function dol_format_address($object)
 		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
-			$ret.=", ".$object->departement;
+			$ret.=", ".$object->state;
 		}
 		if ($object->zip) $ret .= ($ret ? "\n" : '' ).$object->zip;
 	}

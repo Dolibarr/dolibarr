@@ -78,16 +78,21 @@ if ($_POST["action"] == 'add')
 
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountancyCode")).'</div>';
+        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
         $action='create';       // Force chargement page en mode creation
         $error++;
     }
-
-    if (empty($account->label))
+    if (empty($account->ref))
     {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
+        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
         $action='create';       // Force chargement page en mode creation
         $error++;
+    }
+    if (empty($account->label))
+    {
+    	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
+    	$action='create';       // Force chargement page en mode creation
+    	$error++;
     }
 
     if (! $error)
@@ -98,7 +103,7 @@ if ($_POST["action"] == 'add')
             $_GET["id"]=$id;            // Force chargement page en mode visu
         }
         else {
-            $message='<div class="error">'.$account->error.'</div>';
+            setEventMessage($account->error,'errors');
             $action='create';   // Force chargement page en mode creation
         }
     }
@@ -144,16 +149,21 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
     if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($account->account_number))
     {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountancyCode")).'</div>';
+        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), 'error');
         $action='edit';       // Force chargement page en mode creation
         $error++;
     }
-
-    if (empty($account->label))
+    if (empty($account->ref))
     {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
+        setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), 'errors');
         $action='edit';       // Force chargement page en mode creation
         $error++;
+    }
+    if (empty($account->label))
+    {
+    	setEventMessage($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("LabelBankCashAccount")), 'errors');
+    	$action='edit';       // Force chargement page en mode creation
+    	$error++;
     }
 
     if (! $error)
@@ -256,7 +266,7 @@ if ($action == 'create')
     print '</td></tr>';
 
 	// Country
-	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Country").'</td>';
+	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
 	print '<td colspan="3">';
 	$selectedcode='';
 	if (isset($_POST["account_country_id"]))
@@ -396,7 +406,7 @@ else
 		print '<td colspan="3">'.$account->getLibStatut(4).'</td></tr>';
 
 		// Country
-		print '<tr><td>'.$langs->trans("Country").'</td><td>';
+		print '<tr><td>'.$langs->trans("BankAccountCountry").'</td><td>';
 		if ($account->fk_pays > 0)
 		{
 			$img=picto_from_langcode($account->country_code);
