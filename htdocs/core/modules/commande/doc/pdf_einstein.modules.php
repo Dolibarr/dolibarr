@@ -489,7 +489,9 @@ class pdf_einstein extends ModelePDFCommandes
 			$posy=$pdf->GetY()+4;
 		}
 
-        // Show payments conditions
+		$posxval=52;
+
+		// Show payments conditions
 		if ($object->cond_reglement_code || $object->cond_reglement)
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
@@ -498,7 +500,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY(52, $posy);
+			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
@@ -515,7 +517,7 @@ class pdf_einstein extends ModelePDFCommandes
             $pdf->SetXY($this->marge_gauche, $posy);
             $pdf->SetTextColor(200,0,0);
             $pdf->SetFont('','B', $default_font_size - 2);
-            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+            $pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
             $pdf->SetTextColor(0,0,0);
 
             $posy=$pdf->GetY()+1;
@@ -533,7 +535,7 @@ class pdf_einstein extends ModelePDFCommandes
 	            $pdf->MultiCell(80, 5, $titre, 0, 'L');
 
 				$pdf->SetFont('','', $default_font_size - 2);
-	            $pdf->SetXY(50, $posy);
+	            $pdf->SetXY($posxval, $posy);
 	            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 	            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
 
