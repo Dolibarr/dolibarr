@@ -389,6 +389,35 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * testDolFormatAddress
+     *
+     * @return	void
+     */
+    public function testDolFormatAddress()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$object=new Societe($db);
+		$object->initAsSpecimen();
+
+		$object->country_code='FR';
+    	$address=dol_format_address($object);
+    	$this->assertEquals("21 jump street\n99999 MyTown",$address);
+
+		$object->country_code='GB';
+    	$address=dol_format_address($object);
+    	$this->assertEquals("21 jump street\nMyTown, MyState\n99999",$address);
+
+		$object->country_code='US';
+    	$address=dol_format_address($object);
+    	$this->assertEquals("21 jump street\nMyTown, MyState, 99999",$address);
+    }
+
+    /**
      * testImgPicto
      *
      * @return	void
