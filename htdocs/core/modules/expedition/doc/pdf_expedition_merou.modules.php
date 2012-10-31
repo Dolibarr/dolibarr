@@ -56,10 +56,10 @@ class pdf_expedition_merou extends ModelePdfExpedition
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = round($formatarray['height']/2);
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=10;
-		$this->marge_droite=10;
-		$this->marge_haute=10;
-		$this->marge_basse=10;
+		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
+		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
+		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
+		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
 		$this->option_logo = 1;
 
@@ -148,7 +148,8 @@ class pdf_expedition_merou extends ModelePdfExpedition
 
 				$pdf=pdf_getInstance($this->format,'mm','l');
 				$heightforinfotot = 0;	// Height reserved to output the info and total part
-				$heightforfooter = 28;	// Height reserved to output the footer (value include bottom margin)
+                $heightforfreetext= 5;	// Height reserved to output the free text on last page
+	            $heightforfooter = $this->marge_basse + 10;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
 			    if (class_exists('TCPDF'))
@@ -281,13 +282,13 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
 				// Pied de page

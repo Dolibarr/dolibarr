@@ -77,10 +77,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=10;
-		$this->marge_droite=10;
-		$this->marge_haute=10;
-		$this->marge_basse=10;
+		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
+		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
+		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
+		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
@@ -185,7 +185,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
                 $pdf=pdf_getInstance($this->format);
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
-                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $heightforfreetext= 5;	// Height reserved to output the free text on last page
+	            $heightforfooter = $this->marge_basse + 10;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -271,7 +272,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
@@ -376,13 +377,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
 				// Affiche zone totaux
@@ -738,14 +739,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$tab3_top = $posy + 8;
 		$tab3_width = 80;
 		$tab3_height = 4;
+		if ($this->page_largeur < 210) // To work with US executive format
+		{
+			$tab3_posx -= 20;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY($tab3_posx, $tab3_top - 5);
-		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
+		$pdf->SetFont('','', $default_font_size - 3);
+		$pdf->SetXY($tab3_posx, $tab3_top - 4);
+		$pdf->MultiCell(60, 3, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
-		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
+		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width, $tab3_top);
 
 		$pdf->SetFont('','', $default_font_size - 4);
 		$pdf->SetXY($tab3_posx, $tab3_top);
@@ -756,6 +761,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
 		$pdf->SetXY($tab3_posx+58, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
 		$y=0;
 
