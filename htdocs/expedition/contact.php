@@ -46,6 +46,7 @@ $object = new Expedition($db);
 if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
 
     if (!empty($object->origin))
     {
@@ -151,14 +152,9 @@ if ($id > 0 || ! empty($ref))
 {
 	$langs->trans("OrderCard");
 
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
-
 	$head = shipping_prepare_head($object);
 	dol_fiche_head($head, 'contact', $langs->trans("Sending"), 0, 'sending');
 
-	if (is_null($object->client))	$object->fetch_thirdparty();
 
    /*
 	*   Facture synthese pour rappel
@@ -174,7 +170,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Customer
 	print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-	print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td>';
 	print "</tr>";
 
 	// Linked documents
@@ -211,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 	print $objectsrc->ref_client;
 	print '</td>';
 	print '</tr>';
-	
+
 	// Delivery address
 	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
 	{
@@ -219,11 +215,11 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryAddress');
 		print '</td>';
-	
+
 		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-	
+
 		if ($action == 'editdelivery_address')
 		{
 			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','shipping',$object->id);
@@ -276,8 +272,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 
 		print '<td colspan="1">';
-		//$userAlreadySelected = $object->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
-		$form->select_users($user->id,'contactid',0,$userAlreadySelected);
+		$form->select_users($user->id,'contactid');
 		print '</td>';
 		print '<td>';
 		$formcompany->selectTypeContact($objectsrc, '', 'type','internal');

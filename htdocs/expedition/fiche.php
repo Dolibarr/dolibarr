@@ -54,8 +54,9 @@ $id = $origin_id;
 $ref=GETPOST('ref','alpha');
 
 // Security check
+$socid='';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,$origin,$origin_id);
+$result=restrictedArea($user, $origin, $origin_id);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -1058,7 +1059,7 @@ else
             // Volume Total
             print '<tr><td>'.$langs->trans("Volume").'</td>';
             print '<td colspan="3">';
-            if ($object->trueVolume)
+            if (! empty($object->trueVolume)) // FIXME trueVolume not exist
             {
                 // If sending volume defined
                 print $object->trueVolume.' '.measuring_units_string($object->volumeUnit,"volume");
@@ -1153,7 +1154,7 @@ else
             }
             print '<td>'.$langs->trans("Products").'</td>';
             print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-            if ($object->fk_statut <= 1)
+            if ($object->statut <= 1)
             {
                 print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
             }
