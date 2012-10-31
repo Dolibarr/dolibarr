@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +128,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	$product_static=new Product($db);
 	$expedition=new Expedition($db);
 
-	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked";
+	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end";
 	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line";
 	$sql.= ", e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
 	//if ($conf->livraison_bon->enabled) $sql .= " l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received,";
@@ -263,13 +264,13 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
 
 				// Informations on receipt
-				if ($conf->livraison_bon->enabled)
+				if (! empty($conf->livraison_bon->enabled))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 					$expedition->id=$objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id,$expedition->element);
 					//var_dump($expedition->linkedObjects);
-					$receiving=$expedition->linkedObjects['delivery'][0];
+					$receiving=(! empty($expedition->linkedObjects['delivery'][0])?$expedition->linkedObjects['delivery'][0]:'');
 
 					if (! empty($receiving))
 					{
