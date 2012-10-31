@@ -253,8 +253,6 @@ class pdf_crabe extends ModelePDFFactures
 
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
-                    //print $pdf->getStringHeight(200,'SPECIMEN',false,false);
-                    //print "$this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1";exit;
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;
@@ -282,7 +280,40 @@ class pdf_crabe extends ModelePDFFactures
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
+
+					$showpricebeforepagebreak=1;
+
+					$pdf->startTransaction();
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					$pageposafter=$pdf->getPage();
+					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					{
+						$pdf->rollbackTransaction(true);
+						$pageposafter=$pageposbefore;
+						//print $pageposafter.'-'.$pageposbefore;exit;
+						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+						$pageposafter=$pdf->getPage();
+						if ($pageposafter == $pageposbefore)	// There is no pagebreak after second try with small margin
+						{
+							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
+								$pdf->setPage($pagenb+1);
+							}
+						}
+						else
+						{
+							// We found a page break
+							$showpricebeforepagebreak=0;
+						}
+					}
+					else	// No pagebreak
+					{
+						$pdf->commitTransaction();
+					}
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -291,7 +322,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
-					if ($pageposafter > $pageposbefore) {
+					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
@@ -467,14 +498,18 @@ class pdf_crabe extends ModelePDFFactures
 		$tab3_top = $posy + 8;
 		$tab3_width = 80;
 		$tab3_height = 4;
+		if ($this->page_largeur < 210) // To work with US executive format
+		{
+			$tab3_posx -= 20;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY($tab3_posx, $tab3_top - 5);
-		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
+		$pdf->SetFont('','', $default_font_size - 3);
+		$pdf->SetXY($tab3_posx, $tab3_top - 4);
+		$pdf->MultiCell(60, 3, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
-		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
+		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width, $tab3_top);
 
 		$pdf->SetFont('','', $default_font_size - 4);
 		$pdf->SetXY($tab3_posx, $tab3_top);
@@ -485,6 +520,8 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
 		$pdf->SetXY($tab3_posx+58, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
 		$y=0;
 
