@@ -98,7 +98,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
@@ -126,13 +126,13 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @param		object	$hookmanager		Hookmanager object
+     *  @param		Object		$object				Object to generate
+     *  @param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
      *  @return     int             			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
@@ -184,8 +184,9 @@ class pdf_einstein extends ModelePDFCommandes
 			{
 				$nblignes = count($object->lines);
 
-                $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 50;	// Height reserved to output the info and total part (value include bottom margin)
+				// Create pdf instance
+				$pdf=pdf_getInstance($this->format);
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
                 $heightforfreetext= 5;	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 10;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
@@ -279,7 +280,40 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
+				
+					$showpricebeforepagebreak=1;
+
+					$pdf->startTransaction();
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					$pageposafter=$pdf->getPage();
+					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					{
+						$pdf->rollbackTransaction(true);
+						$pageposafter=$pageposbefore;
+						//print $pageposafter.'-'.$pageposbefore;exit;
+						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+						$pageposafter=$pdf->getPage();
+						if ($pageposafter == $pageposbefore)	// There is no pagebreak after second try with small margin
+						{
+							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
+								$pdf->setPage($pagenb+1);
+							}
+						}
+						else
+						{
+							// We found a page break
+							$showpricebeforepagebreak=0;
+						}
+					}
+					else	// No pagebreak
+					{
+						$pdf->commitTransaction();
+					}
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -288,7 +322,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
-					if ($pageposafter > $pageposbefore) {
+					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
@@ -820,7 +854,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */

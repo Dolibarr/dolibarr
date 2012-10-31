@@ -97,7 +97,7 @@ class pdf_azur extends ModelePDFPropales
 
 		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
@@ -235,10 +235,8 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_middlepage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
-				$tab_height_middlepage = 200;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -284,7 +282,7 @@ class pdf_azur extends ModelePDFPropales
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -333,31 +331,31 @@ class pdf_azur extends ModelePDFPropales
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, $vat_rate, 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
 					}
 
 					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, $up_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
 
 					// Discount on line
-					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
+						$pdf->SetXY($this->posxdiscount-2, $curY);
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails, $hookmanager);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, $remise_percent, 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 4, $total_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
@@ -490,7 +488,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  Show payments table
 	 *
      *  @param	PDF			&$pdf           Object PDF
-     *  @param  Object		$object         Object invoice
+     *  @param  Object		$object         Object proposal
      *  @param  int			$posy           Position y in PDF
      *  @param  Translate	$outputlangs    Object langs for output
      *  @return int             			<0 if KO, >0 if OK
@@ -561,7 +559,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -577,7 +575,7 @@ class pdf_azur extends ModelePDFPropales
 			$posy=$pdf->GetY()+3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTERMCOND))
+		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND))
 		{
 			// Check a payment mode is defined
 			/* Not required on a proposal
@@ -697,6 +695,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 		$largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
+		$useborder=0;
 		$index = 0;
 
 		// Total HT
@@ -705,7 +704,7 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -758,9 +757,9 @@ class pdf_azur extends ModelePDFPropales
 					{
 						$index++;
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code), 0, 'L', 1);
+						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->country_code), $useborder, 'L', 1);
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
 					}
 
 					// Total LocalTax2
@@ -768,9 +767,9 @@ class pdf_azur extends ModelePDFPropales
 					{
 						$index++;
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code), 0, 'L', 1);
+						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->country_code), $useborder, 'L', 1);
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
 					}
 				}
 				else
@@ -793,7 +792,7 @@ class pdf_azur extends ModelePDFPropales
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -821,7 +820,7 @@ class pdf_azur extends ModelePDFPropales
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+								$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -832,8 +831,6 @@ class pdf_azur extends ModelePDFPropales
 						}
 					}
 				}
-
-				$useborder=0;
 
 				// Total TTC
 				$index++;
@@ -889,7 +886,6 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
 
-			// Fin
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);
 		}
@@ -904,9 +900,9 @@ class pdf_azur extends ModelePDFPropales
 	 *   @param		PDF			&$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */

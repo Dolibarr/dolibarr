@@ -739,14 +739,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$tab3_top = $posy + 8;
 		$tab3_width = 80;
 		$tab3_height = 4;
+		if ($this->page_largeur < 210) // To work with US executive format
+		{
+			$tab3_posx -= 20;
+		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetFont('','', $default_font_size - 2);
-		$pdf->SetXY($tab3_posx, $tab3_top - 5);
-		$pdf->MultiCell(60, 5, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
+		$pdf->SetFont('','', $default_font_size - 3);
+		$pdf->SetXY($tab3_posx, $tab3_top - 4);
+		$pdf->MultiCell(60, 3, $outputlangs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
-		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
+		$pdf->line($tab3_posx, $tab3_top, $tab3_posx+$tab3_width, $tab3_top);
 
 		$pdf->SetFont('','', $default_font_size - 4);
 		$pdf->SetXY($tab3_posx, $tab3_top);
@@ -757,6 +761,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
 		$pdf->SetXY($tab3_posx+58, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+
+		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
 		$y=0;
 
