@@ -784,7 +784,7 @@ class Livraison extends CommonObject
 
 		// Initialise parametres
 		$this->id=0;
-		$this->ref = 'SPECIMEN_RECEIPT';
+		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
 		$this->date_delivery = $now;
