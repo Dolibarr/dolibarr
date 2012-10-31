@@ -280,7 +280,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
-				
+
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
@@ -293,8 +293,8 @@ class pdf_einstein extends ModelePDFCommandes
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
-						$pageposafter=$pdf->getPage();
-						if ($pageposafter == $pageposbefore)	// There is no pagebreak after second try with small margin
+						$posyafter=$pdf->GetY();
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
 							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
 							{
