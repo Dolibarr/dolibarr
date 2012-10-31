@@ -151,7 +151,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			{
                 $pdf=pdf_getInstance($this->format);
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
-                $heightforfooter = 50;	// Height reserved to output the footer (value include bottom margin)
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -251,7 +251,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
@@ -318,7 +318,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
-						$this->_pagefoot($pdf,$object,$outputlangs);
+						$this->_pagefoot($pdf,$object,$outputlangs,1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -333,7 +333,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
-						$this->_pagefoot($pdf,$object,$outputlangs);
+						$this->_pagefoot($pdf,$object,$outputlangs,1);
 						// New page
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -394,7 +394,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 						if ($pdf->GetY() > 250)
 						{
-							$this->_pagefoot($pdf,$object,$outputlangs);
+							$this->_pagefoot($pdf,$object,$outputlangs,1);
 
 							$pdf->AddPage('P', 'A4');
 
@@ -425,7 +425,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				return 1;   // Pas d'erreur
+				return 1;
 			}
 			else
 			{
@@ -693,11 +693,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   	@param	PDF			&$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
 	 */
-	function _pagefoot(&$pdf,$object,$outputlangs)
+	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 	}
 
 }
