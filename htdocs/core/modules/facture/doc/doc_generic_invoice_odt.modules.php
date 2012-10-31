@@ -381,7 +381,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
                 // Make substitutions into odt of user info
-				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
+				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
+				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
+				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
+
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet);
+				complete_substitutions_array($tmparray, $outputlangs, $object);
+
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
                 {
@@ -389,66 +396,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                         if (preg_match('/logo$/',$key)) // Image
                         {
                             //var_dump($value);exit;
-                            if (file_exists($value)) $odfHandler->setImage($key, $value);
-                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-                        }
-                        else    // Text
-                        {
-                            $odfHandler->setVars($key, $value, true, 'UTF-8');
-                        }
-                    }
-                    catch(OdfException $e)
-                    {
-                    }
-                }
-                // Make substitutions into odt of mysoc
-                $tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
-				//var_dump($tmparray); exit;
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							//var_dump($value);exit;
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-                // Make substitutions into odt of thirdparty
-				$tmparray=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-					}
-				}
-				// Replace tags of object + external modules
-			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
-			    complete_substitutions_array($tmparray, $outputlangs, $object);
-                foreach($tmparray as $key=>$value)
-                {
-                    try {
-                        if (preg_match('/logo$/',$key)) // Image
-                        {
                             if (file_exists($value)) $odfHandler->setImage($key, $value);
                             else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
                         }
