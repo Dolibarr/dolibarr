@@ -7,11 +7,11 @@ English Dolibarr ChangeLog
 For users:
 - New: [ task #289 ] Can reorder tasks.
 - New: Add field "signature" into thirdparty card. If filled, text is added 
-  at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
-  feature is disabled.
+       at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
+       feature is disabled.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
-  configured. Show also total number of activated modules.
+       configured. Show also total number of activated modules.
 - New: Can filter list of proposal, order or invoice on sales representative.
 - New: Add supplier ref on supplier orders.
 - New: Can export supplier orders.
@@ -25,10 +25,10 @@ For users:
 - New: Can edit and resiliate member status from list.
 - New: Can insert URL links into elements lines. Also reported into PDF.
 - New: When a member is validated, we can subscribe to mailing-lists
-  according to its type.
+       according to its type.
 - New: Add link to third party into sells and purchase journal.
 - New: Suggest a method to generate a backup file for user with no access
-  to mysqldump binary.
+       to mysqldump binary.
 - New: Can use extrafields on contacts/addresses.
 - New: Support unique field for extrafields.
 - New: Extra fields supports more types (int, string, double, date, datetime).
@@ -57,7 +57,8 @@ For users:
 - New: Added ODT Template tag {object_total_discount}
 - New: Add new import options: Third parties bank details, warehouses and stocks, categories and suppliers prices
 - New: English bank account need a bank code (called sort code) to identify an account. 
-
+- New: Add hidden option MAIN_PDF_MARGIN_LEFT, MAIN_PDF_MARGIN_RIGHT, MAIN_PDF_MARGIN_TOP, MAIN_PDF_MARGIN_BOTTOM
+       to force margins of generated PDF.
 New experimental modules:
 - New: Add margin management module.
 - New: Add commissions management module.

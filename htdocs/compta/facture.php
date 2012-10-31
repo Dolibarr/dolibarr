@@ -949,7 +949,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 else if (($action == 'addline' || $action == 'addline_predef') && $user->rights->facture->creer)
 {
 	$langs->load('errors');
-    $error = false;
+    $error = 0;
 
     $idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
@@ -959,12 +959,12 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-        $error = true;
+        $error++;
     }
     if (empty($idprod) && GETPOST('type') < 0)
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-        $error = true;
+        $error++;
     }
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
@@ -974,12 +974,12 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
     if (! GETPOST('qty') && GETPOST('qty') == '')
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-        $error = true;
+        $error++;
     }
     if (empty($idprod) && empty($product_desc))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-        $error = true;
+        $error++;
     }
 
     if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
