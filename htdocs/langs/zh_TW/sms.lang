@@ -1,0 +1,62 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:37:09
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+CHARSET=UTF-8
+Sms=簡訊
+SmsSetup=SMS安裝
+SmsDesc=此頁面允許您定義全局選項上的短信功能
+SmsCard=短信卡
+AllSms=所有短信campains
+SmsTargets=目標
+SmsRecipients=目標
+SmsRecipient=目標
+SmsTitle=描述
+SmsFrom=寄件人
+SmsTo=目標
+SmsTopic=主題的短信
+SmsText=訊息
+SmsMessage=短信
+ShowSms=顯示SMS
+ListOfSms=清單 - 短信campains
+NewSms=新短信戰役
+EditSms=編輯短信
+ResetSms=新發送
+DeleteSms=刪除SMS戰役
+DeleteASms=移除SMS戰役
+PreviewSms=previuw短信
+PrepareSms=編寫短信
+CreateSms=創建SMS
+SmsResult=結果發送短信
+TestSms=測試短信
+ValidSms=驗證SMS
+ApproveSms=批準短信
+SmsStatusDraft=草案
+SmsStatusValidated=驗證
+SmsStatusApproved=批準
+SmsStatusSent=發送
+SmsStatusSentPartialy=發送部分
+SmsStatusSentCompletely=完全發送
+SmsStatusError=錯誤
+SmsStatusNotSent=不發送
+SmsSuccessfulySent=短信正確發送（從%s %s）
+ErrorSmsRecipientIsEmpty=目標號碼是空的
+WarningNoSmsAdded=沒有新的電話號碼添加到目標列表
+ConfirmValidSms=你確認這個戰役的驗證？
+ConfirmResetMailing=警告，如果你犯了一個SMS戰役<b>%s</b> REINIT，你會允許它發送第二次，使群眾。這是真的灣做什麽？
+ConfirmDeleteMailing=你確認刪除的戰役嗎？
+NbOfRecipients=目標數
+NbOfUniqueSms=鈮自由度唯一的電話號碼
+NbOfSms=噴號碼的nbre
+ThisIsATestMessage=這是一條測試消息
+SendSms=發送短信
+SmsInfoCharRemain=鈮的剩余字符
+SmsInfoNumero=（國際格式如：33899701761）
+DelayBeforeSending=延遲發送前（分鐘）
+SmsNoPossibleRecipientFound=沒有目標。檢查您的SMS提供商的設置。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:24).

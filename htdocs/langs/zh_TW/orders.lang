@@ -1,0 +1,163 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+OrdersArea=客戶訂單面積
+SuppliersOrdersArea=供應商的訂單面積
+OrderCard=訂單資訊
+Order=訂單
+Orders=訂單
+OrderLine=在線訂單
+OrderFollow=進一步追蹤
+OrderDate=訂購日期
+OrderToProcess=Order to process
+NewOrder=建立新訂單
+ToOrder=製作訂單
+MakeOrder=製作訂單
+SupplierOrder=供應商訂單
+SuppliersOrders=供應商訂單
+SuppliersOrdersRunning=當前供應商的訂單
+CustomerOrder=客戶訂單
+CustomersOrders=客戶的訂單
+CustomersOrdersRunning=當前客戶的訂單
+CustomersOrdersAndOrdersLines=客戶的訂單，訂單的行
+OrdersToValid=常規驗證
+OrdersToBill=訂單To帳單
+OrdersInProcess=訂單流程
+OrdersToProcess=待處理的客戶訂單
+StatusOrderCanceledShort=已取消
+StatusOrderDraftShort=草案階段
+StatusOrderValidatedShort=驗證階段
+StatusOrderOnProcessShort=處理中
+StatusOrderProcessedShort=處理完畢
+StatusOrderToBillShort=等待帳單
+StatusOrderApprovedShort=核準
+StatusOrderRefusedShort=拒絕
+StatusOrderToProcessShort=要處理
+StatusOrderReceivedPartiallyShort=部分收到
+StatusOrderReceivedAllShort=一切都收到
+StatusOrderCanceled=取消
+StatusOrderDraft=草案（等待驗證）
+StatusOrderValidated=驗證階段
+StatusOrderOnProcess=處理中
+StatusOrderProcessed=處理完畢
+StatusOrderToBill=等待帳單
+StatusOrderApproved=已核準
+StatusOrderRefused=已拒絕
+StatusOrderReceivedPartially=部分收到
+StatusOrderReceivedAll=一切都收到
+DraftOrWaitingApproved=草案尚未下令或批準
+DraftOrWaitingShipped=草案或審定尚未運
+MenuOrdersToBill=訂單To帳單
+SearchOrder=搜尋訂單
+Sending=發出
+Sendings=出貨清單
+ShipProduct=船舶產品
+Discount=折扣
+CreateOrder=創建訂單
+RefuseOrder=拒絕訂單
+ApproveOrder=接受訂單
+ValidateOrder=驗證訂單
+DeleteOrder=刪除訂單
+CancelOrder=取消訂單
+AddOrder=新增訂單
+AddToMyOrders=新增我的訂單
+AddToOtherOrders=新增其他人的訂單
+ShowOrder=顯示訂單
+NoOpenedOrders=沒有打開訂單
+NoOtherOpenedOrders=沒有其他人已經新增的訂單
+OtherOrders=其他命令
+LastOrders=上次%s的訂單
+LastModifiedOrders=最新修改的訂單
+LastClosedOrders=最後%s的封閉式訂單
+AllOrders=所有的訂單
+NbOfOrders=訂單號碼
+OrdersStatistics=訂單統計
+OrdersStatisticsSuppliers=供應商的訂單統計
+NumberOfOrdersByMonth=按月份訂單數
+AmountOfOrdersByMonthHT=按月份訂單金額（稅後）
+ListOfOrders=訂單列表
+CloseOrder=關閉命令
+ConfirmCloseOrder=您確定要關閉這個秩序？一旦訂單是封閉的，它只能產生帳單。
+ConfirmCloseOrderIfSending=您確定要關閉這個訂單？你必須關閉，只有當所有航運完成的訂單。
+ConfirmDeleteOrder=你確定要刪除這個訂單？
+ConfirmValidateOrder=你確定您要驗證這個訂單<b>%s</b>嗎？
+ConfirmCancelOrder=您確定要取消此訂單？
+ConfirmMakeOrder=請確認您是否想要確認您於 <b>%s</b> 製作的訂單？
+GenerateBill=生成發票
+ClassifyBilled=分類“帳單”
+ComptaCard=會計證
+DraftOrders=草案訂單
+RelatedOrders=有關命令
+OnProcessOrders=處理中的訂單
+RefOrder=訂單號碼
+RefCustomerOrder=客戶訂單號
+CustomerOrder=客戶訂單
+RefCustomerOrderShort=客戶訂單號
+SendOrderByMail=為了通過郵件發送
+ActionsOnOrder=採購過程中的事件記錄
+NoArticleOfTypeProduct=任何類型的產品文章'，以便對這一秩序shippable文章
+OrderMode=訂購方法
+AuthorRequest=發起者
+UseCustomerContactAsOrderRecipientIfExist=使用客戶聯系地址，如果定義的，而不是第三方地址為收件人地址
+RunningOrders=訂單的過程
+UserWithApproveOrderGrant=被授予核准權限的用戶
+PaymentOrderRef=清繳秩序％
+CloneOrder=複製訂單
+ConfirmCloneOrder=你確定要複製這個 <b>%s</b> 訂單嗎?
+TypeContact_commande_internal_SALESREPFOLL=代替客戶下單
+TypeContact_commande_internal_SHIPPING=代替客戶寄送
+TypeContact_commande_external_BILLING=客戶 Invoice 聯絡人
+TypeContact_commande_external_SHIPPING=客戶 Shipping 聯絡人
+TypeContact_commande_external_CUSTOMER=客戶訂單聯絡人
+TypeContact_order_supplier_internal_SALESREPFOLL=直接拜訪客戶的方式
+TypeContact_order_supplier_internal_SHIPPING=利用貨運方式
+TypeContact_order_supplier_external_BILLING=供應商利用發票(invoice)方式
+TypeContact_order_supplier_external_SHIPPING=供應商利用貨運方式
+TypeContact_order_supplier_external_CUSTOMER=供應商來訪的方式
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=常COMMANDE_SUPPLIER_ADDON沒有定義
+Error_COMMANDE_ADDON_NotDefined=常COMMANDE_ADDON沒有定義
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=無法加載模塊文件'％s'的
+Error_FailedToLoad_COMMANDE_ADDON_File=無法加載模塊文件'％s'的
+OrderSource0=商業建議
+OrderSource1=因特網
+OrderSource2=郵件活動
+OrderSource3=電話的宣傳運動，
+OrderSource4=傳真活動
+OrderSource5=商業
+OrderSource6=商店
+QtyOrdered=訂購數量
+AddDeliveryCostLine=添加交貨成本線，顯示該命令的重量
+PDFEinsteinDescription=可產生一份完整的訂單範本（logo. ..）
+PDFEdisonDescription=可產生一份簡單的訂單範本
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+DispatchSupplierOrder=接收供應商的訂單%s
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:42).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+SuppliersOrdersToProcess=待處理的供應商的訂單
+StatusOrderSentShort=在過程
+ShippingExist=A貨存在
+UnvalidateOrder=Unvalidate秩序
+ConfirmUnvalidateOrder=你是否確定要還原訂單<b>%s</b>草案狀態？
+OrderByMail=郵件
+OrderByFax=傳真
+OrderByEMail=電子郵件
+OrderByWWW=網頁
+OrderByPhone=電話
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:37).
+
+// 委外加工單
+Outsourced=委外加工單

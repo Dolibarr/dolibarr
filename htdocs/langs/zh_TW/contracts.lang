@@ -1,0 +1,112 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+ContractsArea=合同區
+ListOfContracts=合約名單
+LastContracts=最後％s的修改過的合同
+AllContracts=所有合同
+ContractCard=合同卡
+ContractStatus=合同地位
+ContractStatusNotRunning=不運行
+ContractStatusRunning=運行
+ContractStatusDraft=草案
+ContractStatusValidated=驗證
+ContractStatusClosed=關閉
+ServiceStatusInitial=不運行
+ServiceStatusRunning=運行
+ServiceStatusNotLate=跑步，沒有過期
+ServiceStatusNotLateShort=沒有過期
+ServiceStatusLate=跑步，過期
+ServiceStatusLateShort=過期
+ServiceStatusClosed=關閉
+ServicesLegend=服務的傳說
+Contracts=合同
+Contract=合同
+NoContracts=沒有合同
+MenuServices=服務
+MenuInactiveServices=服務不活躍
+MenuRunningServices=正在運行的服務
+MenuExpiredServices=過期服務
+MenuClosedServices=休息服務
+NewContract=新合同
+AddContract=新增合同
+SearchAContract=搜尋合同
+DeleteAContract=刪除合同
+CloseAContract=關閉的合同
+ConfirmDeleteAContract=你確定要刪除本合同及所有的服務？
+ConfirmValidateContract=你確定要驗證這個合同？
+ConfirmCloseContract=這將關閉所有服務（主動或不）。您確定要關閉這個合同？
+ConfirmCloseService=您確定要關閉這項服務與日期<b>％s嗎</b> ？
+ValidateAContract=驗證合同
+ActivateService=激活服務
+ConfirmActivateService=你確定要激活這項服務的日期<b>％s嗎</b> ？
+DateContract=合同日期
+DateServiceActivate=服務激活日期
+DateServiceUnactivate=服務停用日期
+DateServiceStart=對服務的開始日期
+DateServiceEnd=服務結束日期
+ShowContract=查看合同
+ListOfServices=服務名單
+ListOfInactiveServices=名單不主動服務
+ListOfExpiredServices=名單過期的活動服務
+ListOfClosedServices=關閉服務清單
+ListOfRunningContractsLines=名單合同線運行
+ListOfRunningServices=運行服務的列表
+NotActivatedServices=不活躍的服務（除驗證合同）
+BoardNotActivatedServices=服務激活驗證合同之間
+LastContracts=上次％合同
+LastActivatedServices=上次％s的激活服務
+LastModifiedServices=最後％S修飾服務
+EditServiceLine=編輯服務項目
+ContractStartDate=開始日期
+ContractEndDate=結束日期
+DateStartPlanned=計劃開始日期
+DateStartPlannedShort=計劃開始日期
+DateEndPlanned=計劃結束日期
+DateEndPlannedShort=計劃結束日期
+DateStartReal=真正的開始日期
+DateStartRealShort=真正的開始日期
+DateEndReal=真正的結束日期
+DateEndRealShort=真正的結束日期
+NbOfServices=鈮服務
+CloseService=關閉服務
+ServicesNomberShort=％s的服務（S）
+RunningServices=正在運行的服務
+BoardRunningServices=過期的運行服務
+ServiceStatus=服務現狀
+DraftContracts=草稿合同
+CloseRefusedBecauseOneServiceActive=合同不能被關閉，因為至少有一個開放式服務上
+CloseAllContracts=關閉所有合同線
+DeleteContractLine=刪除線合同
+ConfirmDeleteContractLine=你確定要刪除這個合同線？
+MoveToAnotherContract=移動到另一個合同的服務。
+ConfirmMoveToAnotherContract=我選用新的目標合同，確認我想進入這個合同這項服務。
+ConfirmMoveToAnotherContractQuestion=選擇了現有合同（同第三方），你要提出這項服務？
+PaymentRenewContractId=續訂合同線（％s的數目）
+ExpiredSince=失效日期
+RelatedContracts=有關合同
+TypeContact_contrat_internal_SALESREPSIGN=銷售代表簽訂合同
+TypeContact_contrat_internal_SALESREPFOLL=銷售代表隨訪合同
+TypeContact_contrat_external_BILLING=結算客戶聯系
+TypeContact_contrat_external_CUSTOMER=後續的客戶聯系
+TypeContact_contrat_external_SALESREPSIGN=簽約客戶的聯系
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+Error_CONTRACT_ADDON_NotDefined=恒CONTRACT_ADDON沒有定義
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+NoExpiredServices=沒有過期的主動服務
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:30).

@@ -1,0 +1,126 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+BoxLastRssInfos=RSS信息
+BoxLastProducts=最後更新的產品/服務清單
+BoxLastProductsInContract=最後更新的的合同/產品/服務
+BoxLastSupplierBills=最後更新的供應商帳單票
+BoxLastCustomerBills=最後更新的客戶帳單
+BoxOldestUnpaidCustomerBills=最後更新的未付款客戶帳單
+BoxOldestUnpaidSupplierBills=最後更新的未付款供應商帳單
+BoxLastProposals=最後更新的建議書清單
+BoxLastProspects=最後更新的潛在清單
+BoxLastCustomers=最後更新的客戶清單
+BoxLastCustomerOrders=最後更新的客戶訂單
+BoxLastSuppliers=最後更新的供應商清單
+BoxLastBooks=最後更新的書籍清單
+BoxLastActions=最後更新的事件清單
+BoxLastContracts=最後更新的合同清單
+BoxCurrentAccounts=往來帳戶余額
+BoxSalesTurnover=銷售營業額
+BoxTotalUnpaidCustomerBills=共有未付客戶的發票
+BoxTotalUnpaidSuppliersBills=共有未付供應商的發票
+BoxTitleLastBooks=最後更新的書籍清單
+BoxTitleNbOfCustomers=客戶端的數量
+BoxTitleLastRssInfos=最後 %s 更新的 Rss 消息等(from %s)
+BoxTitleLastProducts=最後更新的產品/服務清單
+BoxTitleLastCustomerOrders=最後更新的客戶訂單
+BoxTitleLastSuppliers=最後更新的供應商清單
+BoxTitleLastCustomers=最後更新的客戶清單
+BoxTitleLastCustomersOrProspects=最後更新的潛在客戶清單
+BoxTitleLastPropals=最後更新的建議書
+BoxTitleLastCustomerBills=最後更新的客戶帳單
+BoxTitleLastSupplierBills=最後更新的供應商帳單
+BoxTitleLastProspects=最後更新的潛在
+BoxTitleLastProductsInContract=最後更新的產品/服務合同
+BoxTitleOldestUnpaidCustomerBills=最後更新的未付款的客戶帳單
+BoxTitleOldestUnpaidSupplierBills=最後更新的未付款的供應商帳單
+BoxTitleCurrentAccounts=當前帳戶的結余
+BoxTitleSalesTurnover=銷售營業額
+BoxTitleTotalUnpaidCustomerBills=未付客戶的發票
+BoxTitleTotalUnpaidSuppliersBills=未付供應商的發票
+BoxMyLastBookmarks=我最後的%s的書簽
+FailedToRefreshDataInfoNotUpToDate=無法刷新的RSS流量。上次成功刷新日期：％s
+LastRefreshDate=最後更新日期
+NoRecordedBookmarks=沒有書簽定義。點擊<a href="%s">這裏</a>添加書簽。
+NoRecordedCustomers=沒有記錄客戶
+BoxTitleLastActionsToDo=上次%s的行動做
+BoxTitleLastContracts=上次%的承
+NoActionsToDo=做任何動作
+NoRecordedOrders=沒有任何客戶的訂單記錄
+NoRecordedProposals=沒有任何建議書的記錄
+NoRecordedInvoices=沒有任何客戶發票記錄
+NoUnpaidCustomerBills=沒有未付款客戶帳單
+NoRecordedSupplierInvoices=沒有任何供應商的發票記錄
+NoUnpaidSupplierBills=沒有未付款的供應商帳單
+NoRecordedProducts=沒有任何產品/服務記錄
+NoRecordedProspects=沒有任何潛在資訊記錄
+NoContractedProducts=沒有產品/服務合同
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
+// Reference language: en_US
+LastRefreshDate=Siste oppdatering dato
+BoxTitleLastContracts=Siste %s kontrakter
+NoModifiedSupplierBills=沒有任何修改過的供應商帳單
+NoRecordedProducts=Ingen registrert produkter / tjenester
+NoContractedProducts=Ingen produkter / tjenester innleide
+NoRecordedContracts=Ingen registrert kontrakter
+BoxTitleLastContracts=Laatste %s contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
+BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
+BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
+BoxTitleOldestUnpaidCustomerBills=Oudste %s onbetaalde facturen klant
+BoxTitleOldestUnpaidSupplierBills=Oudste %s onbetaalde facturen van de leverancier
+BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
+BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
+BoxTitleLastContracts=Laatste %s contracten
+NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
+NoRecordedContracts=Geen geregistreerde overeenkomsten
+BoxTitleLastProductsInContract=Ostatnie %s produktów / usług w umowie
+BoxTitleLastContracts=Ostatnie %s umów
+NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
+NoRecordedContracts=Umów nie zarejestrowanych
+BoxTitleLastContracts=Última contratos %s
+NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
+NoRecordedContracts=Sem contratos registrados
+BoxTitleLastProductsInContract=Последние продукты %s / услуги на основании договора
+BoxTitleLastContracts=Последние контракты %s
+NoModifiedSupplierBills=Нет зарегистрированных поставщиков счетов
+NoRecordedContracts=Нет зарегистрированных контрактов
+BoxTitleLastContracts=Zadnja pogodbe %s
+NoModifiedSupplierBills=Št zabeležene dobavitelja račune
+NoRecordedContracts=Št zabeležene pogodbe
+BoxTitleLastContracts=Son Ssss sözleşmeleri
+NoModifiedSupplierBills=No kaydedildi tedarikçinin faturalar
+NoRecordedContracts=No kaydedildi sözleşmeleri
+NoModifiedSupplierBills=沒有記錄供應商的發票
+NoRecordedContracts=合同沒有記錄
+// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:27).
+
+
+
+BoxTitleLastModifiedSuppliers=最後更新的供應商清單
+BoxTitleLastModifiedCustomers=最後更新的客戶清單
+BoxTitleLastModifiedProspects=最後更新的潛在客戶清單
+BoxLastContacts=最後接觸/地址
+BoxLastMembers=最後成員
+BoxTitleLastModifiedMembers=最後更新的成員清單
+BoxTitleLastModifiedContacts=最後更新的聯絡人/地址清單
+BoxOldestExpiredServices=最早的活動過期服務
+BoxLastExpiredServices=上次%s最古老的接觸，積極過期服務
+BoxTitleLastModifiedDonations=最後更新的捐款清單
+BoxTitleLastModifiedExpenses=最後更新的修改費用
+ClickToAdd=點選這裡來新增
+NoRecordedContacts=沒有任何聯絡人的記錄

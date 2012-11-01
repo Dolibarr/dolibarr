@@ -1,0 +1,84 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+RefSending=出貨單編號
+Sending=出貨
+Sendings=出貨
+Receivings=Receivings
+SendingsArea=出貨
+ListOfSendings=出貨清單列表
+SendingMethod=送貨方式
+SendingReceipt=航運收據
+LastSendings=有 %s 筆最新的出貨項目
+SearchASending=搜尋出貨項目
+StatisticsOfSendings=統計出貨量
+NbOfSendings=出貨數量
+SendingCard=出貨卡
+NewSending=建立出貨
+CreateASending=建立一個新的出貨單
+CreateSending=建立出貨單
+QtyOrdered=訂購數量
+QtyShipped=出貨數量
+QtyToShip=出貨數量
+QtyReceived=收到的數量
+KeepToShip=持續出貨
+OtherSendingsForSameOrder=此訂單的其他出貨清單
+DateSending=出貨日期
+DateSendingShort=出貨日期
+SendingsForSameOrder=此訂單的出貨清單
+SendingsAndReceivingForSameOrder=此訂單的出貨清單及收貨清單
+SendingsToValidate=發送驗證
+StatusSendingCanceled=取消
+StatusSendingDraft=草案
+StatusSendingValidated=驗證（產品出貨或已經出貨）
+StatusSendingCanceledShort=取消
+StatusSendingDraftShort=草案
+StatusSendingValidatedShort=驗證
+SendingSheet=出貨單
+Carriers=載體
+Carrier=載波
+CarriersArea=運營商領域
+NewCarrier=新載體
+ConfirmDeleteSending=你確定要刪除這個出貨單？
+ConfirmValidateSending=你確定要驗證這個出貨單？
+ConfirmCancelSending=你確定要取消此出貨單？
+GenericTransport=通用運輸
+Enlevement=得到了客戶
+DocumentModelSimple=簡單的文件範本
+DocumentModelMerou=Merou A5 範本
+WarningNoQtyLeftToSend=警告，沒有產品等待裝運。
+StatsOnShipmentsOnlyValidated=統計出貨量僅進行驗證
+DateDeliveryPlanned=預計交貨日期
+DateReceived=交貨收到日期
+SendingMethodCATCH=按客戶捕捉
+SendingMethodTRANS=運輸車
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=簡單的送貨單文檔模型
+DocumentModelTyphon=更多的送貨單（logo. ..完整的文檔模型）
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+Shipments=出貨
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:30).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+SendShippingByEMail=通過電子郵件發送貨物
+SendShippingRef=發送貨物%s
+ActionsOnShipping=對裝運的事件
+LinkToTrackYourPackage=鏈接到追蹤您的包裹
+ShipmentCreationIsDoneFromOrder=就目前而言，從這個訂單而建立的出貨單已經完成。
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=沒有定義的常數EXPEDITION_ADDON_NUMBER
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:21).
+
+RelatedShippings=相關出貨清單

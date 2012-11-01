@@ -1,0 +1,18 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:37:09
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+CHARSET=UTF-8
+WorkflowSetup=工作流模塊的設置
+WorkflowDesc=此模塊desinged修改應用程序的自動操作的行為。默認情況下，工作流被打開（你做的事情在你想要的順序）。您可以啟用自動操作，你是有趣英寸
+ThereIsNoWorkflowToModify=沒有工作流程，您可以修改你已激活的模塊。
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=商業提案簽署後自動創建一個客戶訂單
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=商業提案簽署後自動創建一個客戶發票
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=創建一個客戶發票，合同驗證後自動
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=創建一個客戶發票，客戶訂單後自動關閉
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:09).
