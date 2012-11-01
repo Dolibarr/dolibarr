@@ -1,0 +1,31 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2011-10-10 02:45:33
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+CHARSET=UTF-8
+PaypalSetup=貝寶模塊的設置
+PaypalDesc=該模塊提供的網頁，允許<a href="http://www.paypal.com" target="_blank">對貝</a>寶支付客戶的。這可以使用一個免費的付款或支付上一個特定的Dolibarr對象（發票，訂單，... ...）
+PaypalOrCBDoPayment=與信用卡或PayPal付款
+PaypalDoPayment=用PayPal
+PaypalCBDoPayment=信用卡支付
+PAYPAL_API_SANDBOX=測試/沙箱模式
+PAYPAL_API_USER=API的用戶名
+PAYPAL_API_PASSWORD=API密碼
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+PAYPAL_API_SIGNATURE=API簽名
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=優惠“不可分割的”支付（信用卡+貝寶）或“貝寶”只
+PAYPAL_CSS_URL=optionnal付款頁面的CSS樣式表的URL
+ThisIsTransactionId=這是交易編號<b>：%s</b>
+PAYPAL_ADD_PAYMENT_URL=當你郵寄一份文件，添加URL Paypal付款
+PAYPAL_IPN_MAIL_ADDRESS=E-mail地址，即時付款通知（IPN）
+YouAreCurrentlyInSandboxMode=您目前在“沙箱”模式
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:30).

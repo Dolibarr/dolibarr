@@ -1,0 +1,88 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Actions=事件
+ActionsArea=事件區（事件和任務）
+Agenda=議程
+Agendas=議程
+Calendar=日歷
+Calendars=日歷
+AffectedTo=受影響
+DoneBy=做的
+Events=活動
+ListOfActions=名單事件
+Location=位置
+SearchAnAction=搜尋行動/任務
+MenuToDoActions=所有不完整的行動
+MenuDoneActions=所有終止行動
+MenuToDoMyActions=我不完整的行動
+MenuDoneMyActions=我的行動終止
+ListOfEvents=名單Dolibarr事件
+ActionsAskedBy=記錄操作
+ActionsToDoBy=受影響的行動
+ActionsDoneBy=做的動作
+AllMyActions=我所有的行動/任務
+AllActions=所有/任務行動
+ViewList=查看列表
+ViewCal=查看日歷
+ViewWithPredefinedFilters=查看與預定義的篩選器
+AutoActions=全自動灌裝議程
+AgendaAutoActionDesc=在此事件定義為要Dolibarr自動創建一個議程的行動。如果沒有被選中（默認情況下），只有手動操作將被列入議程。
+AgendaSetupOtherDesc=這頁允許配置議程模塊其他參數。
+ActionsEvents=為此Dolibarr活動將創建一個自動行動議程
+PropalValidatedInDolibarr=建議%s的驗證
+InvoiceValidatedInDolibarr=發票%s的驗證
+OrderValidatedInDolibarr=採購訂單%s已驗證
+InterventionValidatedInDolibarr=%s的驗證幹預
+NewCompanyToDolibarr=第三方創建
+DateActionPlannedStart=計劃開始日期
+DateActionPlannedEnd=計劃結束日期
+DateActionDoneStart=真正的開始日期
+DateActionDoneEnd=真正的結束日期
+DateActionStart=開始日期
+DateActionEnd=結束日期
+AgendaUrlOptions1=您還可以添加以下參數來篩選輸出：
+AgendaUrlOptions2=<b>登錄%s</b>到限制產量以行動來創造，受影響或將<b>使用者</b>與所做<b>％。</b>
+AgendaUrlOptions3=<b>logina =%s</b>到<b>％</b>限制輸出到用戶的操作創建<b>為</b> S。
+AgendaUrlOptions4=<b>logint =%s</b>到<b>％</b>限制輸出到行動<b>使用者</b>與受影響。
+AgendaUrlOptions5=<b>logind =%s</b>到<b>％</b>限制輸出到用戶的行為進行<b>由</b> S。
+AgendaShowBirthdayEvents=顯示生日的接觸
+AgendaHideBirthdayEvents=隱藏生日的接觸
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+LocalAgenda=本地日歷
+MyEvents=我的活動
+OtherEvents=其他活動
+EventOnFullDay=全天事件
+ViewDay=日視圖
+ViewWeek=周視圖
+AgendaExtSitesDesc=此頁面允許申報日歷的外部來源，以他們的活動看到到Dolibarr議程。
+InvoiceBackToDraftInDolibarr=發票的%s去回到草案狀態
+OrderApprovedInDolibarr=為了%s批準
+OrderBackToDraftInDolibarr=為了%s回到草案狀態
+OrderCanceledInDolibarr=為了%s取消
+ProposalSentByEMail=商業建議通過電子郵件發送%s
+OrderSentByEMail=客戶訂單通過電子郵件發送%s
+InvoiceSentByEMail=客戶發票通過電子郵件發送%s
+SupplierOrderSentByEMail=供應商的訂單通過電子郵件發送%s
+SupplierInvoiceSentByEMail=供應商的發票通過電子郵件發送%s
+ShippingSentByEMail=通過電子郵件發送的航運%s
+InterventionSentByEMail=通過電子郵件發送的幹預%s
+ExportCal=出口日歷
+ExtSites=導入外部日歷
+ExtSitesEnableThisTool=到議程中顯示的外部日歷
+ExtSitesNbOfAgenda=日歷數
+AgendaExtNb=日歷NB %s
+ExtSiteUrlAgenda=URL來訪問。iCal文件
+ExtSiteNoLabel=無說明
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:07).

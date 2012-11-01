@@ -1,0 +1,48 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:37:09
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+CHARSET=UTF-8
+CashDeskMenu=銷售點
+CashDesk=銷售點
+CashDesks=銷售點
+CashDeskBank=銀行賬戶
+CashDeskBankCash=銀行賬戶（現金）
+CashDeskBankCB=銀行賬戶（卡）
+CashDeskBankCheque=銀行賬戶（支票）
+CashDeskWarehouse=倉庫
+CashdeskShowServices=賣服務
+CashDeskProducts=產品
+CashDeskStock=股票
+CashDeskOn=上
+CashDeskThirdParty=第三方
+ShoppingCart=購物車
+NewSell=新的銷售
+BackOffice=回到辦公室
+AddThisArticle=添加此文章
+RestartSelling=回去就賣
+SellFinished=出售完成
+PrintTicket=打印準考證
+NoResults=沒有結果
+NoProductFound=沒有文章中找到
+ProductFound=產品被發現
+ProductsFound=產品發現
+NoArticle=沒有新文章
+Identification=鑒定
+Article=文章
+Difference=差異
+TotalTicket=總票
+NoVAT=沒有為這次出售增值稅
+Change=過剩收到
+CalTip=點擊查看日歷
+CashDeskSetupStock=你問這是沒有定義的股票，以減少對發票的創作，但倉庫<br>改變庫存模塊設置，或選擇一個倉庫
+BankToPay=負責帳戶
+ShowCompany=顯示公司
+ShowStock=顯示倉庫
+DeleteArticle=點擊刪除此文章
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:40).

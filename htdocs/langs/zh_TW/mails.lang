@@ -1,0 +1,125 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Mailing=發送電子郵件
+EMailing=發送電子郵件
+Mailings=EMailings
+EMailings=EMailings
+AllEMailings=所有eMailings
+MailCard=通過電子郵件發送卡
+MailTargets=目標
+MailRecipients=收件人
+MailRecipient=收件人
+MailTitle=描述
+MailFrom=寄件人
+MailErrorsTo=誤差的
+MailReply=回復
+MailTo=收件人
+MailCC=副本
+MailCCC=緩存副本
+MailTopic=電子郵件的標題
+MailText=郵件內容
+MailFile=附加檔案
+MailMessage=電子郵件正文
+ShowEMailing=顯示電子郵件
+ListOfEMailings=名單emailings
+NewMailing=新的電子郵件
+EditMailing=編輯電子郵件
+ResetMailing=重新發送電子郵件
+DeleteMailing=刪除電子郵件
+DeleteAMailing=刪除一個電子郵件
+PreviewMailing=預覽電子郵件
+PrepareMailing=準備電子郵件
+CreateMailing=創建電子郵件
+MailingDesc=此頁面允許您發送emailings到一群人。
+MailingResult=發送電子郵件的結果
+TestMailing=測試的電子郵件
+ValidMailing=有效的電子郵件
+ApproveMailing=批準電子郵件
+MailingStatusDraft=草案
+MailingStatusValidated=驗證
+MailingStatusApproved=核準
+MailingStatusSent=發送
+MailingStatusSentPartialy=發送部分
+MailingStatusSentCompletely=發送完全
+MailingStatusError=錯誤
+MailingStatusNotSent=不發送
+MailSuccessfulySent=電子郵件發送成功從％（s到％s）
+ErrorMailRecipientIsEmpty=電子郵件收件人是空的
+WarningNoEMailsAdded=沒有新的電子郵件添加到收件人的名單。
+ConfirmValidMailing=你確定要驗證這個電子郵件？
+ConfirmResetMailing=警告<b>％，</b>其中重新初始化電子郵件<b>秒</b> ，你可以使一個集體的時間發送這封電子郵件的另一。您確定這是你想做什麽？
+ConfirmDeleteMailing=你確定要刪除這個emailling？
+NbOfRecipients=受助人數目
+NbOfUniqueEMails=鈮獨特的電子郵件
+NbOfEMails=鈮的電子郵件
+TotalNbOfDistinctRecipients=受助人數目明顯
+NoTargetYet=受助人還沒有確定（走吧標簽'收件人'）
+AddRecipients=添加收件人
+RemoveRecipient=刪除收件人
+CommonSubstitutions=共同換人
+YouCanAddYourOwnPredefindedListHere=要創建您的電子郵件選擇模塊，見htdocs中/包括/模塊/郵寄/自述文件。
+EMailTestSubstitutionReplacedByGenericValues=當使用測試模式，替換變量的值取代通用
+MailingAddFile=附加這個文件
+NoAttachedFiles=沒有附加檔案
+BadEMail=壞值電子郵箱
+CloneEMailing=克隆用電子郵件發送
+ConfirmCloneEMailing=你確定要克隆這個電子郵件？
+CloneContent=克隆消息
+CloneReceivers=克隆者
+DateLastSend=去年發送日期
+DateSending=發送日期
+SentTo=發送到<b>％s</b>
+MailingModuleDescContactCompanies=所有第三方（聯系客戶，潛在客戶，供應商，...）
+MailingModuleDescDolibarrUsers=用戶與郵件全部Dolibarr
+MailingModuleDescFundationMembers=基金會成員與電子郵件
+MailingModuleDescEmailsFromFile=從一個文本文件（電子郵件電子郵件，姓名或名稱;姓;評論）
+MailingModuleDescContactsCategories=第三方的電子郵件（按類別）
+MailingModuleDescDolibarrContractsLinesExpired=與合同到期的路線第三方
+LineInFile=在文件％s的線
+RecipientSelectionModules=為收件人的選擇定義的要求
+MailSelectedRecipients=選擇收件人
+MailingArea=EMailings區
+LastMailings=上次％s的emailings
+TargetsStatistics=統計指標
+NbOfCompaniesContacts=公司獨特的接觸
+MailNoChangePossible=為驗證電子郵件收件人無法改變
+SearchAMailing=搜尋郵件
+SendMailing=發送電子郵件
+SendMail=發送電子郵件
+SentBy=發送
+MailingNeedCommand=對於證券的原因，發送電子郵件應該執行命令行。請問您的管理員發起以下命令發送的電子郵件發送給所有收件人：
+MailingNeedCommand2=但是您可以發送到網上，加入與最大的電子郵件數量值參數MAILING_LIMIT_SENDBYWEB你要發送的會議。
+ConfirmSendingEmailing=你確定要發送郵件？
+LimitSendingEmailing=在線emailings派遣是<b>％</b>有限的安全和超時原因<b>之晤談</b>收件人發送。
+TargetsReset=清除名單
+ToClearAllRecipientsClickHere=點擊這裏以清除此電子郵件的收件人列表
+ToAddRecipientsChooseHere=添加從名單中選擇收件人
+NbOfEMailingsReceived=收到群眾emailings
+IdRecord=編號記錄
+DeliveryReceipt=索取讀取回條
+YouCanUseCommaSeparatorForSeveralRecipients=您可以使用<b>逗號</b>來指定多個收件人。
+Notifications=通知
+NoNotificationsWillBeSent=沒有電子郵件通知此事件的計劃和公司
+ANotificationsWillBeSent=1通知將通過電子郵件發送
+SomeNotificationsWillBeSent=％s的通知將通過電子郵件發送
+AddNewNotification=啟動一個新的電子郵件通知的要求
+ListOfActiveNotifications=列出所有有效的電子郵件通知要求
+ListOfNotificationsDone=列出所有發送電子郵件通知
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+MailingStatusRead=閱讀
+MailingModuleDescContactsByCompanyCategory=聯系第三方（第三方類）
+MailingModuleDescMembersCategories=基金會的成員（按類別）
+MailingModuleDescContactsByFunction=第三方聯系（職位/職務）
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:31).

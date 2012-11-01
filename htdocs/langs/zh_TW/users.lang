@@ -1,0 +1,130 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+UserCard=帳戶資訊
+ContactCard=聯系卡
+GroupCard=集團卡
+NoContactCard=之間沒有聯系卡
+Permission=允許
+Permissions=權限
+EditPassword=修改密碼
+SendNewPassword=重新產生並發送密碼
+ReinitPassword=重設密碼
+PasswordChangedTo=密碼更改為：%s
+SubjectNewPassword=您的新密碼Dolibarr
+AvailableRights=可用的權限
+OwnedRights=擁有權限
+GroupRights=組權限
+UserRights=帳戶權限
+UserGUISetup=設置使用者介面
+DisableUser=停用帳戶
+DisableAUser=禁用一個用戶
+DeleteUser=刪除帳戶
+DeleteAUser=刪除一個用戶
+DisableGroup=禁用
+DisableAGroup=禁用組
+EnableAUser=使用戶
+EnableAGroup=啟用一組
+DeleteGroup=刪除
+DeleteAGroup=刪除一組
+ConfirmDisableUser=您確定要禁用用戶<b>%s嗎</b> ？
+ConfirmDisableGroup=你確定要停用組<b>%s嗎</b> ？
+ConfirmDeleteUser=你確定要刪除用戶<b>%s嗎</b> ？
+ConfirmDeleteGroup=你確定要刪除群組<b>%s嗎</b> ？
+ConfirmEnableUser=您確定要啟用用戶<b>%s嗎</b> ？
+ConfirmEnableGroup=您確定要啟用組<b>%s嗎</b> ？
+ConfirmReinitPassword=你確定要生成一個新密碼的用戶<b>%s嗎</b> ？
+ConfirmSendNewPassword=你確定要生成和發送新密碼的用戶<b>%s嗎</b> ？
+NewUser=新增用戶
+CreateUser=創建用戶
+SearchAGroup=搜尋群組
+SearchAUser=搜尋用戶
+LoginNotDefined=登錄沒有定義。
+NameNotDefined=名稱沒有定義。
+ListOfUsers=用戶名單
+Administrator=管理員
+SuperAdministrator=超級管理員
+SuperAdministratorDesc=管理員的所有權利
+DefaultRights=默認權限
+DefaultRightsDesc=這裏定義<u>默認</u> ）權限自動授予一個<u>新創建的</u>用戶的用戶（轉到卡上改變現有的用戶權限。
+DolibarrUsers=Dolibarr用戶
+LastName=名稱
+FirstName=名字
+ListOfGroups=群組名單
+NewGroup=新增群組
+CreateGroup=建立群組
+RemoveFromGroup=從組中刪除
+PasswordChangedAndSentTo=密碼更改，發送到<b>%s。</b>
+PasswordChangeRequestSent=要求更改密碼<b>的S%</b>發送到<b>%s。</b>
+MenuUsersAndGroups=用戶和群組
+LastGroupsCreated=共建立 %s 群組
+LastUsersCreated=共建立 %s 位用戶
+ShowGroup=顯示群組
+ShowUser=顯示用戶
+NonAffectedUsers=非受影響的用戶
+UserModified=用戶修改成功
+GroupModified=集團修改成功
+PhotoFile=圖片檔案
+UserWithDolibarrAccess=與Dolibarr用戶訪問
+ListOfUsersInGroup=在這個名單的用戶組
+ListOfGroupsForUser=這個名單的用戶群
+UsersToAdd=用戶添加到這個組
+GroupsToAdd=指定使用者群組
+NoLogin=沒有登錄
+LinkToCompanyContact=是否為客戶/潛在/供應商的聯絡人
+LinkedToDolibarrMember=鏈接到會員
+LinkedToDolibarrUser=用戶鏈接到Dolibarr
+LinkedToDolibarrThirdParty=鏈接到第三方Dolibarr
+CreateDolibarrLogin=創建一個用戶
+CreateDolibarrThirdParty=創建一個第三者
+LoginAccountDisable=帳戶已停用，提出一個新的登錄激活它。
+LoginAccountDisableInDolibarr=帳戶已停用的Dolibarr。
+LoginAccountDisableInLdap=帳戶已停用的域名。
+UsePersonalValue=使用個人設定值
+GuiLanguage=界面語言
+InternalUser=內部用戶
+MyInformations=我的資料
+ExportDataset_user_1=Dolibarr的用戶和屬性
+DomainUser=域用戶%s
+Reactivate=重新啟用
+CreateInternalUserDesc=這種形式可以讓您創造一個用戶對貴公司內部/基礎。為了創造一個外部用戶（客戶，供應商，...),使用按鈕'創建Dolibarr用戶從第三方的名片'。
+InternalExternalDesc=<b>內部</b>員工用戶是指直接受公司聘雇的。 <br> <b>非內部</b>員工用戶是指客戶、供應商或其他。 <br><br>此系統可以針對這兩種用戶，定義不同的使用權限，也可設定不同的選單來顯示（見首頁 - 設定 - 顯示選單）
+PermissionInheritedFromAGroup=因為從權限授予一個用戶的一組繼承。
+Inherited=遺傳
+IdPhoneCaller=手機來電者身份
+UserLogged=用戶%s的連接
+NewUserCreated=創建用戶%s
+NewUserPassword=%變動的密碼
+EventUserModified=用戶%s修改
+UserDisabled=用戶%s禁用
+UserEnabled=用戶%s啟動
+UserDeleted=使用者%s刪除
+NewGroupCreated=集團創建%s的
+GroupModified=群組%s修改
+GroupDeleted=群組%s刪除
+ConfirmCreateContact=你確定要為此創造聯系Dolibarr帳戶？
+ConfirmCreateLogin=你確定要創建該成員成為Dolibarr帳戶？
+ConfirmCreateThirdParty=你確定要創建該成員成為第三者？
+LoginToCreate=登錄創建
+NameToCreate=第三黨的名稱創建
+YourRole=您的角色
+YourQuotaOfUsersIsReached=你的活躍用戶達到配額！
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+AdministratorDesc=管理員的實體
+UserWillBeInternalUser=創建的用戶將是一個內部用戶（因為沒有聯系到一個特定的第三方）
+UserWillBeExternalUser=創建的用戶將是外部用戶（因為鏈接到一個特定的第三方）
+UserLogoff=用戶%s登出
+NbOfUsers=用戶數
+DontDowngradeSuperAdmin=只有超級管理員可以降級超級管理員
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:35).
