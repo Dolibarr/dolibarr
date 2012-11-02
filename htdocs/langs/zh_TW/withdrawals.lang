@@ -1,0 +1,110 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+StandingOrdersArea=區人大常委會訂單
+CustomersStandingOrdersArea=站在客戶的訂單面積
+StandingOrders=常年訂單
+StandingOrder=常年訂單
+NewStandingOrder=新的長期訂單
+StandingOrderToProcess=要處理
+StandingOrderProcessed=加工
+Withdrawals=提款
+Withdrawal=提款
+WithdrawalsReceipts=提款收據
+WithdrawalReceipt=提款收據
+WithdrawalReceiptShort=收據
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
+// Reference language: en_US -> zh_CN
+LastWithdrawalReceipts=最後%s撤出收益
+WithdrawedBills=撤回發票
+WithdrawalsLines=提款線
+RequestStandingOrderToTreat=要求會議常規治療
+RequestStandingOrderTreated=站在請求處理的訂單
+CustomersStandingOrders=站在客戶的訂單
+CustomerStandingOrder=客戶的長期訂單
+NbOfInvoiceToWithdraw=鈮的發票與撤回要求
+InvoiceWaitingWithdraw=發票等待撤離
+AmountToWithdraw=收回的款額
+WithdrawsRefused=拒絕撤回
+NoInvoiceToWithdraw=無付款方式客戶發票“撤回”是等待。繼續就提款卡發票&#39;標簽作出要求。
+ResponsibleUser=負責用戶
+WithdrawalsSetup=提款設置
+WithdrawStatistics=提款的統計
+WithdrawRejectStatistics=撤回拒絕的統計
+LastWithdrawalReceipt=撤回收益最後%s
+MakeWithdrawRequest=作出撤回請求
+ThirdPartyBankCode=第三方銀行代碼
+ThirdPartyDeskCode=第三方辦公桌代碼
+NoInvoiceCouldBeWithdrawed=沒有發票withdrawed成功。檢查發票的公司是一個有效的禁令。
+ClassCredited=分類記
+ClassCreditedConfirm=你確定要分類這一撤離收據上記入您的銀行帳戶？
+TransData=數據傳輸
+TransMetod=傳輸的方法
+Send=發送
+Lines=線路
+StandingOrderReject=發出拒絕
+WithdrawalRefused=提款Refuseds
+WithdrawalRefusedConfirm=你確定要輸入一個社會拒絕撤出
+RefusedData=日期拒收
+RefusedReason=拒絕的原因
+RefusedInvoicing=帳單拒絕
+NoInvoiceRefused=拒絕不收
+InvoiceRefused=負責對客戶拒絕
+Status=地位
+StatusUnknown=未知
+StatusWaiting=等候
+StatusCredited=計入
+StatusRefused=拒絕
+StatusMotif0=未指定
+StatusMotif1=提供insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=沒有撤退的命令
+StatusMotif4=客戶訂單
+StatusMotif5=肋inexploitable
+StatusMotif6=帳戶無余額
+StatusMotif7=司法判決
+StatusMotif8=其他原因
+CreateAll=撤回所有
+CreateGuichet=只有辦公室
+CreateBanque=只有銀行
+OrderWaiting=等待治療
+NotifyTransmision=提款傳輸
+NotifyEmision=撤離發射
+NotifyCredit=提款信用
+NumeroNationalEmetter=國家發射數
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+NbOfInvoiceToWithdrawWithInfo=發票鈮撤回界定的銀行帳戶信息的客戶的要求
+StatusTrans=傳播
+PleaseSelectCustomerBankBANToWithdraw=選擇撤回有關客戶的銀行帳戶信息
+WithBankUsingRIB=有關銀行賬戶，使用肋
+WithBankUsingBANBIC=使用的IBAN / BIC / SWIFT的銀行帳戶
+BankToReceiveWithdraw=銀行帳戶，以接收退出
+CreditDate=信貸
+WithdrawalFileNotCapable=無法生成撤出貴國收到文件
+ShowWithdraw=顯示撤櫃
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=然而，如果發票已至少有一個撤出支付尚未處理的，它不會被設置為支付最高允許管理撤出之前。
+DoStandingOrdersBeforePayments=這個標簽允許你為一個固定的訂單要求。一旦完成，你可以鍵入付款，收發票。
+InfoCreditSubject=由銀行支付的長期訂單%s
+InfoCreditMessage=站在為了%s銀行已支付<br>付款資料：%s
+InfoTransSubject=傳輸到銀行的長期訂單%s
+InfoTransMessage=%s %s銀行長期訂單的%s已被transmited。 <br><br>
+InfoTransData=金額：%s <br> metode：%s <br>日期：%s
+InfoFoot=這是一個自動發送的消息由Dolibarr
+InfoRejectSubject=站在為了拒絕
+InfoRejectMessage=您好！ <br><br>發票有關公司%s %s %s金額，standig秩序已被銀行拒絕。 <br><br> - <br> ％$
+ModeWarning=實模式下的選項沒有設置，我們停止後，這個模擬
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:51).
