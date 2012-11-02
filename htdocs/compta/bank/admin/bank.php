@@ -45,8 +45,9 @@ $action = GETPOST('action','alpha');
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-	$free = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT','alpha');
-    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
+	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT');	// No alpha here, we want exact string
+
+    $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 

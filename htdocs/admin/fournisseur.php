@@ -250,8 +250,9 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-    $free = GETPOST('SUPPLIER_INVOICE_FREE_TEXT','alpha');
-    $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
+    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT');	// No alpha here, we want exact string
+
+    $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 

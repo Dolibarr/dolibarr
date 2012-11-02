@@ -209,7 +209,8 @@ if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 
 if ($action == 'set_COMMANDE_FREE_TEXT')
 {
-	$freetext = GETPOST("COMMANDE_FREE_TEXT");
+	$freetext = GETPOST("COMMANDE_FREE_TEXT");	// No alpha here, we want exact string
+
 	$res = dolibarr_set_const($db, "COMMANDE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -407,12 +408,12 @@ foreach ($dirmodels as $reldir)
                 }
                 closedir($handle);
                 arsort($filelist);
-                
+
                 foreach($filelist as $file)
                 {
                     if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                     {
-            		
+
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
