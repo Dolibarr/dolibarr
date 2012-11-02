@@ -187,7 +187,7 @@ class pdf_azur extends ModelePDFPropales
                 $pdf=pdf_getInstance($this->format);
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
                 $heightforfreetext= 5;	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 10;	// Height reserved to output the footer (value include bottom margin)
+	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
