@@ -388,6 +388,18 @@ class Translate
 		{
             $str=$this->tab_translate[$key];
 
+		    // Overwrite translation
+		    $overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
+            {
+                $tmparray=explode(',', $conf->global->$overwritekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
+                }
+            }
+            
             if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
@@ -400,17 +412,6 @@ class Translate
 
 			// Restore HTML tags
             $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);
-
-            // Overwrite translation
-            if (! empty($conf->global->MAIN_OVERWRITE_TRANS))    // Overwrite translation with string1:newstring1,string2:newstring2
-            {
-                $tmparray=explode(',', $conf->global->MAIN_OVERWRITE_TRANS);
-                foreach($tmparray as $tmp)
-                {
-                    $tmparray2=explode(':',$tmp);
-                    if ($tmparray2[0]==$str) { $str=$tmparray2[1]; break; }
-                }
-            }
 
 			return $str;
 		}
@@ -458,10 +459,24 @@ class Translate
 	 */
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
+		global $conf;
+		
 		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
 		    $str=$this->tab_translate[$key];
 
+		    // Overwrite translation
+		    $overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
+            {
+                $tmparray=explode(',', $conf->global->$overwritekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
+                }
+            }
+            
             if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 		}
 		else
