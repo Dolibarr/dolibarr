@@ -613,7 +613,7 @@ class Expedition extends CommonObject
 
 		if ($conf->livraison_bon->enabled)
 		{
-			if ($this->statut == 1)
+			if ($this->statut == 1 || $this->statut == 2)
 			{
 				// Expedition validee
 				include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
