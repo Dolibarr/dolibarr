@@ -148,7 +148,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 
 				$pdf=pdf_getInstance($this->format,'mm','l');
 				$heightforinfotot = 0;	// Height reserved to output the info and total part
-                $heightforfreetext= 5;	// Height reserved to output the free text on last page
+		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);;	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
