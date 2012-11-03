@@ -1581,6 +1581,15 @@ if ($id > 0 || ! empty($ref))
                     }
                 }
 
+                // Modify
+                if ($object->statut == 1)
+                {
+                    if ($user->rights->fournisseur->commande->commander)
+                    {
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
+                    }
+                }
+
                 // Approve
                 if ($object->statut == 1)
                 {
@@ -1606,7 +1615,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // Reopen
-                if (in_array($object->statut, array(1, 5, 6, 7, 9)))
+                if (in_array($object->statut, array(5, 6, 7, 9)))
                 {
                     if ($user->rights->fournisseur->commande->commander)
                     {
