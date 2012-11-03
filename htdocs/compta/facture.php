@@ -363,7 +363,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $mesgs[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")),'errors');
             $action='';
         }
     }
