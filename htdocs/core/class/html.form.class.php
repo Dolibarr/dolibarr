@@ -1236,14 +1236,8 @@ class Form
                 $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
                 if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
                 {
-                    if ($objp->stock > 0)
-                    {
-                        $opt.= ' style="background-color:#32CD32; color:#F5F5F5;"';
-                    }
-                    else if ($objp->stock <= 0)
-                    {
-                        $opt.= ' style="background-color:#FF0000; color:#F5F5F5;"';
-                    }
+                	if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
+                    else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
                 }
                 $opt.= '>';
                 $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
