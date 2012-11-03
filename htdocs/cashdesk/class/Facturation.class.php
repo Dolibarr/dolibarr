@@ -92,8 +92,12 @@ class Facturation
         global $conf,$db;
 
         $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+
         $societe = new Societe($db);
         $societe->fetch($thirdpartyid);
+
+        $product = new Product($db);
+        $product->fetch($this->id);
 
         $sql = "SELECT taux";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
@@ -109,13 +113,12 @@ class Facturation
             //var_dump($vat_rate);exit;
         }
         else
-        {
+       {
             dol_print_error($db);
         }
 
-
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',0);
+        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,$product->type,'HT',0);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];
@@ -131,9 +134,6 @@ class Facturation
         }
         $montant_remise_ht = ($resultarray[6] - $resultarray[0]);
         $this->montantRemise($montant_remise_ht);
-
-        $product = new Product($db);
-        $product->fetch($this->id);
 
         $newcartarray=$_SESSION['poscart'];
         $i=count($newcartarray);
