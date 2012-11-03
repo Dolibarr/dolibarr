@@ -359,7 +359,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 
 	$watermark_angle=atan($h/$w);
 	$watermark_x=5;
-	$watermark_y=$h-25; //Set to $this->page_hauteur-50 or less if problems
+	$watermark_y=$h-50; // We must be sure to not print into margins
 	$watermark_width=$h;
 	$pdf->SetFont('','B',50);
 	$pdf->SetTextColor(255,192,203);

@@ -187,8 +187,8 @@ class pdf_crabe extends ModelePDFFactures
 
                 $pdf=pdf_getInstance($this->format);
 				$heightforinfotot = 50;	// Height reserved to output the info and total part
-                $heightforfreetext= 5;	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 10;	// Height reserved to output the footer (value include bottom margin)
+		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
+	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -710,25 +710,31 @@ class pdf_crabe extends ModelePDFFactures
 
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('','B', $default_font_size - 3);
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio),0,'L',0);
 						$posy=$pdf->GetY()+1;
 
-						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','', $default_font_size - 3);
-						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
-						$posy=$pdf->GetY()+2;
+			            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
+			            {
+							$pdf->SetXY($this->marge_gauche, $posy);
+							$pdf->SetFont('','', $default_font_size - 3);
+							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+							$posy=$pdf->GetY()+2;
+			            }
 					}
 					if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('','B', $default_font_size - 3);
-						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$this->emetteur->name),0,'L',0);
 						$posy=$pdf->GetY()+1;
 
-						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','', $default_font_size - 3);
-						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
-						$posy=$pdf->GetY()+2;
+			            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
+			            {
+							$pdf->SetXY($this->marge_gauche, $posy);
+							$pdf->SetFont('','', $default_font_size - 3);
+							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+							$posy=$pdf->GetY()+2;
+			            }
 					}
 				}
 			}

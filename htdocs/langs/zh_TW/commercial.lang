@@ -1,0 +1,99 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Commercial=商業訂單
+CommercialArea=商業領域
+CommercialCard=商務卡
+CustomerArea=商業訂單資訊區
+Customer=客戶
+Customers=客戶
+Prospect=展望
+Prospects=潛在
+DeleteAction=刪除一個動作/任務
+NewAction=新的行動/任務
+AddAction=新增行動/任務
+AddAnAction=添加一個動作/任務
+AddActionRendezVous=添加交會任務
+Rendez-Vous=會合
+ConfirmDeleteAction=你確定要刪除這個任務嗎？
+CardAction=行動卡
+PercentDone=完成百分比
+ActionOnCompany=關於公司的任務
+ActionOnContact=任務關於聯系
+TaskRDV=會議
+TaskRDVWith=與％會議上的
+ShowTask=顯示任務
+ShowAction=顯示行動
+ActionsReport=行動的報告
+SalesRepresentative=業務代表
+SalesRepresentatives=業務代表
+SalesRepresentativeFollowUp=業務代表（後續）
+SalesRepresentativeSignature=業務代表（簽字）
+CommercialInterlocutor=商業對話者
+ErrorWrongCode=錯誤代碼
+NoSalesRepresentativeAffected=沒有特別的銷售代表影響
+ShowCustomer=顯示客戶
+ShowProspect=展前景
+ListOfProspects=潛在清單
+ListOfCustomers=客戶名單
+LastDoneTasks=%s的最後完成的任務
+LastRecordedTasks=最後錄音任務
+LastActionsToDo=最後%s不是最古老的行動完成
+DoneAndToDoActionsFor=完成，為未來的任務%s
+DoneAndToDoActions=任務完成，並要做到
+DoneActions=已完成的行動
+DoneActionsFor=為%s完成01-0014-03
+ToDoActions=不完整的行動
+ToDoActionsFor=不完全對％01-0014-03
+SendPropalRef=%s的發送商業建議
+SendOrderRef=發送訂單 %s
+StatusActionToDo=要做到
+StatusActionDone=完成
+MyActionsAsked=我的行動已經記錄
+MyActionsToDo=我必須做的動作
+MyActionsDone=行動影響到我
+StatusActionInProcess=在過程
+TasksHistoryForThisContact=此聯絡人的歷史紀錄
+LastProspectDoNotContact=無須聯絡
+LastProspectNeverContacted=從未聯絡過
+LastProspectToContact=待聯絡
+LastProspectContactInProcess=聯絡中
+LastProspectContactDone=聯絡完成
+DateActionPlanned=日期行動計劃
+DateActionDone=日期行動完成
+ActionAskedBy=行動問
+ActionAffectedTo=受影響的行動
+ActionDoneBy=行動方面所做的
+ActionUserAsk=記錄
+ErrorStatusCantBeZeroIfStarted=如果字段' <b>日期做</b> '是充滿行動啟動（或成品），所以外地的<b>狀態</b> '不能為0％％。
+ActionAC_TEL=電話
+ActionAC_FAX=發送傳真
+ActionAC_PROP=通過郵件發送建議
+ActionAC_EMAIL=發送電子郵件
+ActionAC_RDV=會議
+ActionAC_FAC=通過郵件發送客戶發票
+ActionAC_REL=通過郵件發送客戶發票（提醒）
+ActionAC_CLO=關閉
+ActionAC_EMAILING=發送大量的電子郵件
+ActionAC_COM=通過郵件發送客戶訂單
+ActionAC_SUP_ORD=郵寄供應商的訂單
+ActionAC_SUP_INV=郵寄發票的供應商
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+StatusNotApplicable=不適用
+ActionAC_SHIP=發送郵件運輸
+ActionAC_OTH=其他
+StatusProsp=潛在狀態
+DraftPropals=起草商業建議
+SearchPropal=搜尋一個商業建議
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:42).

@@ -363,7 +363,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $mesgs[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")),'errors');
             $action='';
         }
     }
@@ -391,7 +391,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
         }
         else
         {
-            $mesgs[]='<div class="error">'.$object->error.'</div>';
+            setEventMessage($object->error,'errors');
         }
     }
 }
@@ -410,7 +410,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $mesgs[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")),'errors');
             $action='';
         }
     }
@@ -487,7 +487,7 @@ else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->righ
     }
     else
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Reason")),'errors');
     }
 }
 // Classify "abandoned"
@@ -502,7 +502,7 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes')
     }
     else
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Reason")),'errors');
     }
 }
 
@@ -596,13 +596,13 @@ else if ($action == 'add' && $user->rights->facture->creer)
         if (empty($datefacture))
         {
             $error++;
-            $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
         }
 
         if (! ($_POST['fac_replacement'] > 0))
         {
             $error++;
-            $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReplaceInvoice")).'</div>';
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ReplaceInvoice")),'errors');
         }
 
         if (! $error)
@@ -638,14 +638,14 @@ else if ($action == 'add' && $user->rights->facture->creer)
         if (! $_POST['fac_avoir'] > 0)
         {
             $error++;
-            $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("CorrectInvoice")).'</div>';
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CorrectInvoice")),'errors');
         }
 
         $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
             $error++;
-            $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
         }
 
         if (! $error)
@@ -697,7 +697,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
         if (empty($datefacture))
         {
             $error++;
-            $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
         }
 
         if (! $error)
@@ -726,7 +726,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
         if (empty($datefacture))
         {
             $error++;
-            $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
         }
 
         if (! $error)

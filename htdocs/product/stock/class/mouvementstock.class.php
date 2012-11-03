@@ -52,7 +52,7 @@ class MouvementStock
 	 *	@param		int		$type			Direction of movement:
 	 *										0=input (stock increase after stock transfert), 1=output (stock decrease after stock transfer),
 	 *										2=output (stock decrease), 3=input (stock increase)
-	 *	@param		int		$price			Unit price HT of product
+	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$datem			Force date of movement
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
@@ -78,6 +78,7 @@ class MouvementStock
 			return -1;
 		}
 
+		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
 		if ($product->type != 1 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
@@ -211,15 +212,8 @@ class MouvementStock
 		// Add movement for sub products (recursive call)
 		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
 		{
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// we use 0 as price, because pmp is not changed for subproduct
 		}
-
-		// Composition module (this is an external module)
-		/* Removed. This code must be provided by module on trigger STOCK_MOVEMENT
-		if (! $error && $qty < 0 && ! empty($conf->global->MAIN_MODULE_COMPOSITION))
-		{
-			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
-		}*/
 
 		if ($movestock && ! $error)
 		{

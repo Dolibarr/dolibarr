@@ -1,0 +1,256 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-09 00:32:00
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-09 00:32:00).
+// Reference language: en_US
+CHARSET=UTF-8
+ErrorPasswordDiffers=密碼不同，請重新輸入。
+ErrorForbidden=訪問被拒絕。 <br>您嘗試訪問的頁面，無一被驗證的會話區或功能，或者不允許你的用戶。
+ErrorForbidden2=此登錄權限可以定義你的Dolibarr從菜單的%S ->%s的管理員
+ErrorForbidden3=看來Dolibarr是不是通過身份驗證的會話中使用。以在Dolibarr安裝文件就會知道如何管理認證（htaccess的，mod_auth或其他...).
+ErrorNoImagickReadimage=功能imagick_readimage是沒有發現在這個PHP。沒有預覽可用。管理員可以從菜單中禁用此設置 - 顯示選項卡。
+ErrorRecordAlreadyExists=記錄已存在
+ErrorCantReadFile=無法讀取檔案'%s'
+ErrorCantReadDir=無法讀取目錄'%s'
+ErrorFailedToFindEntity=無法讀取實體'%s'的
+ErrorBadLoginPassword=錯誤的帳號或密碼
+ErrorLoginDisabled=您的帳戶已被禁用
+ErrorFailedToRunExternalCommand=無法運行外部命令。檢查它是可用和可運行在PHP的服務器。如果PHP <b>安全模式</b>被激活，請檢查命令<b>safe_mode_exec_dir之</b>內，是由參數定義一個目錄。
+ErrorFailedToChangePassword=無法更改密碼
+ErrorLoginDoesNotExists=<b>如何正確</b>使用手機與登錄<b>%</b>找不到。
+ErrorLoginHasNoEmail=這位用戶沒有電子郵件地址。進程中止。
+ErrorBadValueForCode=代碼有錯誤的值類型。再次嘗試以新的價值...
+SecurityCode=安全代碼
+Calendar=日歷
+AddTrip=添加行程
+Tools=工具
+Birthday=生日
+BirthdayDate=生日
+DateToBirth=出生日期
+BirthdayAlertOn=生日提醒活躍
+BirthdayAlertOff=生日提醒無效
+Notify_NOTIFY_VAL_FICHINTER=驗證幹預
+Notify_NOTIFY_VAL_FAC=客戶發票驗證
+Notify_NOTIFY_APP_ORDER_SUPPLIER=供應商的訂單批準
+Notify_NOTIFY_REF_ORDER_SUPPLIER=供應商的訂單拒絕
+Notify_NOTIFY_VAL_ORDER=驗證客戶訂單
+Notify_NOTIFY_VAL_PROPAL=驗證客戶的建議
+NbOfAttachedFiles=所附文件數/文件
+TotalSizeOfAttachedFiles=附件大小總計
+MaxSize=檔案最大
+AttachANewFile=附加一個新的檔案/文件
+LinkedObject=鏈接對象
+Miscellanous=雜項
+NbOfActiveNotifications=號碼的通知
+WarningInstallDirExists=警告，安裝目錄<b>（htdocs中/安裝</b> ）依然存在。這是一個嚴重的安全漏洞。您應該刪除它盡快。
+WarningUntilDirRemoved=所有安全警告（可見由管理員用戶只）將保持活躍，只要是存在的脆弱性（或常數MAIN_REMOVE_INSTALL_WARNING是在安裝程序->其他設置添加）。
+PredefinedMailTest=這是一個測試郵件。\ n該兩行是由一個回車分隔。
+PredefinedMailTestHtml=這是一個<b>測試</b>郵件（單詞測試必須大膽）。 <br>這兩條線隔開，回車。
+DemoDesc=Dolibarr是緊湊型的ERP / CRM的幾個功能模塊組成。一個演示，其中包括所有模塊並不意味著什麽，因為這永遠不會發生。因此，一些演示配置文件都可用。
+ChooseYourDemoProfil=演示材選擇符合您的活動...
+DemoFundation=一個基金會管理成員
+DemoFundation2=管理成員及銀行賬戶的基礎
+DemoCompanyServiceOnly=管理一特約銷售服務活動只
+DemoCompanyShopWithCashDesk=管理與現金辦公桌店
+DemoCompanyProductAndStocks=管理一個小型或中型公司銷售產品
+DemoCompanyAll=與管理（所有主要功能模塊多種活動小型或中型公司）
+GoToDemo=前往演示
+CreatedBy=建立 by %s 
+ModifiedBy=修改 by %s
+ValidatedBy=被%s驗證
+CanceledBy=被%s取消
+ClosedBy=被%s關閉
+FileWasRemoved=檔案%s被刪除
+DirWasRemoved=目錄%s被刪除
+FeatureNotYetAvailableShort=在下一版本可用
+FeatureNotYetAvailable=此版本尚未提供此功能
+FeatureExperimental=實驗功能。在這個版本並不穩定
+FeatureDevelopment=發展的特點。在這個版本並不穩定
+FeaturesSupported=功能支持
+Width=寬度
+Height=高度
+Depth=深度
+Weight=重量
+TotalWeight=總重量
+WeightUnitton=Ton(公噸)
+WeightUnitkg=Kg(公斤)
+WeightUnitg=g(克)
+WeightUnitmg=mg(毫克)
+Length=長度
+LengthUnitm=m(公尺)
+LengthUnitdm=dm(公寸)
+LengthUnitcm=cm(公分)
+LengthUnitmm=mm(毫米)
+Surface=面積
+SurfaceUnitm2=m^2(平方米)
+SurfaceUnitdm2=dm^2(平方公寸)
+SurfaceUnitcm2=cm^2(平方公分)
+SurfaceUnitmm2=mm^2(平方毫米)
+Volume=體積
+TotalVolume=總體積
+VolumeUnitm3=m^3(立方米)
+VolumeUnitdm3=dm^3(立方公寸)
+VolumeUnitcm3=cm^3(立方公分)
+VolumeUnitmm3=mm^3(立方毫米)
+Size=大小
+SizeUnitm=m(公尺)
+SizeUnitdm=dm(公寸)
+SizeUnitcm=cm(公分)
+SizeUnitmm=mm(毫米)
+BugTracker=臭蟲追蹤系統
+SendNewPasswordDesc=這種形式可以讓您申請一個新的密碼。它將被發送到您的電子郵件地址。 <br>更改才生效後確認此電子郵件裏面點擊鏈接。 <br>檢查你的電子郵件閱讀器軟件。
+BackToLoginPage=回到登錄頁面
+AuthenticationDoesNotAllowSendNewPassword=認證模式為<b>%s。</b> <br>在這種模式下，Dolibarr不能知道，也不更改密碼。 <br>聯系您的系統管理員，如果您想更改您的密碼。
+EnableGDLibraryDesc=安裝或啟用使用此選項與你的PHP GD庫。
+EnablePhpAVModuleDesc=您需要安裝一個模塊，您的防病毒兼容。 （ClamAV的：中的php4 - clamavlib歐的php5 - clamavlib）
+ProfIdShortDesc=<b>教授ID為%s</b>是一個國家的信息取決於第三方。 <br>例如，對於國家的<b>%s，</b>它的代碼<b>的%s。</b>
+DolibarrDemo=Dolibarr的ERP / CRM的演示
+StatsByNumberOfUnits=根據單位數統計的產品/服務
+StatsByNumberOfEntities=根據實體數統計的產品/服務
+NumberOfProposals=數量與去年12個月的建議
+NumberOfCustomerOrders=數量與去年12個月的客戶訂單
+NumberOfCustomerInvoices=發票號碼的客戶比去年12個月
+NumberOfSupplierInvoices=對供應商的發票號碼的最後12個月
+NumberOfUnitsProposals=過去12個月提案數
+NumberOfUnitsCustomerOrders=過去12個月的客戶訂單數
+NumberOfUnitsCustomerInvoices=過去12個月客戶 Invoice 數
+NumberOfUnitsSupplierInvoices=過去12個月供應商 Invoice 數
+EMailTextInterventionValidated=幹預%s已被驗證。
+EMailTextInvoiceValidated=發票%s已被確認。
+EMailTextProposalValidated=這項建議%s已經驗證。
+EMailTextOrderValidated=該命令%s已被驗證。
+EMailTextOrderApproved=該命令%s已被批準。
+EMailTextOrderApprovedBy=該命令%s已被%s批準
+EMailTextOrderRefused=該命令%s已被拒絕。
+EMailTextOrderRefusedBy=該命令%s已經%s拒絕
+ImportedWithSet=輸入數據集
+DolibarrNotification=自動通知
+ResizeDesc=輸入新的高度新的寬度<b>或</b> 。比率將維持在調整大小...
+NewLength=新寬
+NewHeight=新高度
+NewSizeAfterCropping=新的尺寸裁剪後
+DefineNewAreaToPick=定義圖像的新領域挑選（圖像左側單擊然後拖動，直到到達對面角落）
+CurrentInformationOnImage=對當前圖像信息
+YouReceiveMailBecauseOfNotification=您收到此消息，因為您的電子郵件已被添加到列表的目標是特定的事件通知到%%s的軟件第
+YouReceiveMailBecauseOfNotification2=此事件是：
+Bookmark=書簽
+Bookmarks=書簽
+NewBookmark=新的書簽
+ShowBookmark=顯示書簽
+BookmarkThisPage=收藏此頁
+OpenANewWindow=打開一個新窗口
+ReplaceWindow=替換當前窗口
+BookmarkTargetNewWindowShort=新窗口
+BookmarkTargetReplaceWindowShort=當前窗口
+BookmarkTitle=標題書簽
+UrlOrLink=網址
+BehaviourOnClick=行為時，被點擊的網址
+CreateBookmark=創建書簽
+SetHereATitleForLink=設置為書簽標題
+UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部的HTTP URL或相對Dolibarr網址
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=如果選擇打開一個網頁的鏈接必須對現有的或新出現的窗口
+BookmarksManagement=書簽管理
+ListOfBookmarks=書簽列表
+LoginWebcal=登錄為Webcalendar
+ErrorWebcalLoginNotDefined=登錄相關的Webcalendar登錄到您的<b>Dolibarr%s</b>是沒有定義。
+ErrorPhenixLoginNotDefined=登錄相關的鳳凰登錄到您的<b>Dolibarr%s</b>是沒有定義。
+AddCalendarEntry=日歷項中添加%s的
+NewCompanyToDolibarr=%s的公司加入Dolibarr
+ContractValidatedInDolibarr=%s的驗證合同中Dolibarr
+ContractCanceledInDolibarr=%s的合同取消Dolibarr
+ContractClosedInDolibarr=%s的合同在Dolibarr關閉
+PropalClosedSignedInDolibarr=建議%s的簽署Dolibarr
+PropalClosedRefusedInDolibarr=建議%s的拒絕在Dolibarr
+PropalValidatedInDolibarr=建議在Dolibarr%s的驗證
+InvoiceValidatedInDolibarr=%s的驗證發票在Dolibarr
+InvoicePaidInDolibarr=發票%s的改變Dolibarr支付
+InvoiceCanceledInDolibarr=%s的發票取消Dolibarr
+PaymentDoneInDolibarr=%s的支付做Dolibarr
+CustomerPaymentDoneInDolibarr=%s的客戶付款做Dolibarr
+SupplierPaymentDoneInDolibarr=%s的供應商付款做Dolibarr
+MemberValidatedInDolibarr=成員%s驗證在Dolibarr
+MemberResiliatedInDolibarr=成員%s resiliated在Dolibarr
+MemberDeletedInDolibarr=成員%s刪除Dolibarr
+MemberSubscriptionAddedInDolibarr=對成員%s認購加入Dolibarr
+ExportsArea=出口地區
+AvailableFormats=可用的格式
+LibraryUsed=Librairy使用
+LibraryVersion=版本
+ExportableDatas=可匯出的資料
+NoExportableData=沒有可匯出的資料（導出加載的數據，或丟失的權限沒有模塊）
+ToExport=匯出
+NewExport=建立新的匯出
+ExternalSites=外部網站
+CalculatedWeight=計算重量
+CalculatedVolume=計算量
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+WeightUnitpound=pound(英鎊)
+VolumeUnitounce=ounce(盎司)
+VolumeUnitlitre=L(升)
+VolumeUnitgallon=gallon(加侖)
+SizeUnitinch=inch(英吋)
+SizeUnitfoot=foot(英呎)
+ImageEditor=圖像編輯器
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:19).
+
+
+// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+// Reference language: en_US -> zh_CN
+ToolsDesc=此區提供無法加入在子選單的雜項工具。<br><br>請選擇左側選單來執行你想要的工具。
+Notify_WITHDRAW_TRANSMIT=傳輸撤軍
+Notify_BILL_PAYED=客戶發票payed
+Notify_BILL_CANCEL=客戶發票取消
+Notify_BILL_SENTBYMAIL=通過郵件發送的客戶發票
+Notify_ORDER_SUPPLIER_VALIDATE=供應商為了驗證
+Notify_ORDER_SUPPLIER_SENTBYMAIL=通過郵件發送的供應商的訂單
+Notify_BILL_SUPPLIER_VALIDATE=供應商發票驗證
+Notify_BILL_SUPPLIER_PAYED=供應商發票payed
+Notify_BILL_SUPPLIER_SENTBYMAIL=通過郵件發送的供應商發票
+Notify_CONTRACT_VALIDATE=合同驗證
+Notify_FICHEINTER_VALIDATE=幹預驗證
+Notify_MEMBER_DELETE=會員刪除
+Top=頂部
+Bottom=底部的
+Left=左
+Right=右
+ThisIsListOfModules=這是一個模塊，此演示配置文件（只有最常見的模塊在此演示中看到）預選名單。編輯本有一個更個性化的演示，並點擊“開始”。
+ClickHere=點擊這裏
+FileIsTooBig=文件過大
+Export=出口
+// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:16:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+Notify_FICHINTER_VALIDATE=幹預驗證
+Notify_BILL_VALIDATE=客戶發票驗證
+Notify_ORDER_SUPPLIER_APPROVE=供應商為了批準
+Notify_ORDER_SUPPLIER_REFUSE=供應商的訂單被拒絕
+Notify_ORDER_VALIDATE=驗證客戶訂單
+Notify_PROPAL_VALIDATE=驗證客戶的建議
+Notify_WITHDRAW_CREDIT=信貸撤離
+Notify_WITHDRAW_EMIT=執行撤離
+Notify_ORDER_SENTBYMAIL=通過郵件發送的客戶訂單
+Notify_COMPANY_CREATE=第三方創建
+Notify_PROPAL_SENTBYMAIL=通過郵件發送的商業提案
+Notify_ORDER_SENTBYMAIL=envíopedido POR電子郵件
+Notify_SHIPPING_VALIDATE=航運驗證
+Notify_SHIPPING_SENTBYMAIL=通過電子郵件發送的航運
+Notify_MEMBER_VALIDATE=會員驗證
+Notify_MEMBER_SUBSCRIPTION=會員訂閱
+Notify_MEMBER_RESILIATE=會員resiliated
+UseAdvancedPerms=一些模塊使用先進的權限
+FileFormat=文件格式
+SelectAColor=選擇一種顏色
+AddFiles=添加文件
+StartUpload=開始上傳
+CancelUpload=取消上傳
+ShipmentValidatedInDolibarr=運費%s在Dolibarr驗證
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:15).

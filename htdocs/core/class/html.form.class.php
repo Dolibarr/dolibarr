@@ -1236,14 +1236,8 @@ class Form
                 $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
                 if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
                 {
-                    if ($objp->stock > 0)
-                    {
-                        $opt.= ' style="background-color:#32CD32; color:#F5F5F5;"';
-                    }
-                    else if ($objp->stock <= 0)
-                    {
-                        $opt.= ' style="background-color:#FF0000; color:#F5F5F5;"';
-                    }
+                	if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
+                    else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
                 }
                 $opt.= '>';
                 $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
@@ -1480,8 +1474,12 @@ class Form
                 $label = $objp->label;
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
-                $opt.=$objp->ref.' ('.$objp->ref_fourn.') - ';
-                $outval.=$objRef.' ('.$objRefFourn.') - ';
+                $opt.=$objp->ref;
+                if (! empty($objp->idprodfournprice)) $opt.=' ('.$objp->ref_fourn.')';
+                $opt.=' - ';
+                $outval.=$objRef;
+                if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
+                $outval.=' - ';
                 $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
 
@@ -1532,7 +1530,7 @@ class Form
                     }
                 }
                 else
-                {
+              {
                     $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
                     $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
                 }

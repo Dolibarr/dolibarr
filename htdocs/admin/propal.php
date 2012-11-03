@@ -130,7 +130,7 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 
 if ($action == 'set_PROPALE_FREE_TEXT')
 {
-	$freetext = GETPOST('PROPALE_FREE_TEXT','alpha');
+	$freetext = GETPOST('PROPALE_FREE_TEXT');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "PROPALE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
