@@ -1009,7 +1009,7 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
         $sql.= ' VALUES ('.$this->id.')';
-        dol_syslog("Fournisseur.facture::addline sql=".$sql);
+        dol_syslog(get_class($this)."::addline sql=".$sql);
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -1076,7 +1076,7 @@ class FactureFournisseur extends CommonInvoice
         $pu = price2num($pu);
         $qty  = price2num($qty);
 		$remise_percent=price2num($remise_percent);
-		
+
         // Check parameters
         if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
         if ($type < 0) return -1;
@@ -1092,7 +1092,7 @@ class FactureFournisseur extends CommonInvoice
         // qty, pu, remise_percent et txtva
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+        $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];
@@ -1132,7 +1132,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", product_type = ".$product_type;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog("Fournisseur.facture::updateline sql=".$sql);
+        dol_syslog(get_class($this)."::updateline sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1157,7 +1157,7 @@ class FactureFournisseur extends CommonInvoice
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("Fournisseur.facture::updateline error=".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::updateline error=".$this->error, LOG_ERR);
             return -1;
         }
     }

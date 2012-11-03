@@ -40,14 +40,14 @@ $bankid_cb = (GETPOST("CASHDESK_ID_BANKACCOUNT_CB")!='')?GETPOST("CASHDESK_ID_BA
 if (empty($username))
 {
 	$retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login"));
-	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
 	exit;
 }
 // Check third party id
 if (! ($thirdpartyid > 0))
 {
     $retour=$langs->trans("ErrorFieldRequired",$langs->transnoentities("CashDeskThirdPartyForSell"));
-    header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+    header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
     exit;
 }
 
@@ -55,7 +55,7 @@ if (! ($thirdpartyid > 0))
 if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_BILL &&  ! ($warehouseid > 0))
 {
 	$retour=$langs->trans("CashDeskSetupStock");
-	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
+	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid.'&bankid_cash='.$bankid_cash.'&bankid_cheque='.$bankid_cheque.'&bankid_cb='.$bankid_cb);
 	exit;
 }
 
