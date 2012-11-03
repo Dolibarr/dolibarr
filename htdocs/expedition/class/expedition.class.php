@@ -918,7 +918,7 @@ class Expedition extends CommonObject
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
 
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits);
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];
