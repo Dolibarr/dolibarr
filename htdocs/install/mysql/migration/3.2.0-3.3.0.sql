@@ -19,6 +19,8 @@ DROP TABLE llx_product_ca;
 DROP TABLE llx_document;
 DROP TABLE llx_dolibarr_modules;
 
+ALTER TABLE llx_societe_rib MODIFY COLUMN bic varchar(20);
+
 ALTER TABLE llx_facture_rec ADD COLUMN usenewprice        integer;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN remise_percent	real       DEFAULT 0 after qty;
