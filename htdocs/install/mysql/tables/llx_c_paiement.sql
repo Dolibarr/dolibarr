@@ -31,8 +31,7 @@ create table llx_c_paiement
   libelle    varchar(30),
   type       smallint,	
   active     tinyint DEFAULT 1  NOT NULL,
-  module     varchar(32) NULL,
-  UNIQUE KEY uk_c_paiement (code)
+  module     varchar(32) NULL
 )ENGINE=innodb;
 
 

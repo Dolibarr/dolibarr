@@ -23,6 +23,5 @@ create table llx_c_type_fees
   code      varchar(12)  NOT NULL,
   libelle   varchar(30),
   active    tinyint DEFAULT 1   NOT NULL,
-  module    varchar(32) NULL,
-  UNIQUE KEY uk_c_type_fees (code)
+  module    varchar(32) NULL
 )ENGINE=innodb;
