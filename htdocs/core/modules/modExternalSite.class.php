@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ class modExternalSite extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Include any external web site into Dolibarr menus and view it into a Dolibarr frame.";
+		$this->description = "This module include an external web site or page into Dolibarr menus and view it into a Dolibarr frame.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
@@ -63,7 +63,7 @@ class modExternalSite extends DolibarrModules
 		// Name of png file (without png) used for this module
 		$this->picto='bookmark';
 		// Call to inside lang's file
-		$this->langfiles = array("@externalsite");
+		$this->langfiles = array("externalsite");
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -76,7 +76,11 @@ class modExternalSite extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array();			// List of parameters
+		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
+		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
+		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
+		// );
+		$this->const = array(0=>array('EXTERNALSITE_LABEL','chaine','ExternalSite','To declare label to use into external site menu entry', 0));
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
@@ -97,18 +101,19 @@ class modExternalSite extends DolibarrModules
 		//------
 		$r=0;
 
-		$this->menu[$r]=array('fk_menu'=>0,
-													'type'=>'top',
-													'titre'=>'ExternalSites',
-													'mainmenu'=>'externalsite',
-													'url'=>'/externalsite/frames.php',
-													'langs'=>'other',
-													'position'=>100,
-													'perms'=>'',
-													'enabled'=>'$conf->externalsite->enabled',
-													'target'=>'',
-													'user'=>0
-													);
+		$this->menu[$r]=array(
+			'fk_menu'=>0,
+			'type'=>'top',
+			'titre'=>'$conf->global->EXTERNALSITE_LABEL',
+			'mainmenu'=>'externalsite',
+			'url'=>'/externalsite/frames.php',
+			'langs'=>'other',
+			'position'=>100,
+			'perms'=>'',
+			'enabled'=>'$conf->externalsite->enabled',
+			'target'=>'',
+			'user'=>0
+		);
 		$r++;
 
 	}

@@ -48,13 +48,15 @@ if ($action == 'update')
     $i=0;
 
     $db->begin();
-    
+
+	$label  = GETPOST('EXTERNALSITE_LABEL','alpha');
     $exturl = GETPOST('EXTERNALSITE_URL','alpha');
 
+    $i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($label),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
     //$i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($_POST["EXTERNALSITE_LABEL"]),'chaine',0,'',$conf->entity);
 
-    if ($i >= 1)
+    if ($i >= 2)
     {
         $db->commit();
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
@@ -75,8 +77,9 @@ llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ExternalSiteSetup"),$linkback,'setup');
-print '<br>';
 
+print $langs->trans("Module100Desc")."<br>\n";
+print '<br>';
 
 print '<form name="externalsiteconfig" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -89,17 +92,21 @@ print "<td>".$langs->trans("Value")."</td>";
 print "<td>".$langs->trans("Examples")."</td>";
 print "</tr>";
 
-/*print "<tr class=\"impair\">";
-print "<td>".$langs->trans("Label")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". ($_POST["EXTERNALSITE_LABEL"]?$_POST["EXTERNALSITE_LABEL"]:$conf->global->EXTERNALSITE_LABEL) . "\" size=\"40\"></td>";
-print "<td>My menu";
+$var=true;
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". (GETPOST('EXTERNALSITE_LABEL','alpha')?GETPOST('EXTERNALSITE_LABEL','alpha'):((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL=='ExternalSite')?'':$conf->global->EXTERNALSITE_LABEL)) . "\" size=\"12\"></td>";
+print "<td>http://localhost/myurl/";
+print "<br>http://wikipedia.org/";
 print "</td>";
 print "</tr>";
-*/
 
-print "<tr class=\"impair\">";
-print "<td>".$langs->trans("ExternalSiteURL")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_URL\" value=\"". (GETPOST('EXTERNALSITE_URL','alpha')?GETPOST('EXTERNALSITE_URL','alpha'):$conf->global->EXTERNALSITE_URL) . "\" size=\"40\"></td>";
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_URL\" value=\"". (GETPOST('EXTERNALSITE_URL','alpha')?GETPOST('EXTERNALSITE_URL','alpha'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL)) . "\" size=\"40\"></td>";
 print "<td>http://localhost/myurl/";
 print "<br>http://wikipedia.org/";
 print "</td>";
@@ -117,7 +124,8 @@ print "</form>\n";
 
 dol_htmloutput_mesg($mesg);
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
