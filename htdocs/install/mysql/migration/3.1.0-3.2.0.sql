@@ -464,3 +464,12 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'SOCIETE_CODECOMPTA_ADDON' AND __DECRYPT('value')__ = 'mod_codecompta_digitaria';
 
 ALTER TABLE llx_c_barcode_type ADD UNIQUE INDEX uk_c_barcode_type(code, entity);
+
+ALTER TABLE llx_c_actioncomm DROP INDEX code, ADD UNIQUE uk_c_actioncomm (code);
+ALTER TABLE llx_c_civilite DROP INDEX code, ADD UNIQUE uk_c_civilite (code);
+ALTER TABLE llx_c_propalst DROP INDEX code, ADD UNIQUE uk_c_propalst (code);
+ALTER TABLE llx_c_stcomm DROP INDEX code, ADD UNIQUE uk_c_stcomm (code);
+ALTER TABLE llx_c_type_fees DROP INDEX code, ADD UNIQUE uk_c_type_fees (code);
+ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
+ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
+ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
