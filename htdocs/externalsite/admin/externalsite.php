@@ -98,9 +98,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_LABEL\" value=\"". (GETPOST('EXTERNALSITE_LABEL','alpha')?GETPOST('EXTERNALSITE_LABEL','alpha'):((empty($conf->global->EXTERNALSITE_LABEL) || $conf->global->EXTERNALSITE_LABEL=='ExternalSite')?'':$conf->global->EXTERNALSITE_LABEL)) . "\" size=\"12\"></td>";
-print "<td>http://localhost/myurl/";
-print "<br>http://wikipedia.org/";
-print "</td>";
+print "<td>My menu entry</td>";
 print "</tr>";
 
 $var=!$var;
