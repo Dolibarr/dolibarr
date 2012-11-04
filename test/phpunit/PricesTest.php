@@ -131,13 +131,13 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$this->savdb=$db;
 
 		// qty=1, unit_price=1.24, discount_line=0, vat_rate=10, price_base_type='HT'
-        $result1=calcul_price_total(1, 1.24, 0, 10, 0, 0, 0, 'HT', 0);
+        $result1=calcul_price_total(1, 1.24, 0, 10, 0, 0, 0, 'HT', 0, 0);
         print __METHOD__." result1=".join(', ',$result1)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
         $this->assertEquals(array(1.24, 0.12, 1.36, 1.24, 0.124, 1.364, 1.24, 0.12, 1.36, 0, 0, 0, 0, 0, 0, 0),$result1);
 
         // 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1 type 1, 0% localtax2 type 0
-        $result2=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0, 0, 1, 0);
+        $result2=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0, 0);
 		print __METHOD__." result2=".join(', ',$result2)."\n";
         $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result2);
 
@@ -145,7 +145,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
         global $mysoc;
         $mysoc=new Societe($db);
         $mysoc->country_code='ES';
-        $result3=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0);	// 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1, 0% localtax2
+        $result3=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0, 0);	// 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1, 0% localtax2
         print __METHOD__." result3=".join(', ',$result3)."\n";
         $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result3);
 

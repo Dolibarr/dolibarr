@@ -790,3 +790,14 @@ ALTER TABLE llx_categorie MODIFY COLUMN label varchar(255) NOT NULL;
 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (entity, fk_parent, label, type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_label (label);
+
+-- Change index name to be compliant with SQL standard, index name must be unique in database schema
+ALTER TABLE llx_c_actioncomm DROP INDEX code, ADD UNIQUE uk_c_actioncomm (code);
+ALTER TABLE llx_c_civilite DROP INDEX code, ADD UNIQUE uk_c_civilite (code);
+ALTER TABLE llx_c_propalst DROP INDEX code, ADD UNIQUE uk_c_propalst (code);
+ALTER TABLE llx_c_stcomm DROP INDEX code, ADD UNIQUE uk_c_stcomm (code);
+ALTER TABLE llx_c_type_fees DROP INDEX code, ADD UNIQUE uk_c_type_fees (code);
+ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
+ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
+ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
+
