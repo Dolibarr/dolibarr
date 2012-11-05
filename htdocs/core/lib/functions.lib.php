@@ -3874,12 +3874,13 @@ function verifCond($strRights)
 
 /**
  * Replace eval function to add more security.
- * This function is called by verifCond()
+ * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
- * @param 	string	$s		String to evaluate
- * @return	mixed			Result of eval
+ * @param 	string	$s				String to evaluate
+ * @param	int		$returnvalue	0=No return (used to execute $a=something). 1=Value of eval is returned (used to eval $something).
+ * @return	mixed					Nothing or return of eval
  */
-function dol_eval($s)
+function dol_eval($s,$returnvalue=0)
 {
 	// Only global variables can be changed by eval function and returned to caller
 	global $langs, $user, $conf;
@@ -3887,7 +3888,8 @@ function dol_eval($s)
 	global $rights;
 
 	//print $s."<br>\n";
-	eval($s);
+	if ($returnvalue) return eval('return '.$s.';');
+	else eval($s);
 }
 
 /**
