@@ -38,9 +38,9 @@
  *		@param	int		$qty						Quantity
  * 		@param 	float	$pu                         Unit price (HT or TTC selon price_base_type)
  *		@param 	float	$remise_percent_ligne       Discount for line
- *		@param 	float	$txtva                      Vat rate
- *		@param  float	$localtax1_rate             Localtax1 rate (used for some countries only, like spain). Can also be negative. TODO: Remove this param that is not used.
- *		@param  float	$localtax2_rate             Localtax2 rate (used for some countries only, like spain). Can also be negative. TODO: Remove this param that is not used.
+ *		@param 	float	$txtva                      0=do not apply standard tax, Vat rate=apply
+ *		@param  float	$uselocaltax1_rate          0=do not use this localtax, >0=apply, -1=autodetect according to seller
+ *		@param  float	$uselocaltax2_rate          0=do not use this localtax, >0=apply, -1=autodetect according to seller
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
  *		@param	int		$info_bits					Miscellanous informations on line
@@ -48,14 +48,16 @@
  *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
  *		@return result[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount, ...)
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1_rate, $localtax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '')
 {
 	global $conf,$mysoc,$db;
 
 	$result=array();
 
-	$countryid=$mysoc->country_id;	// By default, seller is user company.
-	if (! empty($seller) && is_object($seller)) $countryid=$seller->country_id;	// If seller is a supplier, $seller is provided
+	if (empty($seller) || ! is_object($seller)) $seller=$mysoc;	// If seller is a customer, $seller is not provided, we use $mysoc
+	$countryid=$seller->country_id;
+	if ($uselocaltax1_rate < 0) $uselocaltax1_rate=$seller->localtax1_assuj;
+	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
 
 	// Now we search localtaxes information ourself (rates and types).
 	$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
@@ -102,7 +104,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($apply_tax) {
+    if ($uselocaltax1_rate && $apply_tax) {
   		$result[14] = price2num(($tot_sans_remise * (1 + ( $localtax1_rate / 100))) - $tot_sans_remise, 'MT');
   		$localtaxes[0] += $result[14];
 
@@ -125,7 +127,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($apply_tax) {
+    if ($uselocaltax2_rate && $apply_tax) {
   		$result[15] = price2num(($tot_sans_remise * (1 + ( $localtax2_rate / 100))) - $tot_sans_remise, 'MT');
   		$localtaxes[0] += $result[15];
 
@@ -195,7 +197,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($apply_tax) {
+    if ($uselocaltax1_rate && $apply_tax) {
 
   		$result[14] = price2num(($tot_sans_remise * (1 + ( $localtax1_rate / 100))) - $tot_sans_remise, 'MT');	// amount tax1 for total_ht_without_discount
   		$result[8] += $result[14];																				// total_ttc_without_discount + tax1
@@ -219,7 +221,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
         if ($type == 1) $apply_tax = true;
         break;
     }
-    if ($apply_tax) {
+    if ($uselocaltax2_rate && $apply_tax) {
   		$result[15] = price2num(($tot_sans_remise * (1 + ( $localtax2_rate / 100))) - $tot_sans_remise, 'MT');	// amount tax2 for total_ht_without_discount
   		$result[8] += $result[15];																				// total_ttc_without_discount + tax2
 
