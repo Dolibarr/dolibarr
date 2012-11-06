@@ -109,6 +109,7 @@ $server->wsdl->addComplexType(
 
     	'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
     	'price' => array('name'=>'price','type'=>'xsd:string'),
+    	'price_ttc' => array('name'=>'price_ttc','type'=>'xsd:string'),
     	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
 
     	'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
@@ -278,6 +279,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'price_net' => $product->price,
                 		'price' => ($product->price_ttc-$product->price),
 				        'vat_rate' => $product->tva_tx,
+				        'price_ttc' => $product->price_ttc,
                 		'price_base_type' => $product->price_base_type,
 
 				        'stock_real' => $product->stock_reel,
