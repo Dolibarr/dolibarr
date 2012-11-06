@@ -27,6 +27,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -137,8 +138,7 @@ $server->wsdl->addComplexType(
 	array(),
 	array(
 	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:image[]')
-	),
-	''
+	)
 );
 
 /*
@@ -296,7 +296,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
             if ($result > 0)
             {
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-            	$pdir = get_exdir($obj->id,2) . $obj->id ."/photos/";
+            	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
 
                 // Create
@@ -331,7 +331,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'pmp' => $product->pmp,
                 		'import_key' => $product->import_key,
                 		'dir' => $pdir,
-                		'photos' => $obj->liste_photos($dir,$nbmax=10)
+                		'photos' => $product->liste_photos($dir,$nbmax=10)
                 ));
             }
             else
