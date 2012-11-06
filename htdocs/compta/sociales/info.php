@@ -35,7 +35,7 @@ $action=GETPOST("action");
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $langs->trans("SocialContribution"), '', 'charges');
+$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
 
 /*
