@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,9 +117,48 @@ $server->wsdl->addComplexType(
     	'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
     	'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
 		'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
-		'import_key' => array('name'=>'import_key','type'=>'xsd:string')
+		'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
+
+		'dir' => array('name'=>'dir','type'=>'xsd:string'),
+		'photos' => array('name'=>'photos','type'=>'tns:PhotosArray')
     )
 );
+
+
+/*
+ * Image of product
+*/
+$server->wsdl->addComplexType(
+	'PhotosArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:image[]')
+	),
+	''
+);
+
+/*
+ * An image
+*/
+$server->wsdl->addComplexType(
+	'image',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+	'photo' => array('name'=>'photo','type'=>'xsd:string'),
+	'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
+	'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
+	'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
+	)
+);
+
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -255,6 +295,10 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
             $result=$product->fetch($id,$ref,$ref_ext);
             if ($result > 0)
             {
+            	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
+            	$pdir = get_exdir($obj->id,2) . $obj->id ."/photos/";
+            	$dir = $dir . '/'. $pdir;
+
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -285,7 +329,9 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'stock_real' => $product->stock_reel,
                 		'stock_alert' => $product->seuil_stock_alerte,
 				        'pmp' => $product->pmp,
-                		'import_key' => $product->import_key
+                		'import_key' => $product->import_key,
+                		'dir' => $pdir,
+                		'photos' => $obj->liste_photos($dir,$nbmax=10)
                 ));
             }
             else
