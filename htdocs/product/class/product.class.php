@@ -1203,10 +1203,10 @@ class Product extends CommonObject
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1)
 							{
-								$sql = "SELECT rowid,price, price_ttc, qty_min, remise_percent, remise";
+								$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
-								$sql.= " ORDER BY qty_min ASC";
+								$sql.= " ORDER BY quantity ASC";
 								$resultat=array();
 								$resql = $this->db->query($sql) ;
 								if ($resql)
@@ -1216,8 +1216,8 @@ class Product extends CommonObject
 										$resultat[$ii]=array();
 										$resultat[$ii]["rowid"]=$result["rowid"];
 										$resultat[$ii]["price"]= $result["price"];
-										$resultat[$ii]["price_ttc"]= $result["price_ttc"];
-										$resultat[$ii]["qty_min"]= $result["qty_min"];
+										$resultat[$ii]["unitprice"]= $result["unitprice"];
+										$resultat[$ii]["quantity"]= $result["quantity"];
 										$resultat[$ii]["remise_percent"]= $result["remise_percent"];
 										$resultat[$ii]["remise"]= $result["remise"];
 										$ii++;
@@ -1256,10 +1256,10 @@ class Product extends CommonObject
 						// Récuperation de la liste des prix selon qty si flag positionné
 						if ($this->prices_by_qty[0] == 1)
 						{
-							$sql = "SELECT rowid,price, price_ttc, qty_min, remise_percent, remise";
+							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 							$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[0]."'";
-							$sql.= " ORDER BY qty_min ASC";
+							$sql.= " ORDER BY quantity ASC";
 							$resultat=array();
 							$resql = $this->db->query($sql) ;
 							if ($resql)
@@ -1269,8 +1269,8 @@ class Product extends CommonObject
 									$resultat[$ii]=array();
 									$resultat[$ii]["rowid"]=$result["rowid"];
 									$resultat[$ii]["price"]= $result["price"];
-									$resultat[$ii]["price_ttc"]= $result["price_ttc"];
-									$resultat[$ii]["qty_min"]= $result["qty_min"];
+									$resultat[$ii]["unitprice"]= $result["unitprice"];
+									$resultat[$ii]["quantity"]= $result["quantity"];
 									$resultat[$ii]["remise_percent"]= $result["remise_percent"];
 									$resultat[$ii]["remise"]= $result["remise"];
 									$ii++;

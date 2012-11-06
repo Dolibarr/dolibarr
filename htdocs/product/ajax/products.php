@@ -74,7 +74,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		// Price by qty
 		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1)		// If we need a particular price related to qty
 		{
-			$sql = "SELECT price, price_ttc, qty_min, remise_percent";
+			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty ";
 			$sql.= " WHERE rowid=".$price_by_qty_rowid."";
 
@@ -85,11 +85,11 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 				if ($objp)
 				{
 					$found=true;
-					$outprice_ht=price($objp->price);
-					$outprice_ttc=price($objp->price_ttc);
+					$outprice_ht=price($objp->unitprice);
+					$outprice_ttc=price($objp->unitprice * (1 + ($object->tva_tx / 100)));
 					$outpricebasetype=$object->price_base_type;
 					$outtva_tx=$object->tva_tx;
-					$outqty=$objp->qty_min;
+					$outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
 				}
 			}

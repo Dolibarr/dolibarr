@@ -21,12 +21,12 @@
 
 create table llx_product_price_by_qty
 (
-  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_product_price	integer NOT NULL,
-  date_price		timestamp,
-  price			double (24,8) DEFAULT 0,
-  price_ttc		double (24,8) DEFAULT 0,
+  date_price		timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  price				double(24,8) DEFAULT 0,
+  quantity			double DEFAULT NULL,
   remise_percent	double NOT NULL DEFAULT 0,
-  remise		double NOT NULL DEFAULT 0,
-  qty_min		real DEFAULT 1
+  remise			double NOT NULL DEFAULT 0,
+  unitprice			double(24,8) DEFAULT 0
 )ENGINE=innodb;

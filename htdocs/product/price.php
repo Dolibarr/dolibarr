@@ -108,6 +108,7 @@ else if ($action == 'delete' && $user->rights->produit->supprimer)
 /*****************************************************
  * Price by quantity
  *****************************************************/
+$error=0;
 if ($action == 'activate_price_by_qty') { // Activating product price by quantity add a new price, specified as by quantity
 	$result = $object->fetch($id);
 	$level=GETPOST('level');
@@ -127,68 +128,47 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 	$priceid=GETPOST('priceid');
 	$newprice=price2num(GETPOST("price"),'MU');
 	//$newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-	$qtymin=GETPOST('qty_min');
+	$quantity=GETPOST('quantity');
 	$remise_percent=price2num(GETPOST('remise_percent'));
-	$remise=0; // TODO : allow dicsoun by amount when available on documents
+	$remise=0; // TODO : allow dicsount by amount when available on documents
 	
-	// Calcul des prix (HT  et TTC)
-	if ($newprice!='' || $newprice==0)
+	if (empty($quantity))
 	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
+	}
+	if (empty($newprice))
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
+	}
+	if(!$error) {
+		// Calcul du prix HT et du prix unitaire
 		if ($object->price_base_type == 'TTC')
 		{
-			$price_ttc = price2num($newprice,'MU');
 			$price = price2num($newprice) / (1 + ($object->tva_tx / 100));
-			$price = price2num($price,'MU');
-
-			/*if ($newminprice!='' || $newminprice==0)
-			{
-				$price_min_ttc = price2num($newminprice,'MU');
-				$price_min = price2num($newminprice) / (1 + ($object->tva_tx / 100));
-				$price_min = price2num($price_min,'MU');
-			}
-			else
-			{
-				$price_min=0;
-				$price_min_ttc=0;
-			}*/
 		}
-		else
-		{
-			$price = price2num($newprice,'MU');
-			$price_ttc = price2num($newprice) * (1 + ($object->tva_tx / 100));
-			$price_ttc = price2num($price_ttc,'MU');
-
-			/*if ($newminprice!='' || $newminprice==0)
-			{
-				$price_min = price2num($newminprice,'MU');
-				$price_min_ttc = price2num($newminprice) * (1 + ($object->tva_tx / 100));
-				$price_min_ttc = price2num($price_min_ttc,'MU');
-				//print 'X'.$newminprice.'-'.$price_min;
-			}
-			else
-			{
-				$price_min=0;
-				$price_min_ttc=0;
-			}*/
-		}
-	}
-
-	// Ajout / mise à jour
-	if($rowid > 0) {
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
-		$sql.= " price='".$price."',";
-		$sql.= " price_ttc=".$price_ttc.",";
-		$sql.= " qty_min=".$qtymin.",";
-		$sql.= " remise_percent=".$remise_percent.",";
-		$sql.= " remise=".$remise;
-		$sql.= " WHERE rowid = ".GETPOST('rowid');
 		
-		$result = $db->query($sql);
-	} else {
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,price_ttc,qty_min,remise_percent,remise) values (";
-		$sql.= $priceid.','.$price.','.$price_ttc.','.$qtymin.','.$remise_percent.','.$remise.')';
-
-		$result = $db->query($sql);
+		$price = price2num($newprice,'MU');
+		$unitPrice = price2num($price/$quantity,'MU');
+	
+		// Ajout / mise à jour
+		if($rowid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
+			$sql.= " price='".$price."',";
+			$sql.= " unitprice=".$unitPrice.",";
+			$sql.= " quantity=".$quantity.",";
+			$sql.= " remise_percent=".$remise_percent.",";
+			$sql.= " remise=".$remise;
+			$sql.= " WHERE rowid = ".GETPOST('rowid');
+			
+			$result = $db->query($sql);
+		} else {
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,unitprice,quantity,remise_percent,remise) values (";
+			$sql.= $priceid.','.$price.','.$unitPrice.','.$quantity.','.$remise_percent.','.$remise.')';
+	
+			$result = $db->query($sql);
+		}
 	}
 }
 
@@ -352,7 +332,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans("PriceByQuantityRange").' '.$i.'</td>';
 					print '<td align="right">'.$langs->trans("HT").'</td>';
-					print '<td align="right">'.$langs->trans("TTC").'</td>';
+					print '<td align="right">'.$langs->trans("UnitPrice").'</td>';
 					print '<td align="right">'.$langs->trans("Discount").'</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';
@@ -363,7 +343,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">';
 							print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
 							print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
-							print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"></td>';
+							print '<td><input size="5" type="text" value="'.$prices['quantity'].'" name="quantity"></td>';
 							print '<td align="right" colspan="2"><input size="10" type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
 							//print '<td align="right">&nbsp;</td>';
 							print '<td align="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent">&nbsp;%</td>';
@@ -372,9 +352,9 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 							print '</form>';
 						} else {
 							print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
-							print '<td>'.$prices['qty_min'].'</td>';
+							print '<td>'.$prices['quantity'].'</td>';
 							print '<td align="right">'.price($prices['price']).'</td>';
-							print '<td align="right">'.price($prices['price_ttc']).'</td>';
+							print '<td align="right">'.price($prices['unitprice']).'</td>';
 							print '<td align="right">'.price($prices['remise_percent']).' %</td>';
 							print '<td align="center">';
 							if(($user->rights->produit->creer || $user->rights->service->creer)) {
@@ -395,7 +375,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 						print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">';
 						print '<input type="hidden" value="0" name="rowid">';
 						print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
-						print '<td><input size="5" type="text" value="1" name="qty_min"></td>';
+						print '<td><input size="5" type="text" value="1" name="quantity"></td>';
 						print '<td align="right" colspan="2"><input size="10" type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
 						//print '<td align="right">&nbsp;</td>';
 						print '<td align="right"><input size="5" type="text" value="0" name="remise_percent">&nbsp;%</td>';
@@ -456,7 +436,7 @@ else
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("PriceByQuantityRange").'</td>';
 			print '<td align="right">'.$langs->trans("HT").'</td>';
-			print '<td align="right">'.$langs->trans("TTC").'</td>';
+			print '<td align="right">'.$langs->trans("UnitPrice").'</td>';
 			print '<td align="right">'.$langs->trans("Discount").'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
@@ -467,7 +447,7 @@ else
 					print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">';
 					print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
 					print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
-					print '<td><input size="5" type="text" value="'.$prices['qty_min'].'" name="qty_min"></td>';
+					print '<td><input size="5" type="text" value="'.$prices['quantity'].'" name="quantity"></td>';
 					print '<td align="right" colspan="2"><input size="10" type="text" value="'.$prices['price'].'" name="price">&nbsp;'.$object->price_base_type.'</td>';
 					//print '<td align="right">&nbsp;</td>';
 					print '<td align="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent">&nbsp;%</td>';
@@ -476,9 +456,9 @@ else
 					print '</form>';
 				} else {
 					print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
-					print '<td>'.$prices['qty_min'].'</td>';
+					print '<td>'.$prices['quantity'].'</td>';
 					print '<td align="right">'.price($prices['price']).'</td>';
-					print '<td align="right">'.price($prices['price_ttc']).'</td>';
+					print '<td align="right">'.price($prices['unitprice']).'</td>';
 					print '<td align="right">'.price($prices['remise_percent']).' %</td>';
 					print '<td align="center">';
 					if(($user->rights->produit->creer || $user->rights->service->creer)) {
@@ -499,7 +479,7 @@ else
 				print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">';
 				print '<input type="hidden" value="0" name="rowid">';
 				print '<tr class="'.($ii % 2 == 0 ? 'pair':'impair').'">';
-				print '<td><input size="5" type="text" value="1" name="qty_min"></td>';
+				print '<td><input size="5" type="text" value="1" name="quantity"></td>';
 				print '<td align="right" colspan="2"><input size="10" type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
 				//print '<td align="right">&nbsp;</td>';
 				print '<td align="right"><input size="5" type="text" value="0" name="remise_percent">&nbsp;%</td>';

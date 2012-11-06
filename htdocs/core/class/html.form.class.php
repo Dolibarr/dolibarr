@@ -1226,9 +1226,10 @@ class Form
 				$objp = $this->db->fetch_object($result);
 				
 				if(!empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
-					$sql = "SELECT rowid, qty_min, price, price_ttc, remise_percent, remise";
+					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
+					$sql.= " ORDER BY quantity ASC";
 					
 					dol_syslog(get_class($this)."::select_produits_do search price by qty sql=".$sql);
 					$result2 = $this->db->query($sql);
@@ -1239,9 +1240,9 @@ class Form
 						while ($nb_prices && $j < $nb_prices) {
 							$objp2 = $this->db->fetch_object($result2);
 							
-							$objp->quantity = $objp2->qty_min;
+							$objp->quantity = $objp2->quantity;
 							$objp->price = $objp2->price;
-							$objp->unitprice = $objp2->price;
+							$objp->unitprice = $objp2->unitprice;
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
 							$objp->price_by_qty_rowid = $objp2->rowid;
@@ -1313,14 +1314,8 @@ class Form
 		$opt.= (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)?' pbq="'.$objp->price_by_qty_rowid.'"':'';
         if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
         {
-            if ($objp->stock > 0)
-            {
-                $opt.= ' style="background-color:#32CD32; color:#F5F5F5;"';
-            }
-            else if ($objp->stock <= 0)
-            {
-                $opt.= ' style="background-color:#FF0000; color:#F5F5F5;"';
-            }
+			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
+			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
         $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
@@ -1382,21 +1377,21 @@ class Form
 			$outdiscount=$objp->remise_percent;
 			if ($objp->quantity == 1)
 			{
-				$opt.= price($objp->price).' '.$currencytext."/";
-				$outval.= price($objp->price).' '.$currencytextnoent."/";
+				$opt.= price($objp->unitprice).' '.$currencytext."/";
+				$outval.= price($objp->unitprice).' '.$currencytextnoent."/";
 				$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Unit");
 			}
 			else
 			{
-				$opt.= price($objp->price * $objp->quantity).' '.$currencytext."/".$objp->quantity;
-				$outval.= price($objp->price * $objp->quantity).' '.$currencytextnoent."/".$objp->quantity;
+				$opt.= price($objp->price).' '.$currencytext."/".$objp->quantity;
+				$outval.= price($objp->price).' '.$currencytextnoent."/".$objp->quantity;
 				$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Units");
 			}
 			
-			$outprice_ht=price($objp->price);
-            $outprice_ttc=price($objp->price_ttc);
+			$outprice_ht=price($objp->unitprice);
+            $outprice_ttc=price($objp->unitprice * (1 + ($objp->tva_tx / 100)));
             $outpricebasetype=$objp->price_base_type;
             $outtva_tx=$objp->tva_tx;
 		}
@@ -1573,8 +1568,12 @@ class Form
                 $label = $objp->label;
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
-                $opt.=$objp->ref.' ('.$objp->ref_fourn.') - ';
-                $outval.=$objRef.' ('.$objRefFourn.') - ';
+                $opt.=$objp->ref;
+                if (! empty($objp->idprodfournprice)) $opt.=' ('.$objp->ref_fourn.')';
+                $opt.=' - ';
+                $outval.=$objRef;
+                if (! empty($objp->idprodfournprice)) $outval.=' ('.$objRefFourn.')';
+                $outval.=' - ';
                 $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
 
