@@ -63,7 +63,7 @@ class Categorie
 	 * 	Load category into memory from database
 	 *
 	 * 	@param		int		$id		Id of category
-	 *  @param		strin	$label	Label of category
+	 *  @param		string	$label	Label of category
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
 	function fetch($id,$label='')
@@ -86,20 +86,27 @@ class Categorie
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$res = $this->db->fetch_array($resql);
-
-			$this->id			= $res['rowid'];
-			$this->fk_parent	= $res['fk_parent'];
-			$this->label		= $res['label'];
-			$this->description	= $res['description'];
-			$this->socid		= $res['fk_soc'];
-			$this->visible		= $res['visible'];
-			$this->type			= $res['type'];
-			$this->entity		= $res['entity'];
-
-			$this->db->free($resql);
-
-			return 1;
+			if ($this->db->num_rows($resql) > 0)
+			{
+				$res = $this->db->fetch_array($resql);
+	
+				$this->id			= $res['rowid'];
+				$this->fk_parent	= $res['fk_parent'];
+				$this->label		= $res['label'];
+				$this->description	= $res['description'];
+				$this->socid		= $res['fk_soc'];
+				$this->visible		= $res['visible'];
+				$this->type			= $res['type'];
+				$this->entity		= $res['entity'];
+	
+				$this->db->free($resql);
+	
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{

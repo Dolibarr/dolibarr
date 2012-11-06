@@ -38,16 +38,21 @@ function marges_admin_prepare_head()
 	$head[$h][2] = 'parameters';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,'',$head,$h,'margesadmin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,'',$head,$h,'margesadmin');
 
-    return $head;
+	return $head;
 }
 
-function marges_prepare_head($user)
+/**
+ * Return array of tabs to used on pages for third parties cards.
+ *
+ * @return 	array				Array of tabs
+ */
+function marges_prepare_head()
 {
 	global $langs, $conf;
 	$langs->load("marges@marges");
@@ -87,36 +92,36 @@ function marges_prepare_head($user)
  */
 function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
 {
-  global $db, $conf;
+	global $db, $conf;
 
-  $marge_tx_ret='';
-  $marque_tx_ret='';
+	$marge_tx_ret='';
+	$marque_tx_ret='';
 
-  if($fk_pa > 0) {
-  	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-  	$product = new ProductFournisseur($db);
-  	if ($product->fetch_product_fournisseur_price($fk_pa)) {
-  		$paht_ret = $product->fourn_unitprice;
-  		if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
-  			$paht_ret += $product->fourn_unitcharges;
-  	}
-  	else
-  		$paht_ret = $paht;
-  }
-  else
-  	$paht_ret	= $paht;
+	if($fk_pa > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$product = new ProductFournisseur($db);
+		if ($product->fetch_product_fournisseur_price($fk_pa)) {
+			$paht_ret = $product->fourn_unitprice;
+			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
+				$paht_ret += $product->fourn_unitcharges;
+		}
+		else
+			$paht_ret = $paht;
+	}
+	else
+		$paht_ret	= $paht;
 
-  require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-  // calcul pu_ht remisés
-  $tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT');
-  $pu_ht_remise = $tabprice[0];
-  // calcul taux marge
-  if ($paht_ret != 0)
-  	$marge_tx_ret = round((100 * ($pu_ht_remise - $paht_ret)) / $paht_ret, 3);
-  // calcul taux marque
-  if ($pu_ht_remise != 0)
-  	$marque_tx_ret = round((100 * ($pu_ht_remise - $paht_ret)) / $pu_ht_remise, 3);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+	// calcul pu_ht remisés
+	$tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', 0, 0);	// FIXME Parameter type is missing, i put 0 to avoid blocking error
+	$pu_ht_remise = $tabprice[0];
+	// calcul taux marge
+	if ($paht_ret != 0)
+		$marge_tx_ret = round((100 * ($pu_ht_remise - $paht_ret)) / $paht_ret, 3);
+	// calcul taux marque
+	if ($pu_ht_remise != 0)
+		$marque_tx_ret = round((100 * ($pu_ht_remise - $paht_ret)) / $pu_ht_remise, 3);
 
-  return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
+	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }
 ?>

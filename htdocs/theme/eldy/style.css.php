@@ -1825,6 +1825,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.product_line_stock_ok { color: #002200; }
+.product_line_stock_too_low { color: #664400; }
+
 .fieldrequired { font-weight: bold; color: #000055; }
 
 .photo {

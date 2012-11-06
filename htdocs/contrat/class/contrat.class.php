@@ -892,7 +892,7 @@ class Contrat extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -995,6 +995,7 @@ class Contrat extends CommonObject
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
+
 		$subprice = $price;
 		$remise = 0;
 		if (dol_strlen($remise_percent) > 0)
@@ -1015,7 +1016,7 @@ class Contrat extends CommonObject
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits);
+		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -1879,7 +1880,7 @@ class ContratLigne
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice=calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0);
+		$tabprice=calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1);
 		$this->total_ht  = $tabprice[0];
 		$this->total_tva = $tabprice[1];
 		$this->total_ttc = $tabprice[2];

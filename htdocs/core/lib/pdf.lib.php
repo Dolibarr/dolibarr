@@ -137,7 +137,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
  */
 function pdf_getPDFFont($outputlangs)
 {
-	$font='Helvetica'; // By default, for FPDI or ISO language on TCPDF
+	global $conf;
+
+	if (! empty($conf->global->MAIN_PDF_FORCE_FONT)) return $conf->global->MAIN_PDF_FORCE_FONT;
+
+	$font='Helvetica'; // By default, for FPDI, or ISO language on TCPDF
 	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
 	{
 		if ($outputlangs->trans('FONTFORPDF')!='FONTFORPDF')
@@ -355,7 +359,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 
 	$watermark_angle=atan($h/$w);
 	$watermark_x=5;
-	$watermark_y=$h-25; //Set to $this->page_hauteur-50 or less if problems
+	$watermark_y=$h-50; // We must be sure to not print into margins
 	$watermark_width=$h;
 	$pdf->SetFont('','B',50);
 	$pdf->SetTextColor(255,192,203);
@@ -678,7 +682,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->MultiCell($width, 3, $line, 0, $align, 0);
 		$posy-=$freetextheight;
 	}
-	
+
 	$pdf->SetY(-$posy);
 	$pdf->line($dims['lm'], $dims['hk']-$posy, $dims['wk']-$dims['rm'], $dims['hk']-$posy);
 	$posy--;
@@ -798,7 +802,6 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 		$labelproductservice=pdf_getlinedesc($object,$i,$outputlangs,$hideref,$hidedesc,$issupplierline);
 		// Description
 		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1);
-
 		return $labelproductservice;
 	}
 }

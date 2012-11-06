@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -109,15 +111,54 @@ $server->wsdl->addComplexType(
 
     	'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
     	'price' => array('name'=>'price','type'=>'xsd:string'),
+    	'price_ttc' => array('name'=>'price_ttc','type'=>'xsd:string'),
     	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
 
     	'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
     	'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
     	'stock_pmp' => array('name'=>'stock_pmp','type'=>'xsd:string'),
 		'canvas' => array('name'=>'canvas','type'=>'xsd:string'),
-		'import_key' => array('name'=>'import_key','type'=>'xsd:string')
+		'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
+
+		'dir' => array('name'=>'dir','type'=>'xsd:string'),
+		'photos' => array('name'=>'photos','type'=>'tns:PhotosArray')
     )
 );
+
+
+/*
+ * Image of product
+*/
+$server->wsdl->addComplexType(
+	'PhotosArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:image[]')
+	)
+);
+
+/*
+ * An image
+*/
+$server->wsdl->addComplexType(
+	'image',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+	'photo' => array('name'=>'photo','type'=>'xsd:string'),
+	'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
+	'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
+	'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
+	)
+);
+
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -254,6 +295,10 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
             $result=$product->fetch($id,$ref,$ref_ext);
             if ($result > 0)
             {
+            	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
+            	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
+            	$dir = $dir . '/'. $pdir;
+
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -278,12 +323,15 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'price_net' => $product->price,
                 		'price' => ($product->price_ttc-$product->price),
 				        'vat_rate' => $product->tva_tx,
+				        'price_ttc' => $product->price_ttc,
                 		'price_base_type' => $product->price_base_type,
 
 				        'stock_real' => $product->stock_reel,
                 		'stock_alert' => $product->seuil_stock_alerte,
 				        'pmp' => $product->pmp,
-                		'import_key' => $product->import_key
+                		'import_key' => $product->import_key,
+                		'dir' => $pdir,
+                		'photos' => $product->liste_photos($dir,$nbmax=10)
                 ));
             }
             else

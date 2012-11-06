@@ -55,10 +55,10 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=10;
-		$this->marge_droite=10;
-		$this->marge_haute=10;
-		$this->marge_basse=10;
+		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
+		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
+		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
+		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
 		$this->option_logo = 1;
 
@@ -134,7 +134,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 				$pdf=pdf_getInstance($this->format);
                 $heightforinfotot = 0;	// Height reserved to output the info and total part
-                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
+	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -236,7 +237,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description de la ligne produit
@@ -301,13 +302,13 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext - $heightforinfotot, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfreetext - $heightforinfotot + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforfreetext - $heightforinfotot, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfreetext - $heightforinfotot + 1;
 				}
 
 				// Pied de page
@@ -541,8 +542,9 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 		{
 			// Sender properties
 			$carac_emetteur='';
-		 	// Add internal contact of proposal if defined
-			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+		 	// Add internal contact of origin element if defined
+			$arrayidcontact=array();
+			if (! empty($origin) && is_object($object->$origin)) $arrayidcontact=$object->$origin->getIdContact('internal','SALESREPFOLL');
 		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);

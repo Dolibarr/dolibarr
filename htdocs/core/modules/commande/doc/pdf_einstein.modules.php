@@ -78,10 +78,10 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=10;
-		$this->marge_droite=10;
-		$this->marge_haute=10;
-		$this->marge_basse=10;
+		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
+		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
+		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
+		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
@@ -98,7 +98,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
@@ -126,13 +126,13 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @param		object	$hookmanager		Hookmanager object
+     *  @param		Object		$object				Object to generate
+     *  @param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
      *  @return     int             			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
@@ -184,9 +184,11 @@ class pdf_einstein extends ModelePDFCommandes
 			{
 				$nblignes = count($object->lines);
 
-                $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 50;	// Height reserved to output the info and total part (value include bottom margin)
-                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+				// Create pdf instance
+				$pdf=pdf_getInstance($this->format);
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
+		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
+	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -273,12 +275,45 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
+
+					$showpricebeforepagebreak=1;
+
+					$pdf->startTransaction();
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+					$pageposafter=$pdf->getPage();
+					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					{
+						$pdf->rollbackTransaction(true);
+						$pageposafter=$pageposbefore;
+						//print $pageposafter.'-'.$pageposbefore;exit;
+						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
+						$posyafter=$pdf->GetY();
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						{
+							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
+								$pdf->setPage($pagenb+1);
+							}
+						}
+						else
+						{
+							// We found a page break
+							$showpricebeforepagebreak=0;
+						}
+					}
+					else	// No pagebreak
+					{
+						$pdf->commitTransaction();
+					}
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -287,7 +322,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
-					if ($pageposafter > $pageposbefore) {
+					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
@@ -388,13 +423,13 @@ class pdf_einstein extends ModelePDFCommandes
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
 				// Affiche zone infos
@@ -555,25 +590,31 @@ class pdf_einstein extends ModelePDFCommandes
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
 	                $pdf->SetFont('','B', $default_font_size - 3);
-	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio),0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','', $default_font_size - 3);
-	                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
-		            $posy=$pdf->GetY()+2;
+		            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
+		            {
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('','', $default_font_size - 3);
+		                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+			            $posy=$pdf->GetY()+2;
+		            }
 	            }
 	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 	            {
 	                $pdf->SetXY($this->marge_gauche, $posy);
 	                $pdf->SetFont('','B', $default_font_size - 3);
-	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$this->emetteur->name),0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
-		            $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','', $default_font_size - 3);
-	                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
-		            $posy=$pdf->GetY()+2;
+		            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
+		            {
+			            $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('','', $default_font_size - 3);
+		                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+			            $posy=$pdf->GetY()+2;
+		            }
 	            }
 	        }
 		}
@@ -819,7 +860,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */

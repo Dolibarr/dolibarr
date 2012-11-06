@@ -148,10 +148,11 @@ cui hai bisogno ed essere facile da usare.
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
 %{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
-%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}
-desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/%{name}.desktop
-%endif
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version} || 0%{?mdkversion} || 0%{?suse_version}
+#Commented as it fails with error: /usr/bin/install: cannot stat build/rpm/dolibarr.desktop: No such file or directory
+#desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/%{name}.desktop --vendor=""
+%endif
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/%{name}/build/rpm
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz

@@ -152,7 +152,7 @@ class Translate
 	 *  @param	string	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
 	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	int		$forcelangdir		To force a different lang directory
-	 *	@return	int							<0 if KO, 0 if already loaded, >0 if OK
+	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
 	function Load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
 	{
@@ -164,7 +164,7 @@ class Translate
 			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
 			exit;
 		}
-		if ($this->defaultlang == 'none_NONE') return;    // Special language code to not translate keys
+		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
 
 		//dol_syslog("Translate::Load Start domain=".$domain." alt=".$alt." forcelangdir=".$forcelangdir." this->defaultlang=".$this->defaultlang);
 
@@ -388,6 +388,18 @@ class Translate
 		{
             $str=$this->tab_translate[$key];
 
+		    // Overwrite translation (TODO Move this at a higher level when we load tab_translate to avoid doing it for each trans call)
+		    $overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
+            {
+                $tmparray=explode(',', $conf->global->$overwritekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
+                }
+            }
+
             if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
@@ -401,23 +413,11 @@ class Translate
 			// Restore HTML tags
             $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);
 
-            // Overwrite translation
-            if (! empty($conf->global->MAIN_OVERWRITE_TRANS))    // Overwrite translation with string1:newstring1,string2:newstring2
-            {
-                $tmparray=explode(',', $conf->global->MAIN_OVERWRITE_TRANS);
-                foreach($tmparray as $tmp)
-                {
-                    $tmparray2=explode(':',$tmp);
-                    if ($tmparray2[0]==$str) { $str=$tmparray2[1]; break; }
-                }
-            }
-
 			return $str;
 		}
 		else								// Translation is not available
 		{
-			//$str=$this->getTradFromKey($key);
-			//return $this->convToOutputCharset($str);
+		    if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -458,17 +458,33 @@ class Translate
 	 */
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
+		global $conf;
+
 		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
 		    $str=$this->tab_translate[$key];
 
+		    // Overwrite translation
+		    $overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
+            {
+                $tmparray=explode(',', $conf->global->$overwritekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
+                }
+            }
+
             if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
+
+            return $str;
 		}
 		else
 		{
-			$str=$this->getTradFromKey($key);
+		    if ($key[0] == '$') { return dol_eval($key,1); }
+			return $this->getTradFromKey($key);
 		}
-		return $str;
 	}
 
 

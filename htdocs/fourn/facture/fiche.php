@@ -1361,11 +1361,9 @@ else
         if (! empty($conf->banque->enabled)) $nbcols++;
 
         // Local taxes
-        if ($mysoc->country_code=='ES')
-        {
-            if($mysoc->localtax1_assuj=="1") $nbrow++;
-            if($mysoc->localtax2_assuj=="1") $nbrow++;
-        }
+        // TODO I use here $societe->localtax1_assuj. Before it was $mysoc->localtax1_assuj, but this is a supplier invoice, so made by supplier, so depends on supplier properties
+        if ($societe->localtax1_assuj=="1") $nbrows++;
+        if ($societe->localtax2_assuj=="1") $nbrows++;
 
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
@@ -1473,21 +1471,19 @@ else
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Amount Local Taxes
-        if ($mysoc->country_code=='ES')
+        if ($societe->localtax1_assuj=="1") //Localtax1 RE
         {
-            if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-                print '<td align="right">'.price($object->total_localtax1).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-            }
-            if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-                print '<td align="right">'.price($object->total_localtax2).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-            }
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+            print '<td align="right">'.price($object->total_localtax1).'</td>';
+            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
+        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+            print '<td align="right">'.price($object->total_localtax2).'</td>';
+            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        }
+
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Project

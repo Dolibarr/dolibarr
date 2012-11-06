@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2008 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012 Juanjo Menent		 <jmenent@2byte.es>
+/* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -395,7 +395,7 @@ class Expedition extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				$file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
+				$file = $conf->expedition->dir_output . "/" .get_exdir($this->id, 2) . "/" . $this->id.".pdf";
 				$this->pdf_filename = $file;
 
 				// Tracking url
@@ -613,7 +613,7 @@ class Expedition extends CommonObject
 
 		if ($conf->livraison_bon->enabled)
 		{
-			if ($this->statut == 1)
+			if ($this->statut == 1 || $this->statut == 2)
 			{
 				// Expedition validee
 				include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
@@ -918,7 +918,7 @@ class Expedition extends CommonObject
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
 
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits);
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];

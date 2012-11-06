@@ -287,8 +287,9 @@ class InterfaceActionsAuto
             $langs->load("bills");
             $langs->load("agenda");
 
+            // Values for this action can't be defined by caller.
 			$object->actiontypecode='AC_OTH';
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
+            $object->actionmsg2=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("InvoicePaidInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 

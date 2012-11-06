@@ -1,0 +1,110 @@
+/*
+ * Language code: zh_CN
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+Proposals=商業建議
+Proposal=商業建議
+ProposalShort=建議
+ProposalsDraft=商業建議草案
+ProposalDraft=商業建議草案
+ProposalsOpened=新開張的商業建議
+Prop=商業建議
+CommercialProposal=商業建議
+CommercialProposals=商業建議
+NewProp=新的商業建議
+NewProposal=新的商業建議
+NewPropal=新建議
+Prospect=展望
+ProspectList=展望名單
+DeleteProp=商業建議刪除
+ValidateProp=驗證的商業建議
+AddProp=新增提案
+ConfirmDeleteProp=你確定要刪除這個商業建議？
+ConfirmValidateProp=你確定要驗證這個商業建議？
+LastPropals=最後％的提議
+LastClosedProposals=最後％的封閉式建議
+LastModifiedProposals=最後％s的修訂建議
+AllPropals=所有提案
+LastProposals=最後建議
+SearchAProposal=搜尋建議
+ProposalsStatistics=商業建議的統計數字
+NumberOfProposalsByMonth=按月份數
+AmountOfProposalsByMonthHT=按月份金額（稅後）
+NbOfProposals=商業建議數
+ShowPropal=顯示建議
+PropalsDraft=草稿
+PropalsOpened=開業
+PropalsNotBilled=閉不計費
+PropalStatusDraft=草案（等待驗證）
+PropalStatusValidated=驗證（建議打開）
+PropalStatusOpened=驗證（建議打開）
+PropalStatusClosed=關閉
+PropalStatusSigned=簽名（需要收費）
+PropalStatusNotSigned=不簽署（非公開）
+PropalStatusBilled=帳單
+PropalStatusDraftShort=草案
+PropalStatusValidatedShort=驗證
+PropalStatusOpenedShort=開業
+PropalStatusClosedShort=關閉
+PropalStatusSignedShort=簽名
+PropalStatusNotSignedShort=未簽署
+PropalStatusBilledShort=帳單
+PropalsToClose=商業建議關閉
+PropalsToBill=到法案簽署商業建議
+ListOfProposals=商業建議名單
+ActionsOnPropal=行動上的建議
+NoOpenedPropals=沒有開放的商業建議
+NoOtherOpenedPropals=沒有其他打開的商業建議
+RefProposal=商業建議參考
+SendPropalByMail=通過郵件發送的商業建議
+FileNotUploaded=該文件沒有上載
+FileUploaded=該文件被成功上傳
+AssociatedDocuments=相關文件的建議：
+ErrorCantOpenDir=無法打開目錄
+DatePropal=日期的建議
+DateEndPropal=有效期結束日期
+DateEndPropalShort=結束日期
+ValidityDuration=有效期
+CloseAs=密切與地位
+ClassifyBilled=分類計費
+BuildBill=建立發票
+ErrorPropalNotFound=Propal％s不符合
+Estimate=估計：
+EstimateShort=估計
+OtherPropals=其他建議
+CopyPropalFrom=通過復制現有的商業建議提案
+CreateEmptyPropal=創建空的商業建議維耶熱或從產品/服務列表
+DefaultProposalDurationValidity=默認的商業建議有效期（天數）
+UseCustomerContactAsPropalRecipientIfExist=使用客戶聯系地址，如果定義的，而不是作為提案的第三黨的地址收件人地址
+ClonePropal=克隆的商業建議
+ConfirmClonePropal=你確定要克隆這種商業建議<b>％s嗎</b> ？
+ProposalsAndProposalsLines=商業建議和行
+ProposalLine=建議行
+TypeContact_propal_internal_SALESREPFOLL=代表隨訪的建議
+TypeContact_propal_external_BILLING=客戶發票接觸
+TypeContact_propal_external_CUSTOMER=客戶聯系隨訪的建議
+DocModelAzurDescription=一個完整的方案模型（logo. ..）
+DocModelJauneDescription=特賈恩方案模型
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+ProposalCard=建議卡
+ConfirmReOpenProp=你確定你要打開商業建議<b>%s</b>嗎？
+AvailabilityPeriod=可用性延遲
+SetAvailability=設置可用性延遲
+AfterOrder=訂單後
+AvailabilityTypeAV_NOW=即時
+AvailabilityTypeAV_1W=1個星期
+AvailabilityTypeAV_2W=2個星期
+AvailabilityTypeAV_3W=3個星期
+AvailabilityTypeAV_1M=1個月
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:01).

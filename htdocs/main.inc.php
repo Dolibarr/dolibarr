@@ -894,6 +894,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/css/ui.multiselect.css" />'."\n";
             }
+            // jQuery Timepicker
+            if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
+            {
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css" />'."\n";
+            }
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -968,6 +973,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI) || defined('REQUIRE_JQUERY_BLOCKUI'))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/blockUI/jquery.blockUI.js"></script>'."\n";
+            	print '<script type="text/javascript">'."\n";
+            	print 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working2.gif".'\';'."\n";
+            	print '</script>'."\n";
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/blockUI.js"></script>'."\n";
             }
             // Flot
@@ -1045,6 +1053,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.$pathckeditor.'ckeditor_basic.js"></script>'."\n";
             }
+            // jQuery Timepicker
+            if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js"></script>'."\n";
+            }
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1052,6 +1065,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
             // Add datepicker default options
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
+
+            // add timepicker default options
+            if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
+            }
 
             // JS forced by modules (relative url starting with /)
             if (isset($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))

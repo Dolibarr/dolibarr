@@ -19,6 +19,8 @@ DROP TABLE llx_product_ca;
 DROP TABLE llx_document;
 DROP TABLE llx_dolibarr_modules;
 
+ALTER TABLE llx_societe_rib MODIFY COLUMN bic varchar(20);
+
 ALTER TABLE llx_facture_rec ADD COLUMN usenewprice        integer;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN remise_percent	real       DEFAULT 0 after qty;
@@ -810,3 +812,13 @@ ALTER TABLE llx_product_price_by_qty ADD CONSTRAINT fk_product_price_by_qty_fk_p
 
 ALTER TABLE `llx_product_price_by_qty` ADD `remise_percent` DOUBLE NOT NULL DEFAULT '0' AFTER `price_ttc` ,
 ADD `remise` DOUBLE NOT NULL DEFAULT '0' AFTER `remise_percent`;
+
+-- Change index name to be compliant with SQL standard, index name must be unique in database schema
+ALTER TABLE llx_c_actioncomm DROP INDEX code, ADD UNIQUE uk_c_actioncomm (code);
+ALTER TABLE llx_c_civilite DROP INDEX code, ADD UNIQUE uk_c_civilite (code);
+ALTER TABLE llx_c_propalst DROP INDEX code, ADD UNIQUE uk_c_propalst (code);
+ALTER TABLE llx_c_stcomm DROP INDEX code, ADD UNIQUE uk_c_stcomm (code);
+ALTER TABLE llx_c_type_fees DROP INDEX code, ADD UNIQUE uk_c_type_fees (code);
+ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
+ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
+ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);

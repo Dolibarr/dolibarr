@@ -1,0 +1,102 @@
+/*
+ * Language code: zh_TW
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2010-06-08 21:22:55
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+// Reference language: en_US
+CHARSET=UTF-8
+WarehouseCard=倉庫/庫存卡
+Warehouse=倉庫
+NewWarehouse=新倉庫/庫存區
+MenuNewWarehouse=新倉庫
+WarehouseOpened=打開倉庫
+WarehouseClosed=關閉倉庫
+WarehouseSource=來源倉庫
+WarehouseTarget=目標倉庫
+ValidateSending=刪除發送
+CancelSending=取消發送
+DeleteSending=刪除發送
+Stock=庫存
+Stocks=庫存
+Movement=轉讓
+Movements=轉讓
+ErrorWarehouseRefRequired=倉庫引用的名稱是必需的
+ErrorWarehouseLabelRequired=倉庫標簽要求
+CorrectStock=目前的庫存
+ListOfWarehouses=倉庫名單
+ListOfStockMovements=庫存轉讓清單
+StocksArea=庫存區
+Location=位置
+LocationSummary=擺放位置
+NumberOfProducts=產品總數
+LastMovement=最新異動清單
+LastMovements=最新異動清單
+Units=單位
+Unit=單位
+StockCorrection=修正庫存數
+StockMovement=轉讓
+StockMovements=庫存轉讓
+NumberOfUnit=單位數目
+TotalStock=總庫存
+StockTooLow=庫存過低
+EnhancedValue=價值
+PMPValue=加權平均價格
+PMPValueShort=的WAP
+EnhancedValueOfWarehouses=倉庫價值
+UserWarehouseAutoCreate=當建立一個用戶時，自動建立一個倉庫
+QtyDispatched=派出數量
+OrderDispatch=聯合調度
+RuleForStockManagementDecrease=<b>啟用或關閉庫存減少的管理規則</b>
+RuleForStockManagementIncrease=<b>啟用或關閉庫存增加的管理規則</b>
+DeStockOnBill=在供應商發票(invoice)或票據(Credit notes)驗證後，減少實際庫存量
+DeStockOnValidateOrder=在客戶訂單驗證後，減少實際庫存量
+DeStockOnShipment=在出貨單驗證後，減少實際庫存量(建議採用此方法)
+ReStockOnBill=在供應商發票(invoice)或票據(Credit notes)驗證後，增加實際庫存量
+ReStockOnValidateOrder=在供應商訂單批准後，增加實際庫存量
+ReStockOnDispatchOrder=在手動轉讓庫存量或供應商訂單收到後，增加實際庫存量
+OrderStatusNotReadyToDispatch=命令還沒有或根本沒有更多的地位，使產品在倉庫庫存調度。
+StockDiffPhysicTeoric=股票差異的原因和理論物理
+NoPredefinedProductToDispatch=此對象沒有預定義的產品。因此，沒有庫存調度是必需的。
+DispatchVerb=派遣
+StockLimitShort=限制
+StockLimit=庫存過低提示(數量)
+PhysicalStock=實際庫存量
+RealStock=實際庫存量
+TheoreticalStock=Therocial庫存
+VirtualStock=虛擬庫存
+MininumStock=所需最小庫存量
+StockUp=庫存上升
+MininumStockShort=庫存分
+StockUpShort=庫存上升
+IdWarehouse=編號倉庫
+DescWareHouse=說明倉庫
+LieuWareHouse=本地化倉庫
+WarehousesAndProducts=倉庫和產品
+AverageUnitPricePMPShort=投入品平均價格
+AverageUnitPricePMP=投入品平均價格
+EstimatedStockValueShort=估計的庫存價值
+EstimatedStockValue=估計的庫存價值
+DeleteAWarehouse=刪除倉庫
+ConfirmDeleteWarehouse=你確定要刪除倉庫<b>%s嗎</b> ？
+PersonalStock=%s的個人股票
+ThisWarehouseIsPersonalStock=這個倉庫代表的%s%的個人股票期權
+// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+// Reference language: en_US -> zh_CN
+WarehouseEdit=修改倉庫
+// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+SellPriceMin=銷售單價
+EstimatedStockValueSellShort=庫存已銷售值
+EstimatedStockValueSell=庫存已銷售值
+SelectWarehouseForStockDecrease=選擇倉庫庫存減少使用
+SelectWarehouseForStockIncrease=選擇使用庫存增加的倉庫
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:39).

@@ -295,7 +295,6 @@ if ($action == 'create')
 
 		/*
 		 * Lignes de commandes
-		 *
 		 */
 		print '<br><table class="noborder" width="100%">';
 
@@ -311,9 +310,9 @@ if ($action == 'create')
 		{
 			print '<tr class="liste_titre">';
 			print '<td width="54%">'.$langs->trans("Description").'</td>';
-			print '<td align="center">Quan. commandee</td>';
-			print '<td align="center">Quan. livree</td>';
-			print '<td align="center">Quan. a livrer</td>';
+			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+			print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+			print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
 			if (! empty($conf->stock->enabled))
 			{
 				print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';

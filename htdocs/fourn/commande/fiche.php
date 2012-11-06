@@ -145,24 +145,24 @@ else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
-    $order = new CommandeFournisseur($db);
-    $result = $order->fetch($id);
-    if ($order->statut == 5 || $order->statut == 6 || $order->statut == 7 || $order->statut == 9)
+    $result = $object->fetch($id);
+    if (in_array($object->statut, array(1, 5, 6, 7, 9)))
     {
-        if ($order->statut == 5) $newstatus=4;	// Received->Received partially
-        if ($order->statut == 6) $newstatus=2;	// Canceled->Approved
-        if ($order->statut == 7) $newstatus=3;	// Canceled->Process running
-        if ($order->statut == 9) $newstatus=1;	// Refused->Validated
+        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
+    	else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
+        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
+        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
+        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
 
-        $result = $order->setStatus($user,$newstatus);
+        $result = $object->setStatus($user, $newstatus);
         if ($result > 0)
         {
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_REQUEST['id']);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
             exit;
         }
         else
         {
-            $mesg='<div class="error">'.$order->error.'</div>';
+        	setEventMessage($object->error, 'errors');
         }
     }
 }
@@ -1581,13 +1581,22 @@ if ($id > 0 || ! empty($ref))
                     }
                 }
 
+                // Modify
+                if ($object->statut == 1)
+                {
+                    if ($user->rights->fournisseur->commande->commander)
+                    {
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a>';
+                    }
+                }
+
                 // Approve
                 if ($object->statut == 1)
                 {
                     if ($user->rights->fournisseur->commande->approuver)
                     {
-                        print '<a class="butAction"	href="fiche.php?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
-                        print '<a class="butAction"	href="fiche.php?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+                        print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+                        print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
                     }
                     else
                     {
@@ -1597,7 +1606,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // Send
-                if (in_array($object->statut,array(2,3,4,5)))
+                if (in_array($object->statut, array(2, 3, 4, 5)))
                 {
                     if ($user->rights->fournisseur->commande->commander)
                     {
@@ -1606,11 +1615,11 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // Reopen
-                if ($object->statut == 5 || $object->statut == 6 || $object->statut == 7 || $object->statut == 9)
+                if (in_array($object->statut, array(5, 6, 7, 9)))
                 {
                     if ($user->rights->fournisseur->commande->commander)
                     {
-                        print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
                     }
                 }
 
@@ -1633,14 +1642,14 @@ if ($id > 0 || ! empty($ref))
                 {
                     if ($user->rights->fournisseur->commande->commander)
                     {
-                        print '<a class="butActionDelete" href="fiche.php?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+                        print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
                     }
                 }
 
                 // Delete
                 if ($user->rights->fournisseur->commande->supprimer)
                 {
-                    print '<a class="butActionDelete" href="fiche.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
                 }
 
 
@@ -1675,7 +1684,7 @@ if ($id > 0 || ! empty($ref))
 
             print '</td><td valign="top" width="50%">';
 
-            if ( $user->rights->fournisseur->commande->commander && $object->statut == 2)
+            if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
             {
                 /**
                  * Commander (action=commande)
@@ -1687,21 +1696,21 @@ if ($id > 0 || ! empty($ref))
                 print '<table class="border" width="100%">';
                 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
                 print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-                $date_com = dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+                $date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
                 print $form->select_date($date_com,'','','','',"commande");
                 print '</td></tr>';
 
                 print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-                $formorder->select_methodes_commande($_POST["methodecommande"],"methodecommande",1);
+                $formorder->select_methodes_commande(GETPOST('methodecommande'), "methodecommande", 1);
                 print '</td></tr>';
 
-                print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
+                print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
                 print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("ToOrder").'"></td></tr>';
                 print '</table>';
                 print '</form>';
             }
 
-            if ( $user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4	))
+            if ($user->rights->fournisseur->commande->receptionner	&& ($object->statut == 3 || $object->statut == 4))
             {
                 /**
                  * Receptionner (action=livraison)

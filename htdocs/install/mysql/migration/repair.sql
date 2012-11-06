@@ -18,6 +18,10 @@ delete from llx_commandedet where fk_commande in (select rowid from llx_commande
 delete from llx_commande where ref = '';
 delete from llx_propaldet where fk_propal in (select rowid from llx_propal where ref = '');
 delete from llx_propal where ref = '';
+delete from llx_livraisondet where fk_livraison in (select rowid from llx_livraison where ref = '');
+delete from llx_livraison where ref = '';
+delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
+delete from llx_expedition where ref = '';
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -46,14 +50,17 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
 
+-- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
+delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
+
+
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
-
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
-
 
 -- Fix: It seems this is missing for some users
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);

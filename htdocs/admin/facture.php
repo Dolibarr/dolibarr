@@ -254,9 +254,9 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 
 if ($action == 'set_FACTURE_FREE_TEXT')
 {
-	$free = GETPOST('FACTURE_FREE_TEXT','alpha');
+	$freetext = GETPOST('FACTURE_FREE_TEXT');	// No alpha here, we want exact string
 
-    $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
 

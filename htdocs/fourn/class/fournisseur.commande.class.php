@@ -1101,7 +1101,7 @@ class CommandeFournisseur extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -1110,25 +1110,17 @@ class CommandeFournisseur extends CommonOrder
 
             $subprice = price2num($pu,'MU');
 
-            // TODO A virer
-            // Anciens indicateurs: $price, $remise (a ne plus utiliser)
-            $remise = 0;
-            if ($remise_percent > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100), 2);
-            }
-
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
             $sql.= " (fk_commande,label, description,";
             $sql.= " fk_product, product_type,";
-            $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref,";
+            $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, ref,";
             $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
             $sql.= ")";
             $sql.= " VALUES (".$this->id.", '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
             if ($fk_product) { $sql.= $fk_product.","; }
             else { $sql.= "null,"; }
             $sql.= "'".$product_type."',";
-            $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2.", ".$remise_percent.",'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
+            $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2.", ".$remise_percent.",'".price2num($subprice,'MU')."','".$ref."',";
             $sql.= "'".price2num($total_ht)."',";
             $sql.= "'".price2num($total_tva)."',";
             $sql.= "'".price2num($total_localtax1)."',";
@@ -1597,7 +1589,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	double	$price_base_type 	Type of price base
      *	@param		int		$info_bits			Miscellanous informations
      *	@param		int		$type				Type of line (0=product, 1=service)
-     *  @param		int		$notrigger				Disable triggers
+     *  @param		int		$notrigger			Disable triggers
      *	@return    	int             			< 0 if error, > 0 if ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false)
@@ -1633,27 +1625,20 @@ class CommandeFournisseur extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
 
-            // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
-            $subprice = $pu;
-            $remise = 0;
-            if ($remise_percent > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100),2);
-            }
-            $subprice  = price2num($subprice);
+            $subprice = price2num($pu,'MU');
 
             // Mise a jour ligne en base
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
             $sql.= " description='".$this->db->escape($desc)."'";
             $sql.= ",subprice='".price2num($subprice)."'";
-            $sql.= ",remise='".price2num($remise)."'";
+            //$sql.= ",remise='".price2num($remise)."'";
             $sql.= ",remise_percent='".price2num($remise_percent)."'";
             $sql.= ",tva_tx='".price2num($txtva)."'";
             $sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
