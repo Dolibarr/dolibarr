@@ -99,7 +99,9 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 		if (!$filefd && ! defined("SYSLOG_FILE_NO_ERROR"))
 		{
-			throw new Exception('Failed to open log file '.$logfile);
+			// Do not break dolibarr usage if log fails
+			//throw new Exception('Failed to open log file '.basename($logfile));
+			print 'Failed to open log file '.basename($logfile);
 		}
 
 		$logLevels = array(
