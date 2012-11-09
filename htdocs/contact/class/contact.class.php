@@ -271,10 +271,13 @@ class Contact extends CommonObject
 		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		    if (empty($reshook))
 		    {
-		    	$result=$this->insertExtraFields();
-		    	if ($result < 0)
+		    	if (empty($conf->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		    	{
-		    		$error++;
+		    		$result=$this->insertExtraFields();
+		    		if ($result < 0)
+		    		{
+		    			$error++;
+		    		}
 		    	}
 		    }
 		    else if ($reshook < 0) $error++;
