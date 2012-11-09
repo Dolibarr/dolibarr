@@ -1331,23 +1331,26 @@ else
             {
                 if ($user->rights->facture->creer)
                 {
-                    // TODO until the module is autonomous
                     print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-                    //print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->origin.'&amp;originid='.$object->origin_id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
                 }
+            }
 
-                if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
+            // This is just to generate a delivery receipt
+            if ($conf->livraison_bon->enabled && ($object->statut == 1 || $object->statut == 2) && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds))
+            {
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
+            }
+
+            // Close
+            if (! empty($conf->facture->enabled) && $object->statut > 0)
+            {
+            	if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
                 {
                 	$label="Close";
                 	// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
                 	if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) $label="ClassifyBilled";
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
                 }
-            }
-
-            if ($conf->livraison_bon->enabled && $object->statut == 1 && $user->rights->expedition->livraison->creer && empty($object->linkedObjectsIds))
-            {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
             }
 
             if ($user->rights->expedition->supprimer)

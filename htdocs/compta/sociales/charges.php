@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,7 @@ $action=GETPOST("action");
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $langs->trans("SocialContribution"), '', 'charges');
-
+$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
 
 

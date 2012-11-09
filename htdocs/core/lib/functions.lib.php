@@ -2681,13 +2681,15 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	Return localtaxe rate for a particular vat
+ *	Return localtax rate for a particular vat, when selling a product with vat $tva, from a $thirdparty_buyer to a $thirdparty_seller
+ *  Note: It applies same rule than get_default_tva
  *
  * 	@param	float		$tva			        Vat taxe
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
  * 	@return	int				   					0 if not found, localtax if found
+ *  @see get_default_tva
  */
 function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 {
@@ -2706,9 +2708,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 	if (is_object($thirdparty_buyer))
 	{
-		if ($code_country!=$thirdparty_buyer->country_code) return 0;
-		if ($local==1 && !$thirdparty_buyer->localtax1_assuj) return 0;		// TODO Not sure this is good
-		elseif ($local==2 && !$thirdparty_buyer->localtax2_assuj) return 0;	// TODO Not sure this is good
+		if ($code_country != $thirdparty_buyer->country_code) return 0;
 	}
 
 	// Search local taxes
@@ -2731,14 +2731,13 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 }
 
 /**
- *	Return vat rate of a product in a particular selling country or default country
- *  vat if product is unknown
+ *	Return vat rate of a product in a particular selling country or default country vat if product is unknown
  *
  *  @param	int			$idprod          	Id of product or 0 if not a predefined product
  *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
  *	@param	int			$idprodfournprice	Id product_fournisseur_price (for supplier order/invoice)
  *  @return int					         	<0 if KO, Vat rate if OK
- *	TODO May be this should be better as a method of product class
+ *  @see get_product_localtax_for_country
  */
 function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
 {
@@ -2804,25 +2803,71 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 }
 
 /**
- *	Return localtax rate of a product in a particular selling country
+ *	Return localtax vat rate of a product in a particular selling country or default country vat if product is unknown
  *
- *  @param	int		$idprod         Id of product
- *  @param  int		$local          1 for localtax1, 2 for localtax 2
- *  @param  string	$countrycode    Country code (FR, US, IT, ...)
- *  @return int             		<0 if KO, Vat rate if OK
- *	TODO May be this should be better as a method of product class
+ *  @param	int		$idprod         		Id of product
+ *  @param  int		$local          		1 for localtax1, 2 for localtax 2
+ *  @param  Societe	$thirdparty_seller    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @return int             				<0 if KO, Vat rate if OK
+ *  @see get_product_vat_for_country
  */
-function get_product_localtax_for_country($idprod, $local, $countrycode)
+function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 {
-	global $db;
+	global $db,$mysoc;
 
-	$product=new Product($db);
-	$product->fetch($idprod);
+	if (! class_exists('Product')) {
+		require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+	}
 
-	if ($local==1) return $product->localtax1_tx;
-	elseif ($local==2) return $product->localtax2_tx;
+	$ret=0;
+	$found=0;
 
-	return -1;
+	if ($idprod > 0)
+	{
+		// Load product
+		$product=new Product($db);
+		$result=$product->fetch($idprod);
+
+		if ($mysoc->country_code == $thirdparty_seller->country_code) // If selling country is ours
+		{
+			/* Not defined yet, so we don't use this
+			if ($local==1) $ret=$product->localtax1_tx;
+			elseif ($local==2) $ret=$product->localtax2_tx;
+			$found=1;
+			*/
+		}
+		else
+		{
+			// TODO Read default product vat according to countrycode and product
+
+
+		}
+	}
+
+	if (! $found)
+	{
+		// If vat of product for the country not found or not defined, we return higher vat of country.
+		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+		$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
+		$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+		$sql.= $db->plimit(1);
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$obj=$db->fetch_object($resql);
+			if ($obj)
+			{
+				if ($local==1) $ret=$obj->localtax1;
+				elseif ($local==2) $ret=$obj->localtax2;
+			}
+		}
+		else dol_print_error($db);
+	}
+
+	dol_syslog("get_product_localtax_for_country: ret=".$ret);
+	return $ret;
 }
 
 /**
@@ -2839,6 +2884,7 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
+ *  @see get_default_localtax
  */
 function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
@@ -2926,36 +2972,40 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
 
 /**
  *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
+ *   Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
+ *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
+ *	 Sinon TVA proposee par defaut=0. Fin de regle.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
- *	@return float        				       	Taux de localtax appliquer, -1 si ne peut etre determine
+ *	@return float        				       	localtax, -1 si ne peut etre determine
+ *  @see get_default_tva
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
 	if (!is_object($thirdparty_seller)) return -1;
 	if (!is_object($thirdparty_buyer)) return -1;
 
-	if ($thirdparty_seller->country_id=='ES' || $thirdparty_seller->country_code=='ES')
+	if ($local==1) //RE
 	{
-		if ($local==1) //RE
-		{
-			// Si achatteur non assujeti a RE, localtax1 par default=0
-			if (is_numeric($thirdparty_buyer->localtax1_assuj) && ! $thirdparty_buyer->localtax1_assuj) return 0;
-			if (! is_numeric($thirdparty_buyer->localtax1_assuj) && $thirdparty_buyer->localtax1_assuj=='localtax1off') return 0;
-		}
-		elseif ($local==2) //IRPF
-		{
-			// Si vendeur non assujeti a IRPF, localtax2 par default=0
-			if (is_numeric($thirdparty_seller->localtax2_assuj) && ! $thirdparty_seller->localtax2_assuj) return 0;
-			if (! is_numeric($thirdparty_seller->localtax2_assuj) && $thirdparty_seller->localtax2_assuj=='localtax2off') return 0;
-		} else return -1;
-
-		if ($idprod) return get_product_localtax_for_country($idprod, $local, $thirdparty_seller->country_code);
-		else return -1;
+		// Si vendeur non assujeti a RE, localtax1 par default=0
+		if (is_numeric($thirdparty_seller->localtax1_assuj) && ! $thirdparty_seller->localtax1_assuj) return 0;
+		if (! is_numeric($thirdparty_seller->localtax1_assuj) && $thirdparty_seller->localtax1_assuj=='localtax1off') return 0;
 	}
+	elseif ($local==2) //IRPF
+	{
+		// Si vendeur non assujeti a IRPF, localtax2 par default=0
+		if (is_numeric($thirdparty_seller->localtax2_assuj) && ! $thirdparty_seller->localtax2_assuj) return 0;
+		if (! is_numeric($thirdparty_seller->localtax2_assuj) && $thirdparty_seller->localtax2_assuj=='localtax2off') return 0;
+	}
+
+	if ($thirdparty_seller->country_code == $thirdparty_buyer->country_code)
+	{
+		return get_product_localtax_for_country($idprod, $local, $thirdparty_seller);
+	}
+
 	return 0;
 }
 
@@ -3874,12 +3924,13 @@ function verifCond($strRights)
 
 /**
  * Replace eval function to add more security.
- * This function is called by verifCond()
+ * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
- * @param 	string	$s		String to evaluate
- * @return	mixed			Result of eval
+ * @param 	string	$s				String to evaluate
+ * @param	int		$returnvalue	0=No return (used to execute $a=something). 1=Value of eval is returned (used to eval $something).
+ * @return	mixed					Nothing or return of eval
  */
-function dol_eval($s)
+function dol_eval($s,$returnvalue=0)
 {
 	// Only global variables can be changed by eval function and returned to caller
 	global $langs, $user, $conf;
@@ -3887,7 +3938,8 @@ function dol_eval($s)
 	global $rights;
 
 	//print $s."<br>\n";
-	eval($s);
+	if ($returnvalue) return eval('return '.$s.';');
+	else eval($s);
 }
 
 /**

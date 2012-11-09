@@ -94,6 +94,7 @@ $server->wsdl->addComplexType(
         'ref' => array('name'=>'name','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
         'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
+		'status' => array('name'=>'status','type'=>'xsd:string'),
         'client' => array('name'=>'client','type'=>'xsd:string'),
         'supplier' => array('name'=>'supplier','type'=>'xsd:string'),
         'customer_code' => array('name'=>'customer_code','type'=>'xsd:string'),

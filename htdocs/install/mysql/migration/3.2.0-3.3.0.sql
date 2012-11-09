@@ -262,6 +262,12 @@ UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 41 AND fk_pays = 4 AND l
 UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 42 AND fk_pays = 4 AND localtax2_type = '0';
 UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 43 AND fk_pays = 4 AND localtax2_type = '0';
 
+-- update localtax values for spain
+UPDATE llx_c_tva set localtax1 = '5.2', localtax2 = '-15' where rowid= 41 and fk_pays= 4 AND localtax1_type='3';
+UPDATE llx_c_tva set localtax1 = '1.4', localtax2 = '-15' where rowid= 42 and fk_pays= 4 AND localtax1_type='3';
+UPDATE llx_c_tva set localtax1 = '0.5', localtax2 = '-15' where rowid= 43 and fk_pays= 4 AND localtax1_type='3';
+
+-- update type of localtax for tunisia
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 101 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 102 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 103 and fk_pays= 10 AND localtax1_type='0';
@@ -790,3 +796,14 @@ ALTER TABLE llx_categorie MODIFY COLUMN label varchar(255) NOT NULL;
 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (entity, fk_parent, label, type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_label (label);
+
+-- Change index name to be compliant with SQL standard, index name must be unique in database schema
+ALTER TABLE llx_c_actioncomm DROP INDEX code, ADD UNIQUE uk_c_actioncomm (code);
+ALTER TABLE llx_c_civilite DROP INDEX code, ADD UNIQUE uk_c_civilite (code);
+ALTER TABLE llx_c_propalst DROP INDEX code, ADD UNIQUE uk_c_propalst (code);
+ALTER TABLE llx_c_stcomm DROP INDEX code, ADD UNIQUE uk_c_stcomm (code);
+ALTER TABLE llx_c_type_fees DROP INDEX code, ADD UNIQUE uk_c_type_fees (code);
+ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
+ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
+ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
+

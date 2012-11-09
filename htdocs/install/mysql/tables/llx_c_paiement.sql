@@ -27,7 +27,7 @@
 create table llx_c_paiement
 (
   id         integer     PRIMARY KEY,
-  code       varchar(6)  UNIQUE NOT NULL,
+  code       varchar(6)  NOT NULL,
   libelle    varchar(30),
   type       smallint,	
   active     tinyint DEFAULT 1  NOT NULL,

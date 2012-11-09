@@ -266,7 +266,25 @@ else if ($action == 'setmode' && $user->rights->facture->creer)
 else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 {
     $object->fetch($id);
+    $old_date_lim_reglement=$object->date_lim_reglement;
     $object->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
+    $new_date_lim_reglement=$object->calculate_date_lim_reglement();
+    if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement=$new_date_lim_reglement;
+    if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
+    $result=$object->update($user);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
+else if ($action == 'setconditions' && $user->rights->facture->creer)
+{
+    $object->fetch($id);
+    $object->cond_reglement_code=0;	// To clean property
+    $object->cond_reglement_id=0;		// To clean property
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
+    if ($result < 0) dol_print_error($db,$object->error);
+
+    $old_date_lim_reglement=$object->date_lim_reglement;
+    $new_date_lim_reglement=$object->calculate_date_lim_reglement();
+    if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement=$new_date_lim_reglement;
     if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
@@ -277,25 +295,17 @@ else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
     $object->date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
     if ($object->date_lim_reglement < $object->date)
     {
-    	$object->date_lim_reglement=$object->date;
+    	$object->date_lim_reglement=$object->calculate_date_lim_reglement();
     	setEventMessage($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"),'warnings');
     }
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
-else if ($action == 'setconditions' && $user->rights->facture->creer)
-{
-    $object->fetch($id);
-    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-    if ($result < 0) dol_print_error($db,$object->error);
-}
-
 else if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
-
 else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
 {
     // POST[remise_id] ou POST[remise_id_for_payment]
@@ -764,7 +774,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
                 if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
                 if ($element == 'contract') { $element = $subelement = 'contrat'; }
                 if ($element == 'inter')    { $element = $subelement = 'ficheinter'; }
-                if ($element == 'shipping') {$element = $subelement = 'expedition'; }
+                if ($element == 'shipping') { $element = $subelement = 'expedition'; }
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
@@ -2823,12 +2833,38 @@ else if ($id > 0 || ! empty($ref))
 
         print '</table>';
 
-				// Margin Infos
-				if (! empty($conf->margin->enabled)) {
-				  print '<br>';
-				  $object->displayMarginInfos($object->statut > 0);
-				}
+		// Margin Infos
+		if (! empty($conf->margin->enabled))
+		{
+			  print '<br>';
+			  $object->displayMarginInfos($object->statut > 0);
+		}
 
+        print '</td></tr>';
+
+        // Conditions de reglement
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('PaymentConditionsShort');
+        print '</td>';
+        if ($object->type != 2 && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($object->type != 2)
+        {
+            if ($action == 'editconditions')
+            {
+                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
+            }
+            else
+            {
+                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->cond_reglement_id,'none');
+            }
+        }
+        else
+        {
+            print '&nbsp;';
+        }
         print '</td></tr>';
 
         // Date payment term
@@ -2857,32 +2893,7 @@ else if ($id > 0 || ! empty($ref))
         }
         print '</td></tr>';
 
-        // Conditions de reglement
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('PaymentConditionsShort');
-        print '</td>';
-        if ($object->type != 2 && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-        if ($object->type != 2)
-        {
-            if ($action == 'editconditions')
-            {
-                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->cond_reglement_id,'cond_reglement_id');
-            }
-            else
-            {
-                $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id,$object->cond_reglement_id,'none');
-            }
-        }
-        else
-        {
-            print '&nbsp;';
-        }
-        print '</td></tr>';
-
-        // Mode de reglement
+        // Payment mode
         print '<tr><td>';
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('PaymentMode');
@@ -2907,23 +2918,20 @@ else if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
         print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
 
-				print '</tr>';
+		print '</tr>';
 
         // Amount Local Taxes
-        if ($mysoc->pays_code=='ES')
+        if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
-            if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
-                print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-            }
-            if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
-                print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-                print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-            }
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+            print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        }
+        if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+            print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
