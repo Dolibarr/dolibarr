@@ -148,7 +148,7 @@ class Contact extends CommonObject
 
 			if (! $error)
 			{
-                $result=$this->update($this->id, $user, 1, 'add');
+                $result=$this->update($this->id, $user, 1);
                 if ($result < 0)
                 {
                     $error++;
@@ -203,11 +203,10 @@ class Contact extends CommonObject
 	 *
 	 *      @param      int		$id          	Id of contact/address to update
 	 *      @param      User	$user        	Objet user making change
-	 *      @param      int		$notrigger	    0=no, 1=yes
-	 *      @param		string	$action			'create' or 'update'
+	 *      @param      int		$notrigger	    0=no, 1=yesi
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=0, $notrigger=0, $action='update')
+	function update($id, $user=0, $notrigger=0)
 	{
 		global $conf, $langs;
 
