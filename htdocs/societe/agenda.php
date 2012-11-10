@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -32,12 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("companies");
 
-$mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
-
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $socid);
+$result = restrictedArea($user, 'societe', $socid, '&societe');
 
 
 /*
@@ -143,9 +141,6 @@ if ($socid)
 	print '</table>';
 
 	print '</div>';
-
-
-	dol_htmloutput_mesg($mesg);
 
 
     /*
