@@ -845,6 +845,7 @@ class Societe extends CommonObject
      * 	@param		array		$filters	Array of couple field name/value to filter the companies with the same name
      * 	@param		boolean		$exact		Exact string search (true/false)
      * 	@param		boolean		$case		Case sensitive (true/false)
+     * 	@param		boolean		$similar	Add test if string inside name into database, or name into database inside string. Do not use this: Not compatible with other database.
      * 	@param		string		$clause		Clause for filters
      * 	@return		array		Array of thirdparties object
      */
@@ -880,7 +881,8 @@ class Societe extends CommonObject
     			$sql.= "(";
     		if ($similar)
     		{
-    			// For test similitude
+    			// For test similitude (string inside name into database, or name into database inside string)
+    			// Do not use this. Not compatible with other database.
     			$sql.= "(LOCATE('".$this->db->escape($name)."', nom) > 0 OR LOCATE(nom, '".$this->db->escape($name)."') > 0)";
     		}
     		else
