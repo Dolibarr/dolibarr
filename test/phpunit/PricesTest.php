@@ -139,7 +139,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$result1=calcul_price_total(1, 1.24, 0, 10, 0, 0, 0, 'HT', 0, 0);
         print __METHOD__." result1=".join(', ',$result1)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-        $this->assertEquals(array(1.24, 0.12, 1.36, 1.24, 0.124, 1.364, 1.24, 0.12, 1.36, 0, 0, 0, 0, 0, 0, 0),$result1);
+        $this->assertEquals(array(1.24, 0.12, 1.36, 1.24, 0.124, 1.364, 1.24, 0.12, 1.36, 0, 0, 0, 0, 0, 0, 0),$result1,'Test1');
 
         // 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1 type 1, 0% localtax2 type 0 (method we provide value)
 		$mysoc->country_code='ES';
@@ -148,7 +148,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$mysoc->localtax2_assuj=0;
         $result2=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0, 0);
 		print __METHOD__." result2=".join(', ',$result2)."\n";
-        $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result2);
+        $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result2,'Test2');
 
         // 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1 type 1, 0% localtax2 type 0 (other method autodetect)
 		$mysoc->country_code='ES';
@@ -157,7 +157,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$mysoc->localtax2_assuj=0;
         $result2=calcul_price_total(10, 10, 0, 10, -1, -1, 0, 'HT', 0, 0);
 		print __METHOD__." result2=".join(', ',$result2)."\n";
-        $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result2);
+        $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result2,'Test3');
 
         // 10 * 10 HT - 0% discount with 10% vat, seller not using localtax1, nor localtax2 (method we provide value)
 		$mysoc->country_code='ES';
@@ -167,7 +167,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$result3=calcul_price_total(10, 10, 0, 10, 0, 0, 0, 'HT', 0, 0);	// 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1, 0% localtax2
         print __METHOD__." result3=".join(', ',$result3)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-        $this->assertEquals(array(100, 10, 110, 10, 1, 11, 100, 10, 110, 0, 0, 0, 0, 0, 0, 0),$result3);
+        $this->assertEquals(array(100, 10, 110, 10, 1, 11, 100, 10, 110, 0, 0, 0, 0, 0, 0, 0),$result3,'Test4');
         //$this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result3);
 
         // 10 * 10 HT - 0% discount with 10% vat, seller not using localtax1, nor localtax2 (other method autodetect)
@@ -178,7 +178,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
 		$result3=calcul_price_total(10, 10, 0, 10, -1, -1, 0, 'HT', 0, 0);	// 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1, 0% localtax2
         print __METHOD__." result3=".join(', ',$result3)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
-        $this->assertEquals(array(100, 10, 110, 10, 1, 11, 100, 10, 110, 0, 0, 0, 0, 0, 0, 0),$result3);
+        $this->assertEquals(array(100, 10, 110, 10, 1, 11, 100, 10, 110, 0, 0, 0, 0, 0, 0, 0),$result3,'Test5');
         //$this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result3);
 
         return true;
