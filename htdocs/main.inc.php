@@ -1520,7 +1520,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 	            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
 	            print '" href="';
-	            print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
+	            if ($mode == 'wiki') print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
+	            else print sprintf($helpbaseurl,$helppage);
 	            print '">';
 	            print img_picto('', 'helpdoc').' ';
 	            print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
@@ -1612,7 +1613,7 @@ function main_area($title='')
 /**
  *  Return helpbaseurl, helppage and mode
  *
- *  @param	string		$helppagename		Page name (EN:xxx,ES:eee,FR:fff...)
+ *  @param	string		$helppagename		Page name ('EN:xxx,ES:eee,FR:fff...' or 'http://localpage')
  *  @param  Translate	$langs				Language
  *  @return	array		Array of help urls
  */
