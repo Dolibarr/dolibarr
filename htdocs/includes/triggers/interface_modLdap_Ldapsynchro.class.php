@@ -431,6 +431,9 @@ class InterfaceLdapsynchro
         		$ldap=new Ldap();
         		$ldap->connect_bind();
 
+        		$class = get_class($object);
+        		$object->oldcopy = new $class($object->db);
+
         		$oldinfo=$object->oldcopy->_load_ldap_info();
         		$olddn=$object->oldcopy->_load_ldap_dn($oldinfo);
 
