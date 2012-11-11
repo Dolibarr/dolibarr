@@ -401,14 +401,23 @@ class ChargeSociales extends CommonObject
      */
     function getSommePaiement()
     {
-    	global $conf;
+        $table='paiementcharge';
+        $field='fk_charge';
 
-        $sql = 'SELECT SUM(amount) as amount';
+        $sql = 'SELECT sum(amount) as amount';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+        $sql.= ' WHERE '.$field.' = '.$this->id;
+		// No need to filter on conf->entity because there is already a filter on the primary key of element.
+		// getSommePaiement must return list of paiement for this id, whatever is the entity.
+		// Filtering on entity must be before or later probably
+        /*
+        $sql = 'SELECT SUM(pc.amount) as amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pc';
         $sql.= ', '.MAIN_DB_PREFIX.'chargesociales as c';
         $sql.= ' WHERE c.entity = '.$conf->entity;
         $sql.= ' AND pc.fk_charge = c.rowid';
         $sql.= ' AND pc.fk_charge = '.$this->id;
+		*/
 
         dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
