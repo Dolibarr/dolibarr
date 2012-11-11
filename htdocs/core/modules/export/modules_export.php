@@ -99,7 +99,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Picto string
 	 */
-	function getPicto($key)
+	function getPictoForKey($key)
 	{
 		return $this->picto[$key];
 	}
@@ -110,7 +110,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label
 	 */
-	function getDriverLabel($key)
+	function getDriverLabelForKey($key)
 	{
 		return $this->driverlabel[$key];
 	}
@@ -121,7 +121,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Description
 	 */
-	function getDriverDesc($key)
+	function getDriverDescForKey($key)
 	{
 		return $this->driverdesc[$key];
 	}
@@ -132,7 +132,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Driver version
 	 */
-	function getDriverVersion($key)
+	function getDriverVersionForKey($key)
 	{
 		return $this->driverversion[$key];
 	}
@@ -143,7 +143,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label of library
 	 */
-	function getLibLabel($key)
+	function getLibLabelForKey($key)
 	{
 		return $this->liblabel[$key];
 	}
@@ -154,7 +154,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Version of library
 	 */
-	function getLibVersion($key)
+	function getLibVersionForKey($key)
 	{
 		return $this->libversion[$key];
 	}
