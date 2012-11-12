@@ -98,8 +98,8 @@ UpdateConfCPOK=Updated successfully.
 ErrorUpdateConfCP=An error occurred during the update, please try again.
 AddCPforUsers=Please add the balance of holidays of users by <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">clicking here</a>.
 DelayForSubmitCP=Deadline to apply for holidays
-AlertValidatorDelayCP=Prevent the validator if the request for leave to meet the deadline
-AlertValidorSoldeCP=Prevent the validator if the user requests holidays exceeding the balance
+AlertValidatorDelayCP=Prevent the validator if the holiday request does not match the deadline
+AlertValidorSoldeCP=Prevent the validator if the holiday request exceed the balance
 nbUserCP=Number of users supported in the module holidays
 nbHolidayDeductedCP=Number of holidays to be deducted per day of holiday taken
 nbHolidayEveryMonthCP=Number of holidays added every month

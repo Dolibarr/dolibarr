@@ -28,7 +28,7 @@ class LogHandler
 	}
 
 	/**
-	 * ¿Is the module active?
+	 * Is the module active ?
 	 *
 	 * @return boolean
 	 */

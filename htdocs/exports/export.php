@@ -1152,10 +1152,10 @@ if ($step == 5 && $datatoexport)
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPicto($key)).'</td>';
-	    $text=$objmodelexport->getDriverDesc($key);
-    	print '<td>'.$form->textwithpicto($objmodelexport->getDriverLabel($key),$text).'</td>';
-        print '<td>'.$objmodelexport->getLibLabel($key).'</td><td align="right">'.$objmodelexport->getLibVersion($key).'</td></tr>'."\n";
+        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
+	    $text=$objmodelexport->getDriverDescForKey($key);
+    	print '<td>'.$form->textwithpicto($objmodelexport->getDriverLabelForKey($key),$text).'</td>';
+        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td><td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td></tr>'."\n";
     }
     print '</table>';
 

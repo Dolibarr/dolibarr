@@ -2,10 +2,15 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
+/**
+ * Class to manage logging to a FirePHP
+ */
 class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 {
 	/**
-	 * {@inheritDoc}
+	 * 	Return name of logger
+	 *
+	 * 	@return	string		Name of logger
 	 */
 	public function getName()
 	{
@@ -13,7 +18,9 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Version of the module ('x.y.z' or 'dolibarr' or 'experimental' or 'development')
+	 *
+	 * @return string
 	 */
 	public function getVersion()
 	{
@@ -21,7 +28,9 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Content of the info tooltip.
+	 *
+	 * @return false|string
 	 */
 	public function getInfo()
 	{
@@ -31,7 +40,9 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Is the module active ?
+	 *
+	 * @return boolean
 	 */
 	public function isActive()
 	{
@@ -53,9 +64,11 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 		return -1;
 	}
 
-	// /**
-	//  * {@inheritDoc}
-	//  */
+	///**
+	// * 	Return array of configuration data
+	// *
+	// * 	@return	array		Return array of configuration data
+	// */
 	// public function configure()
 	// {
 	// 	global $langs;
@@ -71,7 +84,9 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	// }
 
 	/**
-	 * {@inheritDoc}
+	 * 	Return if configuration is valid
+	 *
+	 * 	@return	boolean		True if configuration ok
 	 */
 	public function checkConfiguration()
 	{
@@ -93,7 +108,10 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * 	Output log content
+	 *
+	 *	@param	string	$content	Content to log
+	 * 	@return	void
 	 */
 	public function export($content)
 	{

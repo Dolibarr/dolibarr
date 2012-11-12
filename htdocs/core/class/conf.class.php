@@ -160,19 +160,19 @@ class Conf
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
 						// If this is constant for a new tab page activated by a module.
-						if (preg_match('/^MAIN_MODULE_([A-Z_]+)_TABS_/i',$key))
+						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
 						{
 							$params=explode(':',$value,2);
 							$this->tabs_modules[$params[0]][]=$value;
 						}
 						// If this is constant for a sms engine
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SMS$/i',$key,$reg))
 						{
 							$modulename=strtolower($reg[1]);
 							$this->sms_engine_modules[$modulename]=$modulename;    // Add this module in list of modules that provide SMS
 						}
 						// If this is constant for all generic part activated by a module
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
@@ -185,7 +185,7 @@ class Conf
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
-						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i',$key,$reg))
 						{
 							$modulename=strtolower($reg[1]);
 							if ($modulename == 'propale') $modulename='propal';

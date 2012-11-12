@@ -130,11 +130,11 @@ foreach($liste as $key => $val)
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print '<td width="16">'.img_picto_common($model->getDriverLabel($key),$model->getPicto($key)).'</td>';
-	$text=$model->getDriverDesc($key);
-	print '<td>'.$form->textwithpicto($model->getDriverLabel($key),$text).'</td>';
-	print '<td>'.$model->getLibLabel($key).'</td>';
-	print '<td nowrap="nowrap" align="right">'.$model->getLibVersion($key).'</td>';
+	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
+	$text=$model->getDriverDescForKey($key);
+	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
+	print '<td>'.$model->getLibLabelForKey($key).'</td>';
+	print '<td nowrap="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
 }
 
