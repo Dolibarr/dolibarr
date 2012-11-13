@@ -587,7 +587,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
-                print img_object($langs->trans("Rendez-Vous"),"action");
+                print img_object($langs->trans("Rendez-Vous"),"action_rdv");
+                print '</a> <a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
 
