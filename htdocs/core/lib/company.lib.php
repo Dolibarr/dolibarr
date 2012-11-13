@@ -753,7 +753,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 		{
             $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create';
             if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
-            $out.='&amp;contactid='.$objcon->id.'&amp;backtopage=1&amp;percentage=-1">';
+            $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
     		$out.=$langs->trans("AddAnAction").' ';
     		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
     		$out.="</a>";
@@ -776,10 +776,13 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
         $sql.= " AND a.entity IN (".getEntity('actioncomm').")";
-        if (get_class($object) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-        if (get_class($object) == 'Adherent' && $object->id) $sql.= " AND a.fk_element = ".$object->id;
+        if (get_class($object) == 'Adherent') {
+        	$sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+        	if (! empty($object->id))
+        		$sql.= " AND a.fk_element = ".$object->id;
+        }
         if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
-        if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+        if (! empty($objcon->id)) $sql.= " AND a.fk_contact = ".$objcon->id;
         $sql.= " AND c.id=a.fk_action";
         $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
@@ -825,7 +828,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     $out.='<td colspan="2">'.$actionstatic->getNomUrl(1,40).'</td>';
 
                     // Contact pour cette action
-                    if (! $objcon->id && $obj->fk_contact > 0)
+                    if (empty($objcon->id) && $obj->fk_contact > 0)
                     {
                         $contactstatic->name=$obj->name;
                         $contactstatic->firstname=$obj->firstname;
@@ -1029,11 +1032,11 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $out.='</td>';
         $out.='<td colspan="5" align="right">';
 		$permok=$user->rights->agenda->myactions->create;
-        if (($object->id || $objcon->id) && $permok)
+        if ((! empty($object->id) || ! empty($objcon->id)) && $permok)
 		{
             $out.='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create';
             if (get_class($object) == 'Societe') $out.='&amp;socid='.$object->id;
-            $out.='&amp;contactid='.$objcon->id.'&amp;backtopage=1&amp;percentage=-1">';
+            $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1">';
     		$out.=$langs->trans("AddAnAction").' ';
     		$out.=img_picto($langs->trans("AddAnAction"),'filenew');
     		$out.="</a>";
