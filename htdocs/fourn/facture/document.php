@@ -42,7 +42,7 @@ $confirm=GETPOST('confirm','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $facid, 'facture_fourn', 'facture');
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -130,7 +130,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref');
 	print '</td>';
 	print "</tr>\n";
 
@@ -172,12 +172,15 @@ if ($object->id > 0)
 		}
 		print ')';
 	}
+	// FIXME $facidnext is not defined
+	/*
 	if ($facidnext > 0)
 	{
 		$facthatreplace=new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
 		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
 	}
+	*/
 	print '</td></tr>';
 
 	// Label

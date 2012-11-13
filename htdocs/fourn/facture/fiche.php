@@ -1657,7 +1657,7 @@ else
                 print '<td>';
                 if ($object->lines[$i]->fk_product)
                 {
-                    print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+                    print '<a name="'.$object->lines[$i]->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($object->lines[$i]->fk_product);
