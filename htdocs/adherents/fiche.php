@@ -52,9 +52,6 @@ $typeid=GETPOST('typeid','int');
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
 
-// Security check
-$result=restrictedArea($user,'adherent',$rowid,'','','fk_soc', 'rowid', $objcanvas);
-
 if (! empty($conf->mailmanspip->enabled))
 {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -77,6 +74,9 @@ if (! empty($canvas))
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('adherent', 'membercard', $canvas);
 }
+
+// Security check
+$result=restrictedArea($user,'adherent',$rowid,'','','fk_soc', 'rowid', $objcanvas);
 
 $errmsg=''; $errmsgs=array();
 
@@ -735,7 +735,7 @@ else
 		/*                                                                            */
 		/* ************************************************************************** */
 		$object->canvas=$canvas;
-		$object->fk_departement = $_POST["departement_id"];
+		$object->fk_departement = GETPOST('departement_id', 'int');
 
 		// We set country_id, country_code and country for the selected country
 		$object->country_id=GETPOST('country_id','int')?GETPOST('country_id','int'):$mysoc->country_id;
@@ -905,7 +905,7 @@ else
 		{
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				$value=(isset($_POST["options_".$key])?GETPOST('options_'.$key,'alpha'):$object->array_options["options_".$key]);
+				$value=(isset($_POST["options_".$key])?GETPOST('options_'.$key,'alpha'):(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
            		print '<tr><td';
            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
            		print '>'.$label.'</td><td>';
@@ -1235,7 +1235,7 @@ else
 		dol_htmloutput_errors($errmsg,$errmsgs);
 
 		// Confirm create user
-		if ($_GET["action"] == 'create_user')
+		if ($action == 'create_user')
 		{
 			$login=$object->login;
 			if (empty($login))
@@ -1261,7 +1261,7 @@ else
 		}
 
 		// Confirm create third party
-		if ($_GET["action"] == 'create_thirdparty')
+		if ($action == 'create_thirdparty')
 		{
 			$name = $object->getFullName($langs);
 			if (! empty($name))
@@ -1348,7 +1348,7 @@ else
 
 			// Cree un tableau formulaire
 			$formquestion=array();
-			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
+			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
 			$ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
 			if ($ret == 'html') print '<br>';
@@ -1495,10 +1495,10 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans("LinkedToDolibarrThirdParty");
 			print '</td>';
-			if ($_GET['action'] != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+			if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2" class="valeur">';
-			if ($_GET['action'] == 'editthirdparty')
+			if ($action == 'editthirdparty')
 			{
 				$htmlname='socid';
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
@@ -1533,7 +1533,7 @@ else
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans("LinkedToDolibarrUser");
 		print '</td>';
-		if ($_GET['action'] != 'editlogin' && $user->rights->adherent->creer)
+		if ($action != 'editlogin' && $user->rights->adherent->creer)
 		{
 			print '<td align="right">';
 			if ($user->rights->user->user->creer)
@@ -1544,7 +1544,7 @@ else
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2" class="valeur">';
-		if ($_GET['action'] == 'editlogin')
+		if ($action == 'editlogin')
 		{
 			print $form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id,$object->user_id,'userid','');
 		}
