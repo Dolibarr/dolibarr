@@ -51,6 +51,7 @@ class ActionComm extends CommonObject
 
     var $datep;			// Date action start (datep)
     var $datef;			// Date action end (datep2)
+    var $dateend;		// ??
     var $durationp = -1;      // -1=Unkown duration
     var $fulldayevent = 0;    // 1=Event on full day
     var $punctual = 1;        // Milestone

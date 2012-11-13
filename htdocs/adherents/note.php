@@ -57,7 +57,7 @@ if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
 	$res=$object->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		$db->rollback();
 	}
 	else
@@ -81,8 +81,6 @@ if ($id)
 	$head = member_prepare_head($object);
 
 	dol_fiche_head($head, 'note', $langs->trans("Member"), 0, 'user');
-
-	dol_htmloutput_errors($msg);
 
 	print "<form method=\"post\" action=\"note.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

@@ -473,7 +473,7 @@ llxHeader('',$langs->trans("Subscriptions"),'EN:Module_Foundations|FR:Module_Adh
 
 if ($rowid)
 {
-    $res=$object->fetch($rowid,$ref);
+    $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
     //$res=$object->fetch_optionals($object->id,$extralabels);
     //if ($res < 0) { dol_print_error($db); exit; }
@@ -558,10 +558,10 @@ if ($rowid)
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans("LinkedToDolibarrThirdParty");
         print '</td>';
-        if ($_GET['action'] != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
+        if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td class="valeur">';
-        if ($_GET['action'] == 'editthirdparty')
+        if ($action == 'editthirdparty')
         {
             $htmlname='socid';
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="form'.$htmlname.'">';
@@ -813,7 +813,7 @@ if ($rowid)
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
-        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($company->name).'">';
+        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->name).'">';
         print "<table class=\"border\" width=\"100%\">\n";
 
         $today=dol_now();
@@ -822,16 +822,16 @@ if ($rowid)
         $paymentdate=-1;
 
         // Date payment
-        if ($_POST["paymentyear"] && $_POST["paymentmonth"] && $_POST["paymentday"])
+        if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday'))
         {
-            $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
+            $paymentdate=dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
         }
 
         // Date start subscription
         print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
-        if ($_POST["reday"])
+        if (GETPOST('reday'))
         {
-            $datefrom=dol_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+            $datefrom=dol_mktime(0,0,0,GETPOST('remonth'),GETPOST('reday'),GETPOST('reyear'));
         }
         if (! $datefrom)
         {
@@ -848,9 +848,9 @@ if ($rowid)
         print "</td></tr>";
 
         // Date end subscription
-        if ($_POST["endday"])
+        if (GETPOST('endday'))
         {
-            $dateto=dol_mktime(0,0,0,$_POST["endmonth"],$_POST["endday"],$_POST["endyear"]);
+            $dateto=dol_mktime(0,0,0,GETPOST('endmonth'),GETPOST('endday'),GETPOST('endyear'));
         }
         if (! $dateto)
         {
@@ -863,7 +863,7 @@ if ($rowid)
         if ($adht->cotisation)
         {
             // Amount
-            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.GETPOST('cotisation').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
@@ -926,33 +926,33 @@ if ($rowid)
 
                 // Bank account
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
-                $form->select_comptes($_POST["accountid"],'accountid',0,'',1);
+                $form->select_comptes(GETPOST('accountid'),'accountid',0,'',1);
                 print "</td></tr>\n";
 
                 // Payment mode
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-                $form->select_types_paiements($_POST["operation"],'operation','',2);
+                $form->select_types_paiements(GETPOST('operation'),'operation','',2);
                 print "</td></tr>\n";
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                $form->select_date($paymentdate?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1);
+                $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
                 print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
                 print '</td>';
-                print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
+                print '<td><input id="fieldnum_chq" name="num_chq" type="text" size="8" value="'.(! GETPOST('num_chq')?'':GETPOST('num_chq')).'"></td></tr>';
 
                 print '<tr class="bankswitchclass2 fieldrequireddyn"><td>'.$langs->trans('CheckTransmitter');
                 print ' <em>('.$langs->trans("ChequeMaker").')</em>';
                 print '</td>';
-                print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->name:$_POST['chqemetteur']).'"></td></tr>';
+                print '<td><input id="fieldchqemetteur" name="chqemetteur" size="32" type="text" value="'.(! GETPOST('chqemetteur')?'':GETPOST('chqemetteur')).'"></td></tr>';
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Bank');
                 print ' <em>('.$langs->trans("ChequeBank").')</em>';
                 print '</td>';
-                print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
+                print '<td><input id="chqbank" name="chqbank" size="32" type="text" value="'.(! GETPOST('chqbank')?'':GETPOST('chqbank')).'"></td></tr>';
             }
         }
 
@@ -972,7 +972,7 @@ if ($rowid)
             $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
             $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
 
-            $tmp='<input name="sendmail" type="checkbox"'.((isset($_POST["sendmail"])?$_POST["sendmail"]:$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked="checked"':'').'>';
+            $tmp='<input name="sendmail" type="checkbox"'.(GETPOST('sendmail')?GETPOST('sendmail'):(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked="checked"':'')).'>';
             $helpcontent='';
             $helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
             $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";

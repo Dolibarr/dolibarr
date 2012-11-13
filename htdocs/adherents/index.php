@@ -169,11 +169,11 @@ if ($conf->use_javascript_ajax)
     {
         $datalabels[]=array($i,$adhtype->getNomUrl(0,dol_size(16)));
         $dataval['draft'][]=array($i,isset($MemberToValidate[$key])?$MemberToValidate[$key]:0);
-        $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0);
+        $dataval['notuptodate'][]=array($i,isset($MembersValidated[$key])?$MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):0);
         $dataval['uptodate'][]=array($i,isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0);
         $dataval['resiliated'][]=array($i,isset($MembersResiliated[$key])?$MembersResiliated[$key]:0);
         $SommeA+=isset($MemberToValidate[$key])?$MemberToValidate[$key]:0;
-        $SommeB+=isset($MembersValidated[$key])?$MembersValidated[$key]-$MemberUpToDate[$key]:0;
+        $SommeB+=isset($MembersValidated[$key])?$MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):0;
         $SommeC+=isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0;
         $SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
         $i++;
@@ -336,7 +336,7 @@ foreach ($AdherentType as $key => $adhtype)
 	print "<tr $bc[$var]>";
 	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-$MemberUpToDate[$key] > 0) ? $MembersValidated[$key]-$MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0) > 0) ? $MembersValidated[$key]-(isset($MemberUpToDate[$key])?$MemberUpToDate[$key]:0):'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
 	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";

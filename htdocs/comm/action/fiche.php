@@ -381,54 +381,45 @@ if ($action == 'create')
 
     if (! empty($conf->use_javascript_ajax))
     {
-        print "\n".'<script type="text/javascript" language="javascript">';
-        print 'jQuery(document).ready(function () {
-                     function setdatefields()
-                     {
-                            if (jQuery("#fullday:checked").val() == null)
-                            {
-                                jQuery(".fulldaystarthour").attr(\'disabled\', false);
-                                jQuery(".fulldaystartmin").attr(\'disabled\', false);
-                                jQuery(".fulldayendhour").attr(\'disabled\', false);
-                                jQuery(".fulldayendmin").attr(\'disabled\', false);
-                            }
-                            else
-                            {
-                                jQuery(".fulldaystarthour").attr(\'disabled\', true);
-                                jQuery(".fulldaystartmin").attr(\'disabled\', true);
-                                jQuery(".fulldayendhour").attr(\'disabled\', true);
-                                jQuery(".fulldayendmin").attr(\'disabled\', true);
-                                jQuery(".fulldaystarthour").val("00");
-                                jQuery(".fulldaystartmin").val("00");
-                                //jQuery(".fulldayendhour").val("00");
-                                //jQuery(".fulldayendmin").val("00");
-                                jQuery(".fulldayendhour").val("23");
-                                jQuery(".fulldayendmin").val("59");
-                        }
-                    }
+        print "\n".'<script type="text/javascript">';
+        print '$(document).ready(function () {
+        			function setdatefields()
+	            	{
+	            		if ($("#fullday:checked").val() == null) {
+	            			$(".fulldaystarthour").removeAttr("disabled");
+	            			$(".fulldaystartmin").removeAttr("disabled");
+	            			$(".fulldayendhour").removeAttr("disabled");
+	            			$(".fulldayendmin").removeAttr("disabled");
+	            		} else {
+	            			$(".fulldaystarthour").attr("disabled","disabled").val("00");
+	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
+	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
+	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
+	            		}
+	            	}
                     setdatefields();
-                    jQuery("#fullday").change(function() {
+                    $("#fullday").change(function() {
                         setdatefields();
                     });
-                    jQuery("#selectcomplete").change(function() {
-                        if (jQuery("#selectcomplete").val() == 100)
+                    $("#selectcomplete").change(function() {
+                        if ($("#selectcomplete").val() == 100)
                         {
-                            if (jQuery("#doneby").val() <= 0) jQuery("#doneby").val(\''.$user->id.'\');
+                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.$user->id.'\');
                         }
-                        if (jQuery("#selectcomplete").val() == 0)
+                        if ($("#selectcomplete").val() == 0)
                         {
-                            jQuery("#doneby").val(-1);
+                            $("#doneby").val(-1);
                         }
                    });
-                   jQuery("#actioncode").change(function() {
-                        if (jQuery("#actioncode").val() == \'AC_RDV\') jQuery("#dateend").addClass("fieldrequired");
-                        else jQuery("#dateend").removeClass("fieldrequired");
+                   $("#actioncode").change(function() {
+                        if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                        else $("#dateend").removeClass("fieldrequired");
                    });
                })';
         print '</script>'."\n";
     }
 
-	print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="POST">';
+	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
@@ -647,43 +638,34 @@ if ($id)
 
 	if ($action == 'edit')
 	{
-	    if ($conf->use_javascript_ajax)
+	    if (! empty($conf->use_javascript_ajax))
         {
-            print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
-                         function setdatefields()
-                         {
-                                if (jQuery("#fullday:checked").val() == null)
-                                {
-                                    jQuery(".fulldaystarthour").attr(\'disabled\', false);
-                                    jQuery(".fulldaystartmin").attr(\'disabled\', false);
-                                    jQuery(".fulldayendhour").attr(\'disabled\', false);
-                                    jQuery(".fulldayendmin").attr(\'disabled\', false);
-                                }
-                                else
-                                {
-                                    jQuery(".fulldaystarthour").attr(\'disabled\', true);
-                                    jQuery(".fulldaystartmin").attr(\'disabled\', true);
-                                    jQuery(".fulldayendhour").attr(\'disabled\', true);
-                                    jQuery(".fulldayendmin").attr(\'disabled\', true);
-                                    jQuery(".fulldaystarthour").val("00");
-                                    jQuery(".fulldaystartmin").val("00");
-                                    //jQuery(".fulldayendhour").val("00");
-                                    //jQuery(".fulldayendmin").val("00");
-                                    jQuery(".fulldayendhour").val("23");
-                                    jQuery(".fulldayendmin").val("59");
-                            }
-                        }
-                        setdatefields();
-                        jQuery("#fullday").change(function() {
-                            setdatefields();
-                        });
+            print "\n".'<script type="text/javascript">';
+            print '$(document).ready(function () {
+	            		function setdatefields()
+	            		{
+	            			if ($("#fullday:checked").val() == null) {
+	            				$(".fulldaystarthour").removeAttr("disabled");
+	            				$(".fulldaystartmin").removeAttr("disabled");
+	            				$(".fulldayendhour").removeAttr("disabled");
+	            				$(".fulldayendmin").removeAttr("disabled");
+	            			} else {
+	            				$(".fulldaystarthour").attr("disabled","disabled").val("00");
+	            				$(".fulldaystartmin").attr("disabled","disabled").val("00");
+	            				$(".fulldayendhour").attr("disabled","disabled").val("23");
+	            				$(".fulldayendmin").attr("disabled","disabled").val("59");
+	            			}
+	            		}
+	            		setdatefields();
+	            		$("#fullday").change(function() {
+	            			setdatefields();
+	            		});
                    })';
             print '</script>'."\n";
         }
 
         // Fiche action en mode edition
-		print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="post">';
+		print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
