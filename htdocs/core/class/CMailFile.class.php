@@ -103,11 +103,15 @@ class CMailFile
 	{
 		global $conf;
 
-		// We define end of line (RFC 822bis section 2.3)
+		// We define end of line (RFC 821).
 		$this->eol="\r\n";
-		// eol2 is for header fields to manage bugged MTA with option MAIN_FIX_FOR_BUGGED_MTA
-		$this->eol2=$this->eol;
-		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) $this->eol2="\n";
+		// We define end of line for header fields (RFC 822bis section 2.3 says header must contains \r\n). 
+		$this->eol2="\r\n";
+		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) 
+		{
+			$this->eol="\n";
+			$this->eol2="\n";
+		}
 
 		// On defini mixed_boundary
 		$this->mixed_boundary = "multipart_x." . time() . ".x_boundary";
@@ -494,6 +498,7 @@ class CMailFile
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
 	 *  Used for debugging.
+	 *  Note that to see full SMTP protocol, you can use tcpdump -w /tmp/smtp -s 2000 port 25" 
 	 *
 	 *  @return	void
 	 */
@@ -594,6 +599,10 @@ class CMailFile
 		// Sender
 		//$out.= "Sender: ".getValidAddress($this->addr_from,2)).$this->eol2;
 		$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol2;
+		if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))
+		{
+			$out.= "To: ".$this->getValidAddress($this->addr_to,0,1).$this->eol2;
+		}
 		$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
 		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
 		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;
@@ -688,7 +697,11 @@ class CMailFile
 
 		// Make RFC821 Compliant, replace bare linefeeds
 		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
-
+		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
+		{
+			$strContent = preg_replace("/\r\n/si", "\n", $strContent);
+		}
+		
         //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
         $strContent = rtrim(wordwrap($strContent));
 
