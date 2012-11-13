@@ -341,21 +341,21 @@ class Export
 			case 'Date':
 			case 'Duree':
 			case 'Numeric':
-				$szFilterField="<input type=Text name=".$NameField." value='".$ValueField."'>";
+				$szFilterField='<input type="text" name='.$NameField." value='".$ValueField."'>";
 				break;
 			case 'Boolean':
-				$szFilterField="<select name=".$NameField.">";
+				$szFilterField="<select name=".$NameField.'" class="flat">';
 				$szFilterField.='<option ';
 				if ($ValueField=='') $szFilterField.=' selected ';
-				$szFilterField.=' value="">Sans</option>';
+				$szFilterField.=' value="">&nbsp;</option>';
 
 				$szFilterField.='<option ';
 				if ($ValueField=='1') $szFilterField.=' selected ';
-				$szFilterField.=' value="1">Oui</option>';
+				$szFilterField.=' value="1">'.yn(1).'</option>';
 
 				$szFilterField.='<option ';
 				if ($ValueField=='0') $szFilterField.=' selected ';
-				$szFilterField.=' value="0">Non</option>';
+				$szFilterField.=' value="0">'.yn(0).'</option>';
 				$szFilterField.="</select>";
 				break;
 			case 'List':
@@ -396,6 +396,8 @@ class Export
 						}
 					}
 					$szFilterField.="</select>";
+
+					$this->db->close();
 				}
 				break;
 		}
