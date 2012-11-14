@@ -3565,7 +3565,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
  */
 function setEventMessage($mesgs, $style='mesgs')
 {
-	if (! in_array($style,array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
+	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
 	if (! is_array($mesgs))		// If mesgs is a string
 	{
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
