@@ -76,41 +76,6 @@ MailingModuleDescDolibarrUsers=All Dolibarr users with emails
 MailingModuleDescFundationMembers=Foundation members with emails
 MailingModuleDescEmailsFromFile=EMails from a text file (email;name;surname;comments)
 MailingModuleDescContactsCategories=Στοιχεία με emails (ανά κατηγορία)
-MailingModuleDescDolibarrContractsLinesExpired=Third parties with expired contract's lines
-
-LineInFile=Line %s in file
-RecipientSelectionModules=Defined requests for recipient's selection
-MailSelectedRecipients=Selected recipients
-MailingArea=EMailings area
-LastMailings=Last %s emailings
-TargetsStatistics=Targets statistics
-NbOfCompaniesContacts=Unique contacts of companies
-MailNoChangePossible=Recipients for validated emailing can't be changed
-SearchAMailing=Search mailing
-SendMailing=Send emailing
-SendMail=Send email
-SentBy=Sent by
-MailingNeedCommand=For securities reason, sending an emailing should be performed from command line. Ask your administrator to launch the following command to send the emailing to all recipients:
-MailingNeedCommand2=You can however send them online by adding parameter MAILING_LIMIT_SENDBYWEB with value of max number of emails you want to send by session. For this, go on Home - Setup - Other. 
-ConfirmSendingEmailing=Are you sure you want to send mailing ?
-LimitSendingEmailing=On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
-TargetsReset=Clear list
-ToClearAllRecipientsClickHere=Click here to clear the recipient list for this emailing
-ToAddRecipientsChooseHere=Add recipients by choosing from the lists
-NbOfEMailingsReceived=Mass emailings received
-IdRecord=ID record
-DeliveryReceipt=Delivery Receipt
-YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separator to specify several recipients.
-
-# Module Notifications
-Notifications=Notifications
-NoNotificationsWillBeSent=No email notifications are planned for this event and company
-ANotificationsWillBeSent=1 notification will be sent by email
-SomeNotificationsWillBeSent=%s notifications will be sent by email
-AddNewNotification=Activate a new email notification request
-ListOfActiveNotifications=List all active email notification requests
-ListOfNotificationsDone=List all email notifications sent
-
 
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
