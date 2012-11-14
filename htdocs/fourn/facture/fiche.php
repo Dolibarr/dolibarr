@@ -1471,16 +1471,15 @@ else
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Amount Local Taxes
-        // TODO I use here $societe->localtax1_assuj. Before it was $mysoc->localtax1_assuj, but this is a supplier invoice, so made by supplier, so depends on supplier properties
         if ($societe->localtax1_assuj=="1") //Localtax1 RE
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
             print '<td align="right">'.price($object->total_localtax1).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
         if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
             print '<td align="right">'.price($object->total_localtax2).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
@@ -1658,7 +1657,7 @@ else
                 print '<td>';
                 if ($object->lines[$i]->fk_product)
                 {
-                    print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+                    print '<a name="'.$object->lines[$i]->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($object->lines[$i]->fk_product);

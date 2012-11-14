@@ -63,20 +63,20 @@ class Categorie
 	 * 	Load category into memory from database
 	 *
 	 * 	@param		int		$id		Id of category
-	 *  @param		strin	$label	Label of category
+	 *  @param		string	$label	Label of category
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
 	function fetch($id,$label='')
 	{
-		global $conf; 
-		
+		global $conf;
+
 		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		if ($id) 
+		if ($id)
 		{
 			$sql.= " WHERE rowid = '".$id."'";
 		}
-		
+
 		else
 		{
 			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity=".$conf->entity;;
@@ -86,20 +86,27 @@ class Categorie
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$res = $this->db->fetch_array($resql);
+			if ($this->db->num_rows($resql) > 0)
+			{
+				$res = $this->db->fetch_array($resql);
 
-			$this->id			= $res['rowid'];
-			$this->fk_parent	= $res['fk_parent'];
-			$this->label		= $res['label'];
-			$this->description	= $res['description'];
-			$this->socid		= $res['fk_soc'];
-			$this->visible		= $res['visible'];
-			$this->type			= $res['type'];
-			$this->entity		= $res['entity'];
+				$this->id			= $res['rowid'];
+				$this->fk_parent	= $res['fk_parent'];
+				$this->label		= $res['label'];
+				$this->description	= $res['description'];
+				$this->socid		= $res['fk_soc'];
+				$this->visible		= $res['visible'];
+				$this->type			= $res['type'];
+				$this->entity		= $res['entity'];
 
-			$this->db->free($resql);
+				$this->db->free($resql);
 
-			return 1;
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
@@ -695,9 +702,9 @@ class Categorie
 	/**
 	 * 	Retourne toutes les categories
 	 *
-	 *	@param		int			Type of category
-	 *	@param		boolean		Just parent categories if true
-	 *	@return		array		Tableau d'objet Categorie
+	 *	@param	int			$type		Type of category
+	 *	@param	boolean		$parent		Just parent categories if true
+	 *	@return	array					Tableau d'objet Categorie
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
@@ -800,7 +807,7 @@ class Categorie
 	/**
 	 *	Retourne les categories de premier niveau (qui ne sont pas filles)
 	 *
-	 *	@param		int			Type of category
+	 *	@param		int		$type		Type of category
 	 *	@return		void
 	 */
 	function get_main_categories($type=null)

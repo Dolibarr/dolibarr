@@ -442,9 +442,9 @@ if ($step == 2 && $datatoimport)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPicto($key)).'</td>';
-    	$text=$objmodelimport->getDriverDesc($key);
-    	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabel($key),$text).'</td>';
+		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPictoForKey($key)).'</td>';
+    	$text=$objmodelimport->getDriverDescForKey($key);
+    	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td align="right">';
@@ -510,8 +510,8 @@ if ($step == 3 && $datatoimport)
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-    $text=$objmodelimport->getDriverDesc($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    $text=$objmodelimport->getDriverDescForKey($format);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
     print '</td><td align="right" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
@@ -715,8 +715,8 @@ if ($step == 4 && $datatoimport)
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-    $text=$objmodelimport->getDriverDesc($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    $text=$objmodelimport->getDriverDescForKey($format);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// Separator and enclosure
@@ -1164,8 +1164,8 @@ if ($step == 5 && $datatoimport)
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-    $text=$objmodelimport->getDriverDesc($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    $text=$objmodelimport->getDriverDescForKey($format);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// File to import
@@ -1499,7 +1499,7 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDesc($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabel($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// File to import

@@ -253,15 +253,16 @@ UPDATE llx_c_actioncomm set type = 'systemauto' where code IN ('AC_PROP','AC_COM
 
 
 -- update type of localtax1 for spain
-UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 41 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
-UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 42 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
-UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 43 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+UPDATE llx_c_tva SET taux='21', localtax1 = '5.2', localtax1_type = '3' WHERE rowid = 41 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1' OR localtax1_type='3');
+UPDATE llx_c_tva SET taux='10', localtax1 = '1.4', localtax1_type = '3' WHERE rowid = 42 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1' OR localtax1_type='3');
+UPDATE llx_c_tva SET taux='4',  localtax1 = '0.5', localtax1_type = '3' WHERE rowid = 43 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1' OR localtax1_type='3');
 
 -- update type of localtax2 for spain
-UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 41 AND fk_pays = 4 AND localtax2_type = '0';
-UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 42 AND fk_pays = 4 AND localtax2_type = '0';
-UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 43 AND fk_pays = 4 AND localtax2_type = '0';
+UPDATE llx_c_tva SET localtax2 = '-15', localtax2_type = '1' WHERE rowid = 41 AND fk_pays = 4 AND (localtax2_type = '0' OR localtax2_type = '1');
+UPDATE llx_c_tva SET localtax2 = '-15', localtax2_type = '1' WHERE rowid = 42 AND fk_pays = 4 AND (localtax2_type = '0' OR localtax2_type = '1');
+UPDATE llx_c_tva SET localtax2 = '-15', localtax2_type = '1' WHERE rowid = 43 AND fk_pays = 4 AND (localtax2_type = '0' OR localtax2_type = '1');
 
+-- update type of localtax for tunisia
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 101 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 102 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 103 and fk_pays= 10 AND localtax1_type='0';

@@ -628,7 +628,7 @@ class UserGroup extends CommonObject
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
 
-		dol_syslog("Usergroup::update sql=".$sql);
+		dol_syslog(get_class($this)."::update sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

@@ -265,30 +265,37 @@ class Entrepot extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$obj=$this->db->fetch_object($result);
+			if ($this->db->num_rows($result) > 0)
+			{
+				$obj=$this->db->fetch_object($result);
 
-			$this->id             = $obj->rowid;
-			$this->ref            = $obj->rowid;
-			$this->libelle        = $obj->label;
-			$this->description    = $obj->description;
-			$this->statut         = $obj->statut;
-			$this->lieu           = $obj->lieu;
-			$this->address        = $obj->address;
-			$this->cp             = $obj->zip;         // deprecated
-			$this->ville          = $obj->town;        // deprecated
-			$this->pays_id        = $obj->country_id;  // deprecated
-			$this->zip            = $obj->zip;
-			$this->town           = $obj->town;
-			$this->country_id     = $obj->country_id;
-
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-            $tmp=getCountry($this->country_id,'all');
-			$this->pays=$tmp['label'];                // deprecated
-			$this->pays_code=$tmp['code'];            // deprecated
-			$this->country=$tmp['label'];
-			$this->country_code=$tmp['code'];
-
-			return 1;
+				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
+				$this->libelle        = $obj->label;
+				$this->description    = $obj->description;
+				$this->statut         = $obj->statut;
+				$this->lieu           = $obj->lieu;
+				$this->address        = $obj->address;
+				$this->cp             = $obj->zip;         // deprecated
+				$this->ville          = $obj->town;        // deprecated
+				$this->pays_id        = $obj->country_id;  // deprecated
+				$this->zip            = $obj->zip;
+				$this->town           = $obj->town;
+				$this->country_id     = $obj->country_id;
+	
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	            $tmp=getCountry($this->country_id,'all');
+				$this->pays=$tmp['label'];                // deprecated
+				$this->pays_code=$tmp['code'];            // deprecated
+				$this->country=$tmp['label'];
+				$this->country_code=$tmp['code'];
+	
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{

@@ -1004,9 +1004,11 @@ class DoliDBMysqli
     {
         $sql = "ALTER TABLE ".$table;
         $sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-        if ($field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') $sql.="(".$field_desc['value'].")";
+        if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+        	$sql.="(".$field_desc['value'].")";
+        }
         if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
-        
+
         dol_syslog(get_class($this)."::DDLUpdateField ".$sql,LOG_DEBUG);
         if (! $this->query($sql))
         return -1;

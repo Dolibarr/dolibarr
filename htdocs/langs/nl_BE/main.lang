@@ -1,4 +1,4 @@
-# Dolibarr language file - nl_BE - main
+﻿# Dolibarr language file - nl_BE - main
 CHARSET=UTF-8
 SeparatorDecimal=,
 SeparatorThousand= 
@@ -53,8 +53,8 @@ Name=Naam
 Parameter=Parameter
 Parameters=Parameters
 Value=Waarde
-Code=de code
-Type=Het type
+Code=Code
+Type=Type
 Language=Taal
 Note=Aantekening
 Label=Het etiket
@@ -66,7 +66,7 @@ About=Over
 Number=Aantal
 DevelopmentTeam=Ontwikkelingsteam
 Logout=Uitloggen
-Setup=Opstelling
+Setup=Configuratie
 Alert=Alarm
 Previous=Vorig
 Next=Volgend
@@ -375,7 +375,7 @@ File=Bestand
 Files=Bestanden
 NotAllowed=Niet toegestaan
 ReadPermissionNotAllowed=Lees toestemming niet toegestaan
-AmountInCurrency=Bedrag in %s valuta
+AmountInCurrency=Bedrag in %s
 Example=Voorbeeld
 NoExample=Geen voorbeeld
 FindBug=Rapporteer een bug

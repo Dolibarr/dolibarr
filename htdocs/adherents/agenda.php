@@ -35,8 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 $langs->load("companies");
 $langs->load("members");
 
-$mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
-
 $id = GETPOST('id','int');
 
 // Security check
@@ -70,7 +68,7 @@ $form = new Form($db);
 /*
  * Fiche categorie de client et/ou fournisseur
  */
-if ($id)
+if ($object->id > 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -133,9 +131,6 @@ if ($id)
 	print '</div>';
 
 
-	dol_htmloutput_mesg($mesg);
-
-
     /*
      * Barre d'action
      */
@@ -144,7 +139,9 @@ if ($id)
 
     if (! empty($conf->agenda->enabled))
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+    	// FIXME socid parameters is not valid, a member is not a thirparty
+        //print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create">'.$langs->trans("AddAction").'</a>';
     }
 
     print '</div>';

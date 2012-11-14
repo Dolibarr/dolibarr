@@ -326,7 +326,7 @@ class Product extends CommonObject
 						$result = $this->_log_price($user);
 						if ($result > 0)
 						{
-							if ($this->update($id, $user, true) > 0)
+							if ($this->update($id, $user, true, 'add') > 0)
 							{
 								// FIXME: not use here
 								/*
@@ -404,9 +404,10 @@ class Product extends CommonObject
 	 *	@param	int		$id         Id of product
 	 *	@param  User	$user       Object user making update
 	 *	@param	int		$notrigger	Disable triggers
+	 *	@param	string	$action		Current action for hookmanager
 	 *	@return int         		1 if OK, -1 if ref already exists, -2 if other error
 	 */
-	function update($id, $user, $notrigger=false)
+	function update($id, $user, $notrigger=false, $action='update')
 	{
 		global $langs, $conf;
 
@@ -497,11 +498,14 @@ class Product extends CommonObject
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
-			    $result=$this->insertExtraFields();
-			    if ($result < 0)
-			    {
-			        $error++;
-			    }
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
 			}
 			else if ($reshook < 0) $error++;
 

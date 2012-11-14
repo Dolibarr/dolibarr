@@ -530,9 +530,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $companyfr->country_code='FR';
         $companyfr->tva_assuj=1;
 
-        $companymo=new Societe($db);
-        $companymo->country_code='MC';
-        $companymo->tva_assuj=1;
+        $companymc=new Societe($db);
+        $companymc->country_code='MC';
+        $companymc->tva_assuj=1;
 
         $companyit=new Societe($db);
         $companyit->country_code='IT';
@@ -551,7 +551,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $companyus->tva_intra='';
 
         // Test RULE 1-2
-        $vat=get_default_tva($companyfrnovat,$companymo,0);
+        $vat=get_default_tva($companyfrnovat,$companymc,0);
         $this->assertEquals(0,$vat);
 
         // Test RULE 3 (FR-FR)
@@ -559,7 +559,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(19.6,$vat);
 
         // Test RULE 3 (FR-MC)
-        $vat=get_default_tva($companyfr,$companymo,0);
+        $vat=get_default_tva($companyfr,$companymc,0);
         $this->assertEquals(19.6,$vat);
 
         // Test RULE 4 (FR-IT)
@@ -576,6 +576,93 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         // Test RULE 7 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);
         $this->assertEquals(0,$vat);
+    }
+
+    /**
+     * testGetDefaultTva
+     *
+     * @return	void
+     */
+    public function testGetDefaultLocalTax()
+    {
+    	global $conf,$user,$langs,$db;
+    	$this->savconf=$conf;
+    	$this->savuser=$user;
+    	$this->savlangs=$langs;
+    	$this->savdb=$db;
+
+    	$companyfrnovat=new Societe($db);
+    	$companyfrnovat->country_code='FR';
+    	$companyfrnovat->tva_assuj=0;
+    	$companyfrnovat->localtax1_assuj=0;
+    	$companyfrnovat->localtax2_assuj=0;
+
+    	$companyes=new Societe($db);
+    	$companyes->country_code='ES';
+    	$companyes->tva_assuj=1;
+    	$companyes->localtax1_assuj=1;
+    	$companyes->localtax2_assuj=1;
+
+    	$companymc=new Societe($db);
+    	$companymc->country_code='MC';
+    	$companymc->tva_assuj=1;
+    	$companymc->localtax1_assuj=0;
+    	$companymc->localtax2_assuj=0;
+
+    	$companyit=new Societe($db);
+    	$companyit->country_code='IT';
+    	$companyit->tva_assuj=1;
+    	$companyit->tva_intra='IT99999';
+    	$companyit->localtax1_assuj=0;
+    	$companyit->localtax2_assuj=0;
+
+    	$notcompanyit=new Societe($db);
+    	$notcompanyit->country_code='IT';
+    	$notcompanyit->tva_assuj=1;
+    	$notcompanyit->tva_intra='';
+    	$notcompanyit->typent_code='TE_PRIVATE';
+    	$notcompanyit->localtax1_assuj=0;
+    	$notcompanyit->localtax2_assuj=0;
+
+    	$companyus=new Societe($db);
+    	$companyus->country_code='US';
+    	$companyus->tva_assuj=1;
+    	$companyus->tva_intra='';
+    	$companyus->localtax1_assuj=0;
+    	$companyus->localtax2_assuj=0;
+
+    	// Test RULE FR-MC
+    	$vat1=get_default_localtax($companyfrnovat,$companymc,1,0);
+    	$vat2=get_default_localtax($companyfrnovat,$companymc,2,0);
+    	$this->assertEquals(0,$vat1);
+    	$this->assertEquals(0,$vat2);
+
+    	// Test RULE ES-ES
+    	$vat1=get_default_localtax($companyes,$companyes,1,0);
+    	$vat2=get_default_localtax($companyes,$companyes,2,0);
+    	$this->assertEquals(5.2,$vat1);
+    	$this->assertEquals(-15,$vat2);
+
+    	// Test RULE ES-IT
+    	$vat1=get_default_localtax($companyes,$companyit,1,0);
+    	$vat2=get_default_localtax($companyes,$companyit,2,0);
+    	$this->assertEquals(0,$vat1);
+    	$this->assertEquals(0,$vat2);
+
+    	// Test RULE ES-IT
+    	$vat1=get_default_localtax($companyes,$notcompanyit,1,0);
+    	$vat2=get_default_localtax($companyes,$notcompanyit,2,0);
+    	$this->assertEquals(0,$vat1);
+    	$this->assertEquals(0,$vat2);
+
+    	// Test RULE FR-IT
+    	// Not tested
+
+    	// Test RULE ES-US
+    	$vat1=get_default_localtax($companyes,$companyus,1,0);
+    	$vat2=get_default_localtax($companyes,$companyus,2,0);
+    	$this->assertEquals(0,$vat1);
+    	$this->assertEquals(0,$vat2);
     }
 }
 ?>

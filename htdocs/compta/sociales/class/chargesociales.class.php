@@ -262,8 +262,12 @@ class ChargeSociales extends CommonObject
      */
     function solde($year = 0)
     {
-        $sql = "SELECT sum(f.amount) as amount";
-        $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f WHERE paye = 0";
+    	global $conf;
+
+        $sql = "SELECT SUM(f.amount) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as f";
+        $sql.= " WHERE f.entity = ".$conf->entity;
+        $sql.= " AND paye = 0";
 
         if ($year) {
             $sql .= " AND f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
@@ -300,8 +304,8 @@ class ChargeSociales extends CommonObject
      */
     function set_paid($user)
     {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " set paye=1";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
+        $sql.= " paye = 1";
         $sql.= " WHERE rowid = ".$this->id;
         $return = $this->db->query($sql);
         if ($return) return 1;

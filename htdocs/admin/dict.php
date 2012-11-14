@@ -502,9 +502,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            $oldid=$id;
-            $_POST=array('id'=>$oldid);	// Clean $_POST array, we keep only
-            $_GET["id"]=$_POST["id"];   // Force affichage dictionnaire en cours d'edition
+            //$oldid=$id;
+            //$_POST=array('id'=>$oldid);	// Clean $_POST array, we keep only
+            //$_GET["id"]=$_POST["id"];   // Force affichage dictionnaire en cours d'edition
         }
         else
         {
@@ -558,12 +558,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
 
     if ($msg) $msg='<div class="error">'.$msg.'</div>';
-    $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
+    //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if (GETPOST('actioncancel'))
 {
-    $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
+    //$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
@@ -778,7 +778,7 @@ if ($id)
         }
 
         $tmpaction = 'create';
-        $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
+        $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
         $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -947,69 +947,69 @@ if ($id)
                                 $valuetoshow=($obj->code && $key != "PaymentCondition".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                                 $valuetoshow=nl2br($valuetoshow);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_pays') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_pays') {
                                 $key=$langs->trans("Country".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_availability') {
+                            else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
                                 $langs->load("propal");
                                 $key=$langs->trans("AvailabilityType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_actioncomm') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_actioncomm') {
                                 $key=$langs->trans("Action".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Action".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if (! empty($obj->code_iso) && $fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_currencies') {
+                            else if (! empty($obj->code_iso) && $fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_currencies') {
                                 $key=$langs->trans("Currency".strtoupper($obj->code_iso));
                                 $valuetoshow=($obj->code_iso && $key != "Currency".strtoupper($obj->code_iso)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_typent') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_typent') {
                                 $key=$langs->trans(strtoupper($obj->code));
                                 $valuetoshow=($key != strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_prospectlevel') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_prospectlevel') {
                                 $key=$langs->trans(strtoupper($obj->code));
                                 $valuetoshow=($key != strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_civilite') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_civilite') {
                                 $key=$langs->trans("Civility".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_type_contact') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_type_contact') {
                                 $key=$langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_payment_term') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_payment_term') {
                                 $langs->load("bills");
                                 $key=$langs->trans("PaymentConditionShort".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_paiement') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_paiement') {
                                 $langs->load("bills");
                                 $key=$langs->trans("PaymentType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_input_reason') {
+                            else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_reason') {
                                 $key=$langs->trans("DemandReasonType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_input_method') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_method') {
                                 $langs->load("orders");
                                 $key=$langs->trans($obj->code);
                                 $valuetoshow=($obj->code && $key != $obj->code)?$key:$obj->$fieldlist[$field];
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_shipment_mode') {
+                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_shipment_mode') {
                                 $langs->load("sendings");
                                 $key=$langs->trans("SendingMethod".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "SendingMethod".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field] == 'libelle' && $tabname[$_GET['id']]==MAIN_DB_PREFIX.'c_paper_format')
+                            else if ($fieldlist[$field] == 'libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_paper_format')
                             {
                                 $key = $langs->trans('PaperFormat'.strtoupper($obj->code));
                                 $valuetoshow = ($obj->code && $key != 'PaperFormat'.strtoupper($obj->code) ? $key : $obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field] == 'libelle' && $tabname[$_GET['id']] == MAIN_DB_PREFIX.'c_type_fees')
+                            else if ($fieldlist[$field] == 'libelle' && $tabname[$id] == MAIN_DB_PREFIX.'c_type_fees')
                             {
                                 $langs->load('trips');
                                 $key = $langs->trans(strtoupper($obj->code));
@@ -1022,7 +1022,7 @@ if ($id)
                             	$valuetoshow = getCurrencySymbol($obj->code);
                             }
 
-                            else if (($fieldlist[$field] == 'unit') && ($tabname[$_GET['id']] == MAIN_DB_PREFIX.'c_paper_format'))
+                            else if (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format'))
                             {
                             	$key = $langs->trans('SizeUnit'.strtolower($obj->unit));
                                 $valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->$fieldlist[$field]);
@@ -1269,7 +1269,7 @@ function fieldList($fieldlist,$obj='',$tabname='')
 		elseif ($fieldlist[$field] == 'localtax1_type' || $fieldlist[$field] == 'localtax2_type')
 		{
 			print '<td align="center">';
-			print $form->selectarray($fieldlist[$field], $localtax_typeList,$obj->$fieldlist[$field]);
+			print $form->selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''));
 			print '</td>';
 		}
 		else
