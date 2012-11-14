@@ -596,6 +596,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   	@param	PDF			&$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)

@@ -201,6 +201,8 @@ class Export
 	 *
 	 *      @param      int		$indice				Indice of export
 	 *      @param      array	$array_selected     Filter on array of fields to export
+	 *      @param      array	$array_filterValue  Filter on array of fields to export
+	 *      @param      array	$array_filtered     Array with filters values
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
 	function build_sql($indice, $array_selected, $array_filterValue, $array_filtered)
@@ -309,14 +311,16 @@ class Export
 	}
 
 	/**
+	 *	conditionDate
 	 *
-	 * @param unknown $Field
-	 * @param unknown $Value
-	 * @param unknown $Sens
-	 * @return string
+	 *  @param 	string	$Field		Field operand 1
+	 *  @param 	string	$Value		Value operand 2
+	 *  @param 	string	$Sens		Comparison operator
+	 *  @return string
 	 */
 	function conditionDate($Field, $Value, $Sens)
 	{
+		// FIXME date_format is forbidden, not performant and no portable. Use instead BETWEEN
 		if (strlen($Value)==4) $Condition=" date_format(".$Field.",'%Y') ".$Sens." ".$Value;
 		elseif (strlen($Value)==6) $Condition=" date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
 		else  $Condition=" date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
@@ -341,21 +345,21 @@ class Export
 			case 'Date':
 			case 'Duree':
 			case 'Numeric':
-				$szFilterField="<input type=Text name=".$NameField." value='".$ValueField."'>";
+				$szFilterField='<input type="text" name='.$NameField." value='".$ValueField."'>";
 				break;
 			case 'Boolean':
-				$szFilterField="<select name=".$NameField.">";
+				$szFilterField="<select name=".$NameField.'" class="flat">';
 				$szFilterField.='<option ';
 				if ($ValueField=='') $szFilterField.=' selected ';
-				$szFilterField.=' value="">Sans</option>';
+				$szFilterField.=' value="">&nbsp;</option>';
 
 				$szFilterField.='<option ';
 				if ($ValueField=='1') $szFilterField.=' selected ';
-				$szFilterField.=' value="1">Oui</option>';
+				$szFilterField.=' value="1">'.yn(1).'</option>';
 
 				$szFilterField.='<option ';
 				if ($ValueField=='0') $szFilterField.=' selected ';
-				$szFilterField.=' value="0">Non</option>';
+				$szFilterField.=' value="0">'.yn(0).'</option>';
 				$szFilterField.="</select>";
 				break;
 			case 'List':
@@ -396,6 +400,8 @@ class Export
 						}
 					}
 					$szFilterField.="</select>";
+
+					$this->db->close();
 				}
 				break;
 		}
@@ -450,6 +456,8 @@ class Export
 	 *      @param      string		$model              Export format
 	 *      @param      string		$datatoexport       Name of dataset to export
 	 *      @param      array		$array_selected     Filter on array of fields to export
+	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
+	 *      @param      array		$array_filtered     Values of filters
 	 *      @param		string		$sqlquery			If set, transmit a sql query instead of building it from arrays
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
@@ -708,7 +716,10 @@ class Export
 	}
 
 	/**
+	 *	Output list all export models
+	 *  TODO Move this into a class htmlxxx.class.php
 	 *
+	 *	@return	void
 	 */
 	function list_export_model()
 	{

@@ -125,6 +125,7 @@ DeskCode=Code guichet
 BankAccountNumber=Numéro compte
 BankAccountNumberKey=Clé RIB
 ## filters
+SelectFilterFields=Si vous voulez filtrer sur certaines valeures, saisissez ces valeurs. 
 FilterableFields=Champs Filtrables
 FilteredFields=Champs Filtrés
 FilteredFieldsValues=Valeurs de filtrages

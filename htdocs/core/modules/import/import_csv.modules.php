@@ -99,10 +99,9 @@ class ImportCsv extends ModeleImports
 	/**
 	 *	getDriverLabel
 	 *
-	 *	@param	string	$key	Key
 	 *	@return string	Label
 	 */
-	function getDriverLabel($key='')
+	function getDriverLabel()
 	{
 		return $this->label;
 	}
@@ -110,10 +109,9 @@ class ImportCsv extends ModeleImports
 	/**
 	 *	getDriverDesc
 	 *
-	 *	@param	string	$key	Key
 	 *	@return string	Description
 	 */
-	function getDriverDesc($key='')
+	function getDriverDesc()
 	{
 		return $this->desc;
 	}
@@ -131,10 +129,9 @@ class ImportCsv extends ModeleImports
 	/**
 	 *	getDriverVersion
 	 *
-	 *	@param	string	$key	Key
 	 *	@return string	Driver version
 	 */
-	function getDriverVersion($key='')
+	function getDriverVersion()
 	{
 		return $this->version;
 	}
@@ -142,10 +139,9 @@ class ImportCsv extends ModeleImports
 	/**
 	 *	getDriverLabel
 	 *
-	 *	@param	string	$key	Key
 	 *	@return string	Label of external lib
 	 */
-	function getLibLabel($key='')
+	function getLibLabel()
 	{
 		return $this->label_lib;
 	}
@@ -153,10 +149,9 @@ class ImportCsv extends ModeleImports
 	/**
 	 * getLibVersion
 	 *
-	 *	@param	string	$key	Key
 	 *	@return string	Version of external lib
 	 */
-	function getLibVersion($key='')
+	function getLibVersion()
 	{
 		return $this->version_lib;
 	}

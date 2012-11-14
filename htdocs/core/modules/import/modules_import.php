@@ -116,7 +116,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getPicto($key)
+	function getPictoForKey($key)
 	{
 		return $this->picto[$key];
 	}
@@ -127,7 +127,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getDriverLabel($key)
+	function getDriverLabelForKey($key)
 	{
 		return $this->_driverlabel[$key];
 	}
@@ -138,7 +138,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getDriverDesc($key)
+	function getDriverDescForKey($key)
 	{
 		return $this->_driverdesc[$key];
 	}
@@ -149,7 +149,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getDriverVersion($key)
+	function getDriverVersionForKey($key)
 	{
 		return $this->_driverversion[$key];
 	}
@@ -160,7 +160,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getLibLabel($key)
+	function getLibLabelForKey($key)
 	{
 		return $this->_liblabel[$key];
 	}
@@ -171,7 +171,7 @@ class ModeleImports
 	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
-	function getLibVersion($key)
+	function getLibVersionForKey($key)
 	{
 		return $this->_libversion[$key];
 	}

@@ -1262,7 +1262,7 @@ else
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
             // EMail / Web
-            print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
+            print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
             print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
             // Prof ids

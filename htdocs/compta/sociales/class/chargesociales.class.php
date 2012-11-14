@@ -401,14 +401,12 @@ class ChargeSociales extends CommonObject
      */
     function getSommePaiement()
     {
-    	global $conf;
+        $table='paiementcharge';
+        $field='fk_charge';
 
-        $sql = 'SELECT SUM(amount) as amount';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pc';
-        $sql.= ', '.MAIN_DB_PREFIX.'chargesociales as c';
-        $sql.= ' WHERE c.entity = '.$conf->entity;
-        $sql.= ' AND pc.fk_charge = c.rowid';
-        $sql.= ' AND pc.fk_charge = '.$this->id;
+        $sql = 'SELECT sum(amount) as amount';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+        $sql.= ' WHERE '.$field.' = '.$this->id;
 
         dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);

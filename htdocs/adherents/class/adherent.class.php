@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +318,7 @@ class Adherent extends CommonObject
                 $this->ref=$id;
 
                 // Update minor fields
-                $result=$this->update($user,1,1); // nosync is 1 to avoid update data of user
+                $result=$this->update($user,1,1,0,0,'add'); // nosync is 1 to avoid update data of user
                 if ($result < 0)
                 {
                     $this->db->rollback();
@@ -390,9 +390,10 @@ class Adherent extends CommonObject
      *	@param	int		$nosyncuser			0=Synchronize linked user (standard info), 1=Do not synchronize linked user
      *	@param	int		$nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
      *	@param	int		$nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
+     * 	@param	string	$action				Current action for hookmanager
      * 	@return	int							<0 if KO, >0 if OK
      */
-    function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0)
+    function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
     {
         global $conf, $langs;
 
@@ -470,11 +471,14 @@ class Adherent extends CommonObject
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
             if (empty($reshook))
             {
-                $result=$this->insertExtraFields();
-                if ($result < 0)
-                {
-                    $error++;
-                }
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	{
+            		$result=$this->insertExtraFields();
+            		if ($result < 0)
+            		{
+            			$error++;
+            		}
+            	}
             }
             else if ($reshook < 0) $error++;
 

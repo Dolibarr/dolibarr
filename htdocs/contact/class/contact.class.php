@@ -148,7 +148,7 @@ class Contact extends CommonObject
 
 			if (! $error)
 			{
-                $result=$this->update($this->id, $user, 1);
+                $result=$this->update($this->id, $user, 1, 'add');
                 if ($result < 0)
                 {
                     $error++;
@@ -203,10 +203,11 @@ class Contact extends CommonObject
 	 *
 	 *      @param      int		$id          	Id of contact/address to update
 	 *      @param      User	$user        	Objet user making change
-	 *      @param      int		$notrigger	    0=no, 1=yesi
+	 *      @param      int		$notrigger	    0=no, 1=yes
+	 *      @param		string	$action			Current action for hookmanager
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=0, $notrigger=0)
+	function update($id, $user=0, $notrigger=0, $action='update')
 	{
 		global $conf, $langs;
 
@@ -271,10 +272,13 @@ class Contact extends CommonObject
 		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		    if (empty($reshook))
 		    {
-		    	$result=$this->insertExtraFields();
-		    	if ($result < 0)
+		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		    	{
-		    		$error++;
+		    		$result=$this->insertExtraFields();
+		    		if ($result < 0)
+		    		{
+		    			$error++;
+		    		}
 		    	}
 		    }
 		    else if ($reshook < 0) $error++;
