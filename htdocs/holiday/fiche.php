@@ -1,20 +1,21 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
+/* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 /**
  *   	\file       fiche.php
@@ -33,14 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Get parameters
 $myparam = GETPOST("myparam");
-$action=GETPOST('action');
-$id=GETPOST('id');
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
 $user_id = $user->id;
-
+$now=dol_now();
 
 
 /*******************************************************************
@@ -50,7 +51,6 @@ $user_id = $user->id;
 // Si création de la demande
 if ($action == 'create')
 {
-
     // Si pas le droit de créer une demande
     if(!$user->rights->holiday->write)
     {
@@ -290,7 +290,6 @@ if ($action == 'confirm_send')
             $delayForRequest = $cp->getConfCP('delayForRequest');
             //$delayForRequest = $delayForRequest * (60*60*24);
 
-            $now=dol_now();
             $nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
             // Si l'option pour avertir le valideur en cas de délai trop court
@@ -703,11 +702,11 @@ if (empty($id) || $action == 'add' || $action == 'request')
         // Liste des utiliseurs du groupes choisi dans la config
         $idGroupValid = $cp->getConfCP('userGroup');
 
-        $validator = new UserGroup($db,$idGroupValid);
+        $validator = new UserGroup($db, $idGroupValid);
         $valideurarray = $validator->listUsersForGroup();
 
         print '<td>';
-        print $html->select_dolusers($valideur,"valideur",1,"",0,$valideurarray,'');
+        print $html->select_dolusers($validator->id, "valideur", 1, "", 0, $valideurarray);
         print '</td>';
         print '</tr>';
         print '<tr>';
