@@ -124,3 +124,7 @@ BankCode=Código banco
 DeskCode=Código oficina
 BankAccountNumber=Número cuenta
 BankAccountNumberKey=Dígito Control
+## filters
+FilterableFields=Campos filtrables
+FilteredFields=Campos filtrados
+FilteredFieldsValues=Valores de filtros
