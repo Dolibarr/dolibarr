@@ -512,6 +512,9 @@ else
         /*
          *  Creation
          */
+		$private=GETPOST("private","int");
+		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+    	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
         $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
@@ -545,11 +548,10 @@ else
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
-        if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name				= GETPOST('nom');
         $object->firstname			= GETPOST('prenom');
-        $object->particulier		= GETPOST('private', 'int');
+        $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
         $object->code_client		= GETPOST('code_client');
@@ -638,7 +640,7 @@ else
             print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private='.(GETPOST("private")?GETPOST("private"):0).';
+                        is_private='.$private.';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -667,10 +669,10 @@ else
 
             print "<br>\n";
             print $langs->trans("ThirdPartyType").': &nbsp; ';
-            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! GETPOST("private")?' checked="checked"':'');
+            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.($private?'':' checked="checked"');
             print '> '.$langs->trans("Company/Fundation");
             print ' &nbsp; &nbsp; ';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! GETPOST("private")?'':' checked="checked"');
+            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'');
             print '> '.$langs->trans("Individual");
             print ' ('.$langs->trans("ToCreateContactWithSameName").')';
             print "<br>\n";
@@ -693,7 +695,7 @@ else
         print '<table class="border" width="100%">';
 
         // Name, firstname
-        if ($object->particulier || GETPOST("private"))
+        if ($object->particulier || $private)
         {
             print '<tr><td><span id="TypeName" class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
