@@ -89,6 +89,12 @@ class Holiday extends CommonObject
         global $conf, $langs;
         $error=0;
 
+        $now=dol_now();
+        
+        // Check parameters
+        if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
+        if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
+        
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 
@@ -103,22 +109,13 @@ class Holiday extends CommonObject
         $sql.= ") VALUES (";
 
         // User
-        if(!empty($this->fk_user)) {
-            $sql.= "'".$this->fk_user."',";
-        } else {
-            $error++;
-        }
-        $sql.= " NOW(),";
+        $sql.= "'".$this->fk_user."',";
+        $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".addslashes($this->description)."',";
         $sql.= " '".$this->db->idate($this->date_debut)."',";
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " '1',";
-        if(is_numeric($this->fk_validator)) {
-            $sql.= " '".$this->fk_validator."'";
-        }
-        else {
-            $error++;
-        }
+        $sql.= " '".$this->fk_validator."'";
 
         $sql.= ")";
 
@@ -183,7 +180,6 @@ class Holiday extends CommonObject
         $sql.= " cp.fk_user_cancel,";
         $sql.= " cp.detail_refuse";
 
-
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
 
@@ -226,12 +222,12 @@ class Holiday extends CommonObject
     }
 
     /**
-     *	Liste les congés payés pour un utilisateur
+     *	List holidays for a particular user
      *
-     *  @param		int		$user_id    ID de l'utilisateur à lister
-     *  @param      string	$order      Filtrage par ordre
-     *  @param      string	$filter     Filtre de séléction
-     *  @return     int      			-1 si erreur, 1 si OK et 2 si pas de résultat
+     *  @param		int		$user_id    ID of user to list
+     *  @param      string	$order      Sort order
+     *  @param      string	$filter     SQL Filter
+     *  @return     int      			-1 if KO, 1 if OK, 2 if no result
      */
     function fetchByUser($user_id,$order='',$filter='')
     {
@@ -321,11 +317,11 @@ class Holiday extends CommonObject
     }
 
     /**
-     *	Liste les congés payés de tout les utilisateurs
+     *	List all holidays of all users
      *
-     *  @param	string	$order      Filtrage par ordre
-     *  @param  string	$filter     Filtre de séléction
-     *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
+     *  @param      string	$order      Sort order
+     *  @param      string	$filter     SQL Filter
+     *  @return     int      			-1 if KO, 1 if OK, 2 if no result
      */
     function fetchAll($order,$filter)
     {
@@ -1595,5 +1591,27 @@ class Holiday extends CommonObject
       		}
     }
 
+    /**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+    	global $user,$langs;
+    
+    	// Initialise parameters
+    	$this->id=0;
+    	$this->specimen=1;
+    	
+    	$this->fk_user=1;
+    	$this->description='SPECIMEN description';
+    	$this->date_debut=dol_now();
+    	$this->date_fin=dol_now()+(24*3600);
+    	$this->fk_validator=1;
+    }
+    
 }
 ?>

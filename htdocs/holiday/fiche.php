@@ -574,6 +574,9 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
  * View
 ****************************************************/
 
+$form = new Form($db);
+
+
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 if (empty($id) || $action == 'add' || $action == 'request')
@@ -621,7 +624,6 @@ if (empty($id) || $action == 'add' || $action == 'request')
             dol_htmloutput_mesg('',$errors,'error');
         }
 
-        $html = new Form($db);
         $cp = new Holiday($db);
 
         $delayForRequest = $cp->getConfCP('delayForRequest');
@@ -678,10 +680,10 @@ if (empty($id) || $action == 'add' || $action == 'request')
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if(!isset($_GET['datep'])) {
-            $html->select_date(-1,'date_debut_');
+            $form->select_date(-1,'date_debut_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datepmonth'), GETPOST('datepday'), GETPOST('datepyear'));
-            $html->select_date($tmpdate,'date_debut_');
+            $form->select_date($tmpdate,'date_debut_');
         }
         print '</td>';
         print '</tr>';
@@ -690,10 +692,10 @@ if (empty($id) || $action == 'add' || $action == 'request')
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if(!isset($_GET['datep'])) {
-            $html->select_date(-1,'date_fin_');
+            $form->select_date(-1,'date_fin_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datefmonth'), GETPOST('datefday'), GETPOST('datefyear'));
-            $html->select_date($tmpdate,'date_fin_');
+            $form->select_date($tmpdate,'date_fin_');
         }
         print '</td>';
         print '</tr>';
@@ -706,7 +708,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
         $valideurarray = $validator->listUsersForGroup();
 
         print '<td>';
-        print $html->select_dolusers($validator->id, "valideur", 1, "", 0, $valideurarray);
+        print $form->select_dolusers($validator->id, "valideur", 1, "", 0, $valideurarray);
         print '</td>';
         print '</tr>';
         print '<tr>';
@@ -798,44 +800,39 @@ else
             {
 
                 if ($action == 'delete' && $cp->statut == 1) {
-                    if($user->rights->holiday->delete) {
-                        $html = new Form($db);
-
-                        $ret=$html->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                    if($user->rights->holiday->delete) 
+                    {
+                        $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
                         if ($ret == 'html') print '<br />';
                     }
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $cp->statut == 1 && $userID == $cp->fk_user) {
-                    $html = new Form($db);
-
-                    $ret=$html->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 0, 1);
+                if ($action == 'sendToValidate' && $cp->statut == 1 && $userID == $cp->fk_user) 
+                {
+                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 0, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si validation de la demande
-                if ($action == 'valid' && $cp->statut == 2 && $userID == $cp->fk_validator) {
-                    $html = new Form($db);
-
-                    $ret=$html->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 0, 1);
+                if ($action == 'valid' && $cp->statut == 2 && $userID == $cp->fk_validator) 
+                {
+                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 0, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si refus de la demande
-                if ($action == 'refuse' && $cp->statut == 2 && $userID == $cp->fk_validator) {
-                    $html = new Form($db);
-
+                if ($action == 'refuse' && $cp->statut == 2 && $userID == $cp->fk_validator) 
+                {
                     $array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif de refus :",'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    $ret=$html->form_confirm("fiche.php?id=".$_GET['id']."&action=confirm_refuse",$langs->trans("TitleRefuseCP"),"","confirm_refuse",$array_input,"",0);
+                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id']."&action=confirm_refuse",$langs->trans("TitleRefuseCP"),"","confirm_refuse",$array_input,"",0);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si annulation de la demande
-                if ($action == 'cancel' && $cp->statut == 2 && $userID == $cp->fk_validator) {
-                    $html = new Form($db);
-
-                    $ret=$html->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 0, 1);
+                if ($action == 'cancel' && $cp->statut == 2 && $userID == $cp->fk_validator) 
+                {
+                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 0, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
@@ -849,8 +846,6 @@ else
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'">'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="holiday_id" value="'.$_GET['id'].'" />'."\n";
-
-                    $html = new Form($db);
                 }
 
                 print '<table class="border" width="100%">';
@@ -873,7 +868,7 @@ else
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').'</td>';
                     print '<td>';
-                    $html->select_date($cp->date_debut,'date_debut_');
+                    $form->select_date($cp->date_debut,'date_debut_');
                     print '</td>';
                     print '</tr>';
                 }
@@ -887,7 +882,7 @@ else
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').'</td>';
                     print '<td>';
-                    $html->select_date($cp->date_fin,'date_fin_');
+                    $form->select_date($cp->date_fin,'date_fin_');
                     print '</td>';
                     print '</tr>';
                 }
@@ -952,7 +947,7 @@ else
                     $valideur = $validator->listUsersForGroup();
 
                     print '<td>';
-                    $html->select_users($cp->fk_validator,"valideur",1,"",0,$valideur,'');
+                    $form->select_users($cp->fk_validator,"valideur",1,"",0,$valideur,'');
                     print '</td>';
                     print '</tr>';
                 }
@@ -982,44 +977,44 @@ else
                 print '</tbody>';
                 print '</table>';
 
-                dol_fiche_end();
-
-                print '<div style="clear: both;"></div>'."\n";
-
-                if ($edit)
+                if ($edit && $user->id == $cp->fk_user && $cp->statut == 1)
                 {
-                    print '<center>';
+                    print '<br><div align="center">';
                     if($user->rights->holiday->write && $_GET['action'] == 'edit' && $cp->statut == 1)
                     {
                         print '<input type="submit" value="'.$langs->trans("UpdateButtonCP").'" class="button">';
                     }
-                    print '</center>';
+                    print '</div>';
 
                     print '</form>';
                 }
 
+                dol_fiche_end();
+                
                 if (! $edit)
                 {
-                    print '<br />';
-                    print '<div style="float: right;">'."\n";
+		            print '<div class="tabsAction">';
 
                     // Boutons d'actions
-
-                    if($user->rights->holiday->write && $_GET['action'] != 'edit' && $cp->statut == 1) {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=edit" class="butAction" style="float: left;">'.$langs->trans("EditCP").'</a>';
+                    if($user->rights->holiday->write && $_GET['action'] != 'edit' && $cp->statut == 1) 
+                    {
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
                     }
-                    if($user->rights->holiday->delete && $cp->statut == 1) {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butAction" style="float: left;">'.$langs->trans("DeleteCP").'</a>';
+                    if($user->rights->holiday->delete && $cp->statut == 1) 
+                    {
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butAction">'.$langs->trans("DeleteCP").'</a>';
                     }
-                    if($user->id == $cp->fk_user && $cp->statut == 1) {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=sendToValidate" class="butAction" style="float: left;">'.$langs->trans("SendToValidationCP").'</a>';
+                    if($user->id == $cp->fk_user && $cp->statut == 1) 
+                    {
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=sendToValidate" class="butAction">'.$langs->trans("SendToValidationCP").'</a>';
                     }
 
                     // Si le statut est en attente de validation et que le valideur est connecté
-                    if($userID == $cp->fk_validator && $cp->statut == 2) {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=valid" class="butAction" style="float: left;">'.$langs->trans("ActionValidCP").'</a>';
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=refuse" class="butAction" style="float: left;">'.$langs->trans("ActionRefuseCP").'</a>';
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction" style="float: left;">'.$langs->trans("ActionCancelCP").'</a>';
+                    if($userID == $cp->fk_validator && $cp->statut == 2) 
+                    {
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=valid" class="butAction">'.$langs->trans("ActionValidCP").'</a>';
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     }
 
                     print '</div>';
