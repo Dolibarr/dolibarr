@@ -173,7 +173,7 @@ class modWorkflow extends DolibarrModules
      */
     function load_tables()
     {
-        return $this->_load_tables('/workflow/sql/');
+        return $this->_load_tables('');
     }
 }
 ?>
