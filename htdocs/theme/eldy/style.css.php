@@ -1762,9 +1762,7 @@ tr.fiche {
  */
 .ok      { color: #114466; }
 .warning { color: #887711; }
-.error   { color: #550000; font-weight: bold; }
-
-td.highlights { background: #f9c5c6; }
+.error   { color: #550000 !important; font-weight: bold; }
 
 div.ok {
   color: #114466;

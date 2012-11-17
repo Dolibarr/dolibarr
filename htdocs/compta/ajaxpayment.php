@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/compta/ajaxpayment.php
  *       \brief      File to return Ajax response on payment breakdown process
- *       \version    ajaxpayment.php,v 1.0
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -45,10 +44,7 @@ $currentInvId = $_POST['imgClicked'];		// from DOM elements : imgId (equals invo
 
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
 // from text inputs : total amount
-$amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment)
-																				: ''
-										)
-									: '';			// keep void if not a valid entry
+$amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment) : '' ) : '';			// keep void if not a valid entry
 // Checkamounts
 foreach ($amounts as $key => $value)
 {
@@ -60,7 +56,7 @@ foreach ($amounts as $key => $value)
 $result = $amountPayment != '' ? $amountPayment - array_sum($amounts) : $amountPayment + array_sum($amounts);										// Remaining amountPayment
 $toJsonArray = 	array();
 $totalRemaining = price2num(array_sum($remains));
-$toJsonArray['label'] = $amountPayment == '' ? $langs->transnoentities('AmountToBeCharged') : $langs->transnoentities('RemainingAmountPayment');
+$toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');
 if($currentInvId)																	// Here to breakdown
 {
 	// Get the current amount (from form) and the corresponding remainToPay (from invoice)
