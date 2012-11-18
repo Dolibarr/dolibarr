@@ -2700,8 +2700,17 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller=".$thirdparty_seller->id);
 
 	// Some test to guess with no need to make database access
-	if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
-	if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+	if ($mysoc->country_code == 'ES') // For spain, localtaxes are qualified if both supplier and seller use local taxe
+	{
+		if ($local == 1 && (! $thirdparty_seller->localtax1_assuj || ! $thirdparty_buyer->localtax1_assuj)) return 0;
+		if ($local == 2 && (! $thirdparty_seller->localtax2_assuj || ! $thirdparty_buyer->localtax2_assuj)) return 0;
+	
+	}
+	else 
+	{
+		if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+	}
 	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
 
 	$code_country=$thirdparty_seller->country_code;
