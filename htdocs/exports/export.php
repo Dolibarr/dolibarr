@@ -58,6 +58,8 @@ $entitytoicon = array(
 	'product'      => 'product',
     'warehouse'    => 'stock',
 	'category'     => 'category',
+	'shipment'     => 'sending',
+    'shipment_line'=> 'sending'
 );
 
 // Translation code
@@ -86,7 +88,9 @@ $entitytolang = array(
     'warehouse'    => 'Warehouse',
 	'category'     => 'Category',
 	'other'        => 'Other',
-    'trip'         => 'TripsAndExpenses'
+    'trip'         => 'TripsAndExpenses',
+    'shipment'     => 'Shipments',
+    'shipment_line'=> 'ShipmentLine'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();

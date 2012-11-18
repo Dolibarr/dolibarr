@@ -79,6 +79,8 @@ alter table llx_propaldet drop column pa_ht;
 alter table llx_propaldet drop column marge_tx;
 alter table llx_propaldet drop column marque_tx;
 
+alter table llx_expedition add column height_unit integer after height;
+
 ALTER TABLE llx_commande CHANGE COLUMN fk_demand_reason fk_input_reason integer NULL DEFAULT NULL;
 ALTER TABLE llx_propal CHANGE COLUMN fk_demand_reason fk_input_reason integer NULL DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN fk_methode_commande fk_input_method integer NULL DEFAULT 0;

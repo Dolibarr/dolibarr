@@ -65,6 +65,8 @@ class modProjet extends DolibarrModules
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
+		$this->conflictwith = array();
+		$this->langfiles = array('projects');
 
 		// Constants
 		$this->const = array();
