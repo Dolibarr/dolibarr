@@ -2,10 +2,15 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
+/**
+ * Class to manage logging to syslog
+ */
 class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 {
 	/**
-	 * {@inheritDoc}
+	 * 	Return name of logger
+	 *
+	 * 	@return	string		Name of logger
 	 */
 	public function getName()
 	{
@@ -13,7 +18,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Version of the module ('x.y.z' or 'dolibarr' or 'experimental' or 'development')
+	 *
+	 * @return string
 	 */
 	public function getVersion()
 	{
@@ -21,7 +28,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Content of the info tooltip.
+	 *
+	 * @return false|string
 	 */
 	public function getInfo()
 	{
@@ -31,7 +40,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Is the module active ?
+	 *
+	 * @return boolean
 	 */
 	public function isActive()
 	{
@@ -45,7 +56,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * 	Return array of configuration data
+	 *
+	 * 	@return	array		Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -61,7 +74,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * 	Return if configuration is valid
+	 *
+	 * 	@return	boolean		True if configuration ok
 	 */
 	public function checkConfiguration()
 	{
@@ -87,7 +102,9 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 
 	/**
 	 * Export the message
-	 * @param  array $content Array containing the info about the message
+	 *
+	 * @param  	array 	$content 	Array containing the info about the message
+	 * @return	void
 	 */
 	public function export($content)
 	{

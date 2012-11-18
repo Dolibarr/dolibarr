@@ -177,8 +177,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// if there's some localtax without vat, we calculate localtaxes (we will add them at end)
-    $apply_tax = false;
-
+    
     //If price is 'TTC' we need to have the totals without VAT for a correct calculation
     if ($price_base_type=='TTC')
     {
@@ -186,7 +185,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     	$tot_avec_remise= price2num($tot_avec_remise / (1 + ($txtva / 100)),'MU');
     }
 
-  	switch($localtax1_type) {
+	$apply_tax = false;
+    switch($localtax1_type) {
       case '1':     // localtax on product or service
         $apply_tax = true;
         break;

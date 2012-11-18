@@ -1,7 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2003-2010 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
--- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -42,12 +42,12 @@ create table llx_expedition
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,
   
-  height                integer,
-  width                 integer,
-  size_units            integer,
-  size                  integer,
-  weight_units          integer,
-  weight                integer,
+  height                integer,						-- height
+  width                 integer,						-- with
+  size_units            integer,						-- unit of all sizes (height, width, depth)
+  size                  integer,						-- depth
+  weight_units          integer,						-- unit of weight
+  weight                integer,						-- weight
   note                  text,
   model_pdf             varchar(255)
   

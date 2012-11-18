@@ -212,6 +212,6 @@ if (! defined('NOREQUIRETRAN'))
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
 // We force feature to help debug
-$conf->global->MAIN_JS_ON_PAYMENT=0;	// We set to zero to unifrmize way of working between customer and supplier payments
+//$conf->global->MAIN_JS_ON_PAYMENT=0;
 
 ?>

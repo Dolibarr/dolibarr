@@ -285,10 +285,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
             header("Location: fiche.php?id=".$shipping->id);
             exit;
         }
-        $mesg=$shipping->error;
+        setEventMessage($shipping->error,'errors');
     }
 
-    $mesg='<div class="error">'.$mesg.'</div>';
     $action="";
 }
 
@@ -537,7 +536,7 @@ else if ($action == 'classifybilled')
 
 /*
  * View
-*/
+ */
 
 llxHeader('',$langs->trans('Sending'),'Expedition');
 
@@ -904,7 +903,7 @@ else
 
             /*
              * Confirmation de la suppression
-            */
+             */
             if ($action == 'delete')
             {
                 $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
@@ -913,7 +912,7 @@ else
 
             /*
              * Confirmation de la validation
-            */
+             */
             if ($action == 'valid')
             {
                 $objectref = substr($object->ref, 1, 4);
@@ -930,15 +929,15 @@ else
             }
             /*
              * Confirmation de l'annulation
-            */
+             */
             if ($action == 'annuler')
             {
                 $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
                 if ($ret == 'html') print '<br>';
             }
 
-            // Calculate ture totalVeight and totalVolume for all products
-            // by adding weight and volume of each line.
+            // Calculate true totalWeight and totalVolume for all products
+            // by adding weight and volume of each product line.
             $totalWeight = '';
             $totalVolume = '';
             $weightUnit=0;
@@ -949,6 +948,7 @@ else
                 $volumeUnit=0;
                 if (! empty($lines[$i]->weight_units)) $weightUnit = $lines[$i]->weight_units;
                 if (! empty($lines[$i]->volume_units)) $volumeUnit = $lines[$i]->volume_units;
+
                 // TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
                 if ($lines[$i]->weight_units < 50)
                 {
@@ -973,8 +973,6 @@ else
                     $totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped;
                 }
             }
-            $totalVolume=$totalVolume;
-            //print "totalVolume=".$totalVolume." volumeUnit=".$volumeUnit;
 
             print '<table class="border" width="100%">';
 
@@ -1053,48 +1051,49 @@ else
             // Weight
             print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
             print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
-            print $object->weight_units?measuring_units_string($object->weight_units,"weight"):'';
+            print ($object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
             print '</td></tr>';
-
-            // Volume Total
-            print '<tr><td>'.$langs->trans("Volume").'</td>';
-            print '<td colspan="3">';
-            if (! empty($object->trueVolume)) // FIXME trueVolume not exist
-            {
-                // If sending volume defined
-                print $object->trueVolume.' '.measuring_units_string($object->volumeUnit,"volume");
-            }
-            else
-            {
-                // If sending volume not defined we use sum of products
-                if ($totalVolume > 0)
-                {
-                    print $totalVolume.' ';
-                    if ($volumeUnit < 50) print measuring_units_string(0,"volume");
-                    else print measuring_units_string($volumeUnit,"volume");
-                }
-                else print '&nbsp;';
-            }
-            print "</td>\n";
-            print '</tr>';
 
             // Width
             print '<tr><td>'.$form->editfieldkey("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
             print $form->editfieldval("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer);
-            print $object->trueWidth?measuring_units_string($object->width_units,"size"):'';
+            print ($object->trueWidth!='')?' '.measuring_units_string($object->width_units,"size"):'';
             print '</td></tr>';
 
             // Height
             print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
             print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
-            print $object->trueHeight?measuring_units_string($object->height_units,"size"):'';
+            print ($object->trueHeight!='')?' '.measuring_units_string($object->height_units,"size"):'';
             print '</td></tr>';
 
             // Depth
             print '<tr><td>'.$form->editfieldkey("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
             print $form->editfieldval("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer);
-            print $object->trueDepth?measuring_units_string($object->depth_units,"size"):'';
+            print ($object->trueDepth!='')?' '.measuring_units_string($object->depth_units,"size"):'';
             print '</td></tr>';
+
+            // Volume
+            print '<tr><td>';
+            print $langs->trans("Volume");
+            print '</td>';
+            print '<td colspan="3">';
+            $calculatedVolume=0;
+            if ($object->trueWidth && $object->trueHeight && $object->trueDepth) $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+            // If sending volume not defined we use sum of products
+            if ($calculatedVolume > 0)
+			{
+				print $calculatedVolume.' ';
+ 		        if ($volumeUnit < 50) print measuring_units_string(0,"volume");
+        	    else print measuring_units_string($volumeUnit,"volume");
+            }
+            if ($totalVolume > 0)
+            {
+            	if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
+				print $totalVolume;
+            	if ($calculatedVolume) print ')';
+            }
+            print "</td>\n";
+            print '</tr>';
 
             // Status
             print '<tr><td>'.$langs->trans("Status").'</td>';

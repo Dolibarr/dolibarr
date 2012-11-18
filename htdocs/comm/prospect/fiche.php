@@ -36,6 +36,8 @@ $langs->load('companies');
 $langs->load('projects');
 $langs->load('propal');
 
+$action=GETPOST('action', 'alpha');
+
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -48,19 +50,19 @@ $object = new Prospect($db);
  * Actions
  */
 
-if ($_GET["action"] == 'cstc')
+if ($action == 'cstc')
 {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
-	$sql .= " WHERE rowid = ".$_GET["socid"];
+	$sql .= " WHERE rowid = ".$socid;
 	$db->query($sql);
 }
 // set prospect level
-if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
+if ($action == 'setprospectlevel' && $user->rights->societe->creer)
 {
-	$object->fetch($_GET["socid"]);
+	$object->fetch($socid);
 	$object->fk_prospectlevel=$_POST['prospect_level_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
-	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
+	$sql.= " WHERE rowid = ".$socid;
 	$result = $db->query($sql);
 	if (! $result) dol_print_error($result);
 }
@@ -111,7 +113,7 @@ if ($socid > 0)
 	print "</td></tr>";
 
 	// Zip / Town
-	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$societe->town.'</td>';
+	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td>';
 	print '</tr>';
 
 	// Country
@@ -136,18 +138,13 @@ if ($socid > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('ProspectLevelShort');
 	print '<td>';
-	if (($_GET['action'] != 'editlevel') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetLevel'),1).'</a></td>';
+	if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetLevel'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editlevel')
-	{
+	if ($action == 'editlevel')
 		$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
-	}
 	else
-	{
 		print $object->getLibLevel();
-		//$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
-	}
 	print "</td>";
 	print '</tr>';
 

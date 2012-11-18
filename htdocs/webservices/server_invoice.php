@@ -294,7 +294,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 					$linesresp[]=array(
 						'id'=>$line->rowid,
 						'type'=>$line->product_type,
-                        'desc'=>dol_htmlcleanlastbr($line->description),
+                        'desc'=>dol_htmlcleanlastbr($line->desc),
 					    'total_net'=>$line->total_ht,
 						'total_vat'=>$line->total_tva,
 						'total'=>$line->total_ttc,

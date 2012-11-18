@@ -220,7 +220,7 @@ class modGravatar extends DolibarrModules
 	 */
 	function load_tables()
 	{
-		return $this->_load_tables('/mymodule/sql/');
+		return $this->_load_tables('');
 	}
 }
 

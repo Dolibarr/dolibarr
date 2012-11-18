@@ -214,11 +214,11 @@ if ($action == 'create')
     print '<td>&nbsp;</td>';
 
     // Label
-    print '<td align="left"><input type="text" size="34" name="label" class="flat"></td>';
+    print '<td align="left"><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
 
 	// Type
     print '<td align="left">';
-    $formsocialcontrib->select_type_socialcontrib(isset($_POST["actioncode"])?$_POST["actioncode"]:'','actioncode',1);
+    $formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode")?GETPOST("actioncode"):'','actioncode',1);
     print '</td>';
 
 	// Date end period
