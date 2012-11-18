@@ -196,7 +196,13 @@ $server->register(
 );
 
 
-//  return category infos and children
+/**
+ * Get category infos and children
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	int			$id					Id of object
+ * @return	mixed
+ */
 function getCategory($authentication,$id)
 {
 	global $db,$conf,$langs;
