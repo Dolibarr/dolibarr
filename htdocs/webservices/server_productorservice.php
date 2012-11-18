@@ -114,7 +114,16 @@ $server->wsdl->addComplexType(
     	'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
     	'price' => array('name'=>'price','type'=>'xsd:string'),
     	'price_ttc' => array('name'=>'price_ttc','type'=>'xsd:string'),
+    	'price_min' => array('name'=>'price_min','type'=>'xsd:string'),
+    	'price_min_ttc' => array('name'=>'price_min_ttc','type'=>'xsd:string'),
+    	
     	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
+
+    	'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:string'),
+    	'tva_tx' => array('name'=>'tva_tx','type'=>'xsd:string'),
+    	'tva_npr' => array('name'=>'tva_npr','type'=>'xsd:string'),
+    	'localtax1_tx' => array('name'=>'localtax1_tx','type'=>'xsd:string'),
+    	'localtax2_tx' => array('name'=>'localtax2_tx','type'=>'xsd:string'),
 
     	'stock_alert' => array('name'=>'stock_alert','type'=>'xsd:string'),
     	'stock_real' => array('name'=>'stock_real','type'=>'xsd:string'),
@@ -336,9 +345,21 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'country_code' => $product->country_code,
 				        'custom_code' => $product->customcode,
 
-				        'price_net' => $product->price,
-                		'price' => ($product->price_ttc-$product->price),
-				        'vat_rate' => $product->tva_tx,
+				        'price_net' => $product->price, // todo : DEPRECATED ?
+                		//'price' => ($product->price_ttc-$product->price),
+			        	'price' => $product->price,
+			        	'price_ttc' => $product->price_ttc,
+			        	'price_min' => $product->price_min,
+			        	'price_min_ttc' => $product->price_min_ttc,
+			        	'price_base_type' => $product->price_base_type,
+				        'vat_rate' => $product->tva_tx, // todo : DEPRECATED ?
+				        'tva_tx' => $product->tva_tx,
+				        //! French VAT NPR
+				        'tva_npr' => $product->tva_npr,
+				        //! Spanish local taxes
+				        'localtax1_tx' => $product->localtax1_tx,
+				        'localtax2_tx' => $product->localtax2_tx,
+
 				        'price_ttc' => $product->price_ttc,
                 		'price_base_type' => $product->price_base_type,
 
