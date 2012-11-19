@@ -40,7 +40,16 @@ $action = GETPOST('action','alpha');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
+if ($action == 'setMAILING_EMAIL_UNSUBSCRIBE')
+{
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",1,'chaine',0,'',$conf->entity);
+}
+if ($action == 'unsetMAILING_EMAIL_UNSUBSCRIBE')
+{
+	$res=dolibarr_del_const($db, "MAILING_EMAIL_UNSUBSCRIBE");
+}
+
+if ($action == 'setvalue')
 {
 	$db->begin();
 
@@ -129,14 +138,14 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckRead").'</td><td>';
 if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=off">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetMAILING_EMAIL_UNSUBSCRIBE">';
 	print img_picto($langs->trans("Enabled"),'switch_on');
 	print '</a>';
 	$readonly='';
 }
 else
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=on">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setMAILING_EMAIL_UNSUBSCRIBE">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
 	print '</a>';
 	$readonly='disabled="disabled"';
@@ -149,10 +158,12 @@ print $langs->trans("ActivateCheckReadKey").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" '.$readonly.' value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
 print '</td></tr>';
 
-print '</table></form>';
+print '</table>';
 
 print '<br>';
 print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+
+print '</form>';
 
 llxFooter();
 

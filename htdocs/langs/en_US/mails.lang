@@ -77,8 +77,8 @@ MailingStatusRead=Read
 CheckRead=Read Receipt
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 MailtoEMail=Hyper link to email
-ActivateCheckRead=Allow to use the Read receipt tracker and the unsubcribe link
-ActivateCheckReadKey=Key use to encrypt URL use for Read Receipt and unsubcribe function
+ActivateCheckRead=Allow to use the "Read receipt" tracker and the "Unsubcribe" link
+ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
 
 # Libelle des modules de liste de destinataires mailing

@@ -28,9 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-// FIXME don't include external module class
-if (! empty($conf->esaeb->enabled))
-	dol_include_once('/esaeb/class/esaeb19.class.php');
 
 
 /**
@@ -481,7 +478,6 @@ class BonPrelevement extends CommonObject
 
                     /*
                      * End of procedure
-                     *
                      */
                     if ($error == 0)
                     {
@@ -928,7 +924,7 @@ class BonPrelevement extends CommonObject
             }
 
             /*
-             * Creation process
+             * Create withdrawal receipt
              */
             if (!$error)
             {
@@ -1181,12 +1177,15 @@ class BonPrelevement extends CommonObject
 
         $this->file = fopen($this->filename,"w");
 
+        // TODO Move code for es and fr into an external module file with selection into setup of prelevement module
+
         // Build file for Spain
         if ($mysoc->country_code=='ES')
         {
-            // TODO replace by a hook (external modules)
         	if (! empty($conf->esaeb->enabled))
             {
+            	dol_include_once('/esaeb/class/esaeb19.class.php');
+
                 //Head
                 $esaeb19 = new AEB19DocWritter;
                 $esaeb19->configuraPresentador($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_PRESENTADOR,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
@@ -1239,7 +1238,7 @@ class BonPrelevement extends CommonObject
                 fputs($this->file, $esaeb19->generaRemesa());
             }
             else
-            {
+           {
                 $this->total = 0;
                 $sql = "SELECT pl.amount";
                 $sql.= " FROM";
@@ -1271,10 +1270,8 @@ class BonPrelevement extends CommonObject
                 $langs->load('withdrawals');
                 fputs($this->file, $langs->trans('WithdrawalFileNotCapable'));
             }
-
         }
-
-        //Build file for France
+        // Build file for France
         elseif ($mysoc->country_code=='FR')
         {
             /*
@@ -1316,7 +1313,7 @@ class BonPrelevement extends CommonObject
                 }
             }
             else
-            {
+			{
                 $result = -2;
             }
 
@@ -1326,10 +1323,9 @@ class BonPrelevement extends CommonObject
 
             $this->EnregTotal($this->total);
         }
-
-        //Build file for Other Countries with unknow format
+        // Build file for Other Countries with unknow format
         else
-        {
+		{
             $this->total = 0;
             $sql = "SELECT pl.amount";
             $sql.= " FROM";
