@@ -116,7 +116,7 @@ $server->wsdl->addComplexType(
     	'price_ttc' => array('name'=>'price_ttc','type'=>'xsd:string'),
     	'price_min' => array('name'=>'price_min','type'=>'xsd:string'),
     	'price_min_ttc' => array('name'=>'price_min_ttc','type'=>'xsd:string'),
-    	
+
     	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
 
     	'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:string'),
@@ -622,68 +622,64 @@ function getProductsForCategory($authentication,$id)
 				$res  = $db->query($sql);
 				if ($res)
 				{
-						
-					while ($rec = $db->fetch_array ($res))
+					while ($rec = $db->fetch_array($res))
 					{
-						$obj = new Product ($db);
-						$obj->fetch ($rec['fk_'.$field]);
-						if($obj->status > 0 ) {
-							 
+						$obj = new Product($db);
+						$obj->fetch($rec['fk_'.$field]);
+						if($obj->status > 0 )
+						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
 							$pdir = get_exdir($obj->id,2) . $obj->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
-								
+
 							$products[] = array(
-							
-				    	'id' => $obj->id,
-			   			'ref' => $obj->ref,
-			   			'ref_ext' => $obj->ref_ext,
-			    		'label' => $obj->label,
-			    		'description' => $obj->description,
-			    		'date_creation' => dol_print_date($obj->date_creation,'dayhourrfc'),
-			    		'date_modification' => dol_print_date($obj->date_modification,'dayhourrfc'),
-			            'note' => $obj->note,
-			            'status_tosell' => $obj->status,
-			            'status_tobuy' => $obj->status_buy,
-                		'type' => $obj->type,
-				        'barcode' => $obj->barcode,
-				        'barcode_type' => $obj->barcode_type,
-                		'country_id' => $obj->country_id>0?$obj->country_id:'',
-				        'country_code' => $obj->country_code,
-				        'custom_code' => $obj->customcode,
+						    	'id' => $obj->id,
+					   			'ref' => $obj->ref,
+					   			'ref_ext' => $obj->ref_ext,
+					    		'label' => $obj->label,
+					    		'description' => $obj->description,
+					    		'date_creation' => dol_print_date($obj->date_creation,'dayhourrfc'),
+					    		'date_modification' => dol_print_date($obj->date_modification,'dayhourrfc'),
+					            'note' => $obj->note,
+					            'status_tosell' => $obj->status,
+					            'status_tobuy' => $obj->status_buy,
+		                		'type' => $obj->type,
+						        'barcode' => $obj->barcode,
+						        'barcode_type' => $obj->barcode_type,
+		                		'country_id' => $obj->country_id>0?$obj->country_id:'',
+						        'country_code' => $obj->country_code,
+						        'custom_code' => $obj->customcode,
 
-				        'price_net' => $obj->price,
-                		'price' => ($obj->price_ttc-$obj->price),
-				        'vat_rate' => $obj->tva_tx,
-				        'price_ttc' => $obj->price_ttc,
-                		'price_base_type' => $obj->price_base_type,
+						        'price_net' => $obj->price,
+		                		'price' => ($obj->price_ttc-$obj->price),
+						        'vat_rate' => $obj->tva_tx,
+						        'price_ttc' => $obj->price_ttc,
+		                		'price_base_type' => $obj->price_base_type,
 
-				        'stock_real' => $obj->stock_reel,
-                		'stock_alert' => $obj->seuil_stock_alerte,
-				        'pmp' => $obj->pmp,
-                		'import_key' => $obj->import_key,
-                		'dir' => $pdir,
-                		'photos' => $obj->liste_photos($dir,$nbmax=10)
-							
-							
+						        'stock_real' => $obj->stock_reel,
+		                		'stock_alert' => $obj->seuil_stock_alerte,
+						        'pmp' => $obj->pmp,
+		                		'import_key' => $obj->import_key,
+		                		'dir' => $pdir,
+		                		'photos' => $obj->liste_photos($dir,$nbmax=10)
 							);
 						}
 
 					}
-						
+
 					// Retour
 					$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'products'=> $products
 					);
-						
+
 				}
 				else
 				{
 					$errorcode='NORECORDS_FOR_ASSOCIATION'; $errorlabel='No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$c->error, LOG_DEBUG);
-						
+
 				}
 			}
 			else
