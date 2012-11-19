@@ -27,11 +27,11 @@
 /**
  *		Calculate totals (net, vat, ...) of a line.
  *		Value for localtaxX_type are	'0' : local tax not applied
- *										'1' : local tax apply on products and services without vat (vat is not applied on local tax)
+ *										'1' : local tax apply on products and services without vat (vat is not applied for local tax calculation)
  *										'2' : local tax apply on products and services before vat (vat is calculated on amount + localtax)
- *										'3' : local tax apply on products without vat (vat is not applied on local tax)
+ *										'3' : local tax apply on products without vat (vat is not applied for local tax calculation)
  *										'4' : local tax apply on products before vat (vat is calculated on amount + localtax)
- *										'5' : local tax apply on services without vat (vat is not applied on local tax)
+ *										'5' : local tax apply on services without vat (vat is not applied for local tax calculation)
  *										'6' : local tax apply on services before vat (vat is calculated on amount + localtax)
  *										'7' : local tax is a fix amount applied on global invoice
  *
