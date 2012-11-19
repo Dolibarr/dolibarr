@@ -661,6 +661,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
             print $form->selectarray("expedition_method_id",$expe->meths,GETPOST('expedition_method_id','int'),1,0,0,"",1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print "</td></tr>\n";
 
             // Tracking number
@@ -1116,6 +1117,7 @@ else
                 print '<input type="hidden" name="action" value="setexpedition_method_id">';
                 $object->fetch_delivery_methods();
                 print $form->selectarray("expedition_method_id",$object->meths,$object->expedition_method_id,1,0,0,"",1);
+                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print '</form>';
             }
