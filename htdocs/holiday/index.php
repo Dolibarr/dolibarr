@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
+/* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,7 @@ $search_statut   = GETPOST('select_statut');
 
 $max_year = 5;
 $min_year = 10;
+$filter='';
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
@@ -185,7 +186,7 @@ if($holiday_payes == '-1')
 $var=true; $num = count($holiday->holiday);
 $html = new Form($db);
 $htmlother = new FormOther($db);
-print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,$nbtotalofrecords);
+print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num);
 
 print '<div class="tabBar">';
 

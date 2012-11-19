@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *	\class      Contact
- *	\brief      Classe permettant la gestion des contacts
+ *	Class to manage contact/addresses
  */
 class Contact extends CommonObject
 {

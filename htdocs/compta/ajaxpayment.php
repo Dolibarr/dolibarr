@@ -18,7 +18,6 @@
 /**
  *       \file       htdocs/compta/ajaxpayment.php
  *       \brief      File to return Ajax response on payment breakdown process
- *       \version    ajaxpayment.php,v 1.0
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -33,8 +32,14 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
-$langs->Load('compta');
+$langs->load('compta');
+
+
+/*
+ * View
+ */
 
 //init var
 $amountPayment = $_POST['amountPayment'];
@@ -42,26 +47,31 @@ $amounts = $_POST['amounts'];				// from text inputs : invoice amount payment (c
 $remains = $_POST['remains'];				// from dolibarr's object (no need to check)
 $currentInvId = $_POST['imgClicked'];		// from DOM elements : imgId (equals invoice id)
 
-
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
 // from text inputs : total amount
-$amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment)
-																				: ''
-										)
-									: '';			// keep void if not a valid entry
-// Checkamounts
+$amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment) : '' ) : '';			// keep void if not a valid entry
+
+// Clean checkamounts
 foreach ($amounts as $key => $value)
 {
 	$value = price2num($value);
-	if (!is_numeric($value)) unset($amounts[$key]);
+	$amounts[$key]=$value;
+	if (empty($value)) unset($amounts[$key]);
+}
+// Clean remains
+foreach ($remains as $key => $value)
+{
+	$value = price2num($value);
+	$remains[$key]=$value;
+	if (empty($value)) unset($remains[$key]);
 }
 
 // Treatment
-$result = $amountPayment != '' ? $amountPayment - array_sum($amounts) : $amountPayment + array_sum($amounts);										// Remaining amountPayment
+$result = $amountPayment != '' ? ($amountPayment - array_sum($amounts)) : ($amountPayment + array_sum($amounts));					// Remaining amountPayment
 $toJsonArray = 	array();
 $totalRemaining = price2num(array_sum($remains));
-$toJsonArray['label'] = $amountPayment == '' ? $langs->transnoentities('AmountToBeCharged') : $langs->transnoentities('RemainingAmountPayment');
-if($currentInvId)																	// Here to breakdown
+$toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');
+if ($currentInvId)																	// Here to breakdown
 {
 	// Get the current amount (from form) and the corresponding remainToPay (from invoice)
 	$currentAmount = $amounts['amount_'.$currentInvId];
@@ -99,9 +109,11 @@ if($currentInvId)																	// Here to breakdown
 	}
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount)."";			// Param will exist only if an img has been clicked
 }
-// Encode to JSON to return
-$toJsonArray['makeRed'] = $totalRemaining < price2num($result) || price2num($result) < 0 ? true : false;
-$toJsonArray['result'] = price2num($result);
-echo json_encode($toJsonArray);	// Printing the call's result
 
+$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0) ? true : false;
+$toJsonArray['result'] = price($result);		// Return value to user format
+$toJsonArray['resultnum'] = price2num($result);	// Return value to numeric format
+
+// Encode to JSON to return
+echo dol_json_encode($toJsonArray);	// Printing the call's result
 ?>

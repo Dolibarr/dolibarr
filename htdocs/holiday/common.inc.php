@@ -43,14 +43,14 @@ if (empty($conf->holiday->enabled))
 }
 
 
-$verifConf.= "SELECT value";
-$verifConf.= " FROM ".MAIN_DB_PREFIX."holiday_config";
-$verifConf.= " WHERE name = 'userGroup'";
+$sql = "SELECT value";
+$sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
+$sql.= " WHERE name = 'userGroup'";
 
-$result = $db->query($verifConf);
+$result = $db->query($sql);
 $obj = $db->fetch_object($result);
 
-if($obj->value == NULL)
+if ($obj->value == NULL)
 {
     llxHeader('',$langs->trans('CPTitreMenu'));
     print '<div class="tabBar">';

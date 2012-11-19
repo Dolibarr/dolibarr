@@ -136,7 +136,7 @@ if ($action == 'delete')
 			$classname = "MailingTargets";
 			$obj = new $classname($db);
 			$obj->update_nb($id);
-			
+
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
@@ -298,7 +298,7 @@ if ($object->fetch($id) >= 0)
 					}
 
 					print '<td>';
-					if (! $obj->picto) $obj->picto='generic';
+					if (empty($obj->picto)) $obj->picto='generic';
 					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto).' '.$obj->getDesc();
 					print '</td>';
 

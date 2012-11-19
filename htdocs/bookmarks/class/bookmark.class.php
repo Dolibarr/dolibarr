@@ -23,8 +23,7 @@
 
 
 /**
- *		\class      Bookmark
- *		\brief      Class to manage bookmarks
+ *		Class to manage bookmarks
  */
 class Bookmark
 {

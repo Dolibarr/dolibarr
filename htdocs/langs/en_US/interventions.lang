@@ -24,6 +24,7 @@ ConfirmDeleteInterventionLine=Are you sure you want to delete this intervention 
 NameAndSignatureOfInternalContact=Name and signature of intervening :
 NameAndSignatureOfExternalContact=Name and signature of customer :
 DocumentModelStandard=Standard document model for interventions
+InterventionCardsAndInterventionLines=Interventions and lines of interventions
 ClassifyBilled=Classify "Billed"
 StatusInterInvoiced=Billed
 RelatedInterventions=Related interventions

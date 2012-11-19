@@ -14,7 +14,7 @@ For users:
        configured. Show also total number of activated modules.
 - New: Can filter list of proposal, order or invoice on sales representative.
 - New: Add supplier ref on supplier orders.
-- New: Can export supplier orders.
+- New: Can export supplier orders and customers shipments.
 - New: First change to install external plugins from gui (experimental). 
 - New: Monaco is like France for default vat calculation
 - New: Can list elements (invoices, orders or proposals) on a particular

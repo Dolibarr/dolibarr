@@ -28,8 +28,7 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/cotisation.class.php';
 
 
 /**
- *	\class      AdherentStats
- *	\brief      Classe permettant la gestion des stats des adherents
+ *	Class to manage statistics of members
  */
 class AdherentStats extends Stats
 {

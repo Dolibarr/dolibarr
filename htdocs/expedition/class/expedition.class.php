@@ -709,12 +709,12 @@ class Expedition extends CommonObject
 		$sql.= " fk_expedition_methode=".((isset($this->expedition_method_id) && $this->expedition_method_id > 0)?$this->expedition_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
-		$sql.= " height=".(isset($this->trueHeight)?$this->trueHeight:"null").",";
-		$sql.= " width=".(isset($this->trueWidth)?$this->trueWidth:"null").",";
+		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
+		$sql.= " width=".(($this->trueWidth != '')?$this->trueWidth:"null").",";
 		$sql.= " size_units=".(isset($this->size_units)?$this->size_units:"null").",";
-		$sql.= " size=".(isset($this->trueDepth)?$this->trueDepth:"null").",";
+		$sql.= " size=".(($this->trueDepth != '')?$this->trueDepth:"null").",";
 		$sql.= " weight_units=".(isset($this->weight_units)?$this->weight_units:"null").",";
-		$sql.= " weight=".(isset($this->trueWeight)?$this->trueWeight:"null").",";
+		$sql.= " weight=".(($this->trueWeight != '')?$this->trueWeight:"null").",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
 		$sql.= " entity=".$conf->entity;
@@ -858,7 +858,8 @@ class Expedition extends CommonObject
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
-		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.weight, p.weight_units, p.volume, p.volume_units";
+		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
+		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
 		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
@@ -900,6 +901,10 @@ class Expedition extends CommonObject
 				$line->qty_shipped    	= $obj->qty_shipped;
 				$line->weight         	= $obj->weight;
 				$line->weight_units   	= $obj->weight_units;
+				$line->length         	= $obj->length;
+				$line->length_units   	= $obj->length_units;
+				$line->surface        	= $obj->surface;
+				$line->surface_units   	= $obj->surface_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 
