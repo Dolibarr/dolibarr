@@ -804,3 +804,5 @@ ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
 ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
 ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
 
+-- increase field size
+ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(8);
