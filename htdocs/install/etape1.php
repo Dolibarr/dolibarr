@@ -250,24 +250,24 @@ if (! $error && $db->connected)
     }
 }
 
-// Define $defaultCharacterSet and $defaultCollationConnection
+// Define $defaultCharacterSet and $defaultDBSortingCollation
 if (! $error && $db->connected)
 {
     if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
     {
     	$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
-    	$defaultCollationConnection=getStaticMember(get_class($db),'forcecollate');
+    	$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
     }
     else	// If already created, we take current value
     {
         $defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
-        $defaultCollationConnection=$db->getDefaultCollationDatabase();
+        $defaultDBSortingCollation=$db->getDefaultCollationDatabase();
     }
 
     print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
-    print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultCollationConnection.'">';
+    print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultDBSortingCollation.'">';
     $db_character_set=$defaultCharacterSet;
-    $db_collation=$defaultCollationConnection;
+    $db_collation=$defaultDBSortingCollation;
 }
 
 
