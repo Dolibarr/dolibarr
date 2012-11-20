@@ -767,6 +767,7 @@ if ($step == 3 && $datatoexport)
 		print img_object('',$entityicon).' '.$langs->trans($entitylang);
 		print '</td>';
 
+		// Field name
 		$labelName=(! empty($fieldsarray[$code])?$fieldsarray[$code]:'');
 		$ValueFilter=(! empty($array_filtervalue[$code])?$array_filtervalue[$code]:'');
 		$text=$langs->trans($labelName);
@@ -777,11 +778,13 @@ if ($step == 3 && $datatoexport)
 		print '<td>';
 		print $form->textwithpicto($text,$htmltext);
 		print '</td>';
+		
+		// Filter value
 		print '<td>';
 		if (! empty($Typefieldsarray[$code]))
 		{
 			$szInfoFiltre=$objexport->genDocFilter($Typefieldsarray[$code]);
-			if ($szInfoFiltre)
+			if ($szInfoFiltre)	// Is there an info help for this filter ?
 			{
 				$tmp=$objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
 				print $form->textwithpicto($tmp, $szInfoFiltre);

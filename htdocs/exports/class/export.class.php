@@ -339,8 +339,10 @@ class Export
 	{
 		$szFilterField='';
 		$InfoFieldList = explode(":", $TypeField);
+		
 		// build the input field on depend of the type of file
-		switch ($InfoFieldList[0]) {
+		switch ($InfoFieldList[0]) 
+		{
 			case 'Text':
 			case 'Date':
 			case 'Duree':
@@ -387,6 +389,13 @@ class Export
 						while ($i < $num)
 						{
 							$obj = $this->db->fetch_object($resql);
+							if ($obj->$InfoFieldList[2] == '-')	
+							{
+								// Discard entry '-'
+								$i++;
+								continue;
+							}
+															
 							$labeltoshow=dol_trunc($obj->$InfoFieldList[2],18);
 							if (!empty($ValueField) && $ValueField == $obj->rowid)
 							{
@@ -401,7 +410,7 @@ class Export
 					}
 					$szFilterField.="</select>";
 
-					$this->db->close();
+					$this->db->free();
 				}
 				break;
 		}
