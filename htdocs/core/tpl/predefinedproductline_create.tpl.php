@@ -78,7 +78,7 @@ jQuery(document).ready(function() {
 
 	if (is_object($hookmanager))
 	{
-        $parameters=array('fk_parent_line'=>$_POST["fk_parent_line"]);
+        $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line','int'));
 	    $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
@@ -87,8 +87,9 @@ jQuery(document).ready(function() {
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
+    $enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-    $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+    $doleditor=new DolEditor('np_desc',GETPOST('np_desc"'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,70);
 	$doleditor->Create();
 	?>
 	</td>
@@ -99,9 +100,9 @@ $colspan = 4;
 if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right">
-  <select id="fournprice" name="fournprice" style="display: none;"></select>
-  <input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
-  </td>
+		<select id="fournprice" name="fournprice" style="display: none;"></select>
+		<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
+	</td>
 <?php
   if (! empty($conf->global->DISPLAY_MARGIN_RATES))
     $colspan++;
@@ -109,7 +110,9 @@ if (! empty($conf->margin->enabled)) {
     $colspan++;
 }
 ?>
-	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline"></td>
+	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+		<input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline">
+	</td>
 </tr>
 
 <?php if (! empty($conf->service->enabled) && $dateSelector) {
