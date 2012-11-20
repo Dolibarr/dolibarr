@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -51,6 +51,12 @@ $db_user=GETPOST('db_user','alpha');
 $db_pass=GETPOST('db_pass');
 $db_port=GETPOST('db_port','int');
 $db_prefix=GETPOST('db_prefix','alpha');
+
+session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
+
+// Save a flag to tell to restore input value if we do back
+$_SESSION['dol_save_pass']=$db_pass;
+//$_SESSION['dol_save_passroot']=$passroot;
 
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
