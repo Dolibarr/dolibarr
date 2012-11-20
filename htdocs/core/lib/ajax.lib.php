@@ -48,8 +48,9 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					var options = '.json_encode($ajaxoptions).';
 
 					// Remove product id before select another product
-					$("input#search_'.$htmlname.'").change(function() {
-						$("#'.$htmlname.'").val("").trigger("change");
+					// use keyup instead change to avoid loosing the product id
+					$("input#search_'.$htmlname.'").keyup(function() {
+							$("#'.$htmlname.'").val("").trigger("change");
 					});
 					// Check when keyup
 					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
@@ -163,7 +164,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
-						.append( \'<a href="#"><span class="tag">\' + item.label + "</span></a>" )
+						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
   				});';
