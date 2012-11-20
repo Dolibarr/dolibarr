@@ -202,10 +202,9 @@ class Export
 	 *      @param      int		$indice				Indice of export
 	 *      @param      array	$array_selected     Filter on array of fields to export
 	 *      @param      array	$array_filterValue  Filter on array of fields to export
-	 *      @param      array	$array_filtered     Array with filters values
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
-	function build_sql($indice, $array_selected, $array_filterValue, $array_filtered)
+	function build_sql($indice, $array_selected, $array_filterValue)
 	{
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
@@ -225,16 +224,13 @@ class Export
 		$sql.=$this->array_export_sql_end[$indice];
 
 		//construction du filtrage si le parametrage existe
-		if (is_array($array_filtered))
+		if (is_array($array_filterValue))
 		{
 			$sqlWhere='';
 			// pour ne pas a gerer le nombre de condition
-			foreach ($array_filtered as $key => $value)
+			foreach ($array_filterValue as $key => $value)
 			{
-				if ($array_filterValue[$key])
-				{
-					$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
-				}
+				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
@@ -297,8 +293,10 @@ class Export
 						$szFilterQuery=" ".$NameField.substr($ValueField,0,1).substr($ValueField,1);
 				}
 				break;
-			case 'Status':
 			case 'Boolean':
+				$szFilterQuery=" ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField =='yes' ? 1: 0) );
+				break;
+			case 'Status':
 			case 'List':
 				if (is_numeric($ValueField))
 					$szFilterQuery=" ".$NameField."=".$ValueField;
@@ -350,18 +348,18 @@ class Export
 				$szFilterField='<input type="text" name='.$NameField." value='".$ValueField."'>";
 				break;
 			case 'Boolean':
-				$szFilterField="<select name=".$NameField.'" class="flat">';
+				$szFilterField='<select name="'.$NameField.'" class="flat">';
 				$szFilterField.='<option ';
 				if ($ValueField=='') $szFilterField.=' selected ';
 				$szFilterField.=' value="">&nbsp;</option>';
 
 				$szFilterField.='<option ';
-				if ($ValueField=='1') $szFilterField.=' selected ';
-				$szFilterField.=' value="1">'.yn(1).'</option>';
+				if ($ValueField=='yes') $szFilterField.=' selected ';
+				$szFilterField.=' value="yes">'.yn(1).'</option>';
 
 				$szFilterField.='<option ';
-				if ($ValueField=='0') $szFilterField.=' selected ';
-				$szFilterField.=' value="0">'.yn(0).'</option>';
+				if ($ValueField=='no') $szFilterField.=' selected ';
+				$szFilterField.=' value="no">'.yn(0).'</option>';
 				$szFilterField.="</select>";
 				break;
 			case 'List':
@@ -466,11 +464,10 @@ class Export
 	 *      @param      string		$datatoexport       Name of dataset to export
 	 *      @param      array		$array_selected     Filter on array of fields to export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
-	 *      @param      array		$array_filtered     Values of filters
 	 *      @param		string		$sqlquery			If set, transmit a sql query instead of building it from arrays
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
-	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $array_filtered, $sqlquery = '')
+	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
  	{
 		global $conf,$langs;
 
@@ -494,7 +491,7 @@ class Export
 		$objmodel = new $classname($this->db);
 
 		if (! empty($sqlquery)) $sql = $sqlquery;
-        else $sql=$this->build_sql($indice, $array_selected, $array_filterValue, $array_filtered);
+        else $sql=$this->build_sql($indice, $array_selected, $array_filterValue);
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
