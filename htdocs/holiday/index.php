@@ -57,6 +57,7 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
+$holiday = new Holiday($db);
 
 /*
  * Actions
@@ -147,12 +148,10 @@ $user_id = $user->id;
 // Récupération des congés payés de l'utilisateur ou de tous les users
 if(!$user->rights->holiday->lire_tous)
 {
-    $holiday = new Holiday($db);
     $holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);
 }
 else
 {
-    $holiday = new Holiday($db);
     $holiday_payes = $holiday->fetchAll($order,$filter);
 }
 
@@ -282,21 +281,20 @@ if (! empty($holiday->holiday))
 		$validator = new User($db);
 		$validator->fetch($infos_CP['fk_validator']);
 
-		$date = date_create($infos_CP['date_create']);
-		$date = date_format($date,'Y-m-d');
+		$date = $infos_CP['date_create'];
 
 		$statut = $holiday->getStatutCP($infos_CP['statut']);
 
 		print '<tr '.$bc[$var].'>';
 		print '<td><a href="./fiche.php?id='.$infos_CP['rowid'].'">CP '.$infos_CP['rowid'].'</a></td>';
-		print '<td style="text-align: center;">'.$date.'</td>';
+		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$user->getNomUrl('1').'</td>';
 		print '<td>'.$validator->getNomUrl('1').'</td>';
 		print '<td style="text-align: center;">'.$infos_CP['date_debut'].'</td>';
 		print '<td style="text-align: center;">'.$infos_CP['date_fin'].'</td>';
 		print '<td>';
 		$nbopenedday=num_open_day($infos_CP['date_debut'],$infos_CP['date_fin'],0,1);
-		print $nbopenedday.' '.$langs->trans('Jours');
+		print $nbopenedday;
 		print '<td align="center"><a href="./fiche.php?id='.$infos_CP['rowid'].'">'.$statut.'</a></td>';
 		print '</tr>'."\n";
 
