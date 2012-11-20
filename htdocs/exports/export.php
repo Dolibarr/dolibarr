@@ -353,7 +353,7 @@ if ($step == 4 && $action == 'submitFormField')
 	if (is_array($objexport->array_export_TypeFields[0]))
 	{
 		$_SESSION["export_FilterValue_fields"]=array();
-		var_dump($_POST);
+		//var_dump($_POST);
 		foreach($objexport->array_export_TypeFields[0] as $code => $type)	// $code: s.fieldname $value: Text|Boolean|List:ccc
 		{
 			$newcode=(string) preg_replace('/\./','_',$code);
