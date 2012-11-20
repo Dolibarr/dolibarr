@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,41 +23,34 @@
 
 create table llx_bank_account
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  datec          datetime,
-  tms            timestamp,
-  ref            varchar(12) NOT NULL,
-  label          varchar(30) NOT NULL,
-  entity         integer DEFAULT 1 NOT NULL,	-- multi company id
-  bank           varchar(60),
-  code_banque    varchar(7),
-  code_guichet   varchar(6),
-  number         varchar(255),
-  cle_rib        varchar(5),
-  bic            varchar(11),
-  iban_prefix    varchar(34),                 -- 34 according to ISO 13616
-  country_iban   varchar(2),				-- deprecated
-  cle_iban       varchar(2),
-  domiciliation  varchar(255),
-  fk_departement integer        DEFAULT NULL,
-  fk_pays        integer        NOT NULL,
-  proprio        varchar(60),
-  adresse_proprio varchar(255),
-  courant        smallint DEFAULT 0 NOT NULL,
-  clos           smallint DEFAULT 0 NOT NULL,
-  rappro         smallint DEFAULT 1,
-  url			       varchar(128),
-  account_number varchar(8),
-  currency_code  varchar(3) NOT NULL,
-  min_allowed    integer DEFAULT 0,
-  min_desired    integer DEFAULT 0,
-  comment        text
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  datec				datetime,
+  tms				timestamp,
+  ref				varchar(12) NOT NULL,
+  label				varchar(30) NOT NULL,
+  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
+  bank				varchar(60),
+  code_banque		varchar(8),
+  code_guichet		varchar(6),
+  number			varchar(255),
+  cle_rib			varchar(5),
+  bic				varchar(11),
+  iban_prefix		varchar(34),				-- 34 according to ISO 13616
+  country_iban		varchar(2),					-- deprecated
+  cle_iban			varchar(2),
+  domiciliation		varchar(255),
+  fk_departement	integer        DEFAULT NULL,
+  fk_pays			integer        NOT NULL,
+  proprio			varchar(60),
+  adresse_proprio	varchar(255),
+  courant			smallint DEFAULT 0 NOT NULL,
+  clos				smallint DEFAULT 0 NOT NULL,
+  rappro			smallint DEFAULT 1,
+  url				varchar(128),
+  account_number	varchar(8),
+  currency_code		varchar(3) NOT NULL,
+  min_allowed		integer DEFAULT 0,
+  min_desired		integer DEFAULT 0,
+  comment			text
+  
 )ENGINE=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company bank account
--- 2 : second company bank account
--- 3 : etc...
---
