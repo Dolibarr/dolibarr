@@ -229,11 +229,11 @@ if ($action == 'builddoc')
 	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
-	    $mesg='<div class="error">'.$objexport->error.'</div>';
+		setEventMessage($objexport->error, 'errors');
 	}
 	else
 	{
-	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
+		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
 	    $sqlusedforexport=$objexport->sqlusedforexport;
     }
 }
@@ -292,21 +292,20 @@ if ($action == 'add_export_model')
 	    $result = $objexport->create($user);
 		if ($result >= 0)
 		{
-		    $mesg='<div class="ok">'.$langs->trans("ExportModelSaved",$objexport->model_name).'</div>';
+			setEventMessage($langs->trans("ExportModelSaved",$objexport->model_name));
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-			{
-				$mesg='<div class="error">'.$langs->trans("ErrorExportDuplicateProfil").'</div>';
-			}
-			else $mesg='<div class="error">'.$objexport->error.'</div>';
+				setEventMessage($langs->trans("ErrorExportDuplicateProfil"), 'errors');
+			else
+				setEventMessage($objexport->error, 'errors');
 		}
 	}
 	else
 	{
-	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")), 'errors');
 	}
 }
 
@@ -447,9 +446,6 @@ if ($step == 1 || ! $datatoexport)
     print '</table>';
 
     print '</div>';
-
-    if ($mesg) print $mesg;
-
 }
 
 if ($step == 2 && $datatoexport)
@@ -594,8 +590,6 @@ if ($step == 2 && $datatoexport)
     print '</table>';
 
     print '</div>';
-
-    if ($mesg) print $mesg;
 
     /*
      * Barre d'action
@@ -764,12 +758,9 @@ if ($step == 3 && $datatoexport)
 
 	print '</div>';
 
-	if ($mesg) print $mesg;
-
 	/*
 	 * Barre d'action
-	*
-	*/
+	 */
 	print '<div class="tabsAction">';
 	// il n'est pas obligatoire de filtrer les champs
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
@@ -919,10 +910,7 @@ if ($step == 4 && $datatoexport)
 
     print '</table>';
 
-
     print '</div>';
-
-    if ($mesg) print $mesg;
 
     /*
      * Barre d'action
@@ -994,7 +982,6 @@ if ($step == 4 && $datatoexport)
         print '</table>';
         print '</form>';
     }
-
 }
 
 if ($step == 5 && $datatoexport)
@@ -1118,12 +1105,7 @@ if ($step == 5 && $datatoexport)
     print '</div>';
 
     print '<table width="100%">';
-    if ($mesg)
-    {
-    	print '<tr><td colspan="2">';
-    	print $mesg;
-    	print '</td></tr>';
-    }
+
     if ($sqlusedforexport && $user->admin)
     {
     	print '<tr><td>';
@@ -1144,9 +1126,7 @@ if ($step == 5 && $datatoexport)
     print '</table>';
 }
 
-
 print '<br>';
-
 
 llxFooter();
 
