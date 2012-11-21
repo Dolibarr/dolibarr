@@ -360,7 +360,7 @@ if ($step == 4 && $action == 'submitFormField')
 			//print 'xxx'.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
 			$filterqualified=1;
 			if (! isset($_POST[$newcode]) || $_POST[$newcode] == '') $filterqualified=0;
-			elseif (preg_match('/^List/',$type) && $_POST[$newcode] <= 0) $filterqualified=0;
+			elseif (preg_match('/^List/',$type) && (is_numeric($_POST[$newcode]) && $_POST[$newcode] <= 0)) $filterqualified=0;
 			if ($filterqualified)
 			{
 				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
