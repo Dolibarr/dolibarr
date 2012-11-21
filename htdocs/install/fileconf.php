@@ -69,6 +69,8 @@ if (@file_exists($forcedfile)) {
  *	View
  */
 
+session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
+
 pHeader($langs->trans("ConfigurationFile"),"etape1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
 
 // Test if we can run a first install process
@@ -407,7 +409,8 @@ if (! empty($force_install_message))
 		<td class="label" valign="top"><input type="text" id="db_pass" autocomplete="off"
 			name="db_pass"
 			value="<?php
-			$autofill=((! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass);
+			//$autofill=((! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass);
+			$autofill=((! empty($_SESSION['dol_save_pass']))?$_SESSION['dol_save_pass']:$force_install_databasepass);
 			if (! empty($dolibarr_main_prod)) $autofill='';
 			print dol_escape_htmltag($autofill);
 			?>"></td>
@@ -438,7 +441,7 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite hideroot">
-		<td class="label" valign="top"><?php echo $langs->trans("Login"); ?></td>
+		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b></td>
 		<td class="label" valign="top"><input type="text" id="db_user_root"
 			name="db_user_root" class="needroot"
 			value="<?php print (! empty($db_user_root))?$db_user_root:$force_install_databaserootlogin; ?>"></td>
@@ -455,7 +458,7 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite hideroot">
-		<td class="label" valign="top"><?php echo $langs->trans("Password"); ?>
+		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
 		<td class="label" valign="top"><input type="text" autocomplete="off"
 			id="db_pass_root" name="db_pass_root" class="needroot"

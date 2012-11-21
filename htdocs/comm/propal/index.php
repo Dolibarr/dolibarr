@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'propal');
 /*
  * View
  */
-
+$now=dol_now();
 $propalstatic=new Propal($db);
 $companystatic=new Societe($db);
 $form = new Form($db);
@@ -288,7 +288,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 	$now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -328,7 +328,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print $propalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
-				if ($db->jdate($obj->dp) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);

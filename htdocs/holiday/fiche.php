@@ -563,12 +563,11 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
 
 
 
-/***************************************************
+/*
  * View
-****************************************************/
+ */
 
 $form = new Form($db);
-
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
@@ -753,35 +752,36 @@ else
             //print_fiche_titre($langs->trans('TitreRequestCP'));
 
             // Si il y a une erreur
-            if (GETPOST('error')) {
-
-                switch(GETPOST('error')) {
+            if (GETPOST('error')) 
+            {
+                switch(GETPOST('error')) 
+                {
                     case 'datefin' :
-                        $errors[] = $langs->trans('ErrorEndDateCP');
+                        $errors[] = $langs->transnoentitiesnoconv('ErrorEndDateCP');
                         break;
                     case 'SQL_Create' :
-                        $errors[] = $langs->trans('ErrorSQLCreateCP').' <b>'.htmlentities($_GET['msg']).'</b>';
+                        $errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP').' '.$_GET['msg'];
                         break;
                     case 'CantCreate' :
-                        $errors[] = $langs->trans('CantCreateCP');
+                        $errors[] = $langs->transnoentitiesnoconv('CantCreateCP');
                         break;
                     case 'Valideur' :
-                        $errors[] = $langs->trans('InvalidValidatorCP');
+                        $errors[] = $langs->transnoentitiesnoconv('InvalidValidatorCP');
                         break;
                     case 'nodatedebut' :
-                        $errors[] = $langs->trans('NoDateDebut');
+                        $errors[] = $langs->transnoentitiesnoconv('NoDateDebut');
                         break;
                     case 'nodatedebut' :
-                        $errors[] = $langs->trans('NoDateFin');
+                        $errors[] = $langs->transnoentitiesnoconv('NoDateFin');
                         break;
                     case 'DureeHoliday' :
-                        $errors[] = $langs->trans('ErrorDureeCP');
+                        $errors[] = $langs->transnoentitiesnoconv('ErrorDureeCP');
                         break;
                     case 'NoMotifRefuse' :
-                        $errors[] = $langs->trans('NoMotifRefuseCP');
+                        $errors[] = $langs->transnoentitiesnoconv('NoMotifRefuseCP');
                         break;
                     case 'mail' :
-                        $errors[] = $langs->trans('ErrorMailNotSend').'<br /><b>'.$_GET['error_content'].'</b>';
+                        $errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend')."\n".$_GET['error_content'];
                         break;
                 }
 
@@ -795,7 +795,7 @@ else
                 if ($action == 'delete' && $cp->statut == 1) {
                     if($user->rights->holiday->delete)
                     {
-                        $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                        $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
                         if ($ret == 'html') print '<br />';
                     }
                 }
@@ -803,14 +803,14 @@ else
                 // Si envoi en validation
                 if ($action == 'sendToValidate' && $cp->statut == 1 && $userID == $cp->fk_user)
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 0, 1);
+                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si validation de la demande
                 if ($action == 'valid' && $cp->statut == 2 && $userID == $cp->fk_validator)
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 0, 1);
+                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
@@ -818,19 +818,28 @@ else
                 if ($action == 'refuse' && $cp->statut == 2 && $userID == $cp->fk_validator)
                 {
                     $array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif de refus :",'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id']."&action=confirm_refuse",$langs->trans("TitleRefuseCP"),"","confirm_refuse",$array_input,"",0);
+                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse",$langs->trans("TitleRefuseCP"),"","confirm_refuse", $array_input, 1 ,0);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si annulation de la demande
                 if ($action == 'cancel' && $cp->statut == 2 && $userID == $cp->fk_validator)
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$_GET['id'],$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 0, 1);
+                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
 
-                dol_fiche_head(array(),'card',$langs->trans("CPTitreMenu"),0,'holiday');
+                $h=0;
+                $head = array();
+                $head[$h][0] = DOL_URL_ROOT . '/holiday/fiche.php?id='.$id;
+                $head[$h][1] = $langs->trans("Card");
+                $head[$h][2] = 'card';
+                $h++;
+                
+                complete_head_from_modules($conf,$langs,$cp,$head,$h,'holiday');
+                
+                dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
 
                 if ($action == 'edit' && $user->id == $cp->fk_user && $cp->statut == 1)

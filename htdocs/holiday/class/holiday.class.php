@@ -380,13 +380,13 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['rowid'] = $obj->rowid;
                 $tab_result[$i]['fk_user'] = $obj->fk_user;
-                $tab_result[$i]['date_create'] = $obj->date_create;
+                $tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
                 $tab_result[$i]['description'] = $obj->description;
-                $tab_result[$i]['date_debut'] = $obj->date_debut;
-                $tab_result[$i]['date_fin'] = $obj->date_fin;
+                $tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
+                $tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
                 $tab_result[$i]['statut'] = $obj->statut;
                 $tab_result[$i]['fk_validator'] = $obj->fk_validator;
-                $tab_result[$i]['date_valid'] = $obj->date_valid;
+                $tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
                 $tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
                 $tab_result[$i]['date_refuse'] = $obj->date_refuse;
                 $tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;

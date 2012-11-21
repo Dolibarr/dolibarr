@@ -78,8 +78,6 @@ if ($action == 'del_bookmark' && ! empty($bid))
  * View
  */
 
-$now=dol_now();
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $companystatic=new Societe($db);

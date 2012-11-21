@@ -2231,6 +2231,9 @@ class Form
         $inputok=array();
         $inputko=array();
 
+        // Clean parameters
+        $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
+        
         if (is_array($formquestion) && ! empty($formquestion))
         {
             $more.='<table class="paddingrightonly" width="100%">'."\n";
@@ -2337,7 +2340,15 @@ class Form
             $formconfirm.='
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog({
-                    autoOpen: '.($autoOpen ? "true" : "false").',
+                    autoOpen: '.($autoOpen ? "true" : "false").',';
+            		if ($newselectedchoice == 'no')
+            		{
+						$formconfirm.='
+						open: function() {
+            				$(this).parent().find("button.ui-button:eq(1)").focus();
+						},';
+            		}
+        			$formconfirm.='
                     resizable: false,
                     height: "'.$height.'",
                     width: "'.$width.'",
@@ -2383,11 +2394,12 @@ class Form
                     }
                 });
 
+                
             	var button = "'.$button.'";
                 if (button.length > 0) {
                 	$( "#" + button ).click(function() {
                 		$("#'.$dialogconfirm.'").dialog("open");
-                	});
+        			});
                 }
             });
             </script>';
@@ -2417,7 +2429,6 @@ class Form
             $formconfirm.= '<tr class="valid">';
             $formconfirm.= '<td class="valid">'.$question.'</td>';
             $formconfirm.= '<td class="valid">';
-            $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
             $formconfirm.= $this->selectyesno("confirm",$newselectedchoice);
             $formconfirm.= '</td>';
             $formconfirm.= '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
