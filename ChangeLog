@@ -50,9 +50,10 @@ For users:
 - New: Allow to search product from barcodes directly from invoices, proposals... through AJAX.
 - New: Can make one invoice for several orders.
 - New: POS module can works with only one payment method (cach, chq, credit card).
-- New: Add possibility to defined position/job of a user
-- New: [ task #210 ] Can choose cash account during POS login
-- New: [ task #104 ] Can create an invoice from several orders
+- New: Add possibility to defined position/job of a user.
+- New: Add hidden option to add slashes between lines into PDF.
+- New: [ task #210 ] Can choose cash account during POS login.
+- New: [ task #104 ] Can create an invoice from several orders.
 - New: Update libs/tools/logo for DoliWamp (now use PHP 5.3).
 - New: Added ODT Template tag {object_total_discount}
 - New: Add new import options: Third parties bank details, warehouses and stocks, categories and suppliers prices
