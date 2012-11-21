@@ -229,11 +229,11 @@ if ($action == 'builddoc')
 	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
-	    $mesg='<div class="error">'.$objexport->error.'</div>';
+		setEventMessage($objexport->error, 'errors');
 	}
 	else
 	{
-	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
+		setEventMessage($langs->trans("FileSuccessfullyBuilt"));
 	    $sqlusedforexport=$objexport->sqlusedforexport;
     }
 }
@@ -292,21 +292,20 @@ if ($action == 'add_export_model')
 	    $result = $objexport->create($user);
 		if ($result >= 0)
 		{
-		    $mesg='<div class="ok">'.$langs->trans("ExportModelSaved",$objexport->model_name).'</div>';
+			setEventMessage($langs->trans("ExportModelSaved",$objexport->model_name));
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-			{
-				$mesg='<div class="error">'.$langs->trans("ErrorExportDuplicateProfil").'</div>';
-			}
-			else $mesg='<div class="error">'.$objexport->error.'</div>';
+				setEventMessage($langs->trans("ErrorExportDuplicateProfil"), 'errors');
+			else
+				setEventMessage($objexport->error, 'errors');
 		}
 	}
 	else
 	{
-	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")), 'errors');
 	}
 }
 
@@ -353,7 +352,7 @@ if ($step == 4 && $action == 'submitFormField')
 	if (is_array($objexport->array_export_TypeFields[0]))
 	{
 		$_SESSION["export_FilterValue_fields"]=array();
-		var_dump($_POST);
+		//var_dump($_POST);
 		foreach($objexport->array_export_TypeFields[0] as $code => $type)	// $code: s.fieldname $value: Text|Boolean|List:ccc
 		{
 			$newcode=(string) preg_replace('/\./','_',$code);
@@ -362,7 +361,7 @@ if ($step == 4 && $action == 'submitFormField')
 			if (! isset($_POST[$newcode]) || $_POST[$newcode] == '') $filterqualified=0;
 			elseif (preg_match('/^List/',$type) && $_POST[$newcode] <= 0) $filterqualified=0;
 			if ($filterqualified)
-			{	
+			{
 				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
 				$objexport->array_export_FilterValue[0][$code] = $_POST[$newcode];
 			}
@@ -447,9 +446,6 @@ if ($step == 1 || ! $datatoexport)
     print '</table>';
 
     print '</div>';
-
-    if ($mesg) print $mesg;
-
 }
 
 if ($step == 2 && $datatoexport)
@@ -595,8 +591,6 @@ if ($step == 2 && $datatoexport)
 
     print '</div>';
 
-    if ($mesg) print $mesg;
-
     /*
      * Barre d'action
      *
@@ -739,7 +733,7 @@ if ($step == 3 && $datatoexport)
 		print '<td>';
 		print $form->textwithpicto($text,$htmltext);
 		print '</td>';
-		
+
 		// Filter value
 		print '<td>';
 		if (! empty($Typefieldsarray[$code]))
@@ -764,12 +758,9 @@ if ($step == 3 && $datatoexport)
 
 	print '</div>';
 
-	if ($mesg) print $mesg;
-
 	/*
 	 * Barre d'action
-	*
-	*/
+	 */
 	print '<div class="tabsAction">';
 	// il n'est pas obligatoire de filtrer les champs
 	print '<a class="butAction" href="javascript:FilterField.submit();">'.$langs->trans("NextStep").'</a>';
@@ -847,7 +838,7 @@ if ($step == 4 && $datatoexport)
     	$list='';
     	foreach($array_filtervalue as $code=>$value)
     	{
-    		if (isset($objexport->array_export_fields[0][$code])) 
+    		if (isset($objexport->array_export_fields[0][$code]))
     		{
     			$list.=($list?', ':'');
     			$list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
@@ -919,10 +910,7 @@ if ($step == 4 && $datatoexport)
 
     print '</table>';
 
-
     print '</div>';
-
-    if ($mesg) print $mesg;
 
     /*
      * Barre d'action
@@ -994,7 +982,6 @@ if ($step == 4 && $datatoexport)
         print '</table>';
         print '</form>';
     }
-
 }
 
 if ($step == 5 && $datatoexport)
@@ -1079,7 +1066,7 @@ if ($step == 5 && $datatoexport)
     	$list='';
     	foreach($array_filtervalue as $code=>$value)
     	{
-    		if (isset($objexport->array_export_fields[0][$code])) 
+    		if (isset($objexport->array_export_fields[0][$code]))
     		{
     			$list.=($list?', ':'');
     			$list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
@@ -1118,12 +1105,7 @@ if ($step == 5 && $datatoexport)
     print '</div>';
 
     print '<table width="100%">';
-    if ($mesg)
-    {
-    	print '<tr><td colspan="2">';
-    	print $mesg;
-    	print '</td></tr>';
-    }
+
     if ($sqlusedforexport && $user->admin)
     {
     	print '<tr><td>';
@@ -1144,9 +1126,7 @@ if ($step == 5 && $datatoexport)
     print '</table>';
 }
 
-
 print '<br>';
-
 
 llxFooter();
 
