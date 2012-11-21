@@ -171,7 +171,7 @@ LastSubscriptionAmount = Laatste abonnementsaantal
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
 // Reference language: en_US -> nl_NL
 MembersStatisticsByState=Leden statistieken per staat / provincie
-MembersStatisticsByTowne=Leden van de statistieken per gemeente
+MembersStatisticsByTown=Leden van de statistieken per gemeente
 NbOfMembers=Aantal leden
 NoValidatedMemberYet=Geen gevalideerde leden gevonden
 MembersByCountryDesc=Dit scherm tonen statistieken over de leden door de landen. Grafisch is echter afhankelijk van Google online grafiek service en is alleen beschikbaar als een internet verbinding is werkt.

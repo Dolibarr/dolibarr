@@ -96,7 +96,7 @@ function member_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
 
 	return $head;
@@ -173,6 +173,11 @@ function member_stats_prepare_head($object)
     $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbytown';
     $head[$h][1] = $langs->trans('Town');
     $head[$h][2] = 'statstown';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/byproperties.php';
+    $head[$h][1] = $langs->trans('ByProperties');
+    $head[$h][2] = 'statsbyproperties';
     $h++;
 
     // Show more tabs from modules
