@@ -94,7 +94,6 @@ $entitytolang = array(
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
-//$array_filtered=isset($_SESSION["export_filtered_fields"])?$_SESSION["export_filtered_fields"]:array();
 $array_filtervalue=isset($_SESSION["export_FilterValue_fields"])?$_SESSION["export_FilterValue_fields"]:array();
 $datatoexport=GETPOST("datatoexport");
 $action=GETPOST('action', 'alpha');
@@ -220,7 +219,6 @@ if ($step == 1 || $action == 'cleanselect')
     $_SESSION["export_filtered_fields"]=array();
     $array_selected=array();
     $array_filtervalue=array();
-    $array_filtered=array();
 }
 
 if ($action == 'builddoc')
@@ -259,6 +257,7 @@ if ($action == 'deleteprof')
 	}
 }
 
+// TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
 if ($action == 'add_export_model')
 {
 	if ($export_name)
@@ -273,20 +272,16 @@ if ($action == 'add_export_model')
 			$hexa.=$key;
 		}
 
-		$hexafilter='';
 		$hexafiltervalue='';
-		foreach($array_filtered as $key=>$val)
+		foreach($array_filtervalue as $key=>$val)
 		{
-			if ($hexafilter) $hexafilter.=',';
 			if ($hexafilter) $hexafiltervalue.=',';
-			$hexafilter.=$key;
-			$hexafiltervalue.=$array_filtervalue[$key];
+			$hexafiltervalue.=$key.'='.$val;
 		}
 
 	    $objexport->model_name = $export_name;
 	    $objexport->datatoexport = $datatoexport;
 	    $objexport->hexa = $hexa;
-	    $objexport->hexafilter = $hexafilter;
 	    $objexport->hexafiltervalue = $hexafiltervalue;
 
 	    $result = $objexport->create($user);
@@ -312,11 +307,9 @@ if ($action == 'add_export_model')
 if ($step == 2 && $action == 'select_model')
 {
     $_SESSION["export_selected_fields"]=array();
-    //$_SESSION["export_filtered_fields"]=array();
     $_SESSION["export_FilterValue_fields"]=array();
 
     $array_selected=array();
-    $array_filtered=array();
     $array_filtervalue=array();
 
     $result = $objexport->fetch($exportmodelid);
@@ -336,11 +329,10 @@ if ($step == 2 && $action == 'select_model')
 		$i=1;
 		foreach($fieldsarray as $val)
 		{
-			$array_filtered[$val]=$i;
-			$array_filtervalue[$val]=$fieldsarrayvalue[$i-1];
+			$tmp=explode('=',$val);
+			$array_filtervalue[$tmp[0]]=$tmp[1];
 			$i++;
 		}
-		//$_SESSION["export_filtered_fields"]=$array_filtered;
 		$_SESSION["export_FilterValue_fields"]=$array_filtervalue;
     }
 }
