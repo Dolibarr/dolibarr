@@ -994,6 +994,69 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
+     *	Load an object from its id and create a new one in database
+     *
+     *	@param		HookManager	$hookmanager	Hook manager instance
+     *	@return		int							New id of clone
+     */
+    function createFromClone($hookmanager=false)
+    {
+        global $conf,$user,$langs;
+
+        $error=0;
+
+        $this->db->begin();
+
+        // Load source object
+        $objFrom = dol_clone($this);
+
+        $this->id=0;
+        $this->statut=0;
+
+        // Clear fields
+        $this->user_author_id     = $user->id;
+        $this->user_valid         = '';
+        $this->date_creation      = '';
+        $this->date_validation    = '';
+        $this->ref_supplier         = '';
+
+        // Create clone
+        $result=$this->create($user);
+        if ($result < 0) $error++;
+
+        if (! $error)
+        {
+            // Hook of thirdparty module
+            if (is_object($hookmanager))
+            {
+                $parameters=array('objFrom'=>$objFrom);
+                $action='';
+                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if ($reshook < 0) $error++;
+            }
+
+            // Appel des triggers
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('ORDER_SUPPLIER_CLONE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+            // Fin appel triggers
+        }
+
+        // End
+        if (! $error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
+    }
+
+    /**
      *	Add order line
      *
      *	@param      string	$desc            		Description
