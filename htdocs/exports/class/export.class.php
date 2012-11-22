@@ -253,18 +253,18 @@ class Export
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
-				if (strpos($ValueField, "%") > 0)
-					$szFilterQuery=" ".$NameField." like '".$ValueField."'";
+				if (! (strpos($ValueField, '%') === false))
+					$szFilterQuery.=" ".$NameField." LIKE '".$ValueField."'";
 				else
-					$szFilterQuery=" ".$NameField."='".$ValueField."'";
+					$szFilterQuery.=" ".$NameField."='".$ValueField."'";
 				break;
 			case 'Date':
 				if (strpos($ValueField, "+") > 0)
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery= $this->conditionDate($NameField,$ValueArray[0],">=");
-					$szFilterQuery.=" and ".$this->conditionDate($NameField,$ValueArray[1],"<=");
+					$szFilterQuery ="(".$this->conditionDate($NameField,$ValueArray[0],">=");
+					$szFilterQuery.=" AND ".$this->conditionDate($NameField,$ValueArray[1],"<=").")";
 				}
 				else
 				{
@@ -282,8 +282,8 @@ class Export
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery=$NameField.">=".$ValueArray[0];
-					$szFilterQuery.=" and ".$NameField."<=".$ValueArray[1];
+					$szFilterQuery ="(".$NameField.">=".$ValueArray[0];
+					$szFilterQuery.=" AND ".$NameField."<=".$ValueArray[1].")";
 				}
 				else
 				{
@@ -337,9 +337,9 @@ class Export
 	{
 		$szFilterField='';
 		$InfoFieldList = explode(":", $TypeField);
-		
+
 		// build the input field on depend of the type of file
-		switch ($InfoFieldList[0]) 
+		switch ($InfoFieldList[0])
 		{
 			case 'Text':
 			case 'Date':
@@ -387,13 +387,13 @@ class Export
 						while ($i < $num)
 						{
 							$obj = $this->db->fetch_object($resql);
-							if ($obj->$InfoFieldList[2] == '-')	
+							if ($obj->$InfoFieldList[2] == '-')
 							{
 								// Discard entry '-'
 								$i++;
 								continue;
 							}
-															
+
 							$labeltoshow=dol_trunc($obj->$InfoFieldList[2],18);
 							if (!empty($ValueField) && $ValueField == $obj->rowid)
 							{

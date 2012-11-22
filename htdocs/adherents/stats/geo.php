@@ -277,7 +277,8 @@ if ($mode)
 dol_fiche_end();
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

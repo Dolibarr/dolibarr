@@ -180,7 +180,7 @@ LastSubscriptionAmount=Son abonelik tutarı
 "MembersStatisticsByCountries=Ülkelere göre üyelik istatistikleri
 "
 MembersStatisticsByState=Eyalete/ile göre üyelik istatistikleri
-MembersStatisticsByTowne=İlçelere göre üyelik istatistikleri
+MembersStatisticsByTown=İlçelere göre üyelik istatistikleri
 NbOfMembers=Üye sayısı
 NoValidatedMemberYet=Doğrulanmamış üye bulunmadı
 MembersByCountryDesc=Bu ekran ülkelere göre üyelik istatisklerini görüntüler. Grafik eğer internet hizmeti çalışıyor ise sadece  google çevrimiçi grafik hizmetince sağlanır.
