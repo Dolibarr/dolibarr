@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -67,7 +67,7 @@ $server->wsdl->addComplexType(
 		'entity' => array('name'=>'entity','type'=>'xsd:string'),
 	)
 );
-		 
+
 /*
  * Une catégorie
  */
@@ -90,7 +90,7 @@ $server->wsdl->addComplexType(
 		'filles' => array('name'=>'filles','type'=>'tns:FillesArray')
 	)
 );
-	 
+
 /*
  * Les catégories filles, sous tableau dez la catégorie
  */
@@ -123,12 +123,12 @@ $server->wsdl->addComplexType(
     'tns:categories'
 );
  */
- 
+
 /*
  * Les photos  de la catégorie (un tableau indéxé qui contient les images avec leur vignette)
  */
- $server->wsdl->addComplexType(
-    'PhotosArray',
+$server->wsdl->addComplexType(
+	'PhotosArray',
     'complexType',
     'array',
     '',
@@ -137,7 +137,7 @@ $server->wsdl->addComplexType(
     array(
         array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:image[]')
     ),
-''
+	''
 );
 
 /*
@@ -235,7 +235,7 @@ function getCategory($authentication,$id)
 					$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
 					$pdir = get_exdir($categorie->id,2) . $categorie->id ."/photos/";
 					$dir = $dir . '/'. $pdir;
-				
+
 					$cat = array(
 						'id' => $categorie->id,
 						'id_mere' => $categorie->id_mere,
@@ -247,11 +247,10 @@ function getCategory($authentication,$id)
 						'dir' => $pdir,
 						'photos' => $categorie->liste_photos($dir,$nbmax=10)
 			    	);
-			    	
+
 					$cats = $categorie->get_filles();
-					if (sizeof ($cats) > 0)
+					if (count($cats) > 0)
 					{
-					
 					 	foreach($cats as $fille)
 						{
 							$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
@@ -268,11 +267,11 @@ function getCategory($authentication,$id)
 								'dir' => $pdir,
 								'photos' => $fille->liste_photos($dir,$nbmax=10)
 							);
-							
+
 						}
-					 
+
 					}
-					
+
 			    // Create
 			    $objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),

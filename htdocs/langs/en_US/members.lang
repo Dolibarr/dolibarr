@@ -170,7 +170,7 @@ LastSubscriptionDate=Last subscription date
 LastSubscriptionAmount=Last subscription amount
 MembersStatisticsByCountries=Members statistics by country
 MembersStatisticsByState=Members statistics by state/province
-MembersStatisticsByTowne=Members statistics by town
+MembersStatisticsByTown=Members statistics by town
 NbOfMembers=Number of members
 NoValidatedMemberYet=No validated members found
 MembersByCountryDesc=This screen show you statistics on members by countries. Graphic depends however on Google online graph service and is available only if an internet connection is is working.
@@ -196,3 +196,6 @@ Collectivités=Organizations
 Particuliers=Personal
 Entreprises=Companies
 DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br> 
+ByProperties=By characteristics
+MembersStatisticsByProperties=Members statistics by characteristics
+MembersByNature=Members by nature

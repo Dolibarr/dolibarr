@@ -87,7 +87,7 @@ foreach($cp->logs as $logs_CP)
 if($log_holiday == '2')
 {
     print '<tr>';
-    print '<td colspan="7" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('NoResult').'</td>';
+    print '<td colspan="7" class="pair" style="text-align: center; padding: 5px;">'.$langs->trans('NoResults').'</td>';
     print '</tr>';
 }
 

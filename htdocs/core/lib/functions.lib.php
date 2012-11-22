@@ -2190,17 +2190,18 @@ function dol_print_error($db='',$error='')
 }
 
 /**
- * Show email to contact if technical error
+ * Show a public email and error code to contact if technical error
  *
+ * @param	string	$prefixcode		Prefix of public error code		
  * @return	void
  */
-function dol_print_error_email()
+function dol_print_error_email($prefixcode)
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date($now,'%Y%m%d')).'</div>';
+	print '<br><div class="error">'.$langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d')).'</div>';
 }
 
 /**
