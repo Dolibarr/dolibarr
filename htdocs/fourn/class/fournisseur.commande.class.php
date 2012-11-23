@@ -953,35 +953,68 @@ class CommandeFournisseur extends CommonOrder
         if ($this->db->query($sql))
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
+			
+			if ($this->id) {
+				$num=count($this->lines);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " SET ref='(PROV".$this->id.")'";
-            $sql.= " WHERE rowid=".$this->id;
-            dol_syslog(get_class($this)."::create sql=".$sql);
-            if ($this->db->query($sql))
-            {
-                // On logue creation pour historique
-                $this->log($user, 0, time());
+	            /*
+	             *  Insertion du detail des produits dans la base
+	             */
+	            for ($i=0;$i<$num;$i++)
+	            {
+	                $result = $this->addline(
+	                    $this->lines[$i]->desc,
+	                    $this->lines[$i]->subprice,
+	                    $this->lines[$i]->qty,
+	                    $this->lines[$i]->tva_tx,
+	                    $this->lines[$i]->localtax1_tx,
+	                    $this->lines[$i]->localtax2_tx,
+	                    $this->lines[$i]->fk_product,
+	                    0,
+	                    $this->lines[$i]->ref_fourn,
+	                    $this->lines[$i]->remise_percent,
+	                    'HT',
+	                    0,
+	                    $this->lines[$i]->info_bits
+	                );
+	                if ($result < 0)
+	                {
+	                    $this->error=$this->db->lasterror();
+	                    dol_print_error($this->db);
+	                    $this->db->rollback();
+	                    return -1;
+	                }
+	            }
 
-                if (! $notrigger)
-                {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
-                }
-
-                $this->db->commit();
-                return $this->id;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::create: Failed -2 - ".$this->error, LOG_ERR);
-                $this->db->rollback();
-                return -2;
+	            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+	            $sql.= " SET ref='(PROV".$this->id.")'";
+	            $sql.= " WHERE rowid=".$this->id;
+	            dol_syslog(get_class($this)."::create sql=".$sql);
+	            if ($this->db->query($sql))
+	            {
+	                // On logue creation pour historique
+	                $this->log($user, 0, time());
+	
+	                if (! $notrigger)
+	                {
+	                    // Appel des triggers
+	                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	                    $interface=new Interfaces($this->db);
+	                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+	                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	                    // Fin appel triggers
+	                }
+	
+	                $this->db->commit();
+	                return $this->id;
+	            }
+	            else
+	            {
+	                $this->error=$this->db->error();
+	                dol_syslog(get_class($this)."::create: Failed -2 - ".$this->error, LOG_ERR);
+	                $this->db->rollback();
+	                return -2;
+	            }
             }
         }
         else
@@ -1107,7 +1140,6 @@ class CommandeFournisseur extends CommonOrder
         }
         $desc=trim($desc);
 
-
         // Check parameters
         if ($qty < 1 && ! $fk_product)
         {
@@ -1115,7 +1147,6 @@ class CommandeFournisseur extends CommonOrder
             return -1;
         }
         if ($type < 0) return -1;
-
 
         if ($this->statut == 0)
         {
