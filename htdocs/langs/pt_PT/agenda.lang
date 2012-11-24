@@ -82,6 +82,6 @@ ExtSites=Importar calendários externos
 ExtSitesEnableThisTool=Mostrar calendários externos na agenda
 ExtSitesNbOfAgenda=Número de calendários
 AgendaExtNb=Calendário nb %s
-ExtSiteUrlAgenda=URL para aceder. Ical arquivo
+ExtSiteUrlAgenda=URL para aceder. Ficheiro iCal
 ExtSiteNoLabel=Sem Descrição
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:38).
