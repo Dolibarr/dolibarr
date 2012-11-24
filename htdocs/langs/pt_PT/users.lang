@@ -26,24 +26,24 @@ EnableAUser=Reactivar um Utilizador
 EnableAGroup=Reactivar um Grupo
 DeleteGroup=Eliminar
 DeleteAGroup=Eliminar um Grupo
-ConfirmDisableUser=Está seguro de querer desactivar o utilizador <b>%s</b> ?
-ConfirmDisableGroup=Está seguro de querer desactivar o grupo <b>%s</b> ?
-ConfirmDeleteUser=Está seguro de querer eliminar o utilizador <b>%s</b> ?
-ConfirmDeleteGroup=Está seguro de querer eliminar o grupo <b>%s</b> ?
-ConfirmEnableUser=Está seguro de querer reactivar o utilizador <b>%s</b> ?
-ConfirmEnableGroup=Está seguro de querer reactivar o grupo <b>%s</b> ?
-ConfirmReinitPassword=Está seguro de querer gerar uma nova palavra-passe o utilizador <b>%s</b> ?
-ConfirmSendNewPassword=Está seguro de querer enviar uma nova palavra-passe o utilizador <b>%s</b> ?
+ConfirmDisableUser=Deseja mesmo desactivar o utilizador <b>%s</b> ?
+ConfirmDisableGroup=Deseja mesmo desactivar o grupo <b>%s</b> ?
+ConfirmDeleteUser=Deseja mesmo eliminar o utilizador <b>%s</b> ?
+ConfirmDeleteGroup=Deseja mesmo eliminar o grupo <b>%s</b> ?
+ConfirmEnableUser=Deseja mesmo reactivar o utilizador <b>%s</b> ?
+ConfirmEnableGroup=Deseja mesmo reactivar o grupo <b>%s</b> ?
+ConfirmReinitPassword=Deseja mesmo gerar uma nova palavra-passe para o utilizador <b>%s</b> ?
+ConfirmSendNewPassword=Deseja mesmo enviar uma nova palavra-passe para o utilizador <b>%s</b> ?
 NewUser=Novo Utilizador
 CreateUser=Criar Utilizador
 SearchAGroup=Procurar um Grupo
 SearchAUser=Procurar um Utilizador
-LoginNotDefined=O Utilizador não está Definido
+LoginNotDefined=O Utilizador não está definido
 NameNotDefined=O Nome não está definido
 ListOfUsers=Lista de Utilizadores
 Administrator=Administrador
 DefaultRights=Permissões por Defeito
-DefaultRightsDesc=Defina aquí as permissões por defeito: as permissões que se atribuirão automáticamente a um novo utilizador no momento de a sua criação.
+DefaultRightsDesc=Defina aqui as permissões por defeito: as permissões que se atribuirão automaticamente a um novo utilizador no momento de a sua criação.
 DolibarrUsers=Utilizadores
 LastName=Apelidos
 FirstName=Nome
@@ -55,14 +55,14 @@ PasswordChangedAndSentTo=Palavra-Passe alterada e enviada a <b>%s</b>.
 PasswordChangeRequestSent=Pedido para alterar a palavra-passe para <b>%s</b> enviada a <b>%s</b>.
 MenuUsersAndGroups=Utilizadores e Grupos
 LastGroupsCreated=Os %s últimos grupos criados
-LastUsersCreated=Os %s últimos Utilizadores criados
+LastUsersCreated=Os %s últimos utilizadores criados
 ShowGroup=Ver grupo
 ShowUser=Ver utilizador
 NonAffectedUsers=Utilizadores não destinados ao grupo
 UserModified=Utilizador correctamente modificado
 GroupModified=Grupo %s Modificado
-PhotoFile=Ficheiro foto
-UserWithDolibarrAccess=Utilizador com acesso a Dolibarr
+PhotoFile=Fotografia
+UserWithDolibarrAccess=Utilizador com acesso ao Dolibarr
 ListOfUsersInGroup=Lista de Utilizadores deste grupo
 ListOfGroupsForUser=Lista de grupos deste utilizador
 UsersToAdd=Utilizador a Adicionar a este grupo
@@ -70,7 +70,7 @@ GroupsToAdd=Grupos a Adicionar a este utilizador
 NoLogin=Sem Utilizador
 CreateDolibarrLogin=Criar uma Conta
 CreateDolibarrThirdParty=Criar um Terceiro
-LoginAccountDisable=A conta está desactivada, indique um Novo login para a activar.
+LoginAccountDisable=A conta está desactivada, indique um novo nome de utilizador para a activar.
 LoginAccountDisableInDolibarr=A conta está desactivada no Dolibarr
 LoginAccountDisableInLdap=A conta está desactivada ao dominio
 UsePersonalValue=Utilizar valores personalizados
@@ -78,7 +78,7 @@ GuiLanguage=Idioma do Interface
 InternalUser=Utilizador Interno
 MyInformations=A Minha Informação
 ExportDataset_user_1=Utilizadores e Atributos
-DomainUser=Utilizador de Dominio
+DomainUser=Utilizador de Domínio
 Reactivate=Reactivar
 CreateInternalUserDesc=Esta janela permite criar um utilizador interno da sua Empresa/Instituição. Para criar um utilizador externo (cliente, fornecedor...) use o botão ' Criar Utilizador' que se encontra na ficha de contacto do terceiro em questão.
 InternalExternalDesc=Um utilizador <b>interno</b> é um utilizador que pertenece à sua Empresa/Instituição.<br>Um utilizador <b>externo</b> é um utilizador cliente, fornecedor ou outro.<br><br>Nos 2 casos, as permissões de utilizadores definem os direitos de acesso, mas o utilizador externo pode além disso ter  um gestor de menus diferente do utilizador interno (ver Inicio - configuração - visualização)
@@ -94,9 +94,9 @@ UserDeleted=Utilizador %s Eliminado
 NewGroupCreated=Grupo %s Criado
 GroupModified=Grupo %s Modificado
 GroupDeleted=Grupo %s Eliminado
-ConfirmCreateContact=Está seguro de querer criar uma conta para este contacto?
-ConfirmCreateLogin=Está seguro de que deseja criar uma conta para este membro?
-ConfirmCreateThirdParty=Está seguro de querer criar um Terceiro para este membro?
+ConfirmCreateContact=Tem a certeza que deseja criar uma conta para este contacto?
+ConfirmCreateLogin=Tem a certeza que deseja criar uma conta para este membro?
+ConfirmCreateThirdParty=Tem a certeza que deseja criar um terceiro para este membro?
 LoginToCreate=Login a Criar
 NameToCreate=Nome do Terceiro a Criar
 
@@ -107,7 +107,7 @@ SuperAdministrator=Super Administrador
 SuperAdministratorDesc=Administrador com todos os direitos
 LinkToCompanyContact=Link para terceiros / contact
 LinkedToDolibarrMember=Link para membro
-LinkedToDolibarrUser=Link para Dolibarr usuário
+LinkedToDolibarrUser=Link para o utilizador do Dolibarr
 LinkedToDolibarrThirdParty=Link para Dolibarr terceiro
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
@@ -117,7 +117,7 @@ LinkedToDolibarrThirdParty=Link para Dolibarr terceiro
 // Reference language: en_US -> pt_PT
 Inherited=Herdado
 YourRole=Seus papéis
-YourQuotaOfUsersIsReached=Seu contingente de usuários ativos é atingida!
+YourQuotaOfUsersIsReached=A sua quota de utilizadores foi atingida!
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:34).
 
 
@@ -131,7 +131,7 @@ UserWillBeExternalUser=Usuário será criado um usuário externo (porque ligado 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
-UserLogoff=%s o logout do usuário
-NbOfUsers=N º de usuários
+UserLogoff=Terminar sessão de %s
+NbOfUsers=N º de utilizadores
 DontDowngradeSuperAdmin=Apenas um superadmin pode desclassificar um superadmin
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:08).
