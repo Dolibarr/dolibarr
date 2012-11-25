@@ -466,10 +466,19 @@ elseif ($action == 'addline')
     }
     $ret=$object->fetch_thirdparty();
 
-    if ($_POST['idprodfournprice'])	// > 0 or -1
+    if (GETPOST('search_idprodfournprice') || GETPOST('idprodfournprice'))	// With combolist idprodfournprice is > 0 or -1, with autocomplete, idprodfournprice is > 0 or ''
     {
-        $product=new Product($db);
-        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
+    	$idprod=0;
+    	$product=new Product($db);
+
+    	if (GETPOST('idprodfournprice') == '')
+		{
+			$idprod=-1;
+		}
+    	if (GETPOST('idprodfournprice') > 0)
+        {
+    	    $idprod=$product->get_buyprice(GETPOST('idprodfournprice'), $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
+        }
 
         if ($idprod > 0)
         {
