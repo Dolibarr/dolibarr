@@ -5,7 +5,6 @@ Supplier=Supplier
 AddSupplier=Add a supplier
 SupplierRemoved=Supplier removed
 SuppliersInvoice=Suppliers invoice
-SuppliersInvoices=Suppliers invoices
 NewSupplier=New supplier
 History=History
 ListOfSuppliers=List of suppliers

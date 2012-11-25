@@ -13,7 +13,6 @@ Supplier=Leverantör
 AddSupplier=Lägg till en leverantör
 SupplierRemoved=Leverantör bort
 SuppliersInvoice=Leverantörer faktura
-SuppliersInvoices=Leverantörer fakturor
 NewSupplier=Ny leverantör
 History=Historia
 ListOfSuppliers=Lista över leverantörer

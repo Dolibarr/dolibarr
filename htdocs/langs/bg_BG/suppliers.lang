@@ -13,7 +13,6 @@ Supplier=Снабдител
 AddSupplier=Добави доставчик
 SupplierRemoved=Изтрити доставчик
 SuppliersInvoice=Фактура
-SuppliersInvoices=Фактури
 NewSupplier=Нов доставчик
 History=Исторически
 ListOfSuppliers=Списък на доставчиците
