@@ -1447,7 +1447,8 @@ class Form
 
             $num = $this->db->num_rows($result);
 
-            $outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';
+            //$outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
+            $outselect.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
             if (! $selected) $outselect.='<option value="0" selected="selected">&nbsp;</option>';
             else $outselect.='<option value="0">&nbsp;</option>';
 
