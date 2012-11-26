@@ -48,10 +48,10 @@ if (! empty($conf->margin->enabled))
 	if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
-	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 <?php 
 } 
 ?>
+	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
 <form name="addpredefinedproduct" id="addpredefinedproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
