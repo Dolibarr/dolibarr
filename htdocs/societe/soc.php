@@ -1116,7 +1116,7 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$object->name.'"></td></tr>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.dol_escape_htmltag($object->name).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1125,12 +1125,12 @@ else
                 // It does not change the prefix mode using the auto numbering prefix
                 if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm)
                 {
-                    print '<input type="hidden" name="prefix_comm" value="'.$object->prefix_comm.'">';
+                    print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                     print $object->prefix_comm;
                 }
                 else
                 {
-                    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'">';
+                    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                 }
                 print '</td>';
             }
