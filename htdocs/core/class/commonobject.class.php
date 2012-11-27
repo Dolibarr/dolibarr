@@ -1533,7 +1533,10 @@ abstract class CommonObject
 						{
 							$objt = $this->db->fetch_object($resqlt);
        						if ($objt->localtax1_type == '7')
+							{
                  				$this->total_localtax1 += $objt->localtax1;
+                 				$this->total_ttc       += $objt->localtax1;
+							}
 						}
 					}
                     if ($this->total_localtax2 == 0)
@@ -1550,7 +1553,10 @@ abstract class CommonObject
 						{
 							$objt = $this->db->fetch_object($resqlt);
        						if ($objt->localtax2_type == '7')
+							{
                  				$this->total_localtax2 += $objt->localtax2;
+                 				$this->total_ttc       += $objt->localtax2;
+							}
 						}
 					}
                 }
