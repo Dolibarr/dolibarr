@@ -165,6 +165,10 @@ class Form
                 {
                     $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
                 }
+                else if ($typeofdata == 'datehourpicker')
+                {
+                	$ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname,1,1);
+                }
                 else if (preg_match('/^select;/',$typeofdata))
                 {
                      $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
@@ -183,7 +187,7 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-                if ($typeofdata != 'day' && $typeofdata != 'datepicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+                if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker') $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
                 $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
@@ -192,6 +196,7 @@ class Form
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
                 elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
+                elseif ($typeofdata == 'datehourpicker') $ret.=dol_print_date($value,'dayhour');
                 else if (preg_match('/^select;/',$typeofdata))
                 {
                     $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
@@ -272,7 +277,7 @@ class Form
                 if (! empty($tmp[1])) $inputOption=$tmp[1];
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
             }
-            else if (preg_match('/^datepicker/',$inputType))
+            else if ((preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
             {
                 $tmp=explode(':',$inputType);
                 $inputType=$tmp[0];
@@ -2612,9 +2617,11 @@ class Form
      *    @param	string		$page        Page
      *    @param	string		$selected    Date preselected
      *    @param    string		$htmlname    Name of input html field
+     *    @param    int			$displayhour Display hour selector
+     *    @param    int			$displaymin	 Display minutes selector
      *    @return	void
      */
-    function form_date($page, $selected, $htmlname)
+    function form_date($page, $selected, $htmlname,$displayhour=0,$displaymin=0)
     {
         global $langs;
 
@@ -2625,7 +2632,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->select_date($selected,$htmlname,0,0,1,'form'.$htmlname);
+            print $this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
