@@ -1565,15 +1565,18 @@ print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
 print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 // Amount Local Taxes
-if ($mysoc->country_code=='ES')
+if ($mysoc->hasLocalTax(1))
 {
-	if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
 		print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
-	if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+}
+if ($mysoc->hasLocalTax(2))
+{
+	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
 		print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
