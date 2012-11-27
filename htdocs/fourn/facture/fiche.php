@@ -1814,10 +1814,20 @@ else
                 print '<td colspan="4">&nbsp;</td>';
                 print '</tr>';
 
+                // TODO Use the predefinedproductline_create.tpl.php file
                 print '<form name="addline_predef" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addline" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="socid" value="'. $object->socid .'">';
                 print '<input type="hidden" name="facid" value="'.$object->id.'">';
+                
+                print '<script type="text/javascript">
+                		jQuery(document).ready(function() {
+                			jQuery(\'#idprodfournprice\').change(function() {
+                				if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
+                			});
+                		});
+                </script>';
+                           
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';

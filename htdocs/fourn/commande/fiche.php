@@ -1461,12 +1461,22 @@ if ($id > 0 || ! empty($ref))
             print '<td colspan="4">&nbsp;</td>';
             print '</tr>';
 
+            // TODO Use the predefinedproductline_create.tpl.php file
+            
             // Add free products/services form
             print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#add" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden"	name="action" value="addline">';
             print '<input type="hidden"	name="id" value="'.$object->id.'">';
 
+            print '<script type="text/javascript">
+            	jQuery(document).ready(function() {
+            		jQuery(\'#idprodfournprice\').change(function() {
+            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
+            		});
+            	});
+            </script>';
+                        
             $var=true;
             print '<tr '.$bc[$var].'>';
             print '<td>';
