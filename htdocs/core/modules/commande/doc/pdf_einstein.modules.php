@@ -152,8 +152,6 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
 		if ($conf->commande->dir_output)
 		{
             $object->fetch_thirdparty();
@@ -188,7 +186,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 50;	// Height reserved to output the info and total part
+                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
+				$heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
