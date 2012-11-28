@@ -232,7 +232,7 @@ if ($result > 0)
 
         foreach($listofnotifiedevents as $notifiedevent)
         {
-            $label=$langs->trans("Notify_".$notifiedevent['code'])!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+     		$label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);           
             $actions[$notifiedevent['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
