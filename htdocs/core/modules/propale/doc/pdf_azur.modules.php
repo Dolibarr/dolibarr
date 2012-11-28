@@ -856,7 +856,6 @@ class pdf_azur extends ModelePDFPropales
 							case '2':
 							case '4':
 							case '6':
-							case '7':
 								continue 2;
 								break;
 						}
