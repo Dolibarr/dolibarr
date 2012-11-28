@@ -119,8 +119,6 @@ class pdf_azur extends ModelePDFPropales
 		$this->tva=array();
 		$this->localtax1=array();
 		$this->localtax2=array();
-		$this->localtax1_type=array();
-		$this->localtax2_type=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}

@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,8 +120,6 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->tva=array();
 		$this->localtax1=array();
 		$this->localtax2=array();
-		$this->localtax1_type=array();
-		$this->localtax2_type=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
