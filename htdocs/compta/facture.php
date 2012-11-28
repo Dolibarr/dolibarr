@@ -757,6 +757,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
             $object->amount				= $_POST['amount'];
             $object->remise_absolue		= $_POST['remise_absolue'];
             $object->remise_percent		= $_POST['remise_percent'];
+   			$object->fetch_thirdparty();
 
             // If creation from another object of another module (Example: origin=propal, originid=1)
             if ($_POST['origin'] && $_POST['originid'])
@@ -2078,17 +2079,14 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
-        if ($mysoc->pays_code=='ES')
+        if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
-            if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
-            }
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+        }
 
-            if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
-            {
-                print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
-            }
+        if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
         }
         print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
     }
@@ -2654,11 +2652,8 @@ else if ($id > 0 || ! empty($ref))
         if (! empty($conf->banque->enabled)) $nbcols++;
 
         //Local taxes
-        if ($mysoc->pays_code=='ES')
-        {
-            if($mysoc->localtax1_assuj=="1") $nbrows++;
-            if($mysoc->localtax2_assuj=="1") $nbrows++;
-        }
+        if($mysoc->localtax1_assuj=="1") $nbrows++;
+        if($mysoc->localtax2_assuj=="1") $nbrows++;
 
         print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 

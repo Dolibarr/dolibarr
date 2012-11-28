@@ -1066,7 +1066,6 @@ if ($id)
                         }
                     }
 
-                    print '<td align="center" nowrap="nowrap">';
                     // Est-ce une entree du dictionnaire qui peut etre desactivee ?
                     $iserasable=1;  // Oui par defaut
                     if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) $iserasable=0;
@@ -1074,8 +1073,14 @@ if ($id)
                     if (isset($obj->code) && $obj->code == 'EF0') $iserasable=0;
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) $iserasable=0;
 
+                    // Active
+                    print '<td align="center" nowrap="nowrap">';
                     if ($iserasable) print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-                    else print $langs->trans("AlwaysActive");
+                    else
+                 	{
+                  		if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
+                    	else print $langs->trans("AlwaysActive");
+                    }
                     print "</td>";
 
                     // Modify link
