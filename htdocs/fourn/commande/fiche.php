@@ -81,8 +81,8 @@ $object = new CommandeFournisseur($db);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id, $ref);
-	$object->fetch_thirdparty();
+	$resObj = $object->fetch($id, $ref);
+	$resTP = $object->fetch_thirdparty();
 }
 
 /*
@@ -111,7 +111,6 @@ if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->cree
 {
 	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
 
-	$object->fetch($id);
 	$result=$object->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
@@ -132,21 +131,18 @@ else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->
 
 else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
-	$object->fetch($id);
 	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
 {
-	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
-    $result = $object->fetch($id);
     if (in_array($object->statut, array(1, 5, 6, 7, 9)))
     {
         if ($object->statut == 1) $newstatus=0;	// Validated->Draft
@@ -205,8 +201,8 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
     if (! $error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
     {
-        if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
-        if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
+        if ($resObj < 0) dol_print_error($db,$object->error);
+        if ($resTP < 0) dol_print_error($db,$object->error);
 
         // Ecrase $pu par celui	du produit
         // Ecrase $desc	par	celui du produit
@@ -339,8 +335,8 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
         if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
     }
 
-    if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
-    if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
+    if ($resObj < 0) dol_print_error($db,$object->error);
+    if ($resTP < 0) dol_print_error($db,$object->error);
 
     $localtax1_tx=get_localtax($_POST['tva_tx'],1,$object->thirdparty);
     $localtax2_tx=get_localtax($_POST['tva_tx'],2,$object->thirdparty);
@@ -413,8 +409,6 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
 
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->commande->valider)
 {
-    $object->fetch_thirdparty();
-
     $object->date_commande=dol_now();
     $result = $object->valid($user);
     if ($result	>= 0)
@@ -446,8 +440,6 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
 else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
     $idwarehouse=GETPOST('idwarehouse', 'int');
-
-    $object->fetch_thirdparty();
 
     // Check parameters
     if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
@@ -506,7 +498,6 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->commande->supprimer)
 {
-    $object->fetch_thirdparty();
     $result=$object->delete($user);
     if ($result > 0)
     {
@@ -624,7 +615,6 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     // Build document
 
     // Sauvegarde le dernier module	choisi pour	generer	un document
-    $object->fetch_thirdparty();
 
     if ($_REQUEST['model'])
     {
@@ -655,10 +645,8 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    if ($object->fetch($id))
+    if ($resObj)
     {
-    	$object->fetch_thirdparty();
-
         $langs->load("other");
         $upload_dir =	$conf->fournisseur->commande->dir_output;
         $file =	$upload_dir	. '/' .	GETPOST('file');
@@ -744,10 +732,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 {
     $langs->load('mails');
 
-    $result=$object->fetch($_POST['orderid']);
-    $result=$object->fetch_thirdparty();
-
-    if ($result > 0)
+    if ($resObj > 0)
     {
 //        $ref = dol_sanitizeFileName($object->ref);
 //        $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -896,12 +881,10 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 {
 	if ($action == 'addcontact')
 	{
-		$result = $object->fetch($id);
-
-		if ($result > 0 && $id > 0)
+		if ($resObj)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+			$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
 
 		if ($result >= 0)
@@ -926,7 +909,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut')
 	{
-		if ($object->fetch($id))
+		if ($resObj)
 		{
 			$result=$object->swapContactStatus(GETPOST('ligne'));
 		}
@@ -939,7 +922,6 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 	// Efface un contact
 	else if ($action == 'deletecontact')
 	{
-		$object->fetch($id);
 		$result = $object->delete_contact($_GET["lineid"]);
 
 		if ($result >= 0)
@@ -977,12 +959,9 @@ $now=dol_now();
 if ($id > 0 || ! empty($ref))
 {
     //if ($mesg) print $mesg.'<br>';
-
-    $result=$object->fetch($id,$ref);
     if ($result >= 0)
     {
-        $soc = new Societe($db);
-        $soc->fetch($object->socid);
+        $soc = &$object->thirdparty;
 
         $author	= new User($db);
         $author->fetch($object->user_author_id);
