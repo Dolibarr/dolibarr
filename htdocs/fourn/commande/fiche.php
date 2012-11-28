@@ -83,6 +83,8 @@ if ($id > 0 || ! empty($ref))
 {
 	$resObj = $object->fetch($id, $ref);
 	$resTP = $object->fetch_thirdparty();
+	if ($resObj < 0) dol_print_error($db,$object->error);
+	if ($resTP < 0) dol_print_error($db,$object->error);
 }
 
 /*
@@ -201,9 +203,6 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
     if (! $error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
     {
-        if ($resObj < 0) dol_print_error($db,$object->error);
-        if ($resTP < 0) dol_print_error($db,$object->error);
-
         // Ecrase $pu par celui	du produit
         // Ecrase $desc	par	celui du produit
         // Ecrase $txtva  par celui du produit
@@ -732,7 +731,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 {
     $langs->load('mails');
 
-    if ($resObj > 0)
+    if ($resObj)
     {
 //        $ref = dol_sanitizeFileName($object->ref);
 //        $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -961,8 +960,6 @@ if ($id > 0 || ! empty($ref))
     //if ($mesg) print $mesg.'<br>';
     if ($result >= 0)
     {
-        $soc = &$object->thirdparty;
-
         $author	= new User($db);
         $author->fetch($object->user_author_id);
 
@@ -1000,7 +997,7 @@ if ($id > 0 || ! empty($ref))
             $object->date_commande=dol_now();
 
             // We check if number is temporary number
-            if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($soc);
+            if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($object->thirdparty);
             else $newref = $object->ref;
 
             $text=$langs->trans('ConfirmValidateOrder',$newref);
@@ -1106,7 +1103,7 @@ if ($id > 0 || ! empty($ref))
 
         // Fournisseur
         print '<tr><td>'.$langs->trans("Supplier")."</td>";
-        print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+        print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
         print '</tr>';
 
         // Statut
@@ -1437,7 +1434,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td>';
-                print $form->load_tva('tva_tx',$line->tva_tx,$soc,$mysoc);
+                print $form->load_tva('tva_tx',$line->tva_tx,$object->thirdparty,$mysoc);
                 print '</td>';
                 print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
                 print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
@@ -1497,11 +1494,11 @@ if ($id > 0 || ! empty($ref))
 
             print '</td>';
             print '<td align="center">';
-            print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$soc,$mysoc);
+            print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$object->thirdparty,$mysoc);
             print '</td>';
             print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
             print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-            print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$soc->remise_client).'">%</td>';
+            print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'">%</td>';
             print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
             print '</tr>';
 
@@ -1558,7 +1555,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-                print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$soc->remise_client).'">%</td>';
+                print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'">%</td>';
                 print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
                 print '</tr>';
 
@@ -1685,7 +1682,7 @@ if ($id > 0 || ! empty($ref))
             $genallowed=$user->rights->fournisseur->commande->creer;
             $delallowed=$user->rights->fournisseur->commande->supprimer;
 
-            print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$soc->default_lang);
+            print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
             $somethingshown=$formfile->numoffiles;
 
             $object=$object;
@@ -1816,7 +1813,7 @@ if ($id > 0 || ! empty($ref))
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
             $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$soc->id;
+            $formmail->withtosocid=$object->thirdparty->id;
             $formmail->withtocc=1;
             $formmail->withtoccsocid=0;
             $formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
