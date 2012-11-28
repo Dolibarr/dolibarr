@@ -361,7 +361,7 @@ else
             $object->state_id = $_POST["state_id"];
 
             // We set country_id, country_code and label for the selected country
-            $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+            $object->country_id=$_POST["country_id"]?$_POST["country_id"]:(empty($objsoc->country_id)?$mysoc->country_id:$objsoc->country_id);
             if ($object->country_id)
             {
             	$tmparray=getCountry($object->country_id,'all');
@@ -460,7 +460,6 @@ else
             print '</td></tr>';
 
             // Country
-            if (dol_strlen(trim($object->country_id)) == 0) $object->country_id = $objsoc->country_id;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.$colspan.'">';
             print $form->select_country((isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
