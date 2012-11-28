@@ -93,6 +93,7 @@ CloneFiles=Clonar los archivos adjuntos
 ConfirmCloneProject=¿Está seguro de querer clonar este proyecto?
 ProjectReportDate=Cambiar las fechas de las tareas en función de la fecha de inicio del proyecto
 ErrorShiftTaskDate=Se ha producido un error en el cambio de las fechas de las tareas
+ProjectsAndTasksLines=Proyectos y tareas
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto
