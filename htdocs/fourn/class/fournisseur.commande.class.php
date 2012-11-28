@@ -889,7 +889,7 @@ class CommandeFournisseur extends CommonOrder
             dol_syslog(get_class($this)."::commande sql=".$sql, LOG_DEBUG);
             if ($this->db->query($sql))
             {
-                $result = 0;
+                $result = 1;
                 $this->log($user, 3, $date, $comment);
             }
             else
