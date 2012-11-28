@@ -5,7 +5,6 @@ Supplier=Fornecedor
 AddSupplier=Adicionar Fornecedor
 SupplierRemoved=Fornecedor Eliminado
 SuppliersInvoice=Faturas do Fornecedor
-SuppliersInvoices=Faturas de Fornecedores
 NewSupplier=Novo Fornecedor
 History=Histórico
 ListOfSuppliers=Lista de Fornecedores

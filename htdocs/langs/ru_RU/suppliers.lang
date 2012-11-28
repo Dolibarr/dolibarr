@@ -14,7 +14,6 @@ Supplier=Поставщик
 AddSupplier=Добавить поставщиком
 SupplierRemoved=Поставщик удален
 SuppliersInvoice=Поставщики счета
-SuppliersInvoices=Поставщики счета
 NewSupplier=Новый поставщик
 History=История
 ListOfSuppliers=Список поставщиков
