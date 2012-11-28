@@ -144,10 +144,10 @@ class FormActions
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $actioncomm = new ActionComm($this->db);
-        $actioncomm->getActions($socid, $object->id, $typeelement);
+        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
+		if (is_numeric($listofactions) && $listofactions < 0) dol_print_error($this->db,'FailedToGetActions');
 
-        $num = count($actioncomm->actions);
+        $num = count($listofactions);
         if ($num)
         {
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
@@ -164,17 +164,29 @@ class FormActions
 
         	$total = 0;	$var=true;
         	print '<table class="noborder" width="100%">';
-        	print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans('Ref').'</th><th class="liste_titre">'.$langs->trans('Date').'</th><th class="liste_titre">'.$langs->trans('Action').'</th><th class="liste_titre">'.$langs->trans('By').'</th></tr>';
+        	print '<tr class="liste_titre">';
+        	print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
+        	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
+        	print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
+        	print '<th class="liste_titre">'.$langs->trans('By').'</th>';
+        	print '</tr>';
         	print "\n";
 
-        	foreach($actioncomm->actions as $action)
+        	$userstatic = new User($this->db);
+
+        	foreach($listofactions as $action)
         	{
+        		$savlabel=$action->label;
+        		$action->label=$action->ref;
+        		$ref=$action->getNomUrl(1);
+        		$action->label=$savlabel;
+        		$label=$action->getNomUrl(0,38);
+
         		$var=!$var;
         		print '<tr '.$bc[$var].'>';
-        		print '<td>'.$action->getNomUrl(1).'</td>';
+				print '<td>'.$ref.'</td>';
+        		print '<td>'.$label.'</td>';
         		print '<td>'.dol_print_date($action->datep,'day').'</td>';
-        		print '<td title="'.dol_escape_htmltag($action->label).'">'.dol_trunc($action->label,32).'</td>';
-        		$userstatic = new User($this->db);
         		$userstatic->id = $action->author->id;
         		$userstatic->firstname = $action->author->firstname;
         		$userstatic->lastname = $action->author->lastname;
