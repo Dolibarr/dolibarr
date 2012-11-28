@@ -4216,6 +4216,34 @@ function getCurrencySymbol($currency_code)
 
 	return $currency_sign;
 }
+/**
+ * Get type of one localtax
+ *
+ *  @param		int	$vatrate			VAT Rate
+ *  @param		int	$number             Number of localtax (1 / 2)
+ *  @return		int      				Type of local tax (1 to 7 / 0 if not found)
+ */
+
+function getTypeOfLocalTaxFromRate($vatrate, $number)
+{
+	global $db, $mysoc;
+	
+	// Search local taxes
+	$sql  = "SELECT t.localtax1_type, t.localtax2_type";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$mysoc->country_code."'";
+	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+  		if ($number == 1) return $obj->localtax1_type;
+  		elseif ($number == 2) return $obj->localtax2_type;
+	}
+
+	return 0;
+}
 
 if (! function_exists('getmypid'))
 {

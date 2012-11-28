@@ -139,7 +139,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
-		global $user,$langs,$conf;
+		global $user,$langs,$conf,$mysoc,$db;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -366,30 +366,62 @@ class pdf_crabe extends ModelePDFFactures
 					$tvaligne=$object->lines[$i]->total_tva;
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
+					$localtax1_rate=$object->lines[$i]->localtax1_tx;
+					$localtax2_rate=$object->lines[$i]->localtax2_tx;
+					$localtax1_type=$object->lines[$i]->localtax1_type;
+					$localtax2_type=$object->lines[$i]->localtax2_type;
 
 					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
 					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
+					
+					// TODO : store local taxes types into object lines and remove this
+					if (empty($localtax1_type))
+						$localtax1_type=getTypeOfLocalTaxFromRate($vatrate,1);
+					if (empty($localtax2_type))
+						$localtax2_type=getTypeOfLocalTaxFromRate($vatrate,2);
+					//end TODO
+					
+				    // retrieve global local tax
+					if ($localtax1_type == '7')
+					{
+						$sql  = "SELECT t.localtax1";
+						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$mysoc->country_code."'";
+						$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+
+						$resql=$db->query($sql);
+						if ($resql)
+						{
+							$obj = $db->fetch_object($resql);
+							$localtax1_rate = $obj->localtax1;
+						}
+					}
+					if ($localtax2_type == '7')
+					{
+						$sql  = "SELECT t.localtax2";
+						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$mysoc->country_code."'";
+						$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+
+						$resql=$db->query($sql);
+						if ($resql)
+						{
+							$obj = $db->fetch_object($resql);
+							$localtax2_rate = $obj->localtax2;
+						}
+					}
+
+					if ($localtax1ligne != 0 || $localtax1_type == '7')
+						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
+					if ($localtax2ligne != 0 || $localtax2_type == '7')
+						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
 					$this->tva[$vatrate] += $tvaligne;
-
-					// Search local taxes
-					$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
-					$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-					$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$object->client->country_code."'";
-					$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
-
-					$resqlt=$this->db->query($sql);
-					if ($resqlt)
-					{
-						$objt = $this->db->fetch_object($resqlt);
-						$this->localtax1[$objt->localtax1_type][$objt->localtax1]+=$localtax1ligne;
-						$this->localtax2[$objt->localtax2_type][$objt->localtax2]+=$localtax2ligne;
-					}
 
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -990,6 +1022,7 @@ class pdf_crabe extends ModelePDFFactures
 						}
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
+						    // retrieve global local tax
 							if ($tvakey>0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
