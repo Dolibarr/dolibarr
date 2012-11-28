@@ -119,6 +119,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->tva=array();
 		$this->localtax1=array();
 		$this->localtax2=array();
+		$this->localtax1_type=array();
+		$this->localtax2_type=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -149,8 +151,6 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
-
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if ($conf->commande->dir_output)
 		{
@@ -186,7 +186,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 50;	// Height reserved to output the info and total part
+                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
+				$heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
@@ -372,7 +373,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
-
+						
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
 					if (! isset($this->localtax1[$localtax1rate])) 	$this->localtax1[$localtax1rate]='';
@@ -380,7 +381,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
-
+					
 					$nexY+=2;    // Passe espace entre les lignes
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -692,7 +693,7 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 			else
 			{
-				foreach($this->tva as $tvakey => $tvaval)
+							foreach($this->tva as $tvakey => $tvaval)
 				{
 					if ($tvakey > 0)    // On affiche pas taux 0
 					{

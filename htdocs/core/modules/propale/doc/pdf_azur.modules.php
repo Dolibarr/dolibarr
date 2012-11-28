@@ -149,8 +149,6 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
 		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -185,6 +183,7 @@ class pdf_azur extends ModelePDFPropales
 
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
+                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
