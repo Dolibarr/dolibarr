@@ -1518,48 +1518,55 @@ abstract class CommonObject
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
 
-                // Define vatrates with totals for each line and for all lines
-                // TODO $vatrates and $vatrates_alllines not used ?
-                if (! empty($this->vatrate))
+                // Check if global invoice tax for this vat rate
+                if (! empty($obj->vatrate))
                 {
-                	$vatrates[$this->vatrate][]=array(
-                			'total_ht'       =>$obj->total_ht,
-                			'total_tva'      =>$obj->total_tva,
-                			'total_ttc'      =>$obj->total_ttc,
-                			'total_localtax1'=>$obj->total_localtax1,
-                			'total_localtax2'=>$obj->total_localtax2
-                	);
-                	if (! isset($vatrates_alllines[$this->vatrate]['total_ht']))        $vatrates_alllines[$this->vatrate]['total_ht']=0;
-                	if (! isset($vatrates_alllines[$this->vatrate]['total_tva']))       $vatrates_alllines[$this->vatrate]['total_tva']=0;
-                	if (! isset($vatrates_alllines[$this->vatrate]['total_localtax1'])) $vatrates_alllines[$this->vatrate]['total_localtax1']=0;
-                	if (! isset($vatrates_alllines[$this->vatrate]['total_localtax2'])) $vatrates_alllines[$this->vatrate]['total_localtax2']=0;
-                	if (! isset($vatrates_alllines[$this->vatrate]['total_ttc']))       $vatrates_alllines[$this->vatrate]['total_ttc']=0;
-                	$vatrates_alllines[$this->vatrate]['total_ht']       +=$obj->total_ht;
-                	$vatrates_alllines[$this->vatrate]['total_tva']      +=$obj->total_tva;
-                	$vatrates_alllines[$this->vatrate]['total_localtax1']+=$obj->total_localtax1;
-                	$vatrates_alllines[$this->vatrate]['total_localtax2']+=$obj->total_localtax2;
-                	$vatrates_alllines[$this->vatrate]['total_ttc']      +=$obj->total_ttc;
+                    if ($this->total_localtax1 == 0)
+                    {
+						// Search local taxes
+						$sql  = "SELECT t.localtax1, t.localtax1_type";
+						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->client->country_code."'";
+						$sql .= " AND t.taux = ".$obj->vatrate." AND t.active = 1";
+
+						dol_syslog("get_localtax sql=".$sql);
+						$resqlt=$this->db->query($sql);
+						if ($resqlt)
+						{
+							$objt = $this->db->fetch_object($resqlt);
+       						if ($objt->localtax1_type == '7')
+							{
+                 				$this->total_localtax1 += $objt->localtax1;
+                 				$this->total_ttc       += $objt->localtax1;
+							}
+						}
+					}
+                    if ($this->total_localtax2 == 0)
+                    {
+						// Search local taxes
+						$sql  = "SELECT t.localtax2, t.localtax2_type";
+						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->client->country_code."'";
+						$sql .= " AND t.taux = ".$obj->vatrate." AND t.active = 1";
+
+						dol_syslog("get_localtax sql=".$sql);
+						$resqlt=$this->db->query($sql);
+						if ($resqlt)
+						{
+							$objt = $this->db->fetch_object($resqlt);
+       						if ($objt->localtax2_type == '7')
+							{
+                 				$this->total_localtax2 += $objt->localtax2;
+                 				$this->total_ttc       += $objt->localtax2;
+							}
+						}
+					}
                 }
 
                 $i++;
             }
 
             $this->db->free($resql);
-
-            // TODO
-            if ($roundingadjust)
-            {
-                // For each vatrate, calculate if two method of calculation differs
-
-
-                // If it differs
-                if (1==2)
-                {
-                    // Adjust a line and update it
-
-
-                }
-            }
 
             // Now update global field total_ht, total_ttc and tva
             $fieldht='total_ht';

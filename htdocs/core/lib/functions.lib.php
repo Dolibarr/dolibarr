@@ -2721,7 +2721,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax2";
+	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
@@ -2731,9 +2731,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local==1) return $obj->localtax1;
-		elseif ($local==2) return $obj->localtax2;
-		//else return array($obj->localtax1,$obj->localtax2);
+		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
+		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
 	}
 
 	return 0;
