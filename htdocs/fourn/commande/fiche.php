@@ -83,7 +83,6 @@ if ($id > 0 || ! empty($ref))
 {
 	$resObj = $object->fetch($id, $ref);
 	$resTP = $object->fetch_thirdparty();
-	print_r($object->thirdparty);
 	if ($resObj < 0) dol_print_error($db,$object->error);
 	if ($resTP < 0) dol_print_error($db,$object->error);
 } else if($socid) {
