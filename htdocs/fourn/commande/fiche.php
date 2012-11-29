@@ -174,36 +174,36 @@ else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 {
     $langs->load('errors');
-    $error = false;
+    $error = 0;
 
-    if ($_POST['pu'] < 0 && $_POST['qty'] < 0)
+    if (GETPOST('pu') < 0 && GETPOST('qty') < 0)
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-        $error = true;
+        $error++;
     }
-    if (empty($_POST['idprodfournprice']) && $_POST['type'] < 0)
+    if (! GETPOST('idprodfournprice') && GETPOST('type') < 0)
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-        $error = true;
+        $error++;
     }
-    if (empty($_POST['idprodfournprice']) && (! isset($_POST['pu']) || $_POST['pu']=='')) // Unit price can be 0 but not ''
+    if (! GETPOST('idprodfournprice') && (! GETPOST('pu') || GETPOST('pu')=='')) // Unit price can be 0 but not ''
     {
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
-        $error = true;
+        $error++;
     }
-    if (empty($_POST['idprodfournprice']) && empty($_POST['np_desc']) && empty($_POST['dp_desc']))
+    if (! GETPOST('idprodfournprice') && ! GETPOST('np_desc') && ! GETPOST('dp_desc'))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-        $error = true;
+        $error++;
     }
-    if (empty($_POST['idprodfournprice']) && (! isset($_POST['qty']) || $_POST['qty'] == '')
-    || ! empty($_POST['idprodfournprice']) && (! isset($_POST['pqty']) || $_POST['pqty'] == ''))
+    if (! GETPOST('idprodfournprice') && (! GETPOST('qty') || GETPOST('qty') == '')
+    || GETPOST('idprodfournprice') && (! GETPOST('pqty') || GETPOST('pqty') == ''))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-        $error = true;
+        $error++;
     }
 
-    if (! $error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
+    if (! $error && ((GETPOST('qty') || GETPOST('pqty')) && ((GETPOST('pu') && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprodfournprice'))))
     {
         if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
         if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
@@ -211,9 +211,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
         // Ecrase $pu par celui	du produit
         // Ecrase $desc	par	celui du produit
         // Ecrase $txtva  par celui du produit
-        if ($_POST["idprodfournprice"])	// >0 or -1
+        if (GETPOST('idprodfournprice'))	// >0 or -1
         {
-            $qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
+            $qty = GETPOST('qty') ? GETPOST('qty') : GETPOST('pqty');
 
             $productsupplier = new ProductFournisseur($db);
             $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);    // Just to see if a price exists for the quantity. Not used to found vat
@@ -230,9 +230,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
                 $desc.= $productsupplier->description && $_POST['np_desc'] ? "\n" : "";
                 $desc.= $_POST['np_desc'];
 
-                $remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
+                $remise_percent = GETPOST('remise_percent') ? GETPOST('remise_percent') : GETPOST('p_remise_percent');
 
-                $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
+                $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
                 $type = $productsupplier->type;
 
                 // Local Taxes
@@ -241,13 +241,13 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
                 $result=$object->addline(
                     $desc,
-                    $pu,
+                    $pu, // FIXME $pu is not defined
                     $qty,
                     $tva_tx,
                     $localtax1_tx,
                     $localtax2_tx,
                     $productsupplier->id,
-                    $_POST['idprodfournprice'],
+                    GETPOST('idprodfournprice'),
                     $productsupplier->fourn_ref,
                     $remise_percent,
                     'HT',
@@ -257,7 +257,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             if ($idprod == -1)
             {
                 // Quantity too low
-                $mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
+                setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
             }
         }
         else
@@ -272,7 +272,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
             if (! $_POST['dp_desc'])
             {
-                $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+            	setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
             }
             else
             {
@@ -1000,7 +1000,7 @@ if ($id > 0 || ! empty($ref))
             $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
             if ($ret == 'html') print '<br>';
         }
-		
+
 		// Clone confirmation
 		if ($action == 'clone')
 		{
@@ -1065,7 +1065,7 @@ if ($id > 0 || ! empty($ref))
             $ret=$form->form_confirm("fiche.php?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
             if ($ret == 'html') print '<br>';
         }
-		
+
         /*
          * Confirmation de l'annulation
          */
@@ -1491,7 +1491,7 @@ if ($id > 0 || ! empty($ref))
             print '</tr>';
 
             // TODO Use the predefinedproductline_create.tpl.php file
-            
+
             // Add free products/services form
             print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#add" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1505,7 +1505,7 @@ if ($id > 0 || ! empty($ref))
             		});
             	});
             </script>';
-                        
+
             $var=true;
             print '<tr '.$bc[$var].'>';
             print '<td>';
@@ -1684,7 +1684,7 @@ if ($id > 0 || ! empty($ref))
                         print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
                     }
                 }
-				
+
 				// Clone
 				if ($user->rights->fournisseur->commande->creer)
 				{
