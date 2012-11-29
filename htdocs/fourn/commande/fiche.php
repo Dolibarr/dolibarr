@@ -82,10 +82,15 @@ if ($id > 0 || ! empty($ref))
 	if ($ret < 0) dol_print_error($db,$object->error);
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error($db,$object->error);
-} else if($socid) {
-	$object->socid = $socid;
-	$resTP = $object->fetch_thirdparty();
-	if ($resTP < 0) dol_print_error($db,$object->error);
+}
+else if (! empty($socid))
+{
+	$fourn = new Fournisseur($db);
+	$ret=$fourn->fetch($socid);
+	if ($ret < 0) dol_print_error($db,$object->error);
+	$object->socid = $fourn->id;
+	$ret = $object->fetch_thirdparty();
+	if ($ret < 0) dol_print_error($db,$object->error);
 }
 
 /*
@@ -652,19 +657,14 @@ else if ($action == 'remove_file' && $object->id > 0 && $user->rights->fournisse
 /*
  * Create an order
  */
-else if ($action == 'create' && $user->rights->fournisseur->commande->creer)
+else if ($action == 'create' && ! empty($object->socid) && $user->rights->fournisseur->commande->creer)
 {
     $error=0;
 
-    $fourn = new Fournisseur($db);
-    $result=$fourn->fetch($socid);
-
-    $object->socid = $fourn->id;
-
     $db->begin();
 
-    $orderid=$object->create($user);
-    if (! $orderid > 0)
+    $id=$object->create($user);
+    if (! $id > 0)
     {
         $error++;
         setEventMessage($object->error, 'errors');
@@ -674,10 +674,9 @@ else if ($action == 'create' && $user->rights->fournisseur->commande->creer)
     {
         if ($comclientid !=	'')
         {
-    		$object->updateFromCommandeClient($user, $orderid, $comclientid);
+    		$object->updateFromCommandeClient($user, $id, $comclientid);
         }
 
-        $id=$orderid;
 		$ret=$object->fetch($id);    // Reload to get new records
 
         $db->commit();
