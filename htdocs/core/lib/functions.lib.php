@@ -2703,9 +2703,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain, localtaxes are qualified if both supplier and seller use local taxe
 	{
-		if ($local == 1 && (! $thirdparty_seller->localtax1_assuj || ! $thirdparty_buyer->localtax1_assuj)) return 0;
-		if ($local == 2 && (! $thirdparty_seller->localtax2_assuj || ! $thirdparty_buyer->localtax2_assuj)) return 0;
-	
+		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
 	}
 	else 
 	{
@@ -2722,7 +2721,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax2";
+	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
@@ -2732,9 +2731,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local==1) return $obj->localtax1;
-		elseif ($local==2) return $obj->localtax2;
-		//else return array($obj->localtax1,$obj->localtax2);
+		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
+		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
 	}
 
 	return 0;
@@ -2995,18 +2993,27 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
+	global $mysoc;
+	
 	if (!is_object($thirdparty_seller)) return -1;
 	if (!is_object($thirdparty_buyer)) return -1;
 
-	if ($local==1) //RE
+	if ($local==1) // Localtax 1
 	{
-		// Si vendeur non assujeti a RE, localtax1 par default=0
-		if (is_numeric($thirdparty_seller->localtax1_assuj) && ! $thirdparty_seller->localtax1_assuj) return 0;
-		if (! is_numeric($thirdparty_seller->localtax1_assuj) && $thirdparty_seller->localtax1_assuj=='localtax1off') return 0;
+		if ($mysoc->country_code == 'ES')
+		{
+			if (is_numeric($thirdparty_buyer->localtax1_assuj) && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		}
+		else 
+		{
+			// Si vendeur non assujeti a Localtax1, localtax1 par default=0
+			if (is_numeric($thirdparty_seller->localtax1_assuj) && ! $thirdparty_seller->localtax1_assuj) return 0;
+			if (! is_numeric($thirdparty_seller->localtax1_assuj) && $thirdparty_seller->localtax1_assuj=='localtax1off') return 0;
+		}
 	}
-	elseif ($local==2) //IRPF
+	elseif ($local==2) //I Localtax 2
 	{
-		// Si vendeur non assujeti a IRPF, localtax2 par default=0
+		// Si vendeur non assujeti a Localtax2, localtax2 par default=0
 		if (is_numeric($thirdparty_seller->localtax2_assuj) && ! $thirdparty_seller->localtax2_assuj) return 0;
 		if (! is_numeric($thirdparty_seller->localtax2_assuj) && $thirdparty_seller->localtax2_assuj=='localtax2off') return 0;
 	}

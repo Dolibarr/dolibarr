@@ -340,6 +340,7 @@ if ($action == 'create')
 	$langs->load("bills");
 	print '<center>';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
+	print '&nbsp;<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</center>';
 
 	print "</form>";

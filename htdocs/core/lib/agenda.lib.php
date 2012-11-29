@@ -93,7 +93,10 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '<td nowrap="nowrap">';
 				print $langs->trans("Type");
 				print ' &nbsp;</td><td nowrap="nowrap">';
-				print $formactions->select_type_actions(GETPOST('actioncode'), "actioncode");
+
+				// print $formactions->select_type_actions(GETPOST('actioncode'), "actioncode");
+				print $formactions->select_type_actions(GETPOST('actioncode')?GETPOST('actioncode'):'manual', "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+
 				print '</td></tr>';
 			}
 
