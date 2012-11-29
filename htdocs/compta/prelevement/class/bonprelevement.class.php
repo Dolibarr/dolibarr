@@ -1628,20 +1628,20 @@ class BonPrelevement extends CommonObject
         {
             if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0').' '.$langs->trans($this->labelstatut[$statut]);
             if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
-            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut4').' '.$langs->trans($this->labelstatut[$statut]);
+            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6').' '.$langs->trans($this->labelstatut[$statut]);
         }
         if ($mode == 2)
         {
             if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
             if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut4');
+            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
 
         if ($mode == 3)
         {
             if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
             if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-            if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut4');
+            if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
     }
 

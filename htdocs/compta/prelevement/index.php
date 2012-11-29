@@ -93,10 +93,10 @@ print '</td><td valign="top" width="70%">';
  * Withdraw receipts
  */
 $limit=5;
-$sql = "SELECT p.rowid, p.ref, p.amount, p.datec";
-$sql .= " ,p.statut ";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql .= " ORDER BY datec DESC LIMIT ".$limit;
+$sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql.= " ORDER BY datec DESC";
+$sql.= $db->plimit($limit);
 
 $result = $db->query($sql);
 if ($result)
@@ -110,6 +110,7 @@ if ($result)
     print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipt",$limit).'</td>';
     print '<td>'.$langs->trans("Date").'</td>';
     print '<td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td align="right">'.$langs->trans("Status").'</td>';
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -117,13 +118,17 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr ".$bc[$var]."><td>";
+        print "<tr ".$bc[$var].">";
 
-        print '<a href="fiche.php?id='.$obj->rowid.'">';
-        print img_picto('', 'statut'.$obj->statut).' ';
-        print $obj->ref."</a></td>\n";
+        print "<td>";
+        $bprev->id=$obj->rowid;
+        $bprev->ref=$obj->ref;
+        $bprev->statut=$obj->statut;
+        print $bprev->getNomUrl(1);
+        print "</td>\n";
         print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
         print '<td align="right">'.price($obj->amount)."</td>\n";
+        print '<td align="right">'.$bprev->getLibStatut(3)."</td>\n";
 
         print "</tr>\n";
         $i++;
