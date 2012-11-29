@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
@@ -117,14 +117,12 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
 
-        print "<tr $bc[$var]><td>";
+        print "<tr ".$bc[$var]."><td>";
 
-        print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
-
-        print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
-
+        print '<a href="fiche.php?id='.$obj->rowid.'">';
+        print img_picto('', 'statut'.$obj->statut).' ';
+        print $obj->ref."</a></td>\n";
         print '<td>'.dol_print_date($db->jdate($obj->datec),"dayhour")."</td>\n";
-
         print '<td align="right">'.price($obj->amount)."</td>\n";
 
         print "</tr>\n";
