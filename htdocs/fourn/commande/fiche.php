@@ -81,8 +81,14 @@ $object = new CommandeFournisseur($db);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$object->fetch($id, $ref);
-	$object->fetch_thirdparty();
+	$resObj = $object->fetch($id, $ref);
+	$resTP = $object->fetch_thirdparty();
+	if ($resObj < 0) dol_print_error($db,$object->error);
+	if ($resTP < 0) dol_print_error($db,$object->error);
+} else if($socid) {
+	$object->socid = $socid;
+	$resTP = $object->fetch_thirdparty();
+	if ($resTP < 0) dol_print_error($db,$object->error);
 }
 
 /*
@@ -111,7 +117,6 @@ if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->cree
 {
 	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
 
-	$object->fetch($id);
 	$result=$object->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
@@ -132,21 +137,18 @@ else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->
 
 else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
-	$object->fetch($id);
 	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
 {
-	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
-    $result = $object->fetch($id);
     if (in_array($object->statut, array(1, 5, 6, 7, 9)))
     {
         if ($object->statut == 1) $newstatus=0;	// Validated->Draft
@@ -205,9 +207,6 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
     if (! $error && ((GETPOST('qty') || GETPOST('pqty')) && ((GETPOST('pu') && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprodfournprice'))))
     {
-        if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
-        if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
-
         // Ecrase $pu par celui	du produit
         // Ecrase $desc	par	celui du produit
         // Ecrase $txtva  par celui du produit
@@ -339,9 +338,6 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
         if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
     }
 
-    if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
-    if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
-
     $localtax1_tx=get_localtax($_POST['tva_tx'],1,$object->thirdparty);
     $localtax2_tx=get_localtax($_POST['tva_tx'],2,$object->thirdparty);
 
@@ -413,8 +409,6 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
 
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->commande->valider)
 {
-    $object->fetch_thirdparty();
-
     $object->date_commande=dol_now();
     $result = $object->valid($user);
     if ($result	>= 0)
@@ -446,8 +440,6 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
 else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
     $idwarehouse=GETPOST('idwarehouse', 'int');
-
-    $object->fetch_thirdparty();
 
     // Check parameters
     if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
@@ -506,7 +498,6 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->commande->supprimer)
 {
-    $object->fetch_thirdparty();
     $result=$object->delete($user);
     if ($result > 0)
     {
@@ -624,7 +615,6 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     // Build document
 
     // Sauvegarde le dernier module	choisi pour	generer	un document
-    $object->fetch_thirdparty();
 
     if ($_REQUEST['model'])
     {
@@ -655,10 +645,8 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    if ($object->fetch($id))
+    if ($resObj)
     {
-    	$object->fetch_thirdparty();
-
         $langs->load("other");
         $upload_dir =	$conf->fournisseur->commande->dir_output;
         $file =	$upload_dir	. '/' .	GETPOST('file');
@@ -697,6 +685,7 @@ else if ($action == 'create' && $user->rights->fournisseur->commande->creer)
         }
 
         $id=$orderid;
+		$ret=$object->fetch($id);    // Reload to get new records
 
         $db->commit();
     }
@@ -744,10 +733,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 {
     $langs->load('mails');
 
-    $result=$object->fetch($_POST['orderid']);
-    $result=$object->fetch_thirdparty();
-
-    if ($result > 0)
+    if ($resObj)
     {
 //        $ref = dol_sanitizeFileName($object->ref);
 //        $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -896,12 +882,10 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 {
 	if ($action == 'addcontact')
 	{
-		$result = $object->fetch($id);
-
-		if ($result > 0 && $id > 0)
+		if ($resObj)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+			$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
 
 		if ($result >= 0)
@@ -926,7 +910,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut')
 	{
-		if ($object->fetch($id))
+		if ($resObj)
 		{
 			$result=$object->swapContactStatus(GETPOST('ligne'));
 		}
@@ -939,7 +923,6 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 	// Efface un contact
 	else if ($action == 'deletecontact')
 	{
-		$object->fetch($id);
 		$result = $object->delete_contact($_GET["lineid"]);
 
 		if ($result >= 0)
@@ -977,13 +960,8 @@ $now=dol_now();
 if ($id > 0 || ! empty($ref))
 {
     //if ($mesg) print $mesg.'<br>';
-
-    $result=$object->fetch($id,$ref);
     if ($result >= 0)
     {
-        $soc = new Societe($db);
-        $soc->fetch($object->socid);
-
         $author	= new User($db);
         $author->fetch($object->user_author_id);
 
@@ -1021,7 +999,7 @@ if ($id > 0 || ! empty($ref))
             $object->date_commande=dol_now();
 
             // We check if number is temporary number
-            if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($soc);
+            if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($object->thirdparty);
             else $newref = $object->ref;
 
             $text=$langs->trans('ConfirmValidateOrder',$newref);
@@ -1127,7 +1105,7 @@ if ($id > 0 || ! empty($ref))
 
         // Fournisseur
         print '<tr><td>'.$langs->trans("Supplier")."</td>";
-        print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+        print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
         print '</tr>';
 
         // Statut
@@ -1458,7 +1436,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td>';
-                print $form->load_tva('tva_tx',$line->tva_tx,$soc,$mysoc);
+                print $form->load_tva('tva_tx',$line->tva_tx,$object->thirdparty,$mysoc);
                 print '</td>';
                 print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
                 print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
@@ -1528,11 +1506,11 @@ if ($id > 0 || ! empty($ref))
 
             print '</td>';
             print '<td align="center">';
-            print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$soc,$mysoc);
+            print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$object->thirdparty,$mysoc);
             print '</td>';
             print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
             print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-            print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$soc->remise_client).'">%</td>';
+            print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'">%</td>';
             print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
             print '</tr>';
 
@@ -1589,7 +1567,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-                print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$soc->remise_client).'">%</td>';
+                print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'">%</td>';
                 print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
                 print '</tr>';
 
@@ -1716,7 +1694,7 @@ if ($id > 0 || ! empty($ref))
             $genallowed=$user->rights->fournisseur->commande->creer;
             $delallowed=$user->rights->fournisseur->commande->supprimer;
 
-            print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$soc->default_lang);
+            print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
             $somethingshown=$formfile->numoffiles;
 
             $object=$object;
@@ -1847,7 +1825,7 @@ if ($id > 0 || ! empty($ref))
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
             $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$soc->id;
+            $formmail->withtosocid=$object->thirdparty->id;
             $formmail->withtocc=1;
             $formmail->withtoccsocid=0;
             $formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
