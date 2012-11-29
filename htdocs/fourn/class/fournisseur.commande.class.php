@@ -953,7 +953,7 @@ class CommandeFournisseur extends CommonOrder
         if ($this->db->query($sql))
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
-			
+
 			if ($this->id) {
 				$num=count($this->lines);
 
@@ -994,7 +994,7 @@ class CommandeFournisseur extends CommonOrder
 	            {
 	                // On logue creation pour historique
 	                $this->log($user, 0, time());
-	
+
 	                if (! $notrigger)
 	                {
 	                    // Appel des triggers
@@ -1004,7 +1004,7 @@ class CommandeFournisseur extends CommonOrder
 	                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	                    // Fin appel triggers
 	                }
-	
+
 	                $this->db->commit();
 	                return $this->id;
 	            }
@@ -1170,7 +1170,7 @@ class CommandeFournisseur extends CommonOrder
                         $this->error="No price found for this quantity. Quantity may be too low ?";
                         $this->db->rollback();
                         dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
-                        return -1;
+                        return -1; // FIXME this return create an error in jenkins
                     }
                     if ($result < -1)
                     {
