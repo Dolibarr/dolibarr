@@ -80,6 +80,8 @@ class FileUpload
 		elseif ($element == 'invoice_supplier') {
 			$pathname = 'fourn'; $filename='fournisseur.facture';
 			$dir_output=$conf->fournisseur->facture->dir_output;
+		} elseif ($element == 'product') {
+			$dir_output = $conf->product->multidir_output[$conf->entity];
 		} else {
 			$dir_output=$conf->$element->dir_output;
 		}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -51,6 +51,12 @@ $db_user=GETPOST('db_user','alpha');
 $db_pass=GETPOST('db_pass');
 $db_port=GETPOST('db_port','int');
 $db_prefix=GETPOST('db_prefix','alpha');
+
+session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
+
+// Save a flag to tell to restore input value if we do back
+$_SESSION['dol_save_pass']=$db_pass;
+//$_SESSION['dol_save_passroot']=$passroot;
 
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
@@ -244,24 +250,24 @@ if (! $error && $db->connected)
     }
 }
 
-// Define $defaultCharacterSet and $defaultCollationConnection
+// Define $defaultCharacterSet and $defaultDBSortingCollation
 if (! $error && $db->connected)
 {
     if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
     {
     	$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
-    	$defaultCollationConnection=getStaticMember(get_class($db),'forcecollate');
+    	$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
     }
     else	// If already created, we take current value
     {
         $defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
-        $defaultCollationConnection=$db->getDefaultCollationDatabase();
+        $defaultDBSortingCollation=$db->getDefaultCollationDatabase();
     }
 
     print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
-    print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultCollationConnection.'">';
+    print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultDBSortingCollation.'">';
     $db_character_set=$defaultCharacterSet;
-    $db_collation=$defaultCollationConnection;
+    $db_collation=$defaultDBSortingCollation;
 }
 
 

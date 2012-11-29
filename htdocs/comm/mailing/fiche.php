@@ -337,16 +337,30 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 					$i++;
 				}
 			}
+			else
+			{
+				setEventMessage($langs->transnoentitiesnoconv("NoMoreRecipientToSendTo"));
+			}
 
 			// Loop finished, set global statut of mail
 			if ($nbko > 0)
 			{
 				$statut=2;	// Status 'sent partially' (because at least one error)
+				if ($nbok > 0) 	setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
+				else setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
 			}
 			else
 			{
-				if ($nbok >= $num) $statut=3;	// Send to everybody
-				else $statut=2;	// Status 'sent partially' (because not send to everybody)
+				if ($nbok >= $num)
+				{
+					$statut=3;	// Send to everybody
+					setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
+				}
+				else
+				{
+					$statut=2;	// Status 'sent partially' (because not send to everybody)
+					setEventMessage($langs->transnoentitiesnoconv("EMailSentToNRecipients",$nbok));
+				}
 			}
 
 			$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$object->id;
@@ -388,8 +402,8 @@ if ($action == 'send' && empty($_POST["cancel"]))
 		if (preg_match('/[\s\t]*<html>/i',$object->body)) $msgishtml=1;
 
 		// Pratique les substitutions sur le sujet et message
-		$object->sujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
-		$object->body=make_substitutions($object->body,$object->substitutionarrayfortest);
+		$tmpsujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
+		$tmpbody=make_substitutions($object->body,$object->substitutionarrayfortest);
 
 		$arr_file = array();
 		$arr_mime = array();
@@ -412,7 +426,7 @@ if ($action == 'send' && empty($_POST["cancel"]))
 			}
 		}
 
-		$mailfile = new CMailFile($object->sujet,$object->sendto,$object->email_from,$object->body, $arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$object->email_errorsto,$arr_css);
+		$mailfile = new CMailFile($tmpsujet,$object->sendto,$object->email_from,$tmpbody, $arr_file,$arr_mime,$arr_name,'', '', 0, $msgishtml,$object->email_errorsto,$arr_css);
 
 		$result=$mailfile->sendfile();
 		if ($result)
@@ -1147,7 +1161,6 @@ else
 		dol_print_error($db,$object->error);
 	}
 }
-
 
 llxFooter();
 $db->close();

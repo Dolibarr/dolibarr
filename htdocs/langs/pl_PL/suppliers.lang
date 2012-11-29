@@ -16,7 +16,6 @@ Supplier=Dostawca
 AddSupplier=Dodaj dostawcy
 SupplierRemoved=Dostawca usunięte
 SuppliersInvoice=Dostawcy faktury
-SuppliersInvoices=Dostawcy faktur
 NewSupplier=Nowy dostawca
 History=Historia
 ListOfSuppliers=Lista dostawców

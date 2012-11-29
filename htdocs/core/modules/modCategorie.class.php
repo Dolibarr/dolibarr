@@ -140,7 +140,8 @@ class modCategorie extends DolibarrModules
         $this->export_enabled[$r]='$conf->produit->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("produit","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
-		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.rowid'=>'List:Product:label','p.ref'=>'Text');
+		//$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.rowid'=>'List:Product:label','p.ref'=>'Text');
+		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.ref'=>'Text');
 		$this->export_entities_array[$r]=array('p.rowid'=>'product','p.ref'=>'product');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
@@ -178,7 +179,7 @@ class modCategorie extends DolibarrModules
 
 		$this->import_regex_array[$r]=array('ca.type'=>'^[0|1|2|3]');
 		$this->import_examplevalues_array[$r]=array('ca.label'=>"Supplier Category",'ca.type'=>"1",'ca.description'=>"Imported category");
-		
+
 		if (! empty($conf->product->enabled))
 		{
 			//Products
@@ -190,14 +191,14 @@ class modCategorie extends DolibarrModules
 			$this->import_tables_array[$r]=array('cp'=>MAIN_DB_PREFIX.'categorie_product');
 			$this->import_fields_array[$r]=array('cp.fk_categorie'=>"Category*",'cp.fk_product'=>"Product*"
 			);
-			
+
 			$this->import_convertvalue_array[$r]=array(
 					'cp.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
 					'cp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'product')
 			);
 			$this->import_examplevalues_array[$r]=array('cp.fk_categorie'=>"Imported category",'cp.fk_product'=>"PREF123456");
 		}
-		
+
 		if (! empty($conf->societe->enabled))
 		{
 			//Customers
@@ -209,14 +210,14 @@ class modCategorie extends DolibarrModules
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
 			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_societe'=>"ThirdParty*"
 			);
-			
+
 			$this->import_convertvalue_array[$r]=array(
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
 					'cs.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')
 			);
 			$this->import_examplevalues_array[$r]=array('cs.fk_categorie'=>"Imported category",'cs.fk_societe'=>"MyBigCompany");
 		}
-		
+
 		if (! empty($conf->fournisseur->enabled))
 		{
 			// Suppliers
@@ -228,7 +229,7 @@ class modCategorie extends DolibarrModules
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');
 			$this->import_fields_array[$r]=array('cs.fk_categorie'=>"Category*",'cs.fk_societe'=>"Supplier*"
 			);
-			
+
 			$this->import_convertvalue_array[$r]=array(
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref','classfile'=>'/categories/class/categorie.class.php','class'=>'Categorie','method'=>'fetch','element'=>'category'),
 					'cs.fk_societe'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty')

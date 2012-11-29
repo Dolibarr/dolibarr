@@ -196,8 +196,7 @@ if ($id > 0)
 
 
 		// List of document
-		$param='&socid='.$societe->id;
-		$formfile->list_of_documents($filearray,$member,'member',$param, 0, get_exdir($member->id,2,0,1).'/'.$member->id.'/');
+		$formfile->list_of_documents($filearray,$member,'member','', 0, get_exdir($member->id,2,0,1).'/'.$member->id.'/');
 
 		print "<br><br>";
 	}

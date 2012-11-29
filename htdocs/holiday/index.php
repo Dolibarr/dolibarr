@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
+/* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 require('../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
@@ -56,6 +57,7 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
+$holiday = new Holiday($db);
 
 /*
  * Actions
@@ -71,6 +73,7 @@ $search_statut   = GETPOST('select_statut');
 
 $max_year = 5;
 $min_year = 10;
+$filter='';
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
@@ -145,12 +148,10 @@ $user_id = $user->id;
 // Récupération des congés payés de l'utilisateur ou de tous les users
 if(!$user->rights->holiday->lire_tous)
 {
-    $holiday = new Holiday($db);
     $holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);
 }
 else
 {
-    $holiday = new Holiday($db);
     $holiday_payes = $holiday->fetchAll($order,$filter);
 }
 
@@ -185,7 +186,7 @@ if($holiday_payes == '-1')
 $var=true; $num = count($holiday->holiday);
 $html = new Form($db);
 $htmlother = new FormOther($db);
-print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,$nbtotalofrecords);
+print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num);
 
 print '<div class="tabBar">';
 
@@ -280,21 +281,20 @@ if (! empty($holiday->holiday))
 		$validator = new User($db);
 		$validator->fetch($infos_CP['fk_validator']);
 
-		$date = date_create($infos_CP['date_create']);
-		$date = date_format($date,'Y-m-d');
+		$date = $infos_CP['date_create'];
 
 		$statut = $holiday->getStatutCP($infos_CP['statut']);
 
 		print '<tr '.$bc[$var].'>';
 		print '<td><a href="./fiche.php?id='.$infos_CP['rowid'].'">CP '.$infos_CP['rowid'].'</a></td>';
-		print '<td style="text-align: center;">'.$date.'</td>';
+		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$user->getNomUrl('1').'</td>';
 		print '<td>'.$validator->getNomUrl('1').'</td>';
 		print '<td style="text-align: center;">'.$infos_CP['date_debut'].'</td>';
 		print '<td style="text-align: center;">'.$infos_CP['date_fin'].'</td>';
 		print '<td>';
 		$nbopenedday=num_open_day($infos_CP['date_debut'],$infos_CP['date_fin'],0,1);
-		print $nbopenedday.' '.$langs->trans('Jours');
+		print $nbopenedday;
 		print '<td align="center"><a href="./fiche.php?id='.$infos_CP['rowid'].'">'.$statut.'</a></td>';
 		print '</tr>'."\n";
 

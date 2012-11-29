@@ -47,7 +47,6 @@ InvoiceCustomer=Facture client
 CustomerInvoice=Facture client
 CustomersInvoices=Factures clients
 SupplierInvoice=Facture fournisseur
-SuppliersInvoices=Factures fournisseurs
 SupplierBill=Facture fournisseur
 SupplierBills=Factures fournisseurs
 Payment=Règlement

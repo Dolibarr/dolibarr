@@ -87,7 +87,6 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$conf,$langs;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$object->fetch_thirdparty();
 
@@ -133,7 +132,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 0;	// Height reserved to output the info and total part
+				$default_font_size = pdf_getPDFFontSize($outputlangs);
+				$heightforinfotot = 0;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
@@ -261,6 +261,15 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 					$pdf->SetXY($this->posxqtytoship, $curY);
 					$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
+
+					// Add line
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					{
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
+						//$pdf->SetDrawColor(190,190,200);
+						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
+						$pdf->SetLineStyle(array('dash'=>0));
+					}
 
 					$nexY+=2;    // Passe espace entre les lignes
 

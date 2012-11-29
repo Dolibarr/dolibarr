@@ -51,6 +51,7 @@ class ActionComm extends CommonObject
 
     var $datep;			// Date action start (datep)
     var $datef;			// Date action end (datep2)
+    var $dateend;		// ??
     var $durationp = -1;      // -1=Unkown duration
     var $fulldayevent = 0;    // 1=Event on full day
     var $punctual = 1;        // Milestone
@@ -476,11 +477,13 @@ class ActionComm extends CommonObject
      * 	 @param		int		$fk_element		Id of element action is linked to
      *   @param		string	$elementtype	Type of element action is linked to
      *   @param		string	$filter			Other filter
-     *   @return	int						<0 if KO, >0 if OK
+     *   @return	array					<0 if KO, array with actions
      */
-    function getActions($socid=0, $fk_element=0, $elementtype='', $filter='')
+    static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='')
     {
         global $conf, $langs;
+
+        $resarray=array();
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -494,27 +497,27 @@ class ActionComm extends CommonObject
         if (! empty($filter)) $sql.= $filter;
 
         dol_syslog(get_class($this)."::getActions sql=".$sql);
-        $resql=$this->db->query($sql);
+        $resql=$db->query($sql);
         if ($resql)
         {
-            $num = $this->db->num_rows($resql);
+            $num = $db->num_rows($resql);
 
             if ($num)
             {
                 for($i=0;$i<$num;$i++)
                 {
-                    $obj = $this->db->fetch_object($resql);
-                    $actioncommstatic = new ActionComm($this->db);
+                    $obj = $db->fetch_object($resql);
+                    $actioncommstatic = new ActionComm($db);
                     $actioncommstatic->fetch($obj->id);
-                    $this->actions[$i] = $actioncommstatic;
+                    $resarray[$i] = $actioncommstatic;
                 }
             }
-            $this->db->free($resql);
-            return 1;
+            $db->free($resql);
+            return $resarray;
         }
         else
         {
-            $this->error=$this->db->lasterror();
+            $this->error=$db->lasterror();
             return -1;
         }
     }
@@ -706,26 +709,34 @@ class ActionComm extends CommonObject
         if ($option=='birthday') $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
         else $lien = '<a '.($classname?'class="'.$classname.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
         $lienfin='</a>';
-        //print $this->libelle;
+        $label=$this->label;
+        if (empty($label)) $label=$this->libelle;	// Fro backward compatibility
+        //print 'rrr'.$this->libelle;
+
         if ($withpicto == 2)
         {
-            $libelle=$langs->trans("Action".$this->type_code);
+            $libelle=$label;
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->trans("Action".$this->type_code);
             $libelleshort='';
         }
         else if (empty($this->libelle))
         {
-            $libelle=$langs->trans("Action".$this->type_code);
-            $libelleshort=$langs->trans("Action".$this->type_code,'','','','',$maxlength);
+            $libelle=$label;
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle=$langs->trans("Action".$this->type_code);
+        	$libelleshort=dol_trunc($label, $maxlength);
         }
         else
-        {
-            $libelle=$this->libelle;
-            $libelleshort=dol_trunc($this->libelle,$maxlength);
+       {
+            $libelle=$label;
+            $libelleshort=dol_trunc($label,$maxlength);
         }
 
         if ($withpicto)
         {
-            $libelle.=(($this->type_code && $libelle!=$langs->trans("Action".$this->type_code) && $langs->trans("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->trans("Action".$this->type_code).')':'');
+        	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+        	{
+        		 $libelle.=(($this->type_code && $libelle!=$langs->trans("Action".$this->type_code) && $langs->trans("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->trans("Action".$this->type_code).')':'');
+        	}
             $result.=$lien.img_object($langs->trans("ShowAction").': '.$libelle,($overwritepicto?$overwritepicto:'action')).$lienfin;
         }
         if ($withpicto==1) $result.=' ';

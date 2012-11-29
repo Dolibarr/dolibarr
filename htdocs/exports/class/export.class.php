@@ -201,9 +201,10 @@ class Export
 	 *
 	 *      @param      int		$indice				Indice of export
 	 *      @param      array	$array_selected     Filter on array of fields to export
+	 *      @param      array	$array_filterValue  Filter on array of fields to export
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
-	function build_sql($indice, $array_selected, $array_filterValue, $array_filtered)
+	function build_sql($indice, $array_selected, $array_filterValue)
 	{
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
@@ -223,16 +224,13 @@ class Export
 		$sql.=$this->array_export_sql_end[$indice];
 
 		//construction du filtrage si le parametrage existe
-		if (is_array($array_filtered))
+		if (is_array($array_filterValue))
 		{
 			$sqlWhere='';
 			// pour ne pas a gerer le nombre de condition
-			foreach ($array_filtered as $key => $value)
+			foreach ($array_filterValue as $key => $value)
 			{
-				if ($array_filterValue[$key])
-				{
-					$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
-				}
+				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
@@ -255,18 +253,18 @@ class Export
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
-				if (strpos($ValueField, "%") > 0)
-					$szFilterQuery=" ".$NameField." like '".$ValueField."'";
+				if (! (strpos($ValueField, '%') === false))
+					$szFilterQuery.=" ".$NameField." LIKE '".$ValueField."'";
 				else
-					$szFilterQuery=" ".$NameField."='".$ValueField."'";
+					$szFilterQuery.=" ".$NameField."='".$ValueField."'";
 				break;
 			case 'Date':
 				if (strpos($ValueField, "+") > 0)
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery= $this->conditionDate($NameField,$ValueArray[0],">=");
-					$szFilterQuery.=" and ".$this->conditionDate($NameField,$ValueArray[1],"<=");
+					$szFilterQuery ="(".$this->conditionDate($NameField,$ValueArray[0],">=");
+					$szFilterQuery.=" AND ".$this->conditionDate($NameField,$ValueArray[1],"<=").")";
 				}
 				else
 				{
@@ -284,8 +282,8 @@ class Export
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery=$NameField.">=".$ValueArray[0];
-					$szFilterQuery.=" and ".$NameField."<=".$ValueArray[1];
+					$szFilterQuery ="(".$NameField.">=".$ValueArray[0];
+					$szFilterQuery.=" AND ".$NameField."<=".$ValueArray[1].")";
 				}
 				else
 				{
@@ -295,8 +293,10 @@ class Export
 						$szFilterQuery=" ".$NameField.substr($ValueField,0,1).substr($ValueField,1);
 				}
 				break;
-			case 'Status':
 			case 'Boolean':
+				$szFilterQuery=" ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField =='yes' ? 1: 0) );
+				break;
+			case 'Status':
 			case 'List':
 				if (is_numeric($ValueField))
 					$szFilterQuery=" ".$NameField."=".$ValueField;
@@ -309,14 +309,16 @@ class Export
 	}
 
 	/**
+	 *	conditionDate
 	 *
-	 * @param unknown $Field
-	 * @param unknown $Value
-	 * @param unknown $Sens
-	 * @return string
+	 *  @param 	string	$Field		Field operand 1
+	 *  @param 	string	$Value		Value operand 2
+	 *  @param 	string	$Sens		Comparison operator
+	 *  @return string
 	 */
 	function conditionDate($Field, $Value, $Sens)
 	{
+		// FIXME date_format is forbidden, not performant and no portable. Use instead BETWEEN
 		if (strlen($Value)==4) $Condition=" date_format(".$Field.",'%Y') ".$Sens." ".$Value;
 		elseif (strlen($Value)==6) $Condition=" date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
 		else  $Condition=" date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
@@ -335,27 +337,29 @@ class Export
 	{
 		$szFilterField='';
 		$InfoFieldList = explode(":", $TypeField);
+
 		// build the input field on depend of the type of file
-		switch ($InfoFieldList[0]) {
+		switch ($InfoFieldList[0])
+		{
 			case 'Text':
 			case 'Date':
 			case 'Duree':
 			case 'Numeric':
-				$szFilterField="<input type=Text name=".$NameField." value='".$ValueField."'>";
+				$szFilterField='<input type="text" name='.$NameField." value='".$ValueField."'>";
 				break;
 			case 'Boolean':
-				$szFilterField="<select name=".$NameField.">";
+				$szFilterField='<select name="'.$NameField.'" class="flat">';
 				$szFilterField.='<option ';
 				if ($ValueField=='') $szFilterField.=' selected ';
-				$szFilterField.=' value="">Sans</option>';
+				$szFilterField.=' value="">&nbsp;</option>';
 
 				$szFilterField.='<option ';
-				if ($ValueField=='1') $szFilterField.=' selected ';
-				$szFilterField.=' value="1">Oui</option>';
+				if ($ValueField=='yes') $szFilterField.=' selected ';
+				$szFilterField.=' value="yes">'.yn(1).'</option>';
 
 				$szFilterField.='<option ';
-				if ($ValueField=='0') $szFilterField.=' selected ';
-				$szFilterField.=' value="0">Non</option>';
+				if ($ValueField=='no') $szFilterField.=' selected ';
+				$szFilterField.=' value="no">'.yn(0).'</option>';
 				$szFilterField.="</select>";
 				break;
 			case 'List':
@@ -383,6 +387,13 @@ class Export
 						while ($i < $num)
 						{
 							$obj = $this->db->fetch_object($resql);
+							if ($obj->$InfoFieldList[2] == '-')
+							{
+								// Discard entry '-'
+								$i++;
+								continue;
+							}
+
 							$labeltoshow=dol_trunc($obj->$InfoFieldList[2],18);
 							if (!empty($ValueField) && $ValueField == $obj->rowid)
 							{
@@ -396,6 +407,8 @@ class Export
 						}
 					}
 					$szFilterField.="</select>";
+
+					$this->db->free();
 				}
 				break;
 		}
@@ -450,10 +463,11 @@ class Export
 	 *      @param      string		$model              Export format
 	 *      @param      string		$datatoexport       Name of dataset to export
 	 *      @param      array		$array_selected     Filter on array of fields to export
+	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
 	 *      @param		string		$sqlquery			If set, transmit a sql query instead of building it from arrays
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
-	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $array_filtered, $sqlquery = '')
+	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
  	{
 		global $conf,$langs;
 
@@ -477,7 +491,7 @@ class Export
 		$objmodel = new $classname($this->db);
 
 		if (! empty($sqlquery)) $sql = $sqlquery;
-        else $sql=$this->build_sql($indice, $array_selected, $array_filterValue, $array_filtered);
+        else $sql=$this->build_sql($indice, $array_selected, $array_filterValue);
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
@@ -708,7 +722,10 @@ class Export
 	}
 
 	/**
+	 *	Output list all export models
+	 *  TODO Move this into a class htmlxxx.class.php
 	 *
+	 *	@return	void
 	 */
 	function list_export_model()
 	{

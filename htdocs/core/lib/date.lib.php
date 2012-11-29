@@ -759,25 +759,30 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 }
 
 /**
- *	Fonction retournant le nombre de jour entre deux dates sans les jours feries (jours ouvres)
+ *	Function to return number of working days (and text of units) between two dates (jours ouvres)
  *
- *	@param	   timestamp	$timestampStart     Timestamp de debut
- *	@param	   timestamp	$timestampEnd       Timestamp de fin
- *	@param     int			$inhour             0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
- *	@param     int			$lastday            We include last day, 0: non, 1:oui
- *	@return    int								Nombre de jours ou d'heures
+ *	@param	   timestamp	$timestampStart     Timestamp for start date
+ *	@param	   timestamp	$timestampEnd       Timestamp for end date
+ *	@param     int			$inhour             0: return number of days, 1: return number of hours (72 max)
+ *	@param     int			$lastday            We include last day, 0: no, 1:yes
+ *	@return    int								Number of days or hours
  */
 function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {
 	global $langs;
 
 	dol_syslog('num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday);
+	
+	// Check parameters
+	if (! is_int($timestampStart) && ! is_float($timestampStart)) return 'ErrorBadParameter_num_open_day';
+	if (! is_int($timestampEnd) && ! is_float($timestampEnd)) return 'ErrorBadParameter_num_open_day';
+
 	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
 	if ($timestampStart < $timestampEnd)
 	{
 		//print num_between_day($timestampStart, $timestampEnd, $lastday).' - '.num_public_holiday($timestampStart, $timestampEnd);
 		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $lastday);
-		$nbOpenDay.= " ".$langs->trans("Days");
+		$nbOpenDay.= " " . $langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
 		return $nbOpenDay;
 	}
@@ -785,7 +790,7 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 	{
 		$nbOpenDay=$lastday;
 		if ($inhour == 1) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
-		return $nbOpenDay=1;
+		return $nbOpenDay;
 	}
 	else
 	{

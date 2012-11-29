@@ -103,8 +103,6 @@ $rej = new RejetPrelevement($db, $user);
 
 /*
  * Liste des factures
- *
- *
  */
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
 $sql.= " , s.rowid as socid, s.nom";
@@ -141,10 +139,10 @@ if ($resql)
     {
 		$obj = $db->fetch_object($resql);
 
-		print "<tr $bc[$var]><td>";
-		print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print "<tr ".$bc[$var]."><td>";
 
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print img_picto('', 'statut'.$obj->statut).' ';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
@@ -164,7 +162,7 @@ if ($resql)
 	print '<tr class="liste_total"><td>&nbsp;</td>';
 	print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 	print '<td align="right">'.price($total)."</td>\n";
-	print '<td>&nbsp;</td>';
+	print '<td colspan="3">&nbsp;</td>';
 	print "</tr>\n</table>\n";
 	$db->free($resql);
 }

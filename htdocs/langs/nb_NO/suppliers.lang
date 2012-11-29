@@ -5,7 +5,6 @@ Supplier=Leverandør
 AddSupplier=Legg til en leverandør
 SupplierRemoved=Leverandør slettet
 SuppliersInvoice=Leverandørfaktura
-SuppliersInvoices=Leverandørfakturaer
 NewSupplier=Ny leverandør
 History=Historikk
 ListOfSuppliers=Leverandøroversikt

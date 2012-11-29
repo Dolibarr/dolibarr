@@ -512,6 +512,9 @@ else
         /*
          *  Creation
          */
+		$private=GETPOST("private","int");
+		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+    	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
         $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
@@ -545,11 +548,10 @@ else
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
-        if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name				= GETPOST('nom');
         $object->firstname			= GETPOST('prenom');
-        $object->particulier		= GETPOST('private', 'int');
+        $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
         $object->code_client		= GETPOST('code_client');
@@ -638,7 +640,7 @@ else
             print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private='.(GETPOST("private")?GETPOST("private"):0).';
+                        is_private='.$private.';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -667,10 +669,10 @@ else
 
             print "<br>\n";
             print $langs->trans("ThirdPartyType").': &nbsp; ';
-            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! GETPOST("private")?' checked="checked"':'');
+            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.($private?'':' checked="checked"');
             print '> '.$langs->trans("Company/Fundation");
             print ' &nbsp; &nbsp; ';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! GETPOST("private")?'':' checked="checked"');
+            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'');
             print '> '.$langs->trans("Individual");
             print ' ('.$langs->trans("ToCreateContactWithSameName").')';
             print "<br>\n";
@@ -693,7 +695,7 @@ else
         print '<table class="border" width="100%">';
 
         // Name, firstname
-        if ($object->particulier || GETPOST("private"))
+        if ($object->particulier || $private)
         {
             print '<tr><td><span id="TypeName" class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -905,30 +907,26 @@ else
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         // Local Taxes
-        // TODO add specific function by country
-        if($mysoc->country_code=='ES')
+        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
-            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                print $form->selectyesno('localtax1assuj_value',0,1);
-                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                print $form->selectyesno('localtax2assuj_value',0,1);
-                print '</td></tr>';
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsed").'</td><td>';
+            print $form->selectyesno('localtax1assuj_value',0,1);
+            print '</td><td>'.$langs->trans("LocalTax2IsUsed").'</td><td>';
+            print $form->selectyesno('localtax2assuj_value',0,1);
+            print '</td></tr>';
 
-            }
-            elseif($mysoc->localtax1_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                print $form->selectyesno('localtax1assuj_value',0,1);
-                print '</td><tr>';
-            }
-            elseif($mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                print $form->selectyesno('localtax2assuj_value',0,1);
-                print '</td><tr>';
-            }
+        }
+        elseif($mysoc->localtax1_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsed").'</td><td colspan="3">';
+            print $form->selectyesno('localtax1assuj_value',0,1);
+            print '</td><tr>';
+        }
+        elseif($mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax2IsUsed").'</td><td colspan="3">';
+            print $form->selectyesno('localtax2assuj_value',0,1);
+            print '</td><tr>';
         }
 
         if (! empty($conf->global->MAIN_MULTILANGS))
@@ -1119,7 +1117,7 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$object->name.'"></td></tr>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.dol_escape_htmltag($object->name).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1128,12 +1126,12 @@ else
                 // It does not change the prefix mode using the auto numbering prefix
                 if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm)
                 {
-                    print '<input type="hidden" name="prefix_comm" value="'.$object->prefix_comm.'">';
+                    print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                     print $object->prefix_comm;
                 }
                 else
                 {
-                    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'">';
+                    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                 }
                 print '</td>';
             }
@@ -1262,7 +1260,7 @@ else
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
             // EMail / Web
-            print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
+            print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
             print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
             // Prof ids
@@ -1320,31 +1318,27 @@ else
             print '</tr>';
 
             // Local Taxes
-            // TODO add specific function by country
-            if($mysoc->country_code=='ES')
+            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
-                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                    print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
-                    print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                    print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
-                    print '</td></tr>';
+                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print '</td></tr>';
 
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
-                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                    print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
-                    print '</td></tr>';
+            }
+            elseif($mysoc->localtax1_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print '</td></tr>';
 
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
-                    print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                    print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
-                    print '</td></tr>';
-                }
+            }
+            elseif($mysoc->localtax2_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print '</td></tr>';
             }
 
             // Type - Size
@@ -1640,30 +1634,26 @@ else
         print '</tr>';
 
         // Local Taxes
-        // TODO add specific function by country
-        if($mysoc->country_code=='ES')
+        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
-            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                print yn($object->localtax1_assuj);
-                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                print yn($object->localtax2_assuj);
-                print '</td></tr>';
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
+            print yn($object->localtax1_assuj);
+            print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
+            print yn($object->localtax2_assuj);
+            print '</td></tr>';
 
-            }
-            elseif($mysoc->localtax1_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                print yn($object->localtax1_assuj);
-                print '</td><tr>';
-            }
-            elseif($mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                print yn($object->localtax2_assuj);
-                print '</td><tr>';
-            }
+        }
+        elseif($mysoc->localtax1_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
+            print yn($object->localtax1_assuj);
+            print '</td><tr>';
+        }
+        elseif($mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
+            print yn($object->localtax2_assuj);
+            print '</td><tr>';
         }
 
         // Type + Staff

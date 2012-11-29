@@ -361,7 +361,7 @@ else
             $object->state_id = $_POST["state_id"];
 
             // We set country_id, country_code and label for the selected country
-            $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+            $object->country_id=$_POST["country_id"]?$_POST["country_id"]:(empty($objsoc->country_id)?$mysoc->country_id:$objsoc->country_id);
             if ($object->country_id)
             {
             	$tmparray=getCountry($object->country_id,'all');
@@ -434,7 +434,7 @@ else
 
             $colspan=3;
             if ($conf->use_javascript_ajax && $socid > 0) $colspan=2;
-            
+
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Address");
@@ -442,9 +442,9 @@ else
 
             if ($conf->use_javascript_ajax && $socid > 0)
             {
-	            $rowspan=3; 
+	            $rowspan=3;
 	    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
-	
+
 	            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
 		        print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
 	            print '</td>';
@@ -460,7 +460,6 @@ else
             print '</td></tr>';
 
             // Country
-            if (dol_strlen(trim($object->fk_pays)) == 0) $object->fk_pays = $objsoc->country_id;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.$colspan.'">';
             print $form->select_country((isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);

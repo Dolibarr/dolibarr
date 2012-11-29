@@ -13,7 +13,6 @@ Supplier=供应商
 AddSupplier=新增供应商
 SupplierRemoved=供应商删除
 SuppliersInvoice=供应商发票
-SuppliersInvoices=供应商发票
 NewSupplier=新供应商
 History=历史
 ListOfSuppliers=供应商名单

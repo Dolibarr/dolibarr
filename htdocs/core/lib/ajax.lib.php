@@ -48,8 +48,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					var options = '.json_encode($ajaxoptions).';
 
 					// Remove product id before select another product
+					// use keyup instead change to avoid loosing the product id
+					$("input#search_'.$htmlname.'").keydown(function() {
+						//console.log(\'purge_id_after_keydown\');
+						$("#'.$htmlname.'").val("");
+					});
 					$("input#search_'.$htmlname.'").change(function() {
-						$("#'.$htmlname.'").val("").trigger("change");
+						//console.log(\'keyup\');
+						$("#'.$htmlname.'").trigger("change");
 					});
 					// Check when keyup
 					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
@@ -115,6 +121,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {
+							//console.log(\'set value of id with \'+ui.item.id);
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");
     						// Disable an element
     						if (options.option_disabled) {
@@ -163,7 +170,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
-						.append( \'<a href="#"><span class="tag">\' + item.label + "</span></a>" )
+						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
   				});';

@@ -120,6 +120,34 @@ $server->wsdl->addComplexType(
     )
 );
 
+// Define other specific objects
+$server->wsdl->addComplexType(
+	'group',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+	'nom' => array('name'=>'nom','type'=>'xsd:string'),
+	'id' => array('name'=>'id','type'=>'xsd:string'),
+	'datec' => array('name'=>'datec','type'=>'xsd:string'),
+	'nb' => array('name'=>'nb','type'=>'xsd:string')
+	)
+);
+
+$server->wsdl->addComplexType(
+	'GroupsArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:group[]')
+	),
+	'tns:group'
+);
+
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
@@ -142,6 +170,19 @@ $server->register(
     $styledoc,
     $styleuse,
     'WS to get user'
+);
+
+$server->register(
+	'getListOfGroups',
+	// Entry values
+	array('authentication'=>'tns:authentication'),
+	// Exit values
+	array('result'=>'tns:result','groups'=>'tns:GroupsArray'),
+	$ns,
+	$ns.'#getListOfGroups',
+	$styledoc,
+	$styleuse,
+	'WS to get list of groups'
 );
 
 
@@ -244,6 +285,83 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
     }
 
     return $objectresp;
+}
+
+/**
+ * getListOfGroups
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @return	array							Array result
+ */
+function getListOfGroups($authentication)
+{
+	global $db,$conf,$langs;
+
+	$now=dol_now();
+
+	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$arraygroups=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	// Check parameters
+
+	if (! $error)
+	{
+		$sql = "SELECT g.rowid, g.nom, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
+		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+		{
+			$sql.= " WHERE g.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+		}
+		$sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num=$db->num_rows($resql);
+
+			$i=0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				$arraygroups[]=array('id'=>$obj->rowid,'nom'=>$obj->nom,'datec'=>$obj->datec,'nb'=>$obj->nb);
+				$i++;
+			}
+		}
+		else
+		{
+			$error++;
+			$errorcode=$db->lasterrno();
+			$errorlabel=$db->lasterror();
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array(
+		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
+		'groups'=>$arraygroups
+		);
+	}
+	else
+	{
+		$objectresp = array(
+		'result'=>array('result_code' => 'OK', 'result_label' => ''),
+		'groups'=>$arraygroups
+		);
+	}
+
+	return $objectresp;
 }
 
 

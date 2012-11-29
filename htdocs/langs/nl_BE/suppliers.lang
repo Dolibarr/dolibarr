@@ -5,7 +5,6 @@ Supplier=Leverancier
 AddSupplier=Voeg een leverancier toe
 SupplierRemoved=Leverancier verwijderd
 SuppliersInvoice=Leveranciers factuur
-SuppliersInvoices=Leveranciers facturen
 NewSupplier=Nieuwe leverancier
 History=Geschiedenis
 ListOfSuppliers=Lijst van de leveranciers

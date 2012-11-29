@@ -28,9 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-// FIXME don't include external module class
-if (! empty($conf->esaeb->enabled))
-	dol_include_once('/esaeb/class/esaeb19.class.php');
 
 
 /**
@@ -481,7 +478,6 @@ class BonPrelevement extends CommonObject
 
                     /*
                      * End of procedure
-                     *
                      */
                     if ($error == 0)
                     {
@@ -550,16 +546,11 @@ class BonPrelevement extends CommonObject
                 // TODO Call trigger to create a notification using notification module
             }
             else
-            {
+           {
                 dol_syslog(get_class($this)."::set_infotrans Erreur 1", LOG_ERR);
                 dol_syslog($this->db->error());
                 $error++;
             }
-
-            /*
-             * End of procedure
-             *
-             */
 
             if ($error == 0)
             {
@@ -928,7 +919,7 @@ class BonPrelevement extends CommonObject
             }
 
             /*
-             * Creation process
+             * Create withdrawal receipt
              */
             if (!$error)
             {
@@ -1048,6 +1039,44 @@ class BonPrelevement extends CommonObject
         {
             return 0;
         }
+    }
+
+
+    /**
+     *	Get object and lines from database
+     *
+     *	@return	int					>0 if OK, <0 if KO
+     */
+    function delete()
+    {
+    	$this->db->begin();
+
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = '".$this->id."')";
+    	$resql1=$this->db->query($sql);
+    	if (! $resql1) dol_print_error($this->db);
+
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = '".$this->id."'";
+    	$resql2=$this->db->query($sql);
+    	if (! $resql2) dol_print_error($this->db);
+
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_bons WHERE rowid = '".$this->id."'";
+    	$resql3=$this->db->query($sql);
+		if (! $resql3) dol_print_error($this->db);
+
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = '".$this->id."'";
+    	$resql4=$this->db->query($sql);
+		if (! $resql4) dol_print_error($this->db);
+
+		if ($resql1 && $resql2 && $resql3)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
     }
 
 
@@ -1181,12 +1210,15 @@ class BonPrelevement extends CommonObject
 
         $this->file = fopen($this->filename,"w");
 
+        // TODO Move code for es and fr into an external module file with selection into setup of prelevement module
+
         // Build file for Spain
         if ($mysoc->country_code=='ES')
         {
-            // TODO replace by a hook (external modules)
         	if (! empty($conf->esaeb->enabled))
             {
+            	dol_include_once('/esaeb/class/esaeb19.class.php');
+
                 //Head
                 $esaeb19 = new AEB19DocWritter;
                 $esaeb19->configuraPresentador($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_PRESENTADOR,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
@@ -1239,7 +1271,7 @@ class BonPrelevement extends CommonObject
                 fputs($this->file, $esaeb19->generaRemesa());
             }
             else
-            {
+           {
                 $this->total = 0;
                 $sql = "SELECT pl.amount";
                 $sql.= " FROM";
@@ -1271,10 +1303,8 @@ class BonPrelevement extends CommonObject
                 $langs->load('withdrawals');
                 fputs($this->file, $langs->trans('WithdrawalFileNotCapable'));
             }
-
         }
-
-        //Build file for France
+        // Build file for France
         elseif ($mysoc->country_code=='FR')
         {
             /*
@@ -1316,7 +1346,7 @@ class BonPrelevement extends CommonObject
                 }
             }
             else
-            {
+			{
                 $result = -2;
             }
 
@@ -1326,10 +1356,9 @@ class BonPrelevement extends CommonObject
 
             $this->EnregTotal($this->total);
         }
-
-        //Build file for Other Countries with unknow format
+        // Build file for Other Countries with unknow format
         else
-        {
+		{
             $this->total = 0;
             $sql = "SELECT pl.amount";
             $sql.= " FROM";
@@ -1599,20 +1628,20 @@ class BonPrelevement extends CommonObject
         {
             if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0').' '.$langs->trans($this->labelstatut[$statut]);
             if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
-            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut4').' '.$langs->trans($this->labelstatut[$statut]);
+            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6').' '.$langs->trans($this->labelstatut[$statut]);
         }
         if ($mode == 2)
         {
             if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
             if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut4');
+            if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
 
         if ($mode == 3)
         {
             if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut0');
             if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-            if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut4');
+            if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
         }
     }
 

@@ -1498,7 +1498,7 @@ if ($step == 6 && $datatoimport)
 	// Source file format
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
-    $text=$objmodelimport->getDriverDesc($format);
+    $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 

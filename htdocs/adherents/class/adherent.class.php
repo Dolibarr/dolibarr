@@ -33,8 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *      \class      Adherent
- *		\brief      Class to manage members of a foundation
+ *		Class to manage members of a foundation
  */
 class Adherent extends CommonObject
 {

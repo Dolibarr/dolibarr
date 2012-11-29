@@ -146,12 +146,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		// Get source company
-		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-		$this->emetteur=$object->thirdparty;
-
 		if ($conf->fournisseur->dir_output.'/facture')
 		{
 			$object->fetch_thirdparty();
@@ -188,6 +182,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
+                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
@@ -340,6 +335,15 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
+
+					// Add line
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					{
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
+						//$pdf->SetDrawColor(190,190,200);
+						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
+						$pdf->SetLineStyle(array('dash'=>0));
+					}
 
 					$nexY+=2;    // Passe espace entre les lignes
 

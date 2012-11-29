@@ -144,21 +144,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $model='csv';
 
         // Build export file
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), array(), $sql);
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($result,$expectedresult);
 
         $model='tsv';
 
         // Build export file
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), array(), $sql);
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($result,$expectedresult);
 
         $model='excel';
 
         // Build export file
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), array(), $sql);
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($result,$expectedresult);
 
@@ -195,21 +195,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
     	$model='csv';
 
     	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered, $sql);
+    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
 
     	$model='tsv';
 
     	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered, $sql);
+    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
 
     	$model='excel';
 
     	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $array_filtered, $sql);
+    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
     	$this->assertEquals($result,$expectedresult);
 
@@ -234,7 +234,7 @@ class ExportTest extends PHPUnit_Framework_TestCase
         $result=$objexport->load_arrays($user,$datatoexport);
 
         // Build export file
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), array(), $sql);
+        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
         $this->assertEquals($result,$expectedresult);
 

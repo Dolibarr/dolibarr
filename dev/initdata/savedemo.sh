@@ -166,10 +166,25 @@ if [ "x$passwd" != "x" ]
 then
 	export passwd="-p$passwd"
 fi
-#echo "mysqldump -P$port -u$admin $passwd $base > $mydir/$dumpfile"
-#mysqldump -P$port -u$admin $passwd $base > $mydir/$dumpfile
-echo "mysqldump -P$port -u$admin -p***** $base > $mydir/$dumpfile"
-mysqldump -P$port -u$admin $passwd $base > $mydir/$dumpfile
+export list="
+    --ignore-table=$base.llx_abonne
+    --ignore-table=$base.llx_abonne_extrafields 
+    --ignore-table=$base.llx_abonne_type
+    --ignore-table=$base.llx_abonnement 
+	--ignore-table=$base.llx_dolicloud_customers
+	--ignore-table=$base.llx_c_dolicloud_plans
+	--ignore-table=$base.llx_cabinetmed_c_banques
+	--ignore-table=$base.llx_cabinetmed_c_ccam
+	--ignore-table=$base.llx_cabinetmed_c_examconclusion
+	--ignore-table=$base.llx_cabinetmed_cons
+	--ignore-table=$base.llx_cabinetmed_diaglec
+	--ignore-table=$base.llx_cabinetmed_examaut
+	--ignore-table=$base.llx_cabinetmed_exambio
+	--ignore-table=$base.llx_cabinetmed_examenprescrit
+	--ignore-table=$base.llx_cabinetmed_motifcons
+	--ignore-table=$base.llx_cabinetmed_patient" 
+echo "mysqldump -P$port -u$admin -p***** $list $base > $mydir/$dumpfile"
+mysqldump -P$port -u$admin $passwd $list $base > $mydir/$dumpfile
 export res=$?
 
 if [ "x$res" = "x0" ]

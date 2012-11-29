@@ -107,6 +107,13 @@ if ($action == 'add_action')
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
 	}
 
+	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
+	{
+		$error++;
+		$action = 'create';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
+	}
+
 	// Initialisation objet cactioncomm
 	if (! GETPOST('actioncode'))
 	{
@@ -122,13 +129,13 @@ if ($action == 'add_action')
 	// Initialisation objet actioncomm
 	$actioncomm->type_id = $cactioncomm->id;
 	$actioncomm->type_code = $cactioncomm->code;
-	$actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+	$actioncomm->priority = GETPOST("priority")?GETPOST("priority"):0;
 	$actioncomm->fulldayevent = (! empty($fulldayevent)?1:0);
-	$actioncomm->location = isset($_POST["location"])?$_POST["location"]:'';
-	$actioncomm->label = trim($_POST["label"]);
-	if (! $_POST["label"])
+	$actioncomm->location = GETPOST("location");
+	$actioncomm->label = trim(GETPOST('label'));
+	if (! GETPOST('label'))
 	{
-		if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
+		if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
 		{
 			$actioncomm->label = $langs->transnoentitiesnoconv("TaskRDVWith",$contact->getFullName($langs));
 		}
@@ -381,54 +388,47 @@ if ($action == 'create')
 
     if (! empty($conf->use_javascript_ajax))
     {
-        print "\n".'<script type="text/javascript" language="javascript">';
-        print 'jQuery(document).ready(function () {
-                     function setdatefields()
-                     {
-                            if (jQuery("#fullday:checked").val() == null)
-                            {
-                                jQuery(".fulldaystarthour").attr(\'disabled\', false);
-                                jQuery(".fulldaystartmin").attr(\'disabled\', false);
-                                jQuery(".fulldayendhour").attr(\'disabled\', false);
-                                jQuery(".fulldayendmin").attr(\'disabled\', false);
-                            }
-                            else
-                            {
-                                jQuery(".fulldaystarthour").attr(\'disabled\', true);
-                                jQuery(".fulldaystartmin").attr(\'disabled\', true);
-                                jQuery(".fulldayendhour").attr(\'disabled\', true);
-                                jQuery(".fulldayendmin").attr(\'disabled\', true);
-                                jQuery(".fulldaystarthour").val("00");
-                                jQuery(".fulldaystartmin").val("00");
-                                //jQuery(".fulldayendhour").val("00");
-                                //jQuery(".fulldayendmin").val("00");
-                                jQuery(".fulldayendhour").val("23");
-                                jQuery(".fulldayendmin").val("59");
-                        }
-                    }
+        print "\n".'<script type="text/javascript">';
+        print '$(document).ready(function () {
+        			function setdatefields()
+	            	{
+	            		if ($("#fullday:checked").val() == null) {
+	            			$(".fulldaystarthour").removeAttr("disabled");
+	            			$(".fulldaystartmin").removeAttr("disabled");
+	            			$(".fulldayendhour").removeAttr("disabled");
+	            			$(".fulldayendmin").removeAttr("disabled");
+	            			$("#p2").removeAttr("disabled");
+	            		} else {
+	            			$(".fulldaystarthour").attr("disabled","disabled").val("00");
+	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
+	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
+	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
+	            			$("#p2").attr("disabled","disabled").val("");
+	            		}
+	            	}
                     setdatefields();
-                    jQuery("#fullday").change(function() {
+                    $("#fullday").change(function() {
                         setdatefields();
                     });
-                    jQuery("#selectcomplete").change(function() {
-                        if (jQuery("#selectcomplete").val() == 100)
+                    $("#selectcomplete").change(function() {
+                        if ($("#selectcomplete").val() == 100)
                         {
-                            if (jQuery("#doneby").val() <= 0) jQuery("#doneby").val(\''.$user->id.'\');
+                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.$user->id.'\');
                         }
-                        if (jQuery("#selectcomplete").val() == 0)
+                        if ($("#selectcomplete").val() == 0)
                         {
-                            jQuery("#doneby").val(-1);
+                            $("#doneby").val(-1);
                         }
                    });
-                   jQuery("#actioncode").change(function() {
-                        if (jQuery("#actioncode").val() == \'AC_RDV\') jQuery("#dateend").addClass("fieldrequired");
-                        else jQuery("#dateend").removeClass("fieldrequired");
+                   $("#actioncode").change(function() {
+                        if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                        else $("#dateend").removeClass("fieldrequired");
                    });
                })';
         print '</script>'."\n";
     }
 
-	print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="POST">';
+	print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
@@ -441,21 +441,25 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Type d'action actifs
-	print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-	if (GETPOST("actioncode"))
+	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
-		print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
-		$cactioncomm->fetch(GETPOST("actioncode"));
-		print $cactioncomm->getNomUrl();
+		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
+		if (GETPOST("actioncode"))
+		{
+			print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
+			$cactioncomm->fetch(GETPOST("actioncode"));
+			print $cactioncomm->getNomUrl();
+		}
+		else
+		{
+			$htmlactions->select_type_actions($actioncomm->type_code, "actioncode","systemauto");
+		}
+		print '</td></tr>';
 	}
-	else
-	{
-		$htmlactions->select_type_actions($actioncomm->type_code, "actioncode","systemauto");
-	}
-	print '</td></tr>';
+	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
 
 	// Title
-	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
@@ -647,43 +651,34 @@ if ($id)
 
 	if ($action == 'edit')
 	{
-	    if ($conf->use_javascript_ajax)
+	    if (! empty($conf->use_javascript_ajax))
         {
-            print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
-                         function setdatefields()
-                         {
-                                if (jQuery("#fullday:checked").val() == null)
-                                {
-                                    jQuery(".fulldaystarthour").attr(\'disabled\', false);
-                                    jQuery(".fulldaystartmin").attr(\'disabled\', false);
-                                    jQuery(".fulldayendhour").attr(\'disabled\', false);
-                                    jQuery(".fulldayendmin").attr(\'disabled\', false);
-                                }
-                                else
-                                {
-                                    jQuery(".fulldaystarthour").attr(\'disabled\', true);
-                                    jQuery(".fulldaystartmin").attr(\'disabled\', true);
-                                    jQuery(".fulldayendhour").attr(\'disabled\', true);
-                                    jQuery(".fulldayendmin").attr(\'disabled\', true);
-                                    jQuery(".fulldaystarthour").val("00");
-                                    jQuery(".fulldaystartmin").val("00");
-                                    //jQuery(".fulldayendhour").val("00");
-                                    //jQuery(".fulldayendmin").val("00");
-                                    jQuery(".fulldayendhour").val("23");
-                                    jQuery(".fulldayendmin").val("59");
-                            }
-                        }
-                        setdatefields();
-                        jQuery("#fullday").change(function() {
-                            setdatefields();
-                        });
+            print "\n".'<script type="text/javascript">';
+            print '$(document).ready(function () {
+	            		function setdatefields()
+	            		{
+	            			if ($("#fullday:checked").val() == null) {
+	            				$(".fulldaystarthour").removeAttr("disabled");
+	            				$(".fulldaystartmin").removeAttr("disabled");
+	            				$(".fulldayendhour").removeAttr("disabled");
+	            				$(".fulldayendmin").removeAttr("disabled");
+	            			} else {
+	            				$(".fulldaystarthour").attr("disabled","disabled").val("00");
+	            				$(".fulldaystartmin").attr("disabled","disabled").val("00");
+	            				$(".fulldayendhour").attr("disabled","disabled").val("23");
+	            				$(".fulldayendmin").attr("disabled","disabled").val("59");
+	            			}
+	            		}
+	            		setdatefields();
+	            		$("#fullday").change(function() {
+	            			setdatefields();
+	            		});
                    })';
             print '</script>'."\n";
         }
 
         // Fiche action en mode edition
-		print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="post">';
+		print '<form name="formaction" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
@@ -696,10 +691,13 @@ if ($id)
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
 		// Type
-		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		}
 
 		// Title
-		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
+		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
 
         // Full day event
         print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="checked"':'').'></td></tr>';
@@ -815,7 +813,10 @@ if ($id)
 		print '</td></tr>';
 
 		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+			print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		}
 
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';

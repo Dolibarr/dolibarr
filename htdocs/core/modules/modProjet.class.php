@@ -65,6 +65,8 @@ class modProjet extends DolibarrModules
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
+		$this->conflictwith = array();
+		$this->langfiles = array('projects');
 
 		// Constants
 		$this->const = array();
@@ -150,7 +152,8 @@ class modProjet extends DolibarrModules
 				'p.rowid'=>"ProjectId",'p.ref'=>"ProjectRef",'p.datec'=>"DateCreation",'p.dateo'=>"DateDebutProjet",'p.datee'=>"DateFinProjet",'p.fk_statut'=>'ProjectStatus','p.description'=>"projectNote",
 				'pt.rowid'=>'RefTask','pt.dateo'=>"TaskDateo",'pt.datee'=>"TaskDatee",'pt.duration_effective'=>"DurationEffective",'pt.duration_planned'=>"DurationPlanned",'pt.progress'=>"Progress",'pt.description'=>"TaskDesc");
 
-		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','s.fk_pays'=>'List:c_pays:libelle',
+		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','s.fk_pays'=>'List:c_pays:libelle',
+		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','s.fk_pays'=>'List:c_pays:libelle',
 				's.tel'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text',
 				'p.rowid'=>"List:projet:ref",'p.ref'=>"Text",'p.datec'=>"Date",'p.dateo'=>"Date",'p.datee'=>"Date",'p.fk_statut'=>'Status','p.description'=>"Text",
 				'pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.duration_planned'=>"Duree",'pt.progress'=>"Number",'pt.description'=>"Text");
