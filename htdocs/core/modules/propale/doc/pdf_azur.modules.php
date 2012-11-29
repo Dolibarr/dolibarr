@@ -374,41 +374,19 @@ class pdf_azur extends ModelePDFPropales
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					// TODO : store local taxes types into object lines and remove this
+					$localtax1_array=getTypeOfLocalTaxFromRate($vatrate,1,$mysoc);
+					$localtax2_array=getTypeOfLocalTaxFromRate($vatrate,2,$mysoc);
 					if (empty($localtax1_type))
-						$localtax1_type=getTypeOfLocalTaxFromRate($vatrate,1);
+						$localtax1_type = $localtax1_array[0];
 					if (empty($localtax2_type))
-						$localtax2_type=getTypeOfLocalTaxFromRate($vatrate,2);
+						$localtax2_type = $localtax2_array[0];
 					//end TODO
 
 				    // retrieve global local tax
 					if ($localtax1_type == '7')
-					{
-						$sql  = "SELECT t.localtax1";
-						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$mysoc->country_code."'";
-						$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
-
-						$resql=$db->query($sql);
-						if ($resql)
-						{
-							$obj = $db->fetch_object($resql);
-							$localtax1_rate = $obj->localtax1;
-						}
-					}
+						$localtax1_rate = $localtax1_array[1];
 					if ($localtax2_type == '7')
-					{
-						$sql  = "SELECT t.localtax2";
-						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$mysoc->country_code."'";
-						$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
-
-						$resql=$db->query($sql);
-						if ($resql)
-						{
-							$obj = $db->fetch_object($resql);
-							$localtax2_rate = $obj->localtax2;
-						}
-					}
+						$localtax2_rate = $localtax2_array[1];
 
 					if ($localtax1ligne != 0 || $localtax1_type == '7')
 						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
