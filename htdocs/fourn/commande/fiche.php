@@ -83,7 +83,12 @@ if ($id > 0 || ! empty($ref))
 {
 	$resObj = $object->fetch($id, $ref);
 	$resTP = $object->fetch_thirdparty();
+	print_r($object->thirdparty);
 	if ($resObj < 0) dol_print_error($db,$object->error);
+	if ($resTP < 0) dol_print_error($db,$object->error);
+} else if($socid) {
+	$object->socid = $socid;
+	$resTP = $object->fetch_thirdparty();
 	if ($resTP < 0) dol_print_error($db,$object->error);
 }
 
@@ -333,9 +338,6 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
     {
         if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
     }
-
-    if ($resObj < 0) dol_print_error($db,$object->error);
-    if ($resTP < 0) dol_print_error($db,$object->error);
 
     $localtax1_tx=get_localtax($_POST['tva_tx'],1,$object->thirdparty);
     $localtax2_tx=get_localtax($_POST['tva_tx'],2,$object->thirdparty);
@@ -684,6 +686,7 @@ else if ($action == 'create' && $user->rights->fournisseur->commande->creer)
         }
 
         $id=$orderid;
+		$ret=$object->fetch($id);    // Reload to get new records
 
         $db->commit();
     }
