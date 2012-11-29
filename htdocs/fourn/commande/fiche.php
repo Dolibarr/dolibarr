@@ -943,7 +943,7 @@ $productstatic = new Product($db);
 
 $now=dol_now();
 
-if ($object->id > 0)
+if (! empty($object->id))
 {
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
