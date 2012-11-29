@@ -308,7 +308,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             		$outputlangs->setDefaultLang($newlang);
             	}
 
-                $ret=$object->fetch($id);    // Reload to get new records
+                $ret=$object->fetch($object->id);    // Reload to get new records
                 supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
             }
             unset($_POST['qty']);
@@ -360,14 +360,14 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
     if ($result	>= 0)
     {
         $outputlangs = $langs;
-        if (! empty($_REQUEST['lang_id']))
+        if (GETPOST('lang_id'))
         {
             $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+            $outputlangs->setDefaultLang(GETPOST('lang_id'));
         }
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
-            $ret=$object->fetch($id);    // Reload to get new records
+            $ret=$object->fetch($object->id);    // Reload to get new records
             supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
         }
     }
@@ -385,14 +385,14 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
     if ($result	>= 0)
     {
         $outputlangs = $langs;
-        if (! empty($_REQUEST['lang_id']))
+        if (GETPOST('lang_id'))
         {
             $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+            $outputlangs->setDefaultLang(GETPOST('lang_id'));
         }
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
-            $ret=$object->fetch($id);    // Reload to get new records
+            $ret=$object->fetch($object->id);    // Reload to get new records
             supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
         }
     }
@@ -404,7 +404,7 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
 
     if (! $error)
     {
-        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
     }
 }
@@ -416,14 +416,14 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
     if ($result	>= 0)
     {
         $outputlangs = $langs;
-        if (! empty($_REQUEST['lang_id']))
+        if (GETPOST('lang_id'))
         {
             $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+            $outputlangs->setDefaultLang(GETPOST('lang_id'));
         }
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
-            $ret=$object->fetch($id);    // Reload to get new records
+            $ret=$object->fetch($object->id);    // Reload to get new records
             supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
         }
     }
@@ -449,7 +449,7 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
             $action='';
         }
     }
@@ -459,7 +459,7 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         $result	= $object->approve($user, $idwarehouse);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
             exit;
         }
         else
@@ -474,7 +474,7 @@ else if ($action == 'confirm_refuse' &&	$confirm == 'yes' && $user->rights->four
     $result = $object->refuse($user);
     if ($result > 0)
     {
-        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
     }
     else
@@ -488,7 +488,7 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
     $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
     if ($result > 0)
     {
-        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
     }
     else
@@ -549,7 +549,7 @@ else if ($action == 'livraison' && $user->rights->fournisseur->commande->recepti
         $result	= $object->Livraison($user, $date_liv, $_POST["type"], $_POST["comment"]);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
             exit;
         }
         else if($result == -3)
@@ -573,7 +573,7 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' &&	$user->rights->four
     $result	= $object->cancel($user);
     if ($result > 0)
     {
-        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
     }
     else
@@ -594,7 +594,7 @@ else if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
     if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
-    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
+    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
 else if ($action == 'down' && $user->rights->fournisseur->commande->creer)
