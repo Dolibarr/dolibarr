@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,9 +202,18 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
+            
+            // We set country_id, country_code and country for the selected country
+            $object->country_id=GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
+            if ($object->country_id)
+            {
+            	$tmparray=getCountry($object->country_id,'all');
+            	$object->country_code=$tmparray['code'];
+            	$object->country=$tmparray['label'];
+            }
 
-            // Check for duplicate prof id
-        	for ($i = 1; $i < 3; $i++)
+            // Check for duplicate or mandatory prof id
+        	for ($i = 1; $i < 5; $i++)
         	{
         	    $slabel="idprof".$i;
     			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -218,8 +227,18 @@ if (empty($reshook))
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}
+				
+				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+				{
+					$langs->load("errors");
+					$error++;
+					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+					$action = ($action=='add'?'create':'edit');
+				}
 			}
         }
+          
         if (! $error)
         {
             if ($action == 'add')
@@ -293,7 +312,7 @@ if (empty($reshook))
                     // Gestion du logo de la société
                 }
                 else
-                {
+				{
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -834,7 +853,13 @@ else
             if ($idprof!='-')
             {
                 if (($j % 2) == 0) print '<tr>';
-                print '<td>'.$idprof.'</td><td>';
+                
+                $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+               	if(empty($conf->global->$idprof_mandatory))
+                	print '<td>'.$idprof.'</td><td>';
+                else
+                print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
+                
                 $key='idprof'.$i;
                 print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                 print '</td>';
@@ -1271,7 +1296,13 @@ else
                 if ($idprof!='-')
                 {
                     if (($j % 2) == 0) print '<tr>';
-                    print '<td>'.$idprof.'</td><td>';
+                    
+					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+					if(empty($conf->global->$idprof_mandatory))
+						print '<td>'.$idprof.'</td><td>';
+					else
+						print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
+                    
                     $key='idprof'.$i;
                     print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                     print '</td>';
