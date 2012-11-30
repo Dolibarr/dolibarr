@@ -30,7 +30,7 @@ For users:
 - New: Add link to third party into sells and purchase journal.
 - New: Suggest a method to generate a backup file for user with no access
        to mysqldump binary.
-- New: Can use extrafields on contacts/addresses.
+- New: Can also use extrafields on contacts/addresses and users.
 - New: Support unique field for extrafields.
 - New: Extra fields supports more types (int, string, double, date, datetime).
 - New: Can correct stock of a warehouse from warehouse card.

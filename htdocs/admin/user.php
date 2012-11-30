@@ -27,13 +27,18 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("admin");
 $langs->load("members");
 $langs->load("users");
 
 if (! $user->admin) accessforbidden();
+
+$extrafields = new ExtraFields($db);
+
 
 /*
  * Action
@@ -71,14 +76,17 @@ if (preg_match('/del_(.*)/',$action,$reg))
  * View
  */
 
-llxHeader();
+$help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
+llxHeader('',$langs->trans("UsersSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("UsersSetup"),$linkback,'setup');
-print "<br>";
 
 
-print_fiche_titre($langs->trans("MemberMainOptions"),'','');
+$head=user_admin_prepare_head();
+
+dol_fiche_head($head,'card', $langs->trans("User"), 0, 'user');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -114,7 +122,8 @@ else
 print '</td></tr>';
 
 print '</table>';
-print '<br><br>';
+
+dol_fiche_end();
 
 llxFooter();
 $db->close();
