@@ -152,58 +152,6 @@ if ($objectid > 0)
 
         print '</table><br><br><table class="border" width="100%">';
 
-
-        // Third party - Contact
-        print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
-        if ($act->societe->id && $act->type_code == 'AC_TEL')
-        {
-            if ($act->societe->fetch($act->societe->id))
-            {
-                print "<br>".dol_print_phone($act->societe->tel);
-            }
-        }
-        print '</td>';
-        print '<td>'.$langs->trans("Contact").'</td>';
-        print '<td>';
-        if ($act->contact->id > 0)
-        {
-            print $act->contact->getNomUrl(1);
-            if ($act->contact->id && $act->type_code == 'AC_TEL')
-            {
-                if ($act->contact->fetch($act->contact->id))
-                {
-                    print "<br>".dol_print_phone($act->contact->phone_pro);
-                }
-            }
-        }
-        else
-        {
-            print $langs->trans("None");
-        }
-
-        print '</td></tr>';
-
-        // Project
-        if (! empty($conf->projet->enabled))
-        {
-            print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
-            if ($act->fk_project)
-            {
-                $project=new Project($db);
-                $project->fetch($act->fk_project);
-                print $project->getNomUrl(1);
-            }
-            print '</td></tr>';
-        }
-
-        // Priority
-        print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-        print ($act->priority?$act->priority:'');
-        print '</td></tr>';
-
-
-        print '</table><br><br><table class="border" width="100%">';
-
 	}
 	else
 	{
