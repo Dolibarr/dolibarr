@@ -953,6 +953,7 @@ DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for
 WatermarkOnDraft=Watermark on draft document
 CompanyIdProfChecker=Professional Id unique
 MustBeUnique=Must be unique ?
+MustBeMandatory=Must be mandatory ?
 Miscellanous=Miscellaneous
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup

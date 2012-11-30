@@ -963,6 +963,7 @@ DocumentModelOdt=Generació des dels documents amb format OpenDocument (Arxiu .O
 WatermarkOnDraft=Marca d'aigua en els documents esborrany
 CompanyIdProfChecker=Id Professional únic
 MustBeUnique=Ha de ser únic?
+MustBeMandatory=Ha de ser obligatori?
 Miscellanous=Miscel·lània
 ##### Webcal setup #####
 WebCalSetup=Configuració d'enllaç amb el calendari webcalendar
