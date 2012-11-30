@@ -550,6 +550,10 @@ $profid[2][0]=$langs->trans("ProfId3");
 $profid[2][1]=$langs->transcountry('ProfId3', $mysoc->country_code);
 $profid[3][0]=$langs->trans("ProfId4");
 $profid[3][1]=$langs->transcountry('ProfId4', $mysoc->country_code);
+$profid[4][0]=$langs->trans("ProfId5");
+$profid[4][1]=$langs->transcountry('ProfId5', $mysoc->country_code);
+$profid[5][0]=$langs->trans("ProfId6");
+$profid[5][1]=$langs->transcountry('ProfId6', $mysoc->country_code);
 
 $var = true;
 $i=0;
@@ -557,44 +561,47 @@ $i=0;
 $nbofloop=count($profid);
 while ($i < $nbofloop)
 {
-	$var = !$var;
-
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$profid[$i][0]."</td><td>\n";
-	print $profid[$i][1];
-	print '</td>';
-
-	$idprof_unique ='SOCIETE_IDPROF'.($i+1).'_UNIQUE';
-	$idprof_mandatory ='SOCIETE_IDPROF'.($i+1).'_MANDATORY';
-	$verif=(empty($conf->global->$idprof_unique)?false:true);
-	$mandatory=(empty($conf->global->$idprof_mandatory)?false:true);
-
-	if ($verif)
+	if ($profid[$i][1]!='-')
 	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=0">';
-		print img_picto($langs->trans("Activated"),'switch_on');
-		print '</a></td>';
-	}
-	else
-	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=1">';
-		print img_picto($langs->trans("Disabled"),'switch_off');
-		print '</a></td>';
-	}
+		$var = !$var;
 	
-	if ($mandatory)
-	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=0">';
-		print img_picto($langs->trans("Activated"),'switch_on');
-		print '</a></td>';
+		print '<tr '.$bc[$var].'>';
+		print '<td>'.$profid[$i][0]."</td><td>\n";
+		print $profid[$i][1];
+		print '</td>';
+	
+		$idprof_unique ='SOCIETE_IDPROF'.($i+1).'_UNIQUE';
+		$idprof_mandatory ='SOCIETE_IDPROF'.($i+1).'_MANDATORY';
+		$verif=(empty($conf->global->$idprof_unique)?false:true);
+		$mandatory=(empty($conf->global->$idprof_mandatory)?false:true);
+	
+		if ($verif)
+		{
+			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=0">';
+			print img_picto($langs->trans("Activated"),'switch_on');
+			print '</a></td>';
+		}
+		else
+		{
+			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=1">';
+			print img_picto($langs->trans("Disabled"),'switch_off');
+			print '</a></td>';
+		}
+		
+		if ($mandatory)
+		{
+			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=0">';
+			print img_picto($langs->trans("Activated"),'switch_on');
+			print '</a></td>';
+		}
+		else
+		{
+			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=1">';
+			print img_picto($langs->trans("Disabled"),'switch_off');
+			print '</a></td>';
+		}
+		print "</tr>\n";
 	}
-	else
-	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.($i+1).'&status=1">';
-		print img_picto($langs->trans("Disabled"),'switch_off');
-		print '</a></td>';
-	}
-	print "</tr>\n";
 	$i++;
 }
 

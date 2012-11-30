@@ -21,6 +21,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Aquest contacte ja està definit com 
 ErrorCashAccountAcceptsOnlyCashMoney=Aquesta compte bancari és de tipus caixa i només accepta el mètode de pagament de tipus <b>espècie</b>.
 ErrorFromToAccountsMustDiffers=El compte origen i destinació han de ser diferents.
 ErrorBadThirdPartyName=Nom de tercer incorrecte
+ErrorProdIdIsMandatory=El %s es obligatori
 ErrorBadCustomerCodeSyntax=La sintaxi del codi client és incorrecta
 ErrorCustomerCodeRequired=Codi client obligatori
 ErrorCustomerCodeAlreadyUsed=Codi de client ja utilitzat
