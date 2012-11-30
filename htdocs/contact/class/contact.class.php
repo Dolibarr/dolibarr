@@ -138,7 +138,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->priv.",";
         $sql.= " ".($this->canvas?"'".$this->canvas."'":"null").",";
         $sql.= " ".$conf->entity.",";
-        $sql.= " ".$this->import_key.",";
+        $sql.= " ".$this->import_key;
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);
