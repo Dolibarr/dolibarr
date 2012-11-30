@@ -80,8 +80,10 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	if (! empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->MAIN_DISABLE_FPDI))
     	return "Error MAIN_USE_FPDF and MAIN_DISABLE_FPDI can't be set together";
 
-	// We use by default TCPDF
+	// We use by default TCPDF else FPDF
 	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
+	else require_once FPDF_PATH.'fpdf.php';
+
 	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
 	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
@@ -90,7 +92,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$metric=$arrayformat['unit'];
 
 	// Protection et encryption du pdf
-	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
+	if (empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		/* Permission supported by TCPDF
 		 - print : Print the document;
@@ -103,20 +105,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 - print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		 - owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		 */
-		if (! empty($conf->global->MAIN_USE_FPDF))
-		{
-			require_once FPDI_PATH.'fpdi_protection.php';
-			$pdf = new FPDI_Protection($pagetype,$metric,$format);
-			// For FPDF, we specify permission we want to open
-			$pdfrights = array('print');
-		}
-		else
-		{
-			if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-			else $pdf = new TCPDF($pagetype,$metric,$format);
-			// For TCPDF, we specify permission we want to block
-			$pdfrights = array('modify','copy');
-		}
+		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+		else $pdf = new TCPDF($pagetype,$metric,$format);
+		// For TCPDF, we specify permission we want to block
+		$pdfrights = array('modify','copy');
+
 		$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
 		$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
@@ -126,8 +119,42 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 		else $pdf = new TCPDF($pagetype,$metric,$format);
 	}
+
+	// If we use FPDF class, we may need to add method writeHTMLCell
+	if (! empty($conf->global->MAIN_USE_FPDF) && ! method_exists($pdf, 'writeHTMLCell'))
+	{
+		// Declare here a class to overwrite FPDFI to add method writeHTMLCell
+		/**
+		 *	This class if a enhanced FPDI class that support method writeHTMLCell
+		 */
+		class FPDI_DolExtended extends FPDI
+		{
+			public function __call($method, $args)
+			{
+				if (isset($this->$method)) {
+					$func = $this->$method;
+					$func($args);
+				}
+			}
+
+			public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
+			{
+				$this->SetXY($x,$y);
+				$val=str_replace('<br>',"\n",$html);
+				$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
+				//print 'eee'.$val;exit;
+				$this->MultiCell($w,$h,$val,$border,$align,$fill);
+			}
+		}
+
+		$pdf2=new FPDI_DolExtended($pagetype,$metric,$format);
+		unset($pdf);
+		$pdf=$pdf2;
+	}
+
 	return $pdf;
 }
+
 
 /**
  *      Return font name to use for PDF generation
@@ -722,8 +749,9 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if (pdf_getPDFFont($outputlangs) == 'Helvetica')
 	{
 		$pdf->SetXY(-20,-$posy);
-		$pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
-		//print 'xxx'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
+		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
+		if (empty($conf->global->MAIN_USE_FPDF)) $pdf->MultiCell(11, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+		else $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
 	}
 
 	return $marginwithfooter;
