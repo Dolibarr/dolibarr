@@ -777,7 +777,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
-        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('actioncomm').")";
         if (get_class($object) == 'Adherent') {
         	$sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         	if (! empty($object->id))
@@ -916,7 +916,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         $sql.= " WHERE u.rowid = a.fk_user_author";
-        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
+        $sql.= " AND a.entity IN (".getEntity('actioncomm').")";
         if (get_class($object) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         if (get_class($object) == 'Adherent' && $object->id) $sql.= " AND a.fk_element = ".$object->id;
         if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;

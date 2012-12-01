@@ -127,10 +127,7 @@ if ($objectid > 0)
 		print '</td></tr>';
 
 		// Type
-		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-		{
-			print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-		}
+		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';

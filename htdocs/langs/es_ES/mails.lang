@@ -78,7 +78,6 @@ YourMailUnsubcribeOK=El correo electrónico <b>%s</b> es correcta desuscribe.
 MailtoEMail=mailto email (hyperlink)
 ActivateCheckRead=Activar confirmación de lectura y opción de desuscripción
 ActivateCheckReadKey=Clave usada para encriptar la URL de la confirmación de lectura y la función de desuscripción
-EMailSentToNRecipients=E-Mail enviado a %s destinatarios.
 
 # Libelle des modules de liste de destinataires mailing=
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)

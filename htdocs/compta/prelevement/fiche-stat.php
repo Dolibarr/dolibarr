@@ -58,17 +58,24 @@ if ($prev_id)
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
-	
+		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
+
+		$relativepath = 'receipts/'.$bon->ref;
+
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+
+		print '</td></tr>';
+
 		// Status
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-	
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($bon->user_trans);
-	
+
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($bon->date_trans,'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
@@ -82,19 +89,10 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-	
+
 		print '</table>';
-	
-		print '<br>';
-	
-		print '<table class="border" width="100%"><tr><td width="20%">';
-		print $langs->trans("WithdrawalFile").'</td><td>';
-		$relativepath = 'receipts/'.$bon->ref;
-		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
-		print '</td></tr></table>';
-	
-		dol_fiche_end();
-		
+
+		print '</div>';
 	}
 	else
 	{

@@ -81,9 +81,6 @@ WithdrawalFileNotCapable=Impossible de générer un fichier de bons de prélève
 ShowWithdraw=Voir prélèvement
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Toutefois, si la facture a au moins un paiement par prélèvement non traité, elle ne le sera pas afin de permettre la gestion du prélèvement d'abord.
 DoStandingOrdersBeforePayments=Cet onglet permet de faire une demande de prélèvement bancaire. Une fois réalisé, vous pourrez saisir le paiement sur la facture pour la clore.
-WithdrawalFile=Fichier de prélèvement
-SetToStatusSent=Mettre status "Fichier envoyé"
-ThisWillAlsoAddPaymentOnInvoice=Ceci créera également les paiements sur les factures et les classera payées
 
 ### Notifications 
 InfoCreditSubject=Crédit prélèvement %s à la banque

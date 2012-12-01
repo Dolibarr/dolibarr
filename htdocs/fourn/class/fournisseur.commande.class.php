@@ -889,7 +889,7 @@ class CommandeFournisseur extends CommonOrder
             dol_syslog(get_class($this)."::commande sql=".$sql, LOG_DEBUG);
             if ($this->db->query($sql))
             {
-                $result = 1;
+                $result = 0;
                 $this->log($user, 3, $date, $comment);
             }
             else
@@ -954,136 +954,40 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
 
-			if ($this->id) {
-				$num=count($this->lines);
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " SET ref='(PROV".$this->id.")'";
+            $sql.= " WHERE rowid=".$this->id;
+            dol_syslog(get_class($this)."::create sql=".$sql);
+            if ($this->db->query($sql))
+            {
+                // On logue creation pour historique
+                $this->log($user, 0, time());
 
-	            /*
-	             *  Insertion du detail des produits dans la base
-	             */
-	            for ($i=0;$i<$num;$i++)
-	            {
-	                $result = $this->addline(
-	                    $this->lines[$i]->desc,
-	                    $this->lines[$i]->subprice,
-	                    $this->lines[$i]->qty,
-	                    $this->lines[$i]->tva_tx,
-	                    $this->lines[$i]->localtax1_tx,
-	                    $this->lines[$i]->localtax2_tx,
-	                    $this->lines[$i]->fk_product,
-	                    0,
-	                    $this->lines[$i]->ref_fourn,
-	                    $this->lines[$i]->remise_percent,
-	                    'HT',
-	                    0,
-	                    $this->lines[$i]->info_bits
-	                );
-	                if ($result < 0)
-	                {
-	                    $this->error=$this->db->lasterror();
-	                    dol_print_error($this->db);
-	                    $this->db->rollback();
-	                    return -1;
-	                }
-	            }
+                if (! $notrigger)
+                {
+                    // Appel des triggers
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    // Fin appel triggers
+                }
 
-	            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-	            $sql.= " SET ref='(PROV".$this->id.")'";
-	            $sql.= " WHERE rowid=".$this->id;
-	            dol_syslog(get_class($this)."::create sql=".$sql);
-	            if ($this->db->query($sql))
-	            {
-	                // On logue creation pour historique
-	                $this->log($user, 0, time());
-
-	                if (! $notrigger)
-	                {
-	                    // Appel des triggers
-	                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	                    $interface=new Interfaces($this->db);
-	                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-	                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	                    // Fin appel triggers
-	                }
-
-	                $this->db->commit();
-	                return $this->id;
-	            }
-	            else
-	            {
-	                $this->error=$this->db->error();
-	                dol_syslog(get_class($this)."::create: Failed -2 - ".$this->error, LOG_ERR);
-	                $this->db->rollback();
-	                return -2;
-	            }
+                $this->db->commit();
+                return $this->id;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dol_syslog(get_class($this)."::create: Failed -2 - ".$this->error, LOG_ERR);
+                $this->db->rollback();
+                return -2;
             }
         }
         else
         {
             $this->error=$this->db->error();
             dol_syslog(get_class($this)."::create: Failed -1 - ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -1;
-        }
-    }
-
-    /**
-     *	Load an object from its id and create a new one in database
-     *
-     *	@param		HookManager	$hookmanager	Hook manager instance
-     *	@return		int							New id of clone
-     */
-    function createFromClone($hookmanager=false)
-    {
-        global $conf,$user,$langs;
-
-        $error=0;
-
-        $this->db->begin();
-
-        // Load source object
-        $objFrom = dol_clone($this);
-
-        $this->id=0;
-        $this->statut=0;
-
-        // Clear fields
-        $this->user_author_id     = $user->id;
-        $this->user_valid         = '';
-        $this->date_creation      = '';
-        $this->date_validation    = '';
-        $this->ref_supplier         = '';
-
-        // Create clone
-        $result=$this->create($user);
-        if ($result < 0) $error++;
-
-        if (! $error)
-        {
-            // Hook of thirdparty module
-            if (is_object($hookmanager))
-            {
-                $parameters=array('objFrom'=>$objFrom);
-                $action='';
-                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                if ($reshook < 0) $error++;
-            }
-
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_SUPPLIER_CLONE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
-        }
-
-        // End
-        if (! $error)
-        {
-            $this->db->commit();
-            return $this->id;
-        }
-        else
-        {
             $this->db->rollback();
             return -1;
         }
@@ -1140,6 +1044,7 @@ class CommandeFournisseur extends CommonOrder
         }
         $desc=trim($desc);
 
+
         // Check parameters
         if ($qty < 1 && ! $fk_product)
         {
@@ -1147,6 +1052,7 @@ class CommandeFournisseur extends CommonOrder
             return -1;
         }
         if ($type < 0) return -1;
+
 
         if ($this->statut == 0)
         {
@@ -1170,7 +1076,7 @@ class CommandeFournisseur extends CommonOrder
                         $this->error="No price found for this quantity. Quantity may be too low ?";
                         $this->db->rollback();
                         dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
-                        return -1; // FIXME this return create an error in jenkins
+                        return -1;
                     }
                     if ($result < -1)
                     {
