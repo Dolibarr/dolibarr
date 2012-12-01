@@ -54,27 +54,21 @@ if ($prev_id)
       	dol_fiche_head($head, 'rejects', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
       	print '<table class="border" width="100%">';
-      	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
-
-		$relativepath = 'receipts/'.$bon->ref;
-
-		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
-
-		print '</td></tr>';
-
+	
 		// Status
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-
+	
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($bon->user_trans);
-
+	
 			print '<tr><td width="20%">'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($bon->date_trans,'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
@@ -88,10 +82,19 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-
-      	print '</table>';
-
-      	print '</div>';
+	
+		print '</table>';
+	
+		print '<br>';
+	
+		print '<table class="border" width="100%"><tr><td width="20%">';
+		print $langs->trans("WithdrawalFile").'</td><td>';
+		$relativepath = 'receipts/'.$bon->ref;
+		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		print '</td></tr></table>';
+	
+		dol_fiche_end();
+      	
     }
   	else
     {
@@ -103,8 +106,6 @@ $rej = new RejetPrelevement($db, $user);
 
 /*
  * Liste des factures
- *
- *
  */
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
 $sql.= " , s.rowid as socid, s.nom";
@@ -141,10 +142,10 @@ if ($resql)
     {
 		$obj = $db->fetch_object($resql);
 
-		print "<tr $bc[$var]><td>";
-		print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print "<tr ".$bc[$var]."><td>";
 
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print img_picto('', 'statut'.$obj->statut).' ';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
@@ -164,7 +165,7 @@ if ($resql)
 	print '<tr class="liste_total"><td>&nbsp;</td>';
 	print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 	print '<td align="right">'.price($total)."</td>\n";
-	print '<td>&nbsp;</td>';
+	print '<td colspan="3">&nbsp;</td>';
 	print "</tr>\n</table>\n";
 	$db->free($resql);
 }

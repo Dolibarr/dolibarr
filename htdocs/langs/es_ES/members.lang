@@ -199,3 +199,6 @@ Collectivités=Colectividades
 Particuliers=Particulares
 Entreprises=Empresas
 DOLIBARRFOUNDATION_PAYMENT_FORM=Para realizar el pago de su cotización por transferencia bancaria, visite la página <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribirse#Para_una_adhesi.C3.B3n_por_transferencia">http://wiki.dolibarr.org/index.php/Subscribirse</a>.<br>Para pagar con tarjeta de crédito o PayPal, haga clic en el botón en la parte inferior de esta página.<br><br>
+ByProperties=Por características
+MembersStatisticsByProperties=Estadísticas de los miembros por características
+MembersByNature=Miembros por naturaleza

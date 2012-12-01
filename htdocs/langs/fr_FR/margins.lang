@@ -47,7 +47,6 @@ MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge n
 
 BuyingCost=Coût de revient
 UnitCharges=Charge unitaire
-Charges=Charges
 
 AgentContactType=Type de contact commissionné
 AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera associé aux agents commerciaux

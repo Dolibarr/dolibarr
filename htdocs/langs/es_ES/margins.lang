@@ -47,7 +47,3 @@ MARGIN_TYPE_DETAILS=Margen bruto : Precio de venta sin IVA - Precio de compra si
 
 BuyingCost=Costos
 UnitCharges=Carga unitaria
-Charges=Cargas
-
-AgentContactType=Tipo de contacto comisionado
-AgentContactTypeDetails=Indica el tipo de contacto enlazado a las facturas que serán asociados a los agentes comerciales

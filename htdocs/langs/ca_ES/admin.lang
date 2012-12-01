@@ -718,6 +718,20 @@ VATIsNotUsedDesc=El tipus d'IVA proposat per defecte és 0. Aquest és el cas d'
 VATIsUsedExampleFR=A França, es tracta de les societats o organismes que trien un règim fiscal general (General simplificat o General normal), règim en el qual es declara l'IVA.
 VATIsNotUsedExampleFR=A França, es tracta d'associacions exemptes d'IVA o societats, organismes o professions liberals que han eligedo el règim fiscal de mòduls (IVA en franquícia), pagant un IVA en franquícia sense fer declaració d'IVA. Aquesta elecció fa aparèixer l'anotació "IVA no aplicable - art-293B del CGI" en les factures.
 ##### Local Taxes #####
+LocalTax1IsUsed=Subjecte
+LocalTax1IsNotUsed=No subjecte
+LocalTax1IsUsedDesc=Ús d'un 2on. tipus d'impost (Diferent de l'IVA)
+LocalTax1IsNotUsedDesc=No utilitzar un 2on. tipus d'impost (Diferent de l'IVA)
+LocalTax1Management=Gestió 2on. tipus d'impost
+LocalTax1IsUsedExample=
+LocalTax1IsNotUsedExample=
+LocalTax2IsUsed=Subjecte
+LocalTax2IsNotUsed=No subjecte
+LocalTax2IsUsedDesc=Ús d'un 3er. tipus d'impost (Diferent de l'IVA)
+LocalTax2IsNotUsedDesc=No utilitzar un 3er. tipus d'impost (Diferent de l'IVA)
+LocalTax2Management=Gestió 2on. tipus d'impost
+LocalTax2IsUsedExample=
+LocalTax2IsNotUsedExample= 
 LocalTax1ManagementES=Gestió Recàrrec d'Equivalència
 LocalTax1IsUsedDescES=El tipus de RE proposat per defecte en les creacions de pressupostos, factures, comandes, etc. Respon a la següent regla:<br>Si el comprador no està subjecte a RE, RE per defecte= 0. Final de regla.<br>Si el comprador està subjecte a RE aleshores s'aplica valor de RE per defecte. Final de regla.<br>
 LocalTax1IsNotUsedDescES=El tipus de RE proposat per defecte es 0. Final de regla.
@@ -949,7 +963,6 @@ DocumentModelOdt=Generació des dels documents amb format OpenDocument (Arxiu .O
 WatermarkOnDraft=Marca d'aigua en els documents esborrany
 CompanyIdProfChecker=Id Professional únic
 MustBeUnique=Ha de ser únic?
-MustBeMandatory=Ha de ser obligatori?
 Miscellanous=Miscel·lània
 ##### Webcal setup #####
 WebCalSetup=Configuració d'enllaç amb el calendari webcalendar

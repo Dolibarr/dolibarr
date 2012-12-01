@@ -21,7 +21,6 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto ya está definido como 
 ErrorCashAccountAcceptsOnlyCashMoney=Esta cuenta bancaria es de tipo caja y solo acepta el método de pago de tipo <b>especie</b>.
 ErrorFromToAccountsMustDiffers=La cuenta origen y destino deben ser diferentes.
 ErrorBadThirdPartyName=Nombre de tercero incorrecto
-ErrorProdIdIsMandatory=El %s es obligatorio
 ErrorBadCustomerCodeSyntax=La sintaxis del código cliente es incorrecta
 ErrorCustomerCodeRequired=Código cliente obligatorio
 ErrorCustomerCodeAlreadyUsed=Código de cliente ya utilizado

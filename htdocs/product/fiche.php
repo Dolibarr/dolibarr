@@ -1380,7 +1380,7 @@ print "\n</div><br>\n";
  * All the "Add to" areas
  */
 
-if ($object->id && ($action == '' || $action == 'view') && $object->status)
+if ($id && ($action == '' || $action == 'view') && $object->status)
 {
     print '<table width="100%" class="noborder">';
 

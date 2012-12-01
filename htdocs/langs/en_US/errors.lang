@@ -25,7 +25,6 @@ ErrorThisContactIsAlreadyDefinedAsThisType=This contact is already defined as co
 ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it accepts payments of type cash only.
 ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
 ErrorBadThirdPartyName=Bad value for third party name
-ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorCustomerCodeRequired=Customer code required
 ErrorCustomerCodeAlreadyUsed=Customer code already used

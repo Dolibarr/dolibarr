@@ -375,6 +375,11 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 			// Set constant
 			$("#set_" + code).click(function() {
 				if (input.alert && input.alert.set) {
+					// Posibility to force label of buttons
+					if (input.alert.set.yesButton)
+						yesButton = input.alert.set.yesButton;
+					if (input.alert.set.noButton)
+						noButton = input.alert.set.noButton;
 					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
 				} else {
 					setConstant(url, code, input, entity);
@@ -384,6 +389,11 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 			// Del constant
 			$("#del_" + code).click(function() {
 				if (input.alert && input.alert.del) {
+					// Posibility to force label of buttons
+					if (input.alert.del.yesButton)
+						yesButton = input.alert.del.yesButton;
+					if (input.alert.del.noButton)
+						noButton = input.alert.del.noButton;
 					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
 				} else {
 					delConstant(url, code, input, entity);
