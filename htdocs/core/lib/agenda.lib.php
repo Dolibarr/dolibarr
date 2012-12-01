@@ -403,6 +403,11 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/participant.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Participants");
+	$head[$h][2] = 'participant';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
