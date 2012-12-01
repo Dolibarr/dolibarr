@@ -408,9 +408,9 @@ function actions_prepare_head($object)
 
 	if ($conf->global->AGENDA_USE_SEVERAL_CONTACTS)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/action/participant.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Participants");
-		$head[$h][2] = 'participant';
+		$head[$h][0] = DOL_URL_ROOT.'/comm/action/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Contacts");
+		$head[$h][2] = 'contact';
 		$h++;
 	}
 
