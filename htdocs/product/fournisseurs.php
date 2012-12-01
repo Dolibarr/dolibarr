@@ -351,11 +351,8 @@ if ($id || $ref)
 				//print $form->load_tva('tva_tx',$product->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
 				if (! empty($socid))	// When update
 				{
-					$supplierselected=new Societe($db);
-					$supplierselected->fetch($socid);
 					$default_vat=get_default_tva($supplier, $mysoc, $product->id);
 				}
-				if ($action == 'add_price' && $socid) $default_vat=$product->tva_tx;	// If editing product-fourn
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';
 
