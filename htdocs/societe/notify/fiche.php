@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,7 +232,7 @@ if ($result > 0)
 
         foreach($listofnotifiedevents as $notifiedevent)
         {
- 			$label=($langs->trans("Notify_".$notifiedevent['code'])!="Notify_".$notifiedevent['code']?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label']);
+            $label=$langs->trans("Notify_".$notifiedevent['code'])!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
             $actions[$notifiedevent['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';

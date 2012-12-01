@@ -94,34 +94,6 @@ if ($action == "save" && empty($cancel))
     }
 }
 
-if (preg_match('/set_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-if (preg_match('/del_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
 
 
 /**
@@ -186,46 +158,6 @@ print "</center>";
 print "</form>\n";
 
 print '</div>';
-
-/*
- * Other options
-*/
-
-print_titre($langs->trans("OtherOptions"));
-
-$var=true;
-
-print '<table class="noborder allwidth">'."\n";
-print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center" width="20">&nbsp;</td>'."\n";
-print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
-print '</tr>'."\n";
-
-// Manual or automatic
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
-print '<td align="center" width="20">&nbsp;</td>'."\n";
-
-print '<td align="center" width="100">'."\n";
-if ($conf->use_javascript_ajax)
-{
-	print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');
-}
-else
-{
-	if($conf->global->AGENDA_USE_EVENT_TYPE == 0)
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else if($conf->global->BUSINESS_VISIBLE_TO_ALL_BY_DEFAULT == 1)
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
-}
-print '</td></tr>'."\n";
-
 
 print "<br>";
 

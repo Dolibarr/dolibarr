@@ -87,6 +87,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$conf,$langs;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$object->fetch_thirdparty();
 
@@ -132,8 +133,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
-				$default_font_size = pdf_getPDFFontSize($outputlangs);
-				$heightforinfotot = 0;	// Height reserved to output the info and total part
+                $heightforinfotot = 0;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);

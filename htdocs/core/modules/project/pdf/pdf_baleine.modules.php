@@ -108,6 +108,8 @@ class pdf_baleine extends ModelePDFProjects
 		{
 			$nblignes = count($object->lines);
 
+			$default_font_size = pdf_getPDFFontsize($outputlangs);
+
 			$objectref = dol_sanitizeFileName($object->ref);
 			$dir = $conf->projet->dir_output;
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
@@ -125,7 +127,6 @@ class pdf_baleine extends ModelePDFProjects
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)

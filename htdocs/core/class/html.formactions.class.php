@@ -144,10 +144,10 @@ class FormActions
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
-		if (is_numeric($listofactions) && $listofactions < 0) dol_print_error($this->db,'FailedToGetActions');
+        $actioncomm = new ActionComm($this->db);
+        $actioncomm->getActions($socid, $object->id, $typeelement);
 
-        $num = count($listofactions);
+        $num = count($actioncomm->actions);
         if ($num)
         {
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
@@ -164,29 +164,17 @@ class FormActions
 
         	$total = 0;	$var=true;
         	print '<table class="noborder" width="100%">';
-        	print '<tr class="liste_titre">';
-        	print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('Date').'</th>';
-        	print '<th class="liste_titre">'.$langs->trans('By').'</th>';
-        	print '</tr>';
+        	print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans('Ref').'</th><th class="liste_titre">'.$langs->trans('Date').'</th><th class="liste_titre">'.$langs->trans('Action').'</th><th class="liste_titre">'.$langs->trans('By').'</th></tr>';
         	print "\n";
 
-        	$userstatic = new User($this->db);
-
-        	foreach($listofactions as $action)
+        	foreach($actioncomm->actions as $action)
         	{
-        		$savlabel=$action->label;
-        		$action->label=$action->ref;
-        		$ref=$action->getNomUrl(1);
-        		$action->label=$savlabel;
-        		$label=$action->getNomUrl(0,38);
-
         		$var=!$var;
         		print '<tr '.$bc[$var].'>';
-				print '<td>'.$ref.'</td>';
-        		print '<td>'.$label.'</td>';
+        		print '<td>'.$action->getNomUrl(1).'</td>';
         		print '<td>'.dol_print_date($action->datep,'day').'</td>';
+        		print '<td title="'.dol_escape_htmltag($action->label).'">'.dol_trunc($action->label,32).'</td>';
+        		$userstatic = new User($this->db);
         		$userstatic->id = $action->author->id;
         		$userstatic->firstname = $action->author->firstname;
         		$userstatic->lastname = $action->author->lastname;
@@ -206,10 +194,9 @@ class FormActions
      *  @param	string		$selected       Type pre-selectionne
      *  @param  string		$htmlname       Nom champ formulaire
      *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not
      * 	@return	void
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0)
+    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='')
     {
         global $langs,$user;
 
@@ -218,13 +205,12 @@ class FormActions
         $caction=new CActionComm($this->db);
         $form=new Form($this->db);
 
-       	// Suggest a list with manual event or all auto events
-       	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
-       	array_unshift($arraylist,'&nbsp;');     // Add empty line at start
-       	//asort($arraylist);
+        $arraylist=$caction->liste_array(1, 'code', $excludetype);
+        array_unshift($arraylist,'&nbsp;');     // Add empty line at start
+        //asort($arraylist);
 
         print $form->selectarray($htmlname, $arraylist, $selected);
-        if ($user->admin && empty($onlyautoornot)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
 }
