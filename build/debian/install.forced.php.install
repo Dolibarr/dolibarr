@@ -29,13 +29,14 @@ $force_install_lockinstall='444';
 // If we enable/disable libraries declaration during install, we must also check they are 
 // not removed from package (see in rules file),
 // declared into dependencies (see in control file)
+$force_dolibarr_lib_TCPDF_PATH='';
+$force_dolibarr_lib_FPDF_PATH='/usr/share/php/fpdf';
+$force_dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 $force_dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
-//$force_dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 $force_dolibarr_lib_GEOIP_PATH='';
 $force_dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
 $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
 $force_dolibarr_lib_PHPEXCEL_PATH='';
-$force_dolibarr_lib_TCPDF_PATH='';
 $force_dolibarr_js_CKEDITOR='/javascript/ckeditor';
 $force_dolibarr_js_JQUERY='/javascript/jquery';
 $force_dolibarr_js_JQUERY_UI='/javascript/jquery-ui';

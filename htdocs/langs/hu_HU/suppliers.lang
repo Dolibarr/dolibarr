@@ -5,7 +5,6 @@ Supplier=Beszállító
 AddSupplier=Beszállító hozzáadása
 SupplierRemoved=Beszállító eltávolítva
 SuppliersInvoice=Beszállító számla
-SuppliersInvoices=Beszállítók számlái
 NewSupplier=Új beszállító
 History=Történet
 ListOfSuppliers=Beszállító listája

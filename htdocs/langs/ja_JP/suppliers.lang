@@ -13,7 +13,6 @@ Supplier=サプライヤー
 AddSupplier=サプライヤーを追加します。
 SupplierRemoved=サプライヤーは、削除
 SuppliersInvoice=仕入先の請求書
-SuppliersInvoices=仕入先の請求書
 NewSupplier=新しいサプライヤー
 History=歴史
 ListOfSuppliers=サプライヤーのリスト

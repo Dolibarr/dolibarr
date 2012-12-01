@@ -466,10 +466,19 @@ elseif ($action == 'addline')
     }
     $ret=$object->fetch_thirdparty();
 
-    if ($_POST['idprodfournprice'])	// > 0 or -1
+    if (GETPOST('search_idprodfournprice') || GETPOST('idprodfournprice'))	// With combolist idprodfournprice is > 0 or -1, with autocomplete, idprodfournprice is > 0 or ''
     {
-        $product=new Product($db);
-        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
+    	$idprod=0;
+    	$product=new Product($db);
+
+    	if (GETPOST('idprodfournprice') == '')
+		{
+			$idprod=-1;
+		}
+    	if (GETPOST('idprodfournprice') > 0)
+        {
+    	    $idprod=$product->get_buyprice(GETPOST('idprodfournprice'), $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
+        }
 
         if ($idprod > 0)
         {
@@ -1805,10 +1814,20 @@ else
                 print '<td colspan="4">&nbsp;</td>';
                 print '</tr>';
 
+                // TODO Use the predefinedproductline_create.tpl.php file
                 print '<form name="addline_predef" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addline" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="socid" value="'. $object->socid .'">';
                 print '<input type="hidden" name="facid" value="'.$object->id.'">';
+                
+                print '<script type="text/javascript">
+                		jQuery(document).ready(function() {
+                			jQuery(\'#idprodfournprice\').change(function() {
+                				if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
+                			});
+                		});
+                </script>';
+                           
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';

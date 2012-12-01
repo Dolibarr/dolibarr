@@ -16,7 +16,6 @@ Supplier=Leverandør
 AddSupplier=Tilføj en leverandør
 SupplierRemoved=Leverandør fjernet
 SuppliersInvoice=Leverandører faktura
-SuppliersInvoices=Leverandører fakturaer
 NewSupplier=Ny leverandør
 History=Historie
 ListOfSuppliers=Liste over leverandører

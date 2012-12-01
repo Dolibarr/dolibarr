@@ -49,8 +49,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 
 					// Remove product id before select another product
 					// use keyup instead change to avoid loosing the product id
-					$("input#search_'.$htmlname.'").keyup(function() {
-							$("#'.$htmlname.'").val("").trigger("change");
+					$("input#search_'.$htmlname.'").keydown(function() {
+						//console.log(\'purge_id_after_keydown\');
+						$("#'.$htmlname.'").val("");
+					});
+					$("input#search_'.$htmlname.'").change(function() {
+						//console.log(\'keyup\');
+						$("#'.$htmlname.'").trigger("change");
 					});
 					// Check when keyup
 					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
@@ -116,6 +121,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {
+							//console.log(\'set value of id with \'+ui.item.id);
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");
     						// Disable an element
     						if (options.option_disabled) {

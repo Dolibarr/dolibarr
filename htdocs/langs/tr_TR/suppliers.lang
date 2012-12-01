@@ -12,7 +12,6 @@ Supplier=Tedarikçi
 AddSupplier=Bir tedarikçi ekle
 SupplierRemoved=Tedarikçi kaldırıldı
 SuppliersInvoice=Tedarikçi faturası
-SuppliersInvoices=Tedarikçi faturaları
 NewSupplier=Yeni tedarikçi
 History=Geçmiş
 ListOfSuppliers=Tedarikçiler listesi

@@ -2722,7 +2722,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax2";
+	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
@@ -2732,9 +2732,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local==1) return $obj->localtax1;
-		elseif ($local==2) return $obj->localtax2;
-		//else return array($obj->localtax1,$obj->localtax2);
+		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
+		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
 	}
 
 	return 0;
@@ -4208,6 +4207,35 @@ function getCurrencySymbol($currency_code)
 	}
 
 	return $currency_sign;
+}
+/**
+ * Get type of one localtax
+ *
+ *  @param		int	$vatrate			VAT Rate
+ *  @param		int	$number             Number of localtax (1 / 2)
+ *  @param		int	$thirdparty         company object
+ *  @return		array      				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
+ */
+
+function getTypeOfLocalTaxFromRate($vatrate, $number, $thirdparty)
+{
+	global $db;
+
+	// Search local taxes
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
+	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+  		if ($number == 1) return array($obj->localtax1_type, $obj->localtax1);
+  		elseif ($number == 2) return array($obj->localtax2_type, $obj->localtax2);
+	}
+
+	return 0;
 }
 
 if (! function_exists('getmypid'))

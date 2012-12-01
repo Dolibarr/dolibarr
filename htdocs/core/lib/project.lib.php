@@ -208,7 +208,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
 					//else $labeltoshow.=' ('.$langs->trans("Private").')';
 					if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 					{
-						print '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
+						print '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' - '.dol_trunc($obj->title,$maxlength).'</option>';
 					}
 					else
 					{
