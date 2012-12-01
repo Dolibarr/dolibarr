@@ -156,6 +156,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		if ($conf->fournisseur->dir_output.'/commande')
 		{
 			$object->fetch_thirdparty();
@@ -194,7 +196,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)

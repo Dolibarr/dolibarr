@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Get parameters
@@ -753,9 +752,9 @@ else
             //print_fiche_titre($langs->trans('TitreRequestCP'));
 
             // Si il y a une erreur
-            if (GETPOST('error'))
+            if (GETPOST('error')) 
             {
-                switch(GETPOST('error'))
+                switch(GETPOST('error')) 
                 {
                     case 'datefin' :
                         $errors[] = $langs->transnoentitiesnoconv('ErrorEndDateCP');
@@ -830,8 +829,16 @@ else
                     if ($ret == 'html') print '<br />';
                 }
 
-                $head=holiday_prepare_head($cp);
 
+                $h=0;
+                $head = array();
+                $head[$h][0] = DOL_URL_ROOT . '/holiday/fiche.php?id='.$id;
+                $head[$h][1] = $langs->trans("Card");
+                $head[$h][2] = 'card';
+                $h++;
+                
+                complete_head_from_modules($conf,$langs,$cp,$head,$h,'holiday');
+                
                 dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
 

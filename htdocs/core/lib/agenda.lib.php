@@ -93,10 +93,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '<td nowrap="nowrap">';
 				print $langs->trans("Type");
 				print ' &nbsp;</td><td nowrap="nowrap">';
-
-				// print $formactions->select_type_actions(GETPOST('actioncode'), "actioncode");
-				print $formactions->select_type_actions(GETPOST('actioncode')?GETPOST('actioncode'):'manual', "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
-
+				print $formactions->select_type_actions(GETPOST('actioncode'), "actioncode");
 				print '</td></tr>';
 			}
 
@@ -448,10 +445,8 @@ function calendars_prepare_head($param)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda');
-
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda','remove');
 
     return $head;
 }

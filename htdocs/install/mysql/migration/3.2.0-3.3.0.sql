@@ -805,12 +805,6 @@ ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
 ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
 
 
-delete from llx_c_actioncomm where id = 40;
-INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) values ( 40, 'AC_OTH_AUTO','systemauto', 'Other (automatically inserted events)' ,NULL, 20);
-UPDATE llx_c_actioncomm SET libelle = 'Other (manually inserted events)' WHERE code = 'AC_OTH';
-UPDATE llx_c_actioncomm SET active = 0 WHERE code in ('AC_PROP', 'AC_COM', 'AC_FAC', 'AC_SHIP', 'AC_SUP_ORD', 'AC_SUP_INV');
-
-
 -- Update dictionnary of table llx_c_paper_format
 DELETE FROM llx_c_paper_format;
 
@@ -842,3 +836,16 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 
 -- increase field size
 ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(8);
+
+
+
+create table llx_user_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- member id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
+
