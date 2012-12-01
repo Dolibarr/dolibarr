@@ -718,7 +718,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		$pdf->SetFont('','B',7);
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell(200, 2, $line1, 0, 'C', 0);
+		$pdf->MultiCell($dims['wk']-$dims['rm'], 2, $line1, 0, 'C', 0);
 		$posy-=3;
 		$pdf->SetFont('','',7);
 	}
@@ -727,7 +727,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		$pdf->SetFont('','B',7);
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell(200, 2, $line2, 0, 'C', 0);
+		$pdf->MultiCell($dims['wk']-$dims['rm'], 2, $line2, 0, 'C', 0);
 		$posy-=3;
 		$pdf->SetFont('','',7);
 	}
@@ -735,14 +735,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if (! empty($line3))
 	{
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell(200, 2, $line3, 0, 'C', 0);
+		$pdf->MultiCell($dims['wk']-$dims['rm'], 2, $line3, 0, 'C', 0);
 	}
 
 	if (! empty($line4))
 	{
 		$posy-=3;
 		$pdf->SetXY($dims['lm'],-$posy);
-		$pdf->MultiCell(200, 2, $line4, 0, 'C', 0);
+		$pdf->MultiCell($dims['wk']-$dims['rm'], 2, $line4, 0, 'C', 0);
 	}
 
 	// Show page nb only on iso languages (so default Helvetica font)
