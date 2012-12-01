@@ -375,7 +375,8 @@ class modAgenda extends DolibarrModules
 		// Prevent pb of modules not correctly disabled
 		//$this->remove($options);
 
-		$sql = array();
+		$sql = array(array( "sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (300, 'action',  'external', 'GUEST', 'Invité', 1);",	"ignoreerror" => 1),
+						array( "sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (301, 'action',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1));
 
 		return $this->_init($sql,$options);
 	}
