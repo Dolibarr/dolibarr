@@ -81,8 +81,8 @@ function user_prepare_head($object)
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:conditiontoshow:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:conditiontoshow:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
     if (! empty($user->societe_id))
@@ -97,8 +97,6 @@ function user_prepare_head($object)
     	$head[$h][2] = 'info';
     	$h++;
     }
-
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'user','remove');
 
 	return $head;
 }
@@ -142,10 +140,8 @@ function group_prepare_head($object)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'group');
-
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'group','remove');
 
     return $head;
 }

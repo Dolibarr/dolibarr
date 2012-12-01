@@ -90,11 +90,11 @@ class Holiday extends CommonObject
         $error=0;
 
         $now=dol_now();
-
+        
         // Check parameters
         if (empty($this->fk_user) || ! is_numeric($this->fk_user) || $this->fk_user < 0) { $this->error="ErrorBadParameter"; return -1; }
         if (empty($this->fk_validator) || ! is_numeric($this->fk_validator) || $this->fk_validator < 0)  { $this->error="ErrorBadParameter"; return -1; }
-
+        
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday(";
 
@@ -191,8 +191,7 @@ class Holiday extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
-                $this->rowid    = $obj->rowid;	// deprecated
+                $this->rowid    = $obj->rowid;
                 $this->fk_user = $obj->fk_user;
                 $this->date_create = $this->db->jdate($obj->date_create);
                 $this->description = $obj->description;
@@ -207,6 +206,8 @@ class Holiday extends CommonObject
                 $this->date_cancel = $this->db->jdate($obj->date_cancel);
                 $this->fk_user_cancel = $obj->fk_user_cancel;
                 $this->detail_refuse = $obj->detail_refuse;
+
+
             }
             $this->db->free($resql);
 
@@ -1600,17 +1601,17 @@ class Holiday extends CommonObject
     function initAsSpecimen()
     {
     	global $user,$langs;
-
+    
     	// Initialise parameters
     	$this->id=0;
     	$this->specimen=1;
-
+    	
     	$this->fk_user=1;
     	$this->description='SPECIMEN description';
     	$this->date_debut=dol_now();
     	$this->date_fin=dol_now()+(24*3600);
     	$this->fk_validator=1;
     }
-
+    
 }
 ?>

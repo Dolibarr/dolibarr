@@ -221,16 +221,14 @@ abstract class CommonObject
      *      @param	int		$rowid              Id of line contact-element
      * 		@param	int		$statut	            New status of link
      *      @param  int		$type_contact_id    Id of contact type (not modified if 0)
-     *      @param  int		$fk_socpeople	    Id of soc_people to update (not modified if 0)
      *      @return int                 		<0 if KO, >= 0 if OK
      */
-    function update_contact($rowid, $statut, $type_contact_id=0, $fk_socpeople=0)
+    function update_contact($rowid, $statut, $type_contact_id=0)
     {
         // Insertion dans la base
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
         $sql.= " statut = ".$statut;
         if ($type_contact_id) $sql.= ", fk_c_type_contact = '".$type_contact_id ."'";
-        if ($fk_socpeople) $sql.= ", fk_socpeople = '".$fk_socpeople ."'";
         $sql.= " where rowid = ".$rowid;
         $resql=$this->db->query($sql);
         if ($resql)

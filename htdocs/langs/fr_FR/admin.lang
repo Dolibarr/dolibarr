@@ -715,20 +715,6 @@ VATIsNotUsedDesc= Le taux de TVA proposé par défaut est 0. C'est le cas d'asso
 VATIsUsedExampleFR= En France, il s'agit des sociétés ou organismes ayant choisi un régime fiscale réel (Réel simplifié ou Réel normal), régime dans lequel la TVA est déclarée.
 VATIsNotUsedExampleFR= En France, il s'agit des associations ne déclarant pas de TVA ou sociétés, organismes ou professions libérales ayant choisi le régime fiscal micro entreprise (TVA en franchise) et payant une TVA en franchise sans faire de déclaration de TVA. Ce choix fait de plus apparaitre la mention "TVA non applicable - art-293B du CGI" sur les factures.
 ##### Local Taxes #####
-LocalTax1IsUsed=Assujeti
-LocalTax1IsNotUsed=Non assujeti
-LocalTax1IsUsedDesc=Utilisation d'une 2eme type taxe (autre que TVA)
-LocalTax1IsNotUsedDesc=Pas d'utilisation de 2eme type taxe (autre que TVA)
-LocalTax1Management=Gestion 2eme type de tax
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
-LocalTax2IsUsed=Assujeti
-LocalTax2IsNotUsed=Non assujeti
-LocalTax2IsUsedDesc=Utilisation d'une 3eme type taxe (autre que TVA)
-LocalTax2IsNotUsedDesc=Pas d'utilisation de 3eme type taxe (autre que TVA)
-LocalTax2Management=Gestion 3eme type de tax
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample= 
 LocalTax1ManagementES= Gestion RE
 LocalTax1IsUsedDescES= Le taux de RE proposé par défaut lors de la création de propale, facture, commande, etc... répond à la règle standard suivante:<br>Si acheteur non assujetti à RE, RE par défaut=0. Fin de règle.<br>Si acheteur assujetti à RE alors RE par défaut. Fin de règle.<br>
 LocalTax1IsNotUsedDescES= Le taux de RE proposé par défaut est 0. Fin de règle.
@@ -1330,7 +1316,6 @@ AccountancyCodeBuy=Code compta achat
 AgendaSetup= Configuration du module actions et agenda
 PasswordTogetVCalExport= Clé pour autoriser lien export
 PastDelayVCalExport=Ne pas exporter les événements de plus de
-AGENDA_USE_EVENT_TYPE=Utilisez les type des évenements (administrable dans Configuration->Dictionnary->llx_c_actioncomm)
 ##### ClickToDial #####
 ClickToDialDesc= Ce module permet d'ajouter un petit picto à côté des numéros de téléphones. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un système SIP par exemple.
 ##### Point Of Sales (CashDesk) #####

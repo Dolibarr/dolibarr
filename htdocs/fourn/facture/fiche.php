@@ -82,7 +82,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         $result=$object->createFromClone($id);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF'].'?action=editfacnumber&id='.$result);
+            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
             exit;
         }
         else

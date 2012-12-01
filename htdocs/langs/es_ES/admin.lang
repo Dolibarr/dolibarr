@@ -720,20 +720,6 @@ VATIsNotUsedDesc=El tipo de IVA propuesto por defecto es 0. Este es el caso de a
 VATIsUsedExampleFR=En Francia, se trata de las sociedades u organismos que eligen un régimen fiscal general (General simplificado o General normal), régimen en el cual se declara el IVA.
 VATIsNotUsedExampleFR=En Francia, se trata de asociaciones exentas de IVA o sociedades, organismos o profesiones liberales que han elegido el régimen fiscal de módulos (IVA en franquicia), pagando un IVA en franquicia sin hacer declaración de IVA. Esta elección hace aparecer la anotación  "IVA no aplicable - art-293B del CGI" en las facturas.
 ##### Local Taxes #####
-LocalTax1IsUsed=Sujeto
-LocalTax1IsNotUsed=No sujeto
-LocalTax1IsUsedDesc=Uso de un 2º tipo de impuesto (Distinto del IVA)
-LocalTax1IsNotUsedDesc=No usar un 2º tipo de impuesto (Distinto del IVA)
-LocalTax1Management=Gestión 2º tipo de impuesto
-LocalTax1IsUsedExample=
-LocalTax1IsNotUsedExample=
-LocalTax2IsUsed=Sujeto
-LocalTax2IsNotUsed=No sujeto
-LocalTax2IsUsedDesc=Uso de un 3er. tipo de impuesto (Distinto del IVA)
-LocalTax2IsNotUsedDesc=No usar un 3er. tipo de impuesto (Distinto del IVA)
-LocalTax2Management=Gestión 3er. tipo de impuesto
-LocalTax2IsUsedExample=
-LocalTax2IsNotUsedExample= 
 LocalTax1ManagementES=Gestión RE
 LocalTax1IsUsedDescES=El tipo de RE propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el comprador no está sujeto a RE, RE por defecto=0. Final de regla.<br>Si el comprador está sujeto a RE entonces se aplica valor de RE por defecto. Final de regla.<br>
 LocalTax1IsNotUsedDescES=El tipo de RE propuesto por defecto es 0. Final de regla.

@@ -143,9 +143,6 @@ class Translate
 	 *  If data for file already loaded, do nothing.
 	 * 	All data in translation array are stored in UTF-8 format.
      *  tab_loaded is completed with $domain key.
-     *  Warning: MAIN_USE_CUSTOM_TRANSLATION is an old deprecated feature. Do not use it. It will revert 
-     *  rule "we keep first entry found with we keep last entry found" so it is probably not what you want to do.
-     *
      *  Value for hash are: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
      *
 	 *  @param	string	$domain      		File name to load (.lang file). Must be "file" or "file@module" for module language files:
@@ -201,14 +198,13 @@ class Translate
 			// Directory of translation files
 			$file_lang = $searchdir.($modulename?'/'.$modulename:'')."/langs/".$langofdir."/".$newdomain.".lang";
 			$file_lang_osencoded=dol_osencode($file_lang);
-
 			$filelangexists=is_file($file_lang_osencoded);
 
 			//dol_syslog('Translate::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 
 			if ($filelangexists)
 			{
-				// TODO Move cache read out of loop on dirs or at least filelangexists
+				// TODO Move cache read out of loop on dirs
 			    $found=false;
 
 				// Enable caching of lang file in memory (not by default)

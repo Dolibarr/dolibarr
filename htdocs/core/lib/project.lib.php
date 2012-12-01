@@ -61,7 +61,7 @@ function project_prepare_head($object)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'project');
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
@@ -96,9 +96,7 @@ function project_prepare_head($object)
    	$head[$h][2] = 'gantt';
    	$h++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'project','remove');
-
-    return $head;
+   	return $head;
 }
 
 
@@ -132,7 +130,7 @@ function task_prepare_head($object)
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
@@ -148,8 +146,6 @@ function task_prepare_head($object)
     $head[$h][1] = $langs->trans('Notes');
     $head[$h][2] = 'task_notes';
     $h++;
-
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'task','remove');
 
     return $head;
 }
