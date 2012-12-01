@@ -47,3 +47,7 @@ MARGIN_TYPE_DETAILS=Marge brut: Preu de venda sense IVA - Preu de compra sense I
 
 BuyingCost=Costos
 UnitCharges=Càrrega unitària
+Charges=Càrreges
+
+AgentContactType=Tipus de contacte comissionat
+AgentContactTypeDetails=Indica el tipus de contacte enllaçat a les factures que seran associats als agents comercials
