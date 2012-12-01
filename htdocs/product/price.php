@@ -322,7 +322,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			print '</td></tr>';
 
 			// Price by quantity
-			if($conf->global->PRODUIT_PRICE_BY_QTY) {
+			if($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
 				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
 				print '</td><td>';
 				
@@ -424,7 +424,7 @@ else
 	print '</td></tr>';
 	
 	// Price by quantity
-	if($conf->global->PRODUIT_PRICE_BY_QTY) {
+	if($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
 		print '<tr><td>'.$langs->trans("PriceByQuantity");
 		if($object->prices_by_qty[0] == 0) {
 			print '&nbsp;<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level=1">'.$langs->trans("Activate");
@@ -699,7 +699,7 @@ if ($result)
 		{
 			print '<td align="center">'.$langs->trans("MultiPriceLevelsName").'</td>';
 		}
-		if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			print '<td align="center">'.$langs->trans("Type").'</td>';
 		}
@@ -730,7 +730,7 @@ if ($result)
 				print '<td align="center">'.$objp->price_level."</td>";
 			}
 			// Price by quantity
-			if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+			if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 			{
 				$type = ($objp->price_by_qty == 1) ? 'PriceByQuantity' : 'Standard';
 				print '<td align="center">'.$langs->trans($type)."</td>";

@@ -1241,7 +1241,7 @@ class Product extends CommonObject
 							return -1;
 						}
 					}
-				} else if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+				} else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 				{
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
