@@ -7,6 +7,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_file extends LogHandler implements LogHandlerInterface
 {
+
 	/**
 	 * 	Return name of logger
 	 *
@@ -106,11 +107,14 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * Export the message
 	 *
 	 * @param  	array 	$content 	Array containing the info about the message
+     * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
 	 * @return	void
 	 */
 	public function export($content)
 	{
 		$logfile = $this->getFilename();
+
+		if ($ident) $this->ident+=$ident;
 
 		if (defined("SYSLOG_FILE_NO_ERROR")) $filefd = @fopen($logfile, 'a+');
 		else $filefd = fopen($logfile, 'a+');
@@ -133,7 +137,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			LOG_DEBUG => 'DEBUG'
 		);
 
-		$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-5s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".$content['message'];
+		$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-5s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
 
 		fwrite($filefd, $message."\n");
 		fclose($filefd);

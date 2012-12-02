@@ -474,12 +474,14 @@ class DoliDBPgsql
 			{
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction",LOG_DEBUG);
+				dol_syslog('',0,1);
 			}
 			return $ret;
 		}
 		else
 		{
 			$this->transaction_opened++;
+			dol_syslog('',0,1);
 			return 1;
 		}
 	}
@@ -492,6 +494,7 @@ class DoliDBPgsql
 	 */
 	function commit($log='')
 	{
+		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("COMMIT;");
@@ -516,6 +519,7 @@ class DoliDBPgsql
 	 */
 	function rollback()
 	{
+		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK;");
