@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,10 +118,6 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 
 		$this->tva=array();
-		$this->localtax1=array();
-		$this->localtax2=array();
-		$this->localtax1_type=array();
-		$this->localtax2_type=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -151,6 +148,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if ($conf->commande->dir_output)
 		{
@@ -186,8 +185,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
-				$heightforinfotot = 50;	// Height reserved to output the info and total part
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
