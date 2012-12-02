@@ -497,22 +497,12 @@ function dol_syslog($message, $level = LOG_INFO)
 
 	if (!defined('SYSLOG_HANDLERS') || !constant('SYSLOG_HANDLERS')) return false;
 
-	$logLevels = array(
-		LOG_EMERG,
-		LOG_ALERT,
-		LOG_CRIT,
-		LOG_ERR,
-		LOG_WARNING,
-		LOG_NOTICE,
-		LOG_INFO,
-		LOG_DEBUG
-	);
-
+	// Test log level
+	$logLevels = array(	LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
 	if (!in_array($level, $logLevels))
 	{
 		throw new Exception('Incorrect log level');
 	}
-
 	if ($level > $conf->global->SYSLOG_LEVEL) return false;
 
 	// If adding log inside HTML page is required
@@ -545,29 +535,10 @@ function dol_syslog($message, $level = LOG_INFO)
 	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
 
-	//We load SYSLOG handlers
-	if (defined('SYSLOG_HANDLERS')) $handlers = json_decode(SYSLOG_HANDLERS);
-	else $handlers = array();
-
-	foreach ($handlers as $handler)
+	// Loop on each log handler and send output
+	foreach ($conf->loghandlers as $loghandlerinstance)
 	{
-		$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
-
-		if (!file_exists($file))
-		{
-			throw new Exception('Missing log handler');
-		}
-
-		require_once $file;
-
-		$class = new $handler();
-
-		if (!$class instanceof LogHandlerInterface)
-		{
-			throw new Exception('Log handler does not extend LogHandlerInterface');
-		}
-
-		$class->export($data);
+		$loghandlerinstance->export($data);
 	}
 }
 

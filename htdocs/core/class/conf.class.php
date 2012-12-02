@@ -60,6 +60,7 @@ class Conf
 	public $societe_modules	        = array();
 
 	var $logbuffer					= array();
+	var $loghandlers                = array();
 
 	//! To store properties of multi-company
 	public $multicompany;
@@ -455,6 +456,27 @@ class Conf
         if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
         {
         	if (is_object($mc)) $mc->setValues($this);
+        }
+
+        // We init log handlers
+        if (defined('SYSLOG_HANDLERS')) $handlers = json_decode(constant('SYSLOG_HANDLERS'));
+        else $handlers = array();
+        foreach ($handlers as $handler)
+        {
+        	$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+           	if (!file_exists($file))
+        	{
+        		throw new Exception('Missing log handler file '.$handler.'.php');
+        	}
+
+        	require_once $file;
+        	$loghandlerinstance = new $handler();
+        	if (!$loghandlerinstance instanceof LogHandlerInterface)
+        	{
+        		throw new Exception('Log handler does not extend LogHandlerInterface');
+        	}
+
+        	$this->loghandlers[]=$loghandlerinstance;
         }
 	}
 }
