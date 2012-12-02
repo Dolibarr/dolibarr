@@ -232,10 +232,11 @@ function dol_getprefix()
 function dol_include_once($relpath, $classname='')
 {
 	global $conf,$langs,$user,$mysoc;   // Other global var must be retreived with $GLOBALS['var']
+
 	if (! empty($classname) && ! class_exists($classname)) {
-		return @include dol_buildpath($relpath);
+		return @include dol_buildpath($relpath);			// Remove @ to find error into php log file if you have problems
 	} else {
-		return @include_once dol_buildpath($relpath);
+		return @include_once dol_buildpath($relpath);		// Remove @ to find error into php log file if you have problems
 	}
 }
 
@@ -2192,7 +2193,7 @@ function dol_print_error($db='',$error='')
 /**
  * Show a public email and error code to contact if technical error
  *
- * @param	string	$prefixcode		Prefix of public error code		
+ * @param	string	$prefixcode		Prefix of public error code
  * @return	void
  */
 function dol_print_error_email($prefixcode)
@@ -2706,7 +2707,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
 		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
 	}
-	else 
+	else
 	{
 		if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
 		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
@@ -2994,7 +2995,7 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
 	global $mysoc;
-	
+
 	if (!is_object($thirdparty_seller)) return -1;
 	if (!is_object($thirdparty_buyer)) return -1;
 
@@ -3004,7 +3005,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		{
 			if (is_numeric($thirdparty_buyer->localtax1_assuj) && ! $thirdparty_buyer->localtax1_assuj) return 0;
 		}
-		else 
+		else
 		{
 			// Si vendeur non assujeti a Localtax1, localtax1 par default=0
 			if (is_numeric($thirdparty_seller->localtax1_assuj) && ! $thirdparty_seller->localtax1_assuj) return 0;
