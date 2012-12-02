@@ -34,7 +34,6 @@ ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
 ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;
 ALTER TABLE llx_societe DROP COLUMN services;
-ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(128);
 
 ALTER TABLE llx_bank ADD COLUMN tms timestamp after datec;
   
