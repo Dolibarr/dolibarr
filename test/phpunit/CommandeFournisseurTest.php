@@ -120,8 +120,6 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      *
      * @return	void
      */
-    // FIXME pending correction of the "addline" method
-    /*
     public function testCommandeFournisseurCreate()
     {
     	global $conf,$user,$langs,$db;
@@ -138,7 +136,6 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-    *
 
     /**
      * testCommandeFournisseurFetch
