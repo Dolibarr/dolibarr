@@ -134,7 +134,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__." result=".$result."\n";
     	//$this->assertLessThan($result, 0);
-        $this->assertGreaterThanOrEqual(-1, $result); // for avoid error if supplier price not exist
+        $this->assertLessThanOrEqual(-1, $result); // for avoid error if supplier price not exist
     	return $result;
     }
 
