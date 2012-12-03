@@ -1170,7 +1170,7 @@ class CommandeFournisseur extends CommonOrder
                         $this->error="No price found for this quantity. Quantity may be too low ?";
                         $this->db->rollback();
                         dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
-                        return -1; // FIXME this return create an error in jenkins
+                        return -1; // FIXME this return status create an error in jenkins
                     }
                     if ($result < -1)
                     {
