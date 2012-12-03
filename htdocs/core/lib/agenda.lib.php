@@ -406,6 +406,14 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	if (! empty($conf->global->AGENDA_USE_SEVERAL_CONTACTS))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/comm/action/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Contacts");
+		$head[$h][2] = 'contact';
+		$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
