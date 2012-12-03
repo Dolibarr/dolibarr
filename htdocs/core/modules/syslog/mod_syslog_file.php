@@ -114,6 +114,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	{
 		$logfile = $this->getFilename();
 
+		// FIXME $ident is not defined !
 		if ($ident) $this->ident+=$ident;
 
 		if (defined("SYSLOG_FILE_NO_ERROR")) $filefd = @fopen($logfile, 'a+');
