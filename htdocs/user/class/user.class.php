@@ -689,33 +689,61 @@ class User extends CommonObject
 
 		// Supprime droits
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
-		if ($this->db->query($sql))
+		if (! $error && ! $this->db->query($sql))
 		{
-
+			$error++;
+        	$this->error = $this->db->lasterror();
+        	dol_syslog(get_class($this)."::delete error -1 ".$this->error, LOG_ERR);
 		}
 
 		// Remove group
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user  = ".$this->id;
-		if ($this->db->query($sql))
+		if (! $error && ! $this->db->query($sql))
 		{
-
+			$error++;
+        	$this->error = $this->db->lasterror();
+        	dol_syslog(get_class($this)."::delete error -2 ".$this->error, LOG_ERR);
 		}
 
 		// Si contact, supprime lien
 		if ($this->contact_id)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
-			if ($this->db->query($sql))
+			if (! $error && ! $this->db->query($sql))
 			{
-
+				$error++;
+	        	$this->error = $this->db->lasterror();
+	        	dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
 			}
 		}
 
-		// Supprime utilisateur
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
-		$result = $this->db->query($sql);
+        // Remove extrafields
+        if (! $error)
+        {
+         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_extrafields WHERE fk_object = ".$this->id;
+           	dol_syslog(get_class($this)."::delete sql=".$sql);
+           	if (! $this->db->query($sql))
+           	{
+           		$error++;
+           		$this->error = $this->db->lasterror();
+           		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+           	}
+        }
 
-		if ($result)
+		// Remove user
+        if (! $error)
+        {
+	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->id;
+	       	dol_syslog(get_class($this)."::delete sql=".$sql);
+	       	if (! $this->db->query($sql))
+	       	{
+	       		$error++;
+	       		$this->error = $this->db->lasterror();
+	       		dol_syslog(get_class($this)."::delete error -5 ".$this->error, LOG_ERR);
+	       	}
+        }
+
+		if (! $error)
 		{
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -1188,6 +1216,25 @@ class User extends CommonObject
 					}
 				}
 			}
+
+			// Actions on extra fields (by external module or standard code)
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+			$hookmanager->initHooks(array('userdao'));
+			$parameters=array('socid'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
 
 			if (! $error && ! $notrigger)
 			{

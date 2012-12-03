@@ -127,6 +127,7 @@ class Contact extends CommonObject
 		$sql.= ", priv";
 		$sql.= ", canvas";
 		$sql.= ", entity";
+		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
@@ -135,8 +136,9 @@ class Contact extends CommonObject
         $sql.= "'".$this->db->escape($this->firstname)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
-        $sql.= " ".($this->canvas?"'".$this->canvas."'":"null").",";
-        $sql.= " ".$conf->entity;
+        $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
+        $sql.= " ".$conf->entity.",";
+        $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);

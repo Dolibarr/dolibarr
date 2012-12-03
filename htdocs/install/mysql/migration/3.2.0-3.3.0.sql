@@ -34,6 +34,7 @@ ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
 ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;
 ALTER TABLE llx_societe DROP COLUMN services;
+ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(128);
 
 ALTER TABLE llx_bank ADD COLUMN tms timestamp after datec;
   
@@ -842,3 +843,16 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 
 -- increase field size
 ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(8);
+
+
+
+create table llx_user_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- member id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
+
