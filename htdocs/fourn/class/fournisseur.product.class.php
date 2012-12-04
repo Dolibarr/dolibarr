@@ -30,8 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 
 /**
- * 	\class      ProductFournisseur
- * 	\brief      Class to manage predefined suppliers products
+ * 	Class to manage predefined suppliers products
  */
 class ProductFournisseur extends Product
 {
@@ -146,7 +145,7 @@ class ProductFournisseur extends Product
      *    @param  	string		$charges			costs affering to product
 	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
 	 *    @param  	float		$remise				Discount  regarding qty (amount)
-     *    @return	int								>0 if KO, >0 if OK
+     *    @return	int								<0 if KO, >=0 if OK
      */
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0)
     {
