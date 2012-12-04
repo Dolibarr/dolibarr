@@ -26,8 +26,7 @@
 
 
 /**
- *	\class      DoliDBMysql
- *	\brief      Class to manage Dolibarr database access for a Mysql database
+ *	Class to manage Dolibarr database access for a Mysql database
  */
 class DoliDBMysql
 {
@@ -291,12 +290,14 @@ class DoliDBMysql
 			{
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction",LOG_DEBUG);
+				dol_syslog('',0,1);
 			}
 			return $ret;
 		}
 		else
 		{
 			$this->transaction_opened++;
+			dol_syslog('',0,1);
 			return 1;
 		}
 	}
@@ -309,6 +310,7 @@ class DoliDBMysql
 	 */
 	function commit($log='')
 	{
+		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("COMMIT");
@@ -334,6 +336,7 @@ class DoliDBMysql
 	 */
 	function rollback($log='')
 	{
+		dol_syslog('',0,-1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK");

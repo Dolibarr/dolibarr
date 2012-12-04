@@ -42,7 +42,7 @@ class ExtraFields
 	var $attribute_unique;
 	// Array to store if attribute is required or not
 	var $attribute_required;
-	
+
 	var $error;
 	var $errno;
 
@@ -438,6 +438,10 @@ class ExtraFields
 		global $conf;
 
 		$array_name_label=array();
+
+		// For avoid conflicts with external modules
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			return $array_name_label;
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";

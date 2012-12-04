@@ -704,7 +704,7 @@ class Adherent extends CommonObject
 
         $this->db->begin();
 
-        // Suppression options
+        // Remove extrafields
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$rowid;
 
         dol_syslog(get_class($this)."::delete sql=".$sql);

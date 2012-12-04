@@ -49,6 +49,11 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (72, 'invoice_supplier', 'external', 'SHIPPING',      'Contact fournisseur livraison', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (73, 'invoice_supplier', 'external', 'SERVICE',       'Contact fournisseur prestation', 1);
 
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'agenda',  'internal', 'ACTOR', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'agenda',  'internal', 'GUEST', 'Guest', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (85, 'agenda',  'external', 'ACTOR', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (86, 'agenda',  'external', 'GUEST', 'Guest', 1);
+
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (91, 'commande','internal', 'SALESREPFOLL',  'Responsable suivi de la commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (100,'commande','external', 'BILLING',       'Contact client facturation commande', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (101,'commande','external', 'CUSTOMER',      'Contact client suivi commande', 1);
