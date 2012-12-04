@@ -19,9 +19,15 @@
  */
 
 /**
+<<<<<<< HEAD
+ *       \file       htdocs/comm/action/participant.php
+ *       \ingroup    agenda
+ *       \brief      Page for multi-users event 
+=======
  *       \file       htdocs/comm/action/contact.php
  *       \ingroup    agenda
  *       \brief      Page for multi-users event
+>>>>>>> b0b0f066558e23b6754cd95bfc25c48a882870bf
  */
 
 require '../../main.inc.php';
