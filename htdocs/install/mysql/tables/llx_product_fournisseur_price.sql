@@ -31,6 +31,8 @@ create table llx_product_fournisseur_price
   fk_availability	integer,	   
   price						double(24,8) DEFAULT 0,
   quantity				double,
+  remise_percent			double NOT NULL DEFAULT 0,
+  remise				double NOT NULL DEFAULT 0,
   unitprice				double(24,8) DEFAULT 0,
 	charges					double(24,8) DEFAULT 0,
   unitcharges			double(24,8) DEFAULT 0,
