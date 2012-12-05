@@ -564,7 +564,7 @@ class Societe extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                unset($this->country_code);
+                unset($this->country_code);		// We clean this because it may have been changed after an update of country_id
                 unset($this->country);
                 unset($this->state_code);
                 unset($this->state);
@@ -2563,6 +2563,8 @@ class Societe extends CommonObject
         $this->state='MyState';
         $this->country_id=1;
         $this->country_code='FR';
+        $this->email='specimen@specimen.com';
+        $this->url='http://www.specimen.com';
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');
