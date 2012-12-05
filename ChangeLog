@@ -63,6 +63,9 @@ For users:
 - New: Add hidden option MAIN_PDF_MARGIN_LEFT, MAIN_PDF_MARGIN_RIGHT, MAIN_PDF_MARGIN_TOP, MAIN_PDF_MARGIN_BOTTOM
        to force margins of generated PDF.
 - New:  [ task #314 ] Can define if prof id are mandatory or not
+- New: Add button on order card to create intervention from services
+- New: Add search box to find products by supplier reference
+
 New experimental modules:
 - New: Add margin management module.
 - New: Add commissions management module.
