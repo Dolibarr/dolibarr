@@ -141,16 +141,144 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 
     if ($object->socid > 0)
     {
-        $result = $object->create();
-        if ($result > 0)
-        {
-            $id=$result;      // Force raffraichissement sur fiche venant d'etre cree
-        }
-        else
-        {
-            $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
-            $action = 'create';
+	    // If creation from another object of another module (Example: origin=propal, originid=1)
+	    if ($_POST['origin'] && $_POST['originid'])
+	    {
+	        // Parse element/subelement (ex: project_task)
+	        $element = $subelement = $_POST['origin'];
+	        if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
+	        {
+	            $element = $regs[1];
+	            $subelement = $regs[2];
+	        }
+
+	        // For compatibility
+	        if ($element == 'order')    { $element = $subelement = 'commande'; }
+	        if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+	        if ($element == 'contract') { $element = $subelement = 'contrat'; }
+
+	        $object->origin    = $_POST['origin'];
+	        $object->origin_id = $_POST['originid'];
+
+	        // Possibility to add external linked objects with hooks
+	        $object->linked_objects[$object->origin] = $object->origin_id;
+	        if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
+	        {
+	        	$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+	        }
+
+	        $object_id = $object->create($user);
+
+	        if ($object_id > 0)
+	        {
+	            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+
+	            $classname = ucfirst($subelement);
+	            $srcobject = new $classname($db);
+
+	            dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+	            $result=$srcobject->fetch($object->origin_id);
+	            if ($result > 0)
+	            {
+	                $srcobject->fetch_thirdparty();
+					$lines = $srcobject->lines;
+	                if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+
+	                $fk_parent_line=0;
+	                $num=count($lines);
+
+	                for ($i=0;$i<$num;$i++)
+	                {
+	                    $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+
+						if ($product_type == 1) { //only services
+							// service prédéfini
+							if ($lines[$i]->fk_product > 0)
+							{
+								$product_static = new Product($db);
+
+								// Define output language
+								if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+								{
+									$prod = new Product($db, $lines[$i]->fk_product);
+
+									$outputlangs = $langs;
+									$newlang='';
+									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+									if (empty($newlang)) $newlang=$srcobject->client->default_lang;
+									if (! empty($newlang))
+									{
+										$outputlangs = new Translate("",$conf);
+										$outputlangs->setDefaultLang($newlang);
+									}
+
+									$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+								}
+								else
+								{
+									$label = $lines[$i]->product_label;
+								}
+
+								$product_static->type=$lines[$i]->fk_product_type;
+								$product_static->id=$lines[$i]->fk_product;
+								$product_static->ref=$lines[$i]->ref;
+								$product_static->libelle=$label;
+								$desc=$product_static->getNomUrl(0);
+								$desc.= ' - '.$label;
+								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
+								if ($conf->global->PRODUIT_DESC_IN_FORM)
+									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?'<br>'.dol_htmlentitiesbr($lines[$i]->desc):'';
+							}
+							else {
+							    $desc = dol_htmlentitiesbr($lines[$i]->desc);
+						        $desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
+					        }
+							$timearray=dol_getdate(mktime());
+            				$date_intervention=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+							$duration = 3600;
+
+		                    $result = $object->addline(
+		                        $object_id,
+		                        $desc,
+					            $date_intervention,
+                 				$duration
+		                    );
+
+		                    if ($result < 0)
+		                    {
+		                        $error++;
+		                        break;
+		                    }
+
+						}
+	                }
+
+	            }
+	            else
+	            {
+	                $mesg=$srcobject->error;
+	                $error++;
+	            }
+	        }
+	        else
+	        {
+	            $mesg=$object->error;
+	            $error++;
+	        }
+	    }
+	    else
+	    {
+	        $result = $object->create();
+	        if ($result > 0)
+	        {
+	            $id=$result;      // Force raffraichissement sur fiche venant d'etre cree
+	        }
+	        else
+	        {
+	            $langs->load("errors");
+	            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	            $action = 'create';
+	        }
         }
     }
     else
@@ -732,6 +860,54 @@ if ($action == 'create')
 
     dol_htmloutput_mesg($mesg);
 
+    if ($socid) $res=$soc->fetch($socid);
+
+    if (GETPOST('origin') && GETPOST('originid'))
+    {
+        // Parse element/subelement (ex: project_task)
+        $element = $subelement = GETPOST('origin');
+        if (preg_match('/^([^_]+)_([^_]+)/i',GETPOST('origin'),$regs))
+        {
+            $element = $regs[1];
+            $subelement = $regs[2];
+        }
+
+        if ($element == 'project')
+        {
+            $projectid=GETPOST('originid');
+        }
+        else
+        {
+            // For compatibility
+            if ($element == 'order' || $element == 'commande')    { $element = $subelement = 'commande'; }
+            if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
+            if ($element == 'contract') { $element = $subelement = 'contrat'; }
+
+            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+
+            $classname = ucfirst($subelement);
+            $objectsrc = new $classname($db);
+            $objectsrc->fetch(GETPOST('originid'));
+            if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
+            $objectsrc->fetch_thirdparty();
+
+            $projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
+
+            $soc = $objectsrc->client;
+
+            $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
+            $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+
+            // Object source contacts list
+            $srccontactslist = $objectsrc->liste_contact(-1,'external',1);
+        }
+    }
+    else {
+		$projectid = GETPOST('projectid','int');
+		$note_private = '';
+		$note_public = '';
+	}
+
     if (! $conf->global->FICHEINTER_ADDON)
     {
         dol_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
@@ -802,7 +978,7 @@ if ($action == 'create')
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
         print '<td valign="top" colspan="2">';
-        print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'"></textarea>';
+        print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
         print '</td></tr>';
 
         // Private note
@@ -811,7 +987,7 @@ if ($action == 'create')
         	print '<tr>';
         	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         	print '<td valign="top" colspan="2">';
-        	print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'"></textarea>';
+        	print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
         	print '</td></tr>';
         }
 
@@ -820,6 +996,12 @@ if ($action == 'create')
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
         print '</table>';
+
+	    if (is_object($objectsrc))
+	    {
+	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		}
 
         print '<center><br>';
         print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
