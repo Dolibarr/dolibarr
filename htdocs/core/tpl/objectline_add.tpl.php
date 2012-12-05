@@ -79,7 +79,9 @@ if (! empty($conf->margin->enabled)) {
 							'price_ht' => 'price_ht',
 							'origin_price_ht_cache' => 'price_ht',
 							'origin_tva_tx_cache' => 'tva_tx',
-							'origin_price_ttc_cache' => 'price_ttc'
+							'origin_price_ttc_cache' => 'price_ttc',
+							'qty' => 'qty',
+							'remise_percent' => 'discount'
 					),
 					'update_textarea' => array(
 							'product_desc' => 'desc'
@@ -158,7 +160,7 @@ if (! empty($conf->margin->enabled)) {
 		<input type="hidden" id="origin_price_ttc_cache" name="origin_price_ttc_cache" value="" />
 	</td>
 	<td align="right"><input type="text" size="3" id="qty" name="qty" value="<?php echo (GETPOST('qty')?GETPOST('qty'):1); ?>"></td>
-	<td align="right" nowrap="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
+	<td align="right" nowrap="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" id="remise_percent" name="remise_percent">%</td>
 <?php
 $colspan = 4;
 if (! empty($conf->margin->enabled)) {
@@ -225,7 +227,9 @@ $(document).ready(function() {
 			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php', {
 				'action': 'fetch',
 				'id': $(this).val(),
-				'price_level': <?php echo empty($buyer->price_level)?1:$buyer->price_level; ?>},
+				'price_level': <?php echo empty($buyer->price_level)?1:$buyer->price_level; ?>,
+				'pbq': $("option:selected", this).attr('pbq')
+				},
 			function(data) {
 				if (typeof data != 'undefined') {
 					$('#product_ref').val(data.ref);
@@ -237,6 +241,8 @@ $(document).ready(function() {
 					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
 					//$('#price_base_type_area').show();
+					$('#qty').val(data.qty);
+					$('#remise_percent').val(data.discount);
 
 					if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances['product_desc'] != "undefined") {
 						CKEDITOR.instances['product_desc'].setData(data.desc).focus();
