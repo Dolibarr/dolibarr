@@ -151,8 +151,6 @@ class pdf_crabe extends ModelePDFFactures
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
 		if ($conf->facture->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -187,6 +185,7 @@ class pdf_crabe extends ModelePDFFactures
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
+                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
 				$heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
@@ -198,6 +197,7 @@ class pdf_crabe extends ModelePDFFactures
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+
                 // Set path to the background PDF File
                 if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {

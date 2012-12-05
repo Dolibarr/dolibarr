@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 
 if (empty($user->id))
 {
@@ -128,14 +129,60 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new CommandeFournisseur($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		// Set supplier and product to use
+		$socid=1;
+		$prodid=1;
+		$societe=new Societe($db);
+		$societe->fetch($socid);
+		$product=new ProductFournisseur($db);
+		$product->fetch($prodid);
 
+		$quantity=10;
+		$ref_fourn='SUPPLIER_REF_PHPUNIT';
+		$tva_tx=19.6;
+
+		// Create supplier price
+		$result=$product->add_fournisseur($user, $societe->id, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
+		$this->assertGreaterThanOrEqual(1, $result);
+		$result=$product->update_buyprice($quantity, 10, $user, 'HT', $societe, '', $ref_fourn, $tva_tx, 0, 0);
+		$this->assertGreaterThanOrEqual(0, $result);
+
+		// Create supplier order with a too low quantity
+		$localobject=new CommandeFournisseur($db);
+    	$localobject->initAsSpecimen();
+    	$localobject->lines=array();	// Overwrite lines of order
+   		$line=new CommandeFournisseurLigne($db);
+   		$line->desc=$langs->trans("Description")." specimen line too low";
+   		$line->qty=1;					// So lower than $quantity
+  		$line->fk_product=$product->id;
+    	$line->ref_fourn=$ref_fourn;
+  		$localobject->lines[]=$line;
+
+    	$result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertEquals(-1, $result);	// must be -1 because quantity is lower than minimum of supplier price
+
+    	$sql="DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where ref=''";
+		$db->query($sql);
+
+    	// Create supplier order
+    	$localobject2=new CommandeFournisseur($db);
+    	$localobject2->initAsSpecimen();		// This create 5 lines of first product found for socid 1
+    	$localobject2->lines=array();	// Overwrite lines of order
+    	$line=new CommandeFournisseurLigne($db);
+    	$line->desc=$langs->trans("Description")." specimen line ok";
+    	$line->qty=10;					// So enough quantity
+    	$line->fk_product=$product->id;
+    	$line->ref_fourn=$ref_fourn;
+    	$localobject2->lines[]=$line;
+
+    	$result=$localobject2->create($user);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertGreaterThanOrEqual(0, $result);
+
     	return $result;
     }
+
 
     /**
      * testCommandeFournisseurFetch

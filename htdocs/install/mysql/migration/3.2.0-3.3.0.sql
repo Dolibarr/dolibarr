@@ -34,6 +34,7 @@ ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
 ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;
 ALTER TABLE llx_societe DROP COLUMN services;
+ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(128);
 
 ALTER TABLE llx_bank ADD COLUMN tms timestamp after datec;
   
@@ -195,6 +196,12 @@ INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidat
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidatorSolde', '0');
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDeducted', '1');
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.08334');
+
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'agenda',  'internal', 'ACTOR', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'agenda',  'internal', 'GUEST', 'Guest', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (85, 'agenda',  'external', 'ACTOR', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (86, 'agenda',  'external', 'GUEST', 'Guest', 1);
 
 
 DELETE FROM llx_document_model WHERE (nom = 'oursin' AND type ='invoice') OR (nom = 'edison' AND type ='order') OR (nom = 'jaune' AND type ='propal');
@@ -825,6 +832,11 @@ ALTER TABLE llx_c_type_fees DROP INDEX code, ADD UNIQUE uk_c_type_fees (code);
 ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
 ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
 ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
+
+delete from llx_c_actioncomm where id = 40;
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) values ( 40, 'AC_OTH_AUTO','systemauto', 'Other (automatically inserted events)' ,NULL, 20);
+UPDATE llx_c_actioncomm SET libelle = 'Other (manually inserted events)' WHERE code = 'AC_OTH';
+UPDATE llx_c_actioncomm SET active = 0 WHERE code in ('AC_PROP', 'AC_COM', 'AC_FAC', 'AC_SHIP', 'AC_SUP_ORD', 'AC_SUP_INV');
 
 -- Update dictionnary of table llx_c_paper_format
 DELETE FROM llx_c_paper_format;

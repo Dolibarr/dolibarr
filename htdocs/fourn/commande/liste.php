@@ -122,7 +122,7 @@ if ($resql)
 
 	print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 	print '<form action="liste.php" method="GET">';
-	print '<table class="liste">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
