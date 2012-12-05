@@ -26,6 +26,7 @@
 require('../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
@@ -56,6 +57,7 @@ $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
 
+$holiday = new Holiday($db);
 
 /*
  * Actions
@@ -78,8 +80,9 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 $order = $db->order($sortfield,$sortorder).$db->plimit($conf->liste_limit + 1, $offset);
 
 // WHERE
-if(!empty($search_ref)){
-    $filter.= " AND cp.rowid LIKE '%$search_ref%'\n";
+if(!empty($search_ref))
+{
+    $filter.= " AND cp.rowid LIKE '%".$db->escape($search_ref)."%'\n";
 }
 
 // DATE START
@@ -123,17 +126,17 @@ if($year_create > 0) {
 
 // EMPLOYE
 if(!empty($search_employe) && $search_employe != -1) {
-    $filter.= " AND cp.fk_user = '$search_employe'\n";
+    $filter.= " AND cp.fk_user = '".$db->escape($search_employe)."'\n";
 }
 
 // VALIDEUR
 if(!empty($search_valideur) && $search_valideur != -1) {
-    $filter.= " AND cp.fk_validator = '$search_valideur'\n";
+    $filter.= " AND cp.fk_validator = '".$db->escape($search_valideur)."'\n";
 }
 
 // STATUT
 if(!empty($search_statut) && $search_statut != -1) {
-    $filter.= " AND cp.statut = '$search_statut'\n";
+    $filter.= " AND cp.statut = '".$db->escape($search_statut)."'\n";
 }
 
 /*************************************
@@ -144,19 +147,17 @@ if(!empty($search_statut) && $search_statut != -1) {
 $user_id = $user->id;
 
 // Récupération des congés payés de l'utilisateur ou de tous les users
-if(!$user->rights->holiday->lire_tous)
+if (!$user->rights->holiday->lire_tous)
 {
-    $holiday = new Holiday($db);
     $holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);
 }
 else
 {
-    $holiday = new Holiday($db);
     $holiday_payes = $holiday->fetchAll($order,$filter);
 }
 
 // Si pas de congés payés
-if($holiday_payes == 0)
+if ($holiday_payes == 0)
 {
     print_fiche_titre($langs->trans('CPTitreMenu'));
 
@@ -168,7 +169,7 @@ if($holiday_payes == 0)
 }
 
 // Si erreur SQL
-if($holiday_payes == '-1')
+if ($holiday_payes == '-1')
 {
     print_fiche_titre($langs->trans('CPTitreMenu'));
 
@@ -281,21 +282,20 @@ if (! empty($holiday->holiday))
 		$validator = new User($db);
 		$validator->fetch($infos_CP['fk_validator']);
 
-		$date = date_create($infos_CP['date_create']);
-		$date = date_format($date,'Y-m-d');
+		$date = $infos_CP['date_create'];
 
 		$statut = $holiday->getStatutCP($infos_CP['statut']);
 
 		print '<tr '.$bc[$var].'>';
 		print '<td><a href="./fiche.php?id='.$infos_CP['rowid'].'">CP '.$infos_CP['rowid'].'</a></td>';
-		print '<td style="text-align: center;">'.$date.'</td>';
+		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$user->getNomUrl('1').'</td>';
 		print '<td>'.$validator->getNomUrl('1').'</td>';
-		print '<td style="text-align: center;">'.$infos_CP['date_debut'].'</td>';
-		print '<td style="text-align: center;">'.$infos_CP['date_fin'].'</td>';
+		print '<td style="text-align: center;">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
+		print '<td style="text-align: center;">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
 		print '<td>';
 		$nbopenedday=num_open_day($infos_CP['date_debut'],$infos_CP['date_fin'],0,1);
-		print $nbopenedday.' '.$langs->trans('Jours');
+		print $nbopenedday;
 		print '<td align="center"><a href="./fiche.php?id='.$infos_CP['rowid'].'">'.$statut.'</a></td>';
 		print '</tr>'."\n";
 
@@ -318,7 +318,7 @@ print '<div style="float: right; margin-top: 8px;">';
 print '<a href="./fiche.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 print '</div>';
 
-// Fin de page
-$db->close();
 llxFooter();
+
+$db->close();
 ?>

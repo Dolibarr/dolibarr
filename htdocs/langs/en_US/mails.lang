@@ -77,8 +77,9 @@ MailingStatusRead=Read
 CheckRead=Read Receipt
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 MailtoEMail=Hyper link to email
-ActivateCheckRead=Allow to use the Read receipt tracker and the unsubcribe link
-ActivateCheckReadKey=Key use to encrypt URL use for Read Receipt and unsubcribe function
+ActivateCheckRead=Allow to use the "Read receipt" tracker and the "Unsubcribe" link
+ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+EMailSentToNRecipients=EMail sent to %s recipients.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)
@@ -105,7 +106,7 @@ SearchAMailing=Search mailing
 SendMailing=Send emailing
 SendMail=Send email
 SentBy=Sent by
-MailingNeedCommand=For security reason, sending an emailing should be performed from command line. Ask your administrator to launch the following command to send the emailing to all recipients:
+MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. Ask your administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=You can however send them online by adding parameter MAILING_LIMIT_SENDBYWEB with value of max number of emails you want to send by session. For this, go on Home - Setup - Other. 
 ConfirmSendingEmailing=Are you sure you want to send emailing without command line and from web mode ?
 LimitSendingEmailing=On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,13 +50,10 @@
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
-<form name="addproduct" id="addproduct"
-	action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add"
-	method="POST">
-	<input type="hidden" name="token"
-		value="<?php echo $_SESSION['newtoken']; ?>" /> <input type="hidden"
-		name="action" value="addline" /> <input type="hidden" name="id"
-		value="<?php echo $this->id; ?>" />
+<form name="addproduct" id="addproduct"	action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+<input type="hidden" name="action" value="addline" />
+<input type="hidden" name="id" value="<?php echo $this->id; ?>" />
 
 	<tr <?php echo $bcnd[$var]; ?>>
 		<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
@@ -77,8 +74,9 @@
 			// Editor wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$nbrows=ROWS_2;
+			$enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
 			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-			$doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+			$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,70);
 			$doleditor->Create();
 			?>
 		</td>

@@ -107,6 +107,13 @@ if ($action == 'add_action')
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
 	}
 
+	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
+	{
+		$error++;
+		$action = 'create';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
+	}
+
 	// Initialisation objet cactioncomm
 	if (! GETPOST('actioncode'))
 	{
@@ -122,13 +129,13 @@ if ($action == 'add_action')
 	// Initialisation objet actioncomm
 	$actioncomm->type_id = $cactioncomm->id;
 	$actioncomm->type_code = $cactioncomm->code;
-	$actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+	$actioncomm->priority = GETPOST("priority")?GETPOST("priority"):0;
 	$actioncomm->fulldayevent = (! empty($fulldayevent)?1:0);
-	$actioncomm->location = isset($_POST["location"])?$_POST["location"]:'';
-	$actioncomm->label = trim($_POST["label"]);
-	if (! $_POST["label"])
+	$actioncomm->location = GETPOST("location");
+	$actioncomm->label = trim(GETPOST('label'));
+	if (! GETPOST('label'))
 	{
-		if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
+		if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
 		{
 			$actioncomm->label = $langs->transnoentitiesnoconv("TaskRDVWith",$contact->getFullName($langs));
 		}
@@ -390,11 +397,13 @@ if ($action == 'create')
 	            			$(".fulldaystartmin").removeAttr("disabled");
 	            			$(".fulldayendhour").removeAttr("disabled");
 	            			$(".fulldayendmin").removeAttr("disabled");
+	            			$("#p2").removeAttr("disabled");
 	            		} else {
 	            			$(".fulldaystarthour").attr("disabled","disabled").val("00");
 	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
 	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
 	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
+	            			$("#p2").attr("disabled","disabled").val("");
 	            		}
 	            	}
                     setdatefields();
@@ -432,21 +441,25 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Type d'action actifs
-	print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-	if (GETPOST("actioncode"))
+	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
-		print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
-		$cactioncomm->fetch(GETPOST("actioncode"));
-		print $cactioncomm->getNomUrl();
+		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
+		if (GETPOST("actioncode"))
+		{
+			print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
+			$cactioncomm->fetch(GETPOST("actioncode"));
+			print $cactioncomm->getNomUrl();
+		}
+		else
+		{
+			$htmlactions->select_type_actions($actioncomm->type_code, "actioncode","systemauto");
+		}
+		print '</td></tr>';
 	}
-	else
-	{
-		$htmlactions->select_type_actions($actioncomm->type_code, "actioncode","systemauto");
-	}
-	print '</td></tr>';
+	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
 
 	// Title
-	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
@@ -678,10 +691,13 @@ if ($id)
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
 		// Type
-		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		}
 
 		// Title
-		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
+		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
 
         // Full day event
         print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="checked"':'').'></td></tr>';
@@ -797,7 +813,10 @@ if ($id)
 		print '</td></tr>';
 
 		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+			print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+		}
 
 		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';

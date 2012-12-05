@@ -14,7 +14,6 @@ Supplier=المورد
 AddSupplier=إضافة مورد
 SupplierRemoved=إزالة المورد
 SuppliersInvoice=فاتورة الموردين
-SuppliersInvoices=فواتير الموردين
 NewSupplier=مورد جديد
 History=التاريخ
 ListOfSuppliers=قائمة الموردين

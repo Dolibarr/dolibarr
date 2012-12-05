@@ -280,12 +280,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             					$(\'.fieldrequireddyn\').removeClass(\'fieldrequired\');
             					$(\'#fieldchqemetteur\').val(\'\');
             				}
-            			}';
-			// For paiement auto-completion
-			if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
-			{
-				print "\n".'
-						function elemToJson(selector)
+            			}
+
+						function _elemToJson(selector)
 						{
 							var subJson = {};
 							$.map(selector.serializeArray(), function(n,i)
@@ -300,14 +297,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							var form = $("#payment_form");
 
 							json["amountPayment"] = $("#amountpayment").attr("value");
-							json["amounts"] = elemToJson(form.find("input[name*=\"amount_\"]"));
-							json["remains"] = elemToJson(form.find("input[name*=\"remain_\"]"));
+							json["amounts"] = _elemToJson(form.find("input[name*=\"amount_\"]"));
+							json["remains"] = _elemToJson(form.find("input[name*=\"remain_\"]"));
 
 							if (imgId != null) {
 								json["imgClicked"] = imgId;
 							}
 
-							$.post("ajaxpayment.php", json, function(data)
+							$.post("'.DOL_URL_ROOT.'/compta/ajaxpayment.php", json, function(data)
 							{
 								json = $.parseJSON(data);
 
@@ -317,9 +314,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								{
 									if (key == "result")	{
 										if (json["makeRed"]) {
-											$("#"+key).css("color", "red");
+											$("#"+key).addClass("error");
 										} else {
-											$("#"+key).removeAttr("style");
+											$("#"+key).removeClass("error");
 										}
 										json[key]=json["label"]+" "+json[key];
 										$("#"+key).text(json[key]);
@@ -331,27 +328,27 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								}
 							});
 						}
-						function callToBreakdown(imgSelector) {
-							var form = $("#payment_form"), imgId;
-
-							imgId =  imgSelector.attr("id");
-							callForResult(imgId);
-						}
-
-						$("#payment_form").find("img").click(function() {
-							callToBreakdown(jQuery(this));
-						});
-
 						$("#payment_form").find("input[name*=\"amount_\"]").change(function() {
 							callForResult();
+						});
+						$("#payment_form").find("input[name*=\"amount_\"]").keyup(function() {
+							callForResult();
+						});
+			';
+
+			if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+			{
+				print '	$("#payment_form").find("img").click(function() {
+							callForResult(jQuery(this).attr("id"));
 						});
 
 						$("#amountpayment").change(function() {
 							callForResult();
 						});';
 			}
-			print '});
-			</script>'."\n";
+
+			print '	});'."\n";
+			print '	</script>'."\n";
 		}
 
 		print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -573,7 +570,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     if ($totalrecudeposits) print '+'.price($totalrecudeposits);
                     print '</b></td>';
                     print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
-                    print '<td align="right" id="result" style="font-weight:bold;"></td>';
+                    print '<td align="right" id="result" style="font-weight: bold;"></td>';
                     print '<td align="center">&nbsp;</td>';
                     print "</tr>\n";
                 }

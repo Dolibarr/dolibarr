@@ -707,6 +707,20 @@ VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases li
 VATIsUsedExampleFR=In France, it means companies or organisations having a real fiscal system (Simplified real or normal real).  A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organisations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
 ##### Local Taxes #####
+LocalTax1IsUsed=Use second tax
+LocalTax1IsNotUsed=Do not use second tax
+LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
+LocalTax1IsNotUsedDesc=Do not use other type of tax (other than VAT)
+LocalTax1Management=Second type of tax
+LocalTax1IsUsedExample=
+LocalTax1IsNotUsedExample=
+LocalTax2IsUsed=Use third tax
+LocalTax2IsNotUsed=Do not use third tax
+LocalTax2IsUsedDesc=Use a third type of tax (other than VAT)
+LocalTax2IsNotUsedDesc=Do not use other type of tax (other than VAT)
+LocalTax2Management=Third type of tax
+LocalTax2IsUsedExample=
+LocalTax2IsNotUsedExample=
 LocalTax1ManagementES= RE Management
 LocalTax1IsUsedDescES= The RE rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If te buyer is not subjected to RE, RE by default=0. End of rule.<br>If the buyer is subjected to RE then the RE by default. End of rule.<br>
 LocalTax1IsNotUsedDescES= By default the proposed RE is 0. End of rule.
@@ -903,7 +917,7 @@ ExtraFieldsContacts=Complementary attributes (contact/address)
 ExtraFieldHasWrongValue=Attribut %s has a wrong value.
 AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
 SendingMailSetup=Setup of sendings by email
-SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must conatins option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
+SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must contains option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
 PathToDocuments=Path to documents
 PathDirectory=Directory
 SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail direct" will generate a mail message that might be not correctly parsed by some receiving mail servers. Result is that some mails can't be read by people hosted by thoose bugged platforms. It's case for some Internet providers (Ex: Orange in France). This is not a problem into Dolibarr nor into PHP but onto receiving mail server. You can however add option MAIN_FIX_FOR_BUGGED_MTA to 1 into setup - other to modify Dolibarr to avoid this. However, you may experience problem with other servers that respect strictly the SMTP standard. The other solution (recommanded) is to use the method "SMTP socket library" that has no disadvantages.
@@ -939,6 +953,7 @@ DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT files for
 WatermarkOnDraft=Watermark on draft document
 CompanyIdProfChecker=Professional Id unique
 MustBeUnique=Must be unique ?
+MustBeMandatory=Must be mandatory ?
 Miscellanous=Miscellaneous
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
@@ -1309,6 +1324,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
 PastDelayVCalExport=Do not export event older than
+AGENDA_USE_EVENT_TYPE=Use events types (manage into Configuration->Dictionnary->llx_c_actioncomm)
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to add an icon after phone numbers. A click on this icon will call a server with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ##### Point Of Sales (CashDesk) #####

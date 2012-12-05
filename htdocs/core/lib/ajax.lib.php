@@ -48,8 +48,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					var options = '.json_encode($ajaxoptions).';
 
 					// Remove product id before select another product
+					// use keyup instead change to avoid loosing the product id
+					$("input#search_'.$htmlname.'").keydown(function() {
+						//console.log(\'purge_id_after_keydown\');
+						$("#'.$htmlname.'").val("");
+					});
 					$("input#search_'.$htmlname.'").change(function() {
-						$("#'.$htmlname.'").val("").trigger("change");
+						//console.log(\'keyup\');
+						$("#'.$htmlname.'").trigger("change");
 					});
 					// Check when keyup
 					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
@@ -115,6 +121,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {
+							//console.log(\'set value of id with \'+ui.item.id);
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");
     						// Disable an element
     						if (options.option_disabled) {
@@ -163,7 +170,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
-						.append( \'<a href="#"><span class="tag">\' + item.label + "</span></a>" )
+						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
   				});';
@@ -368,6 +375,11 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 			// Set constant
 			$("#set_" + code).click(function() {
 				if (input.alert && input.alert.set) {
+					// Posibility to force label of buttons
+					if (input.alert.set.yesButton)
+						yesButton = input.alert.set.yesButton;
+					if (input.alert.set.noButton)
+						noButton = input.alert.set.noButton;
 					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
 				} else {
 					setConstant(url, code, input, entity);
@@ -377,6 +389,11 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 			// Del constant
 			$("#del_" + code).click(function() {
 				if (input.alert && input.alert.del) {
+					// Posibility to force label of buttons
+					if (input.alert.del.yesButton)
+						yesButton = input.alert.del.yesButton;
+					if (input.alert.del.noButton)
+						noButton = input.alert.del.noButton;
 					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
 				} else {
 					delConstant(url, code, input, entity);

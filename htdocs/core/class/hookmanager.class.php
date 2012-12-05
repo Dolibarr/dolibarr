@@ -115,7 +115,8 @@ class HookManager
      * 		@param		Object	&$object		Object to use hooks on
      * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
      * 		@return		mixed					For doActions,formObjectOptions:    Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
-     * 											For printSearchForm,printLeftBlock,printTopRightMenu,...: Return HTML string.
+     * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Must always return an int and things to print into ->resprints. 
+     *                                          Can also return some values into an array ->results.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
 	function executeHooks($method, $parameters=false, &$object='', &$action='')
@@ -127,45 +128,58 @@ class HookManager
 
         // Loop on each hook to qualify modules that declared context
         $modulealreadyexecuted=array();
-        $resaction=0; $resprint='';
+        $resaction=0; $error=0;
+		$this->resPrint=''; $this->resArray=array();
         foreach($this->hooks as $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (! empty($modules))
             {
                 foreach($modules as $module => $actionclassinstance)
                 {
-                    // test to avoid to run twice a hook, when a module implements several active contexts
+                	// jump to next class if method does not exists
+                    if (! method_exists($actionclassinstance,$method)) continue;
+                	// test to avoid to run twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
                     $modulealreadyexecuted[$module]=$module;
 
                     // Hooks that return int
-                    if (($method == 'doActions' || $method == 'formObjectOptions') && method_exists($actionclassinstance,$method))
+                    if (($method == 'doActions' || $method == 'formObjectOptions'))
                     {
-                        $resaction+=$actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
-                        if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
-                        {
-                            $this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
-                            if ($method == 'doActions')
-                            {
-                                if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
-                                if ($action=='update') $action='edit';      // TODO this change must be inside the doActions
-                            }
-                        }
+                    	$resaction+=$actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+                    	if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
+                    	{
+                    		$error++;
+                    		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
+                    		// TODO remove this. Change must be inside the method if required
+                    		if ($method == 'doActions')
+                    		{
+                    			if ($action=='add')    $action='create';
+                    			if ($action=='update') $action='edit';
+                    		}
+                    	}
                     }
-                    // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
-                    else if (method_exists($actionclassinstance,$method))
+                    // Generic hooks that return a string (printSearchForm, printLeftBlock, printTopRightMenu, formAddObjectLine, formBuilddocOptions, ...)
+                    else
                     {
-                        if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
+                    	// TODO. this should be done into the method by returning nothing
+                    	if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
+
                     	$result = $actionclassinstance->$method($parameters, $object, $action, $this);
+
+                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
+
+                    	// TODO. remove this. array result must be set into $actionclassinstance->results
                     	if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
-                    	else $resprint.=$result;
+                    	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprint to return a string
+                    	if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
                 }
             }
         }
 
-        if ($method == 'doActions' || $method == 'formObjectOptions') return $resaction;
-        return $resprint;
+        if ($method != 'doActions' && $method != 'formObjectOptions') return $this->resPrint;	// TODO remove this. When there is something to print, ->resPrint is filled. 
+        return ($error?-1:$resaction);
 	}
 
 }

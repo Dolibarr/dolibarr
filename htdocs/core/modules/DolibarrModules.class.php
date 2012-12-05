@@ -415,6 +415,9 @@ abstract class DolibarrModules
         global $db,$conf;
 
         $error=0;
+		$dirfound=0;
+
+		if (empty($reldir)) return 1;
 
         include_once DOL_DOCUMENT_ROOT .'/core/lib/admin.lib.php';
 
@@ -426,11 +429,13 @@ abstract class DolibarrModules
                 $dir = $dirroot.$reldir;
                 $ok = 0;
 
-                // Run llx_mytable.sql files
                 $handle=@opendir($dir);         // Dir may not exists
                 if (is_resource($handle))
                 {
-                    while (($file = readdir($handle))!==false)
+                	$dirfound++;
+                	
+	                // Run llx_mytable.sql files
+                	while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -438,14 +443,11 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
-                    closedir($handle);
-                }
+                    
+                    rewinddir($handle);
 
-                // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
-                $handle=@opendir($dir);         // Dir may not exist
-                if (is_resource($handle))
-                {
-                    while (($file = readdir($handle))!==false)
+	                // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
+                	while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
                         {
@@ -453,14 +455,11 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
-                    closedir($handle);
-                }
 
-                // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
-                $handle=@opendir($dir);         // Dir may not exist
-                if (is_resource($handle))
-                {
-                    while (($file = readdir($handle))!==false)
+                    rewinddir($handle);
+                    
+                    // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+                	while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
                         {
@@ -468,14 +467,11 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
-                    closedir($handle);
-                }
-
-                // Run update_xxx.sql files
-                $handle=@opendir($dir);         // Dir may not exist
-                if (is_resource($handle))
-                {
-                    while (($file = readdir($handle))!==false)
+                    
+                    rewinddir($handle);
+                    
+                    // Run update_xxx.sql files
+                	while (($file = readdir($handle))!==false)
                     {
                         if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
                         {
@@ -483,6 +479,7 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
+                    
                     closedir($handle);
                 }
 
@@ -493,6 +490,7 @@ abstract class DolibarrModules
             }
         }
 
+        if (! $dirfound) dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
         return $ok;
     }
 

@@ -591,19 +591,19 @@ else
 
 	print '</table>';
 
-    // Warning 1
     if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
     {
         print '<br>';
+        /*
+	    // Warning 1
     	if ($linuxlike)
     	{
     		$sendmailoption=ini_get('mail.force_extra_parameters');
-    		//print 'x'.$sendmailoption;
     		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
     		{
     			print info_admin($langs->trans("SendmailOptionNotComplete"));
     		}
-    	}
+    	}*/
     	// Warning 2
    	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
     }
@@ -657,11 +657,11 @@ else
 		print '<br>';
 	}
 
-	// Affichage formulaire de TEST simple
-	if ($action == 'test')
+	// Show email send test form
+	if ($action == 'test' || $action == 'testhtml')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestSend"));
+		print_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -678,62 +678,16 @@ else
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
-		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTest"));
+		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:($action == 'testhtml'?$langs->trans("PredefinedMailTestHtml"):$langs->trans("PredefinedMailTest")));
 		$formmail->withbodyreadonly=0;
 		$formmail->withcancel=1;
 		$formmail->withdeliveryreceipt=1;
-		$formmail->withfckeditor=0;
-		// Tableau des substitutions
-		$formmail->substit=$substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
-		$formmail->param["action"]="send";
-		$formmail->param["models"]="body";
-		$formmail->param["mailid"]=0;
-		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
-
-		// Init list of files
-        if (GETPOST("mode")=='init')
-		{
-			$formmail->clear_attached_files();
-		}
-
-		$formmail->show_form('addfile','removefile');
-
-		print '<br>';
-	}
-
-	// Affichage formulaire de TEST HTML
-	if ($action == 'testhtml')
-	{
-		print '<br>';
-		print_titre($langs->trans("DoTestSendHTML"));
-
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->withfromreadonly=0;
-		$formmail->withsubstit=0;
-		$formmail->withfrom=1;
-		$formmail->witherrorsto=1;
-		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
-		$formmail->withtocc=(! empty($_POST['sendtocc'])?$_POST['sendtocc']:1);       // ! empty to keep field if empty
-		$formmail->withtoccc=(! empty($_POST['sendtoccc'])?$_POST['sendtoccc']:1);    // ! empty to keep field if empty
-		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
-		$formmail->withtopicreadonly=0;
-		$formmail->withfile=2;
-		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:$langs->trans("PredefinedMailTestHtml"));
-		//$formmail->withbody='Test <b>aaa</b> __LOGIN__';
-		$formmail->withbodyreadonly=0;
-		$formmail->withcancel=1;
-		$formmail->withdeliveryreceipt=1;
-		$formmail->withfckeditor=1;
+		$formmail->withfckeditor=($action == 'testhtml'?1:0);
 		$formmail->ckeditortoolbar='dolibarr_mailings';
 		// Tableau des substitutions
 		$formmail->substit=$substitutionarrayfortest;
 		// Tableau des parametres complementaires du post
-		$formmail->param["action"]="sendhtml";
+		$formmail->param["action"]=($action == 'testhtml'?"sendhtml":"send");
 		$formmail->param["models"]="body";
 		$formmail->param["mailid"]=0;
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
@@ -744,7 +698,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		$formmail->show_form('addfilehtml','removefilehtml');
+		$formmail->show_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
 
 		print '<br>';
 	}

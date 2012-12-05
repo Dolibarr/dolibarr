@@ -729,6 +729,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 				modal: true,
 				buttons: [
 					{
+						id : 'yesButton_' + code,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
@@ -748,6 +749,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						}
 					},
 					{
+						id : 'noButton_' + code,
 						text : noButton,
 						click : function() {
 							$(this).dialog("close");
@@ -755,6 +757,10 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 					}
 				]
 			});
+	// For information dialog box only, hide the noButton
+	if (boxConfirm.info) {
+		$("#noButton_" + code).button().hide();
+	}
 }
 
 /* 

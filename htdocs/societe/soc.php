@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,9 +202,18 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
+            
+            // We set country_id, country_code and country for the selected country
+            $object->country_id=GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
+            if ($object->country_id)
+            {
+            	$tmparray=getCountry($object->country_id,'all');
+            	$object->country_code=$tmparray['code'];
+            	$object->country=$tmparray['label'];
+            }
 
-            // Check for duplicate prof id
-        	for ($i = 1; $i < 3; $i++)
+            // Check for duplicate or mandatory prof id
+        	for ($i = 1; $i < 5; $i++)
         	{
         	    $slabel="idprof".$i;
     			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -218,8 +227,18 @@ if (empty($reshook))
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}
+				
+				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+				{
+					$langs->load("errors");
+					$error++;
+					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+					$action = ($action=='add'?'create':'edit');
+				}
 			}
         }
+          
         if (! $error)
         {
             if ($action == 'add')
@@ -293,7 +312,7 @@ if (empty($reshook))
                     // Gestion du logo de la société
                 }
                 else
-                {
+				{
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -512,6 +531,9 @@ else
         /*
          *  Creation
          */
+		$private=GETPOST("private","int");
+		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+    	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
         $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
@@ -545,11 +567,10 @@ else
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
-        if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name				= GETPOST('nom');
         $object->firstname			= GETPOST('prenom');
-        $object->particulier		= GETPOST('private', 'int');
+        $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
         $object->code_client		= GETPOST('code_client');
@@ -638,7 +659,7 @@ else
             print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
-                        is_private='.(GETPOST("private")?GETPOST("private"):0).';
+                        is_private='.$private.';
 						if (is_private) {
 							$(".individualline").show();
 						} else {
@@ -667,10 +688,10 @@ else
 
             print "<br>\n";
             print $langs->trans("ThirdPartyType").': &nbsp; ';
-            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.(! GETPOST("private")?' checked="checked"':'');
+            print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.($private?'':' checked="checked"');
             print '> '.$langs->trans("Company/Fundation");
             print ' &nbsp; &nbsp; ';
-            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.(! GETPOST("private")?'':' checked="checked"');
+            print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'');
             print '> '.$langs->trans("Individual");
             print ' ('.$langs->trans("ToCreateContactWithSameName").')';
             print "<br>\n";
@@ -693,7 +714,7 @@ else
         print '<table class="border" width="100%">';
 
         // Name, firstname
-        if ($object->particulier || GETPOST("private"))
+        if ($object->particulier || $private)
         {
             print '<tr><td><span id="TypeName" class="fieldrequired">'.$langs->trans('LastName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -832,7 +853,13 @@ else
             if ($idprof!='-')
             {
                 if (($j % 2) == 0) print '<tr>';
-                print '<td>'.$idprof.'</td><td>';
+                
+                $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+               	if(empty($conf->global->$idprof_mandatory))
+                	print '<td>'.$idprof.'</td><td>';
+                else
+                print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
+                
                 $key='idprof'.$i;
                 print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                 print '</td>';
@@ -905,30 +932,26 @@ else
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
         // Local Taxes
-        // TODO add specific function by country
-        if($mysoc->country_code=='ES')
+        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
-            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                print $form->selectyesno('localtax1assuj_value',0,1);
-                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                print $form->selectyesno('localtax2assuj_value',0,1);
-                print '</td></tr>';
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
+            print $form->selectyesno('localtax1assuj_value',0,1);
+            print '</td><td>'.$langs->trans("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
+            print $form->selectyesno('localtax2assuj_value',0,1);
+            print '</td></tr>';
 
-            }
-            elseif($mysoc->localtax1_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                print $form->selectyesno('localtax1assuj_value',0,1);
-                print '</td><tr>';
-            }
-            elseif($mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                print $form->selectyesno('localtax2assuj_value',0,1);
-                print '</td><tr>';
-            }
+        }
+        elseif($mysoc->localtax1_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print $form->selectyesno('localtax1assuj_value',0,1);
+            print '</td><tr>';
+        }
+        elseif($mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print $form->selectyesno('localtax2assuj_value',0,1);
+            print '</td><tr>';
         }
 
         if (! empty($conf->global->MAIN_MULTILANGS))
@@ -1119,7 +1142,7 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.$object->name.'"></td></tr>';
+            print '<tr><td><span class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td colspan="3"><input type="text" size="40" maxlength="60" name="nom" value="'.dol_escape_htmltag($object->name).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1128,12 +1151,12 @@ else
                 // It does not change the prefix mode using the auto numbering prefix
                 if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $object->prefix_comm)
                 {
-                    print '<input type="hidden" name="prefix_comm" value="'.$object->prefix_comm.'">';
+                    print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                     print $object->prefix_comm;
                 }
                 else
                 {
-                    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'">';
+                    print '<input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                 }
                 print '</td>';
             }
@@ -1273,7 +1296,13 @@ else
                 if ($idprof!='-')
                 {
                     if (($j % 2) == 0) print '<tr>';
-                    print '<td>'.$idprof.'</td><td>';
+                    
+					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+					if(empty($conf->global->$idprof_mandatory))
+						print '<td>'.$idprof.'</td><td>';
+					else
+						print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
+                    
                     $key='idprof'.$i;
                     print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                     print '</td>';
@@ -1320,31 +1349,27 @@ else
             print '</tr>';
 
             // Local Taxes
-            // TODO add specific function by country
-            if($mysoc->country_code=='ES')
+            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
-                if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-                {
-                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                    print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
-                    print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                    print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
-                    print '</td></tr>';
+                print '<tr><td>'.$langs->trans("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print '</td><td>'.$langs->trans("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print '</td></tr>';
 
-                }
-                elseif($mysoc->localtax1_assuj=="1")
-                {
-                    print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                    print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
-                    print '</td></tr>';
+            }
+            elseif($mysoc->localtax1_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print '</td></tr>';
 
-                }
-                elseif($mysoc->localtax2_assuj=="1")
-                {
-                    print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                    print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
-                    print '</td></tr>';
-                }
+            }
+            elseif($mysoc->localtax2_assuj=="1")
+            {
+                print '<tr><td>'.$langs->trans("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print '</td></tr>';
             }
 
             // Type - Size
@@ -1640,30 +1665,26 @@ else
         print '</tr>';
 
         // Local Taxes
-        // TODO add specific function by country
-        if($mysoc->country_code=='ES')
+        if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
-            if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                print yn($object->localtax1_assuj);
-                print '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                print yn($object->localtax2_assuj);
-                print '</td></tr>';
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
+            print yn($object->localtax1_assuj);
+            print '</td><td>'.$langs->trans("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
+            print yn($object->localtax2_assuj);
+            print '</td></tr>';
 
-            }
-            elseif($mysoc->localtax1_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                print yn($object->localtax1_assuj);
-                print '</td><tr>';
-            }
-            elseif($mysoc->localtax2_assuj=="1")
-            {
-                print '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                print yn($object->localtax2_assuj);
-                print '</td><tr>';
-            }
+        }
+        elseif($mysoc->localtax1_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print yn($object->localtax1_assuj);
+            print '</td><tr>';
+        }
+        elseif($mysoc->localtax2_assuj=="1")
+        {
+            print '<tr><td>'.$langs->trans("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print yn($object->localtax2_assuj);
+            print '</td><tr>';
         }
 
         // Type + Staff

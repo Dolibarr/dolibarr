@@ -30,6 +30,7 @@ if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','
 require_once '../filefunc.inc.php';
 
 
+
 // Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_PATH'))
@@ -316,6 +317,8 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     $langs->load("main");
     $langs->load("admin");
 
+    $jquerytheme='smoothness';
+
     if ($forcejqueryurl)
     {
         $jQueryCustomPath = $forcejqueryurl;
@@ -326,8 +329,6 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
         $jQueryCustomPath = (defined('JS_JQUERY') && constant('JS_JQUERY')) ? JS_JQUERY : false;
         $jQueryUiCustomPath = (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) ? JS_JQUERY_UI : false;
     }
-
-    $jquerytheme='smoothness';
 
     // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);

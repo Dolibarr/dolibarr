@@ -46,7 +46,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_U
 
 -- Hidden but specific to one entity 
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0,1);
-insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',0,1);
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_MAIL_EMAIL_FROM','robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',0,1);
 
 --
 -- IHM

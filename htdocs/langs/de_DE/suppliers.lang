@@ -12,7 +12,6 @@ Supplier=Lieferant
 AddSupplier=Lieferanten hinzufügen
 SupplierRemoved=Lieferant entfernt
 SuppliersInvoice=Lieferantenrechnung
-SuppliersInvoices=Lieferantenrechnungen
 NewSupplier=Neuer Lieferant
 History=Verlauf
 ListOfSuppliers=Lieferantenliste

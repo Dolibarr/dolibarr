@@ -1,0 +1,17 @@
+# Dolibarr language file - en_SA - main
+CHARSET=UTF-8
+DIRECTION=ltr
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=9
+SeparatorDecimal=.
+SeparatorThousand=,
+FormatDateShort=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatHourShort=%I:%M %p
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %I:%M %p
+FormatDateHourTextShort=%d %b %Y, %I:%M %p
+FormatDateHourText=%d %B %Y, %I:%M %p

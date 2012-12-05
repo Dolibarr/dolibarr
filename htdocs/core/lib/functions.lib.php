@@ -232,10 +232,11 @@ function dol_getprefix()
 function dol_include_once($relpath, $classname='')
 {
 	global $conf,$langs,$user,$mysoc;   // Other global var must be retreived with $GLOBALS['var']
+
 	if (! empty($classname) && ! class_exists($classname)) {
-		return @include dol_buildpath($relpath);
+		return @include dol_buildpath($relpath);			// Remove @ to find error into php log file if you have problems
 	} else {
-		return @include_once dol_buildpath($relpath);
+		return @include_once dol_buildpath($relpath);		// Remove @ to find error into php log file if you have problems
 	}
 }
 
@@ -483,90 +484,73 @@ function dol_strtoupper($utf8_string)
  *
  * 	@param  string		$message	Line to log. Ne doit pas etre traduit si level = LOG_ERR
  *  @param  int			$level		Log level
+ *                                  0=Show nothing
  *									On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *  @param	int			$ident		1=Increase ident of 1, -1=Decrease ident of 1
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO)
+function dol_syslog($message, $level = LOG_INFO, $ident = 0)
 {
-	global $conf, $user, $langs;
+	global $conf, $user;
 
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return false;
 
-	if (!defined('SYSLOG_HANDLERS') || !constant('SYSLOG_HANDLERS')) return false;
-
-	$logLevels = array(
-		LOG_EMERG,
-		LOG_ALERT,
-		LOG_CRIT,
-		LOG_ERR,
-		LOG_WARNING,
-		LOG_NOTICE,
-		LOG_INFO,
-		LOG_DEBUG
-	);
-
-	if (!in_array($level, $logLevels))
+	if (! empty($level))
 	{
-		throw new Exception('Incorrect log level');
-	}
-
-	if ($level > $conf->global->SYSLOG_LEVEL) return false;
-
-	// If adding log inside HTML page is required
-	if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
-	{
-		$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
-	}
-
-	// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-	if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
-	{
-		print "\n\n<!-- Log start\n";
-		print $message."\n";
-		print "Log end -->\n";
-	}
-
-	$data = array(
-		'message' => $message,
-		'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
-		'level' => $level,
-		'user' => ((is_object($user) && $user->id) ? $user->login : false),
-		'ip' => false
-	);
-
-	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
-	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
-	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-	else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
-	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
-
-	//We load SYSLOG handlers
-	if (defined('SYSLOG_HANDLERS')) $handlers = json_decode(SYSLOG_HANDLERS);
-	else $handlers = array();
-
-	foreach ($handlers as $handler)
-	{
-		$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
-
-		if (!file_exists($file))
+		// Test log level
+		$logLevels = array(	LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
+		if (!in_array($level, $logLevels))
 		{
-			throw new Exception('Missing log handler');
+			throw new Exception('Incorrect log level');
+		}
+		if ($level > $conf->global->SYSLOG_LEVEL) return false;
+
+		// If adding log inside HTML page is required
+		if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
+		{
+			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
-		require_once $file;
-
-		$class = new $handler();
-
-		if (!$class instanceof LogHandlerInterface)
+		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
+		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
 		{
-			throw new Exception('Log handler does not extend LogHandlerInterface');
+			print "\n\n<!-- Log start\n";
+			print $message."\n";
+			print "Log end -->\n";
 		}
 
-		$class->export($data);
+		$data = array(
+			'message' => $message,
+			'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
+			'level' => $level,
+			'user' => ((is_object($user) && $user->id) ? $user->login : false),
+			'ip' => false
+		);
+
+		if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
+		else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
+		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
+		else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
+		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
+		else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
+
+		// Loop on each log handler and send output
+		foreach ($conf->loghandlers as $loghandlerinstance)
+		{
+			$loghandlerinstance->export($data);
+		}
+		unset($data);
+	}
+
+	if (! empty($ident))
+	{
+		foreach ($conf->loghandlers as $loghandlerinstance)
+		{
+			$loghandlerinstance->setIdent($ident);
+		}
 	}
 }
 
@@ -2190,17 +2174,18 @@ function dol_print_error($db='',$error='')
 }
 
 /**
- * Show email to contact if technical error
+ * Show a public email and error code to contact if technical error
  *
+ * @param	string	$prefixcode		Prefix of public error code
  * @return	void
  */
-function dol_print_error_email()
+function dol_print_error_email($prefixcode)
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date($now,'%Y%m%d')).'</div>';
+	print '<br><div class="error">'.$langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d')).'</div>';
 }
 
 /**
@@ -2700,8 +2685,16 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller=".$thirdparty_seller->id);
 
 	// Some test to guess with no need to make database access
-	if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
-	if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+	if ($mysoc->country_code == 'ES') // For spain, localtaxes are qualified if both supplier and seller use local taxe
+	{
+		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+	}
+	else
+	{
+		if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+	}
 	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
 
 	$code_country=$thirdparty_seller->country_code;
@@ -2712,7 +2705,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax2";
+	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
@@ -2722,9 +2715,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local==1) return $obj->localtax1;
-		elseif ($local==2) return $obj->localtax2;
-		//else return array($obj->localtax1,$obj->localtax2);
+		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
+		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
 	}
 
 	return 0;
@@ -2985,18 +2977,27 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
+	global $mysoc;
+
 	if (!is_object($thirdparty_seller)) return -1;
 	if (!is_object($thirdparty_buyer)) return -1;
 
-	if ($local==1) //RE
+	if ($local==1) // Localtax 1
 	{
-		// Si vendeur non assujeti a RE, localtax1 par default=0
-		if (is_numeric($thirdparty_seller->localtax1_assuj) && ! $thirdparty_seller->localtax1_assuj) return 0;
-		if (! is_numeric($thirdparty_seller->localtax1_assuj) && $thirdparty_seller->localtax1_assuj=='localtax1off') return 0;
+		if ($mysoc->country_code == 'ES')
+		{
+			if (is_numeric($thirdparty_buyer->localtax1_assuj) && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		}
+		else
+		{
+			// Si vendeur non assujeti a Localtax1, localtax1 par default=0
+			if (is_numeric($thirdparty_seller->localtax1_assuj) && ! $thirdparty_seller->localtax1_assuj) return 0;
+			if (! is_numeric($thirdparty_seller->localtax1_assuj) && $thirdparty_seller->localtax1_assuj=='localtax1off') return 0;
+		}
 	}
-	elseif ($local==2) //IRPF
+	elseif ($local==2) //I Localtax 2
 	{
-		// Si vendeur non assujeti a IRPF, localtax2 par default=0
+		// Si vendeur non assujeti a Localtax2, localtax2 par default=0
 		if (is_numeric($thirdparty_seller->localtax2_assuj) && ! $thirdparty_seller->localtax2_assuj) return 0;
 		if (! is_numeric($thirdparty_seller->localtax2_assuj) && $thirdparty_seller->localtax2_assuj=='localtax2off') return 0;
 	}
@@ -3565,7 +3566,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
  */
 function setEventMessage($mesgs, $style='mesgs')
 {
-	if (! in_array($style,array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
+	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
 	if (! is_array($mesgs))		// If mesgs is a string
 	{
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
@@ -4198,6 +4199,35 @@ function getCurrencySymbol($currency_code)
 	}
 
 	return $currency_sign;
+}
+/**
+ * Get type of one localtax
+ *
+ *  @param		int	$vatrate			VAT Rate
+ *  @param		int	$number             Number of localtax (1 / 2)
+ *  @param		int	$thirdparty         company object
+ *  @return		array      				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
+ */
+
+function getTypeOfLocalTaxFromRate($vatrate, $number, $thirdparty)
+{
+	global $db;
+
+	// Search local taxes
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
+	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+  		if ($number == 1) return array($obj->localtax1_type, $obj->localtax1);
+  		elseif ($number == 2) return array($obj->localtax2_type, $obj->localtax2);
+	}
+
+	return 0;
 }
 
 if (! function_exists('getmypid'))

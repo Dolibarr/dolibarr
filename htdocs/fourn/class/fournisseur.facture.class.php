@@ -30,8 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 
 
 /**
- *	\class      FactureFournisseur
- *	\brief      Class to manage suppliers invoices
+ *	Class to manage suppliers invoices
  */
 class FactureFournisseur extends CommonInvoice
 {
@@ -618,6 +617,8 @@ class FactureFournisseur extends CommonInvoice
         	// We remove directory
         	if ($conf->fournisseur->facture->dir_output)
         	{
+        		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
         		$ref = dol_sanitizeFileName($this->ref);
         		$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2).$ref;
         		$file = $dir . "/" . $ref . ".pdf";
@@ -632,6 +633,7 @@ class FactureFournisseur extends CommonInvoice
         		if (file_exists($dir))
         		{
         			$res=@dol_delete_dir_recursive($dir);
+
         			if (! $res)
         			{
         				$this->error='ErrorFailToDeleteDir';

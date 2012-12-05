@@ -627,6 +627,7 @@ BySalesRepresentative=By sales representative
 LinkedToSpecificUsers=Linked to a particular user contact
 DeleteAFile=Delete a file
 ConfirmDeleteAFile=Are you sure you want to delete file
+NoResults=No results
 
 # Week day
 Monday=Monday

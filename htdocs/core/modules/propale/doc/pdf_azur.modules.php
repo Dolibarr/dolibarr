@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,8 +117,6 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		$this->tva=array();
-		$this->localtax1=array();
-		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -136,7 +135,7 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
-		global $user,$langs,$conf;
+		global $user,$langs,$conf,$mysoc,$db;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -148,8 +147,6 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("bills");
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
-
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if ($conf->propal->dir_output)
 		{
@@ -185,6 +182,7 @@ class pdf_azur extends ModelePDFPropales
 
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
+                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
                 $heightforinfotot = 50;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
@@ -362,22 +360,48 @@ class pdf_azur extends ModelePDFPropales
 					$tvaligne=$object->lines[$i]->total_tva;
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
+					$localtax1_rate=$object->lines[$i]->localtax1_tx;
+					$localtax2_rate=$object->lines[$i]->localtax2_tx;
+					$localtax1_type=$object->lines[$i]->localtax1_type;
+					$localtax2_type=$object->lines[$i]->localtax2_type;
 
 					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
 					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
-					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
-					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
+					// TODO : store local taxes types into object lines and remove this
+					$localtax1_array=getTypeOfLocalTaxFromRate($vatrate,1,$mysoc);
+					$localtax2_array=getTypeOfLocalTaxFromRate($vatrate,2,$mysoc);
+					if (empty($localtax1_type))
+						$localtax1_type = $localtax1_array[0];
+					if (empty($localtax2_type))
+						$localtax2_type = $localtax2_array[0];
+					//end TODO
+
+				    // retrieve global local tax
+					if ($localtax1_type == '7')
+						$localtax1_rate = $localtax1_array[1];
+					if ($localtax2_type == '7')
+						$localtax2_rate = $localtax2_array[1];
+
+					if ($localtax1ligne != 0 || $localtax1_type == '7')
+						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
+					if ($localtax2ligne != 0 || $localtax2_type == '7')
+						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]='';
-					if (! isset($this->localtax1[$localtax1rate]))	$this->localtax1[$localtax1rate]='';
-					if (! isset($this->localtax2[$localtax2rate]))	$this->localtax2[$localtax2rate]='';
 					$this->tva[$vatrate] += $tvaligne;
-					$this->localtax1[$localtax1rate]+=$localtax1ligne;
-					$this->localtax2[$localtax2rate]+=$localtax2ligne;
+
+					// Add line
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					{
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
+						//$pdf->SetDrawColor(190,190,200);
+						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
+						$pdf->SetLineStyle(array('dash'=>0));
+					}
 
 					$nexY+=2;    // Passe espace entre les lignes
 
@@ -726,6 +750,84 @@ class pdf_azur extends ModelePDFPropales
 			}
 			else
 			{
+				//Local tax 1 before VAT
+				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				{
+					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
+						switch ($localtax_type) {
+							case '1':
+							case '3':
+							case '5':
+							case '7':
+								continue 2;
+								break;
+						}
+						foreach( $localtax_rate as $tvakey => $tvaval )
+						{
+							if ($tvakey>0)    // On affiche pas taux 0
+							{
+								//$this->atleastoneratenotnull++;
+
+								$index++;
+								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+
+								$tvacompl='';
+								if (preg_match('/\*/',$tvakey))
+								{
+									$tvakey=str_replace('*','',$tvakey);
+									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+								}
+								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+								$totalvat.=vatrate($tvakey,1).$tvacompl;
+								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+								$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+							}
+						}
+					}
+	      }
+				//Local tax 2  before VAT
+				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				{
+					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
+						switch ($localtax_type) {
+							case '1':
+							case '3':
+							case '5':
+							case '7':
+								continue 2;
+								break;
+						}
+						foreach( $localtax_rate as $tvakey => $tvaval )
+						{
+							if ($tvakey>0)    // On affiche pas taux 0
+							{
+								//$this->atleastoneratenotnull++;
+
+
+
+								$index++;
+								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+
+								$tvacompl='';
+								if (preg_match('/\*/',$tvakey))
+								{
+									$tvakey=str_replace('*','',$tvakey);
+									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+								}
+								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+								$totalvat.=vatrate($tvakey,1).$tvacompl;
+								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+								$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+
+							}
+						}
+					}
+				}
+				// VAT
 				foreach($this->tva as $tvakey => $tvaval)
 				{
 					if ($tvakey > 0)    // On affiche pas taux 0
@@ -750,48 +852,25 @@ class pdf_azur extends ModelePDFPropales
 					}
 				}
 
-				if (! $this->atleastoneratenotnull) // If no vat at all
+				//Local tax 1 after VAT
+				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				{
-					$index++;
-					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
-
-					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
-
-					// Total LocalTax1
-					if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on' && $object->total_localtax1>0)
-					{
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT1".$mysoc->country_code), $useborder, 'L', 1);
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax1), $useborder, 'R', 1);
-					}
-
-					// Total LocalTax2
-					if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on' && $object->total_localtax2>0)
-					{
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalLT2".$mysoc->country_code), $useborder, 'L', 1);
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2), $useborder, 'R', 1);
-					}
-				}
-				else
-				{
-					if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
-					{
-						//Local tax 1
-						foreach($this->localtax1 as $tvakey => $tvaval)
+					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
+						switch ($localtax_type) {
+							case '2':
+							case '4':
+							case '6':
+								continue 2;
+								break;
+						}
+						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey!=0)    // On affiche pas taux 0
+							if ($tvakey>0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
 								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 
 								$tvacompl='';
 								if (preg_match('/\*/',$tvakey))
@@ -799,27 +878,43 @@ class pdf_azur extends ModelePDFPropales
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
-								$totalvat.=vatrate($tvakey,1).$tvacompl;
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+								if ($localtax_type == '7') {  // amount on order
+									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
+								}
+								else
+								{
+									$totalvat.=vatrate($tvakey,1).$tvacompl;
+									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								}
 							}
 						}
 					}
-
-					if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-					{
-						//Local tax 2
-						foreach($this->localtax2 as $tvakey => $tvaval)
+	      		}
+				//Local tax 2  after VAT
+				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				{
+					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
+						switch ($localtax_type) {
+							case '2':
+							case '4':
+							case '6':
+								continue 2;
+								break;
+						}
+						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey!=0)    // On affiche pas taux 0
+							if ($tvakey>0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
 								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 
 								$tvacompl='';
 								if (preg_match('/\*/',$tvakey))
@@ -827,13 +922,21 @@ class pdf_azur extends ModelePDFPropales
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
-								$totalvat.=vatrate($tvakey,1).$tvacompl;
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
 
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								if ($localtax_type == '7') {  // amount on order
+									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
+								}
+								else
+								{
+									$totalvat.=vatrate($tvakey,1).$tvacompl;
+									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								}
 							}
 						}
 					}

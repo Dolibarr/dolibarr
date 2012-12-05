@@ -627,7 +627,8 @@ ByDay=Per dia
 BySalesRepresentative=Per comercial
 LinkedToSpecificUsers=Enllaçat a un contacte d'usuari particular
 DeleteAFile=Eliminació d'arxiu
-ConfirmDeleteAFile=Confirma l'eliminació de l'arxiu
+ConfirmDeleteAFile=Confirme l'eliminació de l'arxiu
+NoResults=Cap resultat
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts

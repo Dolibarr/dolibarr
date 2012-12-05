@@ -33,8 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *      \class      Adherent
- *		\brief      Class to manage members of a foundation
+ *		Class to manage members of a foundation
  */
 class Adherent extends CommonObject
 {
@@ -705,7 +704,7 @@ class Adherent extends CommonObject
 
         $this->db->begin();
 
-        // Suppression options
+        // Remove extrafields
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$rowid;
 
         dol_syslog(get_class($this)."::delete sql=".$sql);

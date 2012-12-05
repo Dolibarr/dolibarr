@@ -165,8 +165,7 @@ if ($id > 0 || ! empty($ref))
                     print "<td align=\"center\">";
                     print dol_print_date($db->jdate($objp->datef))."</td>";
                     print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-                    $fac=new Facture($db);
-                    print '<td align="right">'.$fac->LibStatut($objp->paye,$objp->statut,5).'</td>';
+                    print '<td align="right">'.$supplierinvoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }

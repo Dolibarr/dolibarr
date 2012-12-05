@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,15 +42,14 @@
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
 $colspan = 4;
-if (! empty($conf->margin->enabled)) {
+if (! empty($conf->margin->enabled)) 
+{
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+	if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
-<?php
-  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    $colspan++;
-  if (! empty($conf->global->DISPLAY_MARK_RATES))
-    $colspan++;
-}
+<?php 
+} 
 ?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
@@ -63,7 +62,7 @@ if (! empty($conf->margin->enabled)) {
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#idprod').change(function() {
-		  jQuery('#np_desc').focus();
+		  if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
 	});
 });
 </script>
@@ -78,7 +77,7 @@ jQuery(document).ready(function() {
 
 	if (is_object($hookmanager))
 	{
-        $parameters=array('fk_parent_line'=>$_POST["fk_parent_line"]);
+        $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line','int'));
 	    $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
@@ -87,8 +86,9 @@ jQuery(document).ready(function() {
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
+    $enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-    $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+    $doleditor=new DolEditor('np_desc',GETPOST('np_desc"'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,70);
 	$doleditor->Create();
 	?>
 	</td>
@@ -96,34 +96,34 @@ jQuery(document).ready(function() {
 	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
 <?php
 $colspan = 4;
-if (! empty($conf->margin->enabled)) {
+if (! empty($conf->margin->enabled)) 
+{
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+	if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 ?>
 	<td align="right">
-  <select id="fournprice" name="fournprice" style="display: none;"></select>
-  <input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
-  </td>
+		<select id="fournprice" name="fournprice" style="display: none;"></select>
+		<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
+	</td>
 <?php
-  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    $colspan++;
-  if (! empty($conf->global->DISPLAY_MARK_RATES))
-    $colspan++;
 }
 ?>
-	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline"></td>
+	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
+		<input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline">
+	</td>
 </tr>
 
-<?php if (! empty($conf->service->enabled) && $dateSelector) {
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
-	$colspan = 10;
-else
-	$colspan = 9;
-if (! empty($conf->margin->enabled)) {
-	$colspan++; // For the buying price
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		$colspan++;
-	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		$colspan++;
-}
+<?php 
+if (! empty($conf->service->enabled) && $dateSelector) 
+{
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
+	else $colspan = 9;
+	if (! empty($conf->margin->enabled))
+	{
+		$colspan++; // For the buying price
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+	}
 ?>
 <tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan; ?>">
@@ -135,11 +135,15 @@ if (! empty($conf->margin->enabled)) {
 	?>
 	</td>
 </tr>
-<?php } ?>
+<?php
+} 
+?>
 
 </form>
+
 <?php
-if (! empty($conf->margin->enabled)) {
+if (! empty($conf->margin->enabled)) 
+{
 ?>
 <script type="text/javascript">
 $("#idprod").change(function() {
@@ -174,5 +178,7 @@ $("#idprod").change(function() {
   'json');
 });
 </script>
-<?php } ?>
+<?php
+} 
+?>
 <!-- END PHP TEMPLATE predefinedproductline_create.tpl.php -->
