@@ -2221,6 +2221,24 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						}
 					}
 
+                    // Create intervention
+                    if ($conf->ficheinter->enabled)
+                    {
+                    	$langs->load("interventions");
+
+                        if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfServicesLines() > 0)
+                        {
+                              if ($user->rights->ficheinter->creer)
+                              {
+                                  print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddIntervention').'</a>';
+                              }
+                              else
+                              {
+                                  print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('AddIntervention').'</a>';
+                              }
+                      }
+                    }
+
 					// Reopen a closed order
 					if ($object->statut == 3)
 					{

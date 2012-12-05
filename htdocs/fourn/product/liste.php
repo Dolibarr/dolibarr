@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +100,10 @@ if ($_POST["mode"] == 'search')
 {
 	$sql .= " AND (p.ref LIKE '%".$_POST["sall"]."%'";
 	$sql .= " OR p.label LIKE '%".$_POST["sall"]."%')";
+	if ($sRefSupplier)
+	{
+		$sql .= " AND ppf.ref_fourn LIKE '%".$sRefSupplier."%'";
+	}
 }
 else
 {

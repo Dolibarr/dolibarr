@@ -181,3 +181,5 @@ HelpAddThisServiceCard=This option allows you to create or clone a service if it
 CurrentProductPrice=Current price
 AlwaysUseNewPrice=Always use current price of product/service
 AlwaysUseFixedPrice=Use the fixed price
+PriceByQuantity=Price by quantity
+PriceByQuantityRange=Quantity range
