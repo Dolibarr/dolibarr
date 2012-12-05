@@ -89,20 +89,14 @@ $server->wsdl->addComplexType(
     '',
     array(
 		'id' => array('name'=>'id','type'=>'xsd:string'),
-		'civilite_id' => array('name'=>'civilite_id','type'=>'xsd:string'),
 		'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
-		'name' => array('name'=>'name','type'=>'xsd:string'),
 		'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
 		'address' => array('name'=>'address','type'=>'xsd:string'),
-		'cp' => array('name'=>'cp','type'=>'xsd:string'),
 		'zip' => array('name'=>'zip','type'=>'xsd:string'),
 		'town' => array('name'=>'town','type'=>'xsd:string'),
 		'state_id' => array('name'=>'state_id','type'=>'xsd:string'),
 		'state_code' => array('name'=>'state_code','type'=>'xsd:string'),
 		'state' => array('name'=>'state','type'=>'xsd:string'),
-		'fk_pays' => array('name'=>'fk_pays','type'=>'xsd:string'),
-		'pays_code' => array('name'=>'pays_code','type'=>'xsd:string'),
-		'pays' => array('name'=>'pays','type'=>'xsd:string'),
 		'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
 		'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
 		'country' => array('name'=>'country','type'=>'xsd:string'),
@@ -120,7 +114,7 @@ $server->wsdl->addComplexType(
 		'ref_propal' => array('name'=>'ref_propal','type'=>'xsd:string'),
 		'user_id' => array('name'=>'user_id','type'=>'xsd:string'),
 		'user_login' => array('name'=>'user_login','type'=>'xsd:string'),
-		'civility_id' => array('name'=>'civility_id','type'=>'xsd:string'),
+		'civility_id' => array('name'=>'civility_id','type'=>'xsd:string')
     //...
     )
 );
@@ -241,18 +235,13 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 			        'contact'=>array(
 						'id' => $contact->id,
 						'lastname' => $contact->lastname,
-						'name' => $contact->name,
 						'firstname' => $contact->firstname,
 						'address' => $contact->address,
-						'cp' => $contact->cp,
 						'zip' => $contact->zip,
 						'town' => $contact->town,
 						'state_id' => $contact->state_id,
 						'state_code' => $contact->state_code,
 						'state' => $contact->state,
-						'fk_pays' => $contact->fk_pays,
-						'pays_code' => $contact->pays_code,
-						'pays' => $contact->pays,
 						'country_id' => $contact->country_id,
 						'country_code' => $contact->country_code,
 						'country' => $contact->country,
@@ -319,7 +308,10 @@ function createContact($authentication,$contact)
 	$error=0;
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 	// Check parameters
-
+	if (empty($contact['lastname']))
+	{
+		$error++; $errorcode='KO'; $errorlabel="Name is mandatory.";
+	}
 
 	if (! $error)
 	{
@@ -327,37 +319,33 @@ function createContact($authentication,$contact)
 
 		$newobject=new Contact($db);
 		
-		$newobject->id=$contact->id;
-		$newobject->civility_id=$contact->civility_id;
-		$newobject->lastname=$contact->lastname;
-		$newobject->name=$contact->name;
-		$newobject->firstname=$contact->firstname;
-		$newobject->address=$contact->address;
-		$newobject->zip=$contact->zip;
-		$newobject->town=$contact->town;
-		$newobject->state_id=$contact->state_id;
-		$newobject->state_code=$contact->state_code;
-		$newobject->state=$contact->state;
-		$newobject->fk_pays=$contact->fk_pays;
-		$newobject->pays_code=$contact->pays_code;
-		$newobject->pays=$contact->pays;
-		$newobject->country_id=$contact->country_id;
-		$newobject->country_code=$contact->country_code;
-		$newobject->country=$contact->country;
-		$newobject->socid=$contact->socid;
-		$newobject->status=$contact->status;
-		$newobject->code=$contact->code;
-		$newobject->email=$contact->email;
-		$newobject->birthday=$contact->birthday;
-		$newobject->default_lang=$contact->default_lang;
-		$newobject->note=$contact->note;
-		$newobject->no_email=$contact->no_email;
-		$newobject->ref_facturation=$contact->ref_facturation;
-		$newobject->ref_contrat=$contact->ref_contrat;
-		$newobject->ref_commande=$contact->ref_commande;
-		$newobject->ref_propal=$contact->ref_propal;
-		$newobject->user_id=$contact->user_id;
-		$newobject->user_login=$contact->user_login;
+		$newobject->id=$contact['id'];
+		$newobject->civility_id=$contact['civility_id'];
+		$newobject->lastname=$contact['lastname'];
+		$newobject->firstname=$contact['firstname'];
+		$newobject->address=$contact['address'];
+		$newobject->zip=$contact['zip'];
+		$newobject->town=$contact['town'];
+		$newobject->state_id=$contact['state_id'];
+		$newobject->state_code=$contact['state_code'];
+		$newobject->state=$contact['state'];
+		$newobject->country_id=$contact['country_id'];
+		$newobject->country_code=$contact['country_code'];
+		$newobject->country=$contact['country'];
+		$newobject->socid=$contact['socid'];
+		$newobject->status=$contact['status'];
+		$newobject->code=$contact['code'];
+		$newobject->email=$contact['email'];
+		$newobject->birthday=$contact['birthday'];
+		$newobject->default_lang=$contact['default_lang'];
+		$newobject->note=$contact['note'];
+		$newobject->no_email=$contact['no_email'];
+		$newobject->ref_facturation=$contact['ref_facturation'];
+		$newobject->ref_contrat=$contact['ref_contrat'];
+		$newobject->ref_commande=$contact['ref_commande'];
+		$newobject->ref_propal=$contact['ref_propal'];
+		$newobject->user_id=$contact['user_id'];
+		$newobject->user_login=$contact['user_login'];
 
 		
 		//...
