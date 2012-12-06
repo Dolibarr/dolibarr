@@ -10,7 +10,7 @@ StandingOrderProcessed=Traités
 Withdrawals=Retraits
 Withdrawal=Retrait
 WithdrawalsReceipts=Bons de prélèvements
-WithdrawalReceipt=Bon de prélèvement
+WithdrawalReceipts=Bon de prélèvements
 WithdrawalReceiptShort=Bon
 LastWithdrawalReceipts=Les %s derniers bons de traitement
 WithdrawedBills=Factures prélevées
@@ -82,7 +82,7 @@ ShowWithdraw=Voir prélèvement
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Toutefois, si la facture a au moins un paiement par prélèvement non traité, elle ne le sera pas afin de permettre la gestion du prélèvement d'abord.
 DoStandingOrdersBeforePayments=Cet onglet permet de faire une demande de prélèvement bancaire. Une fois réalisé, vous pourrez saisir le paiement sur la facture pour la clore.
 WithdrawalFile=Fichier de prélèvement
-SetToStatusSent=Mettre status "Fichier envoyé"
+SetToStatusSent=Mettre statut "Fichier envoyé"
 ThisWillAlsoAddPaymentOnInvoice=Ceci créera également les paiements sur les factures et les classera payées
 
 ### Notifications 
