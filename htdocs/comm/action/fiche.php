@@ -603,6 +603,10 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Other attributes
+    print '<tr><td colspan="4">&nbsp;';
+    print '</td></tr>';
+    
+    // Other attributes
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$actioncomm,$action);    // Note that $action and $object may have been modified by hook
 
@@ -834,6 +838,11 @@ if ($id)
         print '</td></tr>';
 
         // Other attributes
+        print '<tr><td colspan="4">&nbsp;';
+        print '</td></tr>';
+        
+        // Other attributes
+        $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
         
 		print '</table>';
@@ -1019,8 +1028,11 @@ if ($id)
 		print dol_htmlentitiesbr($act->note);
 		print '</td></tr>';
 
+		print '<tr><td colspan="4">&nbsp;';
+		print '</td></tr>';
+
         // Other attributes
-        $parameters=array();
+		$parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
