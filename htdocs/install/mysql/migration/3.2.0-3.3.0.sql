@@ -198,6 +198,12 @@ INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDed
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.08334');
 
 
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'agenda',  'internal', 'ACTOR', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (81, 'agenda',  'internal', 'GUEST', 'Guest', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (85, 'agenda',  'external', 'ACTOR', 'Responsable', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (86, 'agenda',  'external', 'GUEST', 'Guest', 1);
+
+
 DELETE FROM llx_document_model WHERE (nom = 'oursin' AND type ='invoice') OR (nom = 'edison' AND type ='order') OR (nom = 'jaune' AND type ='propal');
 
 ALTER TABLE llx_boxes DROP INDEX uk_boxes;
@@ -795,6 +801,28 @@ ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (entity, fk_parent, 
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_label (label);
 
+-- [ task #559 ] Price by quantity management
+CREATE TABLE llx_product_price_by_qty
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  fk_product_price	integer NOT NULL,
+  date_price		timestamp,
+  price			double (24,8) DEFAULT 0,
+  price_ttc		double (24,8) DEFAULT 0,
+  qty_min		real DEFAULT 0
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_price ADD price_by_qty INT NOT NULL DEFAULT 0;
+
+ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, qty_min);
+
+ALTER TABLE llx_product_price_by_qty ADD INDEX idx_product_price_by_qty_fk_product_price (fk_product_price);
+
+ALTER TABLE llx_product_price_by_qty ADD CONSTRAINT fk_product_price_by_qty_fk_product_price FOREIGN KEY (fk_product_price) REFERENCES llx_product_price (rowid);
+
+ALTER TABLE `llx_product_price_by_qty` ADD `remise_percent` DOUBLE NOT NULL DEFAULT '0' AFTER `price_ttc` ,
+ADD `remise` DOUBLE NOT NULL DEFAULT '0' AFTER `remise_percent`;
+
 -- Change index name to be compliant with SQL standard, index name must be unique in database schema
 ALTER TABLE llx_c_actioncomm DROP INDEX code, ADD UNIQUE uk_c_actioncomm (code);
 ALTER TABLE llx_c_civilite DROP INDEX code, ADD UNIQUE uk_c_civilite (code);
@@ -805,12 +833,10 @@ ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
 ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
 ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
 
-
 delete from llx_c_actioncomm where id = 40;
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) values ( 40, 'AC_OTH_AUTO','systemauto', 'Other (automatically inserted events)' ,NULL, 20);
 UPDATE llx_c_actioncomm SET libelle = 'Other (manually inserted events)' WHERE code = 'AC_OTH';
 UPDATE llx_c_actioncomm SET active = 0 WHERE code in ('AC_PROP', 'AC_COM', 'AC_FAC', 'AC_SHIP', 'AC_SUP_ORD', 'AC_SUP_INV');
-
 
 -- Update dictionnary of table llx_c_paper_format
 DELETE FROM llx_c_paper_format;
@@ -844,8 +870,6 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 -- increase field size
 ALTER TABLE llx_bank_account MODIFY COLUMN code_banque varchar(8);
 
-
-
 create table llx_user_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -855,4 +879,3 @@ create table llx_user_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
-

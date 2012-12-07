@@ -817,7 +817,7 @@ if ($step == 4 && $datatoexport)
     $list='';
     foreach($array_selected as $code=>$value)
     {
-        $list.=($list?', ':'');
+        $list.=(! empty($list)?', ':'');
         $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td>';
@@ -828,15 +828,18 @@ if ($step == 4 && $datatoexport)
     {
     	print '<tr><td width="25%">'.$langs->trans("FilteredFields").'</td>';
     	$list='';
-    	foreach($array_filtervalue as $code=>$value)
+    	if (! empty($array_filtervalue))
     	{
-    		if (isset($objexport->array_export_fields[0][$code]))
+    		foreach($array_filtervalue as $code=>$value)
     		{
-    			$list.=($list?', ':'');
-    			$list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
+    			if (isset($objexport->array_export_fields[0][$code]))
+    			{
+    				$list.=($list?', ':'');
+    				$list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
+    			}
     		}
     	}
-    	print '<td>'.($list?$list:$langs->trans("None")).'</td>';
+    	print '<td>'.(! empty($list)?$list:$langs->trans("None")).'</td>';
     	print '</tr>';
     }
 
@@ -1046,7 +1049,7 @@ if ($step == 5 && $datatoexport)
     $list='';
     foreach($array_selected as $code=>$label)
     {
-        $list.=($list?', ':'');
+        $list.=(! empty($list)?', ':'');
         $list.=$langs->trans($objexport->array_export_fields[0][$code]);
     }
     print '<td>'.$list.'</td></tr>';
@@ -1056,15 +1059,18 @@ if ($step == 5 && $datatoexport)
     {
     	print '<tr><td width="25%">'.$langs->trans("FilteredFields").'</td>';
     	$list='';
-    	foreach($array_filtervalue as $code=>$value)
+    	if (! empty($array_filtervalue))
     	{
-    		if (isset($objexport->array_export_fields[0][$code]))
+    		foreach($array_filtervalue as $code=>$value)
     		{
-    			$list.=($list?', ':'');
-    			$list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
+    			if (isset($objexport->array_export_fields[0][$code]))
+    			{
+    				$list.=($list?', ':'');
+    				$list.=$langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code])?$array_filtervalue[$code]:'')."'";
+    			}
     		}
     	}
-    	print '<td>'.($list?$list:$langs->trans("None")).'</td>';
+    	print '<td>'.(! empty($list)?$list:$langs->trans("None")).'</td>';
     	print '</tr>';
     }
 

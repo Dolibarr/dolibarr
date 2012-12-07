@@ -2,6 +2,7 @@
 -- Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2012		Maxime Kohlhaas			<maxime.kohlhaas@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,25 +19,8 @@
 --
 -- ============================================================================
 
-create table llx_product_price
-(
-  rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  entity			integer   DEFAULT 1 NOT NULL,		-- Multi company id
-  tms				timestamp,
-  fk_product		integer NOT NULL,
-  date_price		datetime NOT NULL,
-  price_level		smallint NULL DEFAULT 1,
-  price				double(24,8) DEFAULT NULL,
-  price_ttc			double(24,8) DEFAULT NULL,
-  price_min			double(24,8) default NULL,
-  price_min_ttc		double(24,8) default NULL,
-  price_base_type	varchar(3) DEFAULT 'HT',
-  tva_tx			double(6,3) NOT NULL,
-  recuperableonly	integer NOT NULL DEFAULT '0',  
-  localtax1_tx		double(6,3) DEFAULT 0,
-  localtax2_tx		double(6,3) DEFAULT 0,
-  fk_user_author	integer,
-  tosell			tinyint DEFAULT 1,
-  price_by_qty		integer NOT NULL DEFAULT 0
-)ENGINE=innodb;
+ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, quantity);
 
+ALTER TABLE llx_product_price_by_qty ADD INDEX idx_product_price_by_qty_fk_product_price (fk_product_price);
+
+ALTER TABLE llx_product_price_by_qty ADD CONSTRAINT fk_product_price_by_qty_fk_product_price FOREIGN KEY (fk_product_price) REFERENCES llx_product_price (rowid);

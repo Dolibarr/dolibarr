@@ -166,7 +166,9 @@ if ($forgetpasslink || $helpcenterlink) {
 	}
 
 	if ($helpcenterlink) {
-		echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/support/index.php" target="_blank">';
+		$url=DOL_URL_ROOT.'/support/index.php';
+		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
+		echo '<a style="color: #888888; font-size: 10px" href="'.dol_escape_htmltag($url).'" target="_blank">';
 		if ($forgetpasslink) {
 			echo '&nbsp;-&nbsp;';
 		} else {

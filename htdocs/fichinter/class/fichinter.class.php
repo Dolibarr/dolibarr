@@ -156,6 +156,14 @@ class Fichinter extends CommonObject
 		if ($result)
 		{
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+
+            // Add linked object
+            if (! $error && $this->origin && $this->origin_id)
+            {
+                $ret = $this->add_object_linked();
+                if (! $ret)	dol_print_error($this->db);
+            }
+
 			$this->db->commit();
 
 			// Appel des triggers

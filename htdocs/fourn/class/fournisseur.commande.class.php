@@ -1122,6 +1122,7 @@ class CommandeFournisseur extends CommonOrder
         if (empty($txtva)) $txtva=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
+		if (empty($remise_percent)) $remise_percent=0;
 
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
@@ -1170,7 +1171,7 @@ class CommandeFournisseur extends CommonOrder
                         $this->error="No price found for this quantity. Quantity may be too low ?";
                         $this->db->rollback();
                         dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
-                        return -1; // FIXME this return status create an error in jenkins
+                        return -1;
                     }
                     if ($result < -1)
                     {
@@ -1205,7 +1206,7 @@ class CommandeFournisseur extends CommonOrder
             $subprice = price2num($pu,'MU');
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
-            $sql.= " (fk_commande,label, description,";
+            $sql.= " (fk_commande, label, description,";
             $sql.= " fk_product, product_type,";
             $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, ref,";
             $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
@@ -1806,24 +1807,19 @@ class CommandeFournisseur extends CommonOrder
 
         $now=dol_now();
 
-        // Charge tableau des produits prodids
-        $prodids = array();
-
+        // Find first product
+        $prodid=0;
+        $product=new ProductFournisseur($db);
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
         $sql.= " WHERE entity IN (".getEntity('product', 1).")";
-
+        $sql.=$this->db->order("rowid","ASC");
+        $sql.=$this->db->plimit(1);
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num_prods = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num_prods)
-            {
-                $i++;
-                $row = $this->db->fetch_row($resql);
-                $prodids[$i] = $row[0];
-            }
+            $obj = $this->db->fetch_object($resql);
+            $prodid = $obj->rowid;
         }
 
         // Initialise parametres
@@ -1865,9 +1861,7 @@ class CommandeFournisseur extends CommonOrder
                 $line->total_tva=19.6;
                 $line->remise_percent=00;
             }
-            $line->ref_fourn='SUPPLIER_REF_'.$xnbp;
-            $prodid = rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
+            $line->fk_product=$prodid;
 
             $this->lines[$xnbp]=$line;
 

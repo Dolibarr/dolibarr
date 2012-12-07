@@ -142,6 +142,27 @@ while($i<count($properties))
 $targetcontent=preg_replace('/\'prop1\'=>\$'.$classmin.'->prop1,/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\'prop2\'=>\$'.$classmin.'->prop2,/', '', $targetcontent);
 
+// Substitute get method parameters
+$varprop="\n\t\t";
+$cleanparam='';
+$i=0;
+
+while($i<count($properties))
+{
+
+	$varprop.='$newobject->'.$properties[$i].'=$'.$classmin.'->'.$properties[$i].';';
+
+	$i++;
+	if ($i == count($properties))
+		$varprop.="\n";
+	else
+		$varprop.="\n\t\t";
+}
+$targetcontent=preg_replace('/\$newobject->prop1=\$'.$classmin.'->prop1;/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$newobject->prop2=\$'.$classmin.'->prop2;/', '', $targetcontent);
+
+
+
 // Build file
 $fp=fopen($outfile,"w");
 if ($fp)
