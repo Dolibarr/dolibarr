@@ -1023,8 +1023,11 @@ class Societe extends CommonObject
             }
 
             // Removed extrafields
-          	//$result=$this->deleteExtraFields($this);
-            //if ($result < 0) $error++;
+            if (! $error)
+            {
+	          	$result=$this->deleteExtraFields($this);
+	            if ($result < 0) $error++;
+            }
 
             if (! $error)
             {

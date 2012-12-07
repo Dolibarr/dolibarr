@@ -745,6 +745,12 @@ class Contact extends CommonObject
 				$this->error=$this->db->error().' sql='.$sql;
 			}
 		}
+		
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields($this);
+			if ($result < 0) $error++;
+		}
 
 		if (! $error && ! $notrigger)
 		{
