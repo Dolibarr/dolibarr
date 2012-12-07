@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
  */
 class modMyModule extends DolibarrModules
 {
-	var $error;
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -245,12 +244,8 @@ class modMyModule extends DolibarrModules
 		$sql = array();
 
 		$result=$this->load_tables();
-		if ($result>0)	{
-			return $this->_init($sql, $options);
-		}else {
-			$this->error=$this->db->error();
-			return -1;
-		}
+
+		return $this->_init($sql, $options);
 	}
 
 	/**
