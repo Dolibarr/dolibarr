@@ -6,6 +6,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +186,7 @@ class DoliDBPgsql
 		    if ($type == 'dml')
 		    {
                 $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
-
+                
 		        // we are inside create table statement so lets process datatypes
     			if (preg_match('/(ISAM|innodb)/i',$line)) { // end of create table sequence
     				$line=preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i',');',$line);
@@ -224,7 +225,11 @@ class DoliDBPgsql
     			// float -> numeric
     			$line=preg_replace('/^float/i','numeric',$line);
     			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
-
+    			
+    			//Check tms timestamp field case (in Mysql this field is defautled to now and 
+    			// on update defaulted by now
+    			$line=preg_replace('/(\s*)tms(\s*)timestamp/i','\\1tms timestamp without time zone DEFAULT now() NOT NULL',$line);
+    			
     			// unique index(field1,field2)
     			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
     			{
@@ -333,7 +338,7 @@ class DoliDBPgsql
 			// except for sql insert in data file that are mysql escaped so we removed them to
 			// be compatible with standard_conforming_strings=on that considers \ as ordinary character).
 			if ($unescapeslashquot) $line=preg_replace("/\\\'/","''",$line);
-
+			
 			//print "type=".$type." newline=".$line."<br>\n";
 		}
 
