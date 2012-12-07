@@ -529,7 +529,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     {
                         if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
-                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
+                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'"');
                         }
                         print '<input type=hidden name="'.$nameRemain.'" value="'.$remaintopay.'">';
                         print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
