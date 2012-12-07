@@ -74,7 +74,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'extrafields', $langs->trans("Agenda"));
+dol_fiche_head($head, 'attributes', $langs->trans("Agenda"));
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
