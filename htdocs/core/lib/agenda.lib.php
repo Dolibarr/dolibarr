@@ -373,6 +373,11 @@ function agenda_prepare_head()
 	$head[$h][1] = $langs->trans("AutoActions");
 	$head[$h][2] = 'autoactions';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'extrafield';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("ExportCal");
