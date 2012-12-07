@@ -297,7 +297,7 @@ ALTER TABLE llx_accountingsystem ADD INDEX idx_accountingsystem_pcg_version (pcg
 create table llx_accountingaccount
 (
   rowid           integer      AUTO_INCREMENT PRIMARY KEY,
-  fk_pcg_version  varchar(12)  NOT NULL,
+  fk_pcg_version  int	       NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(20)  NOT NULL,
@@ -307,7 +307,7 @@ create table llx_accountingaccount
 )ENGINE=innodb;
 
 ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
-ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accountingsystem (pcg_version);
+ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accountingsystem (rowid);
 
 
 -- Data for accountancy expert
