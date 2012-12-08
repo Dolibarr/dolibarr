@@ -181,3 +181,5 @@ HelpAddThisServiceCard=Cette option permet de créer ou de cloner une fiche serv
 CurrentProductPrice=Prix actuel
 AlwaysUseNewPrice=Toujours utiliser le prix du jour
 AlwaysUseFixedPrice=Utiliser le prix fixé
+PriceByQuantity=Prix par quantité
+PriceByQuantityRange=Grille de quantités

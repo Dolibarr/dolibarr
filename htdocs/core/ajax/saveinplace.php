@@ -79,6 +79,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
 	}
+	else $newelement = $element;
 
 	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->write)
 	|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))

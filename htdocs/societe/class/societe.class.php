@@ -564,7 +564,7 @@ class Societe extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                unset($this->country_code);
+                unset($this->country_code);		// We clean this because it may have been changed after an update of country_id
                 unset($this->country);
                 unset($this->state_code);
                 unset($this->state);
@@ -1041,6 +1041,19 @@ class Societe extends CommonObject
                 }
             }
 
+            // Remove extrafields
+            if (! $error)
+            {
+            	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_extrafields WHERE fk_object = ".$id;
+            	dol_syslog(get_class($this)."::delete sql=".$sql);
+            	if (! $this->db->query($sql))
+            	{
+            		$error++;
+            		$this->error = $this->db->lasterror();
+            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+            	}
+            }
+
             // Remove third party
             if (! $error)
             {
@@ -1051,7 +1064,7 @@ class Societe extends CommonObject
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -3 ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -2550,6 +2563,8 @@ class Societe extends CommonObject
         $this->state='MyState';
         $this->country_id=1;
         $this->country_code='FR';
+        $this->email='specimen@specimen.com';
+        $this->url='http://www.specimen.com';
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');
@@ -2569,7 +2584,7 @@ class Societe extends CommonObject
         $this->idprof5='idprof5';
         $this->idprof6='idprof6';
     }
-    
+
     /**
      *  Check if localtax define for company
      *  Used to build previews or test instances.
@@ -2580,11 +2595,11 @@ class Societe extends CommonObject
      */
     function hasLocalTax($localTaxNum) {
         global $user,$langs,$conf;
-        
+
         // check parameter
         if ($localTaxNum != 1 && $localTaxNum != 2)
             return false;
-        
+
 		// Search local taxes
 		$sql  = "SELECT t.localtax1, t.localtax2";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
@@ -2600,7 +2615,7 @@ class Societe extends CommonObject
 		if ($resql)
 		{
    			return ($this->db->num_rows($resql) > 0);
-   			
+
 		}
 		else
 		    return false;

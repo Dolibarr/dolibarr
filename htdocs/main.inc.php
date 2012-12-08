@@ -8,6 +8,7 @@
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1417,6 +1418,13 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    {
 	        $langs->load("products");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+	    }
+
+	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
+	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
+	    {
+	        $langs->load("products");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/fourn/product/liste.php', DOL_URL_ROOT.'/fourn/product/liste.php', img_object('','product').' '.$langs->trans("SupplierRef"), 'products', 'srefsupplier');
 	    }
 
 	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)

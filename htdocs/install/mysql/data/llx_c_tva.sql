@@ -255,9 +255,13 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (15
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1543,154,     '10','0','VAT Frontero',1);
 
 -- BARBADOS (id country=46)
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (461,46,     '0','0','No VAT',1);
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (462,46,     '15','0','VAT 15%',1);
-INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (463,46,     '7.5','0','VAT 7.5%',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES ( 461, 46,     '0','0','No VAT',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES ( 462, 46,     '15','0','VAT 15%',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES ( 463, 46,     '7.5','0','VAT 7.5%',1);
+
+-- SOUTH AFRICA (id country=205)
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2051,205,     '0','0','No VAT',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2052,205,     '14','0','VAT 14%',1);
 
 -- VENEZUELA (id country=232)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2321,232,     '0','0','No VAT',1);

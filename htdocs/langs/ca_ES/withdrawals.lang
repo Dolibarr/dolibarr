@@ -34,7 +34,7 @@ MakeWithdrawRequest=Fer una petició de domiciliació
 ThirdPartyBankCode=Codi banc del tercer
 ThirdPartyDeskCode=Codi oficina del tercer
 NoInvoiceCouldBeWithdrawed=No s'ha domiciliat cap factura. Assegureu-vos que les factures són d'empreses amb les dades de comptes bancaris correctes.
-ClassCredited=Abonar
+ClassCredited=Classificar com "Abonada"
 ClassCreditedConfirm=Esteu segur de voler classificar aquesta domiciliació com abonada al seu compte bancari?
 TransData=Data enviament
 TransMetod=Mètode enviament
@@ -81,6 +81,9 @@ WithdrawalFileNotCapable=No es possible generar fitxer bancari de domiciliacio p
 ShowWithdraw=Veure domiciliació
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No obstant això, si la factura té pendent algun pagament per domiciliació, no serà tancada per a permetre la gestió de la domiciliació.
 DoStandingOrdersBeforePayments=Aquesta pestanya us permet realitzar una petició de domiciliació. Un cop, podeu ingressar el pagament a la factura per procedir al seu tancament.
+WithdrawalFile=Arxiu de la domiciliació
+SetToStatusSent=Classificar com "Arxiu enviat"
+ThisWillAlsoAddPaymentOnInvoice=Es crearan els pagaments de les factures i les classificarà com pagades
 
 ### Notifications 
 InfoCreditSubject=Abonament de domiciliació %s pel banc
