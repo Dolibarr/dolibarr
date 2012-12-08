@@ -117,7 +117,7 @@ print '<td width="20%">';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" value="'.$langs->trans('Launch').'" />';
+print '<input type="submit" class="button" value="'.$langs->trans('Launch').'" />';
 print '</td></tr>';
 
 // Total Margin
@@ -216,7 +216,7 @@ if ($result)
 
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			if ($id > 0) {
 				print '<td>';
 				$invoicestatic->id=$objp->facid;
