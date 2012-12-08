@@ -248,6 +248,7 @@ class User extends CommonObject
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
+			//dol_syslog(get_class($this).'::fetch load personalized conf sql='.$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
