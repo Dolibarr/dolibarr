@@ -23,7 +23,8 @@ create table llx_element_lock
 	elementtype			varchar(16) NOT NULL,
 	datel    			datetime,				-- date of lock
 	datem    			datetime,				-- date of unlock/modif
-	fk_user_modif   	integer,
-	status				tinyint DEFAULT 0		-- 0 unlock, 1 lock
+	fk_user_modif		   	integer,
+	status				tinyint DEFAULT 0,		-- 0 unlock, 1 lock
+	sessionid			varchar(255)
 	
 )ENGINE=innodb;
