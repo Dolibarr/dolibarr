@@ -41,9 +41,9 @@ $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 if ($action == 'setcomptamode')
 {
 	$compta_mode = GETPOST('compta_mode','alpha');
-	
+
 	$res = dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -60,9 +60,9 @@ if ($action == 'setcomptamode')
 if ($action == 'setchart')
 {
 	$chartofaccounts = GETPOST('chartofaccounts','alpha');
-	
+
 	$res = dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts,'chaine',0,'',$conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -81,9 +81,9 @@ if ($action == 'update' || $action == 'add')
 	$constvalue = GETPOST('constvalue','alpha');
 	$consttype = GETPOST('consttype','alpha');
 	$constnote = GETPOST('constnote','alpha');
-	
+
 	$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
-	
+
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -157,13 +157,13 @@ if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting-
 {
   print '<br>';
   print_titre($langs->trans("Definechartofaccounts"));
-  
+
   print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
   print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-  
+
   print '<table class="noborder" width="100%">';
   $var=True;
-  
+
   print '<tr class="liste_titre">';
   print '<td>';
   print '<input type="hidden" name="action" value="setchart">';
@@ -176,9 +176,9 @@ if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting-
   print "<td>";
   print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
   print '<option value="0">'.$langs->trans("DoNotSuggestChart").'</option>';
-  
+
   $sql = "SELECT rowid, pcg_version, fk_pays, label, active";
-  $sql.= " FROM ".MAIN_DB_PREFIX."accountingsystem";
+  $sql.= " FROM ".MAIN_DB_PREFIX."accounting_system";
   $sql.= " WHERE active = 1";
   $sql.= " AND fk_pays = ".$mysoc->country_id;
   $var=True;
@@ -191,11 +191,11 @@ if (! empty($conf->global->ACCOUNTING_SELECTCHART) && ! empty($conf->accounting-
       {
           $var=!$var;
           $row = $db->fetch_row($resql);
-  
+
           print '<option value="'.$row[0].'"';
           print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected="selected"':'';
           print '>'.$row[1].' - '.$row[3].'</option>';
-  
+
           $i++;
       }
   }
@@ -250,11 +250,11 @@ foreach ($list as $key)
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="consttype" value="string">';
 	print '<input type="hidden" name="constname" value="'.$key.'">';
-	
+
 	print '<tr '.$bc[$var].' class="value">';
 
 	// Param
-	$libelle = $langs->trans($key); 
+	$libelle = $langs->trans($key);
 	print '<td>'.$libelle;
 	//print ' ('.$key.')';
 	print "</td>\n";
@@ -266,7 +266,7 @@ foreach ($list as $key)
 	print '<input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
 	print "</td></tr>\n";
 	print '</form>';
-	
+
 	$i++;
 }
 

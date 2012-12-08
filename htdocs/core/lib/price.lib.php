@@ -46,21 +46,21 @@
  *		@param	int		$info_bits					Miscellanous informations on line
  *		@param	int		$type						0/1=Product/service
  *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
- *		@return result[ 0=total_ht, 
- *						 1=total_vat, 
- *						 2=total_ttc, 
- *						 3=pu_ht, 
- *						 4=pu_tva, 
- *						 5=pu_ttc, 
- *						 6=total_ht_without_discount, 
- *						 7=total_vat_without_discount, 
- *						 8=total_ttc_without_discount, 
- *						 9=amount tax1 for total_ht, 
- *						10=amount tax2 for total_ht, 
- *						11=amount tax1 for pu_ht, 
- *						12=amount tax2 for pu_ht, 
- *						13=not used???, 
- *						14=amount tax1 for total_ht_without_discount, 
+ *		@return result[ 0=total_ht,
+ *						 1=total_vat,
+ *						 2=total_ttc,
+ *						 3=pu_ht,
+ *						 4=pu_tva,
+ *						 5=pu_ttc,
+ *						 6=total_ht_without_discount,
+ *						 7=total_vat_without_discount,
+ *						 8=total_ttc_without_discount,
+ *						 9=amount tax1 for total_ht,
+ *						10=amount tax2 for total_ht,
+ *						11=amount tax1 for pu_ht,
+ *						12=amount tax2 for pu_ht,
+ *						13=not used???,
+ *						14=amount tax1 for total_ht_without_discount,
  *						15=amount tax1 for total_ht_without_discount]
  */
 function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '')
@@ -69,7 +69,17 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	$result=array();
 
-	if (empty($seller) || ! is_object($seller)) $seller=$mysoc;	// If seller is a customer, $seller is not provided, we use $mysoc
+	if (empty($seller) || ! is_object($seller))
+	{
+		if (! is_object($mysoc))	// mysoc may be not defined (during migration process)
+		{
+			$mysoc=new Societe($db);
+			$mysoc->getMysoc($conf);
+		}
+		$seller=$mysoc;	// If seller is a customer, $seller is not provided, we use $mysoc
+		//var_dump($seller->country_id);exit;
+	}
+
 	$countryid=$seller->country_id;
 	if ($uselocaltax1_rate < 0) $uselocaltax1_rate=$seller->localtax1_assuj;
 	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
@@ -192,7 +202,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 
 	// if there's some localtax without vat, we calculate localtaxes (we will add them at end)
-    
+
     //If price is 'TTC' we need to have the totals without VAT for a correct calculation
     if ($price_base_type=='TTC')
     {

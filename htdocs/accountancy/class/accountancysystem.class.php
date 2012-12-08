@@ -59,15 +59,15 @@ class AccountancySystem
 	function create($user)
 	{
 		$now=dol_now();
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accountingsystem";
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
 		$sql.= " (date_creation, fk_user_author, numero,intitule)";
 		$sql.= " VALUES (".$this->db->idate($now).",".$user->id.",'".$this->numero."','".$this->intitule."')";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accountingsystem");
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
 
 			if ($id > 0)
 			{

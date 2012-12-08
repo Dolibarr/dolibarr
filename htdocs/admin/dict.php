@@ -99,7 +99,7 @@ $tabname[20]= MAIN_DB_PREFIX."c_input_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
 $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
 $tabname[23]= MAIN_DB_PREFIX."accountingaccount";
-$tabname[24]= MAIN_DB_PREFIX."accountingsystem";
+$tabname[24]= MAIN_DB_PREFIX."accounting_system";
 
 // Dictionary labels
 $tablib=array();
@@ -153,7 +153,7 @@ $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT rowid   as rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number as accountancy_code, account_parent, label, active FROM ".MAIN_DB_PREFIX."accountingaccount";
-$tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as pays_id, p.code as pays_code, p.libelle as pays, s.label, s.active FROM ".MAIN_DB_PREFIX."accountingsystem as s, ".MAIN_DB_PREFIX."c_pays as p WHERE s.fk_pays=p.rowid and p.active=1";
+$tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as pays_id, p.code as pays_code, p.libelle as pays, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_pays as p WHERE s.fk_pays=p.rowid and p.active=1";
 
 // Critere de tri du dictionnaire
 $tabsqlsort=array();

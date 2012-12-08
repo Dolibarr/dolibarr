@@ -57,7 +57,7 @@ CREATE OR REPLACE FUNCTION dol_util_triggerall(DoEnable boolean) RETURNS integer
 
 
 -- Add triggers
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accountingsystem FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accounting_system FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accountingtransaction FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_actioncomm FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
