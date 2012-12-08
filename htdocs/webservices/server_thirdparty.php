@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 dol_syslog("Call Dolibarr webservices interfaces");
@@ -82,14 +83,8 @@ $server->wsdl->addComplexType(
     )
 );
 
-// Define other specific objects
-$server->wsdl->addComplexType(
-    'thirdparty',
-    'complexType',
-    'struct',
-    'all',
-    '',
-    array(
+
+$thirdparty_fields= array(
     	'id' => array('name'=>'id','type'=>'xsd:string'),
         'ref' => array('name'=>'name','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
@@ -123,8 +118,34 @@ $server->wsdl->addComplexType(
     	'profid6' => array('name'=>'profid6','type'=>'xsd:string'),
         'capital' => array('name'=>'capital','type'=>'xsd:string'),
     	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
-    	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string')
-    )
+    	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string'));
+
+//Retreive all extrafield for thirdsparty
+// fetch optionals attributes and labels
+$extrafields=new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label('company');
+foreach($extrafields->attribute_label as $key=>$label)
+{
+	//$value=$object->array_options["options_".$key];
+	$type =$extrafields->attribute_type[$key];
+	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+	else {$type='xsd:string';}
+
+	$extrafield_array = array();
+
+	$extrafield_array[$key]=array('name'=>$key,'type'=>$type);
+}
+
+$thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
+
+// Define other specific objects
+$server->wsdl->addComplexType(
+    'thirdparty',
+    'complexType',
+    'struct',
+    'all',
+    '',
+	$thirdparty_fields
 );
 
 // Define other specific objects
