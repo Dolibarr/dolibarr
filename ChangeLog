@@ -62,7 +62,14 @@ For users:
 - New: Can choose menu entry to show with external site module.
 - New: Add hidden option MAIN_PDF_MARGIN_LEFT, MAIN_PDF_MARGIN_RIGHT, MAIN_PDF_MARGIN_TOP, MAIN_PDF_MARGIN_BOTTOM
        to force margins of generated PDF.
-- New:  [ task #314 ] Can define if prof id are mandatory or not
+- New:  [ task #314 ] Can define if prof id are mandatory or not.
+- New: Add button on order card to create intervention from services.
+- New: Add search box to find products by supplier reference.
+- New: Add option MAIN_HELPCENTER_LINKTOUSE to define target link "I need help" onto logon page. 
+- New: [ task #608 ] Can clone a supplier order with prices updates
+- New: [ task #559 ] Can define a discount % regarding quantity in supplier prices and price by quantity in customer prices
+- New: [ task #527 ] After cloning a suplier invoice, go onto invoice ref into edit mode
+
 New experimental modules:
 - New: Add margin management module.
 - New: Add commissions management module.

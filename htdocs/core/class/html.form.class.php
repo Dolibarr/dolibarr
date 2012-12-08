@@ -379,7 +379,12 @@ class Form
         $s="";
         if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
-        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
+        // Use another method to help avoid having a space in value in order to use this value with jquery
+        // TODO add this in css
+        //if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
+        $paramfortooltiptd.= (($direction < 0)?' style="padding-left: 3px !important;"':'');
+        $paramfortooltiptd.= (($direction > 0)?' style="padding-right: 3px !important;"':'');
+        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
         if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
         if (empty($notabs))	$s.='</tr></table>';
 
@@ -1229,13 +1234,13 @@ class Form
             	$opt = '';
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
-				
+
 				if(!empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql.= " ORDER BY quantity ASC";
-					
+
 					dol_syslog(get_class($this)."::select_produits_do search price by qty sql=".$sql);
 					$result2 = $this->db->query($sql);
 					if ($result2)
@@ -1244,18 +1249,18 @@ class Form
 						$j = 0;
 						while ($nb_prices && $j < $nb_prices) {
 							$objp2 = $this->db->fetch_object($result2);
-							
+
 							$objp->quantity = $objp2->quantity;
 							$objp->price = $objp2->price;
 							$objp->unitprice = $objp2->unitprice;
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
 							$objp->price_by_qty_rowid = $objp2->rowid;
-							
+
 							$this->_construct_product_list_option($objp, $opt, $optJson, 0, $selected);
-							
+
 							$j++;
-							
+
 							// Add new entry
 							// "key" value of json key array is used by jQuery automatically as selected value
 							// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -1290,7 +1295,7 @@ class Form
 
 	function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected) {
 		global $langs,$conf,$user,$db;
-		
+
         $outkey='';
         $outval='';
         $outref='';
@@ -1394,7 +1399,7 @@ class Form
 				$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Units");
 			}
-			
+
 			$outprice_ht=price($objp->unitprice);
             $outprice_ttc=price($objp->unitprice * (1 + ($objp->tva_tx / 100)));
             $outpricebasetype=$objp->price_base_type;
@@ -2333,7 +2338,7 @@ class Form
 
         // Clean parameters
         $newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
-        
+
         if (is_array($formquestion) && ! empty($formquestion))
         {
             $more.='<table class="paddingrightonly" width="100%">'."\n";
@@ -2494,7 +2499,7 @@ class Form
                     }
                 });
 
-                
+
             	var button = "'.$button.'";
                 if (button.length > 0) {
                 	$( "#" + button ).click(function() {
