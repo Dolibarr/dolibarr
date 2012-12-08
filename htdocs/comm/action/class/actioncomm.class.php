@@ -209,6 +209,25 @@ class ActionComm extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm","id");
 
+            // Actions on extra fields (by external module or standard code)
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+            $hookmanager=new HookManager($this->db);
+            $hookmanager->initHooks(array('actioncommdao'));
+            $parameters=array('actcomm'=>$this->id);
+            $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook))
+            {
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            	{
+            		$result=$this->insertExtraFields();
+            		if ($result < 0)
+            		{
+            			$error++;
+            		}
+            	}
+            }
+            else if ($reshook < 0) $error++;
+            
             if (! $notrigger)
             {
                 // Appel des triggers
@@ -343,7 +362,19 @@ class ActionComm extends CommonObject
         $sql.= " WHERE id=".$this->id;
 
         dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
+        $res=$this->db->query($sql);
+        if ($res < 0) {
+        	$this->error=$this->db->lasterror();
+        	$error++;
+        }
+        
+        // Removed extrafields
+        if (! $error) {
+        	$result=$this->deleteExtraFields($this);
+        	if ($result < 0) $error++;
+        }
+        
+        if (!$error)
         {
             if (! $notrigger)
             {
@@ -437,6 +468,26 @@ class ActionComm extends CommonObject
         dol_syslog(get_class($this)."::update sql=".$sql);
         if ($this->db->query($sql))
         {
+        	
+        	// Actions on extra fields (by external module or standard code)
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+        	$hookmanager=new HookManager($this->db);
+        	$hookmanager->initHooks(array('actioncommdao'));
+        	$parameters=array('actcomm'=>$this->id);
+        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        	if (empty($reshook))
+        	{
+        		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        		{
+        			$result=$this->insertExtraFields();
+        			if ($result < 0)
+        			{
+        				$error++;
+        			}
+        		}
+        	}
+        	else if ($reshook < 0) $error++;
+        	
             if (! $notrigger)
             {
                 // Appel des triggers
