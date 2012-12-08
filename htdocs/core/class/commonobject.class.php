@@ -2067,6 +2067,36 @@ abstract class CommonObject
         }
     }
 
+    /**
+     *	Delete all extra fields values for the current object.
+     * 
+     *  @return	void
+     */
+	function deleteExtraFields()
+	{
+		global $langs;
+		
+		$error=0;
+		
+		$this->db->begin();
+	
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
+		dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
+		$this->db->query($sql_del);
+	
+		if (! $resql)
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::delete ".$this->error,LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
 
     /**
      *	Add/Update all extra fields values for the current object.
