@@ -230,6 +230,9 @@ class DoliDBPgsql
     			// on update defaulted by now
     			$line=preg_replace('/(\s*)tms(\s*)timestamp/i','\\1tms timestamp without time zone DEFAULT now() NOT NULL',$line);
     			
+    			// nuke ON UPDATE CURRENT_TIMESTAMP
+    			$line=preg_replace('/(\s*)on(\s*)update(\s*)CURRENT_TIMESTAMP/i','\\1',$line);
+    			
     			// unique index(field1,field2)
     			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
     			{

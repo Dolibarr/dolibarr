@@ -96,6 +96,8 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product FOR EACH ROW
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_fournisseur_price FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_price FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE OR REPLACE FUNCTION update_modified_column_date_price()	RETURNS TRIGGER AS $$ BEGIN NEW.date_price = now(); RETURN NEW; END; $$ LANGUAGE 'PLPGSQL';
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_price_by_qty FOR EACH ROW EXECUTE PROCEDURE update_modified_column_date_price();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_stock FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_projet FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_projet_task FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -112,5 +114,5 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_stock_mouvement FOR 
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_texts FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_tva FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_usergroup FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-
