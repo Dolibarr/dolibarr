@@ -718,15 +718,12 @@ class User extends CommonObject
 			}
 		}
 
-        // Remove extrafields
-        if (! $error)
+		// Removed extrafields
+		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
-         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_extrafields WHERE fk_object = ".$this->id;
-           	dol_syslog(get_class($this)."::delete sql=".$sql);
-           	if (! $this->db->query($sql))
-           	{
+			$result=$this->deleteExtraFields($this);
+			if ($result < 0) {
            		$error++;
-           		$this->error = $this->db->lasterror();
            		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
            	}
         }

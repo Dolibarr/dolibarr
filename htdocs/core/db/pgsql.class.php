@@ -6,6 +6,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,6 +226,13 @@ class DoliDBPgsql
     			$line=preg_replace('/^float/i','numeric',$line);
     			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
+    			//Check tms timestamp field case (in Mysql this field is defautled to now and 
+    			// on update defaulted by now
+    			$line=preg_replace('/(\s*)tms(\s*)timestamp/i','\\1tms timestamp without time zone DEFAULT now() NOT NULL',$line);
+    			
+    			// nuke ON UPDATE CURRENT_TIMESTAMP
+    			$line=preg_replace('/(\s*)on(\s*)update(\s*)CURRENT_TIMESTAMP/i','\\1',$line);
+    			
     			// unique index(field1,field2)
     			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
     			{

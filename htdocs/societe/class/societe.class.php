@@ -1022,10 +1022,6 @@ class Societe extends CommonObject
                 }
             }
 
-            // Removed extrafields
-          	//$result=$this->deleteExtraFields($this);
-            //if ($result < 0) $error++;
-
             if (! $error)
             {
             	// Additionnal action by hooks
@@ -1041,16 +1037,13 @@ class Societe extends CommonObject
                 }
             }
 
-            // Remove extrafields
-            if (! $error)
+            // Removed extrafields
+            if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {
-            	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_extrafields WHERE fk_object = ".$id;
-            	dol_syslog(get_class($this)."::delete sql=".$sql);
-            	if (! $this->db->query($sql))
-            	{
+            	$result=$this->deleteExtraFields($this);
+            	if ($result < 0) {
             		$error++;
-            		$this->error = $this->db->lasterror();
-            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+            		 dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
             	}
             }
 
