@@ -20,10 +20,8 @@ create table llx_element_lock
 (
 	rowid				integer	AUTO_INCREMENT	PRIMARY KEY,
 	fk_element			integer NOT NULL,
-	elementtype			varchar(16) NOT NULL,
+	elementtype			varchar(32) NOT NULL,
 	datel    			datetime,				-- date of lock
 	datem    			datetime,				-- date of unlock/modif
-	fk_user_modif   	integer,
-	status				tinyint DEFAULT 0		-- 0 unlock, 1 lock
-	
+	sessionid			varchar(255)	
 )ENGINE=innodb;
