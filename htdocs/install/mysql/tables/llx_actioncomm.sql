@@ -50,8 +50,8 @@ create table llx_actioncomm
   punctual			smallint NOT NULL default 1,
   percent			smallint NOT NULL default 0,
   location			varchar(128),
-  durationp			real,							-- duree planifiee
-  durationa			real,							-- deprecated
+  durationp			double,							-- duree planifiee
+  durationa			double,							-- deprecated
   note				text,
   
   fk_element		integer DEFAULT NULL,

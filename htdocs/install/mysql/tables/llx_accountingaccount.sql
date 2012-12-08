@@ -20,7 +20,7 @@
 create table llx_accountingaccount
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_pcg_version  varchar(12)  NOT NULL,
+  fk_pcg_version  integer NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(20)  NOT NULL,

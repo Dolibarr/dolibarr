@@ -18,5 +18,5 @@
 -- ===========================================================================
 
 
-ALTER TABLE llx_accountingsystem ADD INDEX idx_accountingsystem_pcg_version (pcg_version);
+ALTER TABLE llx_accountingsystem ADD UNIQUE INDEX idx_accountingsystem_pcg_version (pcg_version);
 
