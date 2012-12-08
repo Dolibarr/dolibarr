@@ -701,75 +701,101 @@ class Adherent extends CommonObject
 
         $result = 0;
 		$error=0;
+		$errorflag=0;
 
         $this->db->begin();
 
-        // Remove extrafields
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_extrafields WHERE fk_object = ".$rowid;
-
+        // Remove category
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
         dol_syslog(get_class($this)."::delete sql=".$sql);
         $resql=$this->db->query($sql);
-        if ($resql)
+        if (! $resql)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
-            dol_syslog(get_class($this)."::delete sql=".$sql);
-            $resql=$this->db->query($sql);
-
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-            dol_syslog(get_class($this)."::delete sql=".$sql);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-            	// Remove linked user
-            	$ret=$this->setUserId(0);
-            	if ($ret > 0)
-            	{
-            		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-            		dol_syslog(get_class($this)."::delete sql=".$sql);
-            		$resql=$this->db->query($sql);
-            		if ($resql)
-            		{
-            			if ($this->db->affected_rows($resql))
-            			{
-            				// Appel des triggers
-            				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            				$interface=new Interfaces($this->db);
-            				$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
-            				if ($result < 0) {
-            					$error++; $this->errors=$interface->errors;
-            				}
-            				// Fin appel triggers
-
-            				$this->db->commit();
-            				return 1;
-            			}
-            			else
-            			{
-            				// Rien a effacer
-            				$this->db->rollback();
-            				return 0;
-            			}
-            		}
-            		else
-            		{
-            			$this->error=$this->db->error();
-            			$this->db->rollback();
-            			return -3;
-            		}
-            	}
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                $this->db->rollback();
-                return -2;
-            }
+        	$error++;
+        	$this->error .= $this->db->lasterror();
+        	$errorflag=-1;
+        	dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+        	
+        }
+        
+        // Remove cotisation
+        if (! $error)
+        {
+        	 $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
+        	dol_syslog(get_class($this)."::delete sql=".$sql);
+        	$resql=$this->db->query($sql);
+        	if (! $resql)
+        	{
+        		$error++;
+        		$this->error .= $this->db->lasterror();
+        		$errorflag=-2;
+        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+        	}
+        }
+        
+        // Remove linked user
+        if (! $error) 
+        {
+        	$ret=$this->setUserId(0);
+        	if ($ret < 0)
+        	{
+        		$error++;
+        		$this->error .= $this->db->lasterror();
+        		$errorflag=-3;
+        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+        	}
+        }
+        
+        // Removed extrafields
+        if (! $error)
+        {
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->deleteExtraFields($this);
+        		if ($result < 0) {
+        			$error++;
+        			$errorflag=-4;
+        			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+        		}
+        	}
+        }
+        
+        // Remove adherent
+        if (! $error)
+        {
+        	$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+        	dol_syslog(get_class($this)."::delete sql=".$sql);
+        	$resql=$this->db->query($sql);
+        	if (! $resql)
+        	{
+        		$error++;
+        		$this->error .= $this->db->lasterror();
+        		$errorflag=-5;
+        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+        	}
+        }
+        
+        if (! $error)
+        {
+        	// Appel des triggers
+       		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+        	$interface=new Interfaces($this->db);
+        	$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
+        	if ($result < 0) {$error++; $this->errors=$interface->errors;}
+        	// Fin appel triggers
+        }
+        
+        
+        
+        if (! $error)
+        {
+        	$this->db->commit();
+        	return 1;
         }
         else
         {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
+        	$this->db->rollback();
+        	return $errorflag;
         }
     }
 
