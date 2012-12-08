@@ -881,4 +881,7 @@ create table llx_user_extrafields
 
 ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
 
-ALTER TABLE llx_element_lock ADD COLUMN sessionid varchar(255) AFTER status;
+ALTER TABLE llx_element_lock ADD COLUMN sessionid varchar(255) AFTER datem;
+ALTER TABLE llx_element_lock MODIFY COLUMN elementtype varchar(32) NOT NULL;
+ALTER TABLE llx_element_lock DROP COLUMN fk_user_modif;
+ALTER TABLE llx_element_lock DROP COLUMN status;
