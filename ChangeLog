@@ -9,6 +9,7 @@ For users:
 - New: Add field "signature" into thirdparty card. If filled, text is added 
        at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
        feature is disabled.
+- New: Can input a payment back onto an credit note.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
        configured. Show also total number of activated modules.

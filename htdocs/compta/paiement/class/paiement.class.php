@@ -121,7 +121,8 @@ class Paiement extends CommonObject
 
 	/**
 	 *    Create payment of invoices into database.
-	 *    Use this->amounts to have list of invoices for the payment
+	 *    Use this->amounts to have list of invoices for the payment.
+	 *    For payment of a customer invoice, amounts are postive, for payment of credit note, amounts are negative
 	 *
 	 *    @param	User	$user                	Object user
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
@@ -189,6 +190,9 @@ class Paiement extends CommonObject
                             $deposits=$invoice->getSumDepositsUsed();
                             $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
                             $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+
+							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
+
                             // If there is withdrawals request to do and not done yet, we wait before closing.
                             $mustwait=0;
                             $listofpayments=$invoice->getListOfPayments();
@@ -205,7 +209,7 @@ class Paiement extends CommonObject
                                 }
                             }
 
-                            if ($invoice->type != 0 && $invoice->type != 1) dol_syslog("Invoice ".$facid." is not a standard nor replacement invoice. We do nothing more.");
+                            if ($invoice->type != 0 && $invoice->type != 1 && $invoice->type != 2) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else $result=$invoice->set_paid($user,'','');
@@ -363,7 +367,7 @@ class Paiement extends CommonObject
 
     /**
      *      A record into bank for payment with links between this bank record and invoices of payment.
-     *      All payment properties must have been set first like after a call to create().
+     *      All payment properties (this->amount, this->amounts, ...) must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
      *      @param  string	$mode               'payment', 'payment_supplier'
@@ -401,7 +405,7 @@ class Paiement extends CommonObject
                 $this->datepaye,
                 $this->paiementid,  // Payment mode id or code ("CHQ or VIR for example")
                 $label,
-                $totalamount,
+                $totalamount,		// Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
                 $this->num_paiement,
                 '',
                 $user,
