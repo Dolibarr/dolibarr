@@ -813,7 +813,7 @@ CREATE TABLE llx_product_price_by_qty
   qty_min		real DEFAULT 0
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_price ADD price_by_qty INT NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_price ADD COLUMN price_by_qty INT NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, qty_min);
 
@@ -880,3 +880,8 @@ create table llx_user_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
+
+ALTER TABLE llx_element_lock ADD COLUMN sessionid varchar(255) AFTER datem;
+ALTER TABLE llx_element_lock MODIFY COLUMN elementtype varchar(32) NOT NULL;
+ALTER TABLE llx_element_lock DROP COLUMN fk_user_modif;
+ALTER TABLE llx_element_lock DROP COLUMN status;
