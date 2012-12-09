@@ -252,7 +252,8 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			}
 			if (! $cum[$caseprev] && $cum[$case])
 			{
-				print '<td align="right">+Inf%</td>';
+				//print '<td align="right">+Inf%</td>';
+				print '<td align="right">-</td>';
 			}
 			if (isset($cum[$caseprev]) && ! $cum[$caseprev] && ! $cum[$case])
 			{
