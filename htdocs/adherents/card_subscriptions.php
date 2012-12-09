@@ -744,19 +744,31 @@ if ($rowid)
 
         print_fiche_titre($langs->trans("NewCotisation"));
 
-        $bankdirect=0;        // Option to write to bank is on by default
-        $bankviainvoice=0;    // Option to write via invoice is on by default
-        $invoiceonly=0;
-        if (! empty($conf->banque->enabled) && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
-        if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
+        // Define default choice to select
+        $bankdirect=0;        // 1 means option by default is write to bank direct with no invoice
+        $invoiceonly=0;		  // 1 means option by default is invoice only
+        $bankviainvoice=0;    // 1 means option by default is write to bank via invoice
+        if (GETPOST('paymentsave'))
+        {
+        	if (GETPOST('paymentsave') == 'bankdirect')     $bankdirect=1;
+        	if (GETPOST('paymentsave') == 'invoiceonly')    $invoiceonly=1;
+        	if (GETPOST('paymentsave') == 'bankviainvoice') $bankviainvoice=1;
+        }
+        else
+       {
+        	if (! empty($conf->global->ADHERENT_BANK_USE) && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
+       		else if (! empty($conf->global->ADHERENT_BANK_USE) && ! empty($conf->banque->enabled)) $bankdirect=1;
+        	else if (empty($conf->global->ADHERENT_BANK_USE) && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $invoiceonly=1;
+       }
 
         print "\n\n<!-- Form add subscription -->\n";
 
         if ($conf->use_javascript_ajax)
         {
+        	//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
             print "\n".'<script type="text/javascript" language="javascript">';
             print '$(document).ready(function () {
-                        $(".bankswitchclass, .bankswitchclass2").'.($bankdirect||$bankviainvoice||in_array(GETPOST('paymentsave'),array('bankdirect','bankviainvoice'))?'show()':'hide()').';
+                        $(".bankswitchclass, .bankswitchclass2").'.(($bankdirect||$bankviainvoice)?'show()':'hide()').';
                         $("#none, #invoiceonly").click(function() {
                             $(".bankswitchclass").hide();
                             $(".bankswitchclass2").hide();
@@ -886,7 +898,7 @@ if ($rowid)
                 print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('MoreActions');
                 print '</td>';
                 print '<td>';
-                print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($bankviainvoice)?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
+                print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice)?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
                 if (! empty($conf->banque->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(! empty($bankdirect)?' checked="checked"':'');
@@ -894,8 +906,8 @@ if ($rowid)
                 }
                 if (! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
-                    print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(empty($conf->global->ADHERENT_BANK_USE) || $invoiceonly?' checked="checked"':'');
-                    if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
+                    print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(! empty($invoiceonly)?' checked="checked"':'');
+                    if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
@@ -909,8 +921,8 @@ if ($rowid)
                 }
                 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
-                    print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice && !empty($conf->global->ADHERENT_BANK_USE)?' checked="checked"':'');
-                    if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
+                    print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(! empty($bankviainvoice)?' checked="checked"':'');
+                    if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
