@@ -718,7 +718,7 @@ class User extends CommonObject
 			}
 		}
 
-		// Removed extrafields
+		// Remove extrafields
 		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
 			$result=$this->deleteExtraFields($this);
