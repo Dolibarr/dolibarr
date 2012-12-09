@@ -42,13 +42,13 @@ $langs->load('compta');
  */
 
 //init var
+$invoice_type = GETPOST('invoice_type','int');
 $amountPayment = $_POST['amountPayment'];
 $amounts = $_POST['amounts'];				// from text inputs : invoice amount payment (check required)
 $remains = $_POST['remains'];				// from dolibarr's object (no need to check)
 $currentInvId = $_POST['imgClicked'];		// from DOM elements : imgId (equals invoice id)
 
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
-// from text inputs : total amount
 $amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment) : '' ) : '';			// keep void if not a valid entry
 
 // Clean checkamounts
@@ -62,7 +62,7 @@ foreach ($amounts as $key => $value)
 foreach ($remains as $key => $value)
 {
 	$value = price2num($value);
-	$remains[$key]=$value;
+	$remains[$key]=(($invoice_type)==2?-1:1)*$value;
 	if (empty($value)) unset($remains[$key]);
 }
 

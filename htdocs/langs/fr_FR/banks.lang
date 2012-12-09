@@ -103,6 +103,7 @@ ConciliatedBy=Rapproché par
 DateConciliating=Date rapprochement
 BankLineConciliated=Écriture rapprochée
 CustomerInvoicePayment=Règlement client
+CustomerInvoicePaymentBack=Remboursement client
 SupplierInvoicePayment=Règlement fournisseur
 WithdrawalPayment=Règlement bon de prélèvement
 SocialContributionPayment=Règlement charge sociale
