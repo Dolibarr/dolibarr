@@ -130,6 +130,17 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '506', 'KG
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Ltd. - Limited Company');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
 
+-- Greece
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10201',102,'Ατομική επιχείρηση',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10202',102,'Εταιρική  επιχείρηση',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10203',102,'Ομόρρυθμη Εταιρεία Ο.Ε',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10204',102,'Ετερόρρυθμη Εταιρεία Ε.Ε',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10205',102,'Εταιρεία Περιορισμένης Ευθύνης Ε.Π.Ε',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10206',102,'Ανώνυμη Εταιρεία Α.Ε',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10207',102,'Ανώνυμη ναυτιλιακή εταιρεία Α.Ν.Ε',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10208',102,'Συνεταιρισμός',0,1);
+INSERT INTO `llx_c_forme_juridique` (code,fk_pays,libelle,isvatexempted,active) VALUES ('10209',102,'Συμπλοιοκτησία',0,1);
+
 -- Italy
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('301',3,'Società semplice',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('302',3,'Società in nome collettivo s.n.c.',0,1);

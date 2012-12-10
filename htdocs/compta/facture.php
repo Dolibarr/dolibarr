@@ -2647,6 +2647,9 @@ else if ($id > 0 || ! empty($ref))
          * List of payments
          */
 
+        $sign=1;
+        if ($object->type == 2) $sign=-1;
+
         $nbrows=8; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) $nbcols++;
@@ -2686,9 +2689,9 @@ else if ($id > 0 || ! empty($ref))
         {
             $num = $db->num_rows($result);
             $i = 0;
-
-            if ($object->type != 2)
-            {
+			
+			//if ($object->type != 2)
+            //{
                 if ($num > 0)
                 {
                     while ($i < $num)
@@ -2709,7 +2712,7 @@ else if ($id > 0 || ! empty($ref))
                             if ($bankaccountstatic->id) print $bankaccountstatic->getNomUrl(1,'transactions');
                             print '</td>';
                         }
-                        print '<td align="right">'.price($objp->amount).'</td>';
+                        print '<td align="right">'.price($sign * $objp->amount).'</td>';
                         print '<td>&nbsp;</td>';
                         print '</tr>';
                         $i++;
@@ -2719,7 +2722,7 @@ else if ($id > 0 || ! empty($ref))
                 {
                     print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
                 }
-            }
+            //}
             $db->free($result);
         }
         else
@@ -2819,11 +2822,27 @@ else if ($id > 0 || ! empty($ref))
             print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
             print '<td nowrap="nowrap">&nbsp;</td></tr>';
         }
-        else
+        else	// Credit note
         {
+        	// Total already paid back
+        	print '<tr><td colspan="'.$nbcols.'" align="right">';
+        	print $langs->trans('AlreadyPaidBack');
+        	print ' :</td><td align="right">'.price($sign * $totalpaye).'</td><td>&nbsp;</td></tr>';
+
+            // Billed
+            print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
+
+            // Remainder to pay back
+            print '<tr><td colspan="'.$nbcols.'" align="right">';
+            if ($resteapayeraffiche <= 0) print $langs->trans('RemainderToPayBack');
+            else print $langs->trans('ExcessPaydBack');
+            print ' :</td>';
+            print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign * $resteapayeraffiche).'</b></td>';
+            print '<td nowrap="nowrap">&nbsp;</td></tr>';
+
             // Sold credit note
-            print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
-            print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($object->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
+            //print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
+            //print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign * $object->total_ttc).'</b></td><td>&nbsp;</td></tr>';
         }
 
         print '</table>';

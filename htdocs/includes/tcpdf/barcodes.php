@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : barcodes.php
-// Version     : 1.0.024
+// Version     : 1.0.025
 // Begin       : 2008-06-09
-// Last Update : 2012-04-30
+// Last Update : 2012-09-11
 // Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -37,14 +37,14 @@
  * PHP class to creates array representations for common 1D barcodes to be used with TCPDF.
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.024
+ * @version 1.0.025
  */
 
 /**
  * @class TCPDFBarcode
  * PHP class to creates array representations for common 1D barcodes to be used with TCPDF (http://www.tcpdf.org).<br>
  * @package com.tecnick.tcpdf
- * @version 1.0.024
+ * @version 1.0.025
  * @author Nicola Asuni
  */
 class TCPDFBarcode {
@@ -1452,7 +1452,7 @@ class TCPDFBarcode {
 			$seq .= '010101'; // right guard bar
 		} else {
 			$bararray = array('code' => $code, 'maxw' => 0, 'maxh' => 1, 'bcode' => array());
-			$half_len = ceil($len / 2);
+			$half_len = intval(ceil($len / 2));
 			if ($len == 8) {
 				for ($i = 0; $i < $half_len; ++$i) {
 					$seq .= $codes['A'][$code{$i}];
