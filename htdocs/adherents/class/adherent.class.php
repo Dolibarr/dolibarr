@@ -715,9 +715,9 @@ class Adherent extends CommonObject
         	$this->error .= $this->db->lasterror();
         	$errorflag=-1;
         	dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-        	
+
         }
-        
+
         // Remove cotisation
         if (! $error)
         {
@@ -732,9 +732,9 @@ class Adherent extends CommonObject
         		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         	}
         }
-        
+
         // Remove linked user
-        if (! $error) 
+        if (! $error)
         {
         	$ret=$this->setUserId(0);
         	if ($ret < 0)
@@ -745,21 +745,22 @@ class Adherent extends CommonObject
         		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         	}
         }
-        
+
         // Removed extrafields
         if (! $error)
         {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
-        		$result=$this->deleteExtraFields($this);
-        		if ($result < 0) {
+        		$result=$this->deleteExtraFields();
+        		if ($result < 0)
+        		{
         			$error++;
         			$errorflag=-4;
         			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         		}
         	}
         }
-        
+
         // Remove adherent
         if (! $error)
         {
@@ -774,7 +775,7 @@ class Adherent extends CommonObject
         		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         	}
         }
-        
+
         if (! $error)
         {
         	// Appel des triggers
@@ -784,9 +785,9 @@ class Adherent extends CommonObject
         	if ($result < 0) {$error++; $this->errors=$interface->errors;}
         	// Fin appel triggers
         }
-        
-        
-        
+
+
+
         if (! $error)
         {
         	$this->db->commit();
