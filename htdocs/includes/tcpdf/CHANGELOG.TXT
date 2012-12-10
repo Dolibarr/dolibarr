@@ -1,3 +1,70 @@
+5.9.200 (2012-12-05)
+	- Bug item #768 "Rowspan with Pagebreak error" was fixed.
+	- Page regions now works also with limited MultiCell() cells.
+
+5.9.199 (2012-11-29)
+	- Internal setImageBuffer() method was improved.
+
+5.9.198 (2012-11-19)
+	- Datamatrix EDIFACT mode was fixed.
+
+5.9.197 (2012-11-06)
+	- Bug item #756 "TCPDF 5.9.196 shows line on top of all PDFs" was fixed.
+
+5.9.196 (2012-11-02)
+	- Several methods were improved to avoid output when the context is out of page.
+	- Bug item #755 "remove cached files before unsetting" was fixed.
+
+5.9.195 (2012-10-24)
+	- Method _putfonts() was improved.
+
+5.9.194 (2012-10-23)
+	- Text alignment on TextField() method was fixed.
+
+5.9.193 (2012-09-25)
+	- Support for named destinations on HTML links was added  (i.e.: <a href="#destinationname">link to named destination</a>).
+
+5.9.192 (2012-09-24)
+	- A problem on the releasing process was fixed.
+
+5.9.191 (2012-09-24)
+	- SVG image naow support svg and eps images.
+
+5.9.190 (2012-09-23)
+	- "page" word translation is now set to empty if not defined.
+	- Tooltip feature was added on the radiobutton annotation.
+
+5.9.189 (2012-09-18)
+	- Bug item #3568969 "ini_get safe_mode error" was fixed.
+
+5.9.188 (2012-09-15)
+	- A datamatrix barcode bug was fixed.
+
+5.9.187 (2012-09-14)
+	- Subset feature was extended to include the first 256 characters.
+
+5.9.186 (2012-09-13)
+	- barcodes.php file was resynced.
+	- Methods SetAbsX, SetAbsY, SetAbsXY where added to set the absolute pointer coordinates.
+	- Method getCharBBox were added to get single character bounding box.
+	- Signature of addTTFfont method was changed ($addcbbox paramter was added).
+
+5.9.185 (2012-09-12)
+	- Method _putfontwidths() was fixed.
+
+5.9.184 (2012-09-11)
+	- A problem with EAN barcodes was fixed.
+
+5.9.183 (2012-09-07)
+	- A problem with font names normalization was fixed.
+
+5.9.182 (2012-09-05)
+	- Bug item #3564982 "Infinite loop in Write() method" was fixed.
+
+5.9.181 (2012-08-31)
+	- composer.json file was added.
+	- Bug item #3563369 "Cached images are not unlinked some time" was fixed.
+
 5.9.180 (2012-08-22)
 	- Bug item #3560493 "Problems with nested cells in HTML" was fixed.
 
