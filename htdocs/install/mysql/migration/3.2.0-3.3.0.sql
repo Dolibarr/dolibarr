@@ -172,6 +172,7 @@ date_create    datetime NOT NULL ,
 description    varchar(255) NOT NULL ,
 date_debut     date NOT NULL ,
 date_fin       date NOT NULL ,
+halfday        integer DEFAULT 0,
 statut         integer NOT NULL DEFAULT '1',
 fk_validator   integer NOT NULL ,
 date_valid     datetime DEFAULT NULL ,
@@ -183,6 +184,8 @@ fk_user_cancel integer DEFAULT NULL,
 detail_refuse  varchar(250) DEFAULT NULL
 ) 
 ENGINE=innodb;
+ALTER TABLE llx_holiday ADD COLUMN halfday        integer DEFAULT 0 after date_fin;
+
 
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
