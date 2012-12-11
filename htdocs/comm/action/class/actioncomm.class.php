@@ -227,7 +227,7 @@ class ActionComm extends CommonObject
             	}
             }
             else if ($reshook < 0) $error++;
-            
+
             if (! $notrigger)
             {
                 // Appel des triggers
@@ -367,13 +367,17 @@ class ActionComm extends CommonObject
         	$this->error=$this->db->lasterror();
         	$error++;
         }
-        
+
         // Removed extrafields
         if (! $error) {
-        	$result=$this->deleteExtraFields($this);
-        	if ($result < 0) $error++;
+        	$result=$this->deleteExtraFields();
+          	if ($result < 0)
+           	{
+           		$error++;
+           		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+           	}
         }
-        
+
         if (!$error)
         {
             if (! $notrigger)
@@ -468,7 +472,7 @@ class ActionComm extends CommonObject
         dol_syslog(get_class($this)."::update sql=".$sql);
         if ($this->db->query($sql))
         {
-        	
+
         	// Actions on extra fields (by external module or standard code)
         	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
         	$hookmanager=new HookManager($this->db);
@@ -487,7 +491,7 @@ class ActionComm extends CommonObject
         		}
         	}
         	else if ($reshook < 0) $error++;
-        	
+
             if (! $notrigger)
             {
                 // Appel des triggers

@@ -1018,7 +1018,7 @@ class Societe extends CommonObject
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::Delete erreur -2 ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::delete erreur -2 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -1040,10 +1040,11 @@ class Societe extends CommonObject
             // Removed extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {
-            	$result=$this->deleteExtraFields($this);
-            	if ($result < 0) {
+            	$result=$this->deleteExtraFields();
+            	if ($result < 0)
+            	{
             		$error++;
-            		 dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+            		dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
             	}
             }
 
