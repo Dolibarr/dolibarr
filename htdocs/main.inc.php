@@ -791,6 +791,8 @@ if (! function_exists("llxHeader"))
      */
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
+	    global $conf;
+	
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 		if (empty($conf->global->MAIN_HIDE_TOP_MENU))
 		{
