@@ -89,6 +89,12 @@ $form = new Form($db);
 $object = new User($db);
 $extrafields = new ExtraFields($db);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('usercard'));
+
+
 
 /**
  * Actions
@@ -195,7 +201,7 @@ if ($action == 'add' && $canadduser)
         		$object->array_options[$key]=GETPOST($key);
         	}
         }
-                
+
         // FIXME external module
         $object->webcal_login	= $_POST["webcal_login"];
         $object->phenix_login	= $_POST["phenix_login"];
@@ -323,7 +329,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             		$object->array_options[$key]=GETPOST($key);
             	}
             }
-                        
+
             // FIXME external module
             $object->webcal_login	= $_POST["webcal_login"];
             $object->phenix_login	= $_POST["phenix_login"];
@@ -884,7 +890,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     		print '</td></tr>'."\n";
     	}
     }
-    
+
     // Module Webcalendar
     // TODO external module
     if (! empty($conf->webcalendar->enabled))
@@ -921,7 +927,7 @@ else
         $object->fetch($id);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
-        
+
         // Connexion ldap
         // pour recuperer passDoNotExpire et userChangePassNextLogon
         if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid))
@@ -1041,7 +1047,7 @@ else
             if (! empty($conf->webcalendar->enabled)) $rowspan++;	// TODO external module
             if (! empty($conf->phenix->enabled)) $rowspan+=2;		// TODO external module
 
-            
+
             // Lastname
             print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td>'.$object->nom.'</td>';
@@ -1291,7 +1297,7 @@ else
 					print '</td></tr>'."\n";
 				}
 			}
-            
+
 			print "</table>\n";
 
             print "</div>\n";
@@ -1898,7 +1904,7 @@ else
             		print '</td></tr>'."\n";
             	}
             }
-                        
+
             print '</table>';
 
             print '<br><center>';

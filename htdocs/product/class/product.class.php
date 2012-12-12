@@ -626,6 +626,17 @@ class Product extends CommonObject
 				    }
 				}
 
+				// Removed extrafields
+				if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+				{
+					$result=$this->deleteExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+						dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
+					}
+				}
+
                 // Delete product
                 if (! $error)
                 {

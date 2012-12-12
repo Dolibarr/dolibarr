@@ -9,6 +9,7 @@ For users:
 - New: Add field "signature" into thirdparty card. If filled, text is added 
        at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
        feature is disabled.
+- New: Can input a payment back onto an credit note.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
        configured. Show also total number of activated modules.
@@ -66,6 +67,9 @@ For users:
 - New: Add button on order card to create intervention from services.
 - New: Add search box to find products by supplier reference.
 - New: Add option MAIN_HELPCENTER_LINKTOUSE to define target link "I need help" onto logon page. 
+- New: [ task #608 ] Can clone a supplier order with prices updates
+- New: [ task #559 ] Can define a discount % regarding quantity in supplier prices and price by quantity in customer prices
+- New: [ task #527 ] After cloning a suplier invoice, go onto invoice ref into edit mode
 
 New experimental modules:
 - New: Add margin management module.

@@ -172,6 +172,7 @@ date_create    datetime NOT NULL ,
 description    varchar(255) NOT NULL ,
 date_debut     date NOT NULL ,
 date_fin       date NOT NULL ,
+halfday        integer DEFAULT 0,
 statut         integer NOT NULL DEFAULT '1',
 fk_validator   integer NOT NULL ,
 date_valid     datetime DEFAULT NULL ,
@@ -183,6 +184,8 @@ fk_user_cancel integer DEFAULT NULL,
 detail_refuse  varchar(250) DEFAULT NULL
 ) 
 ENGINE=innodb;
+ALTER TABLE llx_holiday ADD COLUMN halfday        integer DEFAULT 0 after date_fin;
+
 
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
@@ -212,8 +215,8 @@ ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (entity, box_id, position, fk_us
 UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd WHERE bd.rowid = b.box_id);
 
 -- TASK #204
-alter table llx_c_tva add column localtax1_type varchar(1) default '0' after localtax1;
-alter table llx_c_tva add column localtax2_type varchar(1) default '0' after localtax2;
+ALTER TABLE llx_c_tva ADD COLUMN localtax1_type varchar(1) default '0' after localtax1;
+ALTER TABLE llx_c_tva ADD COLUMN localtax2_type varchar(1) default '0' after localtax2;
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(1);
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(1);
 
@@ -289,8 +292,9 @@ ALTER TABLE llx_c_chargessociales ADD COLUMN accountancy_code varchar(15) DEFAUL
 -- Tables for accountancy expert
 DROP TABLE llx_accountingaccount;
 DROP TABLE llx_accountingsystem;
+DROP TABLE llx_accounting_system;
 
-create table llx_accountingsystem
+create table llx_accounting_system
 (
   rowid             integer         AUTO_INCREMENT PRIMARY KEY,
   pcg_version       varchar(12)     NOT NULL,
@@ -299,7 +303,7 @@ create table llx_accountingsystem
   active            smallint        DEFAULT 0
 )ENGINE=innodb;
 
-ALTER TABLE llx_accountingsystem ADD INDEX idx_accountingsystem_pcg_version (pcg_version);
+ALTER TABLE llx_accounting_system ADD UNIQUE INDEX uk_accounting_system_pcg_version (pcg_version);
 
 create table llx_accountingaccount
 (
@@ -314,12 +318,12 @@ create table llx_accountingaccount
 )ENGINE=innodb;
 
 ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
-ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accountingsystem (pcg_version);
+ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version FOREIGN KEY (fk_pcg_version) REFERENCES llx_accounting_system (pcg_version);
 
 
 -- Data for accountancy expert
 
-insert into llx_accountingsystem (rowid, pcg_version, fk_pays, label, active) VALUES (1,'PCG99-ABREGE', 1, 'The simple accountancy french plan', 1);
+insert into llx_accounting_system (rowid, pcg_version, fk_pays, label, active) VALUES (1,'PCG99-ABREGE', 1, 'The simple accountancy french plan', 1);
 
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  1,'PCG99-ABREGE','CAPIT', 'CAPITAL', '101', '1', 'Capital', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  2,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '105', '1', 'Ecarts de réévaluation', '1');
@@ -424,7 +428,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (101,'PCG99-ABREGE','PROD',  'XXXXXX',  '787', '7', 'Reprises sur provisions', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (102,'PCG99-ABREGE','PROD',  'XXXXXX',   '79', '7', 'Transferts de charges', '1');
 
-insert into llx_accountingsystem (rowid, pcg_version, fk_pays, label, active) VALUES (2,'PCG99-BASE', 1, 'The base accountancy french plan', 1);
+insert into llx_accounting_system (rowid, pcg_version, fk_pays, label, active) VALUES (2,'PCG99-BASE', 1, 'The base accountancy french plan', 1);
 
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (103,'PCG99-BASE','CAPIT', 'XXXXXX',   '10',  '1', 'Capital  et réserves', '1');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (104,'PCG99-BASE','CAPIT', 'CAPITAL', '101', '10', 'Capital', '1');
@@ -812,7 +816,7 @@ CREATE TABLE llx_product_price_by_qty
   qty_min		real DEFAULT 0
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_price ADD price_by_qty INT NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_price ADD COLUMN price_by_qty INT NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, qty_min);
 
@@ -879,3 +883,8 @@ create table llx_user_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_user_extrafields ADD INDEX idx_user_extrafields (fk_object);
+
+ALTER TABLE llx_element_lock ADD COLUMN sessionid varchar(255) AFTER datem;
+ALTER TABLE llx_element_lock MODIFY COLUMN elementtype varchar(32) NOT NULL;
+ALTER TABLE llx_element_lock DROP COLUMN fk_user_modif;
+ALTER TABLE llx_element_lock DROP COLUMN status;

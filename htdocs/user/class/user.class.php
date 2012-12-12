@@ -248,6 +248,7 @@ class User extends CommonObject
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
+			//dol_syslog(get_class($this).'::fetch load personalized conf sql='.$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -717,15 +718,13 @@ class User extends CommonObject
 			}
 		}
 
-        // Remove extrafields
-        if (! $error)
+		// Remove extrafields
+		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
-         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_extrafields WHERE fk_object = ".$this->id;
-           	dol_syslog(get_class($this)."::delete sql=".$sql);
-           	if (! $this->db->query($sql))
-           	{
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
            		$error++;
-           		$this->error = $this->db->lasterror();
            		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
            	}
         }

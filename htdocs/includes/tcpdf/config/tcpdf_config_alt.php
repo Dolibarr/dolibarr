@@ -214,7 +214,7 @@ define ('PDF_IMAGE_SCALE_RATIO', 1.25);
 define('HEAD_MAGNIFICATION', 1.1);
 
 /**
- * height of cell repect font height
+ * height of cell respect font height
  */
 define('K_CELL_HEIGHT_RATIO', 1.25);
 

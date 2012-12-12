@@ -83,7 +83,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
             $tmpfacture=new Facture($db);
             $tmpfacture->fetch($cursorfacid);
             $amountsresttopay[$cursorfacid]=price2num($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
-            if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
+            if ($amounts[$cursorfacid] && (abs($amounts[$cursorfacid]) > abs($amountsresttopay[$cursorfacid])))
             {
                 $addwarning=1;
                 $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
@@ -147,6 +147,16 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 
     $db->begin();
 
+    // Clean parameters amount if payment is for a credit note
+    if (GETPOST('type') == 2)
+    {
+	    foreach ($amounts as $key => $value)	// How payment is dispatch
+	    {
+	    	$newvalue = price2num($value,'MT');
+	    	$amounts[$key] = -$newvalue;
+	    }
+    }
+
     // Creation of payment line
     $paiement = new Paiement($db);
     $paiement->datepaye     = $datepaye;
@@ -157,7 +167,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 
     if (! $error)
     {
-    	$paiement_id = $paiement->create($user,(GETPOST('closepaidinvoices')=='on'?1:0));
+    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));
     	if ($paiement_id < 0)
         {
             $errmsg=$paiement->error;
@@ -167,7 +177,9 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 
     if (! $error)
     {
-        $result=$paiement->addPaymentToBank($user,'payment','(CustomerInvoicePayment)',$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
+    	$label='(CustomerInvoicePayment)';
+    	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
+        $result=$paiement->addPaymentToBank($user,'payment',$label,$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
         if ($result < 0)
         {
             $errmsg=$paiement->error;
@@ -227,15 +239,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		dol_htmloutput_errors($errmsg);
 
-		// Bouchon
-		if ($facture->type == 2)
-		{
-            $langs->load('other');
-			print $langs->trans("FeatureNotYetAvailable");
-			llxFooter();
-			exit;
-		}
-
 		// Initialize data for confirmation (this is used because data can be change during confirmation)
 		if ($action == 'add_paiement')
 		{
@@ -253,6 +256,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			if (! empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid=$conf->global->PAYPAL_BANK_ACCOUNT;
 			$paymentnum=$facture->ref_int;
 		}
+
+		// Add realtime total information
 		if ($conf->use_javascript_ajax)
 		{
 			print "\n".'<script type="text/javascript" language="javascript">';
@@ -296,6 +301,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							var json = {};
 							var form = $("#payment_form");
 
+							json["invoice_type"] = $("#invoice_type").val();
 							json["amountPayment"] = $("#amountpayment").attr("value");
 							json["amounts"] = _elemToJson(form.find("input[name*=\"amount_\"]"));
 							json["remains"] = _elemToJson(form.find("input[name*=\"remain_\"]"));
@@ -336,7 +342,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						});
 			';
 
-			if (! empty($conf->global->MAIN_JS_ON_PAYMENT))
+			// Add user helper to input amount on invoices
+			if (! empty($conf->global->MAIN_JS_ON_PAYMENT) && $facture->type != 2)
 			{
 				print '	$("#payment_form").find("img").click(function() {
 							callForResult(jQuery(this).attr("id"));
@@ -356,7 +363,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<input type="hidden" name="action" value="add_paiement">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
-		print '<input type="hidden" name="type" value="'.$facture->type.'">';
+		print '<input type="hidden" name="type" id="invoice_type" value="'.$facture->type.'">';
 		print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($facture->client->name).'">';
 
 		print '<table class="border" width="100%">';
@@ -462,17 +469,26 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $num = $db->num_rows($resql);
             if ($num > 0)
             {
+            	$sign=1;
+            	if ($facture->type == 2) $sign=-1;
+            	 
+				$arraytitle=$langs->trans('Invoice');
+				if ($facture->type == 2) $arraytitle=$langs->trans("CreditNotes");
+				$alreadypayedlabel=$langs->trans('Received');
+				if ($facture->type == 2) $alreadypayedlabel=$langs->trans("PaidBack");
+				$remaindertopay=$langs->trans('RemainderToTake');
+				if ($facture->type == 2) $remaindertopay=$langs->trans("RemainderToPayBack");
 
                 $i = 0;
                 //print '<tr><td colspan="3">';
                 print '<br>';
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
-                print '<td>'.$langs->trans('Invoice').'</td>';
+                print '<td>'.$arraytitle.'</td>';
                 print '<td align="center">'.$langs->trans('Date').'</td>';
                 print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
-                print '<td align="right">'.$langs->trans('Received').'</td>';
-                print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+                print '<td align="right">'.$alreadypayedlabel.'</td>';
+                print '<td align="right">'.$remaindertopay.'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
@@ -505,18 +521,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Date
                     print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 
-                    // Prix
-                    print '<td align="right">'.price($objp->total_ttc).'</td>';
+                    // Price
+                    print '<td align="right">'.price($sign * $objp->total_ttc).'</td>';
 
-                    // Recu
-                    print '<td align="right">'.price($paiement);
+                    // Received or paid back
+                    print '<td align="right">'.price($sign * $paiement);
                     if ($creditnotes) print '+'.price($creditnotes);
                     if ($deposits) print '+'.price($deposits);
                     print '</td>';
 
-                    // Remain to pay
-                    print '<td align="right">'.price($remaintopay).'</td>';
-                    $test= price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits));
+                    // Remain to take or to pay back
+                    print '<td align="right">'.price($sign * $remaintopay).'</td>';
+                    //$test= price(price2num($objp->total_ttc - $paiement - $creditnotes - $deposits));
 
                     // Amount
                     print '<td align="right">';
@@ -529,7 +545,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     {
                         if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
                         {
-                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'" "');
+                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'"');
                         }
                         print '<input type=hidden name="'.$nameRemain.'" value="'.$remaintopay.'">';
                         print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
@@ -543,7 +559,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     // Warning
                     print '<td align="center" width="16">';
-                    if ($amounts[$invoice->id] && $amounts[$invoice->id] > $amountsresttopay[$invoice->id])
+                    //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
+                    if ($amounts[$invoice->id] && (abs($amounts[$invoice->id]) > abs($amountsresttopay[$invoice->id])))
                     {
                         print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
                     }
@@ -564,12 +581,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Print total
                     print '<tr class="liste_total">';
                     print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
-                    print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-                    print '<td align="right"><b>'.price($totalrecu);
+                    print '<td align="right"><b>'.price($sign * $total_ttc).'</b></td>';
+                    print '<td align="right"><b>'.price($sign * $totalrecu);
                     if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
                     if ($totalrecudeposits) print '+'.price($totalrecudeposits);
                     print '</b></td>';
-                    print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
+                    print '<td align="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
                     print '<td align="right" id="result" style="font-weight: bold;"></td>';
                     print '<td align="center">&nbsp;</td>';
                     print "</tr>\n";
@@ -588,15 +605,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         // Bouton Enregistrer
         if ($action != 'add_paiement')
         {
-            //			print '<tr><td colspan="3" align="center">';
-            print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
+        	$checkboxlabel=$langs->trans("ClosePaidInvoicesAutomatically");
+        	if ($facture->type == 2) $checkboxlabel=$langs->trans("ClosePaidCreditNotesAutomatically");
+        	$buttontitle=$langs->trans('ToMakePayment');
+        	if ($facture->type == 2) $buttontitle=$langs->trans('ToMakePaymentBack');
+
+        	print '<center><br>';
+        	print '<input type="checkbox" checked="checked" name="closepaidinvoices"> '.$checkboxlabel;
             /*if (! empty($conf->prelevement->enabled))
             {
                 $langs->load("withdrawals");
                 if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
             }*/
-            print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"><br><br></center>';
-            //			print '</td></tr>';
+            print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
+            print '</center>';
         }
 
 

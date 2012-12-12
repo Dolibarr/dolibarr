@@ -93,7 +93,7 @@ print '<td width="20%">';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" value="'.$langs->trans('Launch').'" />';
+print '<input type="submit" class="button" value="'.$langs->trans('Launch').'" />';
 print '</td></tr>';
 
 // Total Margin
@@ -220,7 +220,7 @@ if ($result)
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 			print "</tr>\n";
-			
+
 			$i++;
 
 			$cumul_achat += round($objp->buying_price, $rounding);

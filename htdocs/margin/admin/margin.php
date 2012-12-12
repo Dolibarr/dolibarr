@@ -125,7 +125,6 @@ print_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
-
 print '<td colspan="2" align="center">'.$langs->trans("Value").'</td>'."\n";
 print '<td align="left">'.$langs->trans("Details").'</td>'."\n";
 print '</tr>';
@@ -161,8 +160,6 @@ print '</form>';
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
-
-
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
 {
@@ -187,8 +184,6 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
-
-
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
 {
@@ -208,9 +203,10 @@ else
 print '</td>';
 print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</td>';
 print '</tr>';
-print '<tr>';
-print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
 {

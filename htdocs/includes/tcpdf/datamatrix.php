@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : datamatrix.php
-// Version     : 1.0.001
+// Version     : 1.0.004
 // Begin       : 2010-06-07
-// Last Update : 2011-09-14
+// Last Update : 2012-11-19
 // Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -34,14 +34,14 @@
 //============================================================+
 
 /**
- * @file
- * Class to create DataMatrix ECC 200 barcode arrays for TCPDF class.
- * DataMatrix (ISO/IEC 16022:2006) is a 2-dimensional bar code.
- *
- * @package com.tecnick.tcpdf
- * @author Nicola Asuni
- * @version 1.0.001
- */
+* @file
+* Class to create DataMatrix ECC 200 barcode arrays for TCPDF class.
+* DataMatrix (ISO/IEC 16022:2006) is a 2-dimensional bar code.
+*
+* @package com.tecnick.tcpdf
+* @author Nicola Asuni
+* @version 1.0.004
+*/
 
 // custom definitions
 if (!defined('DATAMATRIXDEFS')) {
@@ -59,54 +59,54 @@ if (!defined('DATAMATRIXDEFS')) {
 
 
 /**
- * ASCII encoding: ASCII character 0 to 127 (1 byte per CW)
- */
+* ASCII encoding: ASCII character 0 to 127 (1 byte per CW)
+*/
 define('ENC_ASCII', 0);
 
 /**
- * C40 encoding: Upper-case alphanumeric (3/2 bytes per CW)
- */
+* C40 encoding: Upper-case alphanumeric (3/2 bytes per CW)
+*/
 define('ENC_C40', 1);
 
 /**
- * TEXT encoding: Lower-case alphanumeric (3/2 bytes per CW)
- */
+* TEXT encoding: Lower-case alphanumeric (3/2 bytes per CW)
+*/
 define('ENC_TXT', 2);
 
 /**
- * X12 encoding: ANSI X12 (3/2 byte per CW)
- */
+* X12 encoding: ANSI X12 (3/2 byte per CW)
+*/
 define('ENC_X12', 3);
 
 /**
- * EDIFACT encoding: ASCII character 32 to 94 (4/3 bytes per CW)
- */
+* EDIFACT encoding: ASCII character 32 to 94 (4/3 bytes per CW)
+*/
 define('ENC_EDF', 4);
 
 /**
- * BASE 256 encoding: ASCII character 0 to 255 (1 byte per CW)
- */
+* BASE 256 encoding: ASCII character 0 to 255 (1 byte per CW)
+*/
 define('ENC_BASE256', 5);
 
 /**
- * ASCII extended encoding: ASCII character 128 to 255 (1/2 byte per CW)
- */
+* ASCII extended encoding: ASCII character 128 to 255 (1/2 byte per CW)
+*/
 define('ENC_ASCII_EXT', 6);
 
 /**
- * ASCII number encoding: ASCII digits (2 bytes per CW)
- */
+* ASCII number encoding: ASCII digits (2 bytes per CW)
+*/
 define('ENC_ASCII_NUM', 7);
 
 /**
- * @class Datamatrix
- * Class to create DataMatrix ECC 200 barcode arrays for TCPDF class.
- * DataMatrix (ISO/IEC 16022:2006) is a 2-dimensional bar code.
- *
- * @package com.tecnick.tcpdf
- * @author Nicola Asuni
- * @version 1.0.001
- */
+* @class Datamatrix
+* Class to create DataMatrix ECC 200 barcode arrays for TCPDF class.
+* DataMatrix (ISO/IEC 16022:2006) is a 2-dimensional bar code.
+*
+* @package com.tecnick.tcpdf
+* @author Nicola Asuni
+* @version 1.0.004
+*/
 class Datamatrix {
 
 	/**
@@ -184,7 +184,7 @@ class Datamatrix {
 	protected $chset_id = array(ENC_C40 => 'C40', ENC_TXT => 'TXT', ENC_X12 =>'X12');
 
 	/**
-	 * Basic set of charactes for each encodation mode.
+	 * Basic set of characters for each encodation mode.
 	 * @protected
 	 */
 	protected $chset = array(
@@ -270,7 +270,7 @@ class Datamatrix {
 				$cw[] = 129;
 				++$nd;
 				// add remaining pads
-				for ($i = $nd; $i <= $params[11]; ++$i) {
+				for ($i = $nd; $i < $params[11]; ++$i) {
 					$cw[] = $this->get253StateCodeword(129, $i);
 				}
 			}
@@ -280,7 +280,7 @@ class Datamatrix {
 		// initialize empty arrays
 		$grid = array_fill(0, ($params[2] * $params[3]), 0);
 		// get placement map
-		$places = $this->getPlacemetMap($params[2], $params[3]);
+		$places = $this->getPlacementMap($params[2], $params[3]);
 		// fill the grid with data
 		$grid = array();
 		$i = 0;
@@ -365,7 +365,7 @@ class Datamatrix {
 		if (($a == 0) OR ($b == 0)) {
 			return 0;
 		}
-		return $alog[($log[$a] + $log[$b]) % ($gf - 1)];
+		return ($alog[($log[$a] + $log[$b]) % ($gf - 1)]);
 	}
 
 	/**
@@ -552,7 +552,7 @@ class Datamatrix {
 				return ENC_C40;
 			}
 			// get char
-			$chr = ord($data{($pos + $charscount)});
+			$chr = ord($data[$pos + $charscount]);
 			$charscount++;
 			// STEP L
 			if ($this->isCharMode($chr, ENC_ASCII_NUM)) {
@@ -709,7 +709,7 @@ class Datamatrix {
 		while ($pos < $data_lenght) {
 			switch ($enc) {
 				case ENC_ASCII: { // STEP B. While in ASCII encodation
-					if (($data_lenght > 1) AND ($pos < ($data_lenght - 1)) AND ($this->isCharMode(ord($data{($pos)}), ENC_ASCII_NUM) AND $this->isCharMode(ord($data{($pos + 1)}), ENC_ASCII_NUM))) {
+					if (($data_lenght > 1) AND ($pos < ($data_lenght - 1)) AND ($this->isCharMode(ord($data[$pos]), ENC_ASCII_NUM) AND $this->isCharMode(ord($data[$pos + 1]), ENC_ASCII_NUM))) {
 						// 1. If the next data sequence is at least 2 consecutive digits, encode the next two digits as a double digit in ASCII mode.
 						$cw[] = (intval(substr($data, $pos, 2)) + 130);
 						++$cw_num;
@@ -724,7 +724,7 @@ class Datamatrix {
 							++$cw_num;
 						} else {
 							// get new byte
-							$chr = ord($data{($pos)});
+							$chr = ord($data[$pos]);
 							++$pos;
 							if ($this->isCharMode($chr, ENC_ASCII_EXT)) {
 								// 3. If the next data character is extended ASCII (greater than 127) encode it in ASCII mode first using the Upper Shift (value 235) character.
@@ -752,7 +752,7 @@ class Datamatrix {
 					$charset = $this->chset[$set_id];
 					do {
 						// 2. process the next character in C40 encodation.
-						$chr = ord($data{($epos)});
+						$chr = ord($data[$epos]);
 						++$epos;
 						// check for extended character
 						if ($chr & 0x80) {
@@ -802,6 +802,8 @@ class Datamatrix {
 								$enc = $newenc;
 								$cw[] = $this->getSwitchEncodingCodeword($enc);
 								++$cw_num;
+								$pos -= $p;
+								$p = 0;
 								break;
 							}
 						}
@@ -834,9 +836,11 @@ class Datamatrix {
 							$cw_num += 2;
 						} else {
 							// switch to ASCII encoding
-							$enc = ENC_ASCII;
-							$cw[] = $this->getSwitchEncodingCodeword($enc);
-							++$cw_num;
+							if ($enc != ENC_ASCII) {
+								$enc = ENC_ASCII;
+								$cw[] = $this->getSwitchEncodingCodeword($enc);
+								++$cw_num;
+							}
 						}
 					}
 					break;
@@ -846,52 +850,50 @@ class Datamatrix {
 					$temp_cw = array();
 					$epos = $pos;
 					$field_lenght = 0;
-					while ($epos < $data_lenght) {
+					$newenc = $enc;
+					do {
 						// 2. process the next character in EDIFACT encodation.
-						$chr = ord($data{($epos)});
-						++$epos;
-						$temp_cw[] = $chr;
-						++$field_lenght;
-						if (($field_lenght == 4) OR ($epos == $data_lenght)) {
-							if ($field_lenght < 4) {
+						$chr = ord($data[$epos]);
+						if ($this->isCharMode($chr, ENC_EDF)) {
+							++$epos;
+							$temp_cw[] = $chr;
+							++$field_lenght;
+						}
+						if (($field_lenght == 4) OR ($epos == $data_lenght) OR !$this->isCharMode($chr, ENC_EDF)) {
+							if ($field_lenght < 4) { echo $field_lenght."\n";
 								// set unlatch character
 								$temp_cw[] = 0x1f;
 								++$field_lenght;
-								$enc = ENC_ASCII;
 								// fill empty characters
 								for ($i = $field_lenght; $i < 4; ++$i) {
 									$temp_cw[] = 0;
 								}
+								$enc = ENC_ASCII;
 							}
 							// encodes four data characters in three codewords
-							$cw[] = (($temp_cw[0] & 0x3F) << 2) + (($temp_cw[1] & 0x30) >> 4);
-							$cw[] = (($temp_cw[1] & 0x0F) << 4) + (($temp_cw[2] & 0x3C) >> 2);
-							$cw[] = (($temp_cw[2] & 0x03) << 6) + ($temp_cw[3] & 0x3F);
-							$cw_num += 3;
+							$tcw = (($temp_cw[0] & 0x3F) << 2) + (($temp_cw[1] & 0x30) >> 4);
+							if ($tcw > 0) {
+								$cw[] = $tcw;
+								$cw_num++;
+							}
+							$tcw= (($temp_cw[1] & 0x0F) << 4) + (($temp_cw[2] & 0x3C) >> 2);
+							if ($tcw > 0) {
+								$cw[] = $tcw;
+								$cw_num++;
+							}
+							$tcw = (($temp_cw[2] & 0x03) << 6) + ($temp_cw[3] & 0x3F);
+							if ($tcw > 0) {
+								$cw[] = $tcw;
+								$cw_num++;
+							}
 							$temp_cw = array();
 							$pos = $epos;
 							$field_lenght = 0;
-						}
-						// 1. If the EDIFACT encoding is at the point of starting a new triple symbol character and if the look-ahead test (starting at step J) indicates another mode, switch to that mode.
-						if ($field_lenght == 0) {
-							// get remaining number of data symbols
-							$cwr = ($this->getMaxDataCodewords($cw_num + 2) - $cw_num);
-							if ($cwr < 3) {
-								// return to ascii without unlatch
-								$enc = ENC_ASCII;
+							if ($enc == ENC_ASCII) {
 								break; // exit from EDIFACT mode
-							} else {
-								$newenc = $this->lookAheadTest($data, $pos, $enc);
-								if ($newenc != $enc) {
-									// 1. If the look-ahead test (starting at step J) indicates another mode, switch to that mode.
-									$enc = $newenc;
-									$cw[] = $this->getSwitchEncodingCodeword($enc);
-									++$cw_num;
-									break; // exit from EDIFACT mode
-								}
 							}
 						}
-					}
+					} while ($epos < $data_lenght);
 					break;
 				}
 				case ENC_BASE256: { // G. While in Base 256 (B256) encodation
@@ -908,7 +910,7 @@ class Datamatrix {
 							break; // exit from B256 mode
 						} else {
 							// 2. Otherwise, process the next character in Base 256 encodation.
-							$chr = ord($data{($pos)});
+							$chr = ord($data[$pos]);
 							++$pos;
 							$temp_cw[] = $chr;
 							++$field_lenght;
@@ -1076,7 +1078,6 @@ class Datamatrix {
 		return $marr;
 	}
 
-
 	/**
 	 * Build a placement map.
 	 * (Annex F - ECC 200 symbol character placement)
@@ -1085,7 +1086,7 @@ class Datamatrix {
 	 * @return array
 	 * @protected
 	 */
-	protected function getPlacemetMap($nrow, $ncol) {
+	protected function getPlacementMap($nrow, $ncol) {
 		// initialize array with zeros
 		$marr = array_fill(0, ($nrow * $ncol), 0);
 		// set starting values

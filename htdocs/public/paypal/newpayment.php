@@ -231,7 +231,10 @@ if (GETPOST("action") == 'dopayment')
         dol_syslog("email: $email", LOG_DEBUG);
         dol_syslog("desc: $desc", LOG_DEBUG);
 
-	    $_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
+        dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG);	// If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
+	    //$_SESSION["PaymentType"]=$PAYPAL_PAYMENT_TYPE;
+	    //$_SESSION["currencyCodeType"]=$PAYPAL_API_DEVISE;
+	    //$_SESSION["Payment_Amount"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
         print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);

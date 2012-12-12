@@ -21,4 +21,4 @@
 ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version);
 
 
-ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version  FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accountingsystem (pcg_version);
+ALTER TABLE llx_accountingaccount ADD CONSTRAINT fk_accountingaccount_fk_pcg_version  FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);

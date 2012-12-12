@@ -933,6 +933,7 @@ SendmailOptionMayHurtBuggedMTA=La fonction d'envoi de mails par la méthode "PHP
 TranslationSetup=Translation setup
 TranslationDesc=Le choix de la langue affichée à l'écran se modifie:<br>* Soit de manière globale depuis le menu <strong>Accueil - Configuration - Affichage</strong><br>* Soit de manière spécifique à l'utilisateur depuis l'onglet <strong>Interface utilisateur</strong> de sa fiche utilisateur (cliquer sur le login en haut de l'écran). 
 ClassNotFoundIntoPathWarning=La class %s n'a pas été trouvée dans le path PHP
+YesInSummer=Oui en été
 
 ##### Module password generation= undefined
 PasswordGenerationStandard= Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés.
