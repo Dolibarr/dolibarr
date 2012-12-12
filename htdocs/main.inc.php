@@ -196,9 +196,9 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 if (! empty($conf->file->main_force_https))
 {
     $newurl='';
-    if ($conf->file->main_force_https == '1')
+    if (is_numeric($conf->file->main_force_https))
     {
-        if (! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
+        if ($conf->file->main_force_https == '1' && ! empty($_SERVER["SCRIPT_URI"]))	// If SCRIPT_URI supported by server
         {
             if (preg_match('/^http:/i',$_SERVER["SCRIPT_URI"]) && ! preg_match('/^https:/i',$_SERVER["SCRIPT_URI"]))	// If link is http
             {
@@ -216,7 +216,12 @@ if (! empty($conf->file->main_force_https))
     }
     else
     {
-        $newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
+        // Check HTTPS environment variable (Apache/mod_ssl only)
+        // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
+        if (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on')		// If link is http
+        {
+            $newurl=$conf->file->main_force_https.$_SERVER["REQUEST_URI"];
+        }
     }
     // Start redirect
     if ($newurl)
@@ -792,7 +797,7 @@ if (! function_exists("llxHeader"))
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 	    global $conf;
-	
+
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 		if (empty($conf->global->MAIN_HIDE_TOP_MENU))
 		{
