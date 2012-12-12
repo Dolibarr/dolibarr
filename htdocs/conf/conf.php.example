@@ -205,11 +205,14 @@ $dolibarr_main_authentication='dolibarr';
 //##################
 
 // dolibarr_main_force_https
-// This parameter allows to force the HTTPS mode.
+// This parameter allows to force the HTTPS mode. 
+// 0 = No forced redirect
+// 1 = Force redirect to https until SCRIPT_URI start with https
+// 2 = Force redirect to https until SERVER["HTTPS"] is 'on'
 // Warning: If you enable this parameter, your web server must be configured
 // to respond URL with https protocol.
 // Default value: 0
-// Possible values: 0 or 1
+// Possible values: 0, 1 or 2
 // Examples:
 // $dolibarr_main_force_https='0';
 //
