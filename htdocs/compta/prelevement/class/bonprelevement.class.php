@@ -1251,7 +1251,6 @@ class BonPrelevement extends CommonObject
                         $esaeb19->agregaRecibo(
                             $idOrdenante,
 							$client->idprof1,
-                            "idcliente".$i+1,
                             $obj->client_nom,
                             $obj->code_banque,
                             $obj->code_guichet,
