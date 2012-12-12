@@ -2531,8 +2531,12 @@ else
              * List of payments
              */
 
-            $nbrows=8;
-            if ($conf->projet->enabled) $nbrows++;
+ 	        $sign=1;
+	        if ($object->type == 2) $sign=-1;
+
+	        $nbrows=8; $nbcols=2;
+	        if (! empty($conf->projet->enabled)) $nbrows++;
+	        if (! empty($conf->banque->enabled)) $nbcols++;
 
             //Local taxes
             if ($mysoc->pays_code=='ES')
@@ -2555,21 +2559,26 @@ else
 
             $var=true;
 
-            // Payments already done (from payment on this invoice)
-            $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid,';
-            $sql.= ' c.code as payment_code, c.libelle as payment_label,';
-            $sql.= ' pf.amount';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
-            $sql.= ' WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-            $sql.= ' ORDER BY dp, tms';
+	        // Payments already done (from payment on this invoice)
+	        $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
+	        $sql.= ' c.code as payment_code, c.libelle as payment_label,';
+	        $sql.= ' pf.amount,';
+	        $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+	        $sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+	        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+	        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+	        $sql.= ' WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+	        $sql.= ' ORDER BY p.datep, p.tms';
 
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-                $i = 0;
-
-                if ($object->type != 2)
+	        $result = $db->query($sql);
+	        if ($result)
+    	    {
+        	    $num = $db->num_rows($result);
+            	$i = 0;
+			
+				//if ($object->type != 2)
+            	//{
+            	if ($num > 0)
                 {
                     while ($i < $num)
                     {
@@ -2580,64 +2589,69 @@ else
                         print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
                         $label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
                         print '<td>'.$label.' '.$objp->num_paiement.'</td>';
-                        print '<td align="right">'.price($objp->amount).'</td>';
+                        print '<td align="right">'.price($sign * $objp->amount).'</td>';
                         print '<td>&nbsp;</td>';
                         print '</tr>';
                         $i++;
                     }
                 }
+                else
+                {
+                    print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+                }
+    	        //}
                 $db->free($result);
+        	}
+        	else
+        	{
+            	dol_print_error($db);
+        	}
+
+        if ($object->type != 2)
+        {
+            // Total already paid
+            print '<tr><td colspan="2" align="right">';
+            if ($object->type != 3) print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
+            else print $langs->trans('AlreadyPaid');
+            print ' :</td><td align="right">'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
+
+            $resteapayeraffiche=$resteapayer;
+
+            // Loop on each credit note or deposit amount applied
+            $creditnoteamount=0;
+            $depositamount=0;
+            $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+            $sql.= " re.description, re.fk_facture_source";
+            $sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
+            $sql.= " WHERE fk_facture = ".$object->id;
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $num = $db->num_rows($resql);
+                $i = 0;
+                $invoice=new Facture($db);
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($resql);
+                    $invoice->fetch($obj->fk_facture_source);
+                    print '<tr><td colspan="2" align="right">';
+                    if ($invoice->type == 2) print $langs->trans("CreditNote").' ';
+                    if ($invoice->type == 3) print $langs->trans("Deposit").' ';
+                    print $invoice->getNomUrl(0);
+                    print ' :</td>';
+                    print '<td align="right">'.price($obj->amount_ttc).'</td>';
+                    print '<td align="right">';
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
+                    print '</td></tr>';
+                    $i++;
+                    if ($invoice->type == 2) $creditnoteamount += $obj->amount_ttc;
+                    if ($invoice->type == 3) $depositamount += $obj->amount_ttc;
+                }
             }
             else
             {
                 dol_print_error($db);
             }
-
-            if ($object->type != 2)
-            {
-                // Total already paid
-                print '<tr><td colspan="2" align="right">';
-                if ($object->type != 3) print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
-                else print $langs->trans('AlreadyPaid');
-                print ' :</td><td align="right">'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
-
-                $resteapayeraffiche=$resteapayer;
-
-                // Loop on each credit note or deposit amount applied
-                $creditnoteamount=0;
-                $depositamount=0;
-                $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-                $sql.= " re.description, re.fk_facture_source";
-                $sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-                $sql.= " WHERE fk_facture = ".$object->id;
-                $resql=$db->query($sql);
-                if ($resql)
-                {
-                    $num = $db->num_rows($resql);
-                    $i = 0;
-                    $invoice=new Facture($db);
-                    while ($i < $num)
-                    {
-                        $obj = $db->fetch_object($resql);
-                        $invoice->fetch($obj->fk_facture_source);
-                        print '<tr><td colspan="2" align="right">';
-                        if ($invoice->type == 2) print $langs->trans("CreditNote").' ';
-                        if ($invoice->type == 3) print $langs->trans("Deposit").' ';
-                        print $invoice->getNomUrl(0);
-                        print ' :</td>';
-                        print '<td align="right">'.price($obj->amount_ttc).'</td>';
-                        print '<td align="right">';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
-                        print '</td></tr>';
-                        $i++;
-                        if ($invoice->type == 2) $creditnoteamount += $obj->amount_ttc;
-                        if ($invoice->type == 3) $depositamount += $obj->amount_ttc;
-                    }
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
 
                 // Paye partiellement 'escompte'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat')
@@ -2685,12 +2699,28 @@ else
                 print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
                 print '<td nowrap="nowrap">&nbsp;</td></tr>';
             }
-            else
-            {
-                // Sold credit note
-                print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTC').' :</td>';
-                print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($object->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
-            }
+            else	// Credit note
+        	{
+	        	// Total already paid back
+	        	print '<tr><td colspan="2" align="right">';
+	        	print $langs->trans('AlreadyPaidBack');
+	        	print ' :</td><td align="right">'.price($sign * $totalpaye).'</td><td>&nbsp;</td></tr>';
+
+	            // Billed
+	            print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
+
+	            // Remainder to pay back
+	            print '<tr><td colspan="2" align="right">';
+	            if ($resteapayeraffiche <= 0) print $langs->trans('RemainderToPayBack');
+	            else print $langs->trans('ExcessPaydBack');
+	            print ' :</td>';
+	            print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign * $resteapayeraffiche).'</b></td>';
+	            print '<td nowrap="nowrap">&nbsp;</td></tr>';
+
+	            // Sold credit note
+	            //print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
+    	        //print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign * $object->total_ttc).'</b></td><td>&nbsp;</td></tr>';
+	        }
 
             print '</table>';
 

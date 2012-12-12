@@ -108,11 +108,11 @@ else
         else  $sql.= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    if ($_REQUEST["search_ref"])         $sql .=" AND p.rowid=".$_REQUEST["search_ref"];
-    if ($_REQUEST["search_account"])     $sql .=" AND b.fk_account=".$_REQUEST["search_account"];
-    if ($_REQUEST["search_paymenttype"]) $sql .=" AND c.code='".$_REQUEST["search_paymenttype"]."'";
-    if ($_REQUEST["search_amount"])      $sql .=" AND p.amount=".price2num($_REQUEST["search_amount"]);
-    if ($_REQUEST["search_company"])     $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
+    if (GETPOST("search_ref"))         		$sql .=" AND p.rowid=".GETPOST("search_ref",'int');
+    if (GETPOST("search_account") > 0)      $sql .=" AND b.fk_account=".GETPOST("search_account",'int');
+    if (GETPOST("search_paymenttype") > 0)  $sql .=" AND c.code='".GETPOST("search_paymenttype",'int')."'";
+    if (GETPOST("search_amount"))      		$sql .=" AND p.amount=".price2num(GETPOST("search_amount"));
+    if (GETPOST("search_company"))     		$sql .=" AND s.nom LIKE '%".$db->escape(GETPOST("search_company"))."%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);

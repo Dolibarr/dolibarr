@@ -37,6 +37,7 @@ require('../main.inc.php');
 $langs->Load('compta');
 
 //init var
+$invoice_type = GETPOST('invoice_type','int');
 $amountPayment = $_POST['amountPayment'];
 $amounts = $_POST['amounts'];				// from text inputs : invoice amount payment (check required)
 $remains = $_POST['remains'];				// from dolibarr's object (no need to check)
@@ -53,7 +54,15 @@ $amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	?
 foreach ($amounts as $key => $value)
 {
 	$value = price2num($value);
-	if (!is_numeric($value)) unset($amounts[$key]);
+	$amounts[$key]=$value;
+	if (empty($value)) unset($amounts[$key]);
+}
+// Clean remains
+foreach ($remains as $key => $value)
+{
+	$value = price2num($value);
+	$remains[$key]=(($invoice_type)==2?-1:1)*$value;
+	if (empty($value)) unset($remains[$key]);
 }
 
 // Treatment

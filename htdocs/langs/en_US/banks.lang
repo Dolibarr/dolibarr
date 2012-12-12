@@ -103,6 +103,7 @@ ConciliatedBy=Reconciled by
 DateConciliating=Reconcile date
 BankLineConciliated=Transaction reconciled
 CustomerInvoicePayment=Customer payment
+CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=Supplier payment
 WithdrawalPayment=Withdrawal payment
 SocialContributionPayment=Social contribution payment
