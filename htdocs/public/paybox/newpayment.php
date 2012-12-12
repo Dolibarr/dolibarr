@@ -75,9 +75,13 @@ if (! GETPOST("action"))
     }
 }
 
+// Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentok.php?';
-$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentko.php?';
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+
+$urlok=$urlwithroot.'/public/paybox/paymentok.php?';
+$urlko=$urlwithroot.'/public/paybox/paymentko.php?';
 
 // Complete urls
 $SOURCE=GETPOST("source",'alpha');

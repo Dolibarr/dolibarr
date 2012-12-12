@@ -1462,17 +1462,10 @@ class User extends CommonObject
 			$outputlangs=$langs;
 		}
 
-		// Define urlwithouturlroot
-		if (! empty($_SERVER["HTTP_HOST"])) // Autodetect main url root
-		{
-			$urlwithouturlroot='http://'.preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$_SERVER["HTTP_HOST"]);
-		}
-		else
-		{
-			$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-		}
-		if (! empty($dolibarr_main_force_https)
-			|| (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
+		// Define $urlwithroot
+		//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+		//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+		$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		// TODO Use outputlangs to translate messages
 		if (! $changelater)
@@ -1482,7 +1475,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Login")." : $this->login\n";
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
-			$url = $urlwithouturlroot.DOL_URL_ROOT;
+			$url = $urlwithroot;
 			$mesg.= 'Click here to go to Dolibarr: '.$url."\n\n";
 			$mesg.= "--\n";
 			$mesg.= $user->getFullName($langs);	// Username that make then sending
@@ -1495,7 +1488,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
 			$mesg.= "You must click on the folowing link to validate its change.\n";
-			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dol_syslog(get_class($this)."::send_password url=".$url);
