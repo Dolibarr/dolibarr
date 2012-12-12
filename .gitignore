@@ -3,6 +3,7 @@ htdocs/conf/conf.php.old
 documents/
 custom/
 custom2/
+test/
 nbproject
 default.properties
 .settings/
