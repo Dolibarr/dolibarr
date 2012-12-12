@@ -878,8 +878,11 @@ class ActionComm extends CommonObject
                     $event['location']=$obj->location;
                     $event['transparency']='TRANSPARENT';		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['category']=$obj->libelle;	// libelle type action
-                    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-                    $url=$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id;
+					// Define $urlwithroot
+					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
+					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+                    $url=$urlwithroot.'/comm/action/fiche.php?id='.$obj->id;
                     $event['url']=$url;
                     $event['created']=$this->db->jdate($obj->datec);
                     $event['modified']=$this->db->jdate($obj->datem);
