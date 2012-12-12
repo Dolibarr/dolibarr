@@ -84,9 +84,13 @@ if (! GETPOST("action"))
     }
 }
 
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-$urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
-$urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
+// Define $urlwithroot
+//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+
+$urlok=$urlwithroot.'/public/paypal/paymentok.php?';
+$urlko=$urlwithroot.'/public/paypal/paymentko.php?';
 
 // Complete urls for post treatment
 $SOURCE=GETPOST("source",'alpha');

@@ -172,26 +172,30 @@ class Notify
                 	$message.= "\n";
                     $message.= $texte;
                     // Add link
+                    $link='';
                     switch($objet_type)
                     {
                     	case 'ficheinter':
-						    $link=DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objet_id;
+						    $link='/fichinter/fiche.php?id='.$objet_id;
     						break;
                     	case 'propal':
-						    $link=DOL_URL_ROOT.'/comm/propal.php?id='.$objet_id;
+						    $link='/comm/propal.php?id='.$objet_id;
     						break;
     					case 'facture':
-						    $link=DOL_URL_ROOT.'/compta/facture.php?facid='.$objet_id;
+						    $link='/compta/facture.php?facid='.$objet_id;
     						break;
                     	case 'order':
-						    $link=DOL_URL_ROOT.'/commande/fiche.php?facid='.$objet_id;
+						    $link='/commande/fiche.php?facid='.$objet_id;
     						break;
     					case 'order_supplier':
-						    $link=DOL_URL_ROOT.'/fourn/commande/fiche.php?facid='.$objet_id;
+						    $link='/fourn/commande/fiche.php?facid='.$objet_id;
     						break;
                     }
-                    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
-                    if ($link) $message.="\n".$urlwithouturlroot.$link;
+					// Define $urlwithroot
+                    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
+					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+                    if ($link) $message.="\n".$urlwithroot.$link;
 
                     $filename = basename($file);
 
