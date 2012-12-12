@@ -1224,15 +1224,15 @@ class BonPrelevement extends CommonObject
                 $esaeb19->configuraPresentador($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_PRESENTADOR,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
                 $idOrdenante = $esaeb19->agregaOrdenante($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_ORDENANTE,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet, $this->emetteur_number_key, $this->emetteur_numero_compte);
                 $this->total = 0;
-                $sql = "SELECT pl.rowid, pl.client_nom, pl.code_banque, pl.code_guichet, pl.cle_rib, pl.number, pl.amount,";
-                $sql.= " f.facnumber, pf.fk_facture";
-                $sql.= " FROM";
-                $sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
-                $sql.= " ".MAIN_DB_PREFIX."facture as f,";
-                $sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
-                $sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
-                $sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
-                $sql.= " AND pf.fk_facture = f.rowid";
+                $sql = "SELECT pl.rowid, pl.fk_soc, pl.client_nom, pl.code_banque, pl.code_guichet, pl.cle_rib, pl.number, pl.amount,";
+	        	$sql.= " f.facnumber, pf.fk_facture";
+	        	$sql.= " FROM";
+	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+	        	$sql.= " ".MAIN_DB_PREFIX."facture as f,";
+	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	        	$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+	        	$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+	        	$sql.= " AND pf.fk_facture = f.rowid";
 
                 //Lines
                 $i = 0;
@@ -1241,12 +1241,16 @@ class BonPrelevement extends CommonObject
                 {
                     $num = $this->db->num_rows($resql);
 
+					$client = new Societe($this->db);
+                        
                     while ($i < $num)
                     {
-                        $obj = $this->db->fetch_object($resql);
+                    	$obj = $this->db->fetch_object($resql);
+						$client->fetch($obj->fk_soc);
 
                         $esaeb19->agregaRecibo(
                             $idOrdenante,
+							$client->idprof1,
                             "idcliente".$i+1,
                             $obj->client_nom,
                             $obj->code_banque,
