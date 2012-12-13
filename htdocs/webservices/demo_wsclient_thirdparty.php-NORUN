@@ -50,9 +50,9 @@ if ($soapclient)
 $authentication=array(
     'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     'sourceapplication'=>'DEMO',
-    'login'=>'admin_dolibarDev',
-    'password'=>'homedread',
-    'entity'=>'1');
+    'login'=>'admin',
+    'password'=>'',
+    'entity'=>'');
 
 
 // Test URL
