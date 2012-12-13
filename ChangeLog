@@ -13,6 +13,7 @@ English Dolibarr ChangeLog
   complete.
 - Fix: comaptiblity with multicompany module.
 - Fix: Bad label when validating/paying an invoice from POS module.
+- Fix: Correct recipient into rouget template.
 - Fix: A lot of fix into PDF pagebreak management.
 - Update VAT for some countries.
 - Firstname was missing when sending email from file list.
