@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 Florian Henry  <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,13 @@ require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
 
 $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 //$WS_DOL_URL = 'http://localhost:8080/';	// If not a page, should end with /
-$WS_METHOD  = 'getThirdParty';
+$WS_METHOD_GETTHIRDSPARTY  = 'getThirdParty';
+$WS_METHOD_CREATETHIRDSPARTY = 'createThirdParty';
 $ns='http://www.dolibarr.org/ns/';
+
+//Chosse action to do
+//$action='get';
+$action='create';
 
 
 // Set the WebService URL
@@ -51,11 +57,11 @@ $authentication=array(
 
 
 // Test URL
-if ($WS_METHOD)
+if ($action=='get')
 {
-    $parameters = array('authentication'=>$authentication,'id'=>0,'name'=>'aaa','ref_ext'=>'');
-    dol_syslog("Call method ".$WS_METHOD);
-    $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+    $parameters = array('authentication'=>$authentication,'id'=>1,'name'=>'','ref_ext'=>'');
+    dol_syslog("Call method ".$WS_METHOD_GETTHIRDSPARTY);
+    $result = $soapclient->call($WS_METHOD_GETTHIRDSPARTY,$parameters,$ns,'');
     if (! $result)
     {
     	print $soapclient->error_str;
@@ -65,6 +71,54 @@ if ($WS_METHOD)
     	print $soapclient->response;
     	exit;
     }
+}
+
+// Test URL
+if ($action=='create')
+{
+	$newthirdparty=array(
+	'ref'=>'Test WS Create Client',
+	'ref_ext'=>'WS0001',
+	'fk_user_author'=>'1',
+	'status'=>'1',
+	'client'=>'1',
+	'supplier'=>'0',
+	'address'=>'Adresse customer',
+	'zip'=>'75000',
+	'town'=>'Paris',
+	'country_id'=>'1',//France
+	'customer_code'=>'-1',//Generate code regarding module configuration 
+	'supplier_code'=>'0',
+	'phone'=>'0141414141',
+	'fax'=>'0121212121',
+	'email'=>'webtest1@test.fr',
+	'url'=>' www.test.fr',
+	'profid1'=>'1111111',
+	'profid2'=>'222222',
+	'profid3'=>'333333',
+	'profid4'=>'44444',
+	'profid5'=>'55555',
+	'profid6'=>'66666',
+	'capital'=>'3000',
+	'vat_used'=>'0',
+	'vat_number'=>''
+	//,'options_attr1'=>'Attr1 balbal', //Extra field exemple where field code is attr1
+	//'options_attr2'=>'Attr2 balbal' //Extra field exemple where field code is attr2
+	);
+	
+	
+	$parameters = array('authentication'=>$authentication,'thirdparty'=>$newthirdparty);
+	dol_syslog("Call method ".$WS_METHOD_CREATETHIRDSPARTY);
+	$result = $soapclient->call($WS_METHOD_CREATETHIRDSPARTY,$parameters,$ns,'');
+	if (! $result)
+	{
+		print $soapclient->error_str;
+		print "<br>\n\n";
+		print $soapclient->request;
+		print "<br>\n\n";
+		print $soapclient->response;
+		exit;
+	}
 }
 
 

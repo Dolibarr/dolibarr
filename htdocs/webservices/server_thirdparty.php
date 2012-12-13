@@ -124,6 +124,9 @@ $thirdparty_fields= array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('company');
+if (count($extrafields)>0) {
+	$extrafield_array = array();
+}
 foreach($extrafields->attribute_label as $key=>$label)
 {
 	//$value=$object->array_options["options_".$key];
@@ -131,9 +134,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
 	else {$type='xsd:string';}
 
-	$extrafield_array = array();
-
-	$extrafield_array[$key]=array('name'=>$key,'type'=>$type);
+	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
 $thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
@@ -273,10 +274,8 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			$result=$thirdparty->fetch($id,$ref,$ref_ext);
 			if ($result > 0)
 			{
-			    // Create
-			    $objectresp = array(
-			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'thirdparty'=>array(
+				
+				$thirdparty_result_fields=array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
 			   			'ref_ext' => $thirdparty->ref_ext,
@@ -310,8 +309,24 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			            'capital' => $thirdparty->capital,
 			   			'barcode' => $thirdparty->barcode,
 			            'vat_used' => $thirdparty->tva_assuj,
-				        'vat_number' => $thirdparty->tva_intra
-			    ));
+				        'vat_number' => $thirdparty->tva_intra);
+				
+				//Retreive all extrafield for thirdsparty
+				// fetch optionals attributes and labels
+				$extrafields=new ExtraFields($db);
+				$extralabels=$extrafields->fetch_name_optionals_label('company');
+				//Get extrafield values
+				$thirdparty->fetch_optionals($thirdparty->id,$extralabels);
+				
+				foreach($extrafields->attribute_label as $key=>$label)
+				{				
+					$thirdparty_result_fields=array_merge($thirdparty_result_fields,array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+				}
+
+			    // Create
+			    $objectresp = array(
+			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
+			        'thirdparty'=>$thirdparty_result_fields);
 			}
 			else
 			{
@@ -409,6 +424,16 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->tva_intra=$thirdparty['vat_number'];
 
         $newobject->canvas=$thirdparty['canvas'];
+        
+        //Retreive all extrafield for thirdsparty
+        // fetch optionals attributes and labels
+        $extrafields=new ExtraFields($db);
+        $extralabels=$extrafields->fetch_name_optionals_label('company');
+        foreach($extrafields->attribute_label as $key=>$label)
+        {
+        	$key='options_'.$key;
+        	$newobject->array_options[$key]=$thirdparty[$key];
+        }
 
         $db->begin();
 

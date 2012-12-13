@@ -117,7 +117,7 @@ class ActionComm extends CommonObject
         $this->note=dol_htmlcleanlastbr(trim($this->note));
         if (empty($this->percentage))   $this->percentage = 0;
         if (empty($this->priority))     $this->priority = 0;
-        if (empty($this->fulldayevent)) $this->fuldayevent = 0;
+        if (empty($this->fulldayevent)) $this->fulldayevent = 0;
         if (empty($this->punctual))     $this->punctual = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
