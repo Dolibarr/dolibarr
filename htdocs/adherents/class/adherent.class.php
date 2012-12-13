@@ -1025,7 +1025,7 @@ class Adherent extends CommonObject
 
         $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
-        $sql.= " d.photo, d.fk_adherent_type, d.morphy,";
+        $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
         $sql.= " d.datefin as datefin,";
@@ -1057,63 +1057,66 @@ class Adherent extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->ref            = $obj->rowid;
-                $this->id             = $obj->rowid;
-                $this->civilite_id    = $obj->civilite;
-                $this->prenom         = $obj->firstname;   // deprecated
-                $this->firstname      = $obj->firstname;
-                $this->nom            = $obj->lastname;    // deprecated
-                $this->lastname       = $obj->lastname;
-                $this->login          = $obj->login;
-                $this->pass           = $obj->pass;
-                $this->societe        = $obj->societe;
-                $this->fk_soc         = $obj->fk_soc;
-                $this->adresse        = $obj->address;	// deprecated
-                $this->address        = $obj->address;
-                $this->cp             = $obj->zip;		// deprecated
-                $this->zip            = $obj->zip;
-                $this->ville          = $obj->town;	    // deprecated
-                $this->town           = $obj->town;
+                $this->entity			= $obj->entity;
+                $this->ref				= $obj->rowid;
+                $this->id				= $obj->rowid;
+                $this->civilite_id		= $obj->civilite;
+                $this->prenom			= $obj->firstname;   // deprecated
+                $this->firstname		= $obj->firstname;
+                $this->nom				= $obj->lastname;    // deprecated
+                $this->lastname			= $obj->lastname;
+                $this->login			= $obj->login;
+                $this->pass				= $obj->pass;
+                $this->societe			= $obj->societe;
+                $this->fk_soc			= $obj->fk_soc;
+                $this->adresse			= $obj->address;	// deprecated
+                $this->address			= $obj->address;
+                $this->cp				= $obj->zip;		// deprecated
+                $this->zip				= $obj->zip;
+                $this->ville			= $obj->town;	    // deprecated
+                $this->town				= $obj->town;
 
-                $this->state_id       = $obj->fk_departement;
-                $this->state_code     = $obj->fk_departement?$obj->state_code:'';
-                $this->state          = $obj->fk_departement?$obj->state:'';
-                $this->fk_departement   = $obj->fk_departement;                        // deprecated
-                $this->departement_code = $obj->fk_departement?$obj->state_code:'';    // deprecated
-                $this->departement	    = $obj->fk_departement?$obj->state:'';         // deprecated
+                $this->state_id			= $obj->fk_departement;
+                $this->state_code		= $obj->fk_departement?$obj->state_code:'';
+                $this->state			= $obj->fk_departement?$obj->state:'';
+                $this->fk_departement	= $obj->fk_departement;                        // deprecated
+                $this->departement_code	= $obj->fk_departement?$obj->state_code:'';    // deprecated
+                $this->departement		= $obj->fk_departement?$obj->state:'';         // deprecated
 
-                $this->country_id     = $obj->country_id;
-                $this->country_code   = $obj->country_code;
-                if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) $this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
-                else $this->country=$obj->country;
-                $this->pays_id        = $obj->country_id;      // deprecated
-                $this->pays_code      = $obj->country_code;    // deprecated
-                $this->pays           = $this->country;        // deprecated
+                $this->country_id		= $obj->country_id;
+                $this->country_code		= $obj->country_code;
+                if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)
+                	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
+                else
+                	$this->country=$obj->country;
+                $this->pays_id			= $obj->country_id;      // deprecated
+                $this->pays_code		= $obj->country_code;    // deprecated
+                $this->pays				= $this->country;        // deprecated
 
-                $this->phone          = $obj->phone;
-                $this->phone_perso    = $obj->phone_perso;
-                $this->phone_mobile   = $obj->phone_mobile;
-                $this->email          = $obj->email;
+                $this->phone			= $obj->phone;
+                $this->phone_perso		= $obj->phone_perso;
+                $this->phone_mobile		= $obj->phone_mobile;
+                $this->email			= $obj->email;
 
-                $this->photo          = $obj->photo;
-                $this->statut         = $obj->statut;
-                $this->public         = $obj->public;
+                $this->photo			= $obj->photo;
+                $this->statut			= $obj->statut;
+                $this->public			= $obj->public;
 
-                $this->datec          = $this->db->jdate($obj->datec);
-                $this->datem          = $this->db->jdate($obj->datem);
-                $this->datefin        = $this->db->jdate($obj->datefin);
-                $this->datevalid      = $this->db->jdate($obj->datev);
-                $this->naiss          = $this->db->jdate($obj->datenaiss);
+                $this->datec			= $this->db->jdate($obj->datec);
+                $this->datem			= $this->db->jdate($obj->datem);
+                $this->datefin			= $this->db->jdate($obj->datefin);
+                $this->datevalid		= $this->db->jdate($obj->datev);
+                $this->naiss			= $this->db->jdate($obj->datenaiss);
 
-                $this->note           = $obj->note;
-                $this->morphy         = $obj->morphy;
+                $this->note				= $obj->note;
+                $this->morphy			= $obj->morphy;
 
-                $this->typeid         = $obj->fk_adherent_type;
-                $this->type           = $obj->type;
+                $this->typeid			= $obj->fk_adherent_type;
+                $this->type				= $obj->type;
                 $this->need_subscription = ($obj->cotisation=='yes'?1:0);
 
-                $this->user_id        = $obj->user_id;
-                $this->user_login     = $obj->user_login;
+                $this->user_id			= $obj->user_id;
+                $this->user_login		= $obj->user_login;
 
                 // Load other properties
                 $result=$this->fetch_subscriptions();
