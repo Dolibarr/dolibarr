@@ -284,6 +284,10 @@ table.login_table .vmenu {
 	font-size:120%;
 }
 
+.blockvmenubookmarks .menu_contenu {
+	background-color: transparent;
+}
+
 /* ! Message d'erreur lors du login : */
 center .error { padding:8px !important; padding-left:26px !important; padding-right:20px; width:inherit; max-width:450px;color:#552323 !important; font-size:14px; border-radius:8px; text-align: left;}
 
@@ -850,6 +854,10 @@ tr.liste_titre, tr.box_titre {
 		color-stop(0, rgba(255,255,255,.3)),
 		color-stop(1, rgba(0,0,0,.3))
 	);
+}
+
+tr.box_titre td.boxclose {
+	width: 36px;
 }
 
 tr.liste_titre td {
