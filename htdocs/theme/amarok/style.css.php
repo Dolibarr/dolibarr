@@ -86,14 +86,16 @@ body {
 	<?php if (GETPOST("optioncss") != 'print') {?>
 	background-image:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/vmenu.png' ?>);
 	background-repeat:repeat-y;
+	margin:0px;
 	<?php } ?>
 	<?php } else {?>
 	background-image:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/background_login.png' ?>);
+	margin:100px;
 	<?php } ?>
 	color:#232323;
 	font-size:<?php print $fontsize ?>px;
    	font-family:<?php print $fontlist ?>;
-	margin:0px;
+	
     <?php print 'direction:'.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -194,6 +196,7 @@ form#login {
 	);
 	margin-left:auto;
 	margin-right:auto;
+	margin-bottom:25px;
 	padding:20px 20px 10px;
 	width:500px;
 	border-radius:12px;
@@ -201,8 +204,8 @@ form#login {
 }
 form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
-	width:120px;
-	max-width:120px;
+	width:220px;
+	max-width:220px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
@@ -240,14 +243,39 @@ table.login_table tr td a {color:#333333 !important;}
 table.login_table tr td a:hover {color:#000000 !important;}
 
 table.login_table .button {
-	font-size:120%;
-	background-color:#168ac2;
-	color:#ffffff;
-	padding:6px;
-	margin:10px 0px;
-	border-radius:1.6em;
-	border:solid 1px #2e7992;
-	box-shadow:1px 1px 3px rgba(0,0,0,.4);
+	padding:2px;
+	padding-left:6px;
+	padding-right:6px;
+	margin-right:6px;
+	border-radius:.6em;
+
+    background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
+	background-image: -webkit-gradient(
+		linear,
+		left top,
+		left bottom,
+		color-stop(0, rgba(255,255,255,.3)),
+		color-stop(1, rgba(0,0,0,.3))
+	);
+}
+
+table.login_table .button:hover {
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
+	background-image: -webkit-gradient(
+		linear,
+		left top,
+		left bottom,
+		color-stop(1, rgba(255,255,255,.3)),
+		color-stop(0, rgba(0,0,0,.3))
+	);
 }
 	
 table.login_table .vmenu {
