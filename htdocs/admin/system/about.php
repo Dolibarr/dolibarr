@@ -109,18 +109,13 @@ print '</ul>';
 
 
 print $langs->trans("OfficialWebHostingService").':';
-$url='http://www.dolicloud.com'; $title='DoliCloud';
+$url='http://wiki.dolibarr.org/index.php/Cloud_Solutions'; $title=$langs->trans('List');
+if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
+if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
 print '<ul>';
 print '<li>';
 print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
 print '</li>';
-if (preg_match('/^fr_/i',$langs->getDefaultLang()))
-{
-    $url='http://www.dolibox.fr'; $title='DoliBox';
-    print '<li>';
-    print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
-    print '</li>';
-}
 print '</ul>';
 
 
