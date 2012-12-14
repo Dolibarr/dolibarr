@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
@@ -52,7 +52,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
-	 	['NumberedList','BulletedList','Outdent','Indent','CreateDiv'],
+	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	 	['Link','Unlink','Anchor','Image','Table','SpecialChar']
 	 ];
