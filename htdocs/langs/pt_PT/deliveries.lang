@@ -9,23 +9,23 @@ DeliveryDate=Data de Envio
 DeliveryDateShort=Data Envio
 CreateDeliveryOrder=Gerar Ordem de Entrega
 QtyDelivered=Quant. Enviada
-SetDeliveryDate=Indicar a Data de Envío
+SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
-ValidateDeliveryReceiptConfirm=Está seguro de que deseja confirmar esta entrega?
+ValidateDeliveryReceiptConfirm=Deseja mesmo confirmar esta entrega?
 DeliveryMethod=Método de Envio
 TrackingNumber=Nº de tracking
 # merou PDF model
 NameAndSignature=Nome e assinatura:
 ToAndDate=Em___________________________________ a ____/_____/__________
 GoodStatusDeclaration=Recebi a mercadoria em bom estado, 
-Deliverer=Destinatario:
+Deliverer=Destinatário:
 Sender=Origem
 Recipient=Destinatário
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
-DeleteDeliveryReceipt=Excluir recibo de entrega
-DeleteDeliveryReceiptConfirm=Tem certeza de que deseja excluir <b>%s</b> recibo de entrega?
-DeliveryNotValidated=Entrega não validado
+DeleteDeliveryReceipt=Eliminar recibo de entrega
+DeleteDeliveryReceiptConfirm=Tem certeza de que deseja eliminar <b>%s</b> recibo de entrega?
+DeliveryNotValidated=Entrega não validada
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:44).

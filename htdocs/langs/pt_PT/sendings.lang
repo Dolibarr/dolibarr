@@ -1,57 +1,57 @@
 ﻿# Dolibarr language file - pt_PT - sendings
 CHARSET=UTF-8
-RefSending=Ref. Envío
-Sending=Envío
-Sendings=Envíos
+RefSending=Ref. de Envio
+Sending=Envio
+Sendings=Envios
 Receivings=Recepções
-SendingsArea=Área Envíos
-ListOfSendings=Lista de Envíos
-SendingMethod=Método de Envío
+SendingsArea=Área de Envios
+ListOfSendings=Lista de Envios
+SendingMethod=Método de Envio
 SendingReceipt=Entrega
-LastSendings=Os %s Ultimos Envíos
-SearchASending=Procurar Envío
-StatisticsOfSendings=Estatísticas de Envíos
-NbOfSendings=Número de Envíos
-SendingCard=Ficha de Envío
-NewSending=Novo Envío
-CreateASending=Criar um Envío
-CreateSending=Criar Envío
+LastSendings=Os %s Últimos Envios
+SearchASending=Procurar Envio
+StatisticsOfSendings=Estatísticas de Envios
+NbOfSendings=Número de Envios
+SendingCard=Ficha de Envio
+NewSending=Novo Envio
+CreateASending=Criar um Envio
+CreateSending=Criar Envio
 QtyOrdered=Quant. Pedida
 QtyShipped=Quant. Enviada
 QtyToShip=Quant. a Enviar
 QtyReceived=Quant. Recebida
-KeepToShip=Fica por Enviar
-OtherSendingsForSameOrder=Outros Envíos deste Pedido
+KeepToShip=Manter por Enviar
+OtherSendingsForSameOrder=Outros Envios deste Pedido
 DateSending=Data de Expedição
 DateSendingShort=Data de Expedição
 SendingsForSameOrder=Expedições deste Pedido
-SendingsAndReceivingForSameOrder=Envíos e Recepções deste pedido
-SendingsToValidate=Envíos a Confirmar
+SendingsAndReceivingForSameOrder=Envios e Recepções deste pedido
+SendingsToValidate=Envios a Confirmar
 StatusSendingDraft=Rascunho
-StatusSendingValidated=Validado (produtos a enviar o enviados)
+StatusSendingValidated=Validado (produtos a enviar ou enviados)
 StatusSendingDraftShort=Rascunho
 StatusSendingValidatedShort=Validado
-SendingSheet=Ficha de envío
-Carriers=Transportistas
-Carrier=Transportista
-CarriersArea=Área Transportistas
-NewCarrier=Novo Transportista
-ConfirmDeleteSending=Está seguro de querer eliminar esta expedição?
-ConfirmValidateSending=Está seguro de querer Confirmar esta expedição?
-ConfirmCancelSending=Está seguro de querer anular esta expedição?
+SendingSheet=Ficha de envio
+Carriers=Distribuidores
+Carrier=Distribuidor
+CarriersArea=Área de Distribuidores
+NewCarrier=Novo Distribuidor
+ConfirmDeleteSending=Tem a certeza que pretende eliminar esta expedição?
+ConfirmValidateSending=Tem a certeza que pretende confirmar esta expedição?
+ConfirmCancelSending=Tem a certeza que pretende anular esta expedição?
 GenericTransport=Transporte Genérico
 Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
-WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
+WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
-StatsOnShipmentsOnlyValidated=Estatísticas sobre as transferências realizadas apenas validadas
+StatsOnShipmentsOnlyValidated=Estatísticas sobre as transferências validadas realizadas
 SendingMethodCATCH=Capturas por cliente
 SendingMethodTRANS=Transportador
 SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=documento simples, modelo de recibos de entrega
-DocumentModelTyphon=Documento modelo mais completo para a entrega recibos (logo. ..)
+DocumentModelSirocco=Modelo de documento simples de recibos de entrega
+DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
 
@@ -69,10 +69,10 @@ DateReceived=Data da entrega recebida
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
-SendShippingByEMail=Enviar envio por e-mail
+SendShippingByEMail=Efectuar envio por e-mail
 SendShippingRef=Enviar %s embarque
 ActionsOnShipping=Eventos em embarque
 LinkToTrackYourPackage=Link para acompanhar o seu pacote
-ShipmentCreationIsDoneFromOrder=Para o momento, a criação de uma nova remessa é feita a partir do pedido.
+ShipmentCreationIsDoneFromOrder=A criação de uma nova remessa é efectuada a partir da encomenda.
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:53).
