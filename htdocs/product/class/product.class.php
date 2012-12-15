@@ -1223,7 +1223,7 @@ class Product extends CommonObject
 								$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[$i]."'";
 								$sql.= " ORDER BY quantity ASC";
 								$resultat=array();
-								$resql = $this->db->query($sql) ;
+								$resql = $this->db->query($sql);
 								if ($resql)
 								{
 									$ii=0;
@@ -1276,7 +1276,7 @@ class Product extends CommonObject
 							$sql.= " WHERE fk_product_price = '".$this->prices_by_qty_id[0]."'";
 							$sql.= " ORDER BY quantity ASC";
 							$resultat=array();
-							$resql = $this->db->query($sql) ;
+							$resql = $this->db->query($sql);
 							if ($resql)
 							{
 								$ii=0;
