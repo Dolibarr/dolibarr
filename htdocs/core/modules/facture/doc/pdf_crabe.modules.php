@@ -868,7 +868,7 @@ class pdf_crabe extends ModelePDFFactures
 								//$this->atleastoneratenotnull++;
 
 								$index++;
-								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 								$tvacompl='';
 								if (preg_match('/\*/',$tvakey))
@@ -880,7 +880,7 @@ class pdf_crabe extends ModelePDFFactures
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-								$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 							}
 						}
@@ -907,7 +907,7 @@ class pdf_crabe extends ModelePDFFactures
 
 
 								$index++;
-								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 								$tvacompl='';
 								if (preg_match('/\*/',$tvakey))
@@ -919,7 +919,7 @@ class pdf_crabe extends ModelePDFFactures
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-								$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 
 							}
@@ -969,7 +969,7 @@ class pdf_crabe extends ModelePDFFactures
 								//$this->atleastoneratenotnull++;
 
 								$index++;
-								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 								$tvacompl='';
 								if (preg_match('/\*/',$tvakey))
@@ -981,14 +981,14 @@ class pdf_crabe extends ModelePDFFactures
 								if ($localtax_type == '7') {  // amount on order
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
 								}
 								else
 								{
 									$totalvat.=vatrate($tvakey,1).$tvacompl;
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 								}
 							}
@@ -1014,7 +1014,7 @@ class pdf_crabe extends ModelePDFFactures
 								//$this->atleastoneratenotnull++;
 
 								$index++;
-								$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 								$tvacompl='';
 								if (preg_match('/\*/',$tvakey))
@@ -1026,7 +1026,7 @@ class pdf_crabe extends ModelePDFFactures
 
 								if ($localtax_type == '7') {  // amount on order
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
 								}
 								else
@@ -1034,7 +1034,7 @@ class pdf_crabe extends ModelePDFFactures
 									$totalvat.=vatrate($tvakey,1).$tvacompl;
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-									$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 								}
 							}
