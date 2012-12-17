@@ -86,7 +86,7 @@ print "\n</div>\n";
 html_print_paypal_footer($mysoc,$langs);
 
 
-$db->close();
-
 llxFooterPaypal();
+
+$db->close();
 ?>

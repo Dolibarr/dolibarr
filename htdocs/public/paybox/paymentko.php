@@ -74,7 +74,8 @@ print "\n</div>\n";
 
 html_print_paybox_footer($mysoc,$langs);
 
-$db->close();
 
 llxFooterPayBox();
+
+$db->close();
 ?>
