@@ -84,7 +84,8 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
         }
         else
         {
-            $message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePassword").'</div>';
+        	$langs->load("errors");
+            $message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
         }
     }
 }

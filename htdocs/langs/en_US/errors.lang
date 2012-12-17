@@ -115,6 +115,7 @@ ErrorFileRequired=It takes a package Dolibarr file
 ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
 ErrorFailedToAddToMailmanList=Failed to add record to Mailman list or SPIP base
 ErrorNewVaueCantMatchOldValue=New value can't be equal to old one
+ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
