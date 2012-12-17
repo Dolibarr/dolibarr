@@ -469,3 +469,5 @@ ALTER TABLE llx_c_barcode_type ADD UNIQUE INDEX uk_c_barcode_type(code, entity);
 ALTER TABLE llx_c_tva ADD COLUMN localtax1_type varchar(1) default '0' after localtax1;
 ALTER TABLE llx_c_tva ADD COLUMN localtax2_type varchar(1) default '0' after localtax2;
 
+-- if this table still exists, you cant delete a product/service in dolibarr because of its foreign key
+DROP TABLE IF EXISTS llx_product_fournisseur;
