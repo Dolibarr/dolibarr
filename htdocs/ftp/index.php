@@ -155,7 +155,7 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 	if (! $conn_id)
 	{
 		$newsectioniso=utf8_decode($section);
-		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso);
+		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id=$resultarray['conn_id'];
 		$ok=$resultarray['ok'];
 		$mesg=$resultarray['mesg'];
@@ -200,7 +200,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 	if (! $conn_id)
 	{
 		$newsectioniso=utf8_decode($section);
-		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso);
+		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id=$resultarray['conn_id'];
 		$ok=$resultarray['ok'];
 		$mesg=$resultarray['mesg'];
@@ -253,7 +253,7 @@ if ($_REQUEST['action'] == 'confirm_deletesection' && $_REQUEST['confirm'] == 'y
 	if (! $conn_id)
 	{
 		$newsectioniso=utf8_decode($section);
-		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso);
+		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id=$resultarray['conn_id'];
 		$ok=$resultarray['ok'];
 		$mesg=$resultarray['mesg'];
@@ -293,7 +293,7 @@ if ($_REQUEST['action'] == 'download')
 	if (! $conn_id)
 	{
 		$newsectioniso=utf8_decode($section);
-		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso);
+		$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id=$resultarray['conn_id'];
 		$ok=$resultarray['ok'];
 		$mesg=$resultarray['mesg'];
@@ -470,7 +470,7 @@ else
 		// set up a connection or die
 		if (! $conn_id)
 		{
-			$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section);
+			$resultarray=dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive);
 			$conn_id=$resultarray['conn_id'];
 			$ok=$resultarray['ok'];
 			$mesg=$resultarray['mesg'];
@@ -645,7 +645,7 @@ llxFooter();
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive=0)
 {
-	global $langs;
+	global $langs, $conf;
 
 	$ok=1;
 
@@ -657,7 +657,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 
 	if ($ok)
 	{
-		$conn_id = ftp_connect($ftp_server, $ftp_port, 20);
+		$conn_id = ftp_connect($ftp_server, $ftp_port, (empty($conf->global->FTP_CONNECT_TIMEOUT)?40:$conf->global->FTP_CONNECT_TIMEOUT));
 		if ($conn_id)
 		{
 			if ($ftp_user)
@@ -666,7 +666,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 				{
 					// Turn on passive mode transfers (must be after a successful login
 					if ($ftp_passive) ftp_pasv($conn_id, true);
-					
+
 					// Change the dir
 					$newsectioniso=utf8_decode($section);
 					ftp_chdir($conn_id, $newsectioniso);
