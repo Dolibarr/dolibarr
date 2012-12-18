@@ -551,7 +551,7 @@ class ActionComm extends CommonObject
         }
         if (! empty($filter)) $sql.= $filter;
 
-        dol_syslog(get_class($this)."::getActions sql=".$sql);
+        dol_syslog(get_class()."::getActions sql=".$sql);
         $resql=$db->query($sql);
         if ($resql)
         {
