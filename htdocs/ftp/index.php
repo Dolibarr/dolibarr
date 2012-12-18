@@ -63,11 +63,13 @@ $s_ftp_server='FTP_SERVER_'.$numero_ftp;
 $s_ftp_port='FTP_PORT_'.$numero_ftp;
 $s_ftp_user='FTP_USER_'.$numero_ftp;
 $s_ftp_password='FTP_PASSWORD_'.$numero_ftp;
+$s_ftp_passive='FTP_PASSIVE_'.$numero_ftp;
 $ftp_name=$conf->global->$s_ftp_name;
 $ftp_server=$conf->global->$s_ftp_server;
 $ftp_port=$conf->global->$s_ftp_port; if (empty($ftp_port)) $ftp_port=21;
 $ftp_user=$conf->global->$s_ftp_user;
 $ftp_password=$conf->global->$s_ftp_password;
+$ftp_passive=$conf->global->$s_ftp_passive;
 
 $conn_id=0;	// FTP connection ID
 
@@ -413,7 +415,7 @@ else
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
-		print $langs->trans("Port").': <b>'.$ftp_port.'</b><br>';
+		print $langs->trans("Port").': <b>'.$ftp_port.'</b> '.($ftp_passive?"(Passive)":"(Active)").'<br>';
 		print $langs->trans("User").': <b>'.$ftp_user.'</b><br>';
 
 		print $langs->trans("Directory").': ';
@@ -638,9 +640,10 @@ llxFooter();
  * @param 	string	$ftp_user		FTP user
  * @param 	string	$ftp_password	FTP password
  * @param 	string	$section		Directory
+ * @param	string	$ftp_passive	Use a passive mode
  * @return	int 	<0 if OK, >0 if KO
  */
-function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section)
+function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive=0)
 {
 	global $langs;
 
@@ -657,13 +660,13 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 		$conn_id = ftp_connect($ftp_server, $ftp_port, 20);
 		if ($conn_id)
 		{
-			// turn on passive mode transfers
-			//ftp_pasv ($conn_id, true);
-
 			if ($ftp_user)
 			{
 				if (ftp_login($conn_id, $ftp_user, $ftp_password))
 				{
+					// Turn on passive mode transfers (must be after a successful login
+					if ($ftp_passive) ftp_pasv($conn_id, true);
+					
 					// Change the dir
 					$newsectioniso=utf8_decode($section);
 					ftp_chdir($conn_id, $newsectioniso);
