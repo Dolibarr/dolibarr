@@ -657,7 +657,9 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 
 	if ($ok)
 	{
-		$conn_id = ftp_connect($ftp_server, $ftp_port, (empty($conf->global->FTP_CONNECT_TIMEOUT)?40:$conf->global->FTP_CONNECT_TIMEOUT));
+		$connecttimeout=(empty($conf->global->FTP_CONNECT_TIMEOUT)?40:$conf->global->FTP_CONNECT_TIMEOUT);
+		if (! empty($conf->global->FTP_CONNECT_WITH_SSL)) $conn_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
+		else $conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
 		if ($conn_id)
 		{
 			if ($ftp_user)
