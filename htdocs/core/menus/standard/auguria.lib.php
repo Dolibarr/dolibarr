@@ -236,9 +236,21 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         }
     }
 
+	// Modules system tools
+	// TODO Find a way to add parent menu only if child menu exists. For the moment, no ther method than hard coded methods.
+    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
+    {
+       	$langs->load("products");
+       	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
+       	if ($leftmenu=="modulesadmintools")
+       	{
+           	$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",$langs->trans("ProductVatMassChange"),1);
+      	}
+    }
+
     /**
-     * On definit newmenu en fonction de mainmenu et leftmenu
-     * ------------------------------------------------------
+     * We update newmenu with entries found into database
+     * --------------------------------------------------
      */
     if ($mainmenu)
     {
