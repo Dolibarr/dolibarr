@@ -496,7 +496,9 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
             {
                 print "&nbsp;&nbsp;&nbsp;";
             }
-            print $lines[$i]->label;
+            $taskstatic->id=$lines[$i]->id;
+            $taskstatic->ref=$lines[$i]->label;
+            print $taskstatic->getNomUrl(0);
             print "</td>\n";
 
             // Date start

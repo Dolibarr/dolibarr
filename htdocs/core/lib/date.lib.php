@@ -759,15 +759,16 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 }
 
 /**
- *	Function to return number of working days (and text of units) between two dates (jours ouvres)
+ *	Function to return number of working days (and text of units) between two dates (working days)
  *
- *	@param	   timestamp	$timestampStart     Timestamp for start date
- *	@param	   timestamp	$timestampEnd       Timestamp for end date
- *	@param     int			$inhour             0: return number of days, 1: return number of hours (72 max)
- *	@param     int			$lastday            We include last day, 0: no, 1:yes
- *	@return    int								Number of days or hours
+ *	@param	   	timestamp	$timestampStart     Timestamp for start date
+ *	@param	   	timestamp	$timestampEnd       Timestamp for end date
+ *	@param     	int			$inhour             0: return number of days, 1: return number of hours (72h max)
+ *	@param		int			$lastday            We include last day, 0: no, 1:yes
+ *  @param		int			$halfday			Tag to define half day when holiday start and end
+ *	@return    	int								Number of days or hours
  */
-function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
+function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $halfday=0)
 {
 	global $langs;
 
@@ -784,13 +785,13 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $lastday);
 		$nbOpenDay.= " " . $langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
-		return $nbOpenDay;
+		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	}
 	elseif ($timestampStart == $timestampEnd)
 	{
 		$nbOpenDay=$lastday;
 		if ($inhour == 1) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
-		return $nbOpenDay;
+		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	}
 	else
 	{

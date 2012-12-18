@@ -658,8 +658,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			if (! class_exists('HookManager')) {
 				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($db);
 			}
+			$hookmanager=new HookManager($db);
 		}
 		$hookmanager->initHooks(array('fileslib'));
 

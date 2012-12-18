@@ -1724,6 +1724,10 @@ tr.box_titre {
     white-space: nowrap;
 }
 
+tr.box_titre td.boxclose {
+	width: 30px;
+}
+
 tr.box_impair {
 <?php if ($usecss3) { ?>
     background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);

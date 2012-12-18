@@ -52,6 +52,8 @@ $now=dol_now();
 // Si création de la demande
 if ($action == 'create')
 {
+	$cp = new Holiday($db);
+	
     // Si pas le droit de créer une demande
     if(!$user->rights->holiday->write)
     {
@@ -59,9 +61,15 @@ if ($action == 'create')
         exit;
     }
 
-    $date_debut = dol_mktime(0, 0, 0, $_POST['date_debut_month'], $_POST['date_debut_day'], $_POST['date_debut_year']);
-    $date_fin = dol_mktime(0, 0, 0, $_POST['date_fin_month'], $_POST['date_fin_day'], $_POST['date_fin_year']);
-
+    $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
+    $date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+    $starthalfday=GETPOST('starthalfday');
+    $endhalfday=GETPOST('endhalfday');
+    $halfday=0;
+    if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
+    else if ($starthalfday == 'afternoon') $halfday=-1;
+    else if ($endhalfday == 'morning') $halfday=1;
+    
     $valideur = GETPOST('valideur');
     $description = trim(GETPOST('description'));
     $userID = GETPOST('userID');
@@ -80,21 +88,15 @@ if ($action == 'create')
         exit;
     }
 
-    $testDateDebut = $date_debut;
-    $testDateFin = $date_fin;
-
     // Si date de début après la date de fin
-    if($testDateDebut > $testDateFin)
+    if ($date_debut > $date_fin)
     {
         header('Location: fiche.php?action=request&error=datefin');
         exit;
     }
 
-    $cp = new Holiday($db);
-
-    $verifCP = $cp->verifDateHolidayCP($userID,$date_debut,$date_fin);
-
-    // On vérifie si il n'y a pas déjà des congés payés sur cette période
+    // Check if there is already holiday for this period
+    $verifCP = $cp->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
     if (! $verifCP)
     {
         header('Location: fiche.php?action=request&error=alreadyCP');
@@ -102,7 +104,7 @@ if ($action == 'create')
     }
 
     // Si aucun jours ouvrés dans la demande
-    $nbopenedday=num_open_day($testDateDebut,$testDateFin,0,1);
+    $nbopenedday=num_open_day($date_debut, $date_fin, 0, 1, $halfday);
     if($nbopenedday < 1)
     {
         header('Location: fiche.php?action=request&error=DureeHoliday');
@@ -121,7 +123,8 @@ if ($action == 'create')
     $cp->date_debut = $date_debut;
     $cp->date_fin = $date_fin;
     $cp->fk_validator = $valideur;
-
+	$cp->halfday = $halfday;
+	
     $verif = $cp->create($user_id);
 
     // Si pas d'erreur SQL on redirige vers la fiche de la demande
@@ -141,9 +144,15 @@ if ($action == 'create')
 
 if ($action == 'update')
 {
-	$date_debut = dol_mktime(0, 0, 0, $_POST['date_debut_month'], $_POST['date_debut_day'], $_POST['date_debut_year']);
-	$date_fin = dol_mktime(0, 0, 0, $_POST['date_fin_month'], $_POST['date_fin_day'], $_POST['date_fin_year']);
-
+	$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
+	$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+	$starthalfday=GETPOST('starthalfday');
+	$endhalfday=GETPOST('endhalfday');
+	$halfday=0;
+	if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
+	else if ($starthalfday == 'afternoon') $halfday=-1;
+	else if ($endhalfday == 'morning') $halfday=1;
+	
     // Si pas le droit de modifier une demande
     if(!$user->rights->holiday->write)
     {
@@ -175,11 +184,8 @@ if ($action == 'update')
                 exit;
             }
 
-            $testDateDebut = $date_debut;
-            $testDateFin = $date_fin;
-
             // Si date de début après la date de fin
-            if ($testDateDebut > $testDateFin) {
+            if ($date_debut > $date_fin) {
                 header('Location: fiche.php?id='.$_POST['holiday_id'].'&action=edit&error=datefin');
                 exit;
             }
@@ -191,7 +197,7 @@ if ($action == 'update')
             }
 
             // Si pas de jours ouvrés dans la demande
-            $nbopenedday=num_open_day($testDateDebut,$testDateFin,0,1);
+            $nbopenedday=num_open_day($date_debut, $date_fin, 0, 1, $halfday);
             if ($nbopenedday < 1)
             {
                 header('Location: fiche.php?id='.$_POST['holiday_id'].'&action=edit&error=DureeHoliday');
@@ -202,10 +208,10 @@ if ($action == 'update')
             $cp->date_debut = $date_debut;
             $cp->date_fin = $date_fin;
             $cp->fk_validator = $valideur;
-
-            $verif = $cp->update($user->id);
-
-            // Si pas d'erreur SQL on redirige vers la fiche de la demande
+			$cp->halfday = $halfday;
+			
+			// Update
+			$verif = $cp->update($user->id);
             if ($verif > 0)
             {
                 header('Location: fiche.php?id='.$_POST['holiday_id']);
@@ -502,9 +508,9 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
     $userID = $user->id;
 
     // Si statut en attente de validation et valideur = utilisateur
-    if($cp->statut == 2 && $userID == $cp->fk_validator)
+    if ($cp->statut == 2 && $userID == $cp->fk_validator)
     {
-        $cp->date_cancel = date('Y-m-d H:i:s', time());
+        $cp->date_cancel = dol_now();
         $cp->fk_user_cancel = $user->id;
         $cp->statut = 4;
 
@@ -569,6 +575,10 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
  */
 
 $form = new Form($db);
+$cp = new Holiday($db);
+
+$listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
@@ -617,43 +627,39 @@ if (empty($id) || $action == 'add' || $action == 'request')
             dol_htmloutput_mesg('',$errors,'error');
         }
 
-        $cp = new Holiday($db);
 
         $delayForRequest = $cp->getConfCP('delayForRequest');
         //$delayForRequest = $delayForRequest * (60*60*24);
 
         $nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
-        print '<script type="text/javascript">
-       //<![CDATA[
-
-       function valider(){
-         if(document.demandeCP.date_debut_.value != "") {
-
-            if(document.demandeCP.date_fin_.value != "") {
-
-               if(document.demandeCP.valideur.value != "-1") {
-                 return true;
-               }
-               else {
-                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
-                 return false;
-               }
-
-            }
-            else {
-              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
-              return false;
-            }
-         }
-
-         else {
-           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
-           return false;
-         }
-       }
-
-       //]]>
+		print '<script type="text/javascript">
+	    function valider()
+	    {
+    	    if(document.demandeCP.date_debut_.value != "") 
+    	    {
+	           	if(document.demandeCP.date_fin_.value != "") 
+	           	{
+	               if(document.demandeCP.valideur.value != "-1") {
+	                 return true;
+	               }
+	               else {
+	                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+	                 return false;
+	               }
+	            }
+	            else 
+	            {
+	              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+	              return false;
+	            }
+	        }
+	        else 
+	        {
+	           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+	           return false;
+	        }
+       	}
        </script>'."\n";
 
         // Formulaire de demande
@@ -678,6 +684,8 @@ if (empty($id) || $action == 'add' || $action == 'request')
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datepmonth'), GETPOST('datepday'), GETPOST('datepyear'));
             $form->select_date($tmpdate,'date_debut_');
         }
+        print ' &nbsp; &nbsp; ';
+        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
         print '</td>';
         print '</tr>';
         print '<tr>';
@@ -690,6 +698,8 @@ if (empty($id) || $action == 'add' || $action == 'request')
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datefmonth'), GETPOST('datefday'), GETPOST('datefyear'));
             $form->select_date($tmpdate,'date_fin_');
         }
+        print ' &nbsp; &nbsp; ';        
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
         print '</td>';
         print '</tr>';
         print '<tr>';
@@ -738,7 +748,6 @@ else
         // Affichage de la fiche d'une demande de congés payés
         if ($id > 0)
         {
-            $cp = new Holiday($db);
             $cp->fetch($id);
 
             $valideur = new User($db);
@@ -834,7 +843,6 @@ else
 
                 dol_fiche_head($head,'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
-
                 if ($action == 'edit' && $user->id == $cp->fk_user && $cp->statut == 1)
                 {
                     $edit = true;
@@ -845,53 +853,69 @@ else
 
                 print '<table class="border" width="100%">';
                 print '<tbody>';
-                /*print '<tr class="liste_titre">';
-                print '<td colspan="2">'.$langs->trans("InfosCP").'</td>';
-                print '</tr>';*/
 
+                $linkback='';
+                
                 print '<tr>';
                 print '<td width="25%">'.$langs->trans("Ref").'</td>';
-                print '<td>'.$cp->rowid.'</td>';
+                print '<td>';
+                print $form->showrefnav($cp, 'id', $linkback, 1, 'rowid', 'ref');
+                print '</td>';
                 print '</tr>';
 
+			    $starthalfday=($cp->halfday == -1 || $cp->halfday == 2)?'afternoon':'morning';
+			    $endhalfday=($cp->halfday == 1 || $cp->halfday == 2)?'morning':'afternoon';
+			    
                 if(!$edit) {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateDebCP').'</td>';
-                    print '<td>'.dol_print_date($cp->date_debut,'day').'</td>';
+                    print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+                    print '<td>'.dol_print_date($cp->date_debut,'day');
+			        print ' &nbsp; &nbsp; ';
+                    print $langs->trans($listhalfday[$starthalfday]);
+                    print '</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateDebCP').'</td>';
+                    print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
                     $form->select_date($cp->date_debut,'date_debut_');
+			        print ' &nbsp; &nbsp; ';
+        			print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
                     print '</td>';
                     print '</tr>';
                 }
 
-                if(!$edit) {
+                if (!$edit) 
+                {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateFinCP').'</td>';
-                    print '<td>'.dol_print_date($cp->date_fin,'day').'</td>';
+                    print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+                    print '<td>'.dol_print_date($cp->date_fin,'day');
+                    print ' &nbsp; &nbsp; ';
+                    print $langs->trans($listhalfday[$endhalfday]);
+                    print '</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateFinCP').'</td>';
+                    print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
                     $form->select_date($cp->date_fin,'date_fin_');
+			        print ' &nbsp; &nbsp; ';
+        			print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
                     print '</td>';
                     print '</tr>';
                 }
                 print '<tr>';
                 print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
-                print '<td>'.num_open_day($cp->date_debut,$cp->date_fin,0,1).'</td>';
+                print '<td>'.num_open_day($cp->date_debut, $cp->date_fin, 0, 1, $cp->halfday).'</td>';
                 print '</tr>';
 
                 // Status
                 print '<tr>';
                 print '<td>'.$langs->trans('StatutCP').'</td>';
-                print '<td><b>'.$cp->getStatutCP($cp->statut).'</b></td>';
+                print '<td>'.$cp->getLibStatut(2).'</td>';
                 print '</tr>';
-                if($cp->statut == 5) {
+                if ($cp->statut == 5) 
+                {
                 	print '<tr>';
                 	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
                 	print '<td>'.$cp->detail_refuse.'</td>';
@@ -899,12 +923,15 @@ else
                 }
 
                 // Description
-                if(!$edit) {
+                if (!$edit) 
+                {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td>'.nl2br($cp->description).'</td>';
                     print '</tr>';
-                } else {
+                }
+                else 
+                {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$cp->description.'</textarea></td>';
@@ -995,23 +1022,27 @@ else
                     {
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
                     }
-                    if($user->rights->holiday->delete && $cp->statut == 1)
-                    {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butAction">'.$langs->trans("DeleteCP").'</a>';
-                    }
                     if($user->id == $cp->fk_user && $cp->statut == 1)
                     {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=sendToValidate" class="butAction">'.$langs->trans("SendToValidationCP").'</a>';
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
-
-                    // Si le statut est en attente de validation et que le valideur est connecté
-                    if($userID == $cp->fk_validator && $cp->statut == 2)
+                    if($user->rights->holiday->delete && $cp->statut == 1)
                     {
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=valid" class="butAction">'.$langs->trans("ActionValidCP").'</a>';
+                    	print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
+                    }
+                    
+                    // Si le statut est en attente de validation et que le valideur est connecté
+                    if ($userID == $cp->fk_validator && $cp->statut == 2)
+                    {
+                        print '<a href="fiche.php?id='.$_GET['id'].'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
-                        print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     }
 
+                    if (($userID == $cp->fk_validator && $cp->statut == 2) || ($cp->date_debut > dol_now()) || $user->admin)
+                    {
+	                    print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+                    }
+                                    
                     print '</div>';
                 }
 

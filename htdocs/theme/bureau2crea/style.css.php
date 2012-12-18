@@ -1570,6 +1570,10 @@ tr.box_titre {
   -moz-border-radius-topright:6px;
 }
 
+tr.box_titre td.boxclose {
+	width: 30px;
+}
+
 tr.box_impair {
 /* background: #e6ebed; */
 background: #eaeaea;

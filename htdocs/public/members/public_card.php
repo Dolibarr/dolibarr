@@ -72,7 +72,7 @@ llxHeaderVierge($langs->trans("MemberCard"));
 $extralabels=$extrafields->fetch_name_optionals_label('member');
 if ($id > 0)
 {
-	$res=$object->fetch($id,$ref);
+	$res=$object->fetch($id);
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
 	$res=$object->fetch_optionals($object->id,$extralabels);
 
@@ -87,27 +87,22 @@ if ($id > 0)
 		print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
 		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
-
 		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$object->morphy.'</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$object->firstname.'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->pays.'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$object->naiss.'&nbsp;</td></tr>';
 
-		if (isset($object->photo) && $object->photo !=''){
-			print '<tr><td>URL Photo</td><td class="valeur">'."<A HREF=\"$object->photo\"><IMG SRC=\"$object->photo\"></A>".'&nbsp;</td></tr>';
+		if (isset($object->photo) && $object->photo !='')
+		{
+			$form = new Form($db);
+			print '<tr><td>URL Photo</td><td class="valeur">';
+			print $form->showphoto('memberphoto', $object, 64);
+			print '</td></tr>'."\n";
 		}
 		//  foreach($objecto->attribute_label as $key=>$value){
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";

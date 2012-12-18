@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+/* Copyright (C) 2006-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,169 +56,181 @@ $server->wsdl->schemaTargetNamespace=$ns;
 
 // Define WSDL content
 $server->wsdl->addComplexType(
-	'authentication',
-	'complexType',
-	'struct',
-	'all',
-	'',
-	array(
-	'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
-	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
-	'login' => array('name'=>'login','type'=>'xsd:string'),
-	'password' => array('name'=>'password','type'=>'xsd:string'),
-	'entity' => array('name'=>'entity','type'=>'xsd:string'),
-	)
+		'authentication',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'dolibarrkey' => array('name'=>'dolibarrkey','type'=>'xsd:string'),
+				'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
+				'login' => array('name'=>'login','type'=>'xsd:string'),
+				'password' => array('name'=>'password','type'=>'xsd:string'),
+				'entity' => array('name'=>'entity','type'=>'xsd:string')
+		)
 );
 
 $server->wsdl->addComplexType(
-	'line',
-	'complexType',
-	'struct',
-	'all',
-	'',
-	array(
-	'id' => array('name'=>'id','type'=>'xsd:string'),
-	'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
-	'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
-	'desc' => array('name'=>'desc','type'=>'xsd:string'),
-	'qty' => array('name'=>'qty','type'=>'xsd:int'),
-	'price' => array('name'=>'price','type'=>'xsd:double'),
-	'subprice' => array('name'=>'subprice','type'=>'xsd:double'),
-	'tva_tx' => array('name'=>'tva_tx','type'=>'xsd:double'),
+		'line',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'id' => array('name'=>'id','type'=>'xsd:string'),
+				'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
+				'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
+				'desc' => array('name'=>'desc','type'=>'xsd:string'),
+				'qty' => array('name'=>'qty','type'=>'xsd:int'),
+				'price' => array('name'=>'price','type'=>'xsd:double'),
+				'subprice' => array('name'=>'subprice','type'=>'xsd:double'),
+				'tva_tx' => array('name'=>'tva_tx','type'=>'xsd:double'),
 
-	'remise' => array('name'=>'remise','type'=>'xsd:double'),
-	'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
+				'remise' => array('name'=>'remise','type'=>'xsd:double'),
+				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
 
-	'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
-	'product_type' => array('name'=>'product_type','type'=>'xsd:int'),
-	'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
-	'total_tva' => array('name'=>'totaltva','type'=>'xsd:double'),
-	'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
+				'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
+				'product_type' => array('name'=>'product_type','type'=>'xsd:int'),
+				'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
+				'total_tva' => array('name'=>'totaltva','type'=>'xsd:double'),
+				'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
 
-	'date_start' => array('name'=>'date_start','type'=>'xsd:string'),
-	'date_end' => array('name'=>'date_end','type'=>'xsd:string'),
+				'date_start' => array('name'=>'date_start','type'=>'xsd:string'),
+				'date_end' => array('name'=>'date_end','type'=>'xsd:string'),
 
-	// From product
-	'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
-	'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
-	'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
-	)
+				// From product
+				'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
+				'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
+				'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
+		)
 );
 
 $server->wsdl->addComplexType(
-	'LinesArray',
-	'complexType',
-	'array',
-	'',
-	'SOAP-ENC:Array',
-	array(),
-	array(
-	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:line[]')
-	),
-	'tns:line'
-);
-$server->wsdl->addComplexType(
-	'LinesArray2',
-	'complexType',
-	'array',
-	'sequence',
-	'',
-	array(
-	'line' => array(
-	'name' => 'line',
-	'type' => 'tns:line',
-	'minOccurs' => '0',
-	'maxOccurs' => 'unbounded'
-	)
-	)
-);
-
-
-$server->wsdl->addComplexType(
-	'order',
-	'complexType',
-	'struct',
-	'all',
-	'',
-	array(
-		'id' => array('name'=>'id','type'=>'xsd:string'),
-		'ref' => array('name'=>'ref','type'=>'xsd:string'),
-		'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
-		'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-		'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
-		'socid' => array('name'=>'socid','type'=>'xsd:int'),
-		'statut' => array('name'=>'statut','type'=>'xsd:int'),
-		'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
-		'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
-		'total_tva' => array('name'=>'total_tva','type'=>'xsd:double'),
-		'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
-		'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
-		'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
-		'date' => array('name'=>'date','type'=>'xsd:date'),
-		'date_commande' => array('name'=>'date_commande','type'=>'xsd:date'),
-		'remise' => array('name'=>'remise','type'=>'xsd:string'),
-		'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
-		'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
-		'source' => array('name'=>'source','type'=>'xsd:string'),
-		'note' => array('name'=>'note','type'=>'xsd:string'),
-		'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
-		'fk_project' => array('name'=>'fk_project','type'=>'xsd:string'),
-	
-		'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
-		'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
-		'mode_reglement' => array('name'=>'mode_reglement','type'=>'xsd:string'),
-		'cond_reglement_id' => array('name'=>'cond_reglement_id','type'=>'xsd:string'),
-		'cond_reglement_code' => array('name'=>'cond_reglement_code','type'=>'xsd:string'),
-		'cond_reglement' => array('name'=>'cond_reglement','type'=>'xsd:string'),
-		'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
-	
-		'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
-		'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
-		'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
-	
-		'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
-	)
+		'LinesArray',
+		'complexType',
+		'array',
+		'',
+		'SOAP-ENC:Array',
+		array(),
+		array(
+				array(
+						'ref'=>'SOAP-ENC:arrayType',
+						'wsdl:arrayType'=>'tns:line[]'
+				)
+		),
+		'tns:line'
 );
 
 $server->wsdl->addComplexType(
-	'OrdersArray',
-	'complexType',
-	'array',
-	'',
-	'SOAP-ENC:Array',
-	array(),
-	array(
-	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:order[]')
-	),
-	'tns:order'
+		'LinesArray2',
+		'complexType',
+		'array',
+		'sequence',
+		'',
+		array(
+				'line' => array(
+						'name' => 'line',
+						'type' => 'tns:line',
+						'minOccurs' => '0',
+						'maxOccurs' => 'unbounded'
+				)
+		)
 );
 
 $server->wsdl->addComplexType(
-	'OrdersArray2',
-	'complexType',
-	'array',
-	'sequence',
-	'',
-	array(
-		'order' => array(
-		'name' => 'invoice',
-		'type' => 'tns:invoice',
-		'minOccurs' => '0',
-		'maxOccurs' => 'unbounded'
-	)
-	)
+		'order',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'id' => array('name'=>'id','type'=>'xsd:string'),
+				'ref' => array('name'=>'ref','type'=>'xsd:string'),
+				'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
+				'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+				'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
+				'socid' => array('name'=>'socid','type'=>'xsd:int'),
+				'statut' => array('name'=>'statut','type'=>'xsd:int'),
+				'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
+				'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
+				'total_tva' => array('name'=>'total_tva','type'=>'xsd:double'),
+				'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
+				'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
+				'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
+				'date' => array('name'=>'date','type'=>'xsd:date'),
+				'date_commande' => array('name'=>'date_commande','type'=>'xsd:date'),
+				'remise' => array('name'=>'remise','type'=>'xsd:string'),
+				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
+				'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
+				'source' => array('name'=>'source','type'=>'xsd:string'),
+				'note' => array('name'=>'note','type'=>'xsd:string'),
+				'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
+				'fk_project' => array('name'=>'fk_project','type'=>'xsd:string'),
+
+				'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
+				'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
+				'mode_reglement' => array('name'=>'mode_reglement','type'=>'xsd:string'),
+				'cond_reglement_id' => array('name'=>'cond_reglement_id','type'=>'xsd:string'),
+				'cond_reglement_code' => array('name'=>'cond_reglement_code','type'=>'xsd:string'),
+				'cond_reglement' => array('name'=>'cond_reglement','type'=>'xsd:string'),
+				'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
+
+				'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
+				'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
+				'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
+
+				'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
+		)
 );
 
 $server->wsdl->addComplexType(
-	'result',
-	'complexType',
-	'struct',
-	'all',
-	'',
-	array(
-		'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
-	)
+		'OrdersArray',
+		'complexType',
+		'array',
+		'',
+		'SOAP-ENC:Array',
+		array(),
+		array(
+				array(
+						'ref'=>'SOAP-ENC:arrayType',
+						'wsdl:arrayType'=>'tns:order[]'
+				)
+		),
+		'tns:order'
+);
+
+$server->wsdl->addComplexType(
+		'OrdersArray2',
+		'complexType',
+		'array',
+		'sequence',
+		'',
+		array(
+				'order' => array(
+						'name' => 'invoice',
+						'type' => 'tns:invoice',
+						'minOccurs' => '0',
+						'maxOccurs' => 'unbounded'
+				)
+		)
+);
+
+$server->wsdl->addComplexType(
+		'result',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'result_code' => array(
+						'name'=>'result_code',
+						'type'=>'xsd:string'
+				),
+				'result_label' => array(
+						'name'=>'result_label',
+						'type'=>'xsd:string'
+				),
+		)
 );
 
 
@@ -230,54 +243,50 @@ $styleuse='encoded';   // encoded/literal/literal wrapped
 // Better choice is document/literal wrapped but literal wrapped not supported by nusoap.
 
 // Register WSDL
-$server->register('getOrder',
-// Entry values
-	array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'),
-	// Exit values
-	array('result'=>'tns:result','order'=>'tns:order'),
-	$ns,
-	$ns.'#getOrder',
-	$styledoc,
-	$styleuse,
-	'WS to get a particular invoice'
+$server->register(
+		'getOrder',
+		array('authentication'=>'tns:authentication','id'=>'xsd:string','ref'=>'xsd:string','ref_ext'=>'xsd:string'), // Entry values
+		array('result'=>'tns:result','order'=>'tns:order'),	// Exit values
+		$ns,
+		$ns.'#getOrder',
+		$styledoc,
+		$styleuse,
+		'WS to get a particular invoice'
 );
 
-$server->register('getOrdersForThirdParty',
-// Entry values
-	array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),
-	// Exit values
-	array('result'=>'tns:result','orders'=>'tns:OrdersArray2'),
-	$ns,
-	$ns.'#getOrdersForThirdParty',
-	$styledoc,
-	$styleuse,
-	'WS to get all orders of a third party'
+$server->register(
+		'getOrdersForThirdParty',
+		array('authentication'=>'tns:authentication','idthirdparty'=>'xsd:string'),	// Entry values
+		array('result'=>'tns:result','orders'=>'tns:OrdersArray2'),	// Exit values
+		$ns,
+		$ns.'#getOrdersForThirdParty',
+		$styledoc,
+		$styleuse,
+		'WS to get all orders of a third party'
 );
 
-$server->register('createOrder',
-// Entry values
-	array('authentication'=>'tns:authentication','order'=>'tns:order'),
-	// Exit values
-	array('result'=>'tns:result','id'=>'xsd:string'),
-	$ns,
-	$ns.'#createOrder',
-	$styledoc,
-	$styleuse,
-	'WS to create an order'
+$server->register(
+		'createOrder',
+		array('authentication'=>'tns:authentication','order'=>'tns:order'),	// Entry values
+		array('result'=>'tns:result','id'=>'xsd:string'),	// Exit values
+		$ns,
+		$ns.'#createOrder',
+		$styledoc,
+		$styleuse,
+		'WS to create an order'
 );
 
 
 // Register WSDL
-$server->register('validOrder',
-// Entry values
-	array('authentication'=>'tns:authentication','id'=>'xsd:string'),
-	// Exit values
-	array('result'=>'tns:result'),
-	$ns,
-	$ns.'#validOrder',
-	$styledoc,
-	$styleuse,
-	'WS to valid an order'
+$server->register(
+		'validOrder',
+		array('authentication'=>'tns:authentication','id'=>'xsd:string'),	// Entry values
+		array('result'=>'tns:result'),	// Exit values
+		$ns,
+		$ns.'#validOrder',
+		$styledoc,
+		$styleuse,
+		'WS to valid an order'
 );
 
 /**
@@ -605,7 +614,7 @@ function createOrder($authentication,$order)
 
 	$now=dol_now();
 
-	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid'] );
+	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
 
 	// Init and check authentication
 	$objectresp=array();
@@ -633,17 +642,17 @@ function createOrder($authentication,$order)
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
 		$newobject->date_commande=$now;
-		
+
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines=array();
 		if (isset($order['lines']['line'][0])) $arrayoflines=$order['lines']['line'];
 		else $arrayoflines=$order['lines'];
-		
+
 		foreach($arrayoflines as $key => $line)
 		{
 			// $key can be 'line' or '0','1',...
 			$newline=new OrderLigne($db);
-		
+
 			$newline->type=$line['type'];
 			$newline->desc=$line['desc'];
 			$newline->fk_product=$line['fk_product'];
@@ -656,7 +665,7 @@ function createOrder($authentication,$order)
 			$newline->fk_product=$line['fk_product'];
 			$newobject->lines[]=$newline;
 		}
-		
+
 
 		$db->begin();
 
@@ -762,7 +771,7 @@ function validOrder($authentication,$id='')
 	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
-	else 
+	else
 	{
 		$db->commit();
 		$objectresp= array('result'=>array('result_code'=>'OK', 'result_label'=>''));

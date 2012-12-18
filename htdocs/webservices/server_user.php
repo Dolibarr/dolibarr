@@ -28,6 +28,7 @@ require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 
 dol_syslog("Call User webservices interfaces");
@@ -148,6 +149,44 @@ $server->wsdl->addComplexType(
 	'tns:group'
 );
 
+$server->wsdl->addComplexType(
+	'thirdpartywithuser',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+		// For thirdparty and contact 
+		'name' => array('name'=>'name','type'=>'xsd:string'),
+		'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
+		'name_thirdparty' => array('name'=>'name_thirdparty','type'=>'xsd:string'),
+		'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+		'client' => array('name'=>'client','type'=>'xsd:string'),
+		'fournisseur' => array('name'=>'fournisseur','type'=>'xsd:string'),
+		'address' => array('name'=>'address','type'=>'xsd:string'),
+		'zip' => array('name'=>'zip','type'=>'xsd:string'),
+		'town' => array('name'=>'town','type'=>'xsd:string'),
+		'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+		'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+		'phone' => array('name'=>'phone','type'=>'xsd:string'),
+		'fax' => array('name'=>'fax','type'=>'xsd:string'),
+		'email' => array('name'=>'email','type'=>'xsd:string'),
+		'url' => array('name'=>'url','type'=>'xsd:string'),
+		'profid1' => array('name'=>'profid1','type'=>'xsd:string'),
+		'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
+		'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
+		'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
+		'profid5' => array('name'=>'profid5','type'=>'xsd:string'),
+		'profid6' => array('name'=>'profid6','type'=>'xsd:string'),
+		'capital' => array('name'=>'capital','type'=>'xsd:string'),
+		'tva_assuj' => array('name'=>'tva_assuj','type'=>'xsd:string'),
+		'tva_intra' => array('name'=>'tva_intra','type'=>'xsd:string'),
+		// 	For user
+		'login' => array('name'=>'login','type'=>'xsd:string'),
+		'password' => array('name'=>'password','type'=>'xsd:string')
+	)
+);
+
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
@@ -183,6 +222,19 @@ $server->register(
 	$styledoc,
 	$styleuse,
 	'WS to get list of groups'
+);
+
+$server->register(
+	'CreateUserFromThirdparty',
+	// Entry values
+	array('authentication'=>'tns:authentication','thirdpartywithuser'=>'tns:thirdpartywithuser'),
+	// Exit values
+	array('result'=>'tns:result','id'=>'xsd:string'),
+	$ns,
+	$ns.'#CreateUserFromThirdparty',
+	$styledoc,
+	$styleuse,
+	'WS to create an external user with thirdparty and contact'
 );
 
 
@@ -366,6 +418,181 @@ function getListOfGroups($authentication)
 }
 
 
+/**
+ * Create an external user with thirdparty and contact
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$thirdpartywithuser Datas
+ * @return	mixed
+ */
+function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
+{
+	global $db,$conf,$langs;
+
+	dol_syslog("Function: CreateUserFromThirdparty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+
+	if ($fuser->societe_id) $socid=$fuser->societe_id;
+
+	if (! $error && ! $thirdpartywithuser)
+	{
+		$error++;
+		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter thirdparty must be provided.";
+	}
+
+	if (! $error)
+	{
+		$fuser->getrights();
+
+		if ($fuser->rights->societe->creer)
+		{
+			$thirdparty=new Societe($db);
+
+			// If a contact / company already exists with the email, return the corresponding socid
+			$sql = "SELECT s.rowid as societe_id FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
+			$sql.= " WHERE s.entity=".$conf->entity;
+			$sql.= " AND s.email='".$db->escape($thirdpartywithuser['email'])."'";
+			$sql.= " OR sp.email='".$db->escape($thirdpartywithuser['email'])."'";
+			$sql.= $db->plimit(1);
+
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				// If a company or socpeopel is found with the same email we return an error
+				$row = $db->fetch_object($resql);
+				if ($row)
+				{
+					$error++;
+					$errorcode='ALREADY_EXIST'; $errorlabel='Object not create : company or contact exists '.$thirdpartywithuser['email'];
+				}
+				else
+				{
+					/*
+					 * Company creation
+					 */
+					$thirdparty->name=$thirdpartywithuser['name_thirdparty'];
+					$thirdparty->ref_ext=$thirdpartywithuser['ref_ext'];
+					$thirdparty->address=$thirdpartywithuser['address'];
+					$thirdparty->zip=$thirdpartywithuser['zip'];
+					$thirdparty->town=$thirdpartywithuser['town'];
+					$thirdparty->country_id=$thirdpartywithuser['country_id'];
+					$thirdparty->country_code=$thirdpartywithuser['country_code'];
+					$thirdparty->phone=$thirdpartywithuser['phone'];
+					$thirdparty->fax=$thirdpartywithuser['fax'];
+					$thirdparty->email=$thirdpartywithuser['email'];
+					$thirdparty->url=$thirdpartywithuser['url'];
+					$thirdparty->ape=$thirdpartywithuser['ape'];
+					$thirdparty->idprof1=$thirdpartywithuser['prof1'];
+					$thirdparty->idprof2=$thirdpartywithuser['prof2'];
+					$thirdparty->idprof3=$thirdpartywithuser['prof3'];
+					$thirdparty->idprof4=$thirdpartywithuser['prof4'];
+					$thirdparty->idprof5=$thirdpartywithuser['prof5'];
+					$thirdparty->idprof6=$thirdpartywithuser['prof6'];
+					
+					$thirdparty->client=$thirdpartywithuser['client'];
+					$thirdparty->fournisseur=$thirdpartywithuser['fournisseur'];
+
+					$socid_return=$thirdparty->create($fuser);
+				
+					if ($socid_return > 0)
+					{
+						$thirdparty->fetch($socid_return);
+					
+						/*
+						 * Contact creation
+						*
+						*/
+						$contact = new Contact($db);
+						$contact->socid = $thirdparty->id;
+						$contact->lastname = $thirdparty->name;
+						$contact->firstname = $thirdparty->firstname;
+						$contact->civilite_id = $thirdparty->civilite_id;
+						$contact->address = $thirdparty->address;
+						$contact->zip = $thirdparty->zip;
+						$contact->town = $thirdparty->town;
+						$contact->email = $thirdparty->email;
+						$contact->phone_pro = $thirdparty->tel;
+						$contact->phone_mobile = $thirdparty->phone_mobile;
+						$contact->fax = $thirdparty->fax;
+
+						$contact_id =  $contact->create($user);
+						
+						if ($contact_id > 0)
+						{
+							/*
+							 * User creation
+							*
+							*/
+							$edituser = new User($db);
+							$db->begin();
+	
+							$id = $edituser->create_from_contact($contact,$thirdpartywithuser["login"]);
+							if ($id > 0)
+							{
+								$edituser->setPassword($user,trim($thirdpartywithuser['password']));
+							}
+							else
+							{
+								$error++;
+								$errorcode='NOT_CREATE'; $errorlabel='Object not create : no contact found or create';
+							}
+						
+	
+							if (! $error && $id > 0)
+							{
+								$db->commit();
+							}
+							else
+							{
+								$db->rollback();
+								$error++;
+								$errorcode='NOT_CREATE'; $errorlabel='Contact not create';
+							}
+						}
+	
+						if(!$error) {
+							$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>'SUCCESS'),'id'=>$socid_return);
+							$error=0;
+						}
+					}
+					else
+					{
+						$error++;
+						$errors=($thirdparty->error?array($thirdparty->error):$thirdparty->errors);
+					}
+				}
+			}
+			else
+			{
+				// retour creation KO
+				$error++;
+				$errorcode='NOT_CREATE'; $errorlabel='Object not create';
+			}
+		}
+		else
+		{
+			$error++;
+			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array(
+		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
+		);
+	}
+
+	return $objectresp;
+}
 
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
