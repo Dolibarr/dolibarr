@@ -171,6 +171,11 @@ export list="
     --ignore-table=$base.llx_abonne_extrafields 
     --ignore-table=$base.llx_abonne_type
     --ignore-table=$base.llx_abonnement 
+	--ignore-table=$base.llx_bt_namemap
+	--ignore-table=$base.llx_bt_speedlimit
+	--ignore-table=$base.llx_bt_summary
+	--ignore-table=$base.llx_bt_timestamps
+	--ignore-table=$base.llx_bt_webseedfiles
 	--ignore-table=$base.llx_dolicloud_customers
 	--ignore-table=$base.llx_c_dolicloud_plans
 	--ignore-table=$base.llx_cabinetmed_c_banques
@@ -182,7 +187,11 @@ export list="
 	--ignore-table=$base.llx_cabinetmed_exambio
 	--ignore-table=$base.llx_cabinetmed_examenprescrit
 	--ignore-table=$base.llx_cabinetmed_motifcons
-	--ignore-table=$base.llx_cabinetmed_patient" 
+	--ignore-table=$base.llx_cabinetmed_patient
+	--ignore-table=$base.llx_publi_c_contact_list 
+	--ignore-table=$base.llx_publi_c_dnd_list
+	--ignore-table=$base.llx_publi_c_method_list 
+	" 
 echo "mysqldump -P$port -u$admin -p***** $list $base > $mydir/$dumpfile"
 mysqldump -P$port -u$admin $passwd $list $base > $mydir/$dumpfile
 export res=$?
