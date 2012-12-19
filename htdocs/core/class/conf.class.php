@@ -113,17 +113,14 @@ class Conf
 
 	/**
 	 *	Load setup values into conf object (read llx_const)
+	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
 	 *
-	 *	@param      DoliDB		$db		Handler d'acces base
+	 *	@param      DoliDB		$db		Database handler
 	 *	@return     int					< 0 if KO, >= 0 if OK
 	 */
 	function setValues($db)
 	{
 		dol_syslog(get_class($this)."::setValues");
-
-		// Avoid warning if not defined
-		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
-		if (empty($this->db->dolibarr_main_db_cryptkey))   $this->db->dolibarr_main_db_cryptkey='';
 
 		/*
 		 * Definition de toutes les constantes globales d'environnement
@@ -164,13 +161,19 @@ class Conf
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
 						{
 							$params=explode(':',$value,2);
-							$this->tabs_modules[$params[0]][]=$value;
+							$this->tabs_modules[$params[0]][]=$value;				// Add this module in list of modules that provide tabs
 						}
 						// If this is constant for a sms engine
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SMS$/i',$key,$reg))
 						{
 							$modulename=strtolower($reg[1]);
-							$this->sms_engine_modules[$modulename]=$modulename;    // Add this module in list of modules that provide SMS
+							$this->sms_engine_modules[$modulename]=$modulename;		// Add this module in list of modules that provide SMS
+						}
+						// If this is constant for a societe submodule
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SOCIETE$/i',$key,$reg))
+						{
+							$modulename=strtolower($reg[1]);
+							$this->societe_modules[$modulename]=$modulename;		// Add this module in list of modules that provide societe modules
 						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
@@ -395,7 +398,7 @@ class Conf
         $this->format_date_hour_text="%d %B %Y %H:%M";
 
         // Duration of workday
-        if (! isset($conf->global->MAIN_DURATION_OF_WORKDAY)) $this->global->MAIN_DURATION_OF_WORKDAY=86400;
+        if (! isset($this->global->MAIN_DURATION_OF_WORKDAY)) $this->global->MAIN_DURATION_OF_WORKDAY=86400;
 
 		// Limites decimales si non definie (peuvent etre egale a 0)
 		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;

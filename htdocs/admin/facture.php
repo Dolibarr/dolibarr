@@ -778,7 +778,8 @@ print "</table>\n";
 
 dol_htmloutput_mesg($mesg);
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

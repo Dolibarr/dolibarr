@@ -245,6 +245,7 @@ $configfileparameters=array(
 		'separator' => '',
 		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
 		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
+		'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
 		'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
 		'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
 		'?dolibarr_lib_PHPEXCEL_PATH' => 'dolibarr_lib_PHPEXCEL_PATH',
@@ -259,7 +260,8 @@ $configfileparameters=array(
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 		'separator' => '',
 		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
-		'?dolibarr_strict_mode' => 'Strict mode is on/off'
+		'?dolibarr_strict_mode' => 'Strict mode is on/off',
+		'?dolibarr_pdf_force_fpdf' => 'Force fpdf usage to generate PDF'
 );
 
 $var=true;

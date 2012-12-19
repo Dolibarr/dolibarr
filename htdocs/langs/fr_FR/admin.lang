@@ -347,6 +347,8 @@ TextLong=Texte long
 Int=Numérique entier
 Float=Décimal
 DateAndTime=Date et heure
+LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
+WarningUsingFPDF=Attention: Votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalitée (Unicode, transparence des images, langues cyrillic, arabes ou asiatiques...), aussi vous pouvez rencontrez des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir un support complet de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">librairie TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>   
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

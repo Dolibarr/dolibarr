@@ -91,7 +91,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	// Protection et encryption du pdf
+	// Protection and encryption of pdf
 	if (empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		/* Permission supported by TCPDF
@@ -123,7 +123,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	// If we use FPDF class, we may need to add method writeHTMLCell
 	if (! empty($conf->global->MAIN_USE_FPDF) && ! method_exists($pdf, 'writeHTMLCell'))
 	{
-		// Declare here a class to overwrite FPDFI to add method writeHTMLCell
+		// Declare here a class to overwrite FPDI to add method writeHTMLCell
 		/**
 		 *	This class if a enhanced FPDI class that support method writeHTMLCell
 		 */

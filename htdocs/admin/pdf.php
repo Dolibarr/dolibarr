@@ -24,11 +24,12 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 $langs->load("admin");
 $langs->load("languages");
@@ -55,14 +56,14 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT",    $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'',$conf->entity);
-	
+
 	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
 	{
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
 	}
-	
+
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -208,7 +209,7 @@ if ($action == 'edit')	// Edit
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
-    
+
     if ($conf->global->MAIN_FEATURES_LEVEL > 1)
     {
     	//Desc
@@ -216,13 +217,13 @@ if ($action == 'edit')	// Edit
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
     	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC:0,1);
     	print '</td></tr>';
-    	
+
     	//Ref
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
     	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF:0,1);
     	print '</td></tr>';
-    	
+
     	//Details
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
@@ -372,7 +373,7 @@ else	// Show
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
     print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
     print '</td></tr>';
-       
+
     if ($conf->global->MAIN_FEATURES_LEVEL > 1)
     {
     	//Desc
@@ -380,13 +381,13 @@ else	// Show
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
     	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
     	print '</td></tr>';
-    	 
+
     	//Ref
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
     	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
     	print '</td></tr>';
-    	 
+
     	//Details
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
@@ -397,6 +398,69 @@ else	// Show
 	print '</table>';
 
 
+	/*
+	 *  Library
+	 */
+	print '<br>';
+	print_titre($langs->trans("Library"));
+
+	print '<table class="noborder" width="100%">'."\n";
+
+	print '<tr class="liste_titre">'."\n";
+	print '<td>'.$langs->trans("Name").'</td>'."\n";
+	print '<td>'.$langs->trans("Value").'</td>'."\n";
+	print "</tr>\n";
+
+	$var=false;
+	if (! empty($dolibarr_pdf_force_fpdf))
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'>'."\n";
+		print '<td>dolibarr_pdf_force_fpdf</td>'."\n";
+		print '<td>';
+		print $dolibarr_pdf_force_fpdf;
+		print '</td>';
+		print '</tr>';
+	}
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'>'."\n";
+	print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
+	print '<td>';
+	$i=0;
+	$pdf=pdf_getInstance('A4');
+	if (class_exists('FPDF') && ! class_exists('TCPDF'))
+	{
+		if ($i) print ' + ';
+		print 'FPDF';
+		print ' ('.@constant('FPDF_PATH').')';
+		$i++;
+	}
+	if (class_exists('TCPDF'))
+	{
+		if ($i) print ' + ';
+		print 'TCPDF';
+		print ' ('.@constant('TCPDF_PATH').')';
+		$i++;
+	}
+	if (class_exists('FPDI'))
+	{
+		if ($i) print ' + ';
+		print 'FPDI';
+		print ' ('.@constant('FPDI_PATH').')';
+		$i++;
+	}
+	print '<!-- $conf->global->MAIN_USE_FPDF = '.$conf->global->MAIN_USE_FPDF.' -->';
+	print '</td>'."\n";
+	print '</tr>'."\n";
+
+	print "</table>\n";
+
+	if (! empty($dolibarr_pdf_force_fpdf))
+	{
+		print info_admin($langs->trans("WarningUsingFPDF")).'<br>';
+	}
+
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
@@ -404,7 +468,7 @@ else	// Show
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

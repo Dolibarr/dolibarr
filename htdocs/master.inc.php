@@ -41,7 +41,8 @@ require_once 'filefunc.inc.php';	// May have been already require by main.inc.ph
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 
 $conf = new Conf();
-// Identifiant propres au serveur base de donnee
+
+// Set properties specific to database
 $conf->db->host							= $dolibarr_main_db_host;
 $conf->db->port							= $dolibarr_main_db_port;
 $conf->db->name							= $dolibarr_main_db_name;
@@ -53,38 +54,35 @@ $conf->db->character_set				= $dolibarr_main_db_character_set;
 $conf->db->dolibarr_main_db_collation	= $dolibarr_main_db_collation;
 $conf->db->dolibarr_main_db_encryption	= $dolibarr_main_db_encryption;
 $conf->db->dolibarr_main_db_cryptkey	= $dolibarr_main_db_cryptkey;
+if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');	// Force db type (for test purpose, by PHP unit for example)
+
+// Set properties specific to conf file
 $conf->file->main_limit_users			= $dolibarr_main_limit_users;
 $conf->file->mailing_limit_sendbyweb	= $dolibarr_mailing_limit_sendbyweb;
-// Identification mode
-$conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;
-// Force https
-$conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;
-// Cookie cryptkey
-$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;
-// Define array of document root directories
-$conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);
+$conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;	// Identification mode
+$conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
+$conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
+$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
+$conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);										// Define array of document root directories
 if (! empty($dolibarr_main_document_root_alt))
 {
-	// dolibarr_main_document_root_alt contains several directories
+	// dolibarr_main_document_root_alt can contains several directories
 	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
 	foreach($values as $value)
 	{
 		$conf->file->dol_document_root['alt']=$value;
 	}
 }
-// Force db type (for test purpose)
-if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');
-// Force php strict mode (for debug)
-$conf->file->strict_mode = empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;
-// Force Multi-Company transverse mode
-$conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
-// Force entity in login page
-$conf->multicompany->force_entity = empty($multicompany_force_entity)?'':(int) $multicompany_force_entity;
+
+// Set properties specific to multicompany
+$conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;		// Force Multi-Company transverse mode
+$conf->multicompany->force_entity = empty($multicompany_force_entity)?'':(int) $multicompany_force_entity;			// Force entity in login page
 
 // Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';		// Need 500ko memory
 if (! defined('NOREQUIRETRAN')) require_once DOL_DOCUMENT_ROOT .'/core/class/translate.class.php';
 if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+
 
 /*
  * Creation objet $langs (must be before all other code)
@@ -213,5 +211,8 @@ if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR')
 
 // We force feature to help debug
 //$conf->global->MAIN_JS_ON_PAYMENT=0;
+
+// We force FPDF
+if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
 
 ?>
