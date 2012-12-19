@@ -2674,7 +2674,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
- * 	@return	int				   					0 if not found, localtax if found
+ * 	@return	mixed			   					0 if not found, localtax if found
  *  @see get_default_tva
  */
 function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
@@ -2683,10 +2683,10 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
-	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller=".$thirdparty_seller->id);
+	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller id=".$thirdparty_seller->id);
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain, localtaxes are qualified if both supplier and seller use local taxe
+	if ($mysoc->country_code == 'ES') // For spain and localtaxes 1, tax is qualified if buyer use local taxe
 	{
 		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
 		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
@@ -2699,7 +2699,6 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
 
 	$code_country=$thirdparty_seller->country_code;
-
 	if (is_object($thirdparty_buyer))
 	{
 		if ($code_country != $thirdparty_buyer->country_code) return 0;
@@ -2718,6 +2717,38 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 		$obj = $db->fetch_object($resql);
 		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
 		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
+	}
+
+	return 0;
+}
+
+/**
+ *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
+ *
+ *  @param		real	$vatrate			VAT Rate
+ *  @param		int		$local              Number of localtax (1 / 2)
+ *  @param		int		$thirdparty         company object
+ *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
+ *  @deprecated	TODO We should remove this function by storing rate and type into detail lines.
+ */
+function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
+{
+	global $db;
+
+	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
+
+	// Search local taxes
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
+	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1);
+		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2);
 	}
 
 	return 0;
@@ -4201,35 +4232,7 @@ function getCurrencySymbol($currency_code)
 
 	return $currency_sign;
 }
-/**
- * Get type of one localtax
- *
- *  @param		int	$vatrate			VAT Rate
- *  @param		int	$number             Number of localtax (1 / 2)
- *  @param		int	$thirdparty         company object
- *  @return		array      				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
- */
 
-function getTypeOfLocalTaxFromRate($vatrate, $number, $thirdparty)
-{
-	global $db;
-
-	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
-	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-  		if ($number == 1) return array($obj->localtax1_type, $obj->localtax1);
-  		elseif ($number == 2) return array($obj->localtax2_type, $obj->localtax2);
-	}
-
-	return 0;
-}
 
 if (! function_exists('getmypid'))
 {

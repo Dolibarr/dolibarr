@@ -118,6 +118,8 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 
 		$this->tva=array();
+		$this->localtax1=array();
+		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -374,8 +376,8 @@ class pdf_einstein extends ModelePDFCommandes
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 
 					// TODO : store local taxes types into object lines and remove this
-					$localtax1_array=getTypeOfLocalTaxFromRate($vatrate,1,$mysoc);
-					$localtax2_array=getTypeOfLocalTaxFromRate($vatrate,2,$mysoc);
+					$localtax1_array=getLocalTaxesFromRate($vatrate,1,$mysoc);
+					$localtax2_array=getLocalTaxesFromRate($vatrate,2,$mysoc);
 					if (empty($localtax1_type))
 						$localtax1_type = $localtax1_array[0];
 					if (empty($localtax2_type))
