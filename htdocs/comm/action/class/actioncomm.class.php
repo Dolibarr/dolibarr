@@ -528,6 +528,7 @@ class ActionComm extends CommonObject
     /**
      *   Load all objects with filters
      *
+     *   @param		DoliDb	$db				Database handler
      *   @param		int		$socid			Filter by thirdparty
      * 	 @param		int		$fk_element		Id of element action is linked to
      *   @param		string	$elementtype	Type of element action is linked to

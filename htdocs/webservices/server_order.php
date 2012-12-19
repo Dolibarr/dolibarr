@@ -444,6 +444,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 
 /**
  * Get list of orders for third party
+ *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
@@ -604,6 +605,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 
 /**
  * Create order
+ *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$order				Order info
  * @return	int								Id of new order
@@ -701,6 +703,7 @@ function createOrder($authentication,$order)
 
 /**
  * Valid an order
+ *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
  * @return	array							Array result

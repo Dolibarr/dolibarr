@@ -25,27 +25,27 @@
 function GetFolders( $resourceType, $currentFolder )
 {
 	// Map the virtual path to the local server path.
-	$sServerDir = ServerMapFolder( $resourceType, $currentFolder, 'GetFolders' );
+	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFolders');
 
 	// Array that will hold the folders names.
 	$aFolders	= array();
 
-	$oCurrentFolder = @opendir( $sServerDir );
+	$oCurrentFolder = @opendir($sServerDir);
 
 	if ($oCurrentFolder !== false)
 	{
-		while ( $sFile = readdir( $oCurrentFolder ) )
+		while ( $sFile = readdir($oCurrentFolder) )
 		{
-			if ( $sFile != '.' && $sFile != '..' && is_dir( $sServerDir . $sFile ) )
-				$aFolders[] = '<Folder name="' . ConvertToXmlAttribute( $sFile ) . '" />' ;
+			if ( $sFile != '.' && $sFile != '..' && is_dir($sServerDir . $sFile) )
+				$aFolders[] = '<Folder name="' . ConvertToXmlAttribute($sFile) . '" />' ;
 		}
-		closedir( $oCurrentFolder );
+		closedir($oCurrentFolder);
 	}
 
 	// Open the "Folders" node.
 	echo "<Folders>" ;
 
-	natcasesort( $aFolders );
+	natcasesort($aFolders);
 	foreach ( $aFolders as $sFolder )
 		echo $sFolder ;
 
@@ -56,44 +56,44 @@ function GetFolders( $resourceType, $currentFolder )
 function GetFoldersAndFiles( $resourceType, $currentFolder )
 {
 	// Map the virtual path to the local server path.
-	$sServerDir = ServerMapFolder( $resourceType, $currentFolder, 'GetFoldersAndFiles' );
+	$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'GetFoldersAndFiles');
 
 	// Arrays that will hold the folders and files names.
 	$aFolders	= array();
 	$aFiles		= array();
 
-	$oCurrentFolder = @opendir( $sServerDir );
+	$oCurrentFolder = @opendir($sServerDir);
 
 	if ($oCurrentFolder !== false)
 	{
-		while ( $sFile = readdir( $oCurrentFolder ) )
+		while ( $sFile = readdir($oCurrentFolder) )
 		{
 			if ( $sFile != '.' && $sFile != '..' )
 			{
-				if ( is_dir( $sServerDir . $sFile ) )
-					$aFolders[] = '<Folder name="' . ConvertToXmlAttribute( $sFile ) . '" />' ;
+				if ( is_dir($sServerDir . $sFile) )
+					$aFolders[] = '<Folder name="' . ConvertToXmlAttribute($sFile) . '" />' ;
 				else
 				{
-					$iFileSize = @filesize( $sServerDir . $sFile );
+					$iFileSize = @filesize($sServerDir . $sFile);
 					if ( !$iFileSize ) {
 						$iFileSize = 0 ;
 					}
 					if ( $iFileSize > 0 )
 					{
-						$iFileSize = round( $iFileSize / 1024 );
+						$iFileSize = round($iFileSize / 1024);
 						if ( $iFileSize < 1 )
 							$iFileSize = 1 ;
 					}
 
-					$aFiles[] = '<File name="' . ConvertToXmlAttribute( $sFile ) . '" size="' . $iFileSize . '" />' ;
+					$aFiles[] = '<File name="' . ConvertToXmlAttribute($sFile) . '" size="' . $iFileSize . '" />' ;
 				}
 			}
 		}
-		closedir( $oCurrentFolder );
+		closedir($oCurrentFolder);
 	}
 
 	// Send the folders
-	natcasesort( $aFolders );
+	natcasesort($aFolders);
 	echo '<Folders>' ;
 
 	foreach ( $aFolders as $sFolder )
@@ -102,7 +102,7 @@ function GetFoldersAndFiles( $resourceType, $currentFolder )
 	echo '</Folders>' ;
 
 	// Send the files
-	natcasesort( $aFiles );
+	natcasesort($aFiles);
 	echo '<Files>' ;
 
 	foreach ( $aFiles as $sFiles )
@@ -122,20 +122,20 @@ function CreateFolder( $resourceType, $currentFolder )
 	if ( isset( $_GET['NewFolderName'] ) )
 	{
 		$sNewFolderName = $_GET['NewFolderName'] ;
-		$sNewFolderName = SanitizeFolderName( $sNewFolderName );
+		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
-		if ( strpos( $sNewFolderName, '..' ) !== FALSE )
+		if (strpos($sNewFolderName, '..') !== FALSE)
 			$sErrorNumber = '102' ;		// Invalid folder name.
 		else
 		{
 			// Map the virtual path to the local server path of the current folder.
-			$sServerDir = ServerMapFolder( $resourceType, $currentFolder, 'CreateFolder' );
+			$sServerDir = ServerMapFolder($resourceType, $currentFolder, 'CreateFolder');
 
-			if ( is_writable( $sServerDir ) )
+			if ( is_writable($sServerDir) )
 			{
 				$sServerDir .= $sNewFolderName ;
 
-				$sErrorMsg = CreateServerFolder( $sServerDir );
+				$sErrorMsg = CreateServerFolder($sServerDir);
 
 				switch ( $sErrorMsg )
 				{
@@ -172,8 +172,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sErrorNumber = '0' ;
 	$sFileName = '' ;
 
-	if ( isset( $_FILES['NewFile'] ) && !is_null( $_FILES['NewFile']['tmp_name'] )
-       # This is for the QuickUpload tab box
+	if ( isset( $_FILES['NewFile'] ) && !is_null($_FILES['NewFile']['tmp_name'])
+       // This is for the QuickUpload tab box
         or (isset($_FILES['upload']) and !is_null($_FILES['upload']['tmp_name'])))
 	{
 		global $Config ;
@@ -181,21 +181,21 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$oFile = isset($_FILES['NewFile']) ? $_FILES['NewFile'] : $_FILES['upload'];
 
 		// Map the virtual path to the local server path.
-		$sServerDir = ServerMapFolder( $resourceType, $currentFolder, $sCommand );
+		$sServerDir = ServerMapFolder($resourceType, $currentFolder, $sCommand);
 
 		// Get the uploaded file name.
 		$sFileName = $oFile['name'] ;
-		$sFileName = SanitizeFileName( $sFileName );
+		$sFileName = SanitizeFileName($sFileName);
 
 		$sOriginalFileName = $sFileName ;
 
 		// Get the extension.
-		$sExtension = substr( $sFileName, ( strrpos($sFileName, '.') + 1 ) );
-		$sExtension = strtolower( $sExtension );
+		$sExtension = substr($sFileName, (strrpos($sFileName, '.') + 1));
+		$sExtension = strtolower($sExtension);
 
 		if ( isset( $Config['SecureImageUploads'] ) )
 		{
-			if ( ( $isImageValid = IsImageValid( $oFile['tmp_name'], $sExtension ) ) === false )
+			if ( ( $isImageValid = IsImageValid($oFile['tmp_name'], $sExtension) ) === false )
 			{
 				$sErrorNumber = '202' ;
 			}
@@ -203,15 +203,15 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 		if ( isset( $Config['HtmlExtensions'] ) )
 		{
-			if ( !IsHtmlExtension( $sExtension, $Config['HtmlExtensions'] ) &&
-				( $detectHtml = DetectHtml( $oFile['tmp_name'] ) ) === true )
+			if (!IsHtmlExtension($sExtension, $Config['HtmlExtensions']) &&
+				($detectHtml = DetectHtml($oFile['tmp_name'])) === true)
 			{
 				$sErrorNumber = '202' ;
 			}
 		}
 
 		// Check if it is an allowed extension.
-		if ( !$sErrorNumber && IsAllowedExt( $sExtension, $resourceType ) )
+		if ( !$sErrorNumber && IsAllowedExt($sExtension, $resourceType) )
 		{
 			$iCounter = 0 ;
 
@@ -219,17 +219,17 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 			{
 				$sFilePath = $sServerDir . $sFileName ;
 
-				if ( is_file( $sFilePath ) )
+				if ( is_file($sFilePath) )
 				{
 					$iCounter++ ;
-					$sFileName = RemoveExtension( $sOriginalFileName ) . '(' . $iCounter . ').' . $sExtension ;
+					$sFileName = RemoveExtension($sOriginalFileName) . '(' . $iCounter . ').' . $sExtension ;
 					$sErrorNumber = '201' ;
 				}
 				else
 				{
-					move_uploaded_file( $oFile['tmp_name'], $sFilePath );
+					move_uploaded_file($oFile['tmp_name'], $sFilePath);
 
-					if ( is_file( $sFilePath ) )
+					if ( is_file($sFilePath) )
 					{
 						if ( isset( $Config['ChmodOnUpload'] ) && !$Config['ChmodOnUpload'] )
 						{
@@ -244,25 +244,25 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 						}
 
 						$oldumask = umask(0);
-						chmod( $sFilePath, $permissions );
-						umask( $oldumask );
+						chmod($sFilePath, $permissions);
+						umask($oldumask);
 					}
 
 					break ;
 				}
 			}
 
-			if ( file_exists( $sFilePath ) )
+			if ( file_exists($sFilePath) )
 			{
 				//previous checks failed, try once again
-				if ( isset( $isImageValid ) && $isImageValid === -1 && IsImageValid( $sFilePath, $sExtension ) === false )
+				if ( isset( $isImageValid ) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false )
 				{
-					@unlink( $sFilePath );
+					@unlink($sFilePath);
 					$sErrorNumber = '202' ;
 				}
-				else if ( isset( $detectHtml ) && $detectHtml === -1 && DetectHtml( $sFilePath ) === true )
+				else if ( isset( $detectHtml ) && $detectHtml === -1 && DetectHtml($sFilePath) === true )
 				{
-					@unlink( $sFilePath );
+					@unlink($sFilePath);
 					$sErrorNumber = '202' ;
 				}
 			}
@@ -274,8 +274,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$sErrorNumber = '202' ;
 
 
-	$sFileUrl = CombinePaths( GetResourceTypePath( $resourceType, $sCommand ) , $currentFolder );
-	$sFileUrl = CombinePaths( $sFileUrl, $sFileName );
+	$sFileUrl = CombinePaths(GetResourceTypePath($resourceType, $sCommand), $currentFolder);
+	$sFileUrl = CombinePaths($sFileUrl, $sFileName);
 
 
 	// DOL_CHANGE
@@ -283,18 +283,18 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	if($CKEcallback == '')
     {
         // this line already exists so wrap the if block around it
-        SendUploadResults( $sErrorNumber, $sFileUrl, $sFileName );
+        SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
     }
     else
-    {
-    //issue the CKEditor Callback
-    SendCKEditorResults (
-        $CKEcallback,
-        $sFileUrl,
-        ($sErrorNumber != 0 ? 'Error '. $sErrorNumber. ' upload failed.' : 'Upload Successful')
-    );
-  }
+	{
+	    //issue the CKEditor Callback
+		SendCKEditorResults(
+			$CKEcallback,
+			$sFileUrl,
+			($sErrorNumber != 0 ? 'Error '. $sErrorNumber. ' upload failed.' : 'Upload Successful')
+    	);
+	}
 
-	exit ;
+	exit;
 }
 ?>

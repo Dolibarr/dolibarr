@@ -107,7 +107,6 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * Export the message
 	 *
 	 * @param  	array 	$content 	Array containing the info about the message
-     * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
 	 * @return	void
 	 */
 	public function export($content)

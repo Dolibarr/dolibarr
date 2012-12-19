@@ -129,6 +129,13 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 */
 		class FPDI_DolExtended extends FPDI
 		{
+			/**
+			 * __call
+			 *
+			 * @param 	string	$method		Method
+			 * @param 	mixed	$args		Arguments
+			 * @return 	void
+			 */
 			public function __call($method, $args)
 			{
 				if (isset($this->$method)) {
@@ -137,6 +144,22 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 				}
 			}
 
+			/**
+			 * writeHTMLCell
+			 *
+			 * @param unknown_type $w			Width
+			 * @param unknown_type $h			Height
+			 * @param unknown_type $x			X
+			 * @param unknown_type $y			Y
+			 * @param unknown_type $html		Html
+			 * @param unknown_type $border		Border
+			 * @param unknown_type $ln			Ln
+			 * @param unknown_type $fill		Fill
+			 * @param unknown_type $reseth		Reseth
+			 * @param unknown_type $align		Align
+			 * @param unknown_type $autopadding	Autopadding
+			 * @return void
+			 */
 			public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
 			{
 				$this->SetXY($x,$y);
