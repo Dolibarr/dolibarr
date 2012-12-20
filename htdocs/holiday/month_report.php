@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       month_report.php
+ *   	\file       htdocs/holiday/month_report.php
  *		\ingroup    holiday
  *		\brief      Monthly report of paid holiday.
  */
@@ -113,7 +113,7 @@ if($num == '0') {
 
 		$holidaystatic->id=$holiday['rowid'];
 		$holidaystatic->ref=$holiday['rowid'];
-		
+
 		$start_date=$db->jdate($holiday['date_debut']);
 		$end_date=$db->jdate($holiday['date_fin']);
 		/*if(substr($holiday['date_debut'],5,2)==$month-1){

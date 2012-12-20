@@ -19,7 +19,7 @@
 /**
  *		File that defines the balance of paid holiday of users.
  *
- *   	\file       define_holiday.php
+ *   	\file       htdocs/holiday/define_holiday.php
  *		\ingroup    holiday
  *		\brief      File that defines the balance of paid holiday of users.
  */

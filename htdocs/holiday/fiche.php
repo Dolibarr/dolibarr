@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       fiche.php
+ *   	\file       htdocs/holiday/fiche.php
  *		\ingroup    holiday
  *		\brief      Form and file creation of paid holiday.
  */
