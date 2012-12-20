@@ -46,10 +46,13 @@ $search_idprof1=trim(GETPOST('search_idprof1'));
 $search_idprof2=trim(GETPOST('search_idprof2'));
 $search_idprof3=trim(GETPOST('search_idprof3'));
 $search_idprof4=trim(GETPOST('search_idprof4'));
+$search_idprof5=trim(GETPOST('search_idprof5'));
+$search_idprof6=trim(GETPOST('search_idprof6'));
 $search_sale=trim(GETPOST("search_sale"));
 $search_categ=trim(GETPOST("search_categ"));
 $mode=GETPOST("mode");
 $modesearch=GETPOST("mode_search");
+$search_type=trim(GETPOST('search_type'));
 
 $sortfield=GETPOST("sortfield",'alpha');
 $sortorder=GETPOST("sortorder",'alpha');
@@ -107,6 +110,11 @@ if ($mode == 'search')
     {
         $sql .= " AND cs.fk_categorie = ".$search_categ;
     }
+    // Filter on type of thirdparty
+	if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
+	if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
+	if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
+	
 	$result=$db->query($sql);
 	if ($result)
 	{
@@ -147,6 +155,7 @@ if (GETPOST("button_removefilter_x"))
 	$search_idprof2='';
 	$search_idprof3='';
 	$search_idprof4='';
+	$search_type='';
 }
 
 if ($socname)
@@ -187,13 +196,6 @@ if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = s
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";   // Join for the needed table to filter by categ
-// TODO $stcomm is not defined !
-/*
-if (dol_strlen($stcomm))
-{
-	$sql.= " AND s.fk_stcomm=".$stcomm;
-}
-*/
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 // Insert sale filter
 if ($search_sale)
@@ -227,27 +229,17 @@ if ($search_nom)
 	$sql.= " OR s.url LIKE '%".$db->escape($search_nom)."%'";
 	$sql.= ")";
 }
-
-if ($search_ville)
-{
-	$sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
-}
-if ($search_idprof1)
-{
-	$sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
-}
-if ($search_idprof2)
-{
-	$sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
-}
-if ($search_idprof3)
-{
-	$sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
-}
-if ($search_idprof4)
-{
-	$sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
-}
+if ($search_ville)   $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'";
+if ($search_idprof1) $sql .= " AND s.siren LIKE '%".$db->escape($search_idprof1)."%'";
+if ($search_idprof2) $sql .= " AND s.siret LIKE '%".$db->escape($search_idprof2)."%'";
+if ($search_idprof3) $sql .= " AND s.ape LIKE '%".$db->escape($search_idprof3)."%'";
+if ($search_idprof4) $sql .= " AND s.idprof4 LIKE '%".$db->escape($search_idprof4)."%'";
+if ($search_idprof5) $sql .= " AND s.idprof5 LIKE '%".$db->escape($search_idprof5)."%'";
+if ($search_idprof6) $sql .= " AND s.idprof6 LIKE '%".$db->escape($search_idprof6)."%'";
+// Filter on type of thirdparty
+if ($search_type > 0 && in_array($search_type,array('1,3','2,3'))) $sql .= " AND s.client IN (".$db->escape($search_type).")";
+if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND s.fournisseur = 1";
+if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 //print $sql;
 
 // Count total nb of records
@@ -362,7 +354,17 @@ if ($resql)
 	print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$search_idprof4.'">';
 	print '</td>';
 	// Type (customer/prospect/supplier)
-	print '<td colspan="2" class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="middle">';
+	print '<select class="flat" name="search_type">';
+	print '<option value="-1"'.($search_type==''?' selected="selected"':'').'>&nbsp;</option>';
+	print '<option value="1,3"'.($search_type=='1,3'?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
+	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
+	//if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($search_type=='3'?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+	print '<option value="4"'.($search_type=='4'?' selected="selected"':'').'>'.$langs->trans('Supplier').'</option>';
+	print '<option value="0"'.($search_type=='0'?' selected="selected"':'').'>'.$langs->trans('Others').'</option>';
+	print '</select></td>';
+	// Status	
+	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp; ';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
