@@ -28,8 +28,9 @@ function CombinePaths( $sBasePath, $sFolder )
 /**
  * GetResourceTypePath
  *
- * @param unknown_type $resourceType
- * @param unknown_type $sCommand
+ * @param 	string		$resourceType	Resource type
+ * @param 	string		$sCommand		Command
+ * @return	string						Config
  */
 function GetResourceTypePath($resourceType, $sCommand)
 {
@@ -44,8 +45,8 @@ function GetResourceTypePath($resourceType, $sCommand)
 /**
  * GetResourceTypeDirectory
  *
- * @param unknown_type $resourceType
- * @param unknown_type $sCommand
+ * @param unknown_type $resourceType	Resource type
+ * @param unknown_type $sCommand		Command
  * @return string
  */
 function GetResourceTypeDirectory($resourceType, $sCommand)
@@ -77,7 +78,8 @@ function GetUrlFromPath($resourceType, $folderPath, $sCommand)
 /**
  * RemoveExtension
  *
- * @param unknown_type $fileName
+ * @param 	string		$fileName	Filename
+ * @return	string					String without extension
  */
 function RemoveExtension($fileName)
 {
@@ -86,9 +88,10 @@ function RemoveExtension($fileName)
 /**
  * ServerMapFolder
  *
- * @param unknown_type $resourceType
- * @param unknown_type $folderPath
- * @param unknown_type $sCommand
+ * @param 	string	$resourceType	Resource type
+ * @param 	string	$folderPath		Folder
+ * @param 	string	$sCommand		Command
+ * @return	void
  */
 function ServerMapFolder($resourceType, $folderPath, $sCommand)
 {
@@ -112,8 +115,9 @@ function GetParentFolder( $folderPath )
 /**
  * CreateServerFolder
  *
- * @param unknown_type $folderPath
- * @param unknown_type $lastFolder
+ * @param 	string	$folderPath		Folder
+ * @param 	string	$lastFolder		Folder
+ * @return	string					''=success, error message otherwise
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
 {
