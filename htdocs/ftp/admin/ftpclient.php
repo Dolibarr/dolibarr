@@ -114,7 +114,7 @@ if (GETPOST('delete','alpha'))
 		if ($result2) $result3=dolibarr_del_const($db,"FTP_USER_" . $entry,$conf->entity);
 		if ($result3) $result4=dolibarr_del_const($db,"FTP_PASSWORD_" . $entry,$conf->entity);
 		if ($result4) $result5=dolibarr_del_const($db,"FTP_NAME_" . $entry,$conf->entity);
-		if ($result4) $result5=dolibarr_del_const($db,"FTP_PASSIVE_" . $entry,$conf->entity);
+		if ($result4) $result6=dolibarr_del_const($db,"FTP_PASSIVE_" . $entry,$conf->entity);
 		
         if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
         {
