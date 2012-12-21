@@ -281,7 +281,10 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             if ($element == 'order_supplier') {
                 $element = 'fourn'; $subelement = 'fournisseur.commande';
             }
-
+            if ($element == 'project')
+            {
+            	$element = 'projet';
+            }            
             $object->origin    = $_POST['origin'];
             $object->origin_id = $_POST['originid'];
 
@@ -949,6 +952,7 @@ if ($action == 'create')
         if ($element == 'project')
         {
             $projectid=GETPOST('originid');
+            $element = 'projet';            
         }
         else if (in_array($element,array('order_supplier')))
         {
