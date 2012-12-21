@@ -2,7 +2,7 @@
 /* Copyright (C) 2012	Nicolas Péré		<nicolas@amarok2.net>
  * Copyright (C) 2012	Xavier Peyronnet	<xavier.peyronnet@free.fr>
  * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
- * Version 0.6 (2012-10-30)
+ * Copyright (C) 2012	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -652,7 +652,7 @@ div.ficheaddleft {
 
 /* boutons : */
 .button, .butAction {background: #999;border: solid 1px #666;}
-.butActionRefused {background: #ccc;}
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6)}
 .butActionDelete {background: #b33c37;border:solid 1px #8d2f2b;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {
@@ -688,7 +688,7 @@ border-left: solid 1px rgba(0,0,0,.3);
 
 td.formdocbutton {padding-top:6px;}
 
-.button:hover, .butAction:hover, .butActionRefused:hover, .butActionDelete:hover {
+.button:hover, .butAction:hover, .butActionDelete:hover {
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
