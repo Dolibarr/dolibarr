@@ -19,7 +19,7 @@
 /**
  *  Displays the log of actions performed in the module.
  *
- *  \file       view_log.php
+ *  \file       htdocs/holiday/view_log.php
  *  \ingroup    holiday
  */
 
