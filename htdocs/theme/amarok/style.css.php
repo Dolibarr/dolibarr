@@ -909,7 +909,7 @@ tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td {paddin
 	-moz-box-shadow:2px 4px 2px #cccccc;
 	-webkit-box-shadow:2px 4px 2px #cccccc;
 	box-shadow:2px 4px 2px #cccccc;
-	white-space:nowrap;
+	/*white-space:nowrap;*/
 }
 
 .box {
