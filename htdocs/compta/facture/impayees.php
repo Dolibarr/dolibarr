@@ -128,6 +128,20 @@ if ($action == "builddoc" && $user->rights->facture->lire)
 	}
 }
 
+// Remove file
+if ($action == 'remove_file')
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$langs->load("other");
+	$upload_dir = $diroutputpdf;
+	$file = $upload_dir . '/' . GETPOST('file');
+	$ret=dol_delete_file($file,0,0,0,'');
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	$action='';
+}
+
 
 
 /*
