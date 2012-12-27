@@ -241,6 +241,11 @@ alter table llx_facturedet add column localtax2_type varchar(1) after localtax2_
 ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(1);
 ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(1);
 
+alter table llx_facturedet_rec add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_facturedet_rec add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax2_type varchar(1);
+
 alter table llx_propaldet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_propaldet add column localtax2_type varchar(1) after localtax2_tx;
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(1);
