@@ -736,7 +736,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
     // Check parameters
     if (! is_object($object)) dol_print_error('','BadParameter');
 
-    $now=dol_now();
+    $now=dol_now('tzuser');
     $out='';
 
     if (! empty($conf->agenda->enabled))
@@ -902,7 +902,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
     $out='';
     $histo=array();
     $numaction = 0 ;
-    $now=dol_now();
+    $now=dol_now('tzuser');
 
     if (! empty($conf->agenda->enabled))
     {
