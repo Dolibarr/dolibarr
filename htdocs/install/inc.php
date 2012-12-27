@@ -200,17 +200,36 @@ if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
 // Force usage of log file for install and upgrades
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-if (! defined('SYSLOG_FILE_ON')) define('SYSLOG_FILE_ON',1);
 if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
 {
-    if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-    else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
-    else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
-    else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
-    else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
-    //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+	if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+	else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
+	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
+	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
+	else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
+	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
 }
 if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
+// We init log handler for install
+$handlers = array('mod_syslog_file');
+foreach ($handlers as $handler)
+{
+	$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+	if (!file_exists($file))
+	{
+		throw new Exception('Missing log handler file '.$handler.'.php');
+	}
+
+	require_once $file;
+	$loghandlerinstance = new $handler();
+	if (!$loghandlerinstance instanceof LogHandlerInterface)
+	{
+		throw new Exception('Log handler does not extend LogHandlerInterface');
+	}
+
+	$conf->loghandlers[]=$loghandlerinstance;
+}
+
 
 // Removed magic_quotes
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.4
