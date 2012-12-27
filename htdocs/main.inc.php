@@ -1149,8 +1149,22 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     $toprightmenu='';
 
+	// Define menu manager in setup
+	if (empty($user->societe_id))    // If internal user or not defined
+	{
+		$conf->top_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
+		$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
+	}
+	else                        // If external user
+	{
+		$conf->top_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+		$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
+	}
+	// For backward compatibility
+	if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
+	elseif ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
     if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
-
+    
     // For backward compatibility with old modules
     if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 

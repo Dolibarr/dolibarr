@@ -530,7 +530,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>'.$langs->trans("Poste").'</td>';
     print '<td>'.$langs->trans("PhonePro").'</td>';
     print '<td>'.$langs->trans("PhoneMobile").'</td>';
-    print '<td>'.$langs->trans("Fax").'</td>'; // TODO Fax is obsolete, not used by several companies
+    print '<td>'.$langs->trans("Fax").'</td>';
     print '<td>'.$langs->trans("EMail").'</td>';
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
@@ -578,7 +578,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print dol_print_phone($obj->phone_mobile,$country_code,$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX'); // TODO Fax is obsolete, not used by several companies
+            print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX');
             print '</td>';
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
@@ -586,9 +586,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
-                print img_object($langs->trans("Rendez-Vous"),"action_rdv");
-                print '</a> <a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                print '<td align="center">';
+                if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+                {
+                	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
+                	print '</a> ';
+                }
+                print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 print img_object($langs->trans("Event"),"action");
                 print '</a></td>';
             }
@@ -731,7 +736,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
     // Check parameters
     if (! is_object($object)) dol_print_error('','BadParameter');
 
-    $now=dol_now();
+    $now=dol_now('tzuser');
     $out='';
 
     if (! empty($conf->agenda->enabled))
@@ -897,7 +902,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
     $out='';
     $histo=array();
     $numaction = 0 ;
-    $now=dol_now();
+    $now=dol_now('tzuser');
 
     if (! empty($conf->agenda->enabled))
     {

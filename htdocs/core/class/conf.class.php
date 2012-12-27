@@ -439,22 +439,6 @@ class Conf
 		if (isset($this->contrat))   $this->contract=$this->contrat;
 		if (isset($this->categorie)) $this->category=$this->categorie;
 
-
-        // Define menu manager in setup
-        if (empty($user->societe_id))    // If internal user or not defined
-        {
-            $this->top_menu=(empty($this->global->MAIN_MENU_STANDARD_FORCED)?$this->global->MAIN_MENU_STANDARD:$this->global->MAIN_MENU_STANDARD_FORCED);
-            $this->smart_menu=(empty($this->global->MAIN_MENU_SMARTPHONE_FORCED)?$this->global->MAIN_MENU_SMARTPHONE:$this->global->MAIN_MENU_SMARTPHONE_FORCED);
-        }
-        else                        // If external user
-        {
-            $this->top_menu=(empty($this->global->MAIN_MENUFRONT_STANDARD_FORCED)?$this->global->MAIN_MENUFRONT_STANDARD:$this->global->MAIN_MENUFRONT_STANDARD_FORCED);
-            $this->smart_menu=(empty($this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$this->global->MAIN_MENUFRONT_SMARTPHONE:$this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-        }
-        // For backward compatibility
-        if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
-        elseif ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
-
         // Object $mc
         if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
         {

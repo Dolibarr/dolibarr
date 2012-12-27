@@ -1971,10 +1971,10 @@ class Form
     /**
      *      Return list of events that triggered an object creation
      *
-     *      @param	int		$selected        Id du type d'origine pre-selectionne
+     *      @param	int		$selected        Id or code of type origin to select by default
      *      @param  string	$htmlname        Nom de la zone select
      *      @param  string	$exclude         To exclude a code value (Example: SRC_PROP)
-     *		@param	int		$addempty		Add an empty entry
+     *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
     function select_demand_reason($selected='',$htmlname='demandreasonid',$exclude='',$addempty=0)
@@ -1989,7 +1989,7 @@ class Form
         {
             if ($arraydemandreason['code']==$exclude) continue;
 
-            if ($selected == $arraydemandreason['id'])
+            if ($selected && ($selected == $arraydemandreason['id'] || $selected == $arraydemandreason['code']))
             {
                 print '<option value="'.$arraydemandreason['id'].'" selected="selected">';
             }

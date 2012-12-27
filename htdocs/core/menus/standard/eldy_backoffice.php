@@ -28,14 +28,13 @@
 
 
 /**
- *      \class      MenuTop
- *	    \brief      Class to manage top menu Eldy (for internal users)
+ *	Class to manage top menu Eldy (for internal users)
  */
 class MenuTop
 {
 	var $db;
 	var $require_left=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
+	var $type_user=0;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
 
@@ -59,7 +58,7 @@ class MenuTop
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
-		print_eldy_menu($this->db,$this->atarget,$this->hideifnotallowed);
+		print_eldy_menu($this->db,$this->atarget,$this->type_user);
 	}
 
 }
