@@ -34,7 +34,7 @@ class Segment implements IteratorAggregate, Countable
         $this->xml = (string) $xml;
 		$this->odf = $odf;
         $zipHandler = $this->odf->getConfig('ZIP_PROXY');
-        $this->file = new $zipHandler();	
+        $this->file = new $zipHandler($this->odf->getConfig('PATH_TO_TMP'));
         $this->_analyseChildren($this->xml);
     }
     /**
