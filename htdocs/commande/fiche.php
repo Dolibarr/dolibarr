@@ -1394,6 +1394,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
 				$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 
+				$datedelivery		= (!empty($objectsrc->date_livraison)?$objectsrc->date_livraison:'');
+				
 				$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
 				$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
@@ -1410,6 +1412,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			$remise_percent     = $soc->remise_percent;
 			$remise_absolue     = 0;
 			$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			$projectid          = 0;
 		}
 		$absolute_discount=$soc->getAvailableDiscounts();
 
@@ -1432,7 +1435,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 		// Reference client
 		print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
-		print '<input type="text" name="ref_client" value=""></td>';
+		//print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
+		print '<input type="text" name="ref_client" value=""></td>';	// We must not use ref_client of proposal for an order
 		print '</tr>';
 
 		// Client
@@ -1463,43 +1467,37 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 		// Date de livraison
 		print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
-		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY))
+		if (empty($datedelivery))
 		{
-			$datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		}
-		else
-		{
-			$datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+			else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 		}
 		$form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
 		print "</td></tr>";
 
 		// Conditions de reglement
 		print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-		$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
+		$form->select_conditions_paiements($cond_reglement_id,'cond_reglement_id',-1,1);
 		print '</td></tr>';
 
 		// Mode de reglement
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-		$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+		$form->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 		print '</td></tr>';
 
 		// Delivery delay
 		print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-		$form->select_availability($propal->availability,'availability_id','',1);
+		$form->select_availability($availability_id,'availability_id','',1);
 		print '</td></tr>';
 
 		// What trigger creation
 		print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
-		$form->select_demand_reason(($origin=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
+		$form->select_demand_reason($demand_reason_id,'demand_reason_id','',1);
 		print '</td></tr>';
 
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			$projectid = 0;
-			if ($origin == 'project') $projectid = ($originid?$originid:0);
-
 			print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 			$numprojet=select_projects($soc->id,$projectid);
 			if ($numprojet==0)
