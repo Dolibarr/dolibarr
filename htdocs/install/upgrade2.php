@@ -3317,15 +3317,21 @@ function migrate_mode_reglement($db,$langs,$conf)
 
 				$db->begin();
 
+				$sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET ";
+				$sqla.= "fk_paiement = ".$elements['new_id'][$key];
+				$sqla.= " WHERE fk_paiement = ".$old_id;
+				$sqla.= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".$old_id." AND code = '".$elements['code'][$key]."')";
+				$resqla = $db->query($sqla);
+
 				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
 				$sql.= "id = ".$elements['new_id'][$key];
 				$sql.= " WHERE id = ".$old_id;
 				$sql.= " AND code = '".$elements['code'][$key]."'";
-
 				$resql = $db->query($sql);
-				if ($resql)
+
+				if ($resqla && $resql)
 				{
-					foreach($elements['tables'] as $table)
+					foreach($elements['tables'] as $table)		// FIXME We must not update tables if oldid is not renamed
 					{
 						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 						$sql.= "fk_mode_reglement = ".$elements['new_id'][$key];
