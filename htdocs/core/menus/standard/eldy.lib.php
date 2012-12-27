@@ -29,7 +29,7 @@
  *
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target
- * @param 	int		$type_user     	0=Internal,1=External,2=All
+ * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
  * @return	void
  */
 function print_eldy_menu($db,$atarget,$type_user)
