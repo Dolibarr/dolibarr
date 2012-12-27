@@ -27,7 +27,9 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 Group: Productivity/Office/Management
 Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, dejavu
 Requires: mysql-community-server, mysql-community-server-client 
+%if 0%{?suse_version}
 BuildRequires: update-desktop-files fdupes
+%endif
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
 AutoReqProv: no
@@ -119,12 +121,15 @@ do
   fi
 done >>%{name}.lang
 
+%if 0%{?suse_version}
 
 # Enable this command to tag desktop file for suse
 %suse_update_desktop_file dolibarr
 
 # Enable this command to allow suse detection of duplicate files and create hardlinks instead
 %fdupes $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs
+
+%endif
 
 
 #---- clean

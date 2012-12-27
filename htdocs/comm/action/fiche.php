@@ -352,7 +352,7 @@ if ($action == 'update')
 				$actioncomm->array_options[$key]=GETPOST($key);
 			}
 		}
-		
+
 		if (! $error)
 		{
 			$db->begin();
@@ -646,7 +646,7 @@ if ($id)
 	$act = new ActionComm($db);
 	$result=$act->fetch($id);
 	$act->fetch_optionals($id,$extralabels);
-	
+
 	if ($result < 0)
 	{
 		dol_print_error($db,$act->error);
@@ -786,16 +786,19 @@ if ($id)
 
 		print '<table class="border" width="100%">';
 
-		// Company
-		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
-		print '<td>';
-		print $form->select_company($act->societe->id,'socid','',1,1);
-		print '</td>';
+		// Thirdparty - Contact
+		if ($conf->societe->enabled)
+		{
+			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td>';
+			print '<td>';
+			print $form->select_company($act->societe->id,'socid','',1,1);
+			print '</td>';
 
-		// Contact
-		print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-		print $form->selectarray("contactid", (empty($act->societe->id)?array():$act->societe->contact_array()), $act->contact->id, 1);
-		print '</td></tr>';
+			// Contact
+			print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
+			print $form->selectarray("contactid", (empty($act->societe->id)?array():$act->societe->contact_array()), $act->contact->id, 1);
+			print '</td></tr>';
+		}
 
 		// Project
 		if (! empty($conf->projet->enabled))
@@ -803,7 +806,7 @@ if ($id)
 			// Projet associe
 			$langs->load("project");
 
-			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td width="30%" valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
 			$numprojet=select_projects($act->societe->id,$act->fk_project,'projectid');
 			if ($numprojet==0)
 			{
@@ -813,7 +816,7 @@ if ($id)
 		}
 
 		// Priority
-		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td nowrap width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.($act->priority?$act->priority:'').'" size="5">';
 		print '</td></tr>';
 
@@ -835,7 +838,7 @@ if ($id)
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-        
+
 		print '</table>';
 
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
@@ -852,7 +855,7 @@ if ($id)
 			}
 			print '</table><br><br>';
 		}
-	
+
 
 		print '<center><br><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -958,39 +961,41 @@ if ($id)
 		print '</table><br><br><table class="border" width="100%">';
 
 		// Third party - Contact
-		print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
-		if ($act->societe->id && $act->type_code == 'AC_TEL')
+		if ($conf->societe->enabled)
 		{
-			if ($act->societe->fetch($act->societe->id))
+			print '<tr><td width="30%">'.$langs->trans("ActionOnCompany").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
+			if ($act->societe->id && $act->type_code == 'AC_TEL')
 			{
-				print "<br>".dol_print_phone($act->societe->tel);
-			}
-		}
-		print '</td>';
-		print '<td>'.$langs->trans("Contact").'</td>';
-		print '<td>';
-		if ($act->contact->id > 0)
-		{
-			print $act->contact->getNomUrl(1);
-			if ($act->contact->id && $act->type_code == 'AC_TEL')
-			{
-				if ($act->contact->fetch($act->contact->id))
+				if ($act->societe->fetch($act->societe->id))
 				{
-					print "<br>".dol_print_phone($act->contact->phone_pro);
+					print "<br>".dol_print_phone($act->societe->tel);
 				}
 			}
+			print '</td>';
+			print '<td>'.$langs->trans("Contact").'</td>';
+			print '<td>';
+			if ($act->contact->id > 0)
+			{
+				print $act->contact->getNomUrl(1);
+				if ($act->contact->id && $act->type_code == 'AC_TEL')
+				{
+					if ($act->contact->fetch($act->contact->id))
+					{
+						print "<br>".dol_print_phone($act->contact->phone_pro);
+					}
+				}
+			}
+			else
+			{
+				print $langs->trans("None");
+			}
+			print '</td></tr>';
 		}
-		else
-		{
-			print $langs->trans("None");
-		}
-
-		print '</td></tr>';
 
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td width="30%" valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
 			if ($act->fk_project)
 			{
 				$project=new Project($db);
@@ -1001,7 +1006,7 @@ if ($id)
 		}
 
 		// Priority
-		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td nowrap width="30%">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print ($act->priority?$act->priority:'');
 		print '</td></tr>';
 
@@ -1022,10 +1027,10 @@ if ($id)
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
-		
+
 		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{	
+		{
 			print '<br><br><table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
