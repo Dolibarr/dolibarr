@@ -712,12 +712,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 				// Modules system tools
                 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
 	            {
-	            	$langs->load("products");
-	            	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
-	            	if ($leftmenu=="modulesadmintools")
-	            	{
-	                	$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",$langs->trans("ProductVatMassChange"),1);
-	            	}
+			    	if (empty($user->societe_id))
+			    	{
+		            	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
+		            	if ($leftmenu=="modulesadmintools" && $user->admin)
+		            	{
+		            		$langs->load("products");
+		            		$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+		            	}
+			    	}
 	            }
             }
 

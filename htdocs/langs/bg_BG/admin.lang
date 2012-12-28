@@ -340,7 +340,6 @@ SecurityTokenIsUnique=Използвайте уникална параметър
 EnterRefToBuildUrl=Въведете справка за обект %s
 GetSecuredUrl=Изчислява URL
 ButtonHideUnauthorized=Скриване на бутоните за неправомерни действия, вместо да се показва с увреждания бутони
-ModulesSystemTools=Модули инструменти
 ProductVatMassChange=Промяната в масата ДДС
 ProductVatMassChangeDesc=Тази страница може да се използва за промяна на ДДС ставката, определена за продукти или услуги от стойността на друг. Внимание, тази промяна се прави на цялата база данни.
 OldVATRates=Old ставка на ДДС

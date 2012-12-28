@@ -339,7 +339,6 @@ GetSecuredUrl=Obtener la URL calculada
 ButtonHideUnauthorized=Ocultar los botones de acciones no autorizadas en vez de mostrarlos atenuados
 TotalNumberOfActivatedModules=Número total de módulos activados: <b>%s</b>
 YouMustEnableOneModule=Debe activar al menos 1 módulo.
-ModulesSystemTools=Módulos utilidades
 ProductVatMassChange=Modificar IVA en masa
 ProductVatMassChangeDesc=Esta página le permite cambiar el tipo de IVA definido en  los productos o servicios de un valor a otro. Tenga en cuenta que el cambio se lleva a cabo en masa sobre toda la base de datos.
 OldVATRates=Tasa de IVA antigua

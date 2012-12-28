@@ -629,6 +629,8 @@ LinkedToSpecificUsers=Liés à un contact utilisateur particulier
 DeleteAFile=Suppression de fichier
 ConfirmDeleteAFile=Confirmez-vous la suppression du fichier
 NoResults=Aucun résultat
+ModulesSystemTools=Outils Modules
+View=Voir
 
 # Week day
 Monday=Lundi
@@ -659,5 +661,3 @@ ShortThursday=J
 ShortFriday=V
 ShortSaturday=S
 ShortSunday=D
-
-View=Voir

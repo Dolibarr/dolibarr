@@ -628,6 +628,11 @@ LinkedToSpecificUsers=Enlazado a un contacto de usuario particular
 DeleteAFile=Eliminación de archivo
 ConfirmDeleteAFile=Confirme la eliminación del archivo
 NoResults=Ningún resultado
+ModulesSystemTools=Módulos utilidades
+View=Ver
+Test=Prueba
+Element=Elemento
+
 # Week day
 Monday=Lunes
 Tuesday=Martes
@@ -658,6 +663,3 @@ ShortFriday=V
 ShortSaturday=S
 ShortSunday=D
 
-View=Ver
-Test=Prueba
-Element=Elemento

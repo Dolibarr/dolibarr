@@ -333,7 +333,6 @@ SecurityTokenIsUnique=Use a unique securekey parameter for each URL
 EnterRefToBuildUrl=Enter reference for object %s
 GetSecuredUrl=Get calculated URL
 ButtonHideUnauthorized=Hide buttons for unauthorized actions instead of showing disabled buttons
-ModulesSystemTools=Modules tools
 ProductVatMassChange=Mass VAT change
 ProductVatMassChangeDesc=This page can be used to modify a VAT rate defined on products or services from a value to another. Warning, this change is done on all database.
 OldVATRates=Old VAT rate
