@@ -36,10 +36,9 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
 	echo $langs->trans("AddNewLine").' - ';
-	if (! empty($conf->service->enabled))
-	echo $langs->trans('RecordedProductsAndServices');
-	else
-	echo $langs->trans('RecordedProducts');
+	if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('RecordedProducts');
+	else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('RecordedServices');
+	else echo $langs->trans('RecordedProductsAndServices');
 	?>
 	</td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>

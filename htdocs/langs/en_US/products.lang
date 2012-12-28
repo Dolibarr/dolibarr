@@ -151,6 +151,7 @@ DiscountQtyMin=Discount quantity min. (by default)
 NoPriceDefinedForThisSupplier=No price/qty defined for this supplier/product
 NoSupplierPriceDefinedForThisProduct=No supplier price/qty defined for this product
 RecordedProducts=Products recorded
+RecordedServices=Services recorded
 RecordedProductsAndServices=Products/services recorded
 GenerateThumb=Generate thumb
 ProductCanvasAbility=Use special "canvas" addons
