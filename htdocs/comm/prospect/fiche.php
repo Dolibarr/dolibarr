@@ -138,7 +138,7 @@ if ($socid > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('ProspectLevelShort');
 	print '<td>';
-	if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetLevel'),1).'</a></td>';
+	if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editlevel')
