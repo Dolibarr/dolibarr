@@ -628,6 +628,11 @@ LinkedToSpecificUsers=Enllaçat a un contacte d'usuari particular
 DeleteAFile=Eliminació d'arxiu
 ConfirmDeleteAFile=Confirme l'eliminació de l'arxiu
 NoResults=Cap resultat
+ModulesSystemTools=Mòduls utilitats
+View=Veure
+Test=Prova
+Element=Element
+
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts
@@ -657,6 +662,3 @@ ShortThursday=Dj
 ShortFriday=Dv
 ShortSaturday=Ds
 ShortSunday=Dg
-View=Veure
-Test=Prova
-Element=Element

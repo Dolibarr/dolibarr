@@ -338,7 +338,6 @@ GetSecuredUrl=Obtenir la URL calculada
 ButtonHideUnauthorized=Amaga els botons d'accions no autoritzades en compte de mostrar-los atenuats
 TotalNumberOfActivatedModules=Nombre total de mòduls activats: <b>%s</b>
 YouMustEnableOneModule=Ha d'activar almenys 1 mòdul.
-ModulesSystemTools=Mòduls utilitats
 ProductVatMassChange=Modificar IVA en massa
 ProductVatMassChangeDesc=Aquesta pàgina us permet canviar el tipus d'IVA definit en els productes o serveis d'un valor a un altre. Tingueu en compte que el canvi es fa en massa sobre tota la base de dades.
 OldVATRates=Taxa d'IVA antiga

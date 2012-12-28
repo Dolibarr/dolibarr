@@ -69,11 +69,6 @@ $parameters=array();
 $object=(object) 'nothing';
 $reshook=$hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
-/*
-$demoprofiles[]=array('default'=>'0', 'key'=>'profdemomed', 'lang'=>'cabinetmed@cabinetmed', 'label'=>'DemoCabinetMed', 'url'=>'http://demodolimed.dolibarr.org',
-	'disablemodules'=>'adherent,boutique,don,externalsite',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png');
-*/
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
 $alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
@@ -242,16 +237,21 @@ jQuery(document).ready(function () {
     jQuery('tr.moduleline').hide();
     // Enable this to allow personalized setup
     jQuery('.modulelineshow').attr('href','#');
+    jQuery('.cursorpointer').css('cursor','pointer');
     jQuery(".modulelineshow").click(function() {
-        var currentId = $(this).attr('id').substring(2);
-        jQuery('tr.moduleline').hide();
-        if (currentId != openedId)
+        var idstring=$(this).attr('id');
+        if (typeof idstring != "undefined")
         {
-            openedId=currentId;
-            jQuery("#tr1"+currentId).show();
-            jQuery("#tr2"+currentId).show();
+	        var currentId = idstring.substring(2);
+	        jQuery('tr.moduleline').hide();
+	        if (currentId != openedId)
+	        {
+	            openedId=currentId;
+	            jQuery("#tr1"+currentId).show();
+	            jQuery("#tr2"+currentId).show();
+	        }
+	        else openedId = '';
         }
-        else openedId = '';
     });
 });
 </script>
@@ -302,8 +302,8 @@ foreach ($demoprofiles as $profilearray)
         print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 		// Title
         print '<tr>';
-		print '<td width="50"><a href="'.$urlwithmod.'" id="a1'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'"><img src="'.$profilearray['icon'].'" width="48" border="0" alt="Demo '.$profilearray['label'].'"></a></td>';
-		print '<td><a href="'.$urlwithmod.'" id="a2'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">'.$langs->trans($profilearray['label']).'</a></td>';
+		print '<td width="50" id="a1'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'"><a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'"><img src="'.$profilearray['icon'].'" width="48" border="0" alt="Demo '.$profilearray['label'].'"></a></td>';
+		print '<td id="a2'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'"><a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">'.$langs->trans($profilearray['label']).'</a></td>';
 		print '</tr>'."\n";
         // Modules
         if (empty($profilearray['url']))
@@ -368,17 +368,7 @@ print '<tr><td>';
 
 print '</td></tr>';
 
-// Button
-/*
-print '<tr><td align="center">';
-print '<input type="hidden" name="action" value="gotodemo">';
-print '<input class="button" type="submit" value=" < '.$langs->trans("GoToDemo").' > ">';
-print '</td></tr>';
-*/
-
 print '</table>';
-
-$db->close();
 
 // Google Adsense (need Google module)
 if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
@@ -398,6 +388,8 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 }
 
 llxFooterVierge();
+
+$db->close();
 
 
 /**
@@ -449,11 +441,11 @@ border-radius: 8px;
 -webkit-box-shadow: 4px 4px 4px #EEE;
 box-shadow: 4px 4px 4px #EEE;
 
-background-image: linear-gradient(bottom, rgb(246,248,250) 85%, rgb(235,235,238) 100%);
-background-image: -o-linear-gradient(bottom, rgb(246,248,250) 85%, rgb(235,235,238) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 85%, rgb(235,235,238) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 85%, rgb(235,235,238) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 85%, rgb(235,235,238) 100%);
+background-image: linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -o-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
 
     }';
 //    print '.CTableRow1      { background: #f0f0f0; color: #000000; }';

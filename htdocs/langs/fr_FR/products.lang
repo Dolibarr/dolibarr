@@ -151,6 +151,7 @@ VATRateForSupplierProduct=Taux TVA (pour ce produit/fournisseur)
 NoPriceDefinedForThisSupplier=Aucun prix/qté défini pour ce fournisseur/produit
 NoSupplierPriceDefinedForThisProduct=Aucun prix/qté fournisseur défini pour ce produit
 RecordedProducts=Produits en vente
+RecordedServices=Services en vente
 RecordedProductsAndServices=Produits/Services en vente
 GenerateThumb=Générer la vignette
 ProductCanvasAbility=Utiliser les extensions spéciales "canvas"
