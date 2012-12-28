@@ -201,7 +201,18 @@ else if ($action == 'classin' && $user->rights->contrat->creer)
 
 else if ($action == 'addline' && $user->rights->contrat->creer)
 {
-    if (GETPOST('pqty') && ((GETPOST('pu') != '' && GETPOST('desc')) || GETPOST('idprod')))
+    if (! GETPOST('qty'))
+    {
+    	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")),'errors');
+    	$error++;
+    }
+    if ((GETPOST('price_ht') == '' || ! GETPOST('dp_desc')) && ! GETPOST('idprod'))
+    {
+    	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")),'errors');
+    	$error++;
+    }
+    
+    if (! $error)
     {
         $ret=$object->fetch($id);
         if ($ret < 0)
@@ -286,11 +297,11 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         }
         else
         {
-            $pu_ht=GETPOST('pu');
+            $pu_ht=GETPOST('price_ht');
             $price_base_type = 'HT';
             $tva_tx=str_replace('*','',GETPOST('tva_tx'));
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
-            $desc=GETPOST('desc');
+            $desc=GETPOST('dp_desc');
         }
 
         $localtax1_tx=get_localtax($tva_tx,1,$object->societe);
@@ -310,12 +321,12 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             $result = $object->addline(
                 $desc,
                 $pu_ht,
-                GETPOST('pqty'),
+                GETPOST('qty'),
                 $tva_tx,
                 $localtax1_tx,
                 $localtax2_tx,
                 GETPOST('idprod'),
-                GETPOST('premise'),
+                GETPOST('remise_percent'),
                 $date_start,
                 $date_end,
                 $price_base_type,
@@ -343,6 +354,14 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
              	contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
              }
              */
+
+        	unset($_POST['qty']);
+        	unset($_POST['type']);
+        	unset($_POST['idprod']);
+        	unset($_POST['remise_percent']);
+        	unset($_POST['price_ht']);
+        	unset($_POST['tva_tx']);
+        	unset($_POST['dp_desc']);
         }
         else
         {
@@ -372,7 +391,7 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
 		$localtax1_tx=get_localtax(GETPOST('eltva_tx'),1,$object->thirdparty);
         $localtax2_tx=get_localtax(GETPOST('eltva_tx'),2,$object->thirdparty);
 
-        $objectline->description=GETPOST('eldesc');
+        $objectline->description=GETPOST('product_desc');
         $objectline->price_ht=GETPOST('elprice');
         $objectline->subprice=GETPOST('elprice');
         $objectline->qty=GETPOST('elqty');
@@ -898,7 +917,7 @@ else
                     }
                     else
                     {
-                        print "<td>".nl2br($objp->description)."</td>\n";
+                        print "<td>".dol_htmlentitiesbr($objp->description)."</td>\n";
                     }
                     // TVA
                     print '<td align="center">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
@@ -997,7 +1016,16 @@ else
                     {
                         print $objp->label?$objp->label.'<br>':'';
                     }
-                    print '<textarea name="eldesc" cols="70" rows="1">'.$objp->description.'</textarea></td>';
+
+                    // editeur wysiwyg
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+                    $nbrows=ROWS_2;
+                    if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+                    $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
+                    $doleditor=new DolEditor('product_desc',$objp->description,'',92,'dolibarr_details','',false,true,$enable,$nbrows,70);
+                    $doleditor->Create();
+
+                    print '</td>';
                     print '<td align="right">';
                     print $form->load_tva("eltva_tx",$objp->tva_tx,$mysoc,$object->thirdparty);
                     print '</td>';
@@ -1252,108 +1280,60 @@ else
         }
         print '</table>';
 
-        /*
-         * Ajouter une ligne produit/service
-         */
+		// Form to add new line
         if ($user->rights->contrat->creer && ($object->statut >= 0))
         {
+        	$dateSelector=1;
+        	
             print '<br>';
-            print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
+            print '<table id="tablelines" class="noborder" width="100%">';	// Array with (n*2)+1 lines
 
-            print "<tr class=\"liste_titre\">";
-            print '<td>'.$langs->trans("Service").'</td>';
-            print '<td align="center">'.$langs->trans("VAT").'</td>';
-            print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
-            print '<td align="center">'.$langs->trans("Qty").'</td>';
-            print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
-            print '<td>&nbsp;</td>';
-            print '<td>&nbsp;</td>';
-            print "</tr>\n";
+            // Trick to not show product entries
+            $savproductenabled=$conf->product->enabled;
+            $conf->product->enabled = 0;
 
-            $var=false;
+        	// Form to add new line
+        	if ($action != 'editline')
+        	{
+        		$var=true;
 
-            // Service sur produit predefini
-            print '<form name="addline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="addline">';
-            print '<input type="hidden" name="mode" value="predefined">';
-            print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-            print "<tr ".$bc[$var].">";
-            print '<td colspan="3">';
-            // multiprix
-            if (! empty($conf->global->PRODUIT_MULTIPRICES))
-            	$form->select_produits('','idprod',1,$conf->product->limit_size,$object->thirdparty->price_level);
-            else
-				$form->select_produits('','idprod',1,$conf->product->limit_size);
-            print '<br>';
-            print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
-            print '</td>';
-
-            print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$object->thirdparty->remise_client.'">%</td>';
-            print '<td align="center" colspan="2" rowspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-            print '</tr>'."\n";
-
-            print "<tr ".$bc[$var].">";
-            print '<td colspan="8">';
-            print $langs->trans("DateStartPlanned").' ';
-            $form->select_date('',"date_start",$usehm,$usehm,1,"addline");
-            print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $form->select_date('',"date_end",$usehm,$usehm,1,"addline");
-            print '</td>';
-            print '</tr>';
-
-            print '</form>';
-
-            $var=!$var;
-
-            // Service libre
-            print '<form name="addline_sl" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="addline">';
-            print '<input type="hidden" name="mode" value="libre">';
-            print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-            print "<tr $bc[$var]>";
-            print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
-
-            print '<td>';
-            print $form->load_tva("tva_tx",-1,$mysoc,$object->thirdparty);
-            print '</td>';
-            print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
-            print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
-            print '<td align="right" nowrap><input type="text" class="flat" size="1" name="premise" value="'.$object->thirdparty->remise_client.'">%</td>';
-            print '<td align="center" rowspan="2" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-
-            print '</tr>'."\n";
-
-            print "<tr $bc[$var]>";
-            print '<td colspan="8">';
-            print $langs->trans("DateStartPlanned").' ';
-            $form->select_date('',"date_start_sl",$usehm,$usehm,1,"addline_sl");
-            print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $form->select_date('',"date_end_sl",$usehm,$usehm,1,"addline_sl");
-            print '</td>';
-            print '</tr>';
-
+        		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+        		{
+        			// Add free or predefined products/services
+        			$object->formAddObjectLine($dateSelector,$mysoc,$object->thirdparty,$hookmanager);
+        		}
+        		else
+        		{
+        			// Add free products/services
+        			$object->formAddFreeProduct($dateSelector,$mysoc,$object->thirdparty,$hookmanager);
+        	
+        			// Add predefined products/services
+        			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+        			{
+        				$var=!$var;
+        				$object->formAddPredefinedProduct($dateSelector,$mysoc,$object->thirdparty,$hookmanager);
+        			}
+        		}
+        	
+        		$parameters=array();
+        		$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        	}
+        	
+        	// Restore correct setup
+        	$conf->product->enabled = $savproductenabled;
+      
             print '</form>';
 
             print '</table>';
         }
 
 
-
-        //print '</td><td align="center" class="tab" style="padding: 4px; border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
-
-        //print '</td></tr></table>';
-
         print '</div>';
 
 
-        /*************************************************************
-         * Boutons Actions
-         *************************************************************/
+        /*
+         * Buttons
+         */
 
         if ($user->societe_id == 0)
         {
@@ -1391,6 +1371,10 @@ else
             {
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
             }
+            else
+            {
+            	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a>';
+            }
 
             print "</div>";
             print '<br>';
@@ -1410,5 +1394,6 @@ else
 
 
 llxFooter();
+
 $db->close();
 ?>
