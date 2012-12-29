@@ -54,7 +54,7 @@ function dol_json_encode($elements)
 		$output = '[';
 		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
 		{
-			if (is_array($elements[$i])) $output.= json_encode($elements[$i]);
+			if (is_array($elements[$i]) || is_object($elements[$i])) $output.= json_encode($elements[$i]);
 			else $output .= _val($elements[$i]);
 			if($i !== $last) $output.= ',';
 		}
