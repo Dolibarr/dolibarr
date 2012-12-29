@@ -10,6 +10,7 @@ LocalAgenda=Calendario local
 AffectedTo=Asignada a
 DoneBy=Realizado por
 Events=Eventos
+EventsNb=Número de eventos
 MyEvents=Mis eventos
 OtherEvents=Otros eventos
 ListOfActions=Listado de eventos

@@ -658,7 +658,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	print '<td>'.$langs->trans("CompanyName").'</td>';
 	print '<td>'.$langs->trans("Town").'</td>';
 	print '<td>'.$langs->trans("Country").'</td>';
-	print '<td>'.$langs->trans("Tel").'</td>';
+	print '<td>'.$langs->trans("Phone").'</td>';
 	print '<td>'.$langs->trans("Fax").'</td>';
 	print "<td>&nbsp;</td>";
 	print "</tr>";

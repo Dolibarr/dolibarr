@@ -7,6 +7,7 @@ Donor=Donor
 Donors=Donors
 AddDonation=Add a donation
 NewDonation=New donation
+ShowDonation=Show donation
 DonationPromise=Gift promise
 PromisesNotValid=Not validated promises
 PromisesValid=Validated promises
