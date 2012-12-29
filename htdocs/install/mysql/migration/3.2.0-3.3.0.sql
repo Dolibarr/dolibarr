@@ -894,3 +894,5 @@ ALTER TABLE llx_element_lock ADD COLUMN sessionid varchar(255) AFTER datem;
 ALTER TABLE llx_element_lock MODIFY COLUMN elementtype varchar(32) NOT NULL;
 ALTER TABLE llx_element_lock DROP COLUMN fk_user_modif;
 ALTER TABLE llx_element_lock DROP COLUMN status;
+
+DELETE FROM llx_c_action_trigger WHERE elementtype='withdraw';
