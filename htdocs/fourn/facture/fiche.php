@@ -1381,7 +1381,7 @@ else
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
         $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
-        $sql.= ' c.libelle as paiement_type,';
+        $sql.= ' c.id as paiement_type,';
         $sql.= ' pf.amount,';
         $sql.= ' ba.rowid as baid, ba.ref, ba.label';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -1415,7 +1415,9 @@ else
                     $var=!$var;
                     print '<tr '.$bc[$var].'>';
                     print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
-                    print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+                    print '<td>';
+                    print $form->form_modes_reglement(null, $objp->paiement_type,'none').' '.$objp->num_paiement;
+                    print '</td>';
                     if (! empty($conf->banque->enabled))
                     {
                         $bankaccountstatic->id=$objp->baid;
