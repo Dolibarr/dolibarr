@@ -867,7 +867,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 		if ($result > 0 && $id > 0)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+			$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
 
 		if ($result >= 0)
