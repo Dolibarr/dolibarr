@@ -34,7 +34,7 @@ class Segment implements IteratorAggregate, Countable
         $this->xml = (string) $xml;
 		$this->odf = $odf;
         $zipHandler = $this->odf->getConfig('ZIP_PROXY');
-        $this->file = new $zipHandler();	
+        $this->file = new $zipHandler($this->odf->getConfig('PATH_TO_TMP'));
         $this->_analyseChildren($this->xml);
     }
     /**
@@ -96,7 +96,7 @@ class Segment implements IteratorAggregate, Countable
 				$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
 			}
         }
-        $this->file->close();		
+        $this->file->close();
         return $this->xmlParsed;
     }
     /**
@@ -162,7 +162,7 @@ IMG;
         $this->images[$value] = $file;
         $this->setVars($key, $xml, false);
         return $this;
-    }	
+    }
     /**
      * Shortcut to retrieve a child
      *
