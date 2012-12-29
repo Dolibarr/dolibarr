@@ -10,6 +10,7 @@ LocalAgenda=Local calendar
 AffectedTo= Assigned to
 DoneBy= Done by
 Events= Events
+EventsNb=Number of events
 MyEvents=My events
 OtherEvents=Other events
 ListOfActions=List of events

@@ -405,7 +405,11 @@ if (! empty($id) && $action == 'edit')
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-    $form->select_types_paiements('', 'modepaiement', 'CRDT', 0, 1);
+
+    if ($don->modepaiementid) $selected = $don->modepaiementid;
+    else $selected = '';
+
+    $form->select_types_paiements($selected, 'modepaiement', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
@@ -496,7 +500,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	print $don->modepaiement;
+	print $form->form_modes_reglement(null, $don->modepaiementid,'none');
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
