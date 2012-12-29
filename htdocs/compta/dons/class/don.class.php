@@ -36,6 +36,7 @@ class Don extends CommonObject
     public $table_element='don';
 
     var $id;
+    var $ref;
     var $date;
     var $amount;
     var $prenom;
