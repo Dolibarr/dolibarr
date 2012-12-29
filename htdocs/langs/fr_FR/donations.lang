@@ -7,6 +7,7 @@ Donor=Donateur
 Donors=Donateurs
 AddDonation=Ajouter don
 NewDonation=Nouveau don
+ShowDonation=Montrer don
 DonationPromise=Promesse de don
 PromisesNotValid=Promesses non validées
 PromisesValid=Promesses validées

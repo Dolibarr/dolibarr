@@ -36,6 +36,7 @@ class Don extends CommonObject
     public $table_element='don';
 
     var $id;
+    var $ref;
     var $date;
     var $amount;
     var $prenom;
@@ -689,11 +690,11 @@ class Don extends CommonObject
 
         $picto='generic';
 
-        $label=$langs->trans("ShowDonation").': '.$this->ref;
+        $label=$langs->trans("ShowDonation").': '.$this->id;
 
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        if ($withpicto != 2) $result.=$lien.$this->id.$lienfin;
         return $result;
     }
 

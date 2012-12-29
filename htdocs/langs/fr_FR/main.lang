@@ -376,6 +376,7 @@ ResultOk=Succès
 ResultKo=Échec
 Reporting=Rapport
 Reportings=Rapports
+GenerateReport=Générer le rapport
 Draft=Brouillon
 Drafts=Brouillons
 Validated=Validé
