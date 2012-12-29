@@ -148,7 +148,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('SUPPLIER_INVOICE_BUILDDOC',$object,$user,$langs,$conf);
+			$result=$interface->run_triggers('BILL_INVOICE_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 

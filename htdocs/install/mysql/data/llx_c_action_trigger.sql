@@ -36,9 +36,6 @@ insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (4,'ORDER_SUPPLIER_REFUSE','Supplier order request refused','Executed when a supplier order is refused','order_supplier',12);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (5,'ORDER_VALIDATE','Customer order validate','Executed when a customer order is validated','commande',4);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (6,'PROPAL_VALIDATE','Customer proposal validated','Executed when a commercial proposal is validated','propal',2);
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (7,'WITHDRAW_TRANSMIT','Withdraw command transmitted','Executed when a withdrawal command is transmited','withdraw',25);
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (8,'WITHDRAW_CREDIT','Withdraw credited','Executed when a withdrawal is credited','withdraw',26);
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'WITHDRAW_EMIT','Withdraw emit','Executed when a withdrawal is emited','withdraw',27);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (10,'COMPANY_CREATE','Third party created','Executed when a third party is created','societe',1);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (11,'CONTRACT_VALIDATE','Contract validated','Executed when a contract is validated','contrat',17);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (12,'PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal',3);
