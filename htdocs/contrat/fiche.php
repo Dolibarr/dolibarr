@@ -514,7 +514,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat-
 		if ($result > 0 && $id > 0)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
+			$result = $object->add_contact($contactid, GETPOST('type'), GETPOST('source'));
 		}
 
 		if ($result >= 0)
