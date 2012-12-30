@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012       Philippe Grand      <philippe.grand@atoo-net.com>
  *
