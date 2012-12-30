@@ -988,7 +988,7 @@ td.photo {
 /* Toolbar for ECM or Filemanager                                                 */
 /* ============================================================================== */
 
-.toolbar {
+.largebutton {
 <?php if ($usecss3) { ?>
     background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
     background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
@@ -1009,7 +1009,9 @@ td.photo {
     box-shadow: 4px 4px 4px #EEE;
 
     padding: 0 4px 0 4px !important;
+}
 
+.toolbar {
     height: 34px !important;
 }
 

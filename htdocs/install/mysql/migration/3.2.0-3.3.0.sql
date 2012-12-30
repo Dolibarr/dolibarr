@@ -264,8 +264,19 @@ create table llx_socpeople_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
-
 ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
+
+create table llx_actioncomm_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_actioncomm_extrafields ADD INDEX idx_actioncomm_extrafields (fk_object);
+
+
+
 
 UPDATE llx_c_actioncomm set type = 'systemauto' where code IN ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV');
 

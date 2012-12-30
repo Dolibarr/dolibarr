@@ -412,7 +412,7 @@ else $classviewhide='visible';
 // Start container of all panels
 ?>
 <div id="containerlayout"> <!-- begin div id="containerlayout" -->
-<div id="ecm-layout-north" class="toolbar">
+<div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
 // Start top panel, toolbar

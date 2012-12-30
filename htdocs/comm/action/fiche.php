@@ -243,19 +243,19 @@ if ($action == 'add_action')
 			}
 			else
 			{
-				// Si erreur
+				// If error
 				$db->rollback();
-				$id=$idaction;
 				$langs->load("errors");
 				$error=$langs->trans($actioncomm->error);
+				$action = 'create';
 			}
 		}
 		else
 		{
 			$db->rollback();
-			$id=$idaction;
 			$langs->load("errors");
 			$error=$langs->trans($actioncomm->error);
+			$action = 'create';
 		}
 	}
 }
@@ -619,7 +619,7 @@ if ($action == 'create')
 			print $extrafields->showInputField($key,$value);
 			print '</td></tr>'."\n";
 		}
-		print '</table><br><br>';
+		print '</table><br>';
 	}
 
 	print '<center><br>';
@@ -632,7 +632,7 @@ if ($action == 'create')
 }
 
 // View or edit
-if ($id)
+if ($id > 0)
 {
 	if ($error)
 	{

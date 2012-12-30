@@ -228,7 +228,7 @@ class ActionComm extends CommonObject
             }
             else if ($reshook < 0) $error++;
 
-            if (! $notrigger)
+            if (! $error && ! $notrigger)
             {
                 // Appel des triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -240,8 +240,16 @@ class ActionComm extends CommonObject
                 // Fin appel triggers
             }
 
-            $this->db->commit();
-            return $this->id;
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return $this->id;
+            }
+            else
+           {
+	           	$this->db->rollback();
+	           	return -1;
+            }
         }
         else
         {
@@ -591,7 +599,7 @@ class ActionComm extends CommonObject
         $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
-        
+
         $sql = "SELECT a.id, a.datep as dp";
         $sql.= " FROM (".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= ")";
