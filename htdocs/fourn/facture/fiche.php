@@ -230,7 +230,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     $datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
     $datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 
-    if (! GETPOST('socid','int')<1)
+    if (GETPOST('socid','int')<1)
     {
     	$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')).'</div>';
     	$action='create';
