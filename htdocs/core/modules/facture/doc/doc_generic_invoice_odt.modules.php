@@ -344,7 +344,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     '__TOTAL_HT__' => $object->total_ht,
                     '__TOTAL_VAT__' => $object->total_tva
                 );
-                complete_substitutions_array($substitutionarray, $langs, $object);
+                $parameters = array('odfHandler'=>$odfHandler);
+                complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 				// Line of free text
 				$newfreetext='';
@@ -387,7 +388,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet);
-				complete_substitutions_array($tmparray, $outputlangs, $object);
+                                $parameters = array('odfHandler'=>$odfHandler);
+				complete_substitutions_array($tmparray, $outputlangs, $object, $parameters);
 
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
@@ -415,7 +417,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     foreach ($object->lines as $line)
                     {
                         $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
-                        complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+                        $parameters = array('line'=>$line, 'odfHandler'=>$odfHandler);
+                        complete_substitutions_array($tmparray, $outputlangs, $object, $parameters, "completesubstitutionarray_lines");
                         foreach($tmparray as $key => $val)
                         {
                              try

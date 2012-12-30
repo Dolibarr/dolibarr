@@ -332,7 +332,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
                     '__TOTAL_HT__' => $object->total_ht,
                     '__TOTAL_VAT__' => $object->total_vat
                 );
-                complete_substitutions_array($substitutionarray, $langs, $object);
+                $parameters = array('odfHandler'=>$odfHandler);
+                complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 				// Line of free text
 				$newfreetext='';
@@ -431,7 +432,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 				// Replace tags of object + external modules
 			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
-			    complete_substitutions_array($tmparray, $outputlangs, $object);
+                            $parameters = array('odfHandler'=>$odfHandler);
+			    complete_substitutions_array($tmparray, $outputlangs, $object, $parameters);
                 foreach($tmparray as $key=>$value)
                 {
                     try {
@@ -456,7 +458,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
                     foreach ($object->lines as $line)
                     {
                         $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
-                        complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+                        $parameters = array('line'=>$line, 'odfHandler'=>$odfHandler);
+                        complete_substitutions_array($tmparray, $outputlangs, $object, $parameters, "completesubstitutionarray_lines");
                         foreach($tmparray as $key => $val)
                         {
                              try
