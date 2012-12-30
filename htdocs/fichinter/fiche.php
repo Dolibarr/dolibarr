@@ -719,7 +719,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                         // Appel des triggers
                         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                         $interface=new Interfaces($db);
-                        $result=$interface->run_triggers('FICHEINTER_SENTBYMAIL',$object,$user,$langs,$conf);
+                        $result=$interface->run_triggers('FICHINTER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) { $error++; $this->errors=$interface->errors; }
                         // Fin appel triggers
 
@@ -1387,7 +1387,7 @@ else if ($id > 0 || ! empty($ref))
 					else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
                 }
 
-                if (! empty($conf->global->FICHEINTER_CLASSIFY_BILLED))
+                if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))
                 {
 	                if ($object->statut != 2)
 					{

@@ -227,7 +227,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('FICHEINTER_BUILDDOC',$object,$user,$langs,$conf);
+			$result=$interface->run_triggers('FICHINTER_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 

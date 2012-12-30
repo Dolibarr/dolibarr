@@ -30,7 +30,7 @@
 -- List of all managed triggered events (used for trigger agenda and for notification)
 --
 delete from llx_c_action_trigger;
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (1,'FICHEINTER_VALIDATE','Intervention validated','Executed when a intervention is validated','ficheinter',18);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (1,'FICHINTER_VALIDATE','Intervention validated','Executed when a intervention is validated','ficheinter',18);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (2,'BILL_VALIDATE','Customer invoice validated','Executed when a customer invoice is approved','facture',6);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (3,'ORDER_SUPPLIER_APPROVE','Supplier order request approved','Executed when a supplier order is approved','order_supplier',11);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (4,'ORDER_SUPPLIER_REFUSE','Supplier order request refused','Executed when a supplier order is refused','order_supplier',12);
