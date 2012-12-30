@@ -321,7 +321,7 @@ print '</tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('LastUpdateCP').'</td>'."\n";
-print '<td style="padding:5px;"><input class="flat" type="text" name="lastUpdate" value="'.date('d-m-Y à H:i:s',$cp->getConfCP('lastUpdate')).'" disabled="disabled"/></td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="lastUpdate" value="'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'" disabled="disabled"/></td>'."\n";
 print '</tr>'."\n";
 
 print '</tbody>'."\n";
