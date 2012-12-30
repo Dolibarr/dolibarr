@@ -870,7 +870,8 @@ a.toolbarbutton {
     background: #FFFFFF;*/
 }
 img.toolbarbutton {
-    height: 28px;
+	margin-top: 2px;
+	height: 28px;
 }
 
 
@@ -1029,7 +1030,6 @@ img.toolbarbutton {
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEE;
     border:         1px solid #BBB;
     border-width:   0;
     }
