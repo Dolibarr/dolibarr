@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *

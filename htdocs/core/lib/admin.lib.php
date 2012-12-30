@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		J. Fernando Lagrange	<fernando@demo-tic.org>
  *
  * This program is free software; you can redistribute it and/or modify
