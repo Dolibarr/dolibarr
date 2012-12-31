@@ -6,8 +6,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
 - New: [ task #289 ] Can reorder tasks.
-- New: Add field "signature" into thirdparty card. If filled, text is added 
-       at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
+- New: Add field "signature" into user card. If filled, text is added 
+       at end of predefined email texts. If option MAIN_MAIL_DO_NOT_USE_SIGN is on, this
        feature is disabled.
 - New: Can input a payment back onto an credit note.
 - New: Add link "Back to list" on all cards.
