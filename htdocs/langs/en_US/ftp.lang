@@ -10,3 +10,4 @@ FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
 FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
 FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
 FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
+FTPPassiveMode=Passive mode
