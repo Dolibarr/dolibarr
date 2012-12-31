@@ -28,6 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("orders");
+$langs->load("propal");
+$langs->load("bills");
 
 // Security check
 if (!$user->admin)
@@ -109,8 +112,14 @@ foreach($listofnotifiedevents as $notifiedevent)
 {
     $var=!$var;
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+
+    if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
+    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
+    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
+    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+
     print '<tr '.$bc[$var].'>';
-    print '<td>'.$notifiedevent['elementtype'].'</td>';
+    print '<td>'.$elementLabel.'</td>';
     print '<td>'.$notifiedevent['code'].'</td>';
     print '<td>'.$label.'</td>';
     print '</tr>';

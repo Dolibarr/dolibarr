@@ -108,7 +108,7 @@ class InterfaceDemo
         // Data and type of action are stored into $object and $action
     
         // Users
-        if     ($action == 'USER_LOGIN')
+        if ($action == 'USER_LOGIN')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
@@ -322,10 +322,6 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        elseif ($action == 'CONTRACT_MODIFY')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
         elseif ($action == 'CONTRACT_ACTIVATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -404,19 +400,19 @@ class InterfaceDemo
         }
 
 		// Interventions
-		elseif ($action == 'FICHEINTER_CREATE')
+		elseif ($action == 'FICHINTER_CREATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        elseif ($action == 'FICHEINTER_MODIFY')
+        elseif ($action == 'FICHINTER_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        elseif ($action == 'FICHEINTER_VALIDATE')
+        elseif ($action == 'FICHINTER_VALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-	    elseif ($action == 'FICHEINTER_DELETE')
+	    elseif ($action == 'FICHINTER_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
