@@ -371,7 +371,8 @@ if ($id == 11)
 			'propal'            => $langs->trans('Proposal'),
 			'facture'           => $langs->trans('Bill'),
 			'facture_fourn'     => $langs->trans('SupplierBill'),
-			'fichinter'         => $langs->trans('InterventionCard')
+			'fichinter'         => $langs->trans('InterventionCard'),
+			'agenda'			=> $langs->trans('Agenda')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 	$sourceList = array(
