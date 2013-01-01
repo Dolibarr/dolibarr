@@ -73,24 +73,68 @@ class box_activity extends ModeleBoxes
 		$propalstatic=new Propal($db);
 		$commandestatic=new Commande($db);
 
-		$textHead = $langs->trans("Activity")."&nbsp;".date("Y");
+		$textHead = $langs->trans("Activity");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the bills
 		if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
+			$tmpdate = new DateTime("now");
+			$tmpdate= $tmpdate->sub(new DateInterval("P2Y"));
+			// on affiche les factures encaissées sur les deux dernières années
+			$sql = "SELECT DATE_FORMAT(f.datef,'%Y') as annee, f.paye, f.fk_statut, sum(f.total_ttc) as Mnttot, count(*) as nb";
+			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f)";
+			$sql.= " WHERE f.fk_soc = s.rowid";
+			$sql.= " AND s.entity = ".$conf->entity;
+			$sql.= " AND DATE_FORMAT(f.datef,'%Y') >= ".$tmpdate->format("Y")." and paye=1";
+			$sql.= " GROUP BY f.paye, f.fk_statut ";
+			$sql.= " ORDER BY f.fk_statut DESC";
+			
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+				$i = 0;
+				while ($i < $num)
+				{
+					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"', 'logo' => 'bill');
+					$objp = $db->fetch_object($result);
+					
+					$this->info_box_contents[$i][1] = array('td' => 'align="left"', 'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut($objp->paye,$objp->fk_statut,0)." ".$objp->annee);
+					$billurl="viewstatut=2&paye=1&year=".$objp->annee;
+
+					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
+					'text' => $objp->nb, 'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills"
+					);
+					
+					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
+					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->trans("Currency".$conf->currency)
+					);
+					// on ne totalise que l'année en cours
+					if ($objp->annee == date("Y"))
+					{
+						$totalnb += $objp->nb;
+						$totalMnt += $objp->Mnttot;
+					}
+					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"', 'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3) );
+					$i++;
+				}
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInvoices"));
+			}
+			
+			
 			$sql = "SELECT f.paye, f.fk_statut, sum(f.total_ttc) as Mnttot, count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			$sql.= " WHERE f.entity = ".$conf->entity;
 			$sql.= " AND f.fk_soc = s.rowid";
-			$sql.= " AND (DATE_FORMAT(f.datef,'%Y') = ".date("Y")." or paye=0)";
+			$sql.= " AND paye=0";
 			$sql.= " GROUP BY f.paye, f.fk_statut ";
 			$sql.= " ORDER BY f.fk_statut DESC";
 
 			$result = $db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $db->num_rows($result) + $i;
 				$now=dol_now();
 				$i = 0;
 
@@ -109,9 +153,6 @@ class box_activity extends ModeleBoxes
 					} elseif($objp->fk_statut==1)
 					{	// unpaid
 						$billurl="viewstatut=1&paye=0";
-					} else
-					{	// paid for current year
-						$billurl="viewstatut=2&paye=1";
 					}
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $objp->nb, 'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills"
@@ -181,7 +222,6 @@ class box_activity extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 			$sql.= " WHERE p.entity = ".$conf->entity;
 			$sql.= " AND p.fk_soc = s.rowid";
-			$sql.= " AND DATE_FORMAT(p.datep,'%Y') = ".date("Y");
 			$sql.= " AND p.date_cloture IS NULL "; // just unclosed
 			$sql.= " GROUP BY p.fk_statut";
 			$sql.= " ORDER BY p.fk_statut DESC";
