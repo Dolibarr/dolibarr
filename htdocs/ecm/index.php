@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,7 +412,7 @@ else $classviewhide='visible';
 // Start container of all panels
 ?>
 <div id="containerlayout"> <!-- begin div id="containerlayout" -->
-<div id="ecm-layout-north" class="toolbar">
+<div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
 // Start top panel, toolbar

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
@@ -91,7 +91,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	// Protection et encryption du pdf
+	// Protection and encryption of pdf
 	if (empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		/* Permission supported by TCPDF
@@ -123,12 +123,19 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	// If we use FPDF class, we may need to add method writeHTMLCell
 	if (! empty($conf->global->MAIN_USE_FPDF) && ! method_exists($pdf, 'writeHTMLCell'))
 	{
-		// Declare here a class to overwrite FPDFI to add method writeHTMLCell
+		// Declare here a class to overwrite FPDI to add method writeHTMLCell
 		/**
 		 *	This class if a enhanced FPDI class that support method writeHTMLCell
 		 */
 		class FPDI_DolExtended extends FPDI
 		{
+			/**
+			 * __call
+			 *
+			 * @param 	string	$method		Method
+			 * @param 	mixed	$args		Arguments
+			 * @return 	void
+			 */
 			public function __call($method, $args)
 			{
 				if (isset($this->$method)) {
@@ -137,6 +144,22 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 				}
 			}
 
+			/**
+			 * writeHTMLCell
+			 *
+			 * @param unknown_type $w			Width
+			 * @param unknown_type $h			Height
+			 * @param unknown_type $x			X
+			 * @param unknown_type $y			Y
+			 * @param unknown_type $html		Html
+			 * @param unknown_type $border		Border
+			 * @param unknown_type $ln			Ln
+			 * @param unknown_type $fill		Fill
+			 * @param unknown_type $reseth		Reseth
+			 * @param unknown_type $align		Align
+			 * @param unknown_type $autopadding	Autopadding
+			 * @return void
+			 */
 			public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
 			{
 				$this->SetXY($x,$y);

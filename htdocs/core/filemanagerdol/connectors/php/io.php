@@ -23,9 +23,16 @@
  */
 function CombinePaths( $sBasePath, $sFolder )
 {
-	return RemoveFromEnd( $sBasePath, '/' ) . '/' . RemoveFromStart( $sFolder, '/' );
+	return RemoveFromEnd($sBasePath, '/') . '/' . RemoveFromStart($sFolder, '/');
 }
-function GetResourceTypePath( $resourceType, $sCommand )
+/**
+ * GetResourceTypePath
+ *
+ * @param 	string		$resourceType	Resource type
+ * @param 	string		$sCommand		Command
+ * @return	string						Config
+ */
+function GetResourceTypePath($resourceType, $sCommand)
 {
 	global $Config ;
 
@@ -35,93 +42,119 @@ function GetResourceTypePath( $resourceType, $sCommand )
 		return $Config['FileTypesPath'][$resourceType] ;
 }
 
-function GetResourceTypeDirectory( $resourceType, $sCommand )
+/**
+ * GetResourceTypeDirectory
+ *
+ * @param unknown_type $resourceType	Resource type
+ * @param unknown_type $sCommand		Command
+ * @return string
+ */
+function GetResourceTypeDirectory($resourceType, $sCommand)
 {
 	global $Config ;
 	if ( $sCommand == "QuickUpload")
 	{
-		if ( strlen( $Config['QuickUploadAbsolutePath'][$resourceType] ) > 0 )
+		if ( strlen($Config['QuickUploadAbsolutePath'][$resourceType]) > 0)
 			return $Config['QuickUploadAbsolutePath'][$resourceType] ;
 
 		// Map the "UserFiles" path to a local directory.
-		return Server_MapPath( $Config['QuickUploadPath'][$resourceType] );
+		return Server_MapPath($Config['QuickUploadPath'][$resourceType]);
 	}
 	else
 	{
-		if ( strlen( $Config['FileTypesAbsolutePath'][$resourceType] ) > 0 )
+		if ( strlen($Config['FileTypesAbsolutePath'][$resourceType]) > 0)
 			return $Config['FileTypesAbsolutePath'][$resourceType] ;
 
 		// Map the "UserFiles" path to a local directory.
-		return Server_MapPath( $Config['FileTypesPath'][$resourceType] );
+		return Server_MapPath($Config['FileTypesPath'][$resourceType]);
 	}
 }
 
-function GetUrlFromPath( $resourceType, $folderPath, $sCommand )
+function GetUrlFromPath($resourceType, $folderPath, $sCommand)
 {
-	return CombinePaths( GetResourceTypePath( $resourceType, $sCommand ), $folderPath );
+	return CombinePaths(GetResourceTypePath($resourceType, $sCommand), $folderPath);
 }
 
-function RemoveExtension( $fileName )
+/**
+ * RemoveExtension
+ *
+ * @param 	string		$fileName	Filename
+ * @return	string					String without extension
+ */
+function RemoveExtension($fileName)
 {
-	return substr( $fileName, 0, strrpos( $fileName, '.' ) );
+	return substr($fileName, 0, strrpos($fileName, '.'));
 }
-
-function ServerMapFolder( $resourceType, $folderPath, $sCommand )
+/**
+ * ServerMapFolder
+ *
+ * @param 	string	$resourceType	Resource type
+ * @param 	string	$folderPath		Folder
+ * @param 	string	$sCommand		Command
+ * @return	void
+ */
+function ServerMapFolder($resourceType, $folderPath, $sCommand)
 {
 	// Get the resource type directory.
-	$sResourceTypePath = GetResourceTypeDirectory( $resourceType, $sCommand );
+	$sResourceTypePath = GetResourceTypeDirectory($resourceType, $sCommand);
 
 	// Ensure that the directory exists.
-	$sErrorMsg = CreateServerFolder( $sResourceTypePath );
+	$sErrorMsg = CreateServerFolder($sResourceTypePath);
 	if ( $sErrorMsg != '' )
-		SendError( 1, "Error creating folder \"{$sResourceTypePath}\" ({$sErrorMsg})" );
+		SendError(1, "Error creating folder \"{$sResourceTypePath}\" ({$sErrorMsg})");
 
 	// Return the resource type directory combined with the required path.
-	return CombinePaths( $sResourceTypePath , $folderPath );
+	return CombinePaths($sResourceTypePath, $folderPath);
 }
 
 function GetParentFolder( $folderPath )
 {
 	$sPattern = "-[/\\\\][^/\\\\]+[/\\\\]?$-" ;
-	return preg_replace( $sPattern, '', $folderPath );
+	return preg_replace($sPattern, '', $folderPath);
 }
-
-function CreateServerFolder( $folderPath, $lastFolder = null )
+/**
+ * CreateServerFolder
+ *
+ * @param 	string	$folderPath		Folder
+ * @param 	string	$lastFolder		Folder
+ * @return	string					''=success, error message otherwise
+ */
+function CreateServerFolder($folderPath, $lastFolder = null)
 {
 	global $Config ;
-	$sParent = GetParentFolder( $folderPath );
+	$sParent = GetParentFolder($folderPath);
 
 	// Ensure the folder path has no double-slashes, or mkdir may fail on certain platforms
 	while ( strpos($folderPath, '//') !== false )
 	{
-		$folderPath = str_replace( '//', '/', $folderPath );
+		$folderPath = str_replace('//', '/', $folderPath);
 	}
 
 	// Check if the parent exists, or create it.
-	if ( !empty($sParent) && !file_exists( $sParent ) )
+	if ( !empty($sParent) && !file_exists($sParent))
 	{
 		//prevents agains infinite loop when we can't create root folder
-		if ( !is_null( $lastFolder ) && $lastFolder === $sParent) {
+		if ( !is_null($lastFolder) && $lastFolder === $sParent) {
 			return "Can't create $folderPath directory" ;
 		}
 
-		$sErrorMsg = CreateServerFolder( $sParent, $folderPath );
+		$sErrorMsg = CreateServerFolder($sParent, $folderPath);
 		if ( $sErrorMsg != '' )
 			return $sErrorMsg ;
 	}
 
-	if ( !file_exists( $folderPath ) )
+	if ( !file_exists($folderPath))
 	{
 		// Turn off all error reporting.
-		error_reporting( 0 );
+		error_reporting(0);
 
 		$php_errormsg = '' ;
 		// Enable error tracking to catch the error.
-		ini_set( 'track_errors', '1' );
+		ini_set('track_errors', '1');
 
 		if ( isset( $Config['ChmodOnFolderCreate'] ) && !$Config['ChmodOnFolderCreate'] )
 		{
-			mkdir( $folderPath );
+			mkdir($folderPath);
 		}
 		else
 		{
@@ -132,15 +165,15 @@ function CreateServerFolder( $folderPath, $lastFolder = null )
 			}
 			// To create the folder with 0777 permissions, we need to set umask to zero.
 			$oldumask = umask(0);
-			mkdir( $folderPath, $permissions );
-			umask( $oldumask );
+			mkdir($folderPath, $permissions);
+			umask($oldumask);
 		}
 
 		$sErrorMsg = $php_errormsg ;
 
 		// Restore the configurations.
-		ini_restore( 'track_errors' );
-		ini_restore( 'error_reporting' );
+		ini_restore('track_errors');
+		ini_restore('error_reporting');
 
 		return $sErrorMsg ;
 	}
@@ -153,23 +186,23 @@ function GetRootPath()
 	if (!isset($_SERVER)) {
 		global $_SERVER;
 	}
-	$sRealPath = realpath( './' );
+	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
 	$sRealPath = rtrim($sRealPath,"\\/");
 
 	$sSelfPath = $_SERVER['PHP_SELF'] ;
-	$sSelfPath = substr( $sSelfPath, 0, strrpos( $sSelfPath, '/' ) );
+	$sSelfPath = substr($sSelfPath, 0, strrpos($sSelfPath, '/'));
 
-	$sSelfPath = str_replace( '/', DIRECTORY_SEPARATOR, $sSelfPath );
+	$sSelfPath = str_replace('/', DIRECTORY_SEPARATOR, $sSelfPath);
 
-	$position = strpos( $sRealPath, $sSelfPath );
+	$position = strpos($sRealPath, $sSelfPath);
 
 	// This can check only that this script isn't run from a virtual dir
 	// But it avoids the problems that arise if it isn't checked
-	if ( $position === false || $position <> strlen( $sRealPath ) - strlen( $sSelfPath ) )
-		SendError( 1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.php".' );
+	if ( $position === false || $position <> strlen($sRealPath) - strlen($sSelfPath) )
+		SendError(1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.php".');
 
-	return substr( $sRealPath, 0, $position );
+	return substr($sRealPath, 0, $position);
 }
 
 // Emulate the asp Server.mapPath function.
@@ -177,9 +210,9 @@ function GetRootPath()
 function Server_MapPath( $path )
 {
 	// This function is available only for Apache
-	if ( function_exists( 'apache_lookup_uri' ) )
+	if (function_exists('apache_lookup_uri'))
 	{
-		$info = apache_lookup_uri( $path );
+		$info = apache_lookup_uri($path);
 		return $info->filename . $info->path_info ;
 	}
 
@@ -188,41 +221,52 @@ function Server_MapPath( $path )
 	return GetRootPath() . $path ;
 }
 
-function IsAllowedExt( $sExtension, $resourceType )
+function IsAllowedExt($sExtension, $resourceType)
 {
 	global $Config ;
 	// Get the allowed and denied extensions arrays.
 	$arAllowed	= $Config['AllowedExtensions'][$resourceType] ;
 	$arDenied	= $Config['DeniedExtensions'][$resourceType] ;
 
-	if ( count($arAllowed) > 0 && !in_array( $sExtension, $arAllowed ) )
+	if ( count($arAllowed) > 0 && !in_array($sExtension, $arAllowed))
 		return false ;
 
-	if ( count($arDenied) > 0 && in_array( $sExtension, $arDenied ) )
+	if ( count($arDenied) > 0 && in_array($sExtension, $arDenied))
 		return false ;
 
 	return true ;
 }
 
-function IsAllowedType( $resourceType )
+function IsAllowedType($resourceType)
 {
 	global $Config ;
-	if ( !in_array( $resourceType, $Config['ConfigAllowedTypes'] ) )
+	if ( !in_array($resourceType, $Config['ConfigAllowedTypes']))
 		return false ;
 
 	return true ;
 }
 
-function IsAllowedCommand( $sCommand )
+/**
+ * IsAllowedCommand
+ *
+ * @param 	string		$sCommand		Command
+ * @return 	boolean						True or false
+ */
+function IsAllowedCommand($sCommand)
 {
 	global $Config ;
 
-	if ( !in_array( $sCommand, $Config['ConfigAllowedCommands'] ) )
+	if ( !in_array($sCommand, $Config['ConfigAllowedCommands']))
 		return false ;
 
 	return true ;
 }
 
+/**
+ * GetCurrentFolder
+ *
+ * @return	string		current folder
+ */
 function GetCurrentFolder()
 {
 	if (!isset($_GET)) {
@@ -231,22 +275,22 @@ function GetCurrentFolder()
 	$sCurrentFolder	= isset( $_GET['CurrentFolder'] ) ? $_GET['CurrentFolder'] : '/' ;
 
 	// Check the current folder syntax (must begin and start with a slash).
-	if ( !preg_match( '|/$|', $sCurrentFolder ) )
+	if (!preg_match('|/$|', $sCurrentFolder))
 		$sCurrentFolder .= '/' ;
-	if ( strpos( $sCurrentFolder, '/' ) !== 0 )
+	if (strpos($sCurrentFolder, '/') !== 0)
 		$sCurrentFolder = '/' . $sCurrentFolder ;
 
 	// Ensure the folder path has no double-slashes
-	while ( strpos ($sCurrentFolder, '//') !== false ) {
-		$sCurrentFolder = str_replace ('//', '/', $sCurrentFolder);
+	while ( strpos($sCurrentFolder, '//') !== false ) {
+		$sCurrentFolder = str_replace('//', '/', $sCurrentFolder);
 	}
 
 	// Check for invalid folder paths (..)
-	if ( strpos( $sCurrentFolder, '..' ) || strpos( $sCurrentFolder, "\\" ))
-		SendError( 102, '' );
+	if ( strpos($sCurrentFolder, '..') || strpos($sCurrentFolder, "\\"))
+		SendError(102, '');
 
 	if ( preg_match(",(/\.)|[[:cntrl:]]|(//)|(\\\\)|([\:\*\?\"\<\>\|]),", $sCurrentFolder))
-		SendError( 102, '' );
+		SendError(102, '');
 
 	return $sCurrentFolder ;
 }
@@ -254,10 +298,10 @@ function GetCurrentFolder()
 // Do a cleanup of the folder name to avoid possible problems
 function SanitizeFolderName( $sNewFolderName )
 {
-	$sNewFolderName = stripslashes( $sNewFolderName );
+	$sNewFolderName = stripslashes($sNewFolderName);
 
 	// Remove . \ / | : ? * " < >
-	$sNewFolderName = preg_replace( '/\\.|\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|[[:cntrl:]]/', '_', $sNewFolderName );
+	$sNewFolderName = preg_replace('/\\.|\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|[[:cntrl:]]/', '_', $sNewFolderName);
 
 	return $sNewFolderName ;
 }
@@ -267,14 +311,14 @@ function SanitizeFileName( $sNewFileName )
 {
 	global $Config ;
 
-	$sNewFileName = stripslashes( $sNewFileName );
+	$sNewFileName = stripslashes($sNewFileName);
 
 	// Replace dots in the name with underscores (only one dot can be there... security issue).
 	if ( $Config['ForceSingleExtension'] )
-		$sNewFileName = preg_replace( '/\\.(?![^.]*$)/', '_', $sNewFileName );
+		$sNewFileName = preg_replace('/\\.(?![^.]*$)/', '_', $sNewFileName);
 
 	// Remove \ / | : ? * " < >
-	$sNewFileName = preg_replace( '/\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|[[:cntrl:]]/', '_', $sNewFileName );
+	$sNewFileName = preg_replace('/\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|[[:cntrl:]]/', '_', $sNewFileName);
 
 	return $sNewFileName ;
 }
@@ -295,7 +339,7 @@ EOF;
 	}
 
 	$rpl = array( '\\' => '\\\\', '"' => '\\"' );
-	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . strtr( $fileUrl, $rpl ) . '","' . strtr( $fileName, $rpl ) . '", "' . strtr( $customMsg, $rpl ) . '");' ;
+	echo 'window.parent.OnUploadCompleted(' . $errorNumber . ',"' . strtr($fileUrl, $rpl) . '","' . strtr($fileName, $rpl) . '", "' . strtr($customMsg, $rpl) . '");' ;
 	echo '</script>' ;
 	exit ;
 }
@@ -310,8 +354,7 @@ function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 
   $rpl = array( '\\' => '\\\\', '"' => '\\"' );
 
-  echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'.
-    strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
+  echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'. strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
 
   echo '</script>';
 }

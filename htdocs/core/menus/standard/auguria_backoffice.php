@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,15 +29,13 @@
 
 
 /**
- *	\class      MenuTop
- *	\brief      Classe permettant la gestion du menu du haut Auguria
+ *	Classe permettant la gestion du menu du haut Auguria
  */
-
 class MenuTop
 {
 	var $db;
 	var $require_left=array("auguria_backoffice");  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
+	var $type_user=0;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
 
@@ -61,7 +59,7 @@ class MenuTop
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
-		print_auguria_menu($this->db,$this->atarget,$this->hideifnotallowed);
+		print_auguria_menu($this->db,$this->atarget,$this->type_user);
 	}
 
 }

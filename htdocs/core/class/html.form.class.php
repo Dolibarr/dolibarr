@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Ocebo   <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
@@ -1971,10 +1971,10 @@ class Form
     /**
      *      Return list of events that triggered an object creation
      *
-     *      @param	int		$selected        Id du type d'origine pre-selectionne
+     *      @param	int		$selected        Id or code of type origin to select by default
      *      @param  string	$htmlname        Nom de la zone select
      *      @param  string	$exclude         To exclude a code value (Example: SRC_PROP)
-     *		@param	int		$addempty		Add an empty entry
+     *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
     function select_demand_reason($selected='',$htmlname='demandreasonid',$exclude='',$addempty=0)
@@ -1989,7 +1989,7 @@ class Form
         {
             if ($arraydemandreason['code']==$exclude) continue;
 
-            if ($selected == $arraydemandreason['id'])
+            if ($selected && ($selected == $arraydemandreason['id'] || $selected == $arraydemandreason['code']))
             {
                 print '<option value="'.$arraydemandreason['id'].'" selected="selected">';
             }

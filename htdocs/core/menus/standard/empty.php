@@ -28,7 +28,7 @@ class MenuTop
 {
 	var $db;
     var $require_left=array("empty");   // If this top menu handler must be used with a particular left menu handler
-    var $hideifnotallowed=false;		// Put 0 for back office menu, 1 for front office menu
+	var $type_user=0;					// Put 0 for internal users, 1 for external users
     var $atarget="";               		// To store arget to use in menu links
 
 
@@ -50,7 +50,7 @@ class MenuTop
      */
     function showmenu()
     {
-        global $user,$conf,$langs,$dolibarr_main_db_name;;
+        global $user,$conf,$langs,$dolibarr_main_db_name;
 
         print_start_menu_array_empty();
 

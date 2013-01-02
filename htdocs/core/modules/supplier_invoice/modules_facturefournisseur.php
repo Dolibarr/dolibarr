@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2012	Regis Houssin	<regis@dolibarr.fr>
+ * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('SUPPLIER_INVOICE_BUILDDOC',$object,$user,$langs,$conf);
+			$result=$interface->run_triggers('BILL_INVOICE_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -988,7 +988,7 @@ td.photo {
 /* Toolbar for ECM or Filemanager                                                 */
 /* ============================================================================== */
 
-.toolbar {
+.largebutton {
 <?php if ($usecss3) { ?>
     background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
     background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
@@ -1009,7 +1009,9 @@ td.photo {
     box-shadow: 4px 4px 4px #EEE;
 
     padding: 0 4px 0 4px !important;
+}
 
+.toolbar {
     height: 34px !important;
 }
 

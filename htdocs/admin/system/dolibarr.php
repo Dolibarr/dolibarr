@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,6 +245,7 @@ $configfileparameters=array(
 		'separator' => '',
 		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
 		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
+		'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
 		'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
 		'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
 		'?dolibarr_lib_PHPEXCEL_PATH' => 'dolibarr_lib_PHPEXCEL_PATH',
@@ -259,7 +260,8 @@ $configfileparameters=array(
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 		'separator' => '',
 		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
-		'?dolibarr_strict_mode' => 'Strict mode is on/off'
+		'?dolibarr_strict_mode' => 'Strict mode is on/off',
+		'?dolibarr_pdf_force_fpdf' => 'Force fpdf usage to generate PDF'
 );
 
 $var=true;

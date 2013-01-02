@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
- * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -230,6 +230,13 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     $datefacture=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
     $datedue=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 
+    if (GETPOST('socid','int')<1)
+    {
+    	$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')).'</div>';
+    	$action='create';
+    	$error++;
+    }
+    
     if ($datefacture == '')
     {
         $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')).'</div>';
@@ -281,7 +288,10 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             if ($element == 'order_supplier') {
                 $element = 'fourn'; $subelement = 'fournisseur.commande';
             }
-
+            if ($element == 'project')
+            {
+            	$element = 'projet';
+            }            
             $object->origin    = $_POST['origin'];
             $object->origin_id = $_POST['originid'];
 
@@ -864,7 +874,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 		if ($result > 0 && $id > 0)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+			$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
 
 		if ($result >= 0)
@@ -949,6 +959,7 @@ if ($action == 'create')
         if ($element == 'project')
         {
             $projectid=GETPOST('originid');
+            $element = 'projet';            
         }
         else if (in_array($element,array('order_supplier')))
         {
@@ -1377,7 +1388,7 @@ else
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
         $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
-        $sql.= ' c.libelle as paiement_type,';
+        $sql.= ' c.id as paiement_type,';
         $sql.= ' pf.amount,';
         $sql.= ' ba.rowid as baid, ba.ref, ba.label';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -1411,7 +1422,9 @@ else
                     $var=!$var;
                     print '<tr '.$bc[$var].'>';
                     print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
-                    print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+                    print '<td>';
+                    print $form->form_modes_reglement(null, $objp->paiement_type,'none').' '.$objp->num_paiement;
+                    print '</td>';
                     if (! empty($conf->banque->enabled))
                     {
                         $bankaccountstatic->id=$objp->baid;

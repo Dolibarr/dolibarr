@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +127,20 @@ if ($action == "builddoc" && $user->rights->facture->lire)
 	{
 		$mesg='<div class="error">'.$langs->trans('InvoiceNotChecked').'</div>' ;
 	}
+}
+
+// Remove file
+if ($action == 'remove_file')
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$langs->load("other");
+	$upload_dir = $diroutputpdf;
+	$file = $upload_dir . '/' . GETPOST('file');
+	$ret=dol_delete_file($file,0,0,0,'');
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	$action='';
 }
 
 

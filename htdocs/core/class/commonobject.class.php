@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
@@ -1483,8 +1483,8 @@ abstract class CommonObject
         $fieldlocaltax2='total_localtax2';
         if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='tva';
 
-        $sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2, total_ttc,';
-        $sql.= ' tva_tx as vatrate';
+        $sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
+        $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
         if ($exclspec)
@@ -1518,49 +1518,48 @@ abstract class CommonObject
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
 
-                // Check if global invoice tax for this vat rate
-                if (! empty($obj->vatrate))
+                // Check if there is a global invoice tax for this vat rate
+                // FIXME: We should have no database access into this function. Also localtax 7 seems to have problem so i add condition to avoid it into standard usage without loosing it.
+                if (! empty($conf->global->MAIN_USE_LOCALTAX_TYPE_7))
                 {
-                    if ($this->total_localtax1 == 0)
+                	if ($this->total_localtax1 == 0)
                     {
-						// Search local taxes
-						$sql  = "SELECT t.localtax1, t.localtax1_type";
-						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->client->country_code."'";
-						$sql .= " AND t.taux = ".$obj->vatrate." AND t.active = 1";
+						// Search to know if there is a localtax of type 7
+                    	// TODO : store local taxes types into object lines and remove this. We should use here $obj->localtax1_type but it is not yet filled into database, so we search into table of vat rate
+                		global $mysoc;
+                    	$localtax1_array=getLocalTaxesFromRate($vatrate,1,$mysoc);
+                    	if (empty($obj->localtax1_type))
+                    	{
+                    		$obj->localtax1_type = $localtax1_array[0];
+                    		$obj->localtax1_tx = $localtax1_array[1];
+                    	}
+                    	//end TODO
 
-						dol_syslog("get_localtax sql=".$sql);
-						$resqlt=$this->db->query($sql);
-						if ($resqlt)
+						if ($obj->localtax1_type == '7')
 						{
-							$objt = $this->db->fetch_object($resqlt);
-       						if ($objt->localtax1_type == '7')
-							{
-                 				$this->total_localtax1 += $objt->localtax1;
-                 				$this->total_ttc       += $objt->localtax1;
-							}
+							$this->total_localtax1 += $obj->localtax1_tx;
+							$this->total_ttc       += $obj->localtax1_tx;
 						}
 					}
                     if ($this->total_localtax2 == 0)
                     {
-						// Search local taxes
-						$sql  = "SELECT t.localtax2, t.localtax2_type";
-						$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-						$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->client->country_code."'";
-						$sql .= " AND t.taux = ".$obj->vatrate." AND t.active = 1";
+						// Search to know if there is a localtax of type 7
+                    	// TODO : store local taxes types into object lines and remove this. We should use here $obj->localtax1_type but it is not yet filled into database, so we search into table of vat rate
+                		global $mysoc;
+                    	$localtax2_array=getLocalTaxesFromRate($vatrate,2,$mysoc);
+                    	if (empty($obj->localtax2_type))
+                    	{
+                    		$obj->localtax2_type = $localtax2_array[0];
+                    		$obj->localtax2_tx = $localtax2_array[1];
+                    	}
+                    	//end TODO
 
-						dol_syslog("get_localtax sql=".$sql);
-						$resqlt=$this->db->query($sql);
-						if ($resqlt)
+                    	if ($obj->localtax2_type == '7')
 						{
-							$objt = $this->db->fetch_object($resqlt);
-       						if ($objt->localtax2_type == '7')
-							{
-                 				$this->total_localtax2 += $objt->localtax2;
-                 				$this->total_ttc       += $objt->localtax2;
-							}
+							$this->total_localtax2 += $obj->localtax2_tx;
+							$this->total_ttc       += $obj->localtax2_tx;
 						}
-					}
+                    }
                 }
 
                 $i++;

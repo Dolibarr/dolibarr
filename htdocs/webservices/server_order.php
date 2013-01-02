@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
- * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -444,6 +444,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 
 /**
  * Get list of orders for third party
+ *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id of thirdparty
  * @return	array							Array result
@@ -604,6 +605,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 
 /**
  * Create order
+ *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$order				Order info
  * @return	int								Id of new order
@@ -701,6 +703,7 @@ function createOrder($authentication,$order)
 
 /**
  * Valid an order
+ *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of order to validate
  * @return	array							Array result

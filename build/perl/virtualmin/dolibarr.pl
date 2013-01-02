@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \author       (c)2009-2012 Regis Houssin  <regis@dolibarr.fr>
+# \author       (c)2009-2012 Regis Houssin  <regis.houssin@capnetworks.com>
 #----------------------------------------------------------------------------
 
 

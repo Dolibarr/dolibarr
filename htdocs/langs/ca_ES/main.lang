@@ -251,7 +251,6 @@ MonthOfDay=Mes del dia
 HourShort=H
 Rate=Tipus
 UseLocalTax=Incloure taxes
-LocalTaxDesc=Alguns països apliquen 2 o 3 taxes a cada línia de factura. Si és el cas, escolliu el tipus de la segona i tercera taxa i el seu valor. Els possibles tipus són: <br> 1: taxa local aplicable a productes i serveis sense IVA (IVA no s'aplica a la taxa local) <br> 2: taxa local s'aplica a productes i serveis abans de l'IVA (IVA es calcula sobre import + taxa local) <br> 3: taxa local s'aplica a productes sense IVA (IVA no s'aplica a la taxa local) <br> 4: taxa local s'aplica a productes abans de l'IVA (IVA es calcula sobre l'import + taxa local) <br> 5: taxa local s'aplica a serveis sense IVA (IVA no s'aplica a la taxa local) <br> 6: taxa local s'aplica a serveis abans de l'IVA (IVA es calcula sobre import + taxa local) <br> 7: la taxa local és un import fix aplicat al total de la factura
 Bytes=Bytes
 KiloBytes=Kilobytes
 MegaBytes=Megabytes
@@ -629,6 +628,11 @@ LinkedToSpecificUsers=Enllaçat a un contacte d'usuari particular
 DeleteAFile=Eliminació d'arxiu
 ConfirmDeleteAFile=Confirme l'eliminació de l'arxiu
 NoResults=Cap resultat
+ModulesSystemTools=Mòduls utilitats
+View=Veure
+Test=Prova
+Element=Element
+
 # Week day
 Monday=Dilluns
 Tuesday=Dimarts
@@ -658,6 +662,3 @@ ShortThursday=Dj
 ShortFriday=Dv
 ShortSaturday=Ds
 ShortSunday=Dg
-View=Veure
-Test=Prova
-Element=Element

@@ -85,11 +85,11 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
 
 	// Now we search localtaxes information ourself (rates and types).
+	$localtax1_type=0;
+	$localtax2_type=0;
 	$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
-	//$sql.= ", ".MAIN_DB_PREFIX."c_pays as cc";
 	$sql.= " WHERE cv.taux = ".$txtva;
-	//$sql.= " AND cv.fk_pays = cc.rowid and cc.code = '".$mysoc->country_code."'";
 	$sql.= " AND cv.fk_pays = ".$countryid;
 	dol_syslog("search vat information sql=".$sql);
 	$resql = $db->query($sql);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,18 +164,27 @@ class Fichinter extends CommonObject
                 if (! $ret)	dol_print_error($this->db);
             }
 
-			$this->db->commit();
-
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHEINTER_CREATE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('FICHINTER_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
 
-			return $this->id;
+			if (! $error)
+			{
+				$this->db->commit();
+				return $this->id;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=join(',',$this->errors);
+				dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
+				return -1;
+			}
 		}
 		else
 		{
@@ -213,7 +222,7 @@ class Fichinter extends CommonObject
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHEINTER_MODIFY',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('FICHINTER_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
@@ -357,14 +366,14 @@ class Fichinter extends CommonObject
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND fk_statut = 0";
 
-			dol_syslog("Fichinter::setValid sql=".$sql);
+			dol_syslog(get_class($this)."::setValid sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('FICHINTER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
@@ -377,7 +386,7 @@ class Fichinter extends CommonObject
 				{
 					$this->db->rollback();
 					$this->error=join(',',$this->errors);
-					dol_syslog("Fichinter::setValid ".$this->error,LOG_ERR);
+					dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
 					return -1;
 				}
 			}
@@ -385,7 +394,7 @@ class Fichinter extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dol_syslog("Fichinter::setValid ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -675,7 +684,7 @@ class Fichinter extends CommonObject
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('FICHEINTER_DELETE',$this,$user,$langs,$conf);
+				$result=$interface->run_triggers('FICHINTER_DELETE',$this,$user,$langs,$conf);
 				if ($result < 0) {
 					$error++; $this->errors=$interface->errors;
 				}

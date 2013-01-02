@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
@@ -117,6 +117,8 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		$this->tva=array();
+		$this->localtax1=array();
+		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
@@ -371,8 +373,8 @@ class pdf_azur extends ModelePDFPropales
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					// TODO : store local taxes types into object lines and remove this
-					$localtax1_array=getTypeOfLocalTaxFromRate($vatrate,1,$mysoc);
-					$localtax2_array=getTypeOfLocalTaxFromRate($vatrate,2,$mysoc);
+					$localtax1_array=getLocalTaxesFromRate($vatrate,1,$mysoc);
+					$localtax2_array=getLocalTaxesFromRate($vatrate,2,$mysoc);
 					if (empty($localtax1_type))
 						$localtax1_type = $localtax1_array[0];
 					if (empty($localtax2_type))

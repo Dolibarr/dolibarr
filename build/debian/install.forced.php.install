@@ -1,7 +1,7 @@
 <?php
 // File to force Dolibarr wizard installer choices.
 //
-// This file must be present into htdocs/install directory
+// This file must be present into htdocs/install or /etc/dolibarr directory
 // during install process to be used.
 //
 //

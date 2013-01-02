@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Date").'</td>';
-	print '<td align="center">'.$langs->trans("Nb").'</td>';
+	print '<td align="center">'.$langs->trans("EventsNb").'</td>';
 	print '<td>'.$langs->trans("Action").'</td>';
 	print '<td align="center">'.$langs->trans("PDF").'</td>';
 	print '<td align="center">'.$langs->trans("Date").'</td>';
@@ -122,7 +122,7 @@ if ($resql)
 			print '<td align="center">'.$obj->cc.'</td>';
 
 			print '<td>';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto('','filenew').'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('GenerateReport'),'filenew').'</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";

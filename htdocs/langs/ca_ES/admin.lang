@@ -338,7 +338,6 @@ GetSecuredUrl=Obtenir la URL calculada
 ButtonHideUnauthorized=Amaga els botons d'accions no autoritzades en compte de mostrar-los atenuats
 TotalNumberOfActivatedModules=Nombre total de mòduls activats: <b>%s</b>
 YouMustEnableOneModule=Ha d'activar almenys 1 mòdul.
-ModulesSystemTools=Mòduls utilitats
 ProductVatMassChange=Modificar IVA en massa
 ProductVatMassChangeDesc=Aquesta pàgina us permet canviar el tipus d'IVA definit en els productes o serveis d'un valor a un altre. Tingueu en compte que el canvi es fa en massa sobre tota la base de dades.
 OldVATRates=Taxa d'IVA antiga
@@ -350,6 +349,7 @@ TextLong=Text llarg
 Int=numèric enter
 Float=Decimal
 DateAndTime=Data i hora
+LocalTaxDesc=Alguns països apliquen 2 o 3 taxes a cada línia de factura. Si és el cas, escolliu el tipus de la segona i tercera taxa i el seu valor. Els possibles tipus són: <br> 1: taxa local aplicable a productes i serveis sense IVA (IVA no s'aplica a la taxa local) <br> 2: taxa local s'aplica a productes i serveis abans de l'IVA (IVA es calcula sobre import + taxa local) <br> 3: taxa local s'aplica a productes sense IVA (IVA no s'aplica a la taxa local) <br> 4: taxa local s'aplica a productes abans de l'IVA (IVA es calcula sobre l'import + taxa local) <br> 5: taxa local s'aplica a serveis sense IVA (IVA no s'aplica a la taxa local) <br> 6: taxa local s'aplica a serveis abans de l'IVA (IVA es calcula sobre import + taxa local)
 
 # Modules
 Module0Name=Usuaris y grups

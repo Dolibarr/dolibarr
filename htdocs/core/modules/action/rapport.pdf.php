@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
- *	Classe permettant la generation des rapports d'actions
+ *	Class to generate event report
  */
 class CommActionRapport
 {
@@ -217,23 +217,31 @@ class CommActionRapport
 				}
 				$y++;
 
+				// Date
 				$pdf->SetXY($this->marge_gauche, $y);
 				$pdf->MultiCell(22, $height, dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour"), 0, 'L', 0);
 				$y0 = $pdf->GetY();
 
+				// Third party
 				$pdf->SetXY(26, $y);
 				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->societe),32), 0, 'L', 0);
 				$y1 = $pdf->GetY();
 
+				// Action code
+				$code=$obj->code;
+				if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+				{
+					if ($code == 'AC_OTH')      $code='AC_MANUAL';
+					if ($code == 'AC_OTH_AUTO') $code='AC_AUTO';
+				}
 				$pdf->SetXY(60,$y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Action".$obj->code)),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Action".$code)),32), 0, 'L', 0);
 				$y2 = $pdf->GetY();
 
+				// Description of event
 				$pdf->SetXY(106,$y);
 				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($text), 0, 'L', 0);
 				$y3 = $pdf->GetY();
-
-				//$pdf->MultiCell(94,2,"y=$y y3=$y3",0,'L',0);
 
 				$i++;
 			}

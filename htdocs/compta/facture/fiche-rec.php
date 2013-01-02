@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ if ($action == 'add')
 	if (! $error)
 	{
 		$object->titre = GETPOST('titre', 'alpha');
-		$object->note  = GETPOST('comment');
+		$object->note  = GETPOST('note');
 		$object->usenewprice = GETPOST('usenewprice');
 
 		if ($object->create($user, $id) > 0)
@@ -113,53 +113,60 @@ if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
 
-	$invoice = new Facture($db);   // Source invoice
+	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
 
-	if ($invoice->fetch($id) > 0)
+	if ($object->fetch($id) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="facid" value="'.$invoice->id.'">';
+		print '<input type="hidden" name="facid" value="'.$object->id.'">';
 
 		$rowspan=4;
-		if (! empty($conf->projet->enabled) && $invoice->fk_project > 0) $rowspan++;
+		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
 
 		print '<table class="border" width="100%">';
 
-		$invoice->fetch_thirdparty();
+		$object->fetch_thirdparty();
 
-		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$invoice->client->getNomUrl(1,'customer').'</td>';
+		// Third party
+		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$object->client->getNomUrl(1,'customer').'</td>';
 		print '<td>';
 		//print $langs->trans("NotePrivate");
 		print '</td></tr>';
 
+		// Title
 		print '<tr><td>'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat" type="text" name="titre" size="16" value="'.$_POST["titre"].'">';
+		print '<input class="flat" type="text" name="titre" size="24" value="'.$_POST["titre"].'">';
 		print '</td>';
 
+		// Note
 		print '<td rowspan="'.$rowspan.'" valign="top">';
 		print '<textarea class="flat" name="note" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
 
+		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
+		// Payment term
 		print "<tr><td>".$langs->trans("PaymentConditions")."</td><td>";
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$invoice->id, $invoice->cond_reglement_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 		print "</td></tr>";
 
+		// Payment mode
 		print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$invoice->id, $facture->mode_reglement_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 		print "</td></tr>";
 
-		if (! empty($conf->projet->enabled) && $invoice->fk_project > 0)
+		// Project
+		if (! empty($conf->projet->enabled) && $object->fk_project > 0)
 		{
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
-			if ($invoice->fk_project > 0)
+			if ($object->fk_project > 0)
 			{
 				$project = new Project($db);
-				$project->fetch($invoice->fk_project);
+				$project->fetch($object->fk_project);
 				print $project->title;
 			}
 			print "</td></tr>";
@@ -194,7 +201,7 @@ if ($action == 'create')
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-		$sql.= " WHERE l.fk_facture = ".$invoice->id;
+		$sql.= " WHERE l.fk_facture = ".$object->id;
 		$sql.= " ORDER BY l.rowid";
 
 		$result = $db->query($sql);
@@ -339,7 +346,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		dol_print_error('',"Error, no invoice ".$invoice->id);
+		dol_print_error('',"Error, no invoice ".$object->id);
 	}
 }
 else
@@ -360,29 +367,13 @@ else
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td>'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="4">'.$object->titre.'</td>';
 
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
-			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
-			print "<td>". $langs->trans("PaymentConditions") ." : ";
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id,'none');
-			print "</td></tr>";
+			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
 
-			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">".$author->getFullName($langs)."</td>";
-
-			if ($object->remise_percent > 0)
-			{
-				print '<td rowspan="5" valign="top">';
-			}
-			else
-			{
-				print '<td rowspan="4" valign="top">';
-			}
-
-			print $langs->trans("PaymentMode") ." : ";
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id,'none');
-			print "</td></tr>";
+			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
 			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 			print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
@@ -392,10 +383,18 @@ else
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($object->total_ttc).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-			if ($object->note)
-			{
-				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($object->note)."</td></tr>";
-			}
+
+			// Payment term
+			print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id,'none');
+			print "</td></tr>";
+
+			// Payment mode
+			print '<tr><td>'.$langs->trans("PaymentMode").'</td><td colspan="3">';
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id,'none');
+			print "</td></tr>";
+
+			print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($object->note)."</td></tr>";
 
 			print "</table>";
 

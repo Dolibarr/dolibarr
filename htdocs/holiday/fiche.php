@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /**
- *   	\file       fiche.php
+ *   	\file       htdocs/holiday/fiche.php
  *		\ingroup    holiday
  *		\brief      Form and file creation of paid holiday.
  */
@@ -53,7 +53,7 @@ $now=dol_now();
 if ($action == 'create')
 {
 	$cp = new Holiday($db);
-	
+
     // Si pas le droit de créer une demande
     if(!$user->rights->holiday->write)
     {
@@ -69,7 +69,7 @@ if ($action == 'create')
     if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
     else if ($starthalfday == 'afternoon') $halfday=-1;
     else if ($endhalfday == 'morning') $halfday=1;
-    
+
     $valideur = GETPOST('valideur');
     $description = trim(GETPOST('description'));
     $userID = GETPOST('userID');
@@ -124,7 +124,7 @@ if ($action == 'create')
     $cp->date_fin = $date_fin;
     $cp->fk_validator = $valideur;
 	$cp->halfday = $halfday;
-	
+
     $verif = $cp->create($user_id);
 
     // Si pas d'erreur SQL on redirige vers la fiche de la demande
@@ -152,7 +152,7 @@ if ($action == 'update')
 	if ($starthalfday == 'afternoon' && $endhalfday == 'morning') $halfday=2;
 	else if ($starthalfday == 'afternoon') $halfday=-1;
 	else if ($endhalfday == 'morning') $halfday=1;
-	
+
     // Si pas le droit de modifier une demande
     if(!$user->rights->holiday->write)
     {
@@ -209,7 +209,7 @@ if ($action == 'update')
             $cp->date_fin = $date_fin;
             $cp->fk_validator = $valideur;
 			$cp->halfday = $halfday;
-			
+
 			// Update
 			$verif = $cp->update($user->id);
             if ($verif > 0)
@@ -636,9 +636,9 @@ if (empty($id) || $action == 'add' || $action == 'request')
 		print '<script type="text/javascript">
 	    function valider()
 	    {
-    	    if(document.demandeCP.date_debut_.value != "") 
+    	    if(document.demandeCP.date_debut_.value != "")
     	    {
-	           	if(document.demandeCP.date_fin_.value != "") 
+	           	if(document.demandeCP.date_fin_.value != "")
 	           	{
 	               if(document.demandeCP.valideur.value != "-1") {
 	                 return true;
@@ -648,13 +648,13 @@ if (empty($id) || $action == 'add' || $action == 'request')
 	                 return false;
 	               }
 	            }
-	            else 
+	            else
 	            {
 	              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
 	              return false;
 	            }
 	        }
-	        else 
+	        else
 	        {
 	           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
 	           return false;
@@ -698,7 +698,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datefmonth'), GETPOST('datefday'), GETPOST('datefyear'));
             $form->select_date($tmpdate,'date_fin_');
         }
-        print ' &nbsp; &nbsp; ';        
+        print ' &nbsp; &nbsp; ';
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
         print '</td>';
         print '</tr>';
@@ -828,7 +828,7 @@ else
                 if ($action == 'refuse' && $cp->statut == 2 && $userID == $cp->fk_validator)
                 {
                     $array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif de refus :",'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse",$langs->trans("TitleRefuseCP"),"","confirm_refuse", $array_input, 1 ,0);
+                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), "", "confirm_refuse", $array_input, 1, 0);
                     if ($ret == 'html') print '<br />';
                 }
 
@@ -855,7 +855,7 @@ else
                 print '<tbody>';
 
                 $linkback='';
-                
+
                 print '<tr>';
                 print '<td width="25%">'.$langs->trans("Ref").'</td>';
                 print '<td>';
@@ -865,7 +865,7 @@ else
 
 			    $starthalfday=($cp->halfday == -1 || $cp->halfday == 2)?'afternoon':'morning';
 			    $endhalfday=($cp->halfday == 1 || $cp->halfday == 2)?'morning':'afternoon';
-			    
+
                 if(!$edit) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
@@ -885,7 +885,7 @@ else
                     print '</tr>';
                 }
 
-                if (!$edit) 
+                if (!$edit)
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
@@ -914,7 +914,7 @@ else
                 print '<td>'.$langs->trans('StatutCP').'</td>';
                 print '<td>'.$cp->getLibStatut(2).'</td>';
                 print '</tr>';
-                if ($cp->statut == 5) 
+                if ($cp->statut == 5)
                 {
                 	print '<tr>';
                 	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
@@ -923,14 +923,14 @@ else
                 }
 
                 // Description
-                if (!$edit) 
+                if (!$edit)
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td>'.nl2br($cp->description).'</td>';
                     print '</tr>';
                 }
-                else 
+                else
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
@@ -1030,7 +1030,7 @@ else
                     {
                     	print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
-                    
+
                     // Si le statut est en attente de validation et que le valideur est connecté
                     if ($userID == $cp->fk_validator && $cp->statut == 2)
                     {
@@ -1042,7 +1042,7 @@ else
                     {
 	                    print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     }
-                                    
+
                     print '</div>';
                 }
 

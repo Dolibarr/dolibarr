@@ -241,6 +241,11 @@ alter table llx_facturedet add column localtax2_type varchar(1) after localtax2_
 ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(1);
 ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(1);
 
+alter table llx_facturedet_rec add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_facturedet_rec add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax2_type varchar(1);
+
 alter table llx_propaldet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_propaldet add column localtax2_type varchar(1) after localtax2_tx;
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(1);
@@ -259,8 +264,19 @@ create table llx_socpeople_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
-
 ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
+
+create table llx_actioncomm_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_actioncomm_extrafields ADD INDEX idx_actioncomm_extrafields (fk_object);
+
+
+
 
 UPDATE llx_c_actioncomm set type = 'systemauto' where code IN ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV');
 
@@ -889,3 +905,5 @@ ALTER TABLE llx_element_lock ADD COLUMN sessionid varchar(255) AFTER datem;
 ALTER TABLE llx_element_lock MODIFY COLUMN elementtype varchar(32) NOT NULL;
 ALTER TABLE llx_element_lock DROP COLUMN fk_user_modif;
 ALTER TABLE llx_element_lock DROP COLUMN status;
+
+DELETE FROM llx_c_action_trigger WHERE elementtype='withdraw';

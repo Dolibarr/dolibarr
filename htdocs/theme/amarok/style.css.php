@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2012	Nicolas Péré		<nicolas@amarok2.net>
  * Copyright (C) 2012	Xavier Peyronnet	<xavier.peyronnet@free.fr>
- * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
- * Version 0.6 (2012-10-30)
+ * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ body {
 	color:#232323;
 	font-size:<?php print $fontsize ?>px;
    	font-family:<?php print $fontlist ?>;
-	
+
     <?php print 'direction:'.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -215,19 +215,19 @@ form#login img#img_logo {
 	border-bottom:solid 1px rgba(0,0,0,.3);
 	box-shadow:1px 1px 6px rgba(0,0,0,.3) inset , 0 0 1px rgba(255,255,255,.6);
 }
-	
+
 form#login input {
 	padding:6px;
 	font-size:120%;
 }
-	
+
 form#login label, form#login td b {
 	vertical-align:middle;
 	line-height:40px;
 	color:rgba(0,0,0,.4);
 	text-shadow:1px 1px 1px rgba(255,255,255,.6);
 }
-	
+
 form#login table.login_table {
 	margin:10px 0px;
 	border:none;
@@ -277,7 +277,7 @@ table.login_table .button:hover {
 		color-stop(0, rgba(0,0,0,.3))
 	);
 }
-	
+
 table.login_table .vmenu {
 	color:rgba(0,0,0,.6);
 	text-shadow:1px 1px 1px rgba(255,255,255,.6);
@@ -370,7 +370,7 @@ div.tmenu li {
 
 div.tmenu li a {color:#cccccc;}
 div.tmenu li a:hover {color:rgba(255,255,255,.2);}
-	
+
 div.tmenu ul li a.tmenusel {/* texte du menu principal sélectionné */
 	color:#ffffff;
 	font-weight:bold;
@@ -508,6 +508,25 @@ div.vmenu {
 /* Toolbar for ECM or Filemanager                                                 */
 /* ============================================================================== */
 
+
+.largebutton {
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    border: 1px solid #CCC !important;
+
+    -moz-border-radius: 5px 5px 5px 5px !important;
+	-webkit-border-radius: 5px 5px 5px 5px !important;
+	border-radius: 5px 5px 5px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #EEE;
+    -webkit-box-shadow: 4px 4px 4px #EEE;
+    box-shadow: 4px 4px 4px #EEE;
+
+    padding: 0 4px 0 4px !important;
+}
+
 .toolbar {}
 .toolbarbutton {}
 
@@ -598,26 +617,26 @@ a.tabTitle img {
 	-webkit-border-top-left-radius:6px;
 	-webkit-border-top-right-radius:6px;
 }
-	
+
 .tab#active {
 	color:#232323;
 	font-weight:bold;
 	background-color:#ffffff;
 	border-bottom:solid 1px #ffffff;
 }
-	
+
 .tab:hover {color:#333333;}
 
 
 /* ============================================================================== */
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
- 
+
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'20':'24'; ?>px;
 	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'12':'6'; ?>px;
 }
- 
+
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -652,7 +671,7 @@ div.ficheaddleft {
 
 /* boutons : */
 .button, .butAction {background: #999;border: solid 1px #666;}
-.butActionRefused {background: #ccc;}
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6)}
 .butActionDelete {background: #b33c37;border:solid 1px #8d2f2b;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {
@@ -688,7 +707,7 @@ border-left: solid 1px rgba(0,0,0,.3);
 
 td.formdocbutton {padding-top:6px;}
 
-.button:hover, .butAction:hover, .butActionRefused:hover, .butActionDelete:hover {
+.button:hover, .butAction:hover, .butActionDelete:hover {
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 100%, rgba(0,0,0,.3) 0%);
@@ -909,7 +928,7 @@ tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td {paddin
 	-moz-box-shadow:2px 4px 2px #cccccc;
 	-webkit-box-shadow:2px 4px 2px #cccccc;
 	box-shadow:2px 4px 2px #cccccc;
-	white-space:nowrap;
+	/*white-space:nowrap;*/
 }
 
 .box {

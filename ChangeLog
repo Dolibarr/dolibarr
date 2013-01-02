@@ -3,7 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 3.3 compared to 3.2.2 *****
+***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
 - New: [ task #289 ] Can reorder tasks.
 - New: Add field "signature" into thirdparty card. If filled, text is added 
@@ -101,11 +101,31 @@ For developers:
 - New: Add PRODUCT_PRICE_MODIFY trigger.
 - New: Created function to retrieve total amount of discount of an invoice/proposal...
 - New: We can use a dynamic value ($conf->global->XXX for example) into titles of menus.
+- Qual: Renamed SUPPLIER_INVOICE_BUILDDOC trigger to BILL_SUPPLIER_BUILDDOC
+- Qual: Renamed INVOICE_SUPPLIER_DELETE trigger to BILL_SUPPLIER_DELETE
+- Qual: Renamed SUPLLIER_ORDER_BUILDDOC trigger to ORDER_SUPPLIER_BUILDDOC
 
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
 - New: Added bg_BG autotranslated language.
 - New: Translate the donation receipt.
+
+
+***** ChangeLog for 3.2.3 compared to 3.2.2 *****
+
+- Fix: Some permission into agenda module.
+- Fix: Generation of PDF was not using correct font for some languages.
+- Fix some translations.
+- Fix: [ bug #607 ] Nom de société avec guillemets.
+- Fix: Option MAIN_MAIL_SENDMAIL_FORCE_BA and MAIN_FIX_BUGGED_MTA was not
+  complete.
+- Fix: comaptiblity with multicompany module.
+- Fix: Bad label when validating/paying an invoice from POS module.
+- Fix: Correct recipient into rouget template.
+- Fix: A lot of fix into PDF pagebreak management.
+- Update VAT for some countries.
+- Firstname was missing when sending email from file list.
+- Added en_SA language.
 
 
 

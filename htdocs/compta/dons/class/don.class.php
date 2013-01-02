@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ class Don extends CommonObject
     public $table_element='don';
 
     var $id;
+    var $ref;
     var $date;
     var $amount;
     var $prenom;
@@ -689,11 +690,11 @@ class Don extends CommonObject
 
         $picto='generic';
 
-        $label=$langs->trans("ShowDonation").': '.$this->ref;
+        $label=$langs->trans("ShowDonation").': '.$this->id;
 
         if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
         if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+        if ($withpicto != 2) $result.=$lien.$this->id.$lienfin;
         return $result;
     }
 

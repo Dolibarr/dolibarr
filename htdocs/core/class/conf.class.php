@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin      	<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin      	<regis.houssin@capnetworks.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -113,17 +113,14 @@ class Conf
 
 	/**
 	 *	Load setup values into conf object (read llx_const)
+	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
 	 *
-	 *	@param      DoliDB		$db		Handler d'acces base
+	 *	@param      DoliDB		$db		Database handler
 	 *	@return     int					< 0 if KO, >= 0 if OK
 	 */
 	function setValues($db)
 	{
 		dol_syslog(get_class($this)."::setValues");
-
-		// Avoid warning if not defined
-		if (empty($this->db->dolibarr_main_db_encryption)) $this->db->dolibarr_main_db_encryption=0;
-		if (empty($this->db->dolibarr_main_db_cryptkey))   $this->db->dolibarr_main_db_cryptkey='';
 
 		/*
 		 * Definition de toutes les constantes globales d'environnement
@@ -164,13 +161,19 @@ class Conf
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
 						{
 							$params=explode(':',$value,2);
-							$this->tabs_modules[$params[0]][]=$value;
+							$this->tabs_modules[$params[0]][]=$value;				// Add this module in list of modules that provide tabs
 						}
 						// If this is constant for a sms engine
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SMS$/i',$key,$reg))
 						{
 							$modulename=strtolower($reg[1]);
-							$this->sms_engine_modules[$modulename]=$modulename;    // Add this module in list of modules that provide SMS
+							$this->sms_engine_modules[$modulename]=$modulename;		// Add this module in list of modules that provide SMS
+						}
+						// If this is constant for a societe submodule
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SOCIETE$/i',$key,$reg))
+						{
+							$modulename=strtolower($reg[1]);
+							$this->societe_modules[$modulename]=$modulename;		// Add this module in list of modules that provide societe modules
 						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
@@ -395,7 +398,7 @@ class Conf
         $this->format_date_hour_text="%d %B %Y %H:%M";
 
         // Duration of workday
-        if (! isset($conf->global->MAIN_DURATION_OF_WORKDAY)) $this->global->MAIN_DURATION_OF_WORKDAY=86400;
+        if (! isset($this->global->MAIN_DURATION_OF_WORKDAY)) $this->global->MAIN_DURATION_OF_WORKDAY=86400;
 
 		// Limites decimales si non definie (peuvent etre egale a 0)
 		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;
@@ -435,22 +438,6 @@ class Conf
 		if (isset($this->commande))  $this->order=$this->commande;
 		if (isset($this->contrat))   $this->contract=$this->contrat;
 		if (isset($this->categorie)) $this->category=$this->categorie;
-
-
-        // Define menu manager in setup
-        if (empty($user->societe_id))    // If internal user or not defined
-        {
-            $this->top_menu=(empty($this->global->MAIN_MENU_STANDARD_FORCED)?$this->global->MAIN_MENU_STANDARD:$this->global->MAIN_MENU_STANDARD_FORCED);
-            $this->smart_menu=(empty($this->global->MAIN_MENU_SMARTPHONE_FORCED)?$this->global->MAIN_MENU_SMARTPHONE:$this->global->MAIN_MENU_SMARTPHONE_FORCED);
-        }
-        else                        // If external user
-        {
-            $this->top_menu=(empty($this->global->MAIN_MENUFRONT_STANDARD_FORCED)?$this->global->MAIN_MENUFRONT_STANDARD:$this->global->MAIN_MENUFRONT_STANDARD_FORCED);
-            $this->smart_menu=(empty($this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$this->global->MAIN_MENUFRONT_SMARTPHONE:$this->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-        }
-        // For backward compatibility
-        if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
-        elseif ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
 
         // Object $mc
         if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))

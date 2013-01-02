@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,6 +119,17 @@ class html_cerfafr extends ModeleDon
 
             if (file_exists($dir))
             {
+            	$formclass = new Form($this->db);
+
+            	//This is not the proper way to do it but $formclass->form_modes_reglement
+            	//prints the translation instead of returning it
+            	if ($don->modepaiementid)
+            	{
+            		$formclass->load_cache_types_paiements();
+            		$paymentmode = $formclass->cache_types_paiements[$don->modepaiementid]['label'];
+            	}
+            	else $paymentmode = '';
+
 		        // Defini contenu
 		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
 		        $form = implode('', file($donmodel));
@@ -135,7 +147,7 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__DONATOR_ADDRESS__',$don->adresse,$form);
 		        $form = str_replace('__DONATOR_ZIP__',$don->cp,$form);
 		        $form = str_replace('__DONATOR_TOWN__',$don->ville,$form);
-		        $form = str_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$form);
+		        $form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode,$form);
 		        $form = str_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$form);
 		        $form = str_replace('__DonationRef__',$outputlangs->trans("DonationRef"),$form);
 		        $form = str_replace('__DonationReceipt__',$outputlangs->trans("DonationReceipt"),$form);

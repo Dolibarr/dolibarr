@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
@@ -1367,7 +1367,14 @@ else
             if ($user->id <> $id && $candisableuser &&
             (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
-                print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a>';
+            	if ($user->admin || ! $object->admin) // If user edited is admin, delete is possible on for an admin
+            	{
+                	print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a>';
+            	}
+            	else
+            	{
+            		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a>';
+            	}
             }
 
             print "</div>\n";

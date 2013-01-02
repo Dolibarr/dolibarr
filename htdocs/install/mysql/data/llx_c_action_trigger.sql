@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
 --
@@ -30,15 +30,12 @@
 -- List of all managed triggered events (used for trigger agenda and for notification)
 --
 delete from llx_c_action_trigger;
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (1,'FICHEINTER_VALIDATE','Intervention validated','Executed when a intervention is validated','ficheinter',18);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (1,'FICHINTER_VALIDATE','Intervention validated','Executed when a intervention is validated','ficheinter',18);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (2,'BILL_VALIDATE','Customer invoice validated','Executed when a customer invoice is approved','facture',6);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (3,'ORDER_SUPPLIER_APPROVE','Supplier order request approved','Executed when a supplier order is approved','order_supplier',11);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (4,'ORDER_SUPPLIER_REFUSE','Supplier order request refused','Executed when a supplier order is refused','order_supplier',12);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (5,'ORDER_VALIDATE','Customer order validate','Executed when a customer order is validated','commande',4);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (6,'PROPAL_VALIDATE','Customer proposal validated','Executed when a commercial proposal is validated','propal',2);
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (7,'WITHDRAW_TRANSMIT','Withdraw command transmitted','Executed when a withdrawal command is transmited','withdraw',25);
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (8,'WITHDRAW_CREDIT','Withdraw credited','Executed when a withdrawal is credited','withdraw',26);
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'WITHDRAW_EMIT','Withdraw emit','Executed when a withdrawal is emited','withdraw',27);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (10,'COMPANY_CREATE','Third party created','Executed when a third party is created','societe',1);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (11,'CONTRACT_VALIDATE','Contract validated','Executed when a contract is validated','contrat',17);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (12,'PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal',3);

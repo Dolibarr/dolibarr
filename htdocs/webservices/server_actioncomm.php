@@ -228,8 +228,6 @@ $server->register(
  *
  * @param	array		$authentication		Array of authentication information
  * @param	int			$id					Id of object
- * @param	string		$ref				Ref of object
- * @param	ref_ext		$ref_ext			Ref external of object
  * @return	mixed
  */
 function getActionComm($authentication,$id)
@@ -262,7 +260,7 @@ function getActionComm($authentication,$id)
             $result=$actioncomm->fetch($id);
             if ($result > 0)
             {
-            	
+
             	$actioncomm_result_fields=array(
 						'id' => $actioncomm->id,
 						'ref'=> $actioncomm->ref,
@@ -289,19 +287,19 @@ function getActionComm($authentication,$id)
 			        	'projectid'=> $actioncomm->fk_project,
 			        	'fk_element'=> $actioncomm->fk_element,
 			        	'elementtype'=> $actioncomm->elementtype);
-			        	
+
 			        	//Retreive all extrafield for actioncomm
 			        	// fetch optionals attributes and labels
 			        	$extrafields=new ExtraFields($db);
 			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
 			        	//Get extrafield values
 			        	$actioncomm->fetch_optionals($actioncomm->id,$extralabels);
-			        	
+
 			        	foreach($extrafields->attribute_label as $key=>$label)
 			        	{
 			        		$actioncomm_result_fields=array_merge($actioncomm_result_fields,array('options_'.$key => $actioncomm->array_options['options_'.$key]));
 			        	}
-			        	
+
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -363,11 +361,11 @@ function getListActionCommType($authentication)
 				foreach($cactioncomm->liste_array as $code=>$libeller) {
 					$resultarray[]=array('code'=>$code,'libelle'=>$libeller);
 				}
-				
+
 				 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'actioncommtypes'=>$resultarray);
-			
+
 			}
 			else
 			{
@@ -433,8 +431,8 @@ function createActionComm($authentication,$actioncomm)
 		$newobject->fulldayevent=$actioncomm['fulldayevent'];
 		$newobject->location=$actioncomm['location'];
 		$newobject->fk_element=$actioncomm['fk_element'];
-		$newobject->elementtype=$actioncomm['elementtype'];		
-		
+		$newobject->elementtype=$actioncomm['elementtype'];
+
 		//Retreive all extrafield for actioncomm
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
@@ -444,7 +442,7 @@ function createActionComm($authentication,$actioncomm)
 			$key='options_'.$key;
 			$newobject->array_options[$key]=$actioncomm[$key];
 		}
-		
+
 		$db->begin();
 
 		$result=$newobject->add($fuser);

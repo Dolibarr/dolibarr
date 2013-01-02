@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -870,7 +870,8 @@ a.toolbarbutton {
     background: #FFFFFF;*/
 }
 img.toolbarbutton {
-    height: 28px;
+	margin-top: 2px;
+	height: 28px;
 }
 
 
@@ -1029,7 +1030,6 @@ img.toolbarbutton {
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEE;
     border:         1px solid #BBB;
     border-width:   0;
     }

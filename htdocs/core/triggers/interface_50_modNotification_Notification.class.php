@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,14 @@
 class InterfaceNotification
 {
     var $db;
-    var $listofmanagedevents=array('BILL_VALIDATE','ORDER_VALIDATE','PROPAL_VALIDATE',
-                            'FICHEINTER_VALIDATE','ORDER_SUPPLIER_APPROVE','ORDER_SUPPLIER_REFUSE');
+    var $listofmanagedevents=array(
+    	'BILL_VALIDATE',
+    	'ORDER_VALIDATE',
+    	'PROPAL_VALIDATE',
+        'FICHINTER_VALIDATE',
+    	'ORDER_SUPPLIER_APPROVE',
+    	'ORDER_SUPPLIER_REFUSE'
+   	);
 
     /**
      *   Constructor
@@ -146,7 +152,7 @@ class InterfaceNotification
             $notify->send($action, $object->socid, $mesg, 'propal', $object->id, $filepdf);
 		}
 
-		elseif ($action == 'FICHEINTER_VALIDATE')
+		elseif ($action == 'FICHINTER_VALIDATE')
 		{
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 

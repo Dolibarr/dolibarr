@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class MenuTop
 {
 	var $db;
 	var $require_left=array("eldy_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-	var $hideifnotallowed=1;						// Put 0 for back office menu, 1 for front office menu
+	var $type_user=1;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
 
@@ -58,7 +58,7 @@ class MenuTop
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
-		print_eldy_menu($this->db,$this->atarget,$this->hideifnotallowed);
+		print_eldy_menu($this->db,$this->atarget,$this->type_user);
 	}
 
 }

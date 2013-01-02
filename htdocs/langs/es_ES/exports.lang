@@ -60,8 +60,8 @@ TypeOfLineServiceOrProduct=Tipo de línea (0=producto, 1=servicio)
 FileWithDataToImport=Archivo que contiene los datos a importar
 FileToImport=Archivo origen a importar
 FileMustHaveOneOfFollowingFormat=El archivo de importación debe tener uno de los siguientes formatos
-ChooseFormatOfFileToImport=Elija el formato de archivo que desea importar haciendo en el picto %s para seleccionarlo...
-ChooseFileToImport=Elija el archivo de importación y haga clic en el picto %s para seleccionarlo como archivo origen de importación...
+ChooseFormatOfFileToImport=Elija el formato de archivo que desea importar haciendo en la imagen %s para seleccionarlo...
+ChooseFileToImport=Elija el archivo de importación y haga clic en la imagen %s para seleccionarlo como archivo origen de importación...
 DownloadEmptyExample=Descargar archivo de ejemplo vacío
 SourceFileFormat=Formato del archivo origen
 FieldsInSourceFile=Campos en el archivo origen
@@ -125,6 +125,7 @@ DeskCode=Código oficina
 BankAccountNumber=Número cuenta
 BankAccountNumberKey=Dígito Control
 ## filters
+SelectFilterFields=Si quiere aplicar un filtro sobre algunos valores, introdúzcalos aquí.
 FilterableFields=Campos filtrables
 FilteredFields=Campos filtrados
 FilteredFieldsValues=Valores de filtros

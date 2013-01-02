@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand        <philippe.grand@atoo-net.com>
@@ -198,199 +198,209 @@ else if ($action == 'add' && $user->rights->commande->creer)
 	$datecommande  = dol_mktime(12, 0, 0, GETPOST('remonth'),  GETPOST('reday'),  GETPOST('reyear'));
 	$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'),GETPOST('liv_day'),GETPOST('liv_year'));
 
-	$object->socid=$socid;
-	$object->fetch_thirdparty();
-
-	$db->begin();
-
-	$object->date_commande        = $datecommande;
-	$object->note                 = GETPOST('note');
-	$object->note_public          = GETPOST('note_public');
-	$object->source               = GETPOST('source_id');
-	$object->fk_project           = GETPOST('projectid');
-	$object->ref_client           = GETPOST('ref_client');
-	$object->modelpdf             = GETPOST('model');
-	$object->cond_reglement_id    = GETPOST('cond_reglement_id');
-	$object->mode_reglement_id    = GETPOST('mode_reglement_id');
-	$object->availability_id      = GETPOST('availability_id');
-	$object->demand_reason_id     = GETPOST('demand_reason_id');
-	$object->date_livraison       = $datelivraison;
-	$object->fk_delivery_address  = GETPOST('fk_address');
-	$object->contactid            = GETPOST('contactidp');
-
-	// If creation from another object of another module (Example: origin=propal, originid=1)
-	if (! empty($origin) && ! empty($originid))
+	if ($datecommande == '')
 	{
-		// Parse element/subelement (ex: project_task)
-		$element = $subelement = $origin;
-		if (preg_match('/^([^_]+)_([^_]+)/i',$origin,$regs))
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
+		$action='create';
+		$error++;
+	}
+	
+	if (! $error)
+	{
+		$object->socid=$socid;
+		$object->fetch_thirdparty();
+	
+		$db->begin();
+	
+		$object->date_commande        = $datecommande;
+		$object->note                 = GETPOST('note');
+		$object->note_public          = GETPOST('note_public');
+		$object->source               = GETPOST('source_id');
+		$object->fk_project           = GETPOST('projectid');
+		$object->ref_client           = GETPOST('ref_client');
+		$object->modelpdf             = GETPOST('model');
+		$object->cond_reglement_id    = GETPOST('cond_reglement_id');
+		$object->mode_reglement_id    = GETPOST('mode_reglement_id');
+		$object->availability_id      = GETPOST('availability_id');
+		$object->demand_reason_id     = GETPOST('demand_reason_id');
+		$object->date_livraison       = $datelivraison;
+		$object->fk_delivery_address  = GETPOST('fk_address');
+		$object->contactid            = GETPOST('contactidp');
+	
+		// If creation from another object of another module (Example: origin=propal, originid=1)
+		if (! empty($origin) && ! empty($originid))
 		{
-			$element = $regs[1];
-			$subelement = $regs[2];
-		}
-
-		// For compatibility
-		if ($element == 'order')    {
-			$element = $subelement = 'commande';
-		}
-		if ($element == 'propal')   {
-			$element = 'comm/propal'; $subelement = 'propal';
-		}
-		if ($element == 'contract') {
-			$element = $subelement = 'contrat';
-		}
-
-		$object->origin    = $origin;
-		$object->origin_id = $originid;
-
-		// Possibility to add external linked objects with hooks
-		$object->linked_objects[$object->origin] = $object->origin_id;
-		$other_linked_objects=GETPOST('other_linked_objects','array');
-		if (! empty($other_linked_objects))
-		{
-			$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
-		}
-
-		$object_id = $object->create($user);
-
-		if ($object_id > 0)
-		{
-			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-
-			$classname = ucfirst($subelement);
-			$srcobject = new $classname($db);
-
-			dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
-			$result=$srcobject->fetch($object->origin_id);
-			if ($result > 0)
+			// Parse element/subelement (ex: project_task)
+			$element = $subelement = $origin;
+			if (preg_match('/^([^_]+)_([^_]+)/i',$origin,$regs))
 			{
-				$lines = $srcobject->lines;
-				if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
-
-				$fk_parent_line=0;
-				$num=count($lines);
-
-				for ($i=0;$i<$num;$i++)
+				$element = $regs[1];
+				$subelement = $regs[2];
+			}
+	
+			// For compatibility
+			if ($element == 'order')    {
+				$element = $subelement = 'commande';
+			}
+			if ($element == 'propal')   {
+				$element = 'comm/propal'; $subelement = 'propal';
+			}
+			if ($element == 'contract') {
+				$element = $subelement = 'contrat';
+			}
+	
+			$object->origin    = $origin;
+			$object->origin_id = $originid;
+	
+			// Possibility to add external linked objects with hooks
+			$object->linked_objects[$object->origin] = $object->origin_id;
+			$other_linked_objects=GETPOST('other_linked_objects','array');
+			if (! empty($other_linked_objects))
+			{
+				$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
+			}
+	
+			$object_id = $object->create($user);
+	
+			if ($object_id > 0)
+			{
+				dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+	
+				$classname = ucfirst($subelement);
+				$srcobject = new $classname($db);
+	
+				dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+				$result=$srcobject->fetch($object->origin_id);
+				if ($result > 0)
 				{
-					$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
-					$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
-					$product_type=(! empty($lines[$i]->product_type)?$lines[$i]->product_type:0);
-
-					// Dates
-					// TODO mutualiser
-					$date_start=$lines[$i]->date_debut_prevue;
-					if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-					if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-					$date_end=$lines[$i]->date_fin_prevue;
-					if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-					if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-
-					// Reset fk_parent_line for no child products and special product
-					if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-						$fk_parent_line = 0;
-					}
-
-					$result = $object->addline(
-						$object_id,
-						$desc,
-						$lines[$i]->subprice,
-						$lines[$i]->qty,
-						$lines[$i]->tva_tx,
-						$lines[$i]->localtax1_tx,
-						$lines[$i]->localtax2_tx,
-						$lines[$i]->fk_product,
-						$lines[$i]->remise_percent,
-						$lines[$i]->info_bits,
-						$lines[$i]->fk_remise_except,
-						'HT',
-						0,
-						$datestart,
-						$dateend,
-						$product_type,
-						$lines[$i]->rang,
-						$lines[$i]->special_code,
-						$fk_parent_line,
-						$lines[$i]->fk_fournprice,
-						$lines[$i]->pa_ht,
-						$label
-					);
-
-					if ($result < 0)
+					$lines = $srcobject->lines;
+					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+	
+					$fk_parent_line=0;
+					$num=count($lines);
+	
+					for ($i=0;$i<$num;$i++)
 					{
-						$error++;
-						break;
+						$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+						$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+						$product_type=(! empty($lines[$i]->product_type)?$lines[$i]->product_type:0);
+	
+						// Dates
+						// TODO mutualiser
+						$date_start=$lines[$i]->date_debut_prevue;
+						if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
+						if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
+						$date_end=$lines[$i]->date_fin_prevue;
+						if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
+						if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
+	
+						// Reset fk_parent_line for no child products and special product
+						if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+							$fk_parent_line = 0;
+						}
+	
+						$result = $object->addline(
+							$object_id,
+							$desc,
+							$lines[$i]->subprice,
+							$lines[$i]->qty,
+							$lines[$i]->tva_tx,
+							$lines[$i]->localtax1_tx,
+							$lines[$i]->localtax2_tx,
+							$lines[$i]->fk_product,
+							$lines[$i]->remise_percent,
+							$lines[$i]->info_bits,
+							$lines[$i]->fk_remise_except,
+							'HT',
+							0,
+							$datestart,
+							$dateend,
+							$product_type,
+							$lines[$i]->rang,
+							$lines[$i]->special_code,
+							$fk_parent_line,
+							$lines[$i]->fk_fournprice,
+							$lines[$i]->pa_ht,
+							$label
+						);
+	
+						if ($result < 0)
+						{
+							$error++;
+							break;
+						}
+	
+						// Defined the new fk_parent_line
+						if ($result > 0 && $lines[$i]->product_type == 9) {
+							$fk_parent_line = $result;
+						}
 					}
-
-					// Defined the new fk_parent_line
-					if ($result > 0 && $lines[$i]->product_type == 9) {
-						$fk_parent_line = $result;
-					}
+	
+					// Hooks
+					$parameters=array('objFrom'=>$srcobject);
+					$reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+					if ($reshook < 0) $error++;
 				}
-
-				// Hooks
-				$parameters=array('objFrom'=>$srcobject);
-				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) $error++;
+				else
+				{
+					$mesg=$srcobject->error;
+					$error++;
+				}
 			}
 			else
 			{
-				$mesg=$srcobject->error;
+				$mesg=$object->error;
 				$error++;
 			}
 		}
 		else
 		{
-			$mesg=$object->error;
-			$error++;
-		}
-	}
-	else
-	{
-		$object_id = $object->create($user);
-
-		// If some invoice's lines already known
-		$NBLINES=8;
-		for ($i = 1 ; $i <= $NBLINES ; $i++)
-		{
-			if ($_POST['idprod'.$i])
+			$object_id = $object->create($user);
+	
+			// If some invoice's lines already known
+			$NBLINES=8;
+			for ($i = 1 ; $i <= $NBLINES ; $i++)
 			{
-				$xid = 'idprod'.$i;
-				$xqty = 'qty'.$i;
-				$xremise = 'remise_percent'.$i;
-				$object->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+				if ($_POST['idprod'.$i])
+				{
+					$xid = 'idprod'.$i;
+					$xqty = 'qty'.$i;
+					$xremise = 'remise_percent'.$i;
+					$object->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+				}
 			}
 		}
-	}
-
-	// Insert default contacts if defined
-	if ($object_id > 0)
-	{
-		if (GETPOST('contactidp'))
+	
+		// Insert default contacts if defined
+		if ($object_id > 0)
 		{
-			$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
-			if ($result < 0)
+			if (GETPOST('contactidp'))
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
-				$error++;
+				$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
+				if ($result < 0)
+				{
+					$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+					$error++;
+				}
 			}
+	
+			$id = $object_id;
+			$action = '';
 		}
-
-		$id = $object_id;
-		$action = '';
-	}
-
-	// End of object creation, we show it
-	if ($object_id > 0 && ! $error)
-	{
-		$db->commit();
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object_id);
-		exit;
-	}
-	else
-	{
-		$db->rollback();
-		$action='create';
-		if (! $mesg) $mesg='<div class="error">'.$object->error.'</div>';
+	
+		// End of object creation, we show it
+		if ($object_id > 0 && ! $error)
+		{
+			$db->commit();
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object_id);
+			exit;
+		}
+		else
+		{
+			$db->rollback();
+			$action='create';
+			if (! $mesg) $mesg='<div class="error">'.$object->error.'</div>';
+		}
 	}
 }
 
@@ -1394,6 +1404,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
 				$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 
+				$datedelivery		= (!empty($objectsrc->date_livraison)?$objectsrc->date_livraison:'');
+				
 				$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
 				$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
@@ -1410,6 +1422,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			$remise_percent     = $soc->remise_percent;
 			$remise_absolue     = 0;
 			$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			$projectid          = 0;
 		}
 		$absolute_discount=$soc->getAvailableDiscounts();
 
@@ -1432,7 +1445,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 		// Reference client
 		print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
-		print '<input type="text" name="ref_client" value=""></td>';
+		//print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
+		print '<input type="text" name="ref_client" value=""></td>';	// We must not use ref_client of proposal for an order
 		print '</tr>';
 
 		// Client
@@ -1463,43 +1477,37 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 		// Date de livraison
 		print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
-		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY))
+		if (empty($datedelivery))
 		{
-			$datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		}
-		else
-		{
-			$datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+			else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 		}
 		$form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
 		print "</td></tr>";
 
 		// Conditions de reglement
 		print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-		$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
+		$form->select_conditions_paiements($cond_reglement_id,'cond_reglement_id',-1,1);
 		print '</td></tr>';
 
 		// Mode de reglement
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-		$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+		$form->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 		print '</td></tr>';
 
 		// Delivery delay
 		print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-		$form->select_availability($propal->availability,'availability_id','',1);
+		$form->select_availability($availability_id,'availability_id','',1);
 		print '</td></tr>';
 
 		// What trigger creation
 		print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
-		$form->select_demand_reason(($origin=='propal'?'SRC_COMM':''),'demand_reason_id','',1);
+		$form->select_demand_reason($demand_reason_id,'demand_reason_id','',1);
 		print '</td></tr>';
 
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			$projectid = 0;
-			if ($origin == 'project') $projectid = ($originid?$originid:0);
-
 			print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 			$numprojet=select_projects($soc->id,$projectid);
 			if ($numprojet==0)
