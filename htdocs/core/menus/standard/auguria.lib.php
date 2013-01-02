@@ -43,6 +43,8 @@ function print_auguria_menu($db,$atarget,$type_user)
 	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 	$_SESSION["leftmenuopened"]="";
 
+	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+
 	$tabMenu=array();
 	$menuArbo = new Menubase($db,'auguria','top');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria',$tabMenu);
@@ -52,53 +54,50 @@ function print_auguria_menu($db,$atarget,$type_user)
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)
 	{
-		if ($newTabMenu[$i]['enabled'] == true)
+		$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
+
+		$showmode=dol_auguria_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
+
+		if ($showmode == 1)
 		{
-			$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
-			if ($newTabMenu[$i]['perms'] == true)	// Is allowed
+			// Define url
+			if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				// Define url
-				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
-				{
-					$url = $newTabMenu[$i]['url'];
-				}
-				else
-				{
-					$url=dol_buildpath($newTabMenu[$i]['url'],1);
-					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-					{
-                        if (! preg_match('/\?/',$url)) $url.='?';
-                        else $url.='&';
-					    $url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
-					}
-					//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				}
-                $url=preg_replace('/__LOGIN__/',$user->login,$url);
-
-				// Define the class (top menu selected or not)
-				if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-				else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
-				else $classname='class="tmenu"';
-
-				print_start_menu_entry_auguria($idsel,$classname);
-				print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?' target="'.$newTabMenu[$i]['target'].'"':($atarget?' target="'.$atarget.'"':'')).'>';
-				print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
-				print '</a>';
-				print_end_menu_entry_auguria();
+				$url = $newTabMenu[$i]['url'];
 			}
-			else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+			else
 			{
-				if (! $type_user)
+				$url=dol_buildpath($newTabMenu[$i]['url'],1);
+				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 				{
-					print_start_menu_entry_auguria($idsel,'class="tmenu"');
-					print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-					print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
-					print '</a>';
-					print_end_menu_entry_auguria();
+					if (! preg_match('/\?/',$url)) $url.='?';
+					else $url.='&';
+					$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 				}
+				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 			}
+			$url=preg_replace('/__LOGIN__/',$user->login,$url);
+
+			// Define the class (top menu selected or not)
+			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
+			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
+			else $classname='class="tmenu"';
+
+			print_start_menu_entry_auguria($idsel,$classname);
+			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?' target="'.$newTabMenu[$i]['target'].'"':($atarget?' target="'.$atarget.'"':'')).'>';
+			print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
+			print '</a>';
+			print_end_menu_entry_auguria();
+		}
+		else if ($showmode == 2)
+		{
+			print_start_menu_entry_auguria($idsel,'class="tmenu"');
+			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
+			print '</a>';
+			print_end_menu_entry_auguria();
 		}
 	}
 
@@ -361,6 +360,37 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
     }
 
     return count($menu_array);
+}
+
+
+/**
+ * Function to test if an entry is enabled or not
+ *
+ * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
+ * @param	array		&$menuentry					Array for menu entry
+ * @param	array		&$listofmodulesforexternal	Array with list of modules allowed to external users
+ * @return	int										0=Hide, 1=Show, 2=Show gray
+ */
+function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
+{
+	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
+	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
+
+	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
+	if ($type_user && $menuentry['module'])
+	{
+		$tmploops=explode('|',$menuentry['module']);
+		$found=0;
+		foreach($tmploops as $tmploop)
+		{
+		 	if (in_array($tmploop, $listofmodulesforexternal)) { $found++; break; }
+		}
+		if (! $found) return 0;	// Entry is for menus all excluded to external users
+	}
+	if (! $menuentry['perms'] && $type_user) return 0; 											// No permissions and user is external
+	if (! $menuentry['perms'] && ! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0;	// No permissions and option to hide when not allowed, even for internal user, is on
+	if (! $menuentry['perms']) return 2;															// No permissions and user is external
+	return 1;
 }
 
 ?>

@@ -526,7 +526,7 @@ class Menubase
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-        $sql = "SELECT m.rowid, m.type, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
+        $sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
         $sql.= " WHERE m.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
         $sql.= " AND m.menu_handler IN ('".$menu_handler."','all')";
@@ -597,6 +597,7 @@ class Menubase
 
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
+                    $tabMenu[$b]['module']      = $menu['module'];
                     $tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
                     $tabMenu[$b]['url']         = $menu['url'];
                     if (! preg_match("/^(http:\/\/|https:\/\/)/i",$tabMenu[$b]['url']))
