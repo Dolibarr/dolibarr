@@ -42,6 +42,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	$_SESSION["leftmenuopened"]="";
 
 	$id='mainmenu';
+	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	print_start_menu_array();
 
@@ -67,7 +68,9 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 
 	// Third parties
-	if (! empty($conf->societe->enabled) || ! empty($conf->fournisseur->enabled))
+	$tmpentry=array('enabled'=>($conf->societe->enabled || $conf->fournisseur->enabled), 'perms'=>($user->rights->societe->lire || $user->rights->fournisseur->lire), 'module'=>'societe|fournisseur');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
 	{
 		$langs->load("companies");
 		$langs->load("suppliers");
@@ -83,8 +86,8 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='companies';
-		if ((! empty($conf->societe->enabled) && $user->rights->societe->lire)
-		|| (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire))
+
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/societe/index.php?mainmenu=companies&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -95,23 +98,21 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print_text_menu_entry($langs->trans("ThirdParties"));
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($langs->trans("ThirdParties"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
-
 	// Products-Services
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+	$tmpentry=array('enabled'=>($conf->product->enabled || $conf->service->enabled), 'perms'=>($user->rights->produit->lire || $user->rights->service->lire), 'module'=>'product|service');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
 	{
 		$langs->load("products");
 
@@ -130,7 +131,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		if (! empty($conf->service->enabled)) { $chaine.=$langs->trans("Services"); }
 
 		$idsel='products';
-		if ($user->rights->produit->lire || $user->rights->service->lire)
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -141,17 +142,14 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print_text_menu_entry($chaine);
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($chaine);
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
@@ -162,8 +160,10 @@ function print_eldy_menu($db,$atarget,$type_user)
     if (! empty($conf->fournisseur->enabled)) $menuqualified++;
     if (! empty($conf->contrat->enabled)) $menuqualified++;
     if (! empty($conf->ficheinter->enabled)) $menuqualified++;
-    if ($menuqualified)
-    {
+	$tmpentry=array('enabled'=>$menuqualified, 'perms'=>($user->rights->societe->lire || $user->rights->societe->contact->lire), 'module'=>'propal|commande|fournisseur|contrat|ficheinter');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+	{
 		$langs->load("commercial");
 
 		$classname="";
@@ -177,7 +177,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='commercial';
-		if ($user->rights->societe->lire || $user->rights->societe->contact->lire)
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -188,23 +188,23 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print print_text_menu_entry($langs->trans("Commercial"));
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print print_text_menu_entry($langs->trans("Commercial"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
 	// Financial
-	if (! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled)
-	|| ! empty($conf->facture->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled))
+	$tmpentry=array('enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled)),
+		 	 		'perms'=>($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire || $user->rights->facture->lire || $user->rights->deplacement->lire || $user->rights->don->lire || $user->rights->tax->charges->lire),
+					'module'=>'comptabilite|accounting|facture|deplacement|don|tax');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
 	{
 		$langs->load("compta");
 
@@ -219,8 +219,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='accountancy';
-		if ($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire
-		|| $user->rights->facture->lire || $user->rights->deplacement->lire || $user->rights->don->lire || $user->rights->tax->charges->lire)
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -231,22 +230,23 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print_text_menu_entry($langs->trans("MenuFinancial"));
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($langs->trans("MenuFinancial"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
     // Bank
-    if (! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled))
+	$tmpentry=array('enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
+		 	 		'perms'=>($user->rights->banque->lire || $user->rights->prelevement->lire),
+					'module'=>'banque|prelevement');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
     {
         $langs->load("compta");
         $langs->load("banks");
@@ -262,7 +262,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         }
 
         $idsel='bank';
-        if (! empty($user->rights->banque->lire))
+        if ($showmode == 1)
         {
             print_start_menu_entry($idsel,$classname);
             print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -273,23 +273,24 @@ function print_eldy_menu($db,$atarget,$type_user)
             print '</a>';
             print_end_menu_entry();
         }
-        else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+        else if ($showmode == 2)
         {
-            if (! $type_user)
-            {
-                print_start_menu_entry($idsel,$classname);
-                print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-                print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-                print_text_menu_entry($langs->trans("MenuBankCash"));
-                print '</a>';
-                print_end_menu_entry();
-            }
+        	print_start_menu_entry($idsel,$classname);
+        	print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+        	print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+        	print_text_menu_entry($langs->trans("MenuBankCash"));
+        	print '</a>';
+        	print_end_menu_entry();
         }
     }
 
 	// Projects
-	if (! empty($conf->projet->enabled))
-	{
+	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
+		 	 		'perms'=>($user->rights->projet->lire),
+					'module'=>'projet');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+    {
 		$langs->load("projects");
 
 		$classname="";
@@ -303,7 +304,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='project';
-		if ($user->rights->projet->lire)
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -314,23 +315,24 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print_text_menu_entry($langs->trans("Projects"));
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($langs->trans("Projects"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
 	// Tools
-	if (! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled))
-	{
+	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
+		 	 		'perms'=>($user->rights->mailing->lire || $user->rights->export->lire || $user->rights->import->run),
+					'module'=>'mailing|export|import');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+    {
 		$langs->load("other");
 
 		$classname="";
@@ -344,7 +346,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='tools';
-		if ($user->rights->mailing->lire || $user->rights->export->lire || $user->rights->import->run)
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/core/tools.php?mainmenu=tools&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -355,23 +357,24 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print_text_menu_entry($langs->trans("Tools"));
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($langs->trans("Tools"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
 	// OSCommerce 1
-	if (! empty($conf->boutique->enabled))
-	{
+	$tmpentry=array('enabled'=>(! empty($conf->boutique->enabled)),
+		 	 		'perms'=>1,
+					'module'=>'boutique');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+    {
 		$langs->load("shop");
 
 		$classname="";
@@ -396,10 +399,12 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Members
-	if (! empty($conf->adherent->enabled))
+	$tmpentry=array('enabled'=>(! empty($conf->adherent->enabled)),
+		 	 		'perms'=>($user->rights->adherent->lire),
+					'module'=>'adherent');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
 	{
-		// $langs->load("members"); Added in main file
-
 		$classname="";
 		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
 		{
@@ -411,7 +416,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='members';
-		if ($user->rights->adherent->lire)
+		if ($showmode == 1)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -422,17 +427,14 @@ function print_eldy_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+		else if ($showmode == 2)
 		{
-			if (! $type_user)
-			{
-				print_start_menu_entry($idsel,$classname);
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-				print_text_menu_entry($langs->trans("MenuMembers"));
-				print '</a>';
-				print_end_menu_entry();
-			}
+			print_start_menu_entry($idsel,$classname);
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($langs->trans("MenuMembers"));
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
@@ -447,56 +449,51 @@ function print_eldy_menu($db,$atarget,$type_user)
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)
 	{
-		if ($newTabMenu[$i]['enabled'] == true)
+		$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
+
+		$showmode=dol_eldy_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
+
+		if ($showmode == 1)
 		{
-			//var_dump($newTabMenu[$i]);
-
-			$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
-			if ($newTabMenu[$i]['perms'] == true)	// Is allowed
+			if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				if (preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
-				{
-					$url = $newTabMenu[$i]['url'];
-				}
-				else
-				{
-					$url=dol_buildpath($newTabMenu[$i]['url'],1);
-					if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-					{
-                        if (! preg_match('/\?/',$url)) $url.='?';
-                        else $url.='&';
-					    $url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
-					}
-					//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				}
-				$url=preg_replace('/__LOGIN__/',$user->login,$url);
-
-				// Define the class (top menu selected or not)
-				if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-				else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
-				else $classname='class="tmenu"';
-
-				print_start_menu_entry($idsel,$classname);
-				print '<a class="tmenuimage" href="'.$url.'"'.($newTabMenu[$i]['target']?" target='".$newTabMenu[$i]['target']."'":($atarget?' target="'.$atarget.'"':'')).'>';
-				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
-				print '</a>';
-				print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?" target='".$newTabMenu[$i]['target']."'":($atarget?' target="'.$atarget.'"':'')).'>';
-				print_text_menu_entry($newTabMenu[$i]['titre']);
-				print '</a>';
-				print_end_menu_entry();
+				$url = $newTabMenu[$i]['url'];
 			}
-			else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+			else
 			{
-				if (! $type_user)
+				$url=dol_buildpath($newTabMenu[$i]['url'],1);
+				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 				{
-					print_start_menu_entry($idsel,'class="tmenu"');
-					print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
-					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-					print_text_menu_entry($newTabMenu[$i]['titre']);
-					print '</a>';
-					print_end_menu_entry();
+					if (! preg_match('/\?/',$url)) $url.='?';
+					else $url.='&';
+					$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 				}
+				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 			}
+			$url=preg_replace('/__LOGIN__/',$user->login,$url);
+
+			// Define the class (top menu selected or not)
+			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
+			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
+			else $classname='class="tmenu"';
+
+			print_start_menu_entry($idsel,$classname);
+			print '<a class="tmenuimage" href="'.$url.'"'.($newTabMenu[$i]['target']?" target='".$newTabMenu[$i]['target']."'":($atarget?' target="'.$atarget.'"':'')).'>';
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '</a>';
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?" target='".$newTabMenu[$i]['target']."'":($atarget?' target="'.$atarget.'"':'')).'>';
+			print_text_menu_entry($newTabMenu[$i]['titre']);
+			print '</a>';
+			print_end_menu_entry();
+		}
+		else if ($showmode == 2)
+		{
+			print_start_menu_entry($idsel,'class="tmenu"');
+			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print_text_menu_entry($newTabMenu[$i]['titre']);
+			print '</a>';
+			print_end_menu_entry();
 		}
 	}
 
@@ -1464,5 +1461,37 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
     return count($menu_array);
 }
 
+
+/**
+ * Function to test if an entry is enabled or not
+ *
+ * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
+ * @param	array		&$menuentry					Array for menu entry
+ * @param	array		&$listofmodulesforexternal	Array with list of modules allowed to external users
+ * @return	int										0=Hide, 1=Show, 2=Show gray
+ */
+function dol_eldy_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
+{
+	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
+	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
+
+	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
+	if ($type_user && $menuentry['module'])
+	{
+		$tmploops=explode('|',$menuentry['module']);
+		$found=0;
+		foreach($tmploops as $tmploop)
+		{
+			if (in_array($tmploop, $listofmodulesforexternal)) {
+				$found++; break;
+			}
+		}
+		if (! $found) return 0;	// Entry is for menus all excluded to external users
+	}
+	if (! $menuentry['perms'] && $type_user) return 0; 											// No permissions and user is external
+	if (! $menuentry['perms'] && ! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0;	// No permissions and option to hide when not allowed, even for internal user, is on
+	if (! $menuentry['perms']) return 2;															// No permissions and user is external
+	return 1;
+}
 
 ?>

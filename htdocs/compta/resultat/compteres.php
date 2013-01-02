@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 
-if (!$user->rights->compta->resultat->lire) accessforbidden();
+// Security check
+$socid = GETPOST('socid','int');
+if ($user->societe_id > 0) $socid = $user->societe_id;
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+
+
 
 /*
-*	Views
-*/
+ *	Views
+ */
 llxHeader();
 
 $year=$_GET["year"];

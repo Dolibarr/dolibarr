@@ -25,13 +25,15 @@ a package onto LaunchPad
     bzr launchpad-login yourlogin
     bzr whoami "Your Name <email@email.com>"
     bzr whoami
+- Edit file ~/.bashrc to add
+DEBFULLNAME="<Your name>" 
+DEBEMAIL="<Your email address>" 
+
+If you want to build/test package locally:
 - Create a file ~/.pbuilderrc with content
     COMPONENTS="main universe multiverse restricted"
 - Create chroot ubuntu env
     sudo pbuilder create [--distribution sid|squeeze]
-- Edit file ~/.bashrc to add
-DEBFULLNAME="<Your name>" 
-DEBEMAIL="<Your email address>" 
 
 
 # Push/declare sources to Launchpad
@@ -41,14 +43,14 @@ DEBEMAIL="<Your email address>"
     mkdir bzr
 - Create a series 
     Call it 'dev' or 'stable'
-    Add file with *: http://www.dolibarr.org/files/stable/package_debian-ubuntu/dolibarr_3.2.*.tar.gz
-    ??? Configure Series branch - Link to series ???
+    For stable: Add file with *: http://www.dolibarr.org/files/stable/package_debian-ubuntu/dolibarr_3.2.*.tar.gz
+    For dev: Configure Series branch - Link to series
     bzr init
     bzr add
     bzr commit -m "Init"
-    bzr push lp:~eldy/dolibarr/stable
+    bzr push lp:~yourlogin/dolibarr/stable
 
-# Init package tools for launchpad
+# Init repository of sources into launchpad (when repository for sources does not exist)
 #----------------------------------
 
 - Create debian directory and upload it onto bzr branch ~yourlogin/+junk/debian-[dev|stable]
@@ -59,14 +61,20 @@ DEBEMAIL="<Your email address>"
     bzr init
     bzr add
     bzr commit -m "Init control files"
-    bzr push lp:~eldy/+junk/debian-[dev|stable]    (put here any branch name)
+    bzr push lp:~yourlogin/+junk/debian-[dev|stable]    (put here any branch name)
   or download it from launchpad bazaar:
     cd bzr
-    bzr branch lp:~eldy/+junk/debian-[dev|stable]
+    bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
 - To update this debian directory, edit files into the bzr dir and run
     bzr status
     bzr commit -m "Description of change"
-    bzr push lp:~eldy/+junk/debian-[dev|stable]
+    bzr push lp:~yourlogin/+junk/debian-[dev|stable]
+
+# Get repository of sources from launchpad (when repository for sources already exists)
+#----------------------------------
+	cd bzr
+	bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
+
 
 # Define a recipe into launchpad (a rule to build packages into a PPA)
 #----------------------------------
@@ -74,13 +82,18 @@ DEBEMAIL="<Your email address>"
 - Create a file dolibarr.recipe with content
     cd bzr
     vi dolibarr.recipe
-        # bzr-builder format 0.3 deb-version {debupstream}+{revno}+{revno:packaging}
-        lp:dolibarr
-        merge packaging lp:~eldy/dolibarr/debian
+    	For dev:
+	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
+		lp:dolibarr
+		merge packaging lp:~yourlogin/+junk/debian-dev
+    	For stable:
+	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
+		lp:dolibarr/stable
+		merge packaging lp:~yourlogin/+junk/debian-stable
 - Run command
     cd bzr
     bzr dailydeb dolibarr.recipe working-dir
-  This will create a directory "working-dir" with dolibarr sources and will add sources from ~eldy/dolibarr/debian
+  This will create a directory "working-dir" with dolibarr sources and will add sources from ~yourlogin/+junk/debian-[dev|stable]
 - Test package sources
     sudo pbuilder build <working-dir>/<project>_<version>.dsc
 
@@ -94,11 +107,11 @@ Add signing key of the Launchpad repository:
 
 Add Dolibarr Launchpad repository to your system setup by adding the two lines to /etc/apt/sources.list
 For the development snapshot version: 
-deb http://ppa.launchpad.net/eldy/dolibarr-dev/ubuntu precise main 
-deb-src http://ppa.launchpad.net/eldy/dolibarr-dev/ubuntu precise main 
+deb http://ppa.launchpad.net/yourlogin/dolibarr-dev/ubuntu precise main 
+deb-src http://ppa.launchpad.net/yourlogin/dolibarr-dev/ubuntu precise main 
 For the stable version:
-deb http://ppa.launchpad.net/eldy/dolibarr-stable/ubuntu precise main 
-deb-src http://ppa.launchpad.net/eldy/dolibarr-stable/ubuntu precise main 
+deb http://ppa.launchpad.net/yourlogin/dolibarr-stable/ubuntu precise main 
+deb-src http://ppa.launchpad.net/yourlogin/dolibarr-stable/ubuntu precise main 
 
 Update your package cache:
 > apt-get update

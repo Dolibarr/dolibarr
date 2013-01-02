@@ -213,7 +213,7 @@ if ($resql)
 			$productstatic->ref=$obj->pref;
 			print $productstatic->getNomUrl(1,'',20);
             print $obj->label?' - '.dol_trunc($obj->label,16):'';
-            if (! empty($obj->description) && ! empty($conf->global->PRODUIT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
+            if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
 		}
 		else
 		{

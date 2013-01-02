@@ -39,10 +39,12 @@ $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="nom";
 
+$socid = GETPOST('socid','int');
+
 // Security check
-$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire) accessforbidden();
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
 // Date range
 $year=GETPOST("year");

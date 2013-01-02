@@ -44,6 +44,10 @@ if (! $sortorder) $sortorder="DESC";
 
 $mesg = '';
 
+// Security check
+$result=restrictedArea($user,'stock');
+
+
 
 /*
  * Actions

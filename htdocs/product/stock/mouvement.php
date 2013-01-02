@@ -35,7 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->load("products");
 $langs->load("stocks");
 
-if (!$user->rights->produit->lire) accessforbidden();
+// Security check
+$result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
 $product_id=GETPOST("product_id");

@@ -17,3 +17,16 @@ OBS:Screenshots         URL of screenshot
 OBS:QualityCategory     Development|Testing|Stable|Private
 OBS:Maintained          1
 
+
+To submit a snapshot for building, we should have a service file with content
+<services>
+  <service name="download_src_package">
+    <param name="host">www.dolibarr.org</param>
+    <param name="protocol">http</param>
+    <param name="path">/files/lastbuild/package_rpm_generic/dolibarr-3.3.0-0.2.beta1.src.rpm</param>
+  </service>
+</services>
+
+How to have such a service ?
+Try to make "Add file" and select Remote URL and enter http://www.dolibarr.org/files/lastbuild/package_rpm_generic/dolibarr-3.3.0-0.2.beta1.src.rpm
+

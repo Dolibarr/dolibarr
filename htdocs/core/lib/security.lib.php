@@ -88,12 +88,12 @@ function dol_hash($chain,$type=0)
  * 	If GETPOST('action') defined, we also check write and delete permission.
  *
  *	@param	User	$user      	  	User to check
- *	@param  string	$features	    Features to check (in most cases, it's module name. Examples: 'societe', 'contact', 'produit|service', ...)
+ *	@param  string	$features	    Features to check (it must be module name. Examples: 'societe', 'contact', 'produit&service', ...)
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optionnal) is linked to a owned thirdparty (optionnal).
- *	@param  string	$dbtablename    'TableName&SharedElement' with Tablename is table where object is stored, SharedElement is key to define where to check entity. Not used if objectid is null (optionnal)
+ *	@param  string	$dbtablename    'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optionnal key to define where to check entity. Not used if objectid is null (optionnal)
  *	@param  string	$feature2		Feature to check, second level of permission (optionnal)
- *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc (optionnal)
- *  @param  string	$dbt_select     Field name for select if not rowid (optionnal)
+ *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optionnal)
+ *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optionnal)
  *  @param	Canvas	$objcanvas		Object canvas
  * 	@return	int						Always 1, die process if not allowed
  */
@@ -122,11 +122,18 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     $dbtablename=(! empty($params[0]) ? $params[0] : '');
     $sharedelement=(! empty($params[1]) ? $params[1] : '');
 
-    // Check read permission from module
-    // TODO Replace "feature" param into caller by first level of permission
+	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+
+	// Check read permission from module
     $readok=1;
     foreach ($features as $feature)
     {
+    	if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($feature,$listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
+    	{
+    		$readok=0;
+    		continue;
+    	}
+
         if ($feature == 'societe')
         {
             if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) $readok=0;

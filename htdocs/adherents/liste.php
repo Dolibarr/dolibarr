@@ -31,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 $langs->load("members");
 $langs->load("companies");
 
+// Security check
+$result=restrictedArea($user,'adherent');
+
 $action=GETPOST("action");
 $filter=GETPOST("filter");
 $statut=GETPOST("statut");
@@ -68,7 +71,6 @@ if (GETPOST("button_removefilter"))
 	$catid="";
 	$sall="";
 }
-
 
 
 /*

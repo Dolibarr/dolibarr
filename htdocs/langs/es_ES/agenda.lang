@@ -75,3 +75,7 @@ ExtSitesNbOfAgenda=Número de calendarios
 AgendaExtNb=Calendario nº %s
 ExtSiteUrlAgenda=Url de acceso al archivo .ical
 ExtSiteNoLabel=Sin descripción
+
+# Type contacts
+TypeContact_agenda_internal_GUEST=Invitado
+TypeContact_agenda_external_GUEST=Invitado

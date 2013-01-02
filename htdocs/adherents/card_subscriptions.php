@@ -46,7 +46,7 @@ $rowid=GETPOST('rowid','int');
 $typeid=GETPOST('typeid','int');
 
 // Security check
-$result=restrictedArea($user,'adherent',$rowid);
+$result=restrictedArea($user,'adherent',$rowid,'','cotisation');
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
@@ -852,11 +852,12 @@ if ($rowid)
                 $datefrom=dol_time_plus_duree($object->datefin,1,'d');
             }
             else
-            {
-                $datefrom=dol_now();
+			{
+                //$datefrom=dol_now();
+				$datefrom=$object->datevalid;
             }
         }
-        $form->select_date($datefrom,'','','','',"cotisation");
+        $form->select_date($datefrom,'','','','',"cotisation",1,1);
         print "</td></tr>";
 
         // Date end subscription

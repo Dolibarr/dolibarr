@@ -309,7 +309,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td colspan="1">';
 				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid');
-				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
+				if ($nbofcontacts == 0) print $langs->trans("NoContactDefinedForThirdParty");
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($object,'','type','external','rowid');

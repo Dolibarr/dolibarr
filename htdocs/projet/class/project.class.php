@@ -847,7 +847,7 @@ class Project extends CommonObject
      * @param 	int		$mode			0=All project I have permission on, 1=Projects affected to me only, 2=Will return list of all projects with no test on contacts
      * @param 	int		$list			0=Return array,1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
-     * @return 	array 					Array of projects
+     * @return 	array or string			Array of projects id, or string with projects id separated with ","
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0)
     {
@@ -910,7 +910,7 @@ class Project extends CommonObject
 
             if ($list)
             {
-                if (empty($temp)) return 0;
+                if (empty($temp)) return '0';
                 $result = implode(',', $temp);
                 return $result;
             }

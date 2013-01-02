@@ -907,3 +907,4 @@ ALTER TABLE llx_element_lock DROP COLUMN fk_user_modif;
 ALTER TABLE llx_element_lock DROP COLUMN status;
 
 DELETE FROM llx_c_action_trigger WHERE elementtype='withdraw';
+UPDATE llx_c_action_trigger SET code='FICHINTER_VALIDATE' WHERE code='FICHEINTER_VALIDATE';

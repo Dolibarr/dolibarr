@@ -826,7 +826,7 @@ class Form
      *	@param	int		$socid      	Id ot third party or 0 for all
      *	@param  string	$selected   	Id contact pre-selectionne
      *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-     *	@param  int		$showempty     	0=no empty value, 1=add an empty value
+     *	@param  int		$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit)
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
      *	@param	string	$showfunction   Add function into label
@@ -863,7 +863,8 @@ class Form
             $num=$this->db->num_rows($resql);
 
             if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-            if ($showempty) $out.= '<option value="0"></option>';
+            if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'></option>';
+            if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'>'.$langs->trans("Internal").'</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -907,7 +908,7 @@ class Form
                         }
                     }
                     else
-                    {
+					{
                         if ($selected == $obj->rowid)
                         {
                             $out.= $contactstatic->getFullName($langs);
@@ -919,8 +920,8 @@ class Form
                 }
             }
             else
-            {
-            	$out.= '<option value="-1" selected="selected" disabled="disabled">'.$langs->trans("NoContactDefined").'</option>';
+			{
+            	$out.= '<option value="-1"'.($showempty==2?'':' selected="selected"').' disabled="disabled">'.$langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined").'</option>';
             }
             if ($htmlname != 'none' || $options_only)
             {

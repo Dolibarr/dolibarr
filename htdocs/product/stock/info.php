@@ -28,6 +28,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 
 $langs->load("stocks");
 
+// Security check
+$result=restrictedArea($user,'stock');
+
+
 /*
  * View
  */

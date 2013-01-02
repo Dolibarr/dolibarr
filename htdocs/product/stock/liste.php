@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("stocks");
 
-if (!$user->rights->stock->lire)
-  accessforbidden();
+// Security check
+$result=restrictedArea($user,'stock');
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
 $snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
