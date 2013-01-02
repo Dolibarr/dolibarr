@@ -290,36 +290,40 @@ if ($action == 'update' && ! $_POST["cancel"])
 
     if ($caneditfield)	// Case we can edit all field
     {
-        if (! $_POST["nom"])
+        $error=0;
+
+    	if (! $_POST["nom"])
         {
             $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
             $action="edit";       // Go back to create page
+            $error++;
         }
         if (! $_POST["login"])
         {
             $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
             $action="edit";       // Go back to create page
+            $error++;
         }
 
-        if (! $message)
+        if (! $error)
         {
             $db->begin();
             $object->fetch($id);
 
             $object->oldcopy=dol_clone($object);
 
-            $object->lastname		= $_POST["nom"];
-            $object->firstname	= $_POST["prenom"];
-            $object->login		= $_POST["login"];
-            $object->pass			= $_POST["password"];
-            $object->admin		= $_POST["admin"];
-            $object->office_phone	= $_POST["office_phone"];
-            $object->office_fax	= $_POST["office_fax"];
-            $object->user_mobile	= $_POST["user_mobile"];
-            $object->email		= $_POST["email"];
-            $object->job			= $_POST["job"];
-            $object->signature	= $_POST["signature"];
-            $object->openid		= $_POST["openid"];
+            $object->lastname	= GETPOST("nom");
+            $object->firstname	= GETPOST("prenom");
+            $object->login		= GETPOST("login");
+            $object->pass		= GETPOST("password");
+            $object->admin		= GETPOST("admin");
+            $object->office_phone=GETPOST("office_phone");
+            $object->office_fax	= GETPOST("office_fax");
+            $object->user_mobile= GETPOST("user_mobile");
+            $object->email		= GETPOST("email");
+            $object->job		= GETPOST("job");
+            $object->signature	= GETPOST("signature");
+            $object->openid		= GETPOST("openid");
 
             // Get extra fields
             foreach($_POST as $key => $value)
@@ -363,8 +367,10 @@ if ($action == 'update' && ! $_POST["cancel"])
             if (! empty($_FILES['photo']['name'])) $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
             $ret=$object->update($user);
+
             if ($ret < 0)
             {
+            	$error++;
                 if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
                     $langs->load("errors");
@@ -376,7 +382,36 @@ if ($action == 'update' && ! $_POST["cancel"])
                 }
             }
 
-            if ($ret >=0 && ! count($object->errors))
+            if (! $error && isset($_POST['contactid']))
+            {
+            	$contactid=GETPOST('contactid');
+
+            	if ($contactid > 0)
+            	{
+	            	$contact=new Contact($db);
+	            	$contact->fetch($contactid);
+
+	            	$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+	            	$sql.= " SET fk_socpeople=".$contactid;
+	            	if ($contact->socid) $sql.=", fk_societe=".$contact->socid;
+	            	$sql.= " WHERE rowid=".$object->id;
+            	}
+            	else
+            	{
+            		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+            		$sql.= " SET fk_socpeople=NULL, fk_societe=NULL";
+            		$sql.= " WHERE rowid=".$object->id;
+            	}
+            	$resql=$db->query($sql);
+            	dol_syslog("fiche::update sql=".$sql, LOG_DEBUG);
+            	if (! $resql)
+            	{
+            		$error++;
+            		$message.='<div class="error">'.$db->lasterror().'</div>';
+            	}
+            }
+
+            if (! $error && ! count($object->errors))
             {
                 if (GETPOST('deletephoto') && $object->photo)
                 {
@@ -415,7 +450,7 @@ if ($action == 'update' && ! $_POST["cancel"])
                 }
             }
 
-            if ($ret >= 0 && ! count($object->errors))
+            if (! $error && ! count($object->errors))
             {
                 $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
                 $db->commit();
@@ -1149,19 +1184,19 @@ else
 
             // Type
             print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
-            if ($object->societe_id)
-            {
-                print $form->textwithpicto($langs->trans("External"),$langs->trans("InternalExternalDesc"));
-            }
-            else if ($object->ldap_sid)
-            {
-                print $langs->trans("DomainUser",$ldap->domainFQDN);
-            }
-            else
-            {
-                print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
-            }
+            $type=$langs->trans("Internal");
+            if ($object->societe_id) $type=$langs->trans("External");
+            print $form->textwithpicto($type,$langs->trans("InternalExternalDesc"));
+            if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
+
+            // ldap sid
+            if ($object->ldap_sid)
+            {
+            	print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
+            	print $langs->trans("DomainUser",$ldap->domainFQDN);
+            	print '</td></tr>'."\n";
+            }
 
             // Tel pro
             print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
@@ -1630,6 +1665,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
             if ($object->societe_id > 0)
             {
+            	$langs->load("admin");
                 print '<td>';
                 print '<input type="hidden" name="admin" value="'.$object->admin.'">'.yn($object->admin);
                 print ' ('.$langs->trans("ExternalUser").')';
@@ -1702,7 +1738,7 @@ else
                 print '</td></tr>';
             }
 
-            //Multicompany
+            // Multicompany
             if (! empty($conf->multicompany->enabled))
             {
             	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
@@ -1716,25 +1752,25 @@ else
             		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
             	}
             }
-            else
-            {
-            	// Type
-            	print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
-            	print '<td>';
-            	if ($object->societe_id)
-            	{
-            		print $langs->trans("External");
-            	}
-            	else if ($object->ldap_sid)
-            	{
-            		print $langs->trans("DomainUser");
-            	}
-            	else
-            	{
-            		print $langs->trans("Internal");
-            	}
-            	print '</td></tr>';
+
+           	// Type
+           	print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+           	print '<td>';
+           	if ($user->id == $object->id || ! $user->admin)
+           	{
+	           	$type=$langs->trans("Internal");
+    	       	if ($object->societe_id) $type=$langs->trans("External");
+        	   	print $form->textwithpicto($type,$langs->trans("InternalExternalDesc"));
+	           	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+           	}
+           	else
+			{
+				$type=0;
+	            if ($object->contact_id) $type=$object->contact_id;
+	            print $form->selectcontacts(0,$type,'contactid',2,'','',1,'',false,1);
+	           	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             }
+           	print '</td></tr>';
 
             // Tel pro
             print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
