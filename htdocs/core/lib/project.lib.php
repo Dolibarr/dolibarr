@@ -183,7 +183,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
 	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 	$sql.= " WHERE p.entity = ".$conf->entity;
-	if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
+	if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 	$sql.= " ORDER BY p.title ASC";
 
