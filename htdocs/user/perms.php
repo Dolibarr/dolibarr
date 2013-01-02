@@ -28,6 +28,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("users");
 $langs->load("admin");
@@ -253,19 +254,22 @@ print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user-
 print '</td>';
 print '</tr>'."\n";
 
-// Nom
+// Lastname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
 print '<td>'.$fuser->nom.'</td>';
 print '</tr>'."\n";
 
-// Prenom
+// Firstname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
 print '<td>'.$fuser->prenom.'</td>';
 print '</tr>'."\n";
 
 print '</table><br>';
 
-if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
+if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"), 0, 1).'<br>';
+// Show warning about external users
+print showModulesExludedForExternal($modules).'<br>'."\n";
+print "<br>\n";
 
 // For multicompany transversal mode
 if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
@@ -366,7 +370,7 @@ if ($result)
         	print img_picto($langs->trans("Active"),'tick');
         	print '</td>';
         }
-        
+
         else if (is_array($permsgroupbyentity[$entity]))
         {
 	        if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission own by group

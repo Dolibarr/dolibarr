@@ -36,7 +36,6 @@ $langs->load("exports");
 $langs->load("errors");
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user, 'import');
 
 $entitytoicon=array(

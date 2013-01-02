@@ -386,7 +386,7 @@ class Conf
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
 
-        // Format for date (used by default when not found or searched in lang)
+        // Format for date (used by default when not found or not searched in lang)
         $this->format_date_short="%d/%m/%Y";            // Format of day with PHP/C tags (strftime functions)
         $this->format_date_short_java="dd/MM/yyyy";     // Format of day with Java tags
         $this->format_hour_short="%H:%M";
@@ -406,7 +406,10 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
 		// Default max file size for upload
-		$this->maxfilesize = (! empty($this->global->MAIN_UPLOAD_DOC) ? $this->global->MAIN_UPLOAD_DOC * 1024 : 0);
+		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
+
+		// Define list of limited modules
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='facture,commande,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;

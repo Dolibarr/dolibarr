@@ -33,12 +33,14 @@ $HEIGHT=200;
 
 $userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
+
 // Security check
 if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
 }
+$result=restrictedArea($user,'adherent','','','cotisation');
 
 $year = strftime("%Y", time());
 $startyear=$year-2;

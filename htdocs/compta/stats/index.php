@@ -25,27 +25,28 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 
-
 $year_start=GETPOST("year_start");
 $year_current = strftime("%Y",time());
 $nbofyear=4;
 if (! $year_start) {
-    $year_start = $year_current - ($nbofyear-1);
-    $year_end = $year_current;
+	$year_start = $year_current - ($nbofyear-1);
+	$year_end = $year_current;
 }
 else {
-    $year_end=$year_start + ($nbofyear-1);
+	$year_end=$year_start + ($nbofyear-1);
 }
-
 $userid=GETPOST('userid','int');
-$socid=GETPOST('socid','int');
-// Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
-if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire) accessforbidden();
-
+$socid = GETPOST('socid','int');
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->COMPTA_MODE;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+
+// Security check
+if ($user->societe_id > 0) $socid = $user->societe_id;
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+
+
 
 
 /*

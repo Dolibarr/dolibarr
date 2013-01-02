@@ -1133,6 +1133,38 @@ function form_constantes($tableau)
     print '</table>';
 }
 
+
+/**
+ *	Show array with constants to edit
+ *
+ *	@param	array	$modules		Array of all modules
+ *	@return	string					HTML string with warning
+ */
+function showModulesExludedForExternal($modules)
+{
+	global $conf,$langs;
+
+	$text=$langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
+	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$i=0;
+	foreach($modules as $module)
+	{
+		$moduleconst=$module->const_name;
+		$modulename=strtolower($module->name);
+		//print 'modulename='.$modulename;
+
+		//if (empty($conf->global->$moduleconst)) continue;
+		if (! in_array($modulename,$listofmodules)) continue;
+
+		if ($i > 0) $text.=', ';
+		else $text.=' ';
+		$i++;
+		$text.=$langs->trans($module->name);
+	}
+	return img_picto($langs->trans('InfoAdmin'), 'star').' '.$text;
+}
+
+
 /**
  *	Add document model used by doc generator
  *

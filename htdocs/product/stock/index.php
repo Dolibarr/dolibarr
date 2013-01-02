@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("stocks");
 
-if (!$user->rights->stock->lire)
-  accessforbidden();
+// Security check
+$result=restrictedArea($user,'stock');
 
 
 /*

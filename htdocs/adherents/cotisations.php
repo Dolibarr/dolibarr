@@ -46,8 +46,8 @@ if (! $sortfield) {  $sortfield="c.dateadh"; }
 $msg='';
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
 
-if (! $user->rights->adherent->cotisation->lire)
-accessforbidden();
+// Security check
+$result=restrictedArea($user,'adherent','','','cotisation');
 
 
 /*

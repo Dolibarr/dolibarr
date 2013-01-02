@@ -46,7 +46,7 @@ $rowid=GETPOST('rowid','int');
 $typeid=GETPOST('typeid','int');
 
 // Security check
-$result=restrictedArea($user,'adherent',$rowid);
+$result=restrictedArea($user,'adherent',$rowid,'','cotisation');
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);

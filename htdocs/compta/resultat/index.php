@@ -40,8 +40,9 @@ else {
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! $user->rights->compta->resultat->lire && ! $user->rights->accounting->comptarapport->lire)
-	accessforbidden();
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);

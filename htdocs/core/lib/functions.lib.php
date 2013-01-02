@@ -2040,9 +2040,10 @@ function img_phone($alt = 'default', $option = 0)
  *
  *	@param	string	$text			Text info
  *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param	int		$nodiv			No div
  *	@return	string					String with info text
  */
-function info_admin($text, $infoonimgalt = 0)
+function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 {
 	global $conf, $langs;
 
@@ -2051,7 +2052,7 @@ function info_admin($text, $infoonimgalt = 0)
 		return img_picto($text, 'star');
 	}
 
-	return '<div class="info">'.img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.'</div>';
+	return ($nodiv?'':'<div class="info">').img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.($nodiv?'':'</div>');
 }
 
 

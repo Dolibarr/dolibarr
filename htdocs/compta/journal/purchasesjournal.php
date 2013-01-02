@@ -41,11 +41,10 @@ $date_endmonth=GETPOST('date_endmonth');
 $date_endday=GETPOST('date_endday');
 $date_endyear=GETPOST('date_endyear');
 
-// Protection if external user
-if ($user->societe_id > 0)
-	accessforbidden();
-
-$result = restrictedArea($user, 'societe&facture');
+// Security check
+if ($user->societe_id > 0) $socid = $user->societe_id;
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
 
 /*
