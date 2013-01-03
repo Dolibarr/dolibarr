@@ -909,14 +909,14 @@ class User extends CommonObject
 		$this->admin		= 0;
 		$this->nom			= $contact->nom;			// TODO deprecated
 		$this->prenom		= $contact->prenom;	// TODO deprecated
-		$this->lastname		= $contact->nom;
-		$this->firstname	= $contact->prenom;
+		$this->lastname		= $contact->lastname;
+		$this->firstname	= $contact->firstname;
 		$this->email		= $contact->email;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
 
-		if (empty($login)) $login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
+		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
 
 		$this->db->begin();
