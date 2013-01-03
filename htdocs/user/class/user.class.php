@@ -916,7 +916,7 @@ class User extends CommonObject
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
 
-		if (empty($login)) $login=strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
+		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
 
 		$this->db->begin();
