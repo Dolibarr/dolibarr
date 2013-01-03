@@ -909,8 +909,8 @@ class User extends CommonObject
 		$this->admin		= 0;
 		$this->nom			= $contact->nom;			// TODO deprecated
 		$this->prenom		= $contact->prenom;	// TODO deprecated
-		$this->lastname		= $contact->nom;
-		$this->firstname	= $contact->prenom;
+		$this->lastname		= $contact->lastname;
+		$this->firstname	= $contact->firstname;
 		$this->email		= $contact->email;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
