@@ -385,13 +385,18 @@ if ($resql)
 		$subtotal+=$objp->total_ht;
 		$i++;
 	}
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td nowrap="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
-	// Total HT
-	print '<td align="right" nowrap="nowrap">'.price($total).'</td>';
-	print '<td nowrap="nowrap">&nbsp;</td>';
-	print '</tr>';
+
+	if (! empty($conf->global->MAIN_SHOW_TOTAL_FOR_LIMITED_LIST))
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'>';
+		print '<td nowrap="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
+		// Total HT
+		print '<td align="right" nowrap="nowrap">'.price($total).'</td>';
+		print '<td nowrap="nowrap">&nbsp;</td>';
+		print '</tr>';
+	}
+
 	print '</table>';
 
 	print '</form>';
