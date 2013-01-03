@@ -34,12 +34,16 @@ $HEIGHT=200;
 
 $userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
-// Securite acces client
+$id = GETPOST('id','int');
+
+// Security check
 if ($user->societe_id > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
 }
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'deplacement', $id,'');
 
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;

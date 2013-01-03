@@ -37,8 +37,7 @@ if ($user->societe_id > 0)
     $action = '';
     $socid = $user->societe_id;
 }
-if (! $user->rights->adherent->cotisation->lire)
-accessforbidden();
+$result=restrictedArea($user,'adherent','','','cotisation');
 
 $year = strftime("%Y", time());
 $startyear=$year-2;

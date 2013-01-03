@@ -50,12 +50,16 @@ $sql.= " WHERE name = 'userGroup'";
 $result = $db->query($sql);
 $obj = $db->fetch_object($result);
 
-if ($obj->value == NULL)
+if ($obj->value == null)
 {
     llxHeader('',$langs->trans('CPTitreMenu'));
-    print '<div class="tabBar">';
-    print '<span style="color: #FF0000;">'.$langs->trans('NotConfigModCP').'</span>';
-    print '</div>';
+
+    $langs->load("errors");
+	$warnpicto=img_error($langs->trans("WarningMandatorySetupNotComplete"));
+	print '<div class="tabBar">';
+	print $warnpicto.' '.$langs->trans("NotConfigModCP");
+	print '</div>';
+
     llxFooter();
     exit();
 }

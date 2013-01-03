@@ -6,8 +6,8 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
 - New: [ task #289 ] Can reorder tasks.
-- New: Add field "signature" into thirdparty card. If filled, text is added 
-       at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
+- New: Add field "signature" into user card. If filled, text is added 
+       at end of predefined email texts. If option MAIN_MAIL_DO_NOT_USE_SIGN is on, this
        feature is disabled.
 - New: Can input a payment back onto an credit note.
 - New: Add link "Back to list" on all cards.
@@ -35,13 +35,13 @@ For users:
 - New: Support unique field for extrafields.
 - New: Extra fields supports more types (int, string, double, date, datetime).
 - New: Can correct stock of a warehouse from warehouse card.
-- New: [ task #185 ]: Can input amount when correcting stock to recalculate PMP.
-- New: [ task #454 ]: Add "No category" into filters on category.
+- New: [ task #185 ] Can input amount when correcting stock to recalculate PMP.
+- New: [ task #454 ] Add "No category" into filters on category.
 - New: Auto check box on page to edit interface options of user.
 - New: More surface control on stock correction page.
 - New: Add great britain provinces.
 - New: [ task #494 ] Send an email to foundation when a new member has auto-subscribed.
-- New: [ task #326 ]: Add a numbering module to suggest automatically a product ref.
+- New: [ task #326 ] Add a numbering module to suggest automatically a product ref.
 - New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates.
 - New: Add unit foot2, inch2, foot3 and inch3 for surface and volumes.
 - New: Can select thirdparties into emailing targets, even if module category is not enabled.
@@ -61,9 +61,8 @@ For users:
 - New: Add new import options: Third parties bank details, warehouses and stocks, categories and suppliers prices
 - New: English bank account need a bank code (called sort code) to identify an account. 
 - New: Can choose menu entry to show with external site module.
-- New: Add hidden option MAIN_PDF_MARGIN_LEFT, MAIN_PDF_MARGIN_RIGHT, MAIN_PDF_MARGIN_TOP, MAIN_PDF_MARGIN_BOTTOM
-       to force margins of generated PDF.
-- New:  [ task #314 ] Can define if prof id are mandatory or not.
+- New: Add hidden option MAIN_PDF_MARGIN_LEFT, MAIN_PDF_MARGIN_RIGHT, MAIN_PDF_MARGIN_TOP, MAIN_PDF_MARGIN_BOTTOM to force margins of generated PDF.
+- New: [ task #314 ] Can define if prof id are mandatory or not.
 - New: Add button on order card to create intervention from services.
 - New: Add search box to find products by supplier reference.
 - New: Add option MAIN_HELPCENTER_LINKTOUSE to define target link "I need help" onto logon page. 
@@ -76,11 +75,15 @@ New experimental modules:
 - New: Add commissions management module.
 
 
-- Fix: [ bug #499 ]: Supplier order input method not translated
+- Fix: [ bug #499 ] Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 - Fix: Errors weren't being shown in customer's & supplier's orders
 - Fix: Lastname wasn't being recorded in xinputuser emailing module.
+- Fix: [ bug #653 ] Error while creating agenda additional attributes
+- Fix: [ bug #654 ] Event rapport PDF showing ActionAC_OTH_AUTO
+- Fix: [ bug #658 ] Search on bank do not work for description
+- Fix: [ bug #659 ] Comment in recurrent invoices is not stored
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
@@ -103,7 +106,12 @@ For developers:
 - New: We can use a dynamic value ($conf->global->XXX for example) into titles of menus.
 - Qual: Renamed SUPPLIER_INVOICE_BUILDDOC trigger to BILL_SUPPLIER_BUILDDOC
 - Qual: Renamed INVOICE_SUPPLIER_DELETE trigger to BILL_SUPPLIER_DELETE
-- Qual: Renamed SUPLLIER_ORDER_BUILDDOC trigger to ORDER_SUPPLIER_BUILDDOC
+- Qual: Renamed SUPLIER_ORDER_BUILDDOC trigger to ORDER_SUPPLIER_BUILDDOC
+- Qual: Renamed CONTRACTLINE_DELETE trigger to CONTRACT_LINE_DELETE
+- Qual: Renamed all ficheinter.class.php triggers so that they start with 'FICHINTER_'
+- Fix: [ bug #655 ] ORDER_REOPEN trigger incorrectly named
+- Fix: [ bug #656 ] Contracts trigger CONTRACT_MODIFY incorrectly named
+- Fix: [ bug #657 ] Usergroup class' GROUP_DELETE trigger incorrectly named
 
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).

@@ -31,6 +31,8 @@ $langs->load("stocks");
 $langs->load("companies");
 $mesg = '';
 
+// Security check
+$result=restrictedArea($user,'stock');
 
 
 /*

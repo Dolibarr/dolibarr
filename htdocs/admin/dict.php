@@ -371,7 +371,8 @@ if ($id == 11)
 			'propal'            => $langs->trans('Proposal'),
 			'facture'           => $langs->trans('Bill'),
 			'facture_fourn'     => $langs->trans('SupplierBill'),
-			'fichinter'         => $langs->trans('InterventionCard')
+			'fichinter'         => $langs->trans('InterventionCard'),
+			'agenda'			=> $langs->trans('Agenda')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 	$sourceList = array(
@@ -1247,7 +1248,7 @@ function fieldList($fieldlist,$obj='',$tabname='')
 			$align="left";
 			if (in_array($fieldlist[$field],array('taux','localtax1','localtax2'))) $align="right";	// Fields aligned on right
 			print '<td align="'.$align.'">';
-			print '<input type="text" class="flat" value="'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'">';
+			print '<input type="text" class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'libelle_facture') {

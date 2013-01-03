@@ -26,7 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
 $langs->load("exports");
 
-if (! $user->rights->export->lire) accessforbidden();
+
+// Security check
+$result=restrictedArea($user,'export');
 
 
 

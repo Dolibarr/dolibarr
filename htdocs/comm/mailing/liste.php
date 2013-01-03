@@ -27,14 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 
 $langs->load("mails");
 
-if (!$user->rights->mailing->lire) accessforbidden();
-
-// Securite acces client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Security check
+$result=restrictedArea($user,'mailing');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');

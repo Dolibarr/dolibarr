@@ -28,9 +28,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-
 $langs->load("companies");
 $langs->load("members");
+
+// Security check
+$result=restrictedArea($user,'adherent');
 
 
 /*

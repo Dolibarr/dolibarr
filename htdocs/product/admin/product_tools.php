@@ -22,7 +22,7 @@
  */
 
 // TODO We must add a confirmation on button because this will make a mass change
-// TODO Should also change table product_price for price levels
+// FIXME Should also change table product_price for price levels
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -128,6 +128,8 @@ if ($action == 'convert')
  * View
  */
 
+$form=new Form($db);
+
 $title = $langs->trans('ModulesSystemTools');
 
 llxHeader('',$title);
@@ -136,55 +138,63 @@ print_fiche_titre($title,'','setup');
 
 print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 
-$form=new Form($db);
-$var=true;
+if (empty($mysoc->country_code))
+{
+	$langs->load("errors");
+	$warnpicto=img_error($langs->trans("WarningMandatorySetupNotComplete"));
+	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
+}
+else
+{
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
-print '<input type="hidden" name="action" value="convert" />';
+	$var=true;
 
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '</tr>'."\n";
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+	print '<input type="hidden" name="action" value="convert" />';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
-print '<td width="60" align="right">'."\n";
-print $form->load_tva('oldvatrate', $oldvatrate);
-print '</td>'."\n";
-print '</tr>'."\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+	print '</tr>'."\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
-print '<td width="60" align="right">'."\n";
-print $form->load_tva('newvatrate', $newvatrate);
-print '</td>'."\n";
-print '</tr>'."\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'>'."\n";
+	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
+	print '<td width="60" align="right">'."\n";
+	print $form->load_tva('oldvatrate', $oldvatrate);
+	print '</td>'."\n";
+	print '</tr>'."\n";
 
-/*
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
-print '<td width="60" align="right">'."\n";
-print $form->load_PriceBaseType($price_base_type);
-print '</td>'."\n";
-print '</tr>'."\n";
-*/
+	$var=!$var;
+	print '<tr '.$bc[$var].'>'."\n";
+	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
+	print '<td width="60" align="right">'."\n";
+	print $form->load_tva('newvatrate', $newvatrate);
+	print '</td>'."\n";
+	print '</tr>'."\n";
 
-print '</table>';
-print '</div>';
+	/*
+	$var=!$var;
+	print '<tr '.$bc[$var].'>'."\n";
+	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
+	print '<td width="60" align="right">'."\n";
+	print $form->load_PriceBaseType($price_base_type);
+	print '</td>'."\n";
+	print '</tr>'."\n";
+	*/
 
-// Boutons actions
-print '<div class="tabsAction">';
-print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';
-print '</div>';
+	print '</table>';
+	print '</div>';
 
-print '</form>';
+	// Boutons actions
+	print '<div class="tabsAction">';
+	print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';
+	print '</div>';
 
+	print '</form>';
+}
 
 llxFooter();
 

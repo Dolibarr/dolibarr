@@ -68,7 +68,11 @@ print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
 print $langs->trans("DefaultRightsDesc");
 print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+
+// Show warning about external users
+print showModulesExludedForExternal($modules).'<br>'."\n";
 print "<br>\n";
+
 
 $head=security_prepare_head();
 

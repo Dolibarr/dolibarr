@@ -69,25 +69,31 @@ class box_activity extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$facturestatic=new Facture($db);
 		$propalstatic=new Propal($db);
 		$commandestatic=new Commande($db);
 
-		$textHead = $langs->trans("Activity");
+		$nbofyears=2;
+		if (! empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) $nbofyears=$conf->global->MAIN_BOX_ACTIVITY_DURATION;
+		$textHead = $langs->trans("Activity").' ('.$nbofyears.' '.$langs->trans("years").')';
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+
+		// compute the year limit to show
+		$tmpdate= dol_time_plus_duree(time(), -1*$nbofyears, "y");
 
 		// list the summary of the bills
 		if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
-			// compute the year limit to show 
-			$tmpdate= dol_time_plus_duree(time(), -2, "y");
-			
-			// we select only the payed bill grouped by years
-			$sql = "SELECT DATE_FORMAT(f.datef,'%Y') as annee, f.paye, f.fk_statut, sum(f.total_ttc) as Mnttot, count(*) as nb";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f)";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND s.entity = ".$conf->entity;
-			$sql.= " AND DATE_FORMAT(f.datef,'%Y') >= ".date('Y',$tmpdate)." and paye=1";
+			$sql = "SELECT f.paye, f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ")";
+			$sql.= " WHERE f.entity = ".$conf->entity;
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+			$sql.= " AND f.fk_soc = s.rowid";
+			$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND paye=1";
 			$sql.= " GROUP BY f.paye, f.fk_statut ";
 			$sql.= " ORDER BY f.fk_statut DESC";
 
@@ -100,16 +106,16 @@ class box_activity extends ModeleBoxes
 				{
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"', 'logo' => 'bill');
 					$objp = $db->fetch_object($result);
-					
+
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"', 'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut($objp->paye,$objp->fk_statut,0)." ".$objp->annee);
 					$billurl="viewstatut=2&paye=1&year=".$objp->annee;
 
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => $objp->nb, 'url' => DOL_URL_ROOT."/compta/facture/liste.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills"
 					);
-					
+
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->trans("Currency".$conf->currency)
+					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".getCurrencySymbol($conf->currency)
 					);
 					// We add only for the current year
 					if ($objp->annee == date("Y"))
@@ -122,12 +128,13 @@ class box_activity extends ModeleBoxes
 				}
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInvoices"));
 			}
-			
-			$sql = "SELECT f.paye, f.fk_statut, sum(f.total_ttc) as Mnttot, count(*) as nb";
+			else dol_print_error($db);
+
+			$sql = "SELECT f.paye, f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			$sql.= " WHERE f.entity = ".$conf->entity;
 			$sql.= " AND f.fk_soc = s.rowid";
-			$sql.= " AND  paye=0";
+			$sql.= " AND paye=0";
 			$sql.= " GROUP BY f.paye, f.fk_statut ";
 			$sql.= " ORDER BY f.fk_statut DESC";
 
@@ -169,11 +176,15 @@ class box_activity extends ModeleBoxes
 		// list the summary of the orders
 		if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		{
-			
 			$sql = "SELECT c.fk_statut,c.facture, sum(c.total_ttc) as Mnttot, count(*) as nb";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ")";
 			$sql.= " WHERE c.entity = ".$conf->entity;
 			$sql.= " AND c.fk_soc = s.rowid";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+			$sql.= " AND c.date_commande >= '".$db->idate($tmpdate)."'";
 			$sql.= " AND c.facture=0";
 			$sql.= " GROUP BY c.fk_statut";
 			$sql.= " ORDER BY c.fk_statut DESC";
@@ -207,16 +218,22 @@ class box_activity extends ModeleBoxes
 					$i++;
 				}
 			}
+			else dol_print_error($db);
 		}
 
 		// list the summary of the propals
 		if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		{
 			$sql = "SELECT p.fk_statut, sum(p.total) as Mnttot, count(*) as nb";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
+			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= ")";
 			$sql.= " WHERE p.entity = ".$conf->entity;
 			$sql.= " AND p.fk_soc = s.rowid";
-			$sql.= " AND p.date_cloture IS NULL "; // just unclosed
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+			$sql.= " AND p.datep >= '".$db->idate($tmpdate)."'";
+			$sql.= " AND p.date_cloture IS NULL"; // just unclosed
 			$sql.= " GROUP BY p.fk_statut";
 			$sql.= " ORDER BY p.fk_statut DESC";
 
@@ -249,6 +266,7 @@ class box_activity extends ModeleBoxes
 					$i++;
 				}
 			}
+			else dol_print_error($db);
 		}
 
 		// Add the sum in the bottom of the boxes
