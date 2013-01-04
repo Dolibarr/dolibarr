@@ -29,7 +29,7 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 global $user, $conf, $langs;
 
@@ -48,6 +48,9 @@ if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not
 
 if (($id!='') && ($unsuscrib=='1'))
 {
+	//escape id avoiding SQL Injection
+	$id=$db->escape($id);
+	
 	//Udate status of mail in Destinaries maling list
 	$statut='3';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
