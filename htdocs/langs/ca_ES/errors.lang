@@ -111,6 +111,7 @@ ErrorFileRequired=Es requereix un fitxer de paquet Dolibarr en format zip
 ErrorPhpCurlNotInstalled=L'extensió PHP CURL no es troba instal·lada, és indispensable per dialogar amb Paypal.
 ErrorFailedToAddToMailmanList=S'ha produït un error en intentar afegir un registre a la llista Mailman o base de dades SPIP
 ErrorNewVaueCantMatchOldValue=El Nou valor no pot ser igual al antic
+ErrorFailedToValidatePasswordReset=No s'ha pogut restablir la contrasenya. És possible que aquest enllaç ja s'hagi utilitzat (aquest enllaç només es pot utilitzar una vegada). Si no és el cas prova de reiniciar el procés de restabliment de contrasenya des del principi.
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.
