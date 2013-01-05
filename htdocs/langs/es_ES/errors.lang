@@ -112,6 +112,7 @@ ErrorFileRequired=Se requiere un archivo de paquete Dolibarr en formato zip
 ErrorPhpCurlNotInstalled=La extensión PHP CURL no se encuentra instalada, es indispensable para dialogar con Paypal.
 ErrorFailedToAddToMailmanList=Ha ocurrido un error al intentar añadir un registro a la lista Mailman o base de datos SPIP
 ErrorNewVaueCantMatchOldValue=El nuevo valor no puede ser igual al antiguo
+ErrorFailedToValidatePasswordReset=No se ha podido restablecer la contraseña. Es posible que este enlace ya se haya utilizado (este enlace sólo puede usarse una vez). Si no es el caso, trate de reiniciar el proceso de restablecimiento de contraseña desde el principio.
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
