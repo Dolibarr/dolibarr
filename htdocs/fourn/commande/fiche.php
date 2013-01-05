@@ -1069,12 +1069,12 @@ if (! empty($object->id))
 	if ($mysoc->country_code=='ES')
 	{
 		if($mysoc->localtax1_assuj=="1") $nbrow++;
-		if($mysoc->localtax2_assuj=="1") $nbrow++;
+		if($object->thirdparty->localtax2_assuj=="1") $nbrow++;
 	}
 	else 
 	{
 		if($mysoc->localtax1_assuj=="1") $nbrow++;
-		if($object->thirdparty->localtax2_assuj=="1") $nbrow++;
+		if($mysoc->localtax2_assuj=="1") $nbrow++;
 	}
 	print '<table class="border" width="100%">';
 
