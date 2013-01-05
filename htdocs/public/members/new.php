@@ -498,7 +498,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass2" size="20" value="'.GETPOST("pass2").'"></td></tr>'."\n";
 }
 // Birthday
-print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
+print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
 print $form->select_date($birthday,'birth',0,0,1,"newmember");
 print '</td></tr>'."\n";
 // Photo
@@ -551,8 +551,9 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
             }
             if (jQuery("#morphy").val()==\'mor\') {
                 jQuery(".amount").val(\'\');
-                jQuery("#trbudget").show();
                 jQuery("#trcompany").show();
+                jQuery("#trbirth").hide();
+                jQuery("#trbudget").show();
                 if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
                 else { jQuery("#budget").val(\'\'); }
             }
