@@ -236,7 +236,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     	$action='create';
     	$error++;
     }
-    
+
     if ($datefacture == '')
     {
         $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')).'</div>';
@@ -291,7 +291,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             if ($element == 'project')
             {
             	$element = 'projet';
-            }            
+            }
             $object->origin    = $_POST['origin'];
             $object->origin_id = $_POST['originid'];
 
@@ -613,6 +613,8 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
         //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+
+        $action='';
     }
 }
 
@@ -959,7 +961,7 @@ if ($action == 'create')
         if ($element == 'project')
         {
             $projectid=GETPOST('originid');
-            $element = 'projet';            
+            $element = 'projet';
         }
         else if (in_array($element,array('order_supplier')))
         {
@@ -1382,7 +1384,7 @@ else
 
         // Local taxes
         // TODO I use here $societe->localtax1_assuj. Before it was $mysoc->localtax1_assuj, but this is a supplier invoice, so made by supplier, so depends on supplier properties
-        
+
         if ($mysoc->country_code=='ES')
         {
         	if($mysoc->localtax1_assuj=="1") $nbrows++;
@@ -1517,7 +1519,7 @@ else
 	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	        }
         }
-        else 
+        else
        {
 	        if ($societe->localtax1_assuj=="1") //Localtax1 RE
 	        {
@@ -1858,7 +1860,7 @@ else
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="socid" value="'. $object->socid .'">';
                 print '<input type="hidden" name="facid" value="'.$object->id.'">';
-                
+
                 print '<script type="text/javascript">
                 		jQuery(document).ready(function() {
                 			jQuery(\'#idprodfournprice\').change(function() {
@@ -1866,7 +1868,7 @@ else
                 			});
                 		});
                 </script>';
-                           
+
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
@@ -1908,14 +1910,19 @@ else
 
         if ($action != 'presend')
         {
-
             /*
              * Boutons actions
-            */
+             */
 
             print '<div class="tabsAction">';
 
-            // Reopen a standard paid invoice
+		    // Modify a validated invoice with no payments
+			if ($object->statut == 1 && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			}
+
+ 	 		// Reopen a standard paid invoice
             if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
             {
                 if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice

@@ -85,6 +85,7 @@ AccountNumberShort=Nº de cuenta
 AccountNumber=Número de cuenta
 NewAccount=Nueva cuenta
 SalesTurnover=Volumen de ventas
+SalesTurnoverMinimum=Volumen de ventas mínimo
 ByThirdParties=Por tercero
 ByUserAuthorOfInvoice=Por autor de la factura
 AccountancyExport=Exportación contabilidad
