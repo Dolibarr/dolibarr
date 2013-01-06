@@ -118,7 +118,7 @@ $paymentfourn_static=new PaiementFourn($db);
 //$fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-//$fsearch.='  '.$langs->trans("SalesTurnover").' '.$langs->trans("Minimum").': ';
+//$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 //$fsearch.='  <input type="text" name="min" value="'.$min.'">';
 
 // Affiche en-tete du rapport
