@@ -1,0 +1,10 @@
+/* 
+ * Code to add to fiche file in htdocs-fourn-facture to get back the edit button missing in V 3.2.3
+ * I did it into 'boutons actions' section (line 1781)
+ */
+
+// Modify
+if ($action != 'edit' && $object->statut == 1 && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+  {
+    print '<a class="butAction" href="fiche.php?facid='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+  }
