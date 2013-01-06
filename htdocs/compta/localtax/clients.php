@@ -98,7 +98,7 @@ llxHeader('','','','',0,0,'','',$morequerystring);
 $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-$fsearch.='  '.$langs->trans("SalesTurnover").' '.$langs->trans("Minimum").': ';
+$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 // Affiche en-tete du rapport
