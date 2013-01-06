@@ -1159,7 +1159,7 @@ function showModulesExludedForExternal($modules)
 		if ($i > 0) $text.=', ';
 		else $text.=' ';
 		$i++;
-		$text.=$langs->trans($module->name);
+		$text .= $langs->trans('Module'.$module->numero.'Name');
 	}
 	return img_picto($langs->trans('InfoAdmin'), 'star').' '.$text;
 }
