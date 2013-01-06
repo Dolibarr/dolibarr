@@ -581,6 +581,8 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
         //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
+
+        $action='';
     }
 }
 
@@ -1749,7 +1751,7 @@ else
                 $form->select_produits_fournisseurs($object->socid,'','idprodfournprice','',$filtre);
 
                 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
-                
+
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
@@ -1760,7 +1762,7 @@ else
 				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 				$doleditor = new DolEditor('np_desc', GETPOST('np_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
 				$doleditor->Create();
-								
+
                 print '</td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
@@ -1777,14 +1779,19 @@ else
 
         if ($action != 'presend')
         {
-
             /*
              * Boutons actions
-            */
+             */
 
             print '<div class="tabsAction">';
 
-            // Reopen a standard paid invoice
+		    // Modify a validated invoice with no payments
+			if ($object->statut == 1 && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			}
+
+ 	 		// Reopen a standard paid invoice
             if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
             {
                 if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice

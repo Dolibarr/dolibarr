@@ -2911,7 +2911,7 @@ else
                 {
                     print '<div class="tabsAction">';
 
-                    // Editer une facture deja validee, sans paiement effectue et pas exporte en compta
+                    // Modify a validated invoice with no payments and not already exported into accountancy
                     if ($object->statut == 1)
                     {
                         // On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
