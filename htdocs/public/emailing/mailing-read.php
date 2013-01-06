@@ -41,6 +41,9 @@ if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not
 
 if ($id!='')
 {
+	//escape id avoiding SQL Injection
+	$id=$db->escape($id);
+	
 	$statut='2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
 	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
