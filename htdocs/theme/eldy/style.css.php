@@ -239,7 +239,10 @@ input:-webkit-autofill {
 input.liste_titre {
 	box-shadow: none !important;
 }
-
+input.removedfile {
+	padding: 0px !important;
+	border: 0px !important;
+}
 textarea:disabled {
 	background:#ddd;
 }

@@ -2689,7 +2689,7 @@ else if ($id > 0 || ! empty($ref))
         {
             $num = $db->num_rows($result);
             $i = 0;
-			
+
 			//if ($object->type != 2)
             //{
                 if ($num > 0)
@@ -3343,7 +3343,7 @@ else if ($id > 0 || ! empty($ref))
 
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -3366,7 +3366,7 @@ else if ($id > 0 || ! empty($ref))
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

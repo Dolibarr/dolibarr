@@ -2036,7 +2036,7 @@ else
         {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref);
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -2059,7 +2059,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref);
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
                 $file=$fileparams['fullname'];
             }
 
