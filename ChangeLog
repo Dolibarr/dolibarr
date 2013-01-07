@@ -76,14 +76,14 @@ New experimental modules:
 
 
 - Fix: [ bug #499 ] Supplier order input method not translated
-- Fix: No images into product description lines as PDF generation does
-  not work with this.
+- Fix: No images into product description lines as PDF generation does not work with this.
 - Fix: Errors weren't being shown in customer's & supplier's orders
 - Fix: Lastname wasn't being recorded in xinputuser emailing module.
 - Fix: [ bug #653 ] Error while creating agenda additional attributes
 - Fix: [ bug #654 ] Event rapport PDF showing ActionAC_OTH_AUTO
 - Fix: [ bug #658 ] Search on bank do not work for description
 - Fix: [ bug #659 ] Comment in recurrent invoices is not stored
+- Fix: [ bug #622 ] Attaching wrong file when sending the invoice via e-mail
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
