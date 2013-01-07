@@ -430,7 +430,7 @@ abstract class ActionsCardCommon
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$module.'.php');
@@ -467,7 +467,7 @@ abstract class ActionsCardCommon
             	{
             		$module = substr($module, 0, dol_strlen($module)-4);
             	}
-                $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+                $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
                 foreach ($dirsociete as $dirroot)
                 {
                     $res=dol_include_once($dirroot.$module.'.php');

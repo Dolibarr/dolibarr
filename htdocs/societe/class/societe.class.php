@@ -1737,7 +1737,7 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
@@ -1766,7 +1766,7 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
@@ -1792,7 +1792,7 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
@@ -1826,7 +1826,7 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
@@ -1864,7 +1864,7 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
@@ -1899,7 +1899,7 @@ class Societe extends CommonObject
         global $conf;
         if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
         {
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
@@ -1935,7 +1935,7 @@ class Societe extends CommonObject
         if (! empty($conf->global->SOCIETE_CODECOMPTA_ADDON))
         {
         	$file='';
-            $dirsociete=array_merge(array('/core/modules/societe/'), $conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
             	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.".php"))
