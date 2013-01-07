@@ -231,12 +231,16 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Propale		$object					Object source to build document
-	 *	@param	Translate	$outputlangs			Lang output object
-	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
-	 *	@return	int         						1 if OK, <=0 if KO
+	 *	@param		Propale		$object				Object source to build document
+	 *	@param		Translate	$outputlangs		Lang output object
+	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath)
+	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$langs,$conf,$mysoc;
 
@@ -479,6 +483,17 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                     dol_syslog($this->error, LOG_WARNING);
                     return -1;
                 }
+
+				// Add odtgeneration hook
+				if (! is_object($hookmanager))
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('odtgeneration'));
+				$parameters=array('odfHandler'=>$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 // Write new file
 				//$result=$odfHandler->exportAsAttachedFile('toto');
