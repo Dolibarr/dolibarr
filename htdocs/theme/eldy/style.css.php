@@ -110,7 +110,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_TOPMENU_BACK2='190,206,226';
 	$conf->global->THEME_ELDY_VERMENU_BACK1='253,253,253';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK1b='226,228,230';   // vmenu (not menu)
-    $conf->global->THEME_ELDY_VERMENU_BACK2='220,224,227';
+    $conf->global->THEME_ELDY_VERMENU_BACK2='232,234,236';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
     $conf->global->THEME_ELDY_BACKTITLE2='210,220,235';
     $conf->global->THEME_ELDY_BACKTABCARD1='231,232,235';     // card
@@ -839,12 +839,12 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     margin: 1px 0px 8px 2px;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 80%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-/*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 20px, rgb(<?php echo $colorbacktab2; ?>) 100%); */
-    background-image: -webkit-linear-gradient(top, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 10px);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
+/*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%); */
+    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
 <?php } else { ?>
 	background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu.jpg' ?>);
     background-position:top;
@@ -853,7 +853,8 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #BBBBBB;
     border-bottom: 1px solid #BBBBBB;
-	border-radius: 5px;
+    border-top: 1px solid #DDDDDD;
+    border-radius: 5px;
 	-moz-border-radius: 5px;
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
