@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("members");
 
@@ -52,6 +54,8 @@ if (! $sortfield) {  $sortfield="d.nom"; }
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
 
+$extrafields = new ExtraFields($db);
+
 if (GETPOST('button_removefilter'))
 {
     $search_lastname="";
@@ -62,6 +66,10 @@ if (GETPOST('button_removefilter'))
 }
 
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('membertypecard'));
 
 /*
  *	Actions
@@ -77,6 +85,15 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$adht->note        = trim($_POST["comment"]);
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
+		
+		// Get extra fields
+		foreach($_POST as $key => $value)
+		{
+			if (preg_match("/^options_/",$key))
+			{
+				$adht->array_options[$key]=GETPOST($key);
+			}
+		}
 
 		if ($adht->libelle)
 		{
@@ -112,6 +129,15 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
 
+		// Get extra fields
+		foreach($_POST as $key => $value)
+		{
+			if (preg_match("/^options_/",$key))
+			{
+				$adht->array_options[$key]=GETPOST($key);
+			}
+		}
+		
 		$adht->update($user->id);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
@@ -143,6 +169,8 @@ llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_
 
 $form=new Form($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
 // Liste of members type
 
@@ -248,9 +276,28 @@ if ($action == 'create')
 	$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 	$doleditor->Create();
 	print '</td></tr>';
-
+	
+	// Other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+	
 	print "</table>\n";
 
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print '<br><br><table class="border" width="100%">';
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$act->array_options["options_".$key]);
+			print '<tr><td';
+			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+			print ' width="30%">'.$label.'</td><td>';
+			print $extrafields->showInputField($key,$value);
+			print '</td></tr>'."\n";
+		}
+		print '</table><br><br>';
+	}
+	
 	print '<br>';
 	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
@@ -269,6 +316,7 @@ if ($rowid > 0)
 	{
 		$adht = new AdherentType($db);
 		$adht->fetch($rowid);
+		$adht->fetch_optionals($rowid,$extralabels);
 
 		$h=0;
 
@@ -307,7 +355,25 @@ if ($rowid > 0)
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($adht->mail_valid)."</td></tr>";
 
+		// Other attributes
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
+		
 		print '</table>';
+		
+		//Extra field
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print '<br><br><table class="border" width="100%">';
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($adht->array_options['options_'.$key])?$adht->array_options['options_'.$key]:''));
+				print '<tr><td width="30%">'.$label.'</td><td>';
+				print $extrafields->showOutputField($key,$value);
+				print "</td></tr>\n";
+			}
+			print '</table><br><br>';
+		}
 
 		print '</div>';
 
@@ -593,7 +659,7 @@ if ($rowid > 0)
 		$adht = new AdherentType($db);
 		$adht->id = $rowid;
 		$adht->fetch($rowid);
-
+		$adht->fetch_optionals($rowid,$extralabels);
 
 		$h=0;
 
@@ -630,8 +696,26 @@ if ($rowid > 0)
 		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 		$doleditor->Create();
 		print "</td></tr>";
+		
+		// Other attributes
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
+		
+		//Extra field
+		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		{
+			print '<br><br><table class="border" width="100%">';
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($adht->array_options['options_'.$key])?$adht->array_options['options_'.$key]:''));
+				print '<tr><td width="30%">'.$label.'</td><td>';
+				print $extrafields->showInputField($key,$value);
+				print "</td></tr>\n";
+			}
+			print '</table><br><br>';
+		}
 
 		print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
