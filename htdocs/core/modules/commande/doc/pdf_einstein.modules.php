@@ -728,12 +728,17 @@ class pdf_einstein extends ModelePDFCommandes
 							case '3':
 							case '5':
 							case '7':
-								continue 2;
-								break;
+							//TODO: Place into a function to control showing by country or study better option
+								if($mysoc->country_code!='ES')
+								{
+									continue 2;
+									break;
+								}
+								
 						}
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -764,13 +769,18 @@ class pdf_einstein extends ModelePDFCommandes
 							case '1':
 							case '3':
 							case '5':
-							case '7':
-								continue 2;
-								break;
+							case '7':								
+								//TODO: Place into a function to control showing by country or study better option
+								if($mysoc->country_code!='ES')
+								{
+									continue 2;
+									break;
+								}
+								
 						}
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
