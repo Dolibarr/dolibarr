@@ -541,7 +541,7 @@ class ActionComm extends CommonObject
      * 	 @param		int		$fk_element		Id of element action is linked to
      *   @param		string	$elementtype	Type of element action is linked to
      *   @param		string	$filter			Other filter
-     *   @return	array					<0 if KO, array with actions
+     *   @return	array or string			Error string if KO, array with actions if OK
      */
     static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='')
     {
@@ -580,9 +580,8 @@ class ActionComm extends CommonObject
             return $resarray;
         }
         else
-        {
-            $this->error=$db->lasterror();
-            return -1;
+       {
+            return $db->lasterror();
         }
     }
 

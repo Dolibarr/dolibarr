@@ -1071,7 +1071,7 @@ if (! empty($object->id))
 		if($mysoc->localtax1_assuj=="1") $nbrow++;
 		if($object->thirdparty->localtax2_assuj=="1") $nbrow++;
 	}
-	else 
+	else
 	{
 		if($mysoc->localtax1_assuj=="1") $nbrow++;
 		if($mysoc->localtax2_assuj=="1") $nbrow++;
@@ -1245,7 +1245,7 @@ if (! empty($object->id))
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 	}
-	else 
+	else
 	{
 		if ($mysoc->localtax1_assuj=="1") //Localtax1
 		{
@@ -1781,7 +1781,7 @@ if (! empty($object->id))
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref);
+		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
 		$file=$fileparams['fullname'];
 
 		// Build document if it not exists
@@ -1804,7 +1804,7 @@ if (! empty($object->id))
 				dol_print_error($db,$result);
 				exit;
 			}
-			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref);
+			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
 			$file=$fileparams['fullname'];
 		}
 

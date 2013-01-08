@@ -145,7 +145,7 @@ class FormActions
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
-		if (is_numeric($listofactions) && $listofactions < 0) dol_print_error($this->db,'FailedToGetActions');
+		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
         if ($num)

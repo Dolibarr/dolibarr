@@ -304,23 +304,6 @@ td.showDragHandle {cursor:move;}
 
 
 /* ============================================================================== */
-/* Styles de positionnement des zones                                             */
-/* ============================================================================== */
-
-td.vmenu {
-	<?php if (GETPOST("optioncss") != 'print') {?>
-    margin-right:2px;
-    padding:0px;
-    width:170px;
-    <?php } ?>
-}
-
-div.fiche {
-	padding:8px 12px 10px;
-}
-
-
-/* ============================================================================== */
 /* Menu top et 1ère ligne tableau                                                 */
 /* ============================================================================== */
 
@@ -424,7 +407,6 @@ div.vmenu {
 	display:none;
 	<?php } else {?>
 	width:170px;
-	background-color:#dde2e9;
 	<?php } ?>
 }
 
@@ -632,8 +614,18 @@ a.tabTitle img {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
+td.vmenu {
+	<?php if (GETPOST("optioncss") != 'print') {?>
+    margin-right:2px;
+    padding:0px;
+    width:170px;
+    /* border-right: 1px solid #666666; */
+    <?php } ?>
+}
+
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'20':'24'; ?>px;
+	padding:8px 12px 10px;
+	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'16':'24'; ?>px;
 	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'12':'6'; ?>px;
 }
 
@@ -670,9 +662,9 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 /* boutons : */
-.button, .butAction {background: #999;border: solid 1px #666;}
-.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6)}
-.butActionDelete {background: #b33c37;border:solid 1px #8d2f2b;}
+.button, .butAction {background: #999; border: solid 1px #888; font-weight: normal; }
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;}
+.butActionDelete {background: #b33c37; border:solid 1px #8d2f2b; font-weight: normal;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {
 	padding:2px;
@@ -701,9 +693,9 @@ border-left: solid 1px rgba(0,0,0,.3);
 	);
 	}
 
-.button,  a.butAction{color:black;}
+.button, a.butAction {color: white; font-weight: normal !important;}
 
-.butActionDelete{color:white;}
+.butAction, .butActionDelete {color:white;}
 
 td.formdocbutton {padding-top:6px;}
 
@@ -720,6 +712,7 @@ td.formdocbutton {padding-top:6px;}
 		color-stop(1, rgba(255,255,255,.3)),
 		color-stop(0, rgba(0,0,0,.3))
 	);
+	color:white;
 }
 
 /* ============================================================================== */
@@ -873,6 +866,7 @@ tr.liste_titre, tr.box_titre {
 		color-stop(0, rgba(255,255,255,.3)),
 		color-stop(1, rgba(0,0,0,.3))
 	);
+	height: 22px;
 }
 
 tr.box_titre td.boxclose {
