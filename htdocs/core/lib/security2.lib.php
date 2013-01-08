@@ -158,27 +158,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$title='Dolibarr '.DOL_VERSION;
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
-	// Select templates
-	if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
-	{
-		$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
-	}
-	else
-	{
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/login.tpl.php"))
-		{
-			$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
-		}
-		else
-		{
-			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
-		}
-	}
-
 	// Note: $conf->css looks like '/theme/eldy/style.css.php'
 	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
 	$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
-	if (! empty($conf->modules_parts['theme']))	// This slow down
+	if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
 	{
 		foreach($conf->modules_parts['theme'] as $reldir)
 		{
@@ -191,6 +174,28 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	}
 	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
+	// Select templates
+	if (! empty($conf->browser->phone) && preg_match('/^smartphone/',$conf->smart_menu))
+	{
+		$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
+	}
+	else
+	{
+		if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
+		{
+			$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl/'));
+			foreach($dirtpls as $reldir)
+			{
+				$tmp=dol_buildpath($reldir.'login.tpl.php');
+				if (file_exists($tmp)) { $template_dir=preg_replace('/login\.tpl\.php$/','',$tmp); break; }
+			}
+		}
+		else
+		{
+			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
+		}
+	}
+		
 	// Set cookie for timeout management
 	$prefix=dol_getprefix();
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
