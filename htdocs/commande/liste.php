@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
+ * Copyright (C) 2013      Christophe Battarel    <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,6 +276,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print '</tr>';
 	print '<tr class="liste_titre">';
@@ -284,6 +286,7 @@ if ($resql)
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
+	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
@@ -370,6 +373,9 @@ if ($resql)
 		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'">'.$y.'</a>';
 		print '</td>';
 
+		// Amount HT
+		print '<td align="right" nowrap="nowrap">'.price($objp->total_ht).'</td>';
+
 		// Statut
 		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
@@ -379,6 +385,18 @@ if ($resql)
 		$subtotal+=$objp->total_ht;
 		$i++;
 	}
+
+	if (! empty($conf->global->MAIN_SHOW_TOTAL_FOR_LIMITED_LIST))
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'>';
+		print '<td nowrap="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
+		// Total HT
+		print '<td align="right" nowrap="nowrap">'.price($total).'</td>';
+		print '<td nowrap="nowrap">&nbsp;</td>';
+		print '</tr>';
+	}
+
 	print '</table>';
 
 	print '</form>';

@@ -338,7 +338,7 @@ if ($action == "set")
 
         print $langs->trans("YouNeedToPersonalizeSetup")."<br><br>";
 
-        print '<center><a href="../admin/company.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+        print '<center><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
         print $langs->trans("GoToSetupArea");
         print '</a></center>';
     }

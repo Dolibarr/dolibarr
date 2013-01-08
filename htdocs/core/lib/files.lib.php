@@ -140,7 +140,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 							if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-							if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 							{
 								$file_list[] = array(
 										"name" => $file,
@@ -164,7 +164,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 						if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-						if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+						if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 						{
 							$file_list[] = array(
 									"name" => $file,

@@ -910,15 +910,26 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
-        // Output style sheets (optioncss='print' or '')
+        // Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+        if (! empty($conf->modules_parts['theme']))	// This slow down
+        {
+	        foreach($conf->modules_parts['theme'] as $reldir)
+	        {
+	        	if (file_exists(dol_buildpath($reldir.$conf->css, 0))) 
+	        	{
+					$themepath=dol_buildpath($reldir.$conf->css, 1);
+					break;
+	        	}
+	        }
+        }
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+ 		//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
         // CSS forced by modules (relative url starting with /)
-        if (isset($conf->modules_parts['css']))
+        if (! empty($conf->modules_parts['css']))
         {
         	$arraycss=(array) $conf->modules_parts['css'];
         	foreach($arraycss as $modcss => $filescss)
@@ -927,10 +938,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         		foreach($filescss as $cssfile)
         		{
 	        		// cssfile is a relative path
-	        		print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+	        		print '<!-- Added by module '.$modcss. '-->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
 	        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
 	        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
-	        		print '"><!-- Added by module '.$modcss. '-->'."\n";
+	        		print '">'."\n";
         		}
         	}
         }
@@ -939,10 +950,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         {
             foreach($arrayofcss as $cssfile)
             {
-                print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+                print '<!-- Added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
                 if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
-                print '"><!-- Added by page -->'."\n";
+                print '">'."\n";
             }
         }
 
@@ -1078,7 +1089,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             }
 
             // JS forced by modules (relative url starting with /)
-            if (isset($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
+            if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
         	{
         		$arrayjs=(array) $conf->modules_parts['js'];
 	            foreach($arrayjs as $modjs => $filesjs)
@@ -1087,7 +1098,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		            foreach($filesjs as $jsfile)
 		            {
 	    	    		// jsfile is a relative path
-	        	    	print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script><!-- Added by module '.$modjs. '-->'."\n";
+	        	    	print '<!-- Added by module '.$modjs. '-->'."\n".'<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
 		            }
 	            }
         	}

@@ -236,7 +236,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     	$action='create';
     	$error++;
     }
-    
+
     if ($datefacture == '')
     {
         $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')).'</div>';
@@ -291,7 +291,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             if ($element == 'project')
             {
             	$element = 'projet';
-            }            
+            }
             $object->origin    = $_POST['origin'];
             $object->origin_id = $_POST['originid'];
 
@@ -454,8 +454,8 @@ elseif ($action == 'update_line')
 
         }
 
-        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
-        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
+        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
+        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
         $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
@@ -502,8 +502,8 @@ elseif ($action == 'addline')
 
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
-            $localtax1tx= get_localtax($tvatx, 1, $object->thirdparty);
-            $localtax2tx= get_localtax($tvatx, 2, $object->thirdparty);
+            $localtax1tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
+            $localtax2tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
             $remise_percent=GETPOST('remise_percent');
             $type = $product->type;
 
@@ -520,8 +520,8 @@ elseif ($action == 'addline')
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
-        $localtax1tx= get_localtax($tauxtva, 1, $object->thirdparty);
-        $localtax2tx= get_localtax($tauxtva, 2, $object->thirdparty);
+        $localtax1tx= get_localtax($tauxtva, 1, $mysoc,$object->thirdparty);
+        $localtax2tx= get_localtax($tauxtva, 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
         if (! $_POST['dp_desc'])
@@ -613,6 +613,8 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
         //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+
+        $action='';
     }
 }
 
@@ -959,7 +961,7 @@ if ($action == 'create')
         if ($element == 'project')
         {
             $projectid=GETPOST('originid');
-            $element = 'projet';            
+            $element = 'projet';
         }
         else if (in_array($element,array('order_supplier')))
         {
@@ -1382,9 +1384,17 @@ else
 
         // Local taxes
         // TODO I use here $societe->localtax1_assuj. Before it was $mysoc->localtax1_assuj, but this is a supplier invoice, so made by supplier, so depends on supplier properties
-        if ($societe->localtax1_assuj=="1") $nbrows++;
-        if ($societe->localtax2_assuj=="1") $nbrows++;
 
+        if ($mysoc->country_code=='ES')
+        {
+        	if($mysoc->localtax1_assuj=="1") $nbrows++;
+        	if($societe->localtax2_assuj=="1") $nbrows++;
+        }
+        else
+       {
+        	if ($societe->localtax1_assuj=="1") $nbrows++;
+        	if ($societe->localtax2_assuj=="1") $nbrows++;
+       }
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
         $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
@@ -1493,19 +1503,37 @@ else
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Amount Local Taxes
-        if ($societe->localtax1_assuj=="1") //Localtax1 RE
+        //TODO: Place into a function to control showing by country or study better option
+        if ($mysoc->country_code=='ES')
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-            print '<td align="right">'.price($object->total_localtax1).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        	if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+	        {
+	            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+	            print '<td align="right">'.price($object->total_localtax1).'</td>';
+	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	        }
+	        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
+	        {
+	            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+	            print '<td align="right">'.price($object->total_localtax2).'</td>';
+	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	        }
         }
-        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
-        {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-            print '<td align="right">'.price($object->total_localtax2).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        else
+       {
+	        if ($societe->localtax1_assuj=="1") //Localtax1 RE
+	        {
+	            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+	            print '<td align="right">'.price($object->total_localtax1).'</td>';
+	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	        }
+	        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
+	        {
+	            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+	            print '<td align="right">'.price($object->total_localtax2).'</td>';
+	            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	        }
         }
-
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Project
@@ -1832,7 +1860,7 @@ else
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 print '<input type="hidden" name="socid" value="'. $object->socid .'">';
                 print '<input type="hidden" name="facid" value="'.$object->id.'">';
-                
+
                 print '<script type="text/javascript">
                 		jQuery(document).ready(function() {
                 			jQuery(\'#idprodfournprice\').change(function() {
@@ -1840,7 +1868,7 @@ else
                 			});
                 		});
                 </script>';
-                           
+
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
@@ -1882,14 +1910,19 @@ else
 
         if ($action != 'presend')
         {
-
             /*
              * Boutons actions
-            */
+             */
 
             print '<div class="tabsAction">';
 
-            // Reopen a standard paid invoice
+		    // Modify a validated invoice with no payments
+			if ($object->statut == 1 && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			}
+
+ 	 		// Reopen a standard paid invoice
             if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
             {
                 if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
@@ -2003,7 +2036,7 @@ else
         {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref);
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -2026,7 +2059,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref);
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

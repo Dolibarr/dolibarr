@@ -36,7 +36,7 @@ global $user, $conf, $langs;
 $langs->load("main");
 $langs->load("mails");
 
-$id=GETPOST('tag');
+$tag=GETPOST('tag');
 $unsuscrib=GETPOST('unsuscrib');
 
 if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not enabled');
@@ -46,30 +46,30 @@ if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not
  * Actions
  */
 
-if (($id!='') && ($unsuscrib=='1'))
+if (($tag!='') && ($unsuscrib=='1'))
 {
 	//Udate status of mail in Destinaries maling list
 	$statut='3';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
 
 	//Update status communication of thirdparty prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty' AND source_id is not null)";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe thirdparty : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
 
     //Update status communication of contact prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$id."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
 
 	$resql=$db->query($sql);
 
 	$sql = "SELECT mc.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.tag='".$id."'";
+	$sql .= " WHERE mc.tag='".$db->escape($tag)."'";
 
 	$resql=$db->query($sql);
 

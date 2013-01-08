@@ -204,14 +204,14 @@ else if ($action == 'add' && $user->rights->commande->creer)
 		$action='create';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$object->socid=$socid;
 		$object->fetch_thirdparty();
-	
+
 		$db->begin();
-	
+
 		$object->date_commande        = $datecommande;
 		$object->note                 = GETPOST('note');
 		$object->note_public          = GETPOST('note_public');
@@ -226,7 +226,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 		$object->date_livraison       = $datelivraison;
 		$object->fk_delivery_address  = GETPOST('fk_address');
 		$object->contactid            = GETPOST('contactidp');
-	
+
 		// If creation from another object of another module (Example: origin=propal, originid=1)
 		if (! empty($origin) && ! empty($originid))
 		{
@@ -237,7 +237,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 				$element = $regs[1];
 				$subelement = $regs[2];
 			}
-	
+
 			// For compatibility
 			if ($element == 'order')    {
 				$element = $subelement = 'commande';
@@ -248,10 +248,10 @@ else if ($action == 'add' && $user->rights->commande->creer)
 			if ($element == 'contract') {
 				$element = $subelement = 'contrat';
 			}
-	
+
 			$object->origin    = $origin;
 			$object->origin_id = $originid;
-	
+
 			// Possibility to add external linked objects with hooks
 			$object->linked_objects[$object->origin] = $object->origin_id;
 			$other_linked_objects=GETPOST('other_linked_objects','array');
@@ -259,32 +259,32 @@ else if ($action == 'add' && $user->rights->commande->creer)
 			{
 				$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
 			}
-	
+
 			$object_id = $object->create($user);
-	
+
 			if ($object_id > 0)
 			{
 				dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-	
+
 				$classname = ucfirst($subelement);
 				$srcobject = new $classname($db);
-	
+
 				dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 				$result=$srcobject->fetch($object->origin_id);
 				if ($result > 0)
 				{
 					$lines = $srcobject->lines;
 					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
-	
+
 					$fk_parent_line=0;
 					$num=count($lines);
-	
+
 					for ($i=0;$i<$num;$i++)
 					{
 						$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 						$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 						$product_type=(! empty($lines[$i]->product_type)?$lines[$i]->product_type:0);
-	
+
 						// Dates
 						// TODO mutualiser
 						$date_start=$lines[$i]->date_debut_prevue;
@@ -293,12 +293,12 @@ else if ($action == 'add' && $user->rights->commande->creer)
 						$date_end=$lines[$i]->date_fin_prevue;
 						if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
 						if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-	
+
 						// Reset fk_parent_line for no child products and special product
 						if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 							$fk_parent_line = 0;
 						}
-	
+
 						$result = $object->addline(
 							$object_id,
 							$desc,
@@ -323,19 +323,19 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$lines[$i]->pa_ht,
 							$label
 						);
-	
+
 						if ($result < 0)
 						{
 							$error++;
 							break;
 						}
-	
+
 						// Defined the new fk_parent_line
 						if ($result > 0 && $lines[$i]->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}
-	
+
 					// Hooks
 					$parameters=array('objFrom'=>$srcobject);
 					$reshook=$hookmanager->executeHooks('createFrom',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -356,7 +356,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 		else
 		{
 			$object_id = $object->create($user);
-	
+
 			// If some invoice's lines already known
 			$NBLINES=8;
 			for ($i = 1 ; $i <= $NBLINES ; $i++)
@@ -370,7 +370,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 				}
 			}
 		}
-	
+
 		// Insert default contacts if defined
 		if ($object_id > 0)
 		{
@@ -383,11 +383,11 @@ else if ($action == 'add' && $user->rights->commande->creer)
 					$error++;
 				}
 			}
-	
+
 			$id = $object_id;
 			$action = '';
 		}
-	
+
 		// End of object creation, we show it
 		if ($object_id > 0 && ! $error)
 		{
@@ -1405,7 +1405,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 
 				$datedelivery		= (!empty($objectsrc->date_livraison)?$objectsrc->date_livraison:'');
-				
+
 				$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
 				$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
@@ -2347,7 +2347,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			{
 				$ref = dol_sanitizeFileName($object->ref);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
 				$file=$fileparams['fullname'];
 
 				// Build document if it not exists
@@ -2370,7 +2370,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						dol_print_error($db,$result);
 						exit;
 					}
-					$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+					$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
 					$file=$fileparams['fullname'];
 				}
 

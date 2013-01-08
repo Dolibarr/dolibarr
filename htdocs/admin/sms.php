@@ -154,7 +154,7 @@ print "<br>\n";
 dol_htmloutput_mesg($message);
 
 // List of sending methods
-$listofmethods=(is_array($conf->sms_engine_modules)?$conf->sms_engine_modules:array());
+$listofmethods=(is_array($conf->modules_parts['sms'])?$conf->modules_parts['sms']:array());
 asort($listofmethods);
 
 if ($action == 'edit')

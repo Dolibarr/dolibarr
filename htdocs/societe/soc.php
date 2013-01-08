@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -541,7 +541,7 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+        $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
         foreach ($dirsociete as $dirroot)
         {
             $res=dol_include_once($dirroot.$module.'.php');
@@ -554,7 +554,7 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+        $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
         foreach ($dirsociete as $dirroot)
         {
             $res=dol_include_once($dirroot.$module.'.php');
@@ -931,7 +931,8 @@ else
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
-        // Local Taxes
+        // Local Taxes  
+        //TODO: Place into a function to control showing by country or study better option
         if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
@@ -953,7 +954,13 @@ else
             print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
-
+        
+        if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")=='')  )
+        {
+        	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+        	print $form->selectyesno('localtax2assuj_value',0,1);
+        	print '</td><tr>';
+        }
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
@@ -1032,7 +1039,7 @@ else
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$module.'.php');
@@ -1050,7 +1057,7 @@ else
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$module.'.php');
@@ -1349,6 +1356,7 @@ else
             print '</tr>';
 
             // Local Taxes
+            //TODO: Place into a function to control showing by country or study better option
             if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
                 print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
@@ -1370,6 +1378,13 @@ else
                 print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 print '</td></tr>';
+            }
+            
+            if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && $object->fournisseur==1)
+            {
+            	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            	print $form->selectyesno('localtax2assuj_value',0,1);
+            	print '</td><tr>';
             }
 
             // Type - Size
@@ -1665,6 +1680,7 @@ else
         print '</tr>';
 
         // Local Taxes
+        //TODO: Place into a function to control showing by country or study better option
         if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
@@ -1683,6 +1699,13 @@ else
         elseif($mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
+            print yn($object->localtax2_assuj);
+            print '</td><tr>';
+        }
+        
+        if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && $object->fournisseur==1)
+        {
+        	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
             print yn($object->localtax2_assuj);
             print '</td><tr>';
         }

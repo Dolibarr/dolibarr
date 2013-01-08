@@ -4022,7 +4022,7 @@ function picto_from_langcode($codelang)
 
 /**
  *  Complete or removed entries into a head array (used to build tabs) with value added by external modules.
- *  Such values are declared into $conf->tabs_modules.
+ *  Such values are declared into $conf->modules_parts['tab'].
  *
  *  @param	Conf		$conf           Object conf
  *  @param  Translate	$langs          Object langs
@@ -4047,9 +4047,9 @@ function picto_from_langcode($codelang)
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
-	if (isset($conf->tabs_modules[$type]) && is_array($conf->tabs_modules[$type]))
+	if (isset($conf->modules_parts['tabs'][$type]) && is_array($conf->modules_parts['tabs'][$type]))
 	{
-		foreach ($conf->tabs_modules[$type] as $value)
+		foreach ($conf->modules_parts['tabs'][$type] as $value)
 		{
 			$values=explode(':',$value);
 

@@ -52,13 +52,8 @@ class Conf
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('css'=>array(), 'js'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'hooks'=>array(),'dir'=>array());	// List of modules parts
-
-	// TODO Remove thoose arrays with generic module_parts
-	public $tabs_modules			= array();
-	public $sms_engine_modules		= array();
-	public $societe_modules	        = array();
-
+	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array());
+	
 	var $logbuffer					= array();
 	var $loghandlers                = array();
 
@@ -160,20 +155,10 @@ class Conf
 						// If this is constant for a new tab page activated by a module.
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
 						{
+							$partname = 'tabs';
 							$params=explode(':',$value,2);
-							$this->tabs_modules[$params[0]][]=$value;				// Add this module in list of modules that provide tabs
-						}
-						// If this is constant for a sms engine
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SMS$/i',$key,$reg))
-						{
-							$modulename=strtolower($reg[1]);
-							$this->sms_engine_modules[$modulename]=$modulename;		// Add this module in list of modules that provide SMS
-						}
-						// If this is constant for a societe submodule
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_SOCIETE$/i',$key,$reg))
-						{
-							$modulename=strtolower($reg[1]);
-							$this->societe_modules[$modulename]=$modulename;		// Add this module in list of modules that provide societe modules
+							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							$this->modules_parts[$partname][$params[0]][]=$value;
 						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
@@ -183,9 +168,10 @@ class Conf
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl','theme'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
-							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
+							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
+							else if (in_array($partname,array('sms'))) $value = $modulename;
+							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
@@ -205,7 +191,7 @@ class Conf
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);
-		//var_dump($this->modules_parts);
+		//var_dump($this->modules_parts['theme']);
 
 		// Object $mc
 		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
@@ -371,6 +357,7 @@ class Conf
 
 		// conf->theme et $this->css
 		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
+        if (! empty($this->global->MAIN_FORCETHEME)) $this->global->MAIN_THEME=$this->global->MAIN_FORCETHEME;
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "/theme/".$this->theme."/style.css.php";
 
