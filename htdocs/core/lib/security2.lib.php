@@ -175,8 +175,21 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 
-	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php?lang=".$langs->defaultlang;
-	$conf_css = DOL_URL_ROOT.$conf->css;
+	// Note: $conf->css looks like '/theme/eldy/style.css.php'
+	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
+	$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+	if (! empty($conf->modules_parts['theme']))	// This slow down
+	{
+		foreach($conf->modules_parts['theme'] as $reldir)
+		{
+			if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
+			{
+				$themepath=dol_buildpath($reldir.$conf->css, 1);
+				break;
+			}
+		}
+	}
+	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
 	// Set cookie for timeout management
 	$prefix=dol_getprefix();

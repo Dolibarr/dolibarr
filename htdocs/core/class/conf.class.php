@@ -169,8 +169,7 @@ class Conf
 							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							else if (in_array($partname,array('theme'))) $value = '/'.$modulename.'/'.$partname.'/';
-							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
+							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
 							else if (in_array($partname,array('sms'))) $value = $modulename;
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));

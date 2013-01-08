@@ -910,15 +910,26 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
-        // Output style sheets (optioncss='print' or '')
+        // Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+        if (! empty($conf->modules_parts['theme']))	// This slow down
+        {
+	        foreach($conf->modules_parts['theme'] as $reldir)
+	        {
+	        	if (file_exists(dol_buildpath($reldir.$conf->css, 0))) 
+	        	{
+					$themepath=dol_buildpath($reldir.$conf->css, 1);
+					break;
+	        	}
+	        }
+        }
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+ 		//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
         // CSS forced by modules (relative url starting with /)
-        if (isset($conf->modules_parts['css']))
+        if (! empty($conf->modules_parts['css']))
         {
         	$arraycss=(array) $conf->modules_parts['css'];
         	foreach($arraycss as $modcss => $filescss)
@@ -1078,7 +1089,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             }
 
             // JS forced by modules (relative url starting with /)
-            if (isset($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
+            if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
         	{
         		$arrayjs=(array) $conf->modules_parts['js'];
 	            foreach($arrayjs as $modjs => $filesjs)
