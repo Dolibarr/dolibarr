@@ -127,8 +127,13 @@ function member_admin_prepare_head()
     complete_head_from_modules($conf,$langs,'',$head,$h,'member_admin');
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][1] = $langs->trans("ExtraFieldsMember");
     $head[$h][2] = 'attributes';
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_type_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsMemberType");
+    $head[$h][2] = 'attributes_type';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/public.php';
