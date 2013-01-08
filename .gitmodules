@@ -124,3 +124,6 @@
 [submodule "htdocs/custom/b2s"]
 	path = htdocs/custom/b2s
 	url = gitolite@doliforge.org:b2s/b2s.git
+[submodule "htdocs/custom/fidelite"]
+	path = htdocs/custom/fidelite
+	url = gitolite@doliforge.org:fidelite/fidelite.git
