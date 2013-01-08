@@ -229,8 +229,9 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	$dirthemes=array_merge(array($forcethemedir.'/theme'),(array) $conf->modules_parts['themes']);
     }
 
-    $selected_theme=$conf->global->MAIN_THEME;
-    if (! empty($fuser->conf->MAIN_THEME)) $selected_theme=$fuser->conf->MAIN_THEME;
+    $selected_theme='';
+    if (empty($foruserprofile)) $selected_theme=$conf->global->MAIN_THEME;
+    else $selected_theme=empty($fuser->conf->MAIN_THEME)?'':$fuser->conf->MAIN_THEME;
 
     $colspan=2;
     if ($foruserprofile) $colspan=4;
