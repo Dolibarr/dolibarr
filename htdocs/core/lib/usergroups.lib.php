@@ -225,8 +225,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 
     $forcethemedir=(! empty($conf->global->MAIN_FORCETHEMEDIR) ? $conf->global->MAIN_FORCETHEMEDIR : '');
     $dirthemes=array($forcethemedir.'/theme');
-    if (! empty($conf->modules_parts['themes'])) {
-    	$dirthemes=array_merge(array($forcethemedir.'/theme'),(array) $conf->modules_parts['themes']);
+    if (! empty($conf->modules_parts['theme'])) {
+    	$dirthemes=array_merge(array($forcethemedir.'/theme'),(array) $conf->modules_parts['theme']);
     }
 
     $selected_theme='';

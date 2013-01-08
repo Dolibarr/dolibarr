@@ -168,7 +168,8 @@ class Conf
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl','theme'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname,array('theme'))) $value = '/'.$modulename.'/'.$partname.'/';
 							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
 							else if (in_array($partname,array('sms'))) $value = $modulename;
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
@@ -191,7 +192,7 @@ class Conf
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);
-		//var_dump($this->modules_parts);
+		//var_dump($this->modules_parts['theme']);
 
 		// Object $mc
 		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
@@ -357,6 +358,7 @@ class Conf
 
 		// conf->theme et $this->css
 		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
+        if (! empty($this->global->MAIN_FORCETHEME)) $this->global->MAIN_THEME=$this->global->MAIN_FORCETHEME;
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "/theme/".$this->theme."/style.css.php";
 
