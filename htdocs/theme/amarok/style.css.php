@@ -437,7 +437,7 @@ div.vmenu {
 .menu_contenu {
 	background-color:#ffffff;
 	padding-left:12px;
-	border-bottom:solid 1px rgba(0,0,0,.05);
+	border-top:solid 1px rgba(0,0,0,.05);
 }
 
 .menu_contenu:hover {background-color:#f7f7f7;}
