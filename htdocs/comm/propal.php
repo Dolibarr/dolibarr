@@ -634,7 +634,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 	$idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
-	$tva_tx = GETPOST('tva_tx');
+	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
@@ -844,7 +844,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
 
 	// Define vat_rate
-	$vat_rate=GETPOST('tva_tx');
+	$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	$vat_rate=str_replace('*','',$vat_rate);
 	$localtax1_rate=get_localtax($vat_rate,1,$object->client);
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
