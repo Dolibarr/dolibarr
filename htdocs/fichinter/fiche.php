@@ -653,7 +653,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 }
                 else    // Id du contact
                 {
-                    $sendto = $object->client->contact_get_email(GETPOST('receiver','alpha'));
+                    $sendto = $object->client->contact_get_property(GETPOST('receiver'),'email');
                     $sendtoid = GETPOST('receiver','alpha');
                 }
             }
