@@ -22,8 +22,8 @@ AppVerName=DoliWamp-3.3.0-beta
 OutputBaseFilename=DoliWamp-3.3.0-beta
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-;SourceDir=C:\Documents and Settings\ldestail\git\dolibarr_old
-SourceDir=Z:\home\ldestail\git\dolibarr
+;SourceDir=C:\Documents and Settings\ldestailleur\git\dolibarr_old
+SourceDir=Z:\home\ldestailleur\git\dolibarr_veryold
 ; ----- End of change
 ;OutputManifestFile=build\doliwampbuild.log
 AppId=doliwamp
