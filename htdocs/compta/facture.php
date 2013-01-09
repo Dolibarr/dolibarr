@@ -965,7 +965,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
     $idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
-	$tva_tx = GETPOST('tva_tx');
+	$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
@@ -1220,13 +1220,13 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
     $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
     $description=dol_htmlcleanlastbr(GETPOST('product_desc'));
     $pu_ht=GETPOST('price_ht');
+    $vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
     // Define info_bits
     $info_bits=0;
-    if (preg_match('/\*/', GETPOST('tva_tx'))) $info_bits |= 0x01;
+    if (preg_match('/\*/', $vat_rate)) $info_bits |= 0x01;
 
     // Define vat_rate
-    $vat_rate=$_POST['tva_tx'];
     $vat_rate=str_replace('*','',$vat_rate);
     $localtax1_rate=get_localtax($vat_rate,1,$object->client);
     $localtax2_rate=get_localtax($vat_rate,2,$object->client);
