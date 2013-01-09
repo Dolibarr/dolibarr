@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -178,14 +178,19 @@ class modCategorie extends DolibarrModules
 		$this->import_fields_array[$r]=array('ca.label'=>"Label*",'ca.type'=>"Type*",'ca.description'=>"Description");
 
 		$this->import_regex_array[$r]=array('ca.type'=>'^[0|1|2|3]');
-		$this->import_examplevalues_array[$r]=array('ca.label'=>"Supplier Category",'ca.type'=>"1",'ca.description'=>"Imported category");
+		$typeexample="";
+		if ($conf->product->enabled)     { $typeexample.=($typeexample?"/":"")."0=Product"; }
+		if ($conf->fournisseur->enabled) { $typeexample.=($typeexample?"/":"")."1=Supplier"; }
+		if ($conf->societe->enabled)     { $typeexample.=($typeexample?"/":"")."2=Customer-Prospect"; }
+		if ($conf->adherent->enabled)    { $typeexample.=($typeexample?"/":"")."3=Member"; }
+		$this->import_examplevalues_array[$r]=array('ca.label'=>"Supplier Category",'ca.type'=>$typeexample,'ca.description'=>"Imported category");
 
 		if (! empty($conf->product->enabled))
 		{
 			//Products
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
-			$this->import_label[$r]="CatProdList";	// Translation key
+			$this->import_label[$r]="CatProdLinks";	// Translation key
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cp'=>MAIN_DB_PREFIX.'categorie_product');
@@ -204,7 +209,7 @@ class modCategorie extends DolibarrModules
 			//Customers
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
-			$this->import_label[$r]="CatCusList";	// Translation key
+			$this->import_label[$r]="CatCusLinks";	// Translation key
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_societe');
@@ -223,7 +228,7 @@ class modCategorie extends DolibarrModules
 			// Suppliers
 			$r++;
 			$this->import_code[$r]=$this->rights_class.'_'.$r;
-			$this->import_label[$r]="CatSupList";	// Translation key
+			$this->import_label[$r]="CatSupLinks";	// Translation key
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('cs'=>MAIN_DB_PREFIX.'categorie_fournisseur');

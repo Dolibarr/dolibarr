@@ -24,7 +24,7 @@ create table llx_categorie
 	entity          integer DEFAULT 1 NOT NULL,			-- multi company id
 	fk_parent		integer DEFAULT 0 NOT NULL,
 	label 		    varchar(255) NOT NULL,				-- category name
-	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer)
+	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
 	fk_soc          integer DEFAULT NULL,				-- attribution of the category has a company (for product only)
 	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not

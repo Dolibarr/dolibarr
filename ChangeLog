@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
+- New: Add holiday module, to declare and follow holidays of your employees.
+- New: Add margin management module.
+- New: Add new theme Amarok.
 - New: [ task #289 ] Can reorder tasks.
 - New: Add field "signature" into user card. If filled, text is added 
        at end of predefined email texts. If option MAIN_MAIL_DO_NOT_USE_SIGN is on, this
@@ -69,12 +72,9 @@ For users:
 - New: [ task #608 ] Can clone a supplier order with prices updates
 - New: [ task #559 ] Can define a discount % regarding quantity in supplier prices and price by quantity in customer prices
 - New: [ task #527 ] After cloning a suplier invoice, go onto invoice ref into edit mode
-- New: Add new theme Amarok.
 
-New experimental modules:
-- New: Add margin management module.
+New experimental module:
 - New: Add commissions management module.
-
 
 - Fix: [ bug #499 ] Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does not work with this.
