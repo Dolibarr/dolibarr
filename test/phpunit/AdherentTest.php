@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013 Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +170,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      * @depends	testAdherentFetch
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentUpdate($localobject)
+    public function testAdherentUpdate(Adherent $localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -177,6 +178,9 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+        $timestamp = dol_now();
+
+        $localobject->civilite_id = 0;
 		$localobject->login='newlogin';
 		$localobject->societe='New company';
 		$localobject->note='New note after update';
@@ -188,10 +192,12 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$localobject->town='New town';
 		$localobject->country_id=2;
 		$localobject->statut=0;
+        $localobject->morphy=0;
 		$localobject->phone='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
 		$localobject->email='newemail@newemail.com';
+        $localobject->naiss=$timestamp;
 		$result=$localobject->update($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -207,6 +213,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
+        $this->assertEquals($localobject->civilite_id, $newobject->civilite_id);
 		$this->assertEquals($localobject->login, $newobject->login);
 		$this->assertEquals($localobject->societe, $newobject->societe);
 		$this->assertEquals($localobject->note, $newobject->note);
@@ -223,8 +230,42 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
 		$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
 		$this->assertEquals($localobject->email, $newobject->email);
+        $this->assertEquals($localobject->naiss, $timestamp);
+        $this->assertEquals($localobject->morphy, $newobject->morphy);
 
     	return $localobject;
+    }
+
+    /**
+     * testAdherentMakeSubstitution
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return  Adherent
+     *
+     * @depends testAdherentUpdate
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentMakeSubstitution(Adherent $localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $template = '%DOL_MAIN_URL_ROOT%,%ID%,%CIVILITE%,%FIRSTNAME%,%LASTNAME%,%FULLNAME%,%COMPANY%,'.
+                    '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%NAISS%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
+                    '%NOM%,%SOCIETE%,%ADRESSE%,%CP%,%VILLE%,%PAYS%';
+
+        $expected = DOL_MAIN_URL_ROOT.','.$localobject->id.',0,New firstname,New name,New firstname New name,'.
+                    'New company,New address,New zip,New town,,newemail@newemail.com,'.dol_print_date($localobject->naiss,'day').',,'.
+                    'newlogin,dolibspec,New firstname,New name,New company,New address,New zip,New town,';
+
+        $result = $localobject->makeSubstitution($template);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($expected, $result);
+
+        return $localobject;
     }
 
     /**
@@ -233,10 +274,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      * @param	Adherent	$localobject	Member instance
      * @return	Adherent
      *
-     * @depends	testAdherentUpdate
+     * @depends	testAdherentMakeSubstitution
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentValid($localobject)
+    public function testAdherentValid(Adherent $localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -260,7 +301,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      * @depends testAdherentValid
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentOther($localobject)
+    public function testAdherentOther(Adherent $localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
