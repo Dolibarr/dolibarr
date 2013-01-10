@@ -77,8 +77,14 @@ $img_button=dol_buildpath($path.'/theme/amarok/img/button_bg.png',1);
 *, html {
 	margin:0;
 	padding:0;
-	font-size:100%;
+font-size:100%;
 }
+
+/*.fiche ul {
+	margin:0.5em;
+	padding:0.5em;
+	padding-left: 2em;
+}*/
 
 body {
 	background-color:#f5f5f5;
@@ -517,37 +523,194 @@ div.vmenu {
 /* Panes for ECM or Filemanager                                                   */
 /* ============================================================================== */
 
+
 #containerlayout .layout-with-no-border {
-    border:0 !important;
-    border-width:0 !important;
+    border: 0 !important;
+    border-width: 0 !important;
 }
 
 #containerlayout .layout-padding {
-    padding:2px !important;
+    padding: 2px !important;
 }
 
-#containerlayout .ui-layout-pane {/* all 'panes' */
-    background:#ffffff;
-    border:1px solid #bbbbbb;
-    padding:0px;
-    overflow:auto;
+/*
+ *  PANES and CONTENT-DIVs
+ */
+#containerlayout .ui-layout-pane { /* all 'panes' */
+    background: #FFF;
+    border:     1px solid #BBB;
+    /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
+       otherwise you may get double-scrollbars - on the pane AND on the content-div
+    */
+    padding:    0px;
+    overflow:   auto;
 }
-
+/* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
 #containerlayout .ui-layout-content {
-	padding:10px;
-	position:relative; /* contain floated or positioned elements */
-	overflow:auto; /* add scrolling to content-div */
+	padding:    10px;
+	position:   relative; /* contain floated or positioned elements */
+	overflow:   auto; /* add scrolling to content-div */
 }
 
-#containerlayout .pane-in.ecm-in-layout-center.ui-layout-pane.ui-layout-pane-center {
-	border:0px solid #bbbbbb;
-	border-bottom:1px solid #bbbbbb;
+/*
+ *  RESIZER-BARS
+ */
+.ui-layout-resizer  { /* all 'resizer-bars' */
+	width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px !important;
+}
+.ui-layout-resizer-hover    {   /* affects both open and closed states */
+}
+/* NOTE: It looks best when 'hover' and 'dragging' are set to the same color,
+    otherwise color shifts while dragging when bar can't keep up with mouse */
+/*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
+.ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
+    background: #DDD;
+    width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px;
+}
+.ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
+    border-left:  1px solid #BBB;
+    border-right: 1px solid #BBB;
+}
+/* NOTE: Add a 'dragging-limit' color to provide visual feedback when resizer hits min/max size limits */
+.ui-layout-resizer-dragging-limit { /* CLONED resizer at min or max size-limit */
+    background: #E1A4A4; /* red */
+}
+.ui-layout-resizer-closed {
+    background-color: #DDDDDD;
+}
+.ui-layout-resizer-closed:hover {
+    background-color: #EEDDDD;
+}
+.ui-layout-resizer-sliding {    /* resizer when pane is 'slid open' */
+    opacity: .10; /* show only a slight shadow */
+    filter:  alpha(opacity=10);
+}
+.ui-layout-resizer-sliding-hover {  /* sliding resizer - hover */
+    opacity: 1.00; /* on-hover, show the resizer-bar normally */
+    filter:  alpha(opacity=100);
+}
+/* sliding resizer - add 'outside-border' to resizer on-hover */
+/* this sample illustrates how to target specific panes and states */
+/*.ui-layout-resizer-north-sliding-hover  { border-bottom-width:  1px; }
+.ui-layout-resizer-south-sliding-hover  { border-top-width:     1px; }
+.ui-layout-resizer-west-sliding-hover   { border-right-width:   1px; }
+.ui-layout-resizer-east-sliding-hover   { border-left-width:    1px; }
+*/
+
+/*
+ *  TOGGLER-BUTTONS
+ */
+.ui-layout-toggler {
+    <?php if (empty($conf->browser->phone)) { ?>
+    border-top: 1px solid #AAA; /* match pane-border */
+    border-right: 1px solid #AAA; /* match pane-border */
+    border-bottom: 1px solid #AAA; /* match pane-border */
+    background-color: #DDD;
+    top: 5px !important;
+	<?php } else { ?>
+	diplay: none;
+	<?php } ?>
+}
+.ui-layout-toggler-open {
+	height: 54px !important;
+	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler-closed {
+	height: <?php echo (empty($conf->browser->phone)?'54':'2'); ?>px !important;
+	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ui-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
 }
 
-#containerlayout .pane-in.ecm-in-layout-south.layout-padding.ui-layout-pane.ui-layout-pane-south {
-	border:0px solid #bbbbbb;
-	border-top:1px solid #bbbbbb;
+/* hide the toggler-button when the pane is 'slid open' */
+.ui-layout-resizer-sliding  ui-layout-toggler {
+    display: none;
 }
+
+.ui-layout-north {
+	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
+}
+
+
+/* ECM */
+
+#containerlayout .ecm-layout-pane { /* all 'panes' */
+    background: #FFF;
+    border:     1px solid #BBB;
+    /* DO NOT add scrolling (or padding) to 'panes' that have a content-div,
+       otherwise you may get double-scrollbars - on the pane AND on the content-div
+    */
+    padding:    0px;
+    overflow:   auto;
+}
+/* (scrolling) content-div inside pane allows for fixed header(s) and/or footer(s) */
+#containerlayout .ecm-layout-content {
+	padding:    10px;
+	position:   relative; /* contain floated or positioned elements */
+	overflow:   auto; /* add scrolling to content-div */
+}
+
+.ecm-layout-toggler {
+    border-top: 1px solid #AAA; /* match pane-border */
+    border-right: 1px solid #AAA; /* match pane-border */
+    border-bottom: 1px solid #AAA; /* match pane-border */
+    background-color: #CCC;
+    }
+.ecm-layout-toggler-open {
+	height: 48px !important;
+	width: 6px !important;
+    -moz-border-radius:0px 10px 10px 0px;
+	-webkit-border-radius:0px 10px 10px 0px;
+	border-radius:0px 10px 10px 0px;
+}
+.ecm-layout-toggler-closed {
+	height: 48px !important;
+	width: 6px !important;
+}
+
+.ecm-layout-toggler .content {	/* style the text we put INSIDE the togglers */
+    color:          #666;
+    font-size:      12px;
+    font-weight:    bold;
+    width:          100%;
+    padding-bottom: 0.35ex; /* to 'vertically center' text inside text-span */
+}
+#ecm-layout-west-resizer {
+	width: 6px !important;
+}
+
+.ecm-layout-resizer  { /* all 'resizer-bars' */
+    border:         1px solid #BBB;
+    border-width:   0;
+    }
+.ecm-layout-resizer-closed {
+}
+
+.ecm-in-layout-center {
+    border-left: 1px !important;
+    border-right: 0px !important;
+    border-top: 0px !important;
+}
+
+.ecm-in-layout-south {
+    border-left: 0px !important;
+    border-right: 0px !important;
+    border-bottom: 0px !important;
+    padding: 4px 0 4px 4px !important;
+}
+
+
 
 /* ============================================================================== */
 /* Onglets                                                                        */
@@ -1003,6 +1166,9 @@ div.error {
  *  Other
  */
 
+.product_line_stock_ok { color: #002200; }
+.product_line_stock_too_low { color: #664400; }
+ 
 .fieldrequired {
 	font-weight:bold;
 	color:#333333;
@@ -1022,6 +1188,40 @@ div.titre {
 	font-weight:bold;
 	padding-left:1px;
 	padding-bottom:2px;
+}
+
+#dolpaymenttable { width: 600px; font-size: 13px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
+#tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
+#tablepublicpayment tr.liste_total td { border-top: none; }
+
+#divsubscribe { width: 700px; }
+#tablesubscribe { width: 100%; }
+
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #DDD;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #DDD;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #DDD;
+	border-collapse: collapse;
 }
 
 
@@ -1636,3 +1836,133 @@ span.cke_skin_kama {padding:0px !important;}
 /* ============================================================================== */
 
 .template-upload {height:72px !important;}
+
+
+/* ============================================================================== */
+/*  JSGantt                                                                       */
+/* ============================================================================== */
+
+div.scroll2 {
+	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
+}
+
+
+/* ============================================================================== */
+/*  jFileTree                                                                     */
+/* ============================================================================== */
+
+.ecmfiletree {
+	width: 99%;
+	height: 99%;
+	background: #FFF;
+	padding-left: 2px;
+	font-weight: normal;
+}
+
+.fileview {
+	width: 99%;
+	height: 99%;
+	background: #FFF;
+	padding-left: 2px;
+	padding-top: 4px;
+	font-weight: normal;
+}
+
+div.filedirelem {
+    position: relative;
+    display: block;
+    text-decoration: none;
+}
+
+ul.filedirelem {
+    padding: 2px;
+    margin: 0 5px 5px 5px;
+}
+ul.filedirelem li {
+    list-style: none;
+    padding: 2px;
+    margin: 0 10px 20px 10px;
+    width: 160px;
+    height: 120px;
+    text-align: center;
+    display: block;
+    float: <?php print $left; ?>;
+    border: solid 1px #DDDDDD;
+}
+
+ui-layout-north {
+
+}
+
+ul.ecmjqft {
+	font-size: 11px;
+	line-height: 16px;
+	padding: 0px;
+	margin: 0px;
+	font-weight: normal;
+}
+
+ul.ecmjqft li {
+	list-style: none;
+	padding: 0px;
+	padding-left: 20px;
+	margin: 0px;
+	white-space: nowrap;
+	display: block;
+}
+
+ul.ecmjqft a {
+	line-height: 16px;
+	vertical-align: middle;
+	color: #333;
+	padding: 0px 0px;
+	font-weight:normal;
+	display: inline-block !important;
+/*	float: left;*/
+}
+ul.ecmjqft a:active {
+	font-weight: bold !important;
+}
+ul.ecmjqft a:hover {
+    text-decoration: underline;
+}
+div.ecmjqft {
+	vertical-align: middle;
+	display: inline-block !important;
+	text-align: right;
+	position:absolute;
+	right:4px;
+}
+
+/* Core Styles */
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
+
+
+
+/* ============================================================================== */
+/*  jNotify                                                                       */
+/* ============================================================================== */
+
+.jnotify-container {
+	position: fixed !important;
+<?php if (! empty($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM)) { ?>
+	top: auto !important;
+	bottom: 4px !important;
+<?php } ?>
+	text-align: center;
+	min-width: 500px;
+	width: auto;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+}
+
+/* use or not ? */
+div.jnotify-background {
+	opacity : 0.95 !important;
+    -moz-box-shadow: 4px 4px 4px #AAA !important;
+    -webkit-box-shadow: 4px 4px 4px #AAA !important;
+    box-shadow: 4px 4px 4px #AAA !important;
+}
+
