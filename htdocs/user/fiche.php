@@ -307,8 +307,26 @@ if ($action == 'update' && ! $_POST["cancel"])
 
         if (! $error)
         {
-            $db->begin();
             $object->fetch($id);
+
+            // Test if new login
+            if (GETPOST("login") && GETPOST("login") != $object->login)
+            {
+				dol_syslog("New login ".$object->login." is requested. We test it does not exists.");
+				$tmpuser=new User($db);
+				$result=$tmpuser->fetch(0, GETPOST("login"));
+				if ($result > 0)
+				{
+					$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists").'</div>';
+					$action="edit";       // Go back to create page
+					$error++;
+				}
+            }
+       }
+
+       if (! $error)
+       {
+            $db->begin();
 
             $object->oldcopy=dol_clone($object);
 
