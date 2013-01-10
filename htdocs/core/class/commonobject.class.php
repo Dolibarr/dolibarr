@@ -2332,7 +2332,7 @@ abstract class CommonObject
     function isInEEC()
     {
         // List of all country codes that are in europe for european vat rules
-        // List found on http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome
+        // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
         $country_code_in_EEC=array(
     			'AT',	// Austria
     			'BE',	// Belgium
@@ -2345,16 +2345,17 @@ abstract class CommonObject
     			'ES',	// Spain
     			'FI',	// Finland
     			'FR',	// France
-    			'GB',	// Royaume-uni
+    			'GB',	// United Kingdom
     			'GR',	// Greece
     			'NL',	// Holland
     			'HU',	// Hungary
     			'IE',	// Ireland
+    			'IM',	// Isle of Man - Included in UK
     			'IT',	// Italy
     			'LT',	// Lithuania
     			'LU',	// Luxembourg
     			'LV',	// Latvia
-    			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
+    			'MC',	// Monaco - Included in France
     			'MT',	// Malta
         //'NO',	// Norway
     			'PL',	// Poland
