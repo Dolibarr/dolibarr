@@ -53,7 +53,7 @@ class Conf
 
 	public $modules					= array();	// List of activated modules
 	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array());
-	
+
 	var $logbuffer					= array();
 	var $loghandlers                = array();
 
@@ -381,6 +381,7 @@ class Conf
         $this->format_date_text_short="%d %b %Y";
         $this->format_date_text="%d %B %Y";
         $this->format_date_hour_short="%d/%m/%Y %H:%M";
+        $this->format_date_hour_sec_short="%d/%m/%Y %H:%M:%S";
         $this->format_date_hour_text_short="%d %b %Y %H:%M";
         $this->format_date_hour_text="%d %B %Y %H:%M";
 
