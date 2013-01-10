@@ -120,6 +120,7 @@ class FormFile
             {
                 if ($perm)
                 {
+                	$langs->load('other');
                     print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
                     print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
                     print ')';
