@@ -454,6 +454,12 @@ if ($action == 'update' && ! $_POST["cancel"])
             {
                 $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
                 $db->commit();
+
+                $login=$_SESSION["dol_login"];
+                if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)	// Current user has changed its login
+                {
+                	$_SESSION["dol_login"]=$object->login;	// Set new login to avoid disconnect at next page
+                }
             }
             else
             {
