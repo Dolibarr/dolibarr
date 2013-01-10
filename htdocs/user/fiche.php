@@ -775,7 +775,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         else
         {
             // We do not use a field password but a field text to show new password to use.
-            print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'">';
+            print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="off">';
         }
     }
     print '</td></tr>';
@@ -1654,7 +1654,7 @@ else
             }
             else if ($caneditpassword)
             {
-                $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'">';
+                $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="off">';
                 if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
                 {
                     $text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
