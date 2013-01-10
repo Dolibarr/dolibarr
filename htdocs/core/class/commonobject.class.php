@@ -2253,24 +2253,43 @@ abstract class CommonObject
     }
 
     /**
-     * Function that returns the total amount of discounts applied.
+     * Function that returns the total amount HT of discounts applied for all lines.
      *
-     * @return false|float False is returned if the discount couldn't be retrieved
+     * @return 	in		0 if no discount
      */
     function getTotalDiscount()
     {
-        $sql = 'SELECT (SUM(`subprice`) - SUM(`total_ht`)) as `discount` FROM '.MAIN_DB_PREFIX.$this->table_element.'det WHERE `'.$this->fk_element.'` = '.$this->id;
+    	$total_discount=0; 
 
-        $query = $this->db->query($sql);
+        $sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."det";
+        $sql.= " WHERE ".$this->fk_element." = ".$this->id;
 
-        if ($query)
+        dol_syslog(get_class($this).'::getTotalDiscount sql='.$sql);
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            $result = $this->db->fetch_object($query);
+        	$num=$this->db->num_rows($resql);
+        	$i=0;
+        	while ($i < $num)
+        	{
+            	$obj = $this->db->fetch_object($query);
 
-            return price2num($result->discount);
+            	$pu_ht = $obj->pu_ht;
+            	$qty= $obj->qty;
+            	$discount_percent_line = $obj->remise_percent;
+            	$total_ht = $obj->total_ht;
+            	
+        		$total_discount_line = price2num(($pu_ht * $qty) - $total_ht, 'MT');
+        		$total_discount += $total_discount_line;
+        		
+        		$i++;
+        	}
         }
-
-        return false;
+        else dol_syslog(get_class($this).'::getTotalDiscount '.$this->db->lasterror(), LOG_ERR);
+		
+        //print $total_discount; exit;        
+        return price2num($total_discount);
     }
 
     /**
