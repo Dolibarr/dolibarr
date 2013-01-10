@@ -170,6 +170,7 @@ class modECM extends DolibarrModules
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
+		/*
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 							  'type'=>'left',
 							  'titre'=>'Search',
@@ -181,7 +182,8 @@ class modECM extends DolibarrModules
 							  'enabled'=>'$user->rights->ecm->read',
 							  'target'=>'',
 							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
+							  
+		$r++;*/
 
 	}
 

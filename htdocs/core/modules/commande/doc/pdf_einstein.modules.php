@@ -724,18 +724,13 @@ class pdf_einstein extends ModelePDFCommandes
 				//Local tax 1 before VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '1':
-							case '3':
-							case '5':
-							case '7':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+					{
+						// TODO: Place into a function to control showing by country or study better option
+						if (in_array((string) $localtax_type, array('1','3','5','7')) && $mysoc->country_code != 'ES') continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -758,21 +753,16 @@ class pdf_einstein extends ModelePDFCommandes
 						}
 					}
 	      }
-				//Local tax 2  before VAT
+				//Local tax 2 before VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '1':
-							case '3':
-							case '5':
-							case '7':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+					{
+						// TODO: Place into a function to control showing by country or study better option
+						if (in_array((string) $localtax_type, array('1','3','5','7')) && $mysoc->country_code != 'ES') continue;
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -826,14 +816,10 @@ class pdf_einstein extends ModelePDFCommandes
 				//Local tax 1 after VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '2':
-							case '4':
-							case '6':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+					{
+						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
@@ -867,17 +853,13 @@ class pdf_einstein extends ModelePDFCommandes
 						}
 					}
 	      		}
-				//Local tax 2  after VAT
+				//Local tax 2 after VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '2':
-							case '4':
-							case '6':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+					{
+						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
