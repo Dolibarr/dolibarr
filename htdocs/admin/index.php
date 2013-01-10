@@ -81,19 +81,12 @@ print $langs->trans("SetupDescription5")."<br>";
 //print '<hr style="color: #DDDDDD;">';
 print "<br>";
 
-/*
-print '<table width="100%">';
-print '<tr '.$bc[false].'><td '.$bc[false].'>'.img_picto('','puce').' '.$langs->trans("SetupDescription3")."</td></tr>";
-print '<tr '.$bc[true].'><td '.$bc[true].'>'.img_picto('','puce').' '.$langs->trans("SetupDescription4")."</td></tr>";
-print '<tr '.$bc[false].'><td '.$bc[false].'>'.img_picto('','puce').' '.$langs->trans("SetupDescription5")."</td></tr>";
-print '</table>';
-*/
-
-//print '<br>';
-//print info_admin($langs->trans("OnceSetupFinishedCreateUsers")).'<br>';
+// Show logo
+print '<center><div class="logo_setup"></div></center>';
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
