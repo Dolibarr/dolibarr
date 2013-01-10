@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 $langs->load("companies");
 $langs->load("categories");
+$langs->load('withdrawals');
 
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();
