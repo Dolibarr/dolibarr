@@ -160,6 +160,7 @@ if ($object->id)
 	 */
 	if ($action == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
+		$langs->load('other');
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("AddPhoto"), 1, 0, 1, 50, $object, '', false); // FIXME Regis: disabled for the moment
