@@ -2255,11 +2255,11 @@ abstract class CommonObject
     /**
      * Function that returns the total amount HT of discounts applied for all lines.
      *
-     * @return 	in		0 if no discount
+     * @return 	float
      */
     function getTotalDiscount()
     {
-    	$total_discount=0; 
+    	$total_discount=0.00;
 
         $sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."det";
