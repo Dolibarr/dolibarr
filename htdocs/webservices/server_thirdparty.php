@@ -219,12 +219,26 @@ $server->register(
     // Entry values
     array('authentication'=>'tns:authentication','thirdparty'=>'tns:thirdparty'),
     // Exit values
-    array('result'=>'tns:result','id'=>'xsd:string'),
+    array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),
     $ns,
     $ns.'#createThirdParty',
     $styledoc,
     $styleuse,
     'WS to create a thirdparty'
+);
+
+// Register WSDL
+$server->register(
+	'updateThirdParty',
+	// Entry values
+	array('authentication'=>'tns:authentication','thirdparty'=>'tns:thirdparty'),
+	// Exit values
+	array('result'=>'tns:result'),
+	$ns,
+	$ns.'#updateThirdParty',
+	$styledoc,
+	$styleuse,
+	'WS to update a thirdparty'
 );
 
 
@@ -463,6 +477,131 @@ function createThirdParty($authentication,$thirdparty)
     }
 
     return $objectresp;
+}
+
+/**
+ * Update a thirdparty
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	Societe		$thirdparty		    Thirdparty
+ * @return	array							Array result
+ */
+function updateThirdParty($authentication,$thirdparty)
+{
+	global $db,$conf,$langs;
+
+	$now=dol_now();
+
+	dol_syslog("Function: updateThirdParty login=".$authentication['login']);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	// Check parameters
+	if (empty($thirdparty['id']))	{
+		$error++; $errorcode='KO'; $errorlabel="Thirdparty id is mandatory.";
+	}
+
+
+	if (! $error)
+	{
+		$objectfound=false;
+		
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+		$object=new Societe($db);
+		$result=$object->fetch($id);
+		
+		if (!empty($thirdparty['id'])) {
+			 
+			$objectfound=true;
+			
+			$object->ref=$thirdparty['ref'];
+			$object->name=$thirdparty['ref'];
+			$object->ref_ext=$thirdparty['ref_ext'];
+			$object->status=$thirdparty['status'];
+			$object->client=$thirdparty['client'];
+			$object->fournisseur=$thirdparty['supplier'];
+			$object->code_client=$thirdparty['customer_code'];
+			$object->code_fournisseur=$thirdparty['supplier_code'];
+			$object->code_compta=$thirdparty['customer_code_accountancy'];
+			$object->code_compta_fournisseur=$thirdparty['supplier_code_accountancy'];
+			$object->date_creation=$now;
+			$object->note=$thirdparty['note'];
+			$object->address=$thirdparty['address'];
+			$object->zip=$thirdparty['zip'];
+			$object->town=$thirdparty['town'];
+	
+			$object->country_id=$thirdparty['country_id'];
+			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'],3);
+			$object->province_id=$thirdparty['province_id'];
+			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
+	
+			$object->phone=$thirdparty['phone'];
+			$object->fax=$thirdparty['fax'];
+			$object->email=$thirdparty['email'];
+			$object->url=$thirdparty['url'];
+			$object->idprof1=$thirdparty['profid1'];
+			$object->idprof2=$thirdparty['profid2'];
+			$object->idprof3=$thirdparty['profid3'];
+			$object->idprof4=$thirdparty['profid4'];
+			$object->idprof5=$thirdparty['profid5'];
+			$object->idprof6=$thirdparty['profid6'];
+	
+			$object->capital=$thirdparty['capital'];
+	
+			$object->barcode=$thirdparty['barcode'];
+			$object->tva_assuj=$thirdparty['vat_used'];
+			$object->tva_intra=$thirdparty['vat_number'];
+	
+			$object->canvas=$thirdparty['canvas'];
+	
+			//Retreive all extrafield for thirdsparty
+			// fetch optionals attributes and labels
+			$extrafields=new ExtraFields($db);
+			$extralabels=$extrafields->fetch_name_optionals_label('company');
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$key='options_'.$key;
+				$object->array_options[$key]=$thirdparty[$key];
+			}
+	
+			$db->begin();
+	
+			$result=$object->update($fuser);
+			if ($result <= 0) {
+				$error++;
+			}
+		}
+
+		if ((! $error) && ($objectfound))
+		{
+			$db->commit();
+			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+		}
+		elseif ($objectfound)
+		{
+			$db->rollback();
+			$error++;
+			$errorcode='KO';
+			$errorlabel=$object->error;
+		} else {
+			$error++;
+			$errorcode='NOT_FOUND';
+			$errorlabel='Thirdparty id='.$thirdparty['id'].' cannot be found';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
 }
 
 
