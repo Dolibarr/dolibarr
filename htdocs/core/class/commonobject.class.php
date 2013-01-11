@@ -2629,7 +2629,7 @@ abstract class CommonObject
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" width="80">'.$langs->trans('BuyingCost').'</td>';
+				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -3029,7 +3029,10 @@ abstract class CommonObject
     print '<tr class="liste_titre">';
     print '<td width="30%">'.$langs->trans('Margins').'</td>';
     print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
-    print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+	if ($conf->global->MARGIN_TYPE == "1")
+		print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+	else
+		print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
     print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
     if (! empty($conf->global->DISPLAY_MARGIN_RATES))
       print '<td align="right">'.$langs->trans('MarginRate').'</td>';

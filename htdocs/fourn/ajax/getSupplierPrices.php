@@ -73,12 +73,9 @@ if (! empty($idprod))
 				$objp = $db->fetch_object($result);
 
 				$title = $objp->nom.' - '.$objp->ref_fourn.' - ';
-				$label = '';
 
 				if ($objp->quantity == 1)
 				{
-					$label.= price($objp->fprice).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
-
 					$title.= price($objp->fprice);
 					$title.= getCurrencySymbol($conf->currency)."/";
 
@@ -100,8 +97,6 @@ if (! empty($idprod))
 					$title.=" - ";
 					$title.= price($objp->unitprice).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
 
-					$label.= price($objp->unitprice).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
-
 					$price = $objp->unitprice;
 				}
 				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2")) {
@@ -110,6 +105,8 @@ if (! empty($idprod))
 					$price += $objp->unitcharges;
 				}
 				if ($objp->duration) $label .= " - ".$objp->duration;
+
+				$label = price($price).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
 
 				$prices[] = array("id" => $objp->idprodfournprice, "price" => price($price,0,'',0), "label" => $label, "title" => $title);
 				$i++;
