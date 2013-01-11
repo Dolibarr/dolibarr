@@ -44,7 +44,13 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 	if (! empty($usemargins))
 	{
 		?>
-		<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
+		<td align="right">
+		<?php
+		if ($conf->global->MARGIN_TYPE == "1")
+			echo $langs->trans('BuyingPrice');
+		else
+			echo $langs->trans('CostPrice');
+		?>
 		<?php
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
