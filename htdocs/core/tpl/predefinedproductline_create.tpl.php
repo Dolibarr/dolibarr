@@ -57,6 +57,7 @@ if (! empty($usemargins))
 	else
 		echo $langs->trans('CostPrice');
 	?>
+	</td>
 	<?php
 } 
 ?>

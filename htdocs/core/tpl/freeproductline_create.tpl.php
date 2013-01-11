@@ -51,6 +51,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 		else
 			echo $langs->trans('CostPrice');
 		?>
+		</td>
 		<?php
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
