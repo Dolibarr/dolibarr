@@ -1063,7 +1063,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 if (constant('JS_CKEDITOR')) $pathckeditor=JS_CKEDITOR;    // To use external ckeditor js lib
                 print '<script type="text/javascript">';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
-                print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
+                print 'var ckeditorConfig = \''.dol_buildpath($reldir.'/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
                 print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print '</script>'."\n";
