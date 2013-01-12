@@ -593,7 +593,8 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
  */
 else if ($action == 'add' && $user->rights->facture->creer)
 {
-    $object->socid=GETPOST('socid','int');
+	if ($socid>0)
+    	$object->socid=GETPOST('socid','int');
 
     $db->begin();
 
@@ -732,6 +733,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
     // Standard or deposit or proforma invoice
     if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
     {
+    	if (GETPOST('socid','int')<1)
+    	{
+    		$error++;
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
+    	}
+    	
         $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
@@ -1727,7 +1734,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     $soc = new Societe($db);
-    if ($socid) $res=$soc->fetch($socid);
+    if ($socid>1) $res=$soc->fetch($socid);
 
     if (! empty($origin) && ! empty($originid))
     {
@@ -1804,7 +1811,7 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
     // Factures predefinies
-    if (empty($origin) && empty($originid) && $socid)
+    if (empty($origin) && empty($originid) && $socid>1)
     {
         $sql = 'SELECT r.rowid, r.titre, r.total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -1842,7 +1849,7 @@ if ($action == 'create')
     // Tiers
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
-    if($socid)
+    if($socid>1)
     {
     	print '<td colspan="2">';
     	print $soc->getNomUrl(1);
@@ -1928,7 +1935,7 @@ if ($action == 'create')
         print '</td></tr>'."\n";
     }
     
-	if ($socid)
+	if ($socid>1)
 	{
 	    // Replacement
 	    print '<tr height="18"><td valign="middle">';
@@ -1982,7 +1989,7 @@ if ($action == 'create')
 	print '</table>';
 	print '</td></tr>';
 	
-	if($socid)
+	if($socid>1)
 	{
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
@@ -2014,7 +2021,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Project
-    if (! empty($conf->projet->enabled) && $socid)
+    if (! empty($conf->projet->enabled) && $socid>1)
     {
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
