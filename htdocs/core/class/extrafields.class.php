@@ -52,7 +52,8 @@ class ExtraFields
 		'int'=>'Int',
 		'double'=>'Float',
 		'date'=>'Date',
-		'datetime'=>'DateAndTime'
+		'datetime'=>'DateAndTime',
+		'boolean'=>'Boolean'
 	);
 
 	/**
@@ -135,7 +136,14 @@ class ExtraFields
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$field_desc = array('type'=>$type, 'value'=>$length, 'null'=>($required?'NOT NULL':'NULL'));
+			if ($type=='boolean') {
+				$typedb='int';
+				$lengthdb='1';
+			} else {
+				$typedb=$type;
+				$lengthdb=$length;
+			}
+			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'));
 			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
@@ -304,7 +312,14 @@ class ExtraFields
 
         if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$field_desc = array('type'=>$type, 'value'=>$length, 'null'=>($required?'NOT NULL':'NULL'));
+		if ($type=='boolean') {
+				$typedb='int';
+				$lengthdb='1';
+			} else {
+				$typedb=$type;
+				$lengthdb=$length;
+			}
+			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'));
 			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
@@ -487,7 +502,7 @@ class ExtraFields
 	function showInputField($key,$value,$moreparam='')
 	{
 		global $conf;
-
+		
         $label=$this->attribute_label[$key];
 	    $type =$this->attribute_type[$key];
         $size =$this->attribute_size[$key];
@@ -534,6 +549,16 @@ class ExtraFields
         	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
         	$out=$doleditor->Create(1);
         }
+        else if ($type == 'boolean')
+        {
+        	$checked='';
+        	if (!empty($value)) {
+        		$checked=' checked="checked" value="1" ';
+        	} else {
+        		$checked=' value="1" ';
+        	}
+        	$out='<input type="checkbox" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+        }
         // Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
         elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -550,6 +575,7 @@ class ExtraFields
      */
     function showOutputField($key,$value,$moreparam='')
     {
+
         $label=$this->attribute_label[$key];
         $type=$this->attribute_type[$key];
         $size=$this->attribute_size[$key];
@@ -567,6 +593,14 @@ class ExtraFields
         elseif ($type == 'int')
         {
             $showsize=10;
+        }
+        elseif ($type == 'boolean')
+        {
+        	$checked='';
+        	if (!empty($value)) {
+        		$checked=' checked="checked" ';
+        	}
+        	$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly="readonly">';
         }
         else
         {

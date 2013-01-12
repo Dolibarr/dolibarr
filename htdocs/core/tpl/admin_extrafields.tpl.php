@@ -29,6 +29,7 @@
     		else if (type == 'int') { size.val('10').removeAttr('disabled'); }
     		else if (type == 'text') { size.val('2000').removeAttr('disabled'); }
     		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); }
+    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields();
