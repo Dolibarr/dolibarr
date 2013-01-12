@@ -950,7 +950,7 @@ class Adherent extends CommonObject
 
         $this->db->begin();
 
-        // Update link to third party
+        // Remove link to third party onto any other members
         if ($thirdpartyid > 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
@@ -960,7 +960,7 @@ class Adherent extends CommonObject
             $resql = $this->db->query($sql);
         }
 
-        // Update link to third party
+        // Add link to third party for current member
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid>0 ? $thirdpartyid : 'null');
         $sql.= " WHERE rowid = ".$this->id;
 
