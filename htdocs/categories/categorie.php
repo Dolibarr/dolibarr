@@ -85,84 +85,96 @@ if ($id || $ref)
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('categorycard'));
+
 
 /*
  *	Actions
  */
 
-//Suppression d'un objet d'une categorie
-if ($removecat > 0)
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+
+if (empty($reshook))
 {
-	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+	//Suppression d'un objet d'une categorie
+	if ($removecat > 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$object = new Product($db);
-		$result = $object->fetch($id, $ref);
-		$elementtype = 'product';
-	}
-	if ($type==1 && $user->rights->societe->creer)
-	{
-		$object = new Societe($db);
-		$result = $object->fetch($objectid);
-	}
-	if ($type==2 && $user->rights->societe->creer)
-	{
-		$object = new Societe($db);
-		$result = $object->fetch($objectid);
-	}
-	if ($type == 3 && $user->rights->adherent->creer)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$object = new Adherent($db);
-		$result = $object->fetch($objectid);
-	}
-	$cat = new Categorie($db);
-	$result=$cat->fetch($removecat);
+		if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$object = new Product($db);
+			$result = $object->fetch($id, $ref);
+			$elementtype = 'product';
+		}
+		if ($type==1 && $user->rights->societe->creer)
+		{
+			$object = new Societe($db);
+			$result = $object->fetch($objectid);
+		}
+		if ($type==2 && $user->rights->societe->creer)
+		{
+			$object = new Societe($db);
+			$result = $object->fetch($objectid);
+		}
+		if ($type == 3 && $user->rights->adherent->creer)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			$object = new Adherent($db);
+			$result = $object->fetch($objectid);
+		}
+		$cat = new Categorie($db);
+		$result=$cat->fetch($removecat);
 
-	$result=$cat->del_type($object,$elementtype);
-}
+		$result=$cat->del_type($object,$elementtype);
+	}
 
-// Add object into a category
-if ($parent > 0)
-{
-	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+	// Add object into a category
+	if ($parent > 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$object = new Product($db);
-		$result = $object->fetch($id, $ref);
-		$elementtype = 'product';
-	}
-	if ($type==1 && $user->rights->societe->creer)
-	{
-		$object = new Societe($db);
-		$result = $object->fetch($objectid);
-		$elementtype = 'fournisseur';
-	}
-	if ($type==2 && $user->rights->societe->creer)
-	{
-		$object = new Societe($db);
-		$result = $object->fetch($objectid);
-		$elementtype = 'societe';
-	}
-	if ($type==3 && $user->rights->adherent->creer)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$object = new Adherent($db);
-		$result = $object->fetch($objectid);
-		$elementtype = 'member';
-	}
-	$cat = new Categorie($db);
-	$result=$cat->fetch($parent);
+		if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$object = new Product($db);
+			$result = $object->fetch($id, $ref);
+			$elementtype = 'product';
+		}
+		if ($type==1 && $user->rights->societe->creer)
+		{
+			$object = new Societe($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'fournisseur';
+		}
+		if ($type==2 && $user->rights->societe->creer)
+		{
+			$object = new Societe($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'societe';
+		}
+		if ($type==3 && $user->rights->adherent->creer)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			$object = new Adherent($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'member';
+		}
+		$cat = new Categorie($db);
+		$result=$cat->fetch($parent);
 
-	$result=$cat->add_type($object,$elementtype);
-	if ($result >= 0)
-	{
-		$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';
-	}
-	else
-	{
-		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="error">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
-		else $mesg=$langs->trans("Error").' '.$cat->error;
+		$result=$cat->add_type($object,$elementtype);
+		if ($result >= 0)
+		{
+			$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';
+		}
+		else
+		{
+			if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="error">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
+			else $mesg=$langs->trans("Error").' '.$cat->error;
+		}
 	}
 }
 
