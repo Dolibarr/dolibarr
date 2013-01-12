@@ -980,6 +980,8 @@ class User extends CommonObject
 		$this->lastname = $member->lastname;
 		$this->firstname = $member->firstname;
 		$this->email = $member->email;
+		$this->fk_member = $member->id;
+		if ($member->fk_soc) $sql.= ", fk_societe=".$member->fk_soc;
 		$this->pass = $member->pass;
 
 		if (empty($login)) $login=strtolower(substr($member->firstname, 0, 4)) . strtolower(substr($member->lastname, 0, 4));
@@ -992,26 +994,26 @@ class User extends CommonObject
 		if ($result > 0)
 		{
 			$result=$this->setPassword($user,$this->pass);
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET fk_member=".$member->id;
-			if ($member->fk_soc) $sql.= ", fk_societe=".$member->fk_soc;
-			$sql.= " WHERE rowid=".$this->id;
-
-			dol_syslog(get_class($this)."::create_from_member sql=".$sql, LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return $this->id;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
-
-				$this->db->rollback();
-				return -1;
+			if ($member->fk_soc) { 
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+				$sql.= " SET fk_societe=".$member->fk_soc;
+				$sql.= " WHERE rowid=".$this->id;
+	
+				dol_syslog(get_class($this)."::create_from_member sql=".$sql, LOG_DEBUG);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
+	
+					$this->db->rollback();
+					return -1;
+				}
 			}
 		}
 		else
