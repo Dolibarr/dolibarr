@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -913,7 +913,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add("/compta/facture/list.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),0,$user->rights->facture->lire, '', $mainmenu, 'customers_bills');
                 if (empty($user->societe_id))
                 {
-                    $newmenu->add("/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),1,$user->rights->facture->creer);
+                    $newmenu->add("/compta/facture.php?action=create&amp;leftmenu=customers_bills",$langs->trans("NewBill"),1,$user->rights->facture->creer);
                 }
                 $newmenu->add("/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),1,$user->rights->facture->lire);
 
