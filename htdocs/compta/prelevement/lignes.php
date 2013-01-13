@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 if ($user->societe_id > 0) accessforbidden();
 
 $langs->load("categories");
+$langs->load('withdrawals');
 
 // Get supervariables
 $prev_id = GETPOST('id','int');
