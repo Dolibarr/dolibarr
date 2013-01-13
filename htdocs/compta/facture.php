@@ -1734,7 +1734,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     $soc = new Societe($db);
-    if ($socid>1) $res=$soc->fetch($socid);
+    if ($socid>0) $res=$soc->fetch($socid);
 
     if (! empty($origin) && ! empty($originid))
     {
@@ -1811,7 +1811,7 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
     // Factures predefinies
-    if (empty($origin) && empty($originid) && $socid>1)
+    if (empty($origin) && empty($originid) && $socid>0)
     {
         $sql = 'SELECT r.rowid, r.titre, r.total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -1849,7 +1849,7 @@ if ($action == 'create')
     // Tiers
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
-    if($socid>1)
+    if($socid>0)
     {
     	print '<td colspan="2">';
     	print $soc->getNomUrl(1);
@@ -1935,7 +1935,7 @@ if ($action == 'create')
         print '</td></tr>'."\n";
     }
     
-	if ($socid>1)
+	if ($socid>0)
 	{
 	    // Replacement
 	    print '<tr height="18"><td valign="middle">';
@@ -1989,7 +1989,7 @@ if ($action == 'create')
 	print '</table>';
 	print '</td></tr>';
 	
-	if($socid>1)
+	if($socid>0)
 	{
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
@@ -2021,7 +2021,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Project
-    if (! empty($conf->projet->enabled) && $socid>1)
+    if (! empty($conf->projet->enabled) && $socid>0)
     {
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
