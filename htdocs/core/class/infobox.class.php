@@ -50,7 +50,7 @@ class InfoBox
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
             $sql.= " WHERE b.box_id = d.rowid";
-            $sql.= " AND b.entity = ".$conf->entity;
+            $sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
             if ($zone >= 0) $sql.= " AND b.position = ".$zone;
             if ($user->id && ! empty($user->conf->$confuserzone)) $sql.= " AND b.fk_user = ".$user->id;
             else $sql.= " AND b.fk_user = 0";
