@@ -2155,7 +2155,6 @@ div.tabsAction {
 table.noborder {
 	margin-bottom: 10px;
     position: relative;
-    float: left;
     border: none;
 }
 
