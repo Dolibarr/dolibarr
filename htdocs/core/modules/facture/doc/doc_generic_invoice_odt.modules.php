@@ -124,7 +124,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
             'object_total_vat'=>price($object->total_tva,0,$outputlangs),
             'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-            'object_total_discount' => price($object->getTotalDiscount(), 0, $outputlangs),
+            'object_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
             'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,

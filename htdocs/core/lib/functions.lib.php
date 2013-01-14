@@ -2921,6 +2921,18 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 
 	dol_syslog("get_default_tva: seller use vat=".$thirdparty_seller->tva_assuj.", seller country=".$thirdparty_seller->country_code.", seller in cee=".$thirdparty_seller->isInEEC().", buyer country=".$thirdparty_buyer->country_code.", buyer in cee=".$thirdparty_buyer->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
+	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
+	// we use the buyer VAT.
+	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
+	{
+		//print "eee".$thirdparty_buyer->isACompany();exit;
+		if (! $thirdparty_seller->isInEEC() && $thirdparty_buyer->isInEEC() && ! $thirdparty_buyer->isACompany())
+		{
+			//print 'VATRULE 6';
+			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
+		}
+	}
+
 	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj)
 	{
@@ -2961,18 +2973,6 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 		{
 			//print 'VATRULE 5';
 			return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
-		}
-	}
-
-	// If services are eServices according to EU Council Directive 2002/38/EC (ec.europa.eu/taxation_customs/taxation/v.../article_1610_en.htm)
-	// we use the buyer VAT.
-	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
-	{
-		//print "eee".$thirdparty_buyer->isACompany();exit;
-		if (! $thirdparty_seller->isInEEC() && $thirdparty_buyer->isInEEC() && ! $thirdparty_buyer->isACompany())
-		{
-			//print 'VATRULE 6';
-			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
 		}
 	}
 

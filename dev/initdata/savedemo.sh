@@ -188,6 +188,7 @@ export list="
 	--ignore-table=$base.llx_cabinetmed_examenprescrit
 	--ignore-table=$base.llx_cabinetmed_motifcons
 	--ignore-table=$base.llx_cabinetmed_patient
+	--ignore-table=$base.llx_cabinetmed_societe
 	--ignore-table=$base.llx_publi_c_contact_list 
 	--ignore-table=$base.llx_publi_c_dnd_list
 	--ignore-table=$base.llx_publi_c_method_list 

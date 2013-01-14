@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -593,7 +593,8 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
  */
 else if ($action == 'add' && $user->rights->facture->creer)
 {
-    $object->socid=GETPOST('socid','int');
+	if ($socid>0)
+    	$object->socid=GETPOST('socid','int');
 
     $db->begin();
 
@@ -732,6 +733,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
     // Standard or deposit or proforma invoice
     if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
     {
+    	if (GETPOST('socid','int')<1)
+    	{
+    		$error++;
+            setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
+    	}
+    	
         $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
@@ -1727,7 +1734,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     $soc = new Societe($db);
-    if ($socid) $res=$soc->fetch($socid);
+    if ($socid>0) $res=$soc->fetch($socid);
 
     if (! empty($origin) && ! empty($originid))
     {
@@ -1804,7 +1811,7 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
     // Factures predefinies
-    if (empty($origin) && empty($originid))
+    if (empty($origin) && empty($originid) && $socid>0)
     {
         $sql = 'SELECT r.rowid, r.titre, r.total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -1834,16 +1841,27 @@ if ($action == 'create')
             $db->free($resql);
         }
         else
-        {
+       {
             dol_print_error($db);
         }
     }
 
     // Tiers
-    print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td colspan="2">';
-    print $soc->getNomUrl(1);
-    print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-    print '</td>';
+    print '<tr>';
+    print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+    if($socid>0)
+    {
+    	print '<td colspan="2">';
+    	print $soc->getNomUrl(1);
+    	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+    	print '</td>';
+    }
+    else
+   {
+   		print '<td colspan="2">';
+   		print $form->select_company('','socid','s.client = 1',1);
+   		print '</td>';
+    }
     print '</tr>'."\n";
 
     // Type de facture
@@ -1916,72 +1934,77 @@ if ($action == 'create')
         print $desc;
         print '</td></tr>'."\n";
     }
-
-    // Replacement
-    print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
-    if (! $options) print ' disabled="disabled"';
-    print '>';
-    print '</td><td valign="middle">';
-    $text=$langs->trans("InvoiceReplacementAsk").' ';
-    $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
-    if (! $options) $text.=' disabled="disabled"';
-    $text.='>';
-    if ($options)
-    {
-        $text.='<option value="-1"></option>';
-        $text.=$options;
-    }
-    else
-    {
-        $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
-    }
-    $text.='</select>';
-    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
-
-    // Credit note
-    print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
-    if (! $optionsav) print ' disabled="disabled"';
-    print '>';
-    print '</td><td valign="middle">';
-    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
-    //	$text.='<input type="text" value="">';
-    $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
-    if (! $optionsav) $text.=' disabled="disabled"';
-    $text.='>';
-    if ($optionsav)
-    {
-        $text.='<option value="-1"></option>';
-        $text.=$optionsav;
-    }
-    else
-    {
-        $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
-    }
-    $text.='</select>';
-    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
-
-    print '</table>';
-    print '</td></tr>';
-
-    // Discounts for third party
-    print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-    if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.$soc->remise_client.'</a>');
-    else print $langs->trans("CompanyHasNoRelativeDiscount");
-    print ' <a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditRelativeDiscount").')</a>';
-    print '. ';
-    print '<br>';
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.price($absolute_discount).'</a>',$langs->trans("Currency".$conf->currency));
-    else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-    print ' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditGlobalDiscounts").')</a>';
-    print '.';
-    print '</td></tr>';
-
+    
+	if ($socid>0)
+	{
+	    // Replacement
+	    print '<tr height="18"><td valign="middle">';
+	    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
+	    if (! $options) print ' disabled="disabled"';
+	    print '>';
+	    print '</td><td valign="middle">';
+	    $text=$langs->trans("InvoiceReplacementAsk").' ';
+	    $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
+	    if (! $options) $text.=' disabled="disabled"';
+	    $text.='>';
+	    if ($options)
+	    {
+	        $text.='<option value="-1"></option>';
+	        $text.=$options;
+	    }
+	    else
+	    {
+	        $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
+	    }
+	    $text.='</select>';
+	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
+	
+	    // Credit note
+	    print '<tr height="18"><td valign="middle">';
+	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
+	    if (! $optionsav) print ' disabled="disabled"';
+	    print '>';
+	    print '</td><td valign="middle">';
+	    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
+	    //	$text.='<input type="text" value="">';
+	    $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
+	    if (! $optionsav) $text.=' disabled="disabled"';
+	    $text.='>';
+	    if ($optionsav)
+	    {
+	        $text.='<option value="-1"></option>';
+	        $text.=$optionsav;
+	    }
+	    else
+	    {
+	        $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
+	    }
+	    $text.='</select>';
+	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
+	}
+	print '</table>';
+	print '</td></tr>';
+	
+	if($socid>0)
+	{
+		// Discounts for third party
+		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
+		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.$soc->remise_client.'</a>');
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+	    print ' <a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditRelativeDiscount").')</a>';
+		print '. ';
+		print '<br>';
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.price($absolute_discount).'</a>',$langs->trans("Currency".$conf->currency));
+		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		print ' <a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditGlobalDiscounts").')</a>';
+		print '.';
+		print '</td></tr>';
+	}
+	
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
     $form->select_date($dateinvoice,'','','','',"add",1,1);
@@ -1998,7 +2021,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Project
-    if (! empty($conf->projet->enabled))
+    if (! empty($conf->projet->enabled) && $socid>0)
     {
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
