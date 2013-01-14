@@ -2135,7 +2135,10 @@ abstract class CommonObject
                				$this->array_options[$key] = null;
                			}
              			break;
-                  	}
+            		case 'price': 
+            			$this->array_options[$key] = price2num($this->array_options[$key]);
+            			break;
+               	}
             }
 
             $this->db->begin();
