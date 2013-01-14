@@ -78,12 +78,11 @@ class box_contacts extends ModeleBoxes
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND sp.rowid = $user->societe_id";
+			if ($user->societe_id) $sql.= " AND sp.fk_soc = $user->societe_id";
 			$sql.= " ORDER BY sp.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-
 			if ($result)
 			{
 				$num = $db->num_rows($result);
