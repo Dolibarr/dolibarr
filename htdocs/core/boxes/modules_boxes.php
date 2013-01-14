@@ -32,7 +32,8 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	var $db;
 	var $error='';
 	var $max=5;
-
+	var $enabled=1;
+	
 	var $rowid;
 	var $id;
 	var $position;

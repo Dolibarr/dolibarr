@@ -119,15 +119,16 @@ class InfoBox
                         $box->box_id	= (! empty($obj->box_id) ? $obj->box_id : '');
                         $box->note		= (! empty($obj->note) ? $obj->note : '');
 
-                        $enabled=true;
+                        $enabled=$box->enabled;
                         if (isset($box->depends) && count($box->depends) > 0)
                         {
                             foreach($box->depends as $module)
                             {
                                 //print $boxname.'-'.$module.'<br>';
-                                if (empty($conf->$module->enabled)) $enabled=false;
+                                if (empty($conf->$module->enabled)) $enabled=0;
                             }
                         }
+                        //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
                     }
                 }
