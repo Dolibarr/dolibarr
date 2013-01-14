@@ -53,7 +53,10 @@ class ExtraFields
 		'double'=>'Float',
 		'date'=>'Date',
 		'datetime'=>'DateAndTime',
-		'boolean'=>'Boolean'
+		'boolean'=>'Boolean',
+		'price'=>'ExtrafieldPrice',
+		'phone'=>'ExtrafieldPhone',
+		'mail'=>'ExtrafieldMail'
 	);
 
 	/**
@@ -139,6 +142,15 @@ class ExtraFields
 			if ($type=='boolean') {
 				$typedb='int';
 				$lengthdb='1';
+			} elseif($type=='price') {
+				$typedb='double';
+				$lengthdb='24,8';
+			} elseif($type=='phone') {
+				$typedb='varchar';
+				$lengthdb='20';
+			}elseif($type=='mail') {
+				$typedb='varchar';
+				$lengthdb='128';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -312,9 +324,18 @@ class ExtraFields
 
         if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-		if ($type=='boolean') {
+			if ($type=='boolean') {
 				$typedb='int';
 				$lengthdb='1';
+			} elseif($type=='price') {
+				$typedb='double';
+				$lengthdb='24,8';
+			} elseif($type=='phone') {
+				$typedb='varchar';
+				$lengthdb='20';
+			}elseif($type=='mail') {
+				$typedb='varchar';
+				$lengthdb='128';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -533,23 +554,23 @@ class ExtraFields
         	$newsize=$tmp[0];
         	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
-        else if (in_array($type,array('int','double')))
+        elseif (in_array($type,array('int','double')))
         {
         	$tmp=explode(',',$size);
         	$newsize=$tmp[0];
         	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
-        else if ($type == 'varchar')
+        elseif ($type == 'varchar')
         {
         	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
-        else if ($type == 'text')
+        elseif ($type == 'text')
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
         	$out=$doleditor->Create(1);
         }
-        else if ($type == 'boolean')
+        elseif ($type == 'boolean')
         {
         	$checked='';
         	if (!empty($value)) {
@@ -558,6 +579,18 @@ class ExtraFields
         		$checked=' value="1" ';
         	}
         	$out='<input type="checkbox" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+        }
+        elseif ($type == 'mail')
+        {
+        	$out='<input type="text" name="options_'.$key.'" size="32" value="'.$value.'">';
+        }
+        elseif ($type == 'phone')
+        {
+        	$out='<input type="text" name="options_'.$key.'"  size="20" value="'.$value.'">';
+        }
+        elseif ($type == 'price')
+        {
+        	$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.getCurrencySymbol($conf->currency);
         }
         // Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -575,7 +608,8 @@ class ExtraFields
      */
     function showOutputField($key,$value,$moreparam='')
     {
-
+		global $conf;
+		
         $label=$this->attribute_label[$key];
         $type=$this->attribute_type[$key];
         $size=$this->attribute_size[$key];
@@ -601,6 +635,18 @@ class ExtraFields
         		$checked=' checked="checked" ';
         	}
         	$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly="readonly">';
+        } 
+        elseif ($type == 'mail')
+        {
+        	$value=dol_print_email($value);
+        }
+        elseif ($type == 'phone')
+        {
+        	$value=dol_print_phone($value);
+        }
+        elseif ($type == 'price')
+        {
+        	$value=price($value).' '.getCurrencySymbol($conf->currency);
         }
         else
         {
