@@ -303,7 +303,7 @@ function conf($dolibarr_main_document_root)
     // Force usage of log file for install and upgrades
     $conf->syslog->enabled=1;
     $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-    if (! defined('SYSLOG_FILE_ON')) define('SYSLOG_FILE_ON',1);
+    if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS','["mod_syslog_file"]');
     if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
     {
         if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');

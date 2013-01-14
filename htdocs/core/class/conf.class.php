@@ -152,7 +152,7 @@ class Conf
 				$value=$objp->value;
 				if ($key)
 				{
-					if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE_ON and SYSLOG_FILE during install)
+					if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key=$value;
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
