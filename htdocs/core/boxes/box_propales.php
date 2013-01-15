@@ -33,7 +33,7 @@ class box_propales extends ModeleBoxes
 {
     var $boxcode="lastpropals";
     var $boximg="object_propal";
-    var $boxlabel;
+    var $boxlabel="BoxLastProposals";
     var $depends = array("propal");	// conf->propal->enabled
 
     var $db;
@@ -42,17 +42,6 @@ class box_propales extends ModeleBoxes
     var $info_box_head = array();
     var $info_box_contents = array();
 
-
-    /**
-     *  Constructor
-     */
-    function __construct()
-    {
-    	global $langs;
-      $langs->load("boxes");
-
-      $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProposals");
-    }
 
     /**
 	 *  Load data into info_box_contents array to show array later.

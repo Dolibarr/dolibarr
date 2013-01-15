@@ -37,7 +37,7 @@ $action = GETPOST("action");
 $syslogModules = array();
 $activeModules = array();
 
-if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(SYSLOG_HANDLERS);
+if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(constant('SYSLOG_HANDLERS'));
 
 $dir = dol_buildpath('/core/modules/syslog/');
 

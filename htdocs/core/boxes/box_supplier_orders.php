@@ -33,23 +33,14 @@ class box_supplier_orders extends ModeleBoxes
 
     var $boxcode = "latestsupplierorders";
     var $boximg = "object_order";
-    var $boxlabel;
+    var $boxlabel="BoxLatestSupplierOrders";
     var $depends = array("fournisseur");
+    
     var $db;
     var $param;
     var $info_box_head = array();
     var $info_box_contents = array();
 
-    /**
-     *  Constructor
-     */
-    function __construct()
-    {
-        global $langs;
-        $langs->load("boxes");
-
-        $this->boxlabel = $langs->transnoentitiesnoconv("BoxLatestSupplierOrders");
-    }
 
     /**
      *  Load data into info_box_contents array to show array later.

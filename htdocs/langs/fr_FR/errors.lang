@@ -131,3 +131,4 @@ WarningNoDocumentModelActivated=Aucun modèle, pour la génération de document,
 WarningLockFileDoesNotExists=Attention, une fois l'installation terminée, les outils d'installation/migration doivent être désactivés en ajoutant un fichier <b>install.lock</b> dans le répertoire <b>%s</b>. L'absence de ce fichier représente une faille de sécurité. 
 WarningUntilDirRemoved=Les alertes de sécurité sont visibles par les administrateurs uniquement et resteront actives tant que la vulnérabilité sera avérée (ou que la constante MAIN_REMOVE_INSTALL_WARNING aura été définie dans Configuration->Divers)
 WarningCloseAlways=Attention, la fermeture se fait même lorsque le montant diffère. N'activez cette fonctionnalité qu'en connaissance de cause.
+WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de sérieux ralentissement des pages affichant cette boite.

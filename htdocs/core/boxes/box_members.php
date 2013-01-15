@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 /**
  *	\file       htdocs/core/boxes/box_members.php
- *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\ingroup    adherent
+ *	\brief      Module to show box of members
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -33,24 +33,29 @@ class box_members extends ModeleBoxes
 {
 	var $boxcode="lastmembers";
 	var $boximg="object_user";
-	var $boxlabel;
+	var $boxlabel="BoxLastMembers";
 	var $depends = array("adherent");
 
 	var $db;
 	var $param;
-
+	var $enabled = 1;
+	
 	var $info_box_head = array();
 	var $info_box_contents = array();
+
 
 	/**
      *  Constructor
 	 */
-	function __construct()
+	function __construct($db)
 	{
-		global $langs;
-		$langs->load("boxes");
+		global $conf, $user;
 
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastMembers");
+		$this->db = $db;
+		
+		// disable module for such cases
+		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
 	}
 
 	/**

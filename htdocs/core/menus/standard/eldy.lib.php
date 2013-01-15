@@ -443,8 +443,8 @@ function print_eldy_menu($db,$atarget,$type_user)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
     $tabMenu=array();
-	$menuArbo = new Menubase($db,'eldy','top');
-	$newTabMenu = $menuArbo->menuTopCharger('','',$type_user,'eldy',$tabMenu);
+	$menuArbo = new Menubase($db,'eldy');
+	$newTabMenu = $menuArbo->menuTopCharger('','',$type_user,'eldy',$tabMenu);	// Return tabMenu with only top entries
 
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)
@@ -1362,7 +1362,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
         $tabMenu=array();
-        $menuArbo = new Menubase($db,'eldy','left');
+        $menuArbo = new Menubase($db,'eldy');
         $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,(empty($user->societe_id)?0:1),'eldy',$tabMenu);
     }
 

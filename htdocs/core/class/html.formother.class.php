@@ -808,24 +808,28 @@ class FormOther
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
-        //$infobox=new InfoBox($db);
-        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,$user);
-        $arrayboxactivatedid=array();
-        foreach($boxactivated as $box) $arrayboxactivatedid[$box->id]=$box->id;
-
-        $selectboxlist='';
-        if (! empty($conf->use_javascript_ajax))
+        $confuserzone='MAIN_BOXES_'.$areacode;
+        
+        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of user (or everybody if user has no specific setup)
+         
+        $boxidactivatedforuser=array();
+        foreach($boxactivated as $box) 
         {
-            $emptyuser=new User($db);
-            $boxavailable=InfoBox::listBoxes($db,'activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Get list of box available for empty user (minus already activated for user)
+        	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
+        }
+        
+        $selectboxlist='';
+        $arrayboxtoactivatelabel=array();
+        if (! empty($user->conf->$confuserzone))
+        {
+        	$langs->load("boxes");
+        	foreach($boxactivated as $box)
+        	{
+        		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
+        		$arrayboxtoactivatelabel[$box->id]=$langs->transnoentitiesnoconv($box->boxlabel);			// We keep only boxes not shown for user, to show into combo list
+        	}
 
-            $arrayboxtoactivatelabel=array();
-            foreach($boxavailable as $box)
-            {
-                $arrayboxtoactivatelabel[$box->id]=$box->boxlabel;
-            }
-            $form=new Form($db);
-
+        	$form=new Form($db);
             $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
         }
 
@@ -852,12 +856,14 @@ class FormOther
 	        </script>';
         }
 
-        $nbboxactivated=count($boxactivated);
+        $nbboxactivated=count($boxidactivatedforuser);
 
         print load_fiche_titre(($nbboxactivated?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
 
         if ($nbboxactivated)
         {
+        	$emptybox=new ModeleBoxes($db);
+
             print '<table width="100%" class="notopnoleftnoright">';
             print '<tr><td class="notopnoleftnoright">'."\n";
 
@@ -873,6 +879,7 @@ class FormOther
             $ii=0;
             foreach ($boxactivated as $key => $box)
             {
+            	if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
 				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='A'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
             	if (preg_match('/^A/i',$box->box_order)) // column A
                 {
@@ -885,7 +892,6 @@ class FormOther
                 }
             }
 
-            $emptybox=new ModeleBoxes($db);
             $emptybox->box_id='A';
             $emptybox->info_box_head=array();
             $emptybox->info_box_contents=array();
@@ -902,7 +908,8 @@ class FormOther
             $ii=0;
             foreach ($boxactivated as $key => $box)
             {
-				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
+            	if ((! empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
+            	if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
             	if (preg_match('/^B/i',$box->box_order)) // colonne B
                 {
                     $ii++;
@@ -914,7 +921,6 @@ class FormOther
                 }
             }
 
-            $emptybox=new ModeleBoxes($db);
             $emptybox->box_id='B';
             $emptybox->info_box_head=array();
             $emptybox->info_box_contents=array();

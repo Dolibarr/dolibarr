@@ -35,7 +35,7 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_N
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_FEATURES_LEVEL','0','chaine','Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development',1,0);
 
 -- Hidden and common to all entities
-insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_FILE_ON','1','chaine','Log to file Directory where to write log file',0,0);
+insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_HANDLERS','["mod_syslog_file"]','chaine','Which logger to use',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_FILE','DOL_DATA_ROOT/dolibarr.log','chaine','Directory where to write log file',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('SYSLOG_LEVEL','7','chaine','Level of debug info to show',0,0);
 

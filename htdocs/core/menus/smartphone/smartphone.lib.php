@@ -42,8 +42,8 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 
 	$tabMenu=array();
 
-	$menutop = new Menubase($db,'smartphone','top');
-	$menuleft = new Menubase($db,'smartphone','left');
+	$menutop = new Menubase($db,'smartphone');
+	$menuleft = new Menubase($db,'smartphone');
 	$newTabMenu = $menutop->menuTopCharger('', '', $type_user, 'smartphone',$tabMenu);
 	$numTabMenu = count($newTabMenu);
 
