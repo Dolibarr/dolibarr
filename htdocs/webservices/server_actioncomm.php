@@ -454,7 +454,7 @@ function createActionComm($authentication,$actioncomm)
 		if (! $error)
 		{
 			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id);
 		}
 		else
 		{
