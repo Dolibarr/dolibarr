@@ -29,7 +29,7 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -40,8 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php');
 
 
 // Load main language strings
@@ -64,10 +63,9 @@ if (! isset($argv[1]))
 }
 
 $diroutputpdf=$conf->facture->dir_output . '/temp';
-$newmodel='';		// To force a new model
 $newlangid='en_EN';	// To force a new lang id
 $filter=array();
-$regenerate='';
+$regenerate='';		// Ask regenerate (contains name of model to use)
 $option='';
 
 foreach ($argv as $key => $value)
@@ -179,215 +177,29 @@ if (in_array('payments',$filter) && in_array('nopayment',$filter))
 }
 
 
-// Define SQL and SQL order request to select invoices
-$sql = "SELECT DISTINCT f.rowid, f.facnumber";
-$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sqlwhere='';
-$sqlorder='';
-if (in_array('all',$filter))
-{
-	$sqlorder = " ORDER BY f.facnumber ASC";
-}
-if (in_array('date',$filter))
-{
-	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	else $sqlwhere.=" AND";
-	$sqlwhere.= " f.fk_statut > 0";
-	$sqlwhere.= " AND f.datef >= '".$db->idate($dateafterdate)."'";
-	$sqlwhere.= " AND f.datef <= '".$db->idate($datebeforedate)."'";
-	$sqlorder = " ORDER BY f.datef ASC";
-}
-if (in_array('nopayment',$filter))
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
-	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	else $sqlwhere.=" AND";
-	$sqlwhere.= " f.fk_statut > 0";
-	$sqlwhere.= " AND pf.fk_paiement IS NULL";
-}
-if (in_array('payments',$filter))
-{
-	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf,";
-	$sql.= " ".MAIN_DB_PREFIX."paiement as p";
-	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-	else $sqlwhere.=" AND";
-	$sqlwhere.= " f.fk_statut > 0";
-	$sqlwhere.= " AND f.rowid = pf.fk_facture";
-	$sqlwhere.= " AND pf.fk_paiement = p.rowid";
-	$sqlwhere.= " AND p.datep >= '".$db->idate($paymentdateafter)."'";
-	$sqlwhere.= " AND p.datep <= '".$db->idate($paymentdatebefore)."'";
-	$sqlorder = " ORDER BY p.datep ASC";
-}
-if (in_array('nodeposit',$filter))
-{
-    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-    else $sqlwhere.=" AND";
-    $sqlwhere.=' type <> 3';
-}
-if (in_array('noreplacement',$filter))
-{
-    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-    else $sqlwhere.=" AND";
-    $sqlwhere.=' type <> 1';
-}
-if (in_array('nocreditnote',$filter))
-{
-    if (empty($sqlwhere)) $sqlwhere=' WHERE ';
-    else $sqlwhere.=" AND";
-    $sqlwhere.=' type <> 2';
-}
-if ($sqlwhere) $sql.=$sqlwhere;
-if ($sqlorder) $sql.=$sqlorder;
+// Define SQL and SQL request to select invoices
+// Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
+$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate);
 
-//print $sql; exit;
-dol_syslog("scripts/invoices/rebuild_merge.php: sql=",$sql);
-
-print '--- start'."\n";
-
-// Start of transaction
-//$db->begin();
-
-$error = 0;
-$files = array() ;		// liste les fichiers
-
-dol_syslog("scripts/invoices/rebuild_merge.php sql=".$sql);
-if ( $resql=$db->query($sql) )
-{
-    $num = $db->num_rows($resql);
-    $cpt = 0;
-    $oldemail = '';
-    $message = '';
-    $total = '';
-
-    if ($num)
-    {
-    	// First loop on each resultset to build PDF
-    	// -----------------------------------------
-
-        while ($cpt < $num)
-        {
-            $obj = $db->fetch_object($resql);
-
-			$fac = new Facture($db);
-			$result=$fac->fetch($obj->rowid);
-			if ($result > 0)
-			{
-				$outputlangs = $langs;
-				if (! empty($newlangid))
-				{
-					if ($outputlangs->defaultlang != $newlangid)
-					{
-						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($newlangid);
-					}
-				}
-				$filename=$conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
-				if ($regenerate || ! dol_is_file($filename))
-				{
-            	    print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
-    				$result=facture_pdf_create($db, $fac, $newmodel?$newmodel:$fac->modelpdf, $outputlangs);
-				}
-				else {
-				    print "PDF for invoice ".$obj->facnumber." already exists\n";
-				}
-
-				// Add file into files array
-				$files[] = $filename;
-			}
-
-			if ($result <= 0)
-			{
-				print "Error: Failed to build PDF for invoice ".$fac->ref."\n";
-			}
-
-            $cpt++;
-        }
-
-
-        // Now, build a merged files with all files in $files array
-		//---------------------------------------------------------
-
-        // Create empty PDF
-        $pdf=pdf_getInstance();
-        if (class_exists('TCPDF'))
-        {
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-        }
-        $pdf->SetFont(pdf_getPDFFont($outputlangs));
-
-        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
-		//$pdf->SetCompression(false);
-
-
-		//$pdf->Open();
-		//$pdf->AddPage();
-		//$title=$langs->trans("BillsCustomersUnpaid");
-		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
-		//$pdf->MultiCell(100, 3, $title, 0, 'J');
-
-		// Add all others
-		foreach($files as $file)
-		{
-            print "Merge PDF file for invoice ".$file."\n";
-
-			// Charge un document PDF depuis un fichier.
-			$pagecount = $pdf->setSourceFile($file);
-			for ($i = 1; $i <= $pagecount; $i++)
-            {
-                 $tplidx = $pdf->importPage($i);
-                 $s = $pdf->getTemplatesize($tplidx);
-                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-                 $pdf->useTemplate($tplidx);
-            }
-		}
-
-		// Create output dir if not exists
-		dol_mkdir($diroutputpdf);
-
-		// Save merged file
-		$filename='mergedpdf';
-
-		if (! empty($option)) $filename.='_'.$option;
-
-		if ($pagecount)
-		{
-			$file=$diroutputpdf.'/'.$filename.'.pdf';
-			$pdf->Output($file,'F');
-			if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
-
-		print "Merged PDF has been built in ".$file."\n";
-    }
-    else
-    {
-        print "No invoices with payments in this range.\n";
-    }
-}
-else
-{
-    dol_print_error($db);
-    dol_syslog("scripts/invoices/rebuild_merge.php: Error");
-}
 
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error)
+if ($result >= 0)
 {
-	//$db->commit();
+	$error=0;
 	print '--- end ok'."\n";
 }
 else
 {
+	$error=$result;
 	print '--- end error code='.$error."\n";
-	//$db->rollback();
 }
 
 $db->close();
 
 return $error;
+
 
 
 /**
@@ -414,7 +226,7 @@ function usage()
     print "To exclude deposit invoices, use filter=nodeposit\n";
     print "To regenerate existing PDF, use regenerate=crabe\n";
     print "\n";
-	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR regenerate=yes\n";
+	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR regenerate=crabe\n";
 	print "Example: ".$script_file." filter=all lang=it_IT\n";
 	print "\n";
 	print "Note that some filters can be cumulated.\n";

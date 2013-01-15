@@ -115,7 +115,7 @@ class HookManager
      * 		@param		Object	&$object		Object to use hooks on
      * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
      * 		@return		mixed					For doActions,formObjectOptions:    Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
-     * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Must always return an int and things to print into ->resprints. 
+     * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Must always return an int and things to print into ->resprints.
      *                                          Can also return some values into an array ->results.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
@@ -136,6 +136,8 @@ class HookManager
             {
                 foreach($modules as $module => $actionclassinstance)
                 {
+                	//print 'class='.get_class($actionclassinstance).' method='.$method.' action='.$action;
+
                 	// jump to next class if method does not exists
                     if (! method_exists($actionclassinstance,$method)) continue;
                 	// test to avoid to run twice a hook, when a module implements several active contexts
@@ -178,7 +180,7 @@ class HookManager
             }
         }
 
-        if ($method != 'doActions' && $method != 'formObjectOptions') return $this->resPrint;	// TODO remove this. When there is something to print, ->resPrint is filled. 
+        if ($method != 'doActions' && $method != 'formObjectOptions') return $this->resPrint;	// TODO remove this. When there is something to print, ->resPrint is filled.
         return ($error?-1:$resaction);
 	}
 

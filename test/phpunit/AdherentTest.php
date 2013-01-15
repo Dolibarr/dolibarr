@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013 Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     /**
      * testAdherentFetch
      *
-     * @param	int		$id		Id of object to fecth
+     * @param	int		$id		Id of object to fetch
      * @return	object			Fetched object
      *
      * @depends	testAdherentCreate
@@ -161,15 +162,40 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testAdherentFetchLogin
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return  Adherent
+     *
+     * @depends testAdherentFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentFetchLogin(Adherent $localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $newobject = new Adherent($this->savdb);
+        $result = $newobject->fetch_login($localobject->login);
+
+        $this->assertEquals($newobject, $localobject);
+
+        return $localobject;
+    }
+
+    /**
      * testAdherentUpdate
      *
      * @param	Adherent	$localobject	Member instance
      * @return	Adherent
      *
-     * @depends	testAdherentFetch
+     * @depends	testAdherentFetchLogin
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentUpdate($localobject)
+    public function testAdherentUpdate(Adherent $localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -177,6 +203,9 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+        $timestamp = dol_now();
+
+        $localobject->civilite_id = 0;
 		$localobject->login='newlogin';
 		$localobject->societe='New company';
 		$localobject->note='New note after update';
@@ -188,10 +217,12 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$localobject->town='New town';
 		$localobject->country_id=2;
 		$localobject->statut=0;
+        $localobject->morphy=0;
 		$localobject->phone='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
 		$localobject->email='newemail@newemail.com';
+        $localobject->naiss=$timestamp;
 		$result=$localobject->update($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -207,6 +238,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
+        $this->assertEquals($localobject->civilite_id, $newobject->civilite_id);
 		$this->assertEquals($localobject->login, $newobject->login);
 		$this->assertEquals($localobject->societe, $newobject->societe);
 		$this->assertEquals($localobject->note, $newobject->note);
@@ -218,13 +250,140 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($localobject->town, $newobject->town);
 		$this->assertEquals($localobject->country_id, $newobject->country_id);
 		$this->assertEquals('BE', $newobject->country_code);
+        $this->assertEquals('Belgium', $newobject->country);
 		$this->assertEquals($localobject->statut, $newobject->statut);
 		$this->assertEquals($localobject->phone, $newobject->phone);
 		$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
 		$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
 		$this->assertEquals($localobject->email, $newobject->email);
+        $this->assertEquals($localobject->naiss, $timestamp);
+        $this->assertEquals($localobject->morphy, $newobject->morphy);
 
-    	return $localobject;
+        //We return newobject because of new values
+    	return $newobject;
+    }
+
+    /**
+     * testAdherentMakeSubstitution
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return  Adherent
+     *
+     * @depends testAdherentUpdate
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentMakeSubstitution(Adherent $localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $template = '%DOL_MAIN_URL_ROOT%,%ID%,%CIVILITE%,%FIRSTNAME%,%LASTNAME%,%FULLNAME%,%COMPANY%,'.
+                    '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%NAISS%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
+                    '%NOM%,%SOCIETE%,%ADRESSE%,%CP%,%VILLE%,%PAYS%';
+
+        $expected = DOL_MAIN_URL_ROOT.','.$localobject->id.',0,New firstname,New name,New firstname New name,'.
+                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->naiss,'day').',,'.
+                    'newlogin,dolibspec,New firstname,New name,New company,New address,New zip,New town,Belgium';
+
+        $result = $localobject->makeSubstitution($template);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($expected, $result);
+
+        return $localobject;
+    }
+
+     /**
+     * testAdherentSetUserId
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return  Adherent
+     *
+     * @depends testAdherentMakeSubstitution
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentSetUserId(Adherent $localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        //We associate member with user
+        $result = $localobject->setUserId($user->id);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertEquals($result, 1);
+
+        //We update user object
+        $user->fetch($user->id);
+        print __METHOD__." user id=".$user->id." fk_member=".$user->fk_member."\n";
+
+        $this->assertEquals($user->fk_member, $localobject->id);
+
+        //We remove association with user
+        $result = $localobject->setUserId(0);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertEquals($result, 1);
+
+        //We update user object
+        $user->fetch($user->id);
+        print __METHOD__." user id=".$user->id." fk_member=".$user->fk_member."\n";
+
+        $this->assertNull($user->fk_member);
+
+        return $localobject;
+    }
+
+    /**
+     * testAdherentSetThirdPartyId
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return  Adherent
+     *
+     * @depends testAdherentSetUserId
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentSetThirdPartyId(Adherent $localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        //Create a Third Party
+        $thirdparty = new Societe($db);
+        $thirdparty->initAsSpecimen();
+        $result = $thirdparty->create($user);
+        print __METHOD__." id=".$localobject->id." third party id=".$thirdparty->id." result=".$result."\n";
+        $this->assertTrue($result > 0);
+
+        //Set Third Party ID
+        $result = $localobject->setThirdPartyId($thirdparty->id);
+        $this->assertEquals($result, 1);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
+        //Adherent is updated with new data
+        $localobject->fetch($localobject->id);
+        $this->assertEquals($localobject->fk_soc, $thirdparty->id);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+
+        //We remove the third party association
+        $result = $localobject->setThirdPartyId(0);
+        $this->assertEquals($result, 1);
+
+        //And check if it has been updated
+        $localobject->fetch($localobject->id);
+        $this->assertNull($localobject->fk_soc);
+
+        //Now we remove the third party
+        $result = $thirdparty->delete($thirdparty->id);
+        $this->assertEquals($result, 1);
+
+        return $localobject;
     }
 
     /**
@@ -233,10 +392,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      * @param	Adherent	$localobject	Member instance
      * @return	Adherent
      *
-     * @depends	testAdherentUpdate
+     * @depends	testAdherentSetThirdPartyId
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentValid($localobject)
+    public function testAdherentValidate(Adherent $localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -257,10 +416,10 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      * @param	Adherent	$localobject	Member instance
      * @return	int							Id of object
      *
-     * @depends testAdherentValid
+     * @depends testAdherentValidate
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentOther($localobject)
+    public function testAdherentOther(Adherent $localobject)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -277,19 +436,56 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
 
-        return $localobject->id;
+        return $localobject;
+    }
+
+    /**
+     * testAdherentResiliate
+     *
+     * @param   Adherent    $localobject    Member instance
+     * @return  Adherent
+     *
+     * @depends testAdherentOther
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentResiliate(Adherent $localobject)
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        //Let's resilie un adherent
+        $result = $localobject->resiliate($user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertEquals($result, 1);
+
+        //Is statut updated?
+        $this->assertEquals($localobject->statut, 0);
+
+        //We update the object and let's check if it was updated on DB
+        $localobject->fetch($localobject->id);
+        $this->assertEquals($localobject->statut, 0);
+
+        //Now that status=0, resiliate should return 0
+        $result = $localobject->resiliate($user);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertEquals($result, 0);
+
+        return $localobject;
     }
 
     /**
      * testAdherentDelete
      *
-     * @param	int		$id		Id of object to delete
+     * @param   Adherent    $localobject    Member instance
      * @return	void
      *
-     * @depends	testAdherentOther
+     * @depends	testAdherentResiliate
      * The depends says test is run only if previous is ok
      */
-    public function testAdherentDelete($id)
+    public function testAdherentDelete($localobject)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -297,10 +493,8 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Adherent($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
-		print __METHOD__." id=".$id." result=".$result."\n";
+		$result=$localobject->delete($localobject->id);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
 		return $result;

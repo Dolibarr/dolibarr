@@ -50,8 +50,15 @@ if (! empty($usemargins))
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 	if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 	?>
-	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
-	<?php 
+	<td align="right">
+	<?php
+	if ($conf->global->MARGIN_TYPE == "1")
+		echo $langs->trans('BuyingPrice');
+	else
+		echo $langs->trans('CostPrice');
+	?>
+	</td>
+	<?php
 } 
 ?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>

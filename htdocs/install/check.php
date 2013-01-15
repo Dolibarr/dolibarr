@@ -394,8 +394,9 @@ else
 								array('from'=>'2.9.0', 'to'=>'3.0.0'),
 								array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
-								array('from'=>'3.2.0', 'to'=>'3.3.0')
-                                );
+								array('from'=>'3.2.0', 'to'=>'3.3.0'),
+								array('from'=>'3.3.0', 'to'=>'3.4.0')
+						);
 
 		$count=0;
 		foreach ($migrationscript as $migarray)

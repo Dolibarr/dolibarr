@@ -555,7 +555,13 @@ if ($action == 'create')
 	}
 	else
 	{
-		print $form->select_company('','socid','',1,1);
+		//For external user force the company to user company
+		if (!empty($user->societe_id)) {
+			print $form->select_company($user->societe_id,'socid','',1,1);
+		} else {
+			print $form->select_company('','socid','',1,1);
+		}
+		
 	}
 	print '</td></tr>';
 

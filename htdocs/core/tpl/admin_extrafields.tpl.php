@@ -23,12 +23,16 @@
     	function init_typeoffields(type)
     	{
     		var size = jQuery("#size");
+    		var unique = jQuery("#unique");
+    		var required = jQuery("#required");
     		if (type == 'date') { size.val('').attr('disabled','disabled'); }
     		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); }
     		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); }
     		else if (type == 'int') { size.val('10').removeAttr('disabled'); }
     		else if (type == 'text') { size.val('2000').removeAttr('disabled'); }
     		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); }
+    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
+    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields();

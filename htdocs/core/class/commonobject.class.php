@@ -2135,7 +2135,10 @@ abstract class CommonObject
                				$this->array_options[$key] = null;
                			}
              			break;
-                  	}
+            		case 'price': 
+            			$this->array_options[$key] = price2num($this->array_options[$key]);
+            			break;
+               	}
             }
 
             $this->db->begin();
@@ -2253,24 +2256,43 @@ abstract class CommonObject
     }
 
     /**
-     * Function that returns the total amount of discounts applied.
+     * Function that returns the total amount HT of discounts applied for all lines.
      *
-     * @return false|float False is returned if the discount couldn't be retrieved
+     * @return 	float
      */
     function getTotalDiscount()
     {
-        $sql = 'SELECT (SUM(`subprice`) - SUM(`total_ht`)) as `discount` FROM '.MAIN_DB_PREFIX.$this->table_element.'det WHERE `'.$this->fk_element.'` = '.$this->id;
+    	$total_discount=0.00;
 
-        $query = $this->db->query($sql);
+        $sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."det";
+        $sql.= " WHERE ".$this->fk_element." = ".$this->id;
 
-        if ($query)
+        dol_syslog(get_class($this).'::getTotalDiscount sql='.$sql);
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            $result = $this->db->fetch_object($query);
+        	$num=$this->db->num_rows($resql);
+        	$i=0;
+        	while ($i < $num)
+        	{
+            	$obj = $this->db->fetch_object($query);
 
-            return price2num($result->discount);
+            	$pu_ht = $obj->pu_ht;
+            	$qty= $obj->qty;
+            	$discount_percent_line = $obj->remise_percent;
+            	$total_ht = $obj->total_ht;
+            	
+        		$total_discount_line = price2num(($pu_ht * $qty) - $total_ht, 'MT');
+        		$total_discount += $total_discount_line;
+        		
+        		$i++;
+        	}
         }
-
-        return false;
+        else dol_syslog(get_class($this).'::getTotalDiscount '.$this->db->lasterror(), LOG_ERR);
+		
+        //print $total_discount; exit;        
+        return price2num($total_discount);
     }
 
     /**
@@ -2313,7 +2335,7 @@ abstract class CommonObject
     function isInEEC()
     {
         // List of all country codes that are in europe for european vat rules
-        // List found on http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome
+        // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
         $country_code_in_EEC=array(
     			'AT',	// Austria
     			'BE',	// Belgium
@@ -2326,16 +2348,17 @@ abstract class CommonObject
     			'ES',	// Spain
     			'FI',	// Finland
     			'FR',	// France
-    			'GB',	// Royaume-uni
+    			'GB',	// United Kingdom
     			'GR',	// Greece
     			'NL',	// Holland
     			'HU',	// Hungary
     			'IE',	// Ireland
+    			'IM',	// Isle of Man - Included in UK
     			'IT',	// Italy
     			'LT',	// Lithuania
     			'LU',	// Luxembourg
     			'LV',	// Latvia
-    			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
+    			'MC',	// Monaco - Included in France
     			'MT',	// Malta
         //'NO',	// Norway
     			'PL',	// Poland
@@ -2629,7 +2652,7 @@ abstract class CommonObject
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
-				print '<td align="right" width="80">'.$langs->trans('BuyingCost').'</td>';
+				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -3029,7 +3052,10 @@ abstract class CommonObject
     print '<tr class="liste_titre">';
     print '<td width="30%">'.$langs->trans('Margins').'</td>';
     print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
-    print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+	if ($conf->global->MARGIN_TYPE == "1")
+		print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
+	else
+		print '<td width="20%" align="right">'.$langs->trans('CostPrice').'</td>';
     print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
     if (! empty($conf->global->DISPLAY_MARGIN_RATES))
       print '<td align="right">'.$langs->trans('MarginRate').'</td>';

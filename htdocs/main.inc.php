@@ -866,7 +866,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
-        $favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+        $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
         // Displays title
         $appli='Dolibarr';
@@ -912,13 +912,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
         // Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+        $themesubdir='';
         if (! empty($conf->modules_parts['theme']))	// This slow down
         {
 	        foreach($conf->modules_parts['theme'] as $reldir)
 	        {
-	        	if (file_exists(dol_buildpath($reldir.$conf->css, 0))) 
+	        	if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
 	        	{
 					$themepath=dol_buildpath($reldir.$conf->css, 1);
+					$themesubdir=$reldir;
 					break;
 	        	}
 	        }
@@ -1063,7 +1065,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 if (constant('JS_CKEDITOR')) $pathckeditor=JS_CKEDITOR;    // To use external ckeditor js lib
                 print '<script type="text/javascript">';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
-                print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
+                print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";		// $themesubdir='' in standard usage
                 print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print '</script>'."\n";

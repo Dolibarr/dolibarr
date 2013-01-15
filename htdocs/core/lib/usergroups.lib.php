@@ -223,12 +223,17 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
     global $conf,$langs,$bc;
 
-    $forcethemedir=(! empty($conf->global->MAIN_FORCETHEMEDIR) ? $conf->global->MAIN_FORCETHEMEDIR : '');
-    $dirthemes=array($forcethemedir.'/theme');
-    if (! empty($conf->modules_parts['theme'])) {
-    	$dirthemes=array_merge(array($forcethemedir.'/theme'),(array) $conf->modules_parts['theme']);
+    //$conf->global->MAIN_FORCETHEMEDIR='';
+    $dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
+    if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
+    {
+    	foreach($conf->modules_parts['theme'] as $reldir)
+    	{
+	    	$dirthemes=array_merge($dirthemes,(array) ($reldir.'theme'));
+    	}
     }
-
+    $dirthemes=array_unique($dirthemes);
+    
     $selected_theme='';
     if (empty($foruserprofile)) $selected_theme=$conf->global->MAIN_THEME;
     else $selected_theme=empty($fuser->conf->MAIN_THEME)?'':$fuser->conf->MAIN_THEME;

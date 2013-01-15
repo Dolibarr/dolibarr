@@ -487,6 +487,7 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	color: #<?php echo $colortexttopmenu; ?>;
 }
 
+
 ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -1841,6 +1842,11 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 border: 0px;
 /* filter:alpha(opacity=55); */
 /* opacity:.55; */
+}
+
+.logo_setup
+{
+	content:url(<?php echo dol_buildpath($path.'/theme/eldy/img/logo_setup.svg',1) ?>);
 }
 
 div.titre {

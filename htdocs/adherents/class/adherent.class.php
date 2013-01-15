@@ -423,7 +423,7 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-        $sql.= " civilite = ".($this->civilite_id?"'".$this->civilite_id."'":"null");
+        $sql.= " civilite = ".(!is_null($this->civilite_id)?"'".$this->civilite_id."'":"null");
         $sql.= ", prenom = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
         $sql.= ", nom="     .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
@@ -950,7 +950,7 @@ class Adherent extends CommonObject
 
         $this->db->begin();
 
-        // Update link to third party
+        // Remove link to third party onto any other members
         if ($thirdpartyid > 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
@@ -960,7 +960,7 @@ class Adherent extends CommonObject
             $resql = $this->db->query($sql);
         }
 
-        // Update link to third party
+        // Add link to third party for current member
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid>0 ? $thirdpartyid : 'null');
         $sql.= " WHERE rowid = ".$this->id;
 
