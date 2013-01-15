@@ -55,8 +55,7 @@ class box_activity extends ModeleBoxes
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
 
-		// Disabled by default because, still has some bug (pgsl support, filters) and slow down seriously Dolibarr 
-		$this->enabled = (! empty($conf->global->MAIN_FEATURES_LEVEL) || ! empty($conf->global->MAIN_BOX_ACTIVITY_ENABLED));
+		$this->enabled = 1;
 		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
 		// FIXME: Removed number_format (not compatible with all languages)
 		// FIXME: Pb into some status

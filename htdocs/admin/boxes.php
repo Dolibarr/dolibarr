@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -397,7 +397,14 @@ foreach($boxactivated as $key => $box)
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-	print '<td>' . ($box->note?$box->note:'&nbsp;') . '</td>';
+	print '<td>';
+	if ($box->note == '(WarningUsingThisBoxSlowDown)')
+	{
+		$langs->load("errors");
+		print img_warning('',0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+	}
+	else print ($box->note?$box->note:'&nbsp;');
+	print '</td>';
 	print '<td align="center">' . (isset($pos_name[$box->position])?$pos_name[$box->position]:'') . '</td>';
 	$hasnext=($key < (count($boxactivated)-1));
 	$hasprevious=($key != 0);
