@@ -31,7 +31,7 @@ class box_contracts extends ModeleBoxes
 {
     var $boxcode="lastcontracts";
     var $boximg="object_contract";
-    var $boxlabel;
+    var $boxlabel="BoxLastContracts";
     var $depends = array("contrat");	// conf->contrat->enabled
 
     var $db;
@@ -40,18 +40,6 @@ class box_contracts extends ModeleBoxes
     var $info_box_head = array();
     var $info_box_contents = array();
 
-
-    /**
-     *  Constructor
-     */
-    function __construct()
-    {
-    	global $langs;
-
-    	$langs->load("boxes");
-
-    	$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastContracts");
-    }
 
     /**
      *  Load data for box to show them later

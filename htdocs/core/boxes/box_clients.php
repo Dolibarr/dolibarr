@@ -33,7 +33,7 @@ class box_clients extends ModeleBoxes
 {
 	var $boxcode="lastcustomers";
 	var $boximg="object_company";
-	var $boxlabel;
+	var $boxlabel="BoxLastCustomers";
 	var $depends = array("societe");
 
 	var $db;
@@ -42,16 +42,6 @@ class box_clients extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastCustomers");
-	}
 
 	/**
      *  Load data for box to show them later

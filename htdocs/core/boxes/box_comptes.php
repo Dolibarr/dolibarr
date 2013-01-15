@@ -33,7 +33,7 @@ class box_comptes extends ModeleBoxes
 {
 	var $boxcode="currentaccounts";
 	var $boximg="object_bill";
-	var $boxlabel;
+	var $boxlabel="BoxCurrentAccounts";
 	var $depends = array("banque");     // Box active if module banque active
 
 	var $db;
@@ -47,12 +47,11 @@ class box_comptes extends ModeleBoxes
 	/**
 	 *  Constructor
 	 */
-	function __construct()
+	function __construct($db)
 	{
-		global $conf, $langs, $user;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv('BoxCurrentAccounts');
+		global $conf, $user;
+		
+		$this->db = $db;
 		
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);

@@ -33,7 +33,7 @@ class box_commandes extends ModeleBoxes
 {
     var $boxcode="lastcustomerorders";
     var $boximg="object_order";
-    var $boxlabel;
+    var $boxlabel="BoxLastCustomerOrders";
     var $depends = array("commande");
 
 	var $db;
@@ -42,16 +42,6 @@ class box_commandes extends ModeleBoxes
     var $info_box_head = array();
     var $info_box_contents = array();
 
-    /**
-     *  Constructor
-     */
-    function __construct()
-    {
-        global $langs;
-        $langs->load("boxes");
-
-        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastCustomerOrders");
-    }
 
     /**
      *  Load data for box to show them later

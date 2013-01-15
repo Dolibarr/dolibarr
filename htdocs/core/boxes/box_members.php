@@ -33,7 +33,7 @@ class box_members extends ModeleBoxes
 {
 	var $boxcode="lastmembers";
 	var $boximg="object_user";
-	var $boxlabel;
+	var $boxlabel="BoxLastMembers";
 	var $depends = array("adherent");
 
 	var $db;
@@ -47,12 +47,11 @@ class box_members extends ModeleBoxes
 	/**
      *  Constructor
 	 */
-	function __construct()
+	function __construct($db)
 	{
-		global $conf, $langs, $user;
-		$langs->load("boxes");
+		global $conf, $user;
 
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastMembers");
+		$this->db = $db;
 		
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);

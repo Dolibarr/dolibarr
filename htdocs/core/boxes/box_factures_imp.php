@@ -34,7 +34,7 @@ class box_factures_imp extends ModeleBoxes
 {
 	var $boxcode="oldestunpaidcustomerbills";
 	var $boximg="object_bill";
-	var $boxlabel;
+	var $boxlabel="BoxOldestUnpaidCustomerBills";
 	var $depends = array("facture");
 
 	var $db;
@@ -43,17 +43,6 @@ class box_factures_imp extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxOldestUnpaidCustomerBills");
-	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.

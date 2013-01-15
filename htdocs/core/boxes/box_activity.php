@@ -31,7 +31,7 @@ class box_activity extends ModeleBoxes
 {
 	var $boxcode="activity";
 	var $boximg="object_bill";
-	var $boxlabel;
+	var $boxlabel='BoxGlobalActivity';
 	var $depends = array("facture");
 	
 	var $db;
@@ -44,17 +44,10 @@ class box_activity extends ModeleBoxes
 	/**
 	 *	Constructor
 	 */
-	function __construct()
+	function __construct($db)
 	{
-		global $langs,$conf;
-
-		$langs->load("boxes");
-		$langs->load("bills");
-		$langs->load("projects");
-		$langs->load("orders");
-
-		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
-
+		$this->db = $db;
+		
 		$this->enabled = 1;
 		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
 		// FIXME: Removed number_format (not compatible with all languages)

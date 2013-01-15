@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
+$langs->load("boxes");
 
 if (! $user->admin) accessforbidden();
 
@@ -344,7 +345,7 @@ foreach($boxtoadd as $box)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr '.$bc[$var].'>';
-    print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+    print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel).'</td>';
     print '<td>';
     if ($box->note == '(WarningUsingThisBoxSlowDown)')
     {
@@ -403,7 +404,7 @@ foreach($boxactivated as $key => $box)
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
+	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel).'</td>';
 	print '<td>';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)')
 	{

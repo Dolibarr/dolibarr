@@ -32,7 +32,7 @@ class box_factures_fourn extends ModeleBoxes
 {
 	var $boxcode="lastsupplierbills";
 	var $boximg="object_bill";
-	var $boxlabel;
+	var $boxlabel="BoxLastSupplierBills";
 	var $depends = array("facture","fournisseur");
 
 	var $db;
@@ -41,16 +41,6 @@ class box_factures_fourn extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastSupplierBills");
-	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.

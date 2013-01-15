@@ -35,7 +35,7 @@ class box_prospect extends ModeleBoxes
 {
 	var $boxcode="lastprospects";
 	var $boximg="object_company";
-	var $boxlabel;
+	var $boxlabel="BoxLastProspects";
 	var $depends = array("societe");
 
 	var $db;
@@ -43,21 +43,6 @@ class box_prospect extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-
-	/**
-     *  Constructor
-     *
-     *  @param	DoliDB	$db		Database handler
-	 */
-	function __construct($db)
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->db=$db;
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProspects");
-	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.

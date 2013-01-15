@@ -822,10 +822,11 @@ class FormOther
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
+        	$langs->load("boxes");
         	foreach($boxactivated as $box)
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
-        		$arrayboxtoactivatelabel[$box->id]=$box->boxlabel;			// We keep only boxes not shown for user, to show into combo list
+        		$arrayboxtoactivatelabel[$box->id]=$langs->transnoentitiesnoconv($box->boxlabel);			// We keep only boxes not shown for user, to show into combo list
         	}
 
         	$form=new Form($db);

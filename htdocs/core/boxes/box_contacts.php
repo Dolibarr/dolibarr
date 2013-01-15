@@ -34,7 +34,7 @@ class box_contacts extends ModeleBoxes
 {
 	var $boxcode="lastcontacts";
 	var $boximg="object_contact";
-	var $boxlabel;
+	var $boxlabel="BoxLastContacts";
 	var $depends = array("societe");
 
 	var $db;
@@ -43,16 +43,6 @@ class box_contacts extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastContacts");
-	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.

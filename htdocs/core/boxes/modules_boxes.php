@@ -47,7 +47,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB		$db		Database hanlder
+	 *	@param	DoliDB		$db		Database handler
 	 */
 	function __construct($db)
 	{

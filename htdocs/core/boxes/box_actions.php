@@ -32,7 +32,7 @@ class box_actions extends ModeleBoxes
 {
 	var $boxcode="lastactions";
 	var $boximg="object_action";
-	var $boxlabel;
+	var $boxlabel="BoxLastActions";
 	var $depends = array("agenda");
 
 	var $db;
@@ -41,17 +41,6 @@ class box_actions extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-
-	/**
-	 *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastActions");
-	}
 
 	/**
      *  Load data for box to show them later

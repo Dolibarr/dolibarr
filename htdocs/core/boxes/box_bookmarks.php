@@ -29,7 +29,7 @@ class box_bookmarks extends ModeleBoxes
 {
 	var $boxcode="bookmarks";
 	var $boximg="object_bookmark";
-	var $boxlabel;
+	var $boxlabel="BoxMyLastBookmarks";
 	var $depends = array("bookmark");
 
 	var $db;
@@ -38,16 +38,6 @@ class box_bookmarks extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxMyLastBookmarks");
-	}
 
 	/**
      *  Load data for box to show them later
