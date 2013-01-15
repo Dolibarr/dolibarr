@@ -431,16 +431,17 @@ class ExtraFields
 	 * 	Load array this->attribute_label
 	 *
 	 * 	@param	string		$elementtype		Type of element
+	 * 	@param	boolean		$forcecheck			override test of MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='member')
+	function fetch_name_optionals_label($elementtype='member',$forcecheck=false)
 	{
 		global $conf;
 
 		$array_name_label=array();
 
 		// For avoid conflicts with external modules
-		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+		if ((! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) && (!$forcecheck))
 			return $array_name_label;
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired";
