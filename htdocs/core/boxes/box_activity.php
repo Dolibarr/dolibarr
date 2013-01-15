@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2012 Charles-François BENKE <charles.fr@benke.fr>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -34,7 +36,8 @@ class box_activity extends ModeleBoxes
 
 	var $db;
 	var $param;
-
+	var $enabled = 1;
+	
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
@@ -43,7 +46,7 @@ class box_activity extends ModeleBoxes
 	 */
 	function __construct()
 	{
-		global $langs;
+		global $langs,$conf;
 
 		$langs->load("boxes");
 		$langs->load("bills");
@@ -51,6 +54,9 @@ class box_activity extends ModeleBoxes
 		$langs->load("orders");
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
+		
+		// Disabled by default because, still has some bug (pgsl support, filters) and slow down seriously Dolibarr 
+		$this->enabled = (! empty($conf->global->MAIN_FEATURES_LEVEL) || ! empty($conf->global->MAIN_BOX_ACTIVITY_ENABLED));
 	}
 
 	/**
