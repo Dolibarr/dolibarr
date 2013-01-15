@@ -122,9 +122,7 @@ if (empty($reshook))
         $object->fetch($id,$ref);
         $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
         if ($result < 0)
-        {
-            $mesg=join(',',$object->errors);
-        }
+        	setEventMessage(join(',',$object->errors), 'errors');
         $action="";
     }
 
@@ -133,9 +131,7 @@ if (empty($reshook))
         $object->fetch($id,$ref);
         $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
         if ($result < 0)
-        {
-            $mesg=join(',',$object->errors);
-        }
+        	setEventMessage(join(',',$object->errors), 'errors');
         $action="";
     }
 
@@ -146,13 +142,13 @@ if (empty($reshook))
 
         if (! GETPOST('libelle'))
         {
-            $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')), 'errors');
             $action = "create";
             $error++;
         }
         if (empty($ref))
         {
-            $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
+            setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')), 'errors');
             $action = "create";
             $error++;
         }
@@ -230,7 +226,7 @@ if (empty($reshook))
             }
             else
             {
-                $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+            	setEventMessage($langs->trans($object->error), 'errors');
                 $action = "create";
             }
         }
@@ -289,14 +285,14 @@ if (empty($reshook))
                     }
                     else
                     {
+                    	setEventMessage($langs->trans($object->error), 'errors');
                         $action = 'edit';
-                        $mesg = $object->error;
                     }
                 }
                 else
                 {
+                	setEventMessage($langs->trans("ErrorProductBadRefOrLabel"), 'errors');
                     $action = 'edit';
-                    $mesg = $langs->trans("ErrorProductBadRefOrLabel");
                 }
             }
 
@@ -309,7 +305,7 @@ if (empty($reshook))
     {
         if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
         {
-            $mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+        	setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
         }
         else
         {
@@ -351,12 +347,13 @@ if (empty($reshook))
                             $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$object->ref);
                             $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
                             $mesg.='</div>';
+                            setEventMessage($mesg, 'errors');
                             //dol_print_error($object->db);
                         }
                         else
                         {
                             $db->rollback();
-                            $mesg=$object->error;
+                            setEventMessage($langs->trans($object->error), 'errors');
                             dol_print_error($db,$object->error);
                         }
                     }
@@ -389,7 +386,7 @@ if (empty($reshook))
         }
         else
         {
-            $mesg=$object->error;
+        	setEventMessage($langs->trans($object->error), 'errors');
             $reload = 0;
             $action='';
         }
@@ -474,7 +471,7 @@ if (empty($reshook))
             return;
         }
 
-        $mesg = $langs->trans("ErrorUnknown").": $result";
+        setEventMessage($langs->trans("ErrorUnknown").": $result", 'errors');
     }
 
     // Add product into order
@@ -717,8 +714,6 @@ else
         else $title=$langs->trans("NewProduct");
         print_fiche_titre($title);
 
-        dol_htmloutput_mesg($mesg);
-
         print '<table class="border" width="100%">';
         print '<tr>';
         $tmpcode='';
@@ -903,8 +898,6 @@ else
             if ($object->isservice()) $type = $langs->trans('Service');
             print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$object->ref, "");
 
-            dol_htmloutput_errors($mesg);
-
             // Main official, simple, and not duplicated code
             print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1066,8 +1059,6 @@ else
         // Fiche en mode visu
         else
         {
-            dol_htmloutput_mesg($mesg);
-
             $head=product_prepare_head($object, $user);
             $titre=$langs->trans("CardProduct".$object->type);
             $picto=($object->type==1?'service':'product');
