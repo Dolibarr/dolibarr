@@ -126,7 +126,7 @@ if (GETPOST('filtre'))
 
 if (GETPOST("search_ref"))
 {
-	$sql .= " AND fac.rowid LIKE '%".$db->escape(GETPOST("search_ref"))."%'";
+	$sql .= " AND fac.rowid = ".$db->escape(GETPOST("search_ref"));
 }
 if (GETPOST("search_ref_supplier"))
 {
