@@ -96,6 +96,8 @@ class MenuLeft
      */
     function showmenu()
     {
+    	global $conf;
+
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
         $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);

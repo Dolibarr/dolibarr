@@ -32,7 +32,8 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	var $db;
 	var $error='';
 	var $max=5;
-
+	var $enabled=1;
+	
 	var $rowid;
 	var $id;
 	var $position;
@@ -122,7 +123,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 		$bcx[1] = 'class="box_impair"';
 		$var = false;
 
-		dol_syslog(get_Class($this));
+		dol_syslog(get_class($this).'::showBox');
 
 		// Define nbcol and nblines of the box to show
 		$nbcol=0;
