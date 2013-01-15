@@ -2710,7 +2710,6 @@ class PropaleLigne
         }
         $sql.= " , marge_tx='".$this->marge_tx."'";
         $sql.= " , marque_tx='".$this->marque_tx."'";
-        $sql.= " , info_bits=".$this->info_bits;
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
