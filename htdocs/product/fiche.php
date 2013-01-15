@@ -56,15 +56,21 @@ if (! empty($user->societe_id)) $socid=$user->societe_id;
 $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
+if ($id > 0 || ! empty($ref))
+{
+	$object = new Product($db);
+	$object->fetch($id, $ref);
+}
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($id,$ref);
-$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
+$canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','card',$canvas);
+    $objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
 }
 
 // Security check
@@ -92,7 +98,6 @@ if (empty($reshook))
     // Type
     if ($action ==	'setfk_product_type' && $user->rights->produit->creer)
     {
-        $object->fetch($id);
     	$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'));
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
@@ -101,7 +106,6 @@ if (empty($reshook))
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
     {
-    	$object->fetch($id);
     	$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
@@ -110,7 +114,6 @@ if (empty($reshook))
     // Barcode value
     if ($action ==	'setbarcode' && $user->rights->barcode->creer)
     {
-    	$object->fetch($id);
     	//Todo: ajout verification de la validite du code barre en fonction du type
     	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -119,7 +122,6 @@ if (empty($reshook))
 
     if ($action == 'setaccountancy_code_buy')
     {
-        $object->fetch($id,$ref);
         $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
         if ($result < 0)
         	setEventMessage(join(',',$object->errors), 'errors');
@@ -128,7 +130,6 @@ if (empty($reshook))
 
     if ($action == 'setaccountancy_code_sell')
     {
-        $object->fetch($id,$ref);
         $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
         if ($result < 0)
         	setEventMessage(join(',',$object->errors), 'errors');
@@ -158,10 +159,16 @@ if (empty($reshook))
             $object->ref                = $ref;
             $object->libelle            = GETPOST('libelle');
             $object->price_base_type    = GETPOST('price_base_type');
-            if ($object->price_base_type == 'TTC') $object->price_ttc = GETPOST('price');
-            else $object->price = GETPOST('price');
-            if ($object->price_base_type == 'TTC') $object->price_min_ttc = GETPOST('price_min');
-            else $object->price_min = GETPOST('price_min');
+
+            if ($object->price_base_type == 'TTC')
+            	$object->price_ttc = GETPOST('price');
+            else
+            	$object->price = GETPOST('price');
+            if ($object->price_base_type == 'TTC')
+            	$object->price_min_ttc = GETPOST('price_min');
+            else
+            	$object->price_min = GETPOST('price_min');
+
             $object->tva_tx             = str_replace('*','',GETPOST('tva_tx'));
             $object->tva_npr            = preg_match('/\*/',GETPOST('tva_tx'))?1:0;
 
@@ -241,7 +248,7 @@ if (empty($reshook))
         }
         else
         {
-            if ($object->fetch($id,$ref))
+            if ($object->id > 0)
             {
             	$object->oldcopy=dol_clone($object);
 
@@ -312,7 +319,7 @@ if (empty($reshook))
             $db->begin();
 
             $originalId = $id;
-            if ($object->fetch($id,$ref) > 0)
+            if ($object->id > 0)
             {
                 $object->ref = GETPOST('clone_ref');
                 $object->status = 0;
@@ -371,10 +378,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
     if ($action == 'confirm_delete' && $confirm == 'yes')
     {
-        $object = new Product($db);
-        $object->fetch($id,$ref);
-
-        if ( ($object->type == 0 && $user->rights->produit->supprimer)	|| ($object->type == 1 && $user->rights->service->supprimer) )
+        if (($object->type == 0 && $user->rights->produit->supprimer) || ($object->type == 1 && $user->rights->service->supprimer))
         {
             $result = $object->delete($object->id);
         }
@@ -394,7 +398,7 @@ if (empty($reshook))
 
 
     // Add product into proposal
-    if ($action == 'addinpropal')
+    if ($object->id > 0 && $action == 'addinpropal')
     {
         $propal = new Propal($db);
         $result=$propal->fetch(GETPOST('propalid'));
@@ -412,35 +416,27 @@ if (empty($reshook))
             exit;
         }
 
-        $prod = new Product($db);
-        $result=$prod->fetch($id,$ref);
-        if ($result <= 0)
-        {
-            dol_print_error($db,$prod->error);
-            exit;
-        }
+        $desc = $object->description;
 
-        $desc = $prod->description;
-
-        $tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+        $tva_tx = get_default_tva($mysoc, $soc, $object->id);
         $localtax1_tx= get_localtax($tva_tx, 1, $soc);
         $localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-        $pu_ht = $prod->price;
-        $pu_ttc = $prod->price_ttc;
-        $price_base_type = $prod->price_base_type;
+        $pu_ht = $object->price;
+        $pu_ttc = $object->price_ttc;
+        $price_base_type = $object->price_base_type;
 
         // If multiprice
         if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
         {
-            $pu_ht = $prod->multiprices[$soc->price_level];
-            $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-            $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+            $pu_ht = $object->multiprices[$soc->price_level];
+            $pu_ttc = $object->multiprices_ttc[$soc->price_level];
+            $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $prod->tva_tx)
+        if ($tva_tx != $object->tva_tx)
         {
             if ($price_base_type != 'HT')
             {
@@ -460,7 +456,7 @@ if (empty($reshook))
             $tva_tx,
             $localtax1_tx, // localtax1
             $localtax2_tx, // localtax2
-            $prod->id,
+            $object->id,
             GETPOST('remise_percent'),
             $price_base_type,
             $pu_ttc
@@ -475,7 +471,7 @@ if (empty($reshook))
     }
 
     // Add product into order
-    if ($action == 'addincommande')
+    if ($object->id > 0 && $action == 'addincommande')
     {
         $commande = new Commande($db);
         $result=$commande->fetch(GETPOST('commandeid'));
@@ -493,36 +489,28 @@ if (empty($reshook))
             exit;
         }
 
-        $prod = new Product($db);
-        $result=$prod->fetch($id,$ref);
-        if ($result <= 0)
-        {
-            dol_print_error($db,$prod->error);
-            exit;
-        }
+        $desc = $object->description;
 
-        $desc = $prod->description;
-
-        $tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+        $tva_tx = get_default_tva($mysoc, $soc, $object->id);
         $localtax1_tx= get_localtax($tva_tx, 1, $soc);
         $localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
 
-        $pu_ht = $prod->price;
-        $pu_ttc = $prod->price_ttc;
-        $price_base_type = $prod->price_base_type;
+        $pu_ht = $object->price;
+        $pu_ttc = $object->price_ttc;
+        $price_base_type = $object->price_base_type;
 
         // If multiprice
         if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
         {
-            $pu_ht = $prod->multiprices[$soc->price_level];
-            $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-            $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+            $pu_ht = $object->multiprices[$soc->price_level];
+            $pu_ttc = $object->multiprices_ttc[$soc->price_level];
+            $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $prod->tva_tx)
+        if ($tva_tx != $object->tva_tx)
         {
             if ($price_base_type != 'HT')
             {
@@ -542,7 +530,7 @@ if (empty($reshook))
             $tva_tx,
             $localtax1_tx, // localtax1
             $localtax2_tx, // localtax2
-            $prod->id,
+            $object->id,
             GETPOST('remise_percent'),
             '',
             '',
@@ -558,7 +546,7 @@ if (empty($reshook))
     }
 
     // Add product into invoice
-    if ($action == 'addinfacture' && $user->rights->facture->creer)
+    if ($object->id > 0 && $action == 'addinfacture' && $user->rights->facture->creer)
     {
         $facture = New Facture($db);
         $result=$facture->fetch(GETPOST('factureid'));
@@ -576,35 +564,27 @@ if (empty($reshook))
             exit;
         }
 
-        $prod = new Product($db);
-        $result = $prod->fetch($id,$ref);
-        if ($result <= 0)
-        {
-            dol_print_error($db,$prod->error);
-            exit;
-        }
+        $desc = $object->description;
 
-        $desc = $prod->description;
-
-        $tva_tx = get_default_tva($mysoc, $soc, $prod->id);
+        $tva_tx = get_default_tva($mysoc, $soc, $object->id);
         $localtax1_tx= get_localtax($tva_tx, 1, $soc);
         $localtax2_tx= get_localtax($tva_tx, 2, $soc);
 
-        $pu_ht = $prod->price;
-        $pu_ttc = $prod->price_ttc;
-        $price_base_type = $prod->price_base_type;
+        $pu_ht = $object->price;
+        $pu_ttc = $object->price_ttc;
+        $price_base_type = $object->price_base_type;
 
         // If multiprice
         if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
         {
-            $pu_ht = $prod->multiprices[$soc->price_level];
-            $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-            $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+            $pu_ht = $object->multiprices[$soc->price_level];
+            $pu_ttc = $object->multiprices_ttc[$soc->price_level];
+            $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-        if ($tva_tx != $prod->tva_tx)
+        if ($tva_tx != $object->tva_tx)
         {
             if ($price_base_type != 'HT')
             {
@@ -624,7 +604,7 @@ if (empty($reshook))
             $tva_tx,
             $localtax1_tx,
             $localtax2_tx,
-            $prod->id,
+            $object->id,
             GETPOST('remise_percent'),
             '',
             '',
@@ -646,7 +626,7 @@ if (empty($reshook))
 if (GETPOST("cancel") == $langs->trans("Cancel"))
 {
     $action = '';
-    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
     exit;
 }
 
@@ -674,15 +654,9 @@ $formproduct = new FormProduct($db);
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
-    // When used with CANVAS
+    // When used with CANVAS (more simple)
     // -----------------------------------------
-    if (empty($object->error) && ($id || $ref))
-    {
-        $object = new Product($db);
-        $object->fetch($id, $ref);
-    }
-    $objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
-    $objcanvas->display_canvas($action);				// Show template
+    $objcanvas->display_canvas($action); // Show template
 }
 else
 {
@@ -882,10 +856,8 @@ else
      * Product card
      */
 
-    else if ($id || $ref)
+    else if ($object->id > 0)
     {
-        $res=$object->fetch($id,$ref);
-        if ($res < 0) { dol_print_error($db,$object->error); exit; }
         $res=$object->fetch_optionals($object->id,$extralabels);
 
         // Fiche en mode edition
