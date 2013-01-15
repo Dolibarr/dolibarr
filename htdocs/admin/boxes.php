@@ -211,8 +211,6 @@ if ($action == 'switch')
  */
 
 $form=new Form($db);
-$emptyuser=new User($db);
-//$infobox=new InfoBox($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
@@ -316,7 +314,7 @@ if ($resql)
 
 
 // Available boxes
-$boxtoadd=InfoBox::listBoxes($db,'available',-1,$emptyuser,$actives);
+$boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
@@ -366,7 +364,7 @@ print '</table>';
 
 
 // Activated boxes
-$boxactivated=InfoBox::listBoxes($db,'activated',-1,$emptyuser);
+$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));

@@ -33,7 +33,7 @@ class InfoBox
      *  @param	DoliDB	$db				Database handler
      *  @param	string	$mode			'available' or 'activated'
      *  @param	string	$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
-     *  @param  User    $user	  		Objet user to filter (used only if $zone >= 0)
+     *  @param  User    $user	  		Objet user to filter
      *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @return array               	Array of boxes
      */
@@ -52,7 +52,7 @@ class InfoBox
             $sql.= " WHERE b.box_id = d.rowid";
             $sql.= " AND b.entity = ".$conf->entity;
             if ($zone >= 0) $sql.= " AND b.position = ".$zone;
-            if ($user->id && ! empty($user->conf->$confuserzone)) $sql.= " AND b.fk_user = ".$user->id;
+            if (is_object($user)) $sql.= " AND b.fk_user IN (0,".$user->id.")";
             else $sql.= " AND b.fk_user = 0";
             $sql.= " ORDER BY b.box_order";
         }
@@ -71,7 +71,7 @@ class InfoBox
             }
         }
 
-        dol_syslog(get_class()."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')." sql=".$sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -101,13 +101,13 @@ class InfoBox
                         $box=new $boxname($db,$obj->note);
 
                         // box properties
-                        $box->rowid		= (! empty($obj->rowid) ? $obj->rowid : '');
-                        $box->id		= (! empty($obj->box_id) ? $obj->box_id : '');
-                        $box->position	= (! empty($obj->position) ? $obj->position : '');
-                        $box->box_order	= (! empty($obj->box_order) ? $obj->box_order : '');
-                        $box->fk_user	= (! empty($obj->fk_user) ? $obj->fk_user : '');
+                        $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
+                        $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
+                        $box->position	= (empty($obj->position) ? '' : $obj->position);
+                        $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
+                        $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile=$relsourcefile;
-                        if ($mode == 'activated' && (! $user->id || empty($user->conf->$confuserzone)))	// List of activated box was not yet personalized into database
+                        if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
                         {
                             if (is_numeric($box->box_order))
                             {
@@ -116,8 +116,8 @@ class InfoBox
                             }
                         }
                         // box_def properties
-                        $box->box_id	= (! empty($obj->box_id) ? $obj->box_id : '');
-                        $box->note		= (! empty($obj->note) ? $obj->note : '');
+                        $box->box_id	= (empty($obj->box_id) ? '' : $obj->box_id);
+                        $box->note		= (empty($obj->note) ? '' : $obj->note);
 
                         $enabled=$box->enabled;
                         if (isset($box->depends) && count($box->depends) > 0)
@@ -128,6 +128,7 @@ class InfoBox
                                 if (empty($conf->$module->enabled)) $enabled=0;
                             }
                         }
+
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
                     }
@@ -138,9 +139,8 @@ class InfoBox
         else
         {
             //dol_print_error($db);
-            $error=$db->error();
+            $error=$db->lasterror();
             dol_syslog(get_class()."::listBoxes Error ".$error, LOG_ERR);
-            return array();
         }
 
         return $boxes;

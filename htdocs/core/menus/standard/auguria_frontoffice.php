@@ -98,6 +98,8 @@ class MenuLeft
      */
     function showmenu()
     {
+    	global $conf;
+    	
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
         $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after);
