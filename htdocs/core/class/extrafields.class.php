@@ -441,7 +441,7 @@ class ExtraFields
 		$array_name_label=array();
 
 		// For avoid conflicts with external modules
-		if ((! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) && (!$forcecheck))
+		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && !$forcecheck)
 			return $array_name_label;
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired";
