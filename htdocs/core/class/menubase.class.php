@@ -59,13 +59,11 @@ class Menubase
 	 *
 	 *  @param		DoliDB		$db 		    Database handler
      *  @param     	string		$menu_handler	Menu handler
-     *  @param     	string		$type			Type
      */
-    function __construct($db,$menu_handler='',$type='')
+    function __construct($db,$menu_handler='')
     {
         $this->db = $db;
         $this->menu_handler = $menu_handler;
-        $this->type = $type;
         return 1;
     }
 
