@@ -2786,7 +2786,6 @@ class PropaleLigne
         }
 		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-        $sql.= " , info_bits=".$this->info_bits;
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
