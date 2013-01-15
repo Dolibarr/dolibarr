@@ -220,6 +220,20 @@ $server->register(
 	'WS to create a actioncomm'
 );
 
+// Register WSDL
+$server->register(
+	'updateActionComm',
+	// Entry values
+	array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
+	// Exit values
+	array('result'=>'tns:result'),
+	$ns,
+	$ns.'#updateActionComm',
+	$styledoc,
+	$styleuse,
+	'WS to update a actioncomm'
+);
+
 
 
 
@@ -473,7 +487,104 @@ function createActionComm($authentication,$actioncomm)
 	return $objectresp;
 }
 
+/**
+ * Create ActionComm
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	ActionComm	$actioncomm		    $actioncomm
+ * @return	array							Array result
+ */
+function updateActionComm($authentication,$actioncomm)
+{
+	global $db,$conf,$langs;
+
+	$now=dol_now();
+
+	dol_syslog("Function: updateActionComm login=".$authentication['login']);
+
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+	// Init and check authentication
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	// Check parameters
+	if (empty($actioncomm['id']))	{
+		$error++; $errorcode='KO'; $errorlabel="Actioncomm id is mandatory.";
+	}
+
+	if (! $error)
+	{
+		$objectfound=false;
+		
+		$object=new ActionComm($db);
+		$result=$object->fetch($actioncomm['id']);
+		
+		if (!empty($object->id)) {
+		
+			$objectfound=true;
+
+			$object->datep=$actioncomm['datep'];
+			$object->datef=$actioncomm['datef'];
+			$object->type_code=$actioncomm['type_code'];
+			$object->societe->id=$actioncomm['socid'];
+			$object->fk_project=$actioncomm['projectid'];
+			$object->note=$actioncomm['note'];
+			$object->contact->id=$actioncomm['contactid'];
+			$object->usertodo->id=$actioncomm['usertodo'];
+			$object->userdone->id=$actioncomm['userdone'];
+			$object->label=$actioncomm['label'];
+			$object->percentage=$actioncomm['percentage'];
+			$object->priority=$actioncomm['priority'];
+			$object->fulldayevent=$actioncomm['fulldayevent'];
+			$object->location=$actioncomm['location'];
+			$object->fk_element=$actioncomm['fk_element'];
+			$object->elementtype=$actioncomm['elementtype'];
+	
+			//Retreive all extrafield for actioncomm
+			// fetch optionals attributes and labels
+			$extrafields=new ExtraFields($db);
+			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$actioncomm[$key];
+			}
+	
+			$db->begin();
+
+			$result=$object->update($fuser);
+			if ($result <= 0) {
+				$error++;
+			}
+		}
+
+		if ((! $error) && ($objectfound))
+		{
+			$db->commit();
+			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+		}
+		elseif ($objectfound)
+		{
+			$db->rollback();
+			$error++;
+			$errorcode='KO';
+			$errorlabel=$object->error;
+		} else {
+			$error++;
+			$errorcode='NOT_FOUND';
+			$errorlabel='Actioncomm id='.$actioncomm['id'].' cannot be found';
+		}
+	}
+
+	if ($error)
+	{
+		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+	}
+
+	return $objectresp;
+}
+
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
-
-?>

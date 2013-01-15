@@ -506,7 +506,6 @@ function updateThirdParty($authentication,$thirdparty)
 		$error++; $errorcode='KO'; $errorlabel="Thirdparty id is mandatory.";
 	}
 
-
 	if (! $error)
 	{
 		$objectfound=false;
@@ -514,9 +513,9 @@ function updateThirdParty($authentication,$thirdparty)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object=new Societe($db);
-		$result=$object->fetch($id);
+		$result=$object->fetch($thirdparty['id']);
 		
-		if (!empty($thirdparty['id'])) {
+		if (!empty($object->id)) {
 			 
 			$objectfound=true;
 			
@@ -680,9 +679,5 @@ function getListOfThirdParties($authentication,$filterthirdparty)
     return $objectresp;
 }
 
-
-
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
-
-?>
