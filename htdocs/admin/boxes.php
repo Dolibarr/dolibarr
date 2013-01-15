@@ -345,7 +345,14 @@ foreach($boxtoadd as $box)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr '.$bc[$var].'>';
     print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-    print '<td>' . ($box->note?$box->note:'&nbsp;') . '</td>';
+    print '<td>';
+    if ($box->note == '(WarningUsingThisBoxSlowDown)')
+    {
+    	$langs->load("errors");
+    	print $langs->trans("WarningUsingThisBoxSlowDown");
+    }
+	else print ($box->note?$box->note:'&nbsp;');
+    print '</td>';
     print '<td>' . $box->sourcefile . '</td>';
 
     // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
