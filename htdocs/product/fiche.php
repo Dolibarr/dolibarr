@@ -70,7 +70,6 @@ if (! empty($canvas))
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','card',$canvas);
-    $objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
 }
 
 // Security check
@@ -656,7 +655,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS (more simple)
     // -----------------------------------------
-    $objcanvas->display_canvas($action); // Show template
+    $objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
 }
 else
 {
