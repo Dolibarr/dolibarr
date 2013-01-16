@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,11 +33,12 @@ class box_activity extends ModeleBoxes
 	var $boximg="object_bill";
 	var $boxlabel='BoxGlobalActivity';
 	var $depends = array("facture");
-	
+
 	var $db;
 	var $param;
 	var $enabled = 1;
-	
+	var $enabled = 1;
+
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
@@ -47,7 +48,7 @@ class box_activity extends ModeleBoxes
 	function __construct($db)
 	{
 		$this->db = $db;
-		
+
 		$this->enabled = 1;
 		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
 		// FIXME: Removed number_format (not compatible with all languages)
@@ -82,7 +83,7 @@ class box_activity extends ModeleBoxes
 		{
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic=new Facture($db);
-			
+
 			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -176,7 +177,7 @@ class box_activity extends ModeleBoxes
 		{
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic=new Commande($db);
-			
+
 			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -227,7 +228,7 @@ class box_activity extends ModeleBoxes
 		{
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propalstatic=new Propal($db);
-			
+
 			$sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

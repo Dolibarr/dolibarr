@@ -71,17 +71,17 @@ if ($user->societe_id > 0)
 
 if ($action == 'add')
 {
-	$myobject=new Skeleton_Class($db);
-	$myobject->prop1=$_POST["field1"];
-	$myobject->prop2=$_POST["field2"];
-	$result=$myobject->create($user);
+	$object=new Skeleton_Class($db);
+	$object->prop1=$_POST["field1"];
+	$object->prop2=$_POST["field2"];
+	$result=$object->create($user);
 	if ($result > 0)
 	{
 		// Creation OK
 	}
 	{
 		// Creation KO
-		$mesg=$myobject->error;
+		$mesg=$object->error;
 	}
 }
 
@@ -120,7 +120,7 @@ jQuery(document).ready(function() {
 
 // Example 2 : Adding links to objects
 // The class must extends CommonObject class to have this method available
-//$somethingshown=$myobject->showLinkedObjectBlock();
+//$somethingshown=$object->showLinkedObjectBlock();
 
 
 // Example 3 : List of data
