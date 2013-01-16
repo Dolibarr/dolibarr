@@ -119,19 +119,22 @@ jQuery(document).ready(function() {
 
 
 // Example 2 : Adding links to objects
-$somethingshown=$myobject->showLinkedObjectBlock();
+// The class must extends CommonObject class to have this method available
+//$somethingshown=$myobject->showLinkedObjectBlock();
 
 
 // Example 3 : List of data
 if ($action == 'list')
 {
     $sql = "SELECT";
+    $sql.= " t.rowid,";
     $sql.= " t.field1,";
     $sql.= " t.field2";
-    $sql.= " FROM ".MAIN_DB_PREFIX."skeleton as t";
+    $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
     $sql.= " WHERE field3 = 'xxx'";
     $sql.= " ORDER BY field1 ASC";
 
+    print '<table class="noborder">'."\n";
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
@@ -165,6 +168,8 @@ if ($action == 'list')
         $error++;
         dol_print_error($db);
     }
+
+    print '</table>'."\n";
 }
 
 
