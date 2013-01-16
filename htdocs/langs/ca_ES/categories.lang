@@ -2,8 +2,8 @@
 CHARSET=UTF-8
 Category=Categoria
 Categories=categories
-Rubrique=Carpeta
-Rubriques=Carpetes
+Rubrique=Categoria
+Rubriques=Categories
 categories=Categoria(es)
 TheCategorie=La categoria
 NoCategoryYet=Cap categoria d'aquest tipus creada
