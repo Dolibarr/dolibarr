@@ -237,12 +237,14 @@ $sql.= " AND b.box_id = bd.rowid";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
+dol_syslog("Search available boxes sql=".$sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$decalage=0;
+	$var=false;
 	while ($i < $num)
 	{
 		$var = ! $var;
@@ -314,7 +316,7 @@ if ($resql)
 }
 
 
-// Available boxes
+// Available boxes to activate
 $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
 print "<br>\n";
