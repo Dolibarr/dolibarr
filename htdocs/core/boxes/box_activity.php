@@ -37,7 +37,6 @@ class box_activity extends ModeleBoxes
 	var $db;
 	var $param;
 	var $enabled = 1;
-	var $enabled = 1;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
