@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -28,49 +28,15 @@
 
 
 /**
- *	Class to manage top menu Eldy (for internal users)
+ *  Classe to manage menu Eldy 
  */
-class MenuTop
+class MenuManager
 {
 	var $db;
 	var $require_left=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $type_user=0;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
-
-	/**
-     *  Constructor
-     *
-     *  @param      DoliDb		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
-
-
-	/**
-	 *  Show menu
-	 *
-	 * 	@return		void
-	 */
-	function showmenu()
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
-
-		print_eldy_menu($this->db,$this->atarget,$this->type_user);
-	}
-
-}
-
-
-/**
- *  \class      MenuLeft
- *  \brief      Classe permettant la gestion du menu du gauche Eldy
- */
-class MenuLeft
-{
-    var $db;
     var $menu_array;
     var $menu_array_after;
 
@@ -82,7 +48,7 @@ class MenuLeft
      *  @param  array		&$menu_array    	Table of menu entries to show before entries of menu handler
      *  @param  array		&$menu_array_after  Table of menu entries to show after entries of menu handler
      */
-    function __construct($db,&$menu_array,&$menu_array_after)
+    function __construct($db, &$menu_array, &$menu_array_after)
     {
         $this->db=$db;
         $this->menu_array=$menu_array;
@@ -93,13 +59,16 @@ class MenuLeft
     /**
      *  Show menu
      *
-     *  @return     int     Number of menu entries shown
+     *	@param	string	$mode		'top' or 'left'
+     *  @return	int     			Number of menu entries shown
      */
-    function showmenu()
+    function showmenu($mode)
     {
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
-        $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
+        $res='ErrorBadParameterForMode';
+        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user);
+        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
 
         return $res;
     }

@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -35,7 +35,7 @@ class box_external_rss extends ModeleBoxes
 {
     var $boxcode="lastrssinfos";
     var $boximg="object_rss";
-    var $boxlabel;
+    var $boxlabel="BoxLastRssInfos";
     var $depends = array("externalrss");
 
 	var $db;
@@ -52,13 +52,8 @@ class box_external_rss extends ModeleBoxes
      */
     function __construct($db,$param)
     {
-        global $langs;
-        $langs->load("boxes");
-
 		$this->db=$db;
 		$this->param=$param;
-
-        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastRssInfos");
     }
 
     /**

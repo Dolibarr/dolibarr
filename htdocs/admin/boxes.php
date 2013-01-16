@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
+$langs->load("boxes");
 
 if (! $user->admin) accessforbidden();
 
@@ -211,8 +212,6 @@ if ($action == 'switch')
  */
 
 $form=new Form($db);
-$emptyuser=new User($db);
-//$infobox=new InfoBox($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
@@ -238,12 +237,14 @@ $sql.= " AND b.box_id = bd.rowid";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
+dol_syslog("Search available boxes sql=".$sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$decalage=0;
+	$var=false;
 	while ($i < $num)
 	{
 		$var = ! $var;
@@ -315,8 +316,8 @@ if ($resql)
 }
 
 
-// Available boxes
-$boxtoadd=InfoBox::listBoxes($db,'available',-1,$emptyuser,$actives);
+// Available boxes to activate
+$boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
@@ -346,8 +347,15 @@ foreach($boxtoadd as $box)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr '.$bc[$var].'>';
-    print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-    print '<td>' . ($box->note?$box->note:'&nbsp;') . '</td>';
+    print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel).'</td>';
+    print '<td>';
+    if ($box->note == '(WarningUsingThisBoxSlowDown)')
+    {
+    	$langs->load("errors");
+    	print $langs->trans("WarningUsingThisBoxSlowDown");
+    }
+	else print ($box->note?$box->note:'&nbsp;');
+    print '</td>';
     print '<td>' . $box->sourcefile . '</td>';
 
     // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
@@ -366,7 +374,7 @@ print '</table>';
 
 
 // Activated boxes
-$boxactivated=InfoBox::listBoxes($db,'activated',-1,$emptyuser);
+$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));
@@ -398,8 +406,15 @@ foreach($boxactivated as $key => $box)
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
-	print '<td>' . ($box->note?$box->note:'&nbsp;') . '</td>';
+	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel).'</td>';
+	print '<td>';
+	if ($box->note == '(WarningUsingThisBoxSlowDown)')
+	{
+		$langs->load("errors");
+		print img_warning('',0).' '.$langs->trans("WarningUsingThisBoxSlowDown");
+	}
+	else print ($box->note?$box->note:'&nbsp;');
+	print '</td>';
 	print '<td align="center">' . (isset($pos_name[$box->position])?$pos_name[$box->position]:'') . '</td>';
 	$hasnext=($key < (count($boxactivated)-1));
 	$hasprevious=($key != 0);

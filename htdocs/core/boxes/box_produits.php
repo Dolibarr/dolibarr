@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -34,7 +34,7 @@ class box_produits extends ModeleBoxes
 {
 	var $boxcode="lastproducts";
 	var $boximg="object_product";
-	var $boxlabel;
+	var $boxlabel="BoxLastProducts";
 	var $depends = array("produit");
 
 	var $db;
@@ -43,17 +43,6 @@ class box_produits extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProducts");
-	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.

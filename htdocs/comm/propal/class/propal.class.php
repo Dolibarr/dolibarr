@@ -12,7 +12,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -2786,7 +2786,6 @@ class PropaleLigne
         }
 		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-        $sql.= " , info_bits=".$this->info_bits;
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;

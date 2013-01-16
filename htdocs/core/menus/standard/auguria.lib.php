@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -46,7 +46,7 @@ function print_auguria_menu($db,$atarget,$type_user)
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	$tabMenu=array();
-	$menuArbo = new Menubase($db,'auguria','top');
+	$menuArbo = new Menubase($db,'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria',$tabMenu);
 
 	print_start_menu_array_auguria();
@@ -259,7 +259,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
         $tabMenu=array();
-        $menuArbo = new Menubase($db,'auguria','left');
+        $menuArbo = new Menubase($db,'auguria');
         $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
         //var_dump($newmenu);
     }

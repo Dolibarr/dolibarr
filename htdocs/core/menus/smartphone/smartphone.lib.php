@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -42,8 +42,8 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 
 	$tabMenu=array();
 
-	$menutop = new Menubase($db,'smartphone','top');
-	$menuleft = new Menubase($db,'smartphone','left');
+	$menutop = new Menubase($db,'smartphone');
+	$menuleft = new Menubase($db,'smartphone');
 	$newTabMenu = $menutop->menuTopCharger('', '', $type_user, 'smartphone',$tabMenu);
 	$numTabMenu = count($newTabMenu);
 

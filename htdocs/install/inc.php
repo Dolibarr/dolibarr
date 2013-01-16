@@ -7,7 +7,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -303,7 +303,7 @@ function conf($dolibarr_main_document_root)
     // Force usage of log file for install and upgrades
     $conf->syslog->enabled=1;
     $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-    if (! defined('SYSLOG_FILE_ON')) define('SYSLOG_FILE_ON',1);
+    if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS','["mod_syslog_file"]');
     if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
     {
         if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');

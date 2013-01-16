@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -568,6 +568,8 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
         //print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
     }
 }
+
+//print 'mem='.memory_get_usage().' - '.memory_get_peak_usage();
 
 llxFooter();
 
