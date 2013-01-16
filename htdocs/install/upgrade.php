@@ -181,73 +181,76 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     if ($ok)
     {
 	    $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
-	    $obj = $db->fetch_object($result);
-	    if ($obj)	// It table categorie_association exists
+	    if ($result)	// result defined for version 3.2 or -
 	    {
-	    	$couples=array();
-		    $filles=array();
-		    $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
-		    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-		    dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
-		    $resql = $db->query($sql);
-		    if ($resql)
+		    $obj = $db->fetch_object($result);
+		    if ($obj)	// It table categorie_association exists
 		    {
-		        $num=$db->num_rows($resql);
-		        while ($obj=$db->fetch_object($resql))
-		        {
-		            if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
-		            {
-		                if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
-		                {
-		                    $filles[$obj->fk_categorie_fille]=1;	// Set record for this child
-		                    $couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
-		                }
-		            }
-		        }
+		    	$couples=array();
+			    $filles=array();
+			    $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
+			    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+			    dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
+			    $resql = $db->query($sql);
+			    if ($resql)
+			    {
+			        $num=$db->num_rows($resql);
+			        while ($obj=$db->fetch_object($resql))
+			        {
+			            if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
+			            {
+			                if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
+			                {
+			                    $filles[$obj->fk_categorie_fille]=1;	// Set record for this child
+			                    $couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
+			                }
+			            }
+			        }
 
-		        dolibarr_install_syslog("upgrade: result is num=".$num." count(couples)=".count($couples));
+			        dolibarr_install_syslog("upgrade: result is num=".$num." count(couples)=".count($couples));
 
-		        // If there is duplicates couples or child with two parents
-		        if (count($couples) > 0 && $num > count($couples))
-		        {
-		            $error=0;
+			        // If there is duplicates couples or child with two parents
+			        if (count($couples) > 0 && $num > count($couples))
+			        {
+			            $error=0;
 
-		            $db->begin();
+			            $db->begin();
 
-		            // We delete all
-		            $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-		            dolibarr_install_syslog("upgrade: delete association sql=".$sql);
-		            $resqld=$db->query($sql);
-		            if ($resqld)
-		            {
-		            	// And we insert only each record once
-		                foreach($couples as $key => $val)
-		                {
-		                    $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
-		                    $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
-		                    dolibarr_install_syslog("upgrade: insert association sql=".$sql);
-		                    $resqli=$db->query($sql);
-		                    if (! $resqli) $error++;
-		                }
-		            }
+			            // We delete all
+			            $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+			            dolibarr_install_syslog("upgrade: delete association sql=".$sql);
+			            $resqld=$db->query($sql);
+			            if ($resqld)
+			            {
+			            	// And we insert only each record once
+			                foreach($couples as $key => $val)
+			                {
+			                    $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
+			                    $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
+			                    dolibarr_install_syslog("upgrade: insert association sql=".$sql);
+			                    $resqli=$db->query($sql);
+			                    if (! $resqli) $error++;
+			                }
+			            }
 
-		            if (! $error)
-		            {
-		                print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-		                print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
-		                $db->commit();
-		            }
-		            else
-		            {
-		                print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-		                print '<td align="right">'.$langs->trans("Failed").'</td></tr>';
-		                $db->rollback();
-		            }
-		        }
-		    }
-		    else
-		    {
-		        print '<div class="error">'.$langs->trans("Error").' '.$db->lasterror().'</div>';
+			            if (! $error)
+			            {
+			                print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
+			                print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
+			                $db->commit();
+			            }
+			            else
+			            {
+			                print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
+			                print '<td align="right">'.$langs->trans("Failed").'</td></tr>';
+			                $db->rollback();
+			            }
+			        }
+			    }
+			    else
+			    {
+			        print '<div class="error">'.$langs->trans("Error").' '.$db->lasterror().'</div>';
+			    }
 		    }
 	    }
     }
