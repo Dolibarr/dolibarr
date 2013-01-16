@@ -39,21 +39,26 @@ If you want to build/test package locally:
 # Push/declare sources to Launchpad
 #----------------------------------
 
-- Create a Bazaar directory
-    mkdir bzr
-- Create a series 
-    Call it 'dev' or 'stable'
-    For stable: Add file with *: http://www.dolibarr.org/files/stable/package_debian-ubuntu/dolibarr_3.2.*.tar.gz
+- Create a series (https://launchpad.net/dolibarr/)
+    Call it 'dev', 'stable' or 'beta'
     For dev: Configure Series branch - Link to series
+    For stable: Add file with *: http://www.dolibarr.org/files/stable/package_debian-ubuntu/dolibarr_3.2.*.tar.gz
+    For beta: Add file with *: http://www.dolibarr.org/files/lastbuild/package_debian-ubuntu/dolibarr_3.2.*.tar.gz
+    mkdir bzr
     bzr init
     bzr add
     bzr commit -m "Init"
-    bzr push lp:~yourlogin/dolibarr/stable
+
+List of series created:
+https://launchpad.net/dolibarr/trunk
+https://launchpad.net/dolibarr/beta
+https://launchpad.net/dolibarr/stable
 
 # Init repository of sources into launchpad (when repository for sources does not exist)
 #----------------------------------
 
 - Create debian directory and upload it onto bzr branch ~yourlogin/+junk/debian-[dev|stable]
+    mkdir bzr
     cd bzr
     mkdir debian
     cd debian
@@ -61,14 +66,18 @@ If you want to build/test package locally:
     bzr init
     bzr add
     bzr commit -m "Init control files"
-    bzr push lp:~yourlogin/+junk/debian-[dev|stable]    (put here any branch name)
+    bzr push lp:~yourlogin/+junk/debian-[dev|beta|stable]    (put here any branch name)
   or download it from launchpad bazaar:
     cd bzr
-    bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
+    bzr branch lp:~yourlogin/+junk/debian-[dev|beta|stable]
+  
+  For sources, same with
+    bzr push lp:~yourlogin/dolibarr/[dev|beta|stable]
+
 - To update this debian directory, edit files into the bzr dir and run
     bzr status
     bzr commit -m "Description of change"
-    bzr push lp:~yourlogin/+junk/debian-[dev|stable]
+    bzr push lp:~yourlogin/+junk/debian-[dev|beta|stable]
 
 # Get repository of sources from launchpad (when repository for sources already exists)
 #----------------------------------
@@ -86,6 +95,10 @@ If you want to build/test package locally:
 	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
 		lp:dolibarr
 		merge packaging lp:~yourlogin/+junk/debian-dev
+    	For beta:
+	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
+		lp:dolibarr/beta
+		merge packaging lp:~yourlogin/+junk/debian-beta
     	For stable:
 	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
 		lp:dolibarr/stable
@@ -93,7 +106,7 @@ If you want to build/test package locally:
 - Run command
     cd bzr
     bzr dailydeb dolibarr.recipe working-dir
-  This will create a directory "working-dir" with dolibarr sources and will add sources from ~yourlogin/+junk/debian-[dev|stable]
+  This will create a directory "working-dir" with dolibarr sources and will add sources from ~yourlogin/+junk/debian-[dev|beta|stable]
 - Test package sources
     sudo pbuilder build <working-dir>/<project>_<version>.dsc
 
@@ -109,6 +122,9 @@ Add Dolibarr Launchpad repository to your system setup by adding the two lines t
 For the development snapshot version: 
 deb http://ppa.launchpad.net/yourlogin/dolibarr-dev/ubuntu precise main 
 deb-src http://ppa.launchpad.net/yourlogin/dolibarr-dev/ubuntu precise main 
+For the beta version: 
+deb http://ppa.launchpad.net/yourlogin/dolibarr-beta/ubuntu precise main 
+deb-src http://ppa.launchpad.net/yourlogin/dolibarr-beta/ubuntu precise main 
 For the stable version:
 deb http://ppa.launchpad.net/yourlogin/dolibarr-stable/ubuntu precise main 
 deb-src http://ppa.launchpad.net/yourlogin/dolibarr-stable/ubuntu precise main 
