@@ -777,7 +777,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     $password=$generated_password;
 
     // Mot de passe
-    print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Password").'</td>';
     print '<td>';
     if (! empty($ldap_sid))
     {

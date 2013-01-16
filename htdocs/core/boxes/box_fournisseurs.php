@@ -32,7 +32,7 @@ class box_fournisseurs extends ModeleBoxes
 {
     var $boxcode="lastsuppliers";
     var $boximg="object_company";
-    var $boxlabel;
+    var $boxlabel="BoxLastSuppliers";
     var $depends = array("fournisseur");
 
 	var $db;
@@ -41,16 +41,6 @@ class box_fournisseurs extends ModeleBoxes
     var $info_box_head = array();
     var $info_box_contents = array();
 
-    /**
-     *  Constructor
-     */
-    function __construct()
-    {
-        global $langs;
-        $langs->load("boxes");
-
-        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastSuppliers");
-    }
 
     /**
 	 *  Load data into info_box_contents array to show array later.

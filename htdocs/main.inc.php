@@ -1271,13 +1271,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
     // Load the top menu manager (only if not already done)
-    if (! class_exists('MenuTop'))
+    if (! class_exists('MenuManager'))
     {
         $menufound=0;
         $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
         foreach($dirmenus as $dirmenu)
         {
-            $menufound=dol_include_once($dirmenu."standard/".$top_menu);
+        	$menufound=dol_include_once($dirmenu."standard/".$top_menu);
             if ($menufound) break;
         }
         if (! $menufound)	// If failed to include, we try with standard
@@ -1296,9 +1296,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
 	    // Show menu
-	    $menutop = new MenuTop($db);
+	    $dummy1=array();$dummy2=array();
+	    $menutop = new MenuManager($db,$dummy1,$dummy2);
 	    $menutop->atarget=$target;
-	    $menutop->showmenu();      // This contains a \n
+	    $menutop->showmenu('top');      // This contains a \n
 
 	    print "</div>\n";
 
@@ -1483,8 +1484,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    $left_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
 	    if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
 
-	    // Load the top menu manager (only if not already done)
-	    if (! class_exists('MenuLeft'))
+	    // Load the menu manager (only if not already done)
+	    if (! class_exists('MenuManager'))
 	    {
 	        $menufound=0;
 	        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
@@ -1505,8 +1506,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    print '<div class="vmenu">'."\n";
 
-	    $menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
-	    $menuleft->showmenu(); // output menu_array and menu found in database
+	    $menuleft=new MenuManager($db,$menu_array_before,$menu_array_after);
+	    $menuleft->showmenu('left'); // output menu_array and menu found in database
 
 
 	    // Show other forms

@@ -33,7 +33,7 @@ class box_services_contracts extends ModeleBoxes
 {
 	var $boxcode="lastproductsincontract";
 	var $boximg="object_product";
-	var $boxlabel;
+	var $boxlabel="BoxLastProductsInContract";
 	var $depends = array("service","contrat");
 
 	var $db;
@@ -42,17 +42,7 @@ class box_services_contracts extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProductsInContract");
-	}
-
+	
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *

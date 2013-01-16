@@ -473,8 +473,8 @@ function dol_strtoupper($utf8_string)
 
 /**
  *	Write log message into outputs. Possible outputs can be:
- *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE
- *	Syslog if SYSLOG_SYSLOG_ON defined:    	facility is then defined by SYSLOG_FACILITY
+ *	SYSLOG_HANDLERS = ["mod_syslog_file"]  		file name is then defined by SYSLOG_FILE
+ *	SYSLOG_HANDLERS = ["mod_syslog_syslog"]  	facility is then defined by SYSLOG_FACILITY
  *  Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
  *  this, use logging to files instead of syslog (see setup of module).
  *  Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.

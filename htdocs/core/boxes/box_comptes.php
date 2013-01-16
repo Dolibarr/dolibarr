@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Christophe
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,25 +33,29 @@ class box_comptes extends ModeleBoxes
 {
 	var $boxcode="currentaccounts";
 	var $boximg="object_bill";
-	var $boxlabel;
+	var $boxlabel="BoxCurrentAccounts";
 	var $depends = array("banque");     // Box active if module banque active
 
 	var $db;
 	var $param;
-
+	var $enabled = 1;
+	
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-
+	
 	/**
 	 *  Constructor
 	 */
-	function __construct()
+	function __construct($db)
 	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv('BoxCurrentAccounts');
+		global $conf, $user;
+		
+		$this->db = $db;
+		
+		// disable module for such cases
+		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
 	}
 
 	/**

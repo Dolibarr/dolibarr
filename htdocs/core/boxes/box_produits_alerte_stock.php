@@ -35,7 +35,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 {
 	var $boxcode="productsalertstock";
 	var $boximg="object_product";
-	var $boxlabel;
+	var $boxlabel="BoxProductsAlertStock";
 	var $depends = array("produit");
 
 	var $db;
@@ -44,17 +44,6 @@ class box_produits_alerte_stock extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-
-	/**
-     *  Constructor
-	 */
-	function __construct()
-	{
-		global $langs;
-		$langs->load("boxes");
-
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxProductsAlertStock");
-	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.

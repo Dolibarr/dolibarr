@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,78 +31,49 @@
 /**
  *	Classe permettant la gestion du menu du haut Auguria
  */
-class MenuTop
+class MenuManager
 {
 	var $db;
 	var $require_left=array("auguria_backoffice");  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $type_user=0;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
+	var $menu_array;
+	var $menu_array_after;
 
-	/**
+	
+    /**
      *  Constructor
      *
-     *  @param      DoliDb		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
-
-
-	/**
-	 *  Show menu
-	 *
-	 * 	@return	void
-	 */
-	function showmenu()
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
-
-		print_auguria_menu($this->db,$this->atarget,$this->type_user);
-	}
-
-}
-
-
-/**
- *  Classe permettant la gestion du menu du gauche Auguria
- */
-class MenuLeft
-{
-    var $db;
-    var $menu_array;
-    var $menu_array_after;
-
-
-    /**
-	 *	Constructor
-	 *
 	 *  @param	DoliDB		$db     			Database handler
      *  @param  array		&$menu_array    	Table of menu entries to show before entries of menu handler
      *  @param  array		&$menu_array_after  Table of menu entries to show after entries of menu handler
      */
-    function __construct($db,&$menu_array,&$menu_array_after)
+    function __construct($db, &$menu_array, &$menu_array_after)
     {
         $this->db=$db;
         $this->menu_array=$menu_array;
         $this->menu_array_after=$menu_array_after;
     }
-
+	
 
     /**
-     *   Show menu
+     *  Show menu
      *
-     *   @return     int     					Number of menu entries shown
+     *	@param	string	$mode		'top' or 'left'
+     *  @return	int     			Number of menu entries shown
      */
-    function showmenu()
+    function showmenu($mode)
     {
-        require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
-        $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after);
+        $res='ErrorBadParameterForMode';
+        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user);
+        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after);
 
         return $res;
-    }
+	}
+
 }
 
 ?>

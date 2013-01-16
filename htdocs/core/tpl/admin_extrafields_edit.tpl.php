@@ -17,7 +17,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE admin_extrafields.tpl.php -->
+<!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
 <script type="text/javascript">
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
@@ -32,6 +32,7 @@
     		else if (type == 'text') { size.removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
     		else if (type == 'varchar') { size.removeAttr('disabled'); }
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
+    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields(jQuery("#type").val());

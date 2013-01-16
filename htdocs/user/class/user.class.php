@@ -981,7 +981,6 @@ class User extends CommonObject
 		$this->firstname = $member->firstname;
 		$this->email = $member->email;
 		$this->fk_member = $member->id;
-		if ($member->fk_soc) $sql.= ", fk_societe=".$member->fk_soc;
 		$this->pass = $member->pass;
 
 		if (empty($login)) $login=strtolower(substr($member->firstname, 0, 4)) . strtolower(substr($member->lastname, 0, 4));

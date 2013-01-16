@@ -284,7 +284,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
                     '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%NAISS%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
                     '%NOM%,%SOCIETE%,%ADRESSE%,%CP%,%VILLE%,%PAYS%';
 
-        $expected = DOL_MAIN_URL_ROOT.','.$localobject->id.',,New firstname,New name,New firstname New name,'.
+        $expected = DOL_MAIN_URL_ROOT.','.$localobject->id.',0,New firstname,New name,New firstname New name,'.
                     'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->naiss,'day').',,'.
                     'newlogin,dolibspec,New firstname,New name,New company,New address,New zip,New town,Belgium';
 
@@ -320,7 +320,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         //We update user object
         $user->fetch($user->id);
         print __METHOD__." user id=".$user->id." fk_member=".$user->fk_member."\n";
-        
+
         $this->assertEquals($user->fk_member, $localobject->id);
 
         //We remove association with user

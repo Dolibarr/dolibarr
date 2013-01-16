@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,48 +28,15 @@
 
 
 /**
- *	Class to manage top menu Eldy (for external users)
+ *	Class to manage menu Eldy (for external users)
  */
-class MenuTop
+class MenuManager
 {
 	var $db;
 	var $require_left=array("eldy_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $type_user=1;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
-
-	/**
-     *  Constructor
-     *
-     *  @param      DoliDb		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
-
-
-	/**
-	 *  Show menu
-	 *
-	 *  @return	void
-	 */
-	function showmenu()
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
-
-		print_eldy_menu($this->db,$this->atarget,$this->type_user);
-	}
-
-}
-
-
-/**
- *	Classe permettant la gestion du menu du gauche Eldy
- */
-class MenuLeft
-{
-    var $db;
     var $menu_array;
     var $menu_array_after;
 
@@ -92,17 +59,22 @@ class MenuLeft
     /**
      *  Show menu
      *
+     *	@param	string	$mode		'top' or 'left'
      *  @return     int     Number of menu entries shown
      */
-    function showmenu()
+    function showmenu($mode)
     {
-        require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
+    	global $conf;
 
-        $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
+        require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
         $conf->global->MAIN_SEARCHFORM_SOCIETE=0;
         $conf->global->MAIN_SEARCHFORM_CONTACT=0;
 
+        $res='ErrorBadParameterForMode';
+        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user);
+        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
+        
         return $res;
     }
 
