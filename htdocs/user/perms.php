@@ -385,6 +385,15 @@ if ($result)
 	        	print img_picto($langs->trans("Active"),'tick');
 	        	print '</td>';
 	        }
+	        else
+	        {
+	        	// Do not own permission
+	        	if ($caneditperms)
+	        	{
+	        		print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+	        	}
+	        	print '<td>&nbsp</td>';
+	        }
         }
         else
         {
