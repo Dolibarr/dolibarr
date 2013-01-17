@@ -822,7 +822,6 @@ class FormOther
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
-        	$langs->load("boxes");
         	foreach($boxactivated as $box)
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
@@ -862,6 +861,8 @@ class FormOther
 
         if ($nbboxactivated)
         {
+        	$langs->load("boxes");
+
         	$emptybox=new ModeleBoxes($db);
 
             print '<table width="100%" class="notopnoleftnoright">';

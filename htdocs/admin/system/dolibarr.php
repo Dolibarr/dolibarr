@@ -89,7 +89,7 @@ print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTheme").'</td><
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
 if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone)) print $conf->smart_menu;
-else print $conf->top_menu;
+else print $conf->standard_menu;
 print '</td></tr>'."\n";
 print '</table>';
 print '<br>';

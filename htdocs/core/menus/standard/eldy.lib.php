@@ -1474,7 +1474,6 @@ function dol_eldy_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
 {
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
-
 	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
 	if ($type_user && $menuentry['module'])
 	{
