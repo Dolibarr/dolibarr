@@ -316,8 +316,10 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot11.png`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/doc/images/dolibarr_screenshot12.png`;
 
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/document`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/documents`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
