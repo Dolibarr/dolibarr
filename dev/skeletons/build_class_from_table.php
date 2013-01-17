@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -120,7 +120,7 @@ else
 }
 //var_dump($property);
 
-// Define substitute select parameters
+// Define substitute fetch/select parameters
 $varpropselect="\n";
 $cleanparam='';
 $i=0;
@@ -313,7 +313,7 @@ foreach($property as $key => $prop)
 $targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".\$this->db->escape\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
 $targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".\$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
 
-// Substitute select parameters
+// Substitute fetch/select parameters
 $targetcontent=preg_replace('/\$sql\.= " t\.field1,";/', $varpropselect, $targetcontent);
 $targetcontent=preg_replace('/\$sql\.= " t\.field2";/', '', $targetcontent);
 
@@ -444,6 +444,10 @@ $targetcontent=preg_replace('/Put here some comments/','Initialy built by build_
 
 // Substitute table name
 $targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
+
+// Substitute fetch/select parameters
+$targetcontent=preg_replace('/\$sql\.= " t\.field1,";/', $varpropselect, $targetcontent);
+$targetcontent=preg_replace('/\$sql\.= " t\.field2";/', '', $targetcontent);
 
 // Build file
 $fp=fopen($outfile,"w");

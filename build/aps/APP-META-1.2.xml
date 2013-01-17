@@ -57,7 +57,7 @@ standalone software. Dolibarr is designed to provide simplicity to end-user.
 		<!-- Service presentation properties (step 7) -->
 		<license must-accept="false">
 			<text xml:lang="">
-				<name>GPLv2</name>
+				<name>GPL-3.0+</name>
 				<file>COPYING</file>
 			</text>
 		</license>

@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -237,12 +237,14 @@ $sql.= " AND b.box_id = bd.rowid";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
+dol_syslog("Search available boxes sql=".$sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$decalage=0;
+	$var=false;
 	while ($i < $num)
 	{
 		$var = ! $var;
@@ -314,7 +316,7 @@ if ($resql)
 }
 
 
-// Available boxes
+// Available boxes to activate
 $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
 print "<br>\n";

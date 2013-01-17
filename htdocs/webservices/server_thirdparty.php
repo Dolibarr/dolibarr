@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -506,7 +506,6 @@ function updateThirdParty($authentication,$thirdparty)
 		$error++; $errorcode='KO'; $errorlabel="Thirdparty id is mandatory.";
 	}
 
-
 	if (! $error)
 	{
 		$objectfound=false;
@@ -514,9 +513,9 @@ function updateThirdParty($authentication,$thirdparty)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object=new Societe($db);
-		$result=$object->fetch($id);
+		$result=$object->fetch($thirdparty['id']);
 		
-		if (!empty($thirdparty['id'])) {
+		if (!empty($object->id)) {
 			 
 			$objectfound=true;
 			
@@ -680,9 +679,5 @@ function getListOfThirdParties($authentication,$filterthirdparty)
     return $objectresp;
 }
 
-
-
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
-
-?>
