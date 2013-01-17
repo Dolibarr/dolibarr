@@ -233,7 +233,7 @@ $server->register(
 	// Entry values
 	array('authentication'=>'tns:authentication','thirdparty'=>'tns:thirdparty'),
 	// Exit values
-	array('result'=>'tns:result'),
+	array('result'=>'tns:result','id'=>'xsd:string'),
 	$ns,
 	$ns.'#updateThirdParty',
 	$styledoc,
@@ -580,7 +580,10 @@ function updateThirdParty($authentication,$thirdparty)
 		if ((! $error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id
+			);
 		}
 		elseif ($objectfound)
 		{
