@@ -226,7 +226,7 @@ $server->register(
 	// Entry values
 	array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
 	// Exit values
-	array('result'=>'tns:result'),
+	array('result'=>'tns:result','id'=>'xsd:string'),
 	$ns,
 	$ns.'#updateActionComm',
 	$styledoc,
@@ -563,7 +563,10 @@ function updateActionComm($authentication,$actioncomm)
 		if ((! $error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id
+			);
 		}
 		elseif ($objectfound)
 		{
