@@ -861,6 +861,8 @@ class FormOther
 
         if ($nbboxactivated)
         {
+        	$langs->load("boxes");
+
         	$emptybox=new ModeleBoxes($db);
 
             print '<table width="100%" class="notopnoleftnoright">';
