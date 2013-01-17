@@ -2,6 +2,15 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.4 compared to 3.3 *****
+For users:
+- New: Some performance enhancements
+
+For developers:
+
+For translators:
+
+
 
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
@@ -118,6 +127,9 @@ For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
 - New: Added bg_BG autotranslated language.
 - New: Translate the donation receipt.
+
+Dolibarr license has also been updated from GPLv2+ to GPLv3+.
+
 
 
 ***** ChangeLog for 3.2.3 compared to 3.2.2 *****

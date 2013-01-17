@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -378,7 +378,7 @@ class Menubase
      *
      * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (always '')
      * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
-     * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
+     * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
      * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return	array					Return array with menu entries for top menu
@@ -415,7 +415,7 @@ class Menubase
      * 	@param	array	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
      * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION["mainmenu"])
      * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
-     * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
+     * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
      * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return array    		       	Menu array for particular mainmenu value or full tabArray
@@ -425,11 +425,11 @@ class Menubase
         global $langs, $user, $conf; // To export to dol_eval function
         global $mainmenu,$leftmenu; // To export to dol_eval function
 
-        $mainmenu=$mymainmenu;  // To export to dol_eval function
-        $leftmenu=$myleftmenu;  // To export to dol_eval function
-
         // We initialize newmenu with first already found menu entries
         $this->newmenu = $newmenu;
+
+        $mainmenu=$mymainmenu;  // To export to dol_eval function
+        $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         // Load datas from database into $tabMenu, later we will complete this->newmenu with values into $tabMenu
         if (count($tabMenu) == 0)	// To avoid to read into database a second time
@@ -510,7 +510,7 @@ class Menubase
      *
      *  @param	string	$mymainmenu     Value for left that defined mainmenu
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
-     *  @param  int		$type_user      0=Internal,1=External,2=All
+     *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
      *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
@@ -530,9 +530,10 @@ class Menubase
         $sql.= " AND m.menu_handler IN ('".$menu_handler."','all')";
         if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
-        // If type_user == 2, no test required
         $sql.= " ORDER BY m.position, m.rowid";
 
+//$tmp1=dol_microtime_float();
+//print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)." sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -567,11 +568,14 @@ class Menubase
                 // Define $title
                 if ($enabled)
                 {
-                    $title = $langs->trans($menu['titre']);
+//$tmp3=dol_microtime_float();
+//print '>>> 2 '.($tmp3 - $tmp1).'<br>';
+                	$title = $langs->trans($menu['titre']);
                     if ($title == $menu['titre'])   // Translation not found
                     {
                         if (! empty($menu['langs']))    // If there is a dedicated translation file
                         {
+                        	//print 'Load file '.$menu['langs'].'<br>';
                             $langs->load($menu['langs']);
                         }
 
@@ -580,7 +584,7 @@ class Menubase
                             $tab_titre = explode("/",$menu['titre']);
                             $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
                         }
-                        else if (preg_match('/\|\|/',$menu['titre'])) // To manage different translation
+                        else if (preg_match('/\|\|/',$menu['titre'])) // To manage different translation (Title||AltTitle@ConditionForAltTitle)
                         {
                         	$tab_title = explode("||",$menu['titre']);
                         	$alt_title = explode("@",$tab_title[1]);
@@ -592,7 +596,9 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-
+//$tmp4=dol_microtime_float();
+//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+                    
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
                     $tabMenu[$b]['module']      = $menu['module'];
@@ -614,10 +620,10 @@ class Menubase
                     $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
                     $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
                     $tabMenu[$b]['position']    = $menu['position'];
-
+                    
                     $b++;
                 }
-
+                
                 $a++;
             }
             $this->db->free($resql);
