@@ -48,7 +48,7 @@ class Conf
 	public $theme;        // Contains current theme ("eldy", "auguria", ...)
 	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handlers
-	public $top_menu;
+	public $standard_menu;
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
