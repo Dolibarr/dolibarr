@@ -571,7 +571,7 @@ function updateThirdParty($authentication,$thirdparty)
 	
 			$db->begin();
 	
-			$result=$object->update($fuser);
+			$result=$object->update($thirdparty['id'],$fuser);
 			if ($result <= 0) {
 				$error++;
 			}
