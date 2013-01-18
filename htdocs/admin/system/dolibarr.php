@@ -217,11 +217,11 @@ print '<br>';
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters=array(
 		'dolibarr_main_url_root' => $langs->trans("URLRoot"),
-		'dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
+		'?dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
 		'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
-		'dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
+		'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
 		'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
-		'separator' => '',
+		'separator1' => '',
 		'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
 		'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
 		'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
@@ -231,7 +231,7 @@ $configfileparameters=array(
 		'dolibarr_main_db_character_set' => $langs->trans("DBStoringCharset"),
 		'dolibarr_main_db_collation' => $langs->trans("DBSortingCollation"),
 		'?dolibarr_main_db_prefix' => $langs->trans("Prefix"),
-		'separator' => '',
+		'separator2' => '',
 		'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
 		'separator'=> '',
 		'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
@@ -242,7 +242,7 @@ $configfileparameters=array(
 		'?dolibarr_main_auth_ldap_admin_login' => 'dolibarr_main_auth_ldap_admin_login',
 		'?dolibarr_main_auth_ldap_admin_pass' => 'dolibarr_main_auth_ldap_admin_pass',
 		'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
-		'separator' => '',
+		'separator3' => '',
 		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
 		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 		'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
@@ -258,7 +258,8 @@ $configfileparameters=array(
 		'?dolibarr_js_JQUERY_FLOT' => 'dolibarr_js_JQUERY_FLOT',
 		'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
-		'separator' => '',
+		'separator4' => '',
+		'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
 		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 		'?dolibarr_strict_mode' => 'Strict mode is on/off',
 		'?dolibarr_pdf_force_fpdf' => 'Force fpdf usage to generate PDF'
@@ -278,19 +279,16 @@ foreach($configfileparameters as $key => $value)
 {
 	$ignore=0;
 
-	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore=1;
-	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore=1;
-
 	if (empty($ignore))
 	{
 		$newkey = preg_replace('/^\?/','',$key);
 
 		if (preg_match('/^\?/',$key) && empty(${$newkey})) continue;    // We discard parametes starting with ?
-		if ($newkey == 'separator' && $lastkeyshown == 'separator') continue;
+		if (strpos($newkey, 'separator') !== false && $lastkeyshown == 'separator') continue;
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		if ($newkey == 'separator')
+		if (strpos($newkey, 'separator') !== false)
 		{
 			print '<td colspan="3">&nbsp;</td>';
 		}
