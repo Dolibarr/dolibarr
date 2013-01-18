@@ -55,7 +55,7 @@ class box_activity extends ModeleBoxes
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
 
-		// Disabled by default because, still has some bug (pgsl support, filters) and slow down seriously Dolibarr
+		// Disabled by default because, still has some bug (pgsl support, filters, getCurrencySymbol us a cache into a form object not defined, ...) and slow down seriously Dolibarr
 		$this->enabled = (! empty($conf->global->MAIN_FEATURES_LEVEL) || ! empty($conf->global->MAIN_BOX_ACTIVITY_ENABLED));
 	}
 
