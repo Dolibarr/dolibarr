@@ -217,6 +217,26 @@ class DateLibTest extends PHPUnit_Framework_TestCase
        	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('1970-01-01 00:00:00',$result);
 
+    	// Check %Y-%m-%d %H:%M:%S format
+    	$result=dol_print_date(16725225600,'%Y-%m-%d %H:%M:%S',true);	// http://www.epochconverter.com/
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('2500-01-01 00:00:00',$result);
+
+    	// Check %Y-%m-%d %H:%M:%S format
+    	$result=dol_print_date(-1830384000,'%Y-%m-%d %H:%M:%S',true);	// http://www.epochconverter.com/
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('1912-01-01 00:00:00',$result);	// dol_print_date use TZ (good) but epoch converter does not use it.
+
+    	// Check %Y-%m-%d %H:%M:%S format
+    	$result=dol_print_date(-11676096000,'%Y-%m-%d %H:%M:%S',true);	// http://www.epochconverter.com/
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('1600-01-01 00:00:00',$result);
+
+    	// test with negative timezone
+    	$result=dol_print_date(-1,'%Y-%m-%d %H:%M:%S',true);	// http://www.epochconverter.com/
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('1969-12-31 23:59:59',$result);
+
     	// Check dayhour format for fr_FR
     	$outputlangs=new Translate('',$conf);
     	$outputlangs->setDefaultLang('fr_FR');
