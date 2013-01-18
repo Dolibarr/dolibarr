@@ -88,7 +88,7 @@ function getServerTimeZoneInt($refgmtdate='now')
         // Method 1 (include daylight)
         $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
         if ($refgmtdate == 'now') $newrefgmtdate=$yearref.'-'.$monthref.'-'.$dayref;
-        elseif ($refgmtdate == 'summer') $newrefgmtdate=$yearref.'-05-15';
+        elseif ($refgmtdate == 'summer') $newrefgmtdate=$yearref.'-08-01';
         else $newrefgmtdate=$yearref.'-01-01';
         $localtz = new DateTimeZone(getServerTimeZoneString());
         $localdt = new DateTime($newrefgmtdate, $localtz);
@@ -773,7 +773,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
 	global $langs;
 
 	dol_syslog('num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday);
-	
+
 	// Check parameters
 	if (! is_int($timestampStart) && ! is_float($timestampStart)) return 'ErrorBadParameter_num_open_day';
 	if (! is_int($timestampEnd) && ! is_float($timestampEnd)) return 'ErrorBadParameter_num_open_day';
