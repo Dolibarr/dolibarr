@@ -562,7 +562,7 @@ function updateThirdParty($authentication,$thirdparty)
 			//Retreive all extrafield for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('company');
+			$extralabels=$extrafields->fetch_name_optionals_label('company',true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
