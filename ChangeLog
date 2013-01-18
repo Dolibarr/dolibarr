@@ -114,6 +114,7 @@ For developers:
 - New: Add PRODUCT_PRICE_MODIFY trigger.
 - New: Created function to retrieve total amount of discount of an invoice/proposal...
 - New: We can use a dynamic value ($conf->global->XXX for example) into titles of menus.
+- New: Use PHP classes DateTime* for some data functions instead of adodb 
 - Qual: Renamed SUPPLIER_INVOICE_BUILDDOC trigger to BILL_SUPPLIER_BUILDDOC
 - Qual: Renamed INVOICE_SUPPLIER_DELETE trigger to BILL_SUPPLIER_DELETE
 - Qual: Renamed SUPLIER_ORDER_BUILDDOC trigger to ORDER_SUPPLIER_BUILDDOC
