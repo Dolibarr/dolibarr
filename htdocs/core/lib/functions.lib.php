@@ -707,6 +707,23 @@ function dol_format_address($object)
 }
 
 
+
+/**
+ *	Format a string.
+ *
+ *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
+ *  @param	int		$ts			Timesamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
+ *  @param	int		$is_gmt		See comment of timestamp parameter
+ *	@return	string				A formatted string
+ */
+function dol_strftime($fmt, $ts=false, $is_gmt=false)
+{
+	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
+		return ($is_gmt)? @gmstrftime($fmt,$ts): @strftime($fmt,$ts);
+	}
+	else return 'Error date into a not supported range';
+}
+
 /**
  *	Output date in a string format according to outputlangs (or langs if not defined).
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
@@ -717,7 +734,7 @@ function dol_format_address($object)
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc"
- * 	@param	string		$tzoutput		true=output or 'gmt' => string is for Greenwich location
+ * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for local browser TZ usage
  *	@param	Tranlsate	$outputlangs	Object lang that contains language for text translation.
@@ -4202,37 +4219,6 @@ function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
 	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
-}
-
-/**
- *	Convert a currency code into its symbol
- *
- *  @param		string	$currency_code		Currency code
- *  @return		string						Currency symbol encoded into UTF8
- */
-function getCurrencySymbol($currency_code)
-{
-	global $db, $form;
-
-	$currency_sign = '';
-
-	if (! is_object($form)) $form = new Form($db);
-
-	$form->load_cache_currencies();
-
-	if (function_exists("mb_convert_encoding") && isset($form->cache_currencies[$currency_code]) && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
-	{
-		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
-		{
-			$currency_sign .= mb_convert_encoding("&#{$unicode};", "UTF-8", 'HTML-ENTITIES');
-		}
-	}
-	else
-	{
-		$currency_sign = $currency_code;
-	}
-
-	return $currency_sign;
 }
 
 

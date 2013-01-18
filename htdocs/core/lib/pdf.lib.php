@@ -1411,38 +1411,6 @@ function pdf_getTotalQty($object,$type,$outputlangs,$hookmanager=false)
 }
 
 /**
- *	Convert a currency code into its symbol
- *
- *  @param      PDF		&$pdf          		PDF object
- *  @param		string	$currency_code		Currency code
- *  @return		string						Currency symbol encoded into UTF8
- */
-function pdf_getCurrencySymbol(&$pdf, $currency_code)
-{
-	global $db, $form;
-
-	$currency_sign = '';
-
-	if (! is_object($form)) $form = new Form($db);
-
-	$form->load_cache_currencies();
-
-	if (is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
-	{
-		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
-		{
-			$currency_sign.= $pdf->unichr($unicode);
-		}
-	}
-	else
-	{
-		$currency_sign = $currency_code;
-	}
-
-	return $currency_sign;
-}
-
-/**
  * 	Return linked objects
  *
  * 	@param	object		$object			Object

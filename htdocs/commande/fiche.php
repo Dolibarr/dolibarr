@@ -681,7 +681,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').getCurrencySymbol($conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
 			setEventMessage($mesg, 'errors');
 		}
 		else
@@ -799,7 +799,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).getCurrencySymbol($conf->currency), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).$langs->getCurrencySymbol($conf->currency), 'errors');
 			$error++;
 		}
 	}

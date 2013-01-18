@@ -33,7 +33,7 @@ class InfoBox
      *  @param	DoliDB	$db				Database handler
      *  @param	string	$mode			'available' or 'activated'
      *  @param	string	$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
-     *  @param  User    $user	  		Objet user to filter
+     *  @param  User    $user	  		Object user to filter
      *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @return array               	Array of boxes
      */

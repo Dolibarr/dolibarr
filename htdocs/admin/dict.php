@@ -138,7 +138,7 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, p.code as pays_code, p.libelle as pays, a.fk_pays as pays_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
-$tabsql[9] = "SELECT code_iso as code, label as libelle, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
@@ -165,7 +165,7 @@ $tabsqlsort[5] ="libelle ASC";
 $tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] ="pays ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
-$tabsqlsort[9] ="libelle ASC";
+$tabsqlsort[9] ="label ASC";
 $tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
 $tabsqlsort[12]="sortorder ASC, code ASC";
@@ -192,7 +192,7 @@ $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,pays_id,pays,accountancy_code,deductible";
 $tabfield[8] = "code,libelle";
-$tabfield[9] = "code,libelle,unicode";
+$tabfield[9] = "code,label,unicode";
 $tabfield[10]= "pays_id,pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -219,7 +219,7 @@ $tabfieldvalue[5] = "code,libelle";
 $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,pays,accountancy_code,deductible";
 $tabfieldvalue[8] = "code,libelle";
-$tabfieldvalue[9] = "code,libelle,unicode";
+$tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10]= "pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -961,7 +961,7 @@ if ($id)
                                 $key=$langs->trans("Action".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Action".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if (! empty($obj->code_iso) && $fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_currencies') {
+                            else if (! empty($obj->code_iso) && $fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_currencies') {
                                 $key=$langs->trans("Currency".strtoupper($obj->code_iso));
                                 $valuetoshow=($obj->code_iso && $key != "Currency".strtoupper($obj->code_iso)?$key:$obj->$fieldlist[$field]);
                             }
@@ -1020,7 +1020,7 @@ if ($id)
                                 $showfield=0;
                             }
                             else if ($fieldlist[$field]=='unicode') {
-                            	$valuetoshow = getCurrencySymbol($obj->code);
+                            	$valuetoshow = $langs->getCurrencySymbol($obj->code,1);
                             }
 
                             else if (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format'))

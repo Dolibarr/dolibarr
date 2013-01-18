@@ -809,19 +809,19 @@ class FormOther
         include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
         $confuserzone='MAIN_BOXES_'.$areacode;
-        
-        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of user (or everybody if user has no specific setup)
-         
+
+        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
         $boxidactivatedforuser=array();
-        foreach($boxactivated as $box) 
+        foreach($boxactivated as $box)
         {
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
-        
+
         $selectboxlist='';
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
+        	$langs->load("boxes");	// Load label of boxes
         	foreach($boxactivated as $box)
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user

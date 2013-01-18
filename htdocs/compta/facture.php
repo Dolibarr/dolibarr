@@ -738,7 +738,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
     		$error++;
             setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
     	}
-    	
+
         $datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         if (empty($datefacture))
         {
@@ -1136,7 +1136,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 
         if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
         {
-        	$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').getCurrencySymbol($conf->currency));
+        	$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
 			setEventMessage($mesg, 'errors');
         }
         else
@@ -1259,7 +1259,7 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
 
         if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
         {
-        	setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).getCurrencySymbol($conf->currency), 'errors');
+        	setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).$langs->getCurrencySymbol($conf->currency), 'errors');
         	$error++;
         }
     }
@@ -1934,7 +1934,7 @@ if ($action == 'create')
         print $desc;
         print '</td></tr>'."\n";
     }
-    
+
 	if ($socid>0)
 	{
 	    // Replacement
@@ -1960,7 +1960,7 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
-	
+
 	    // Credit note
 	    print '<tr height="18"><td valign="middle">';
 	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
@@ -1988,7 +1988,7 @@ if ($action == 'create')
 	}
 	print '</table>';
 	print '</td></tr>';
-	
+
 	if($socid>0)
 	{
 		// Discounts for third party
@@ -2004,7 +2004,7 @@ if ($action == 'create')
 		print '.';
 		print '</td></tr>';
 	}
-	
+
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
     $form->select_date($dateinvoice,'','','','',"add",1,1);

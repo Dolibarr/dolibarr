@@ -674,7 +674,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
     print currency_name($conf->currency,1);
-    print ' ('.getCurrencySymbol($conf->currency).')';
+    print ' ('.$langs->getCurrencySymbol($conf->currency).')';
     print '</td></tr>';
 
     $var=!$var;
