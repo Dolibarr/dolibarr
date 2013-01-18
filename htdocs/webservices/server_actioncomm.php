@@ -545,11 +545,11 @@ function updateActionComm($authentication,$actioncomm)
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
-				$newobject->array_options[$key]=$actioncomm[$key];
+				$object->array_options[$key]=$actioncomm[$key];
 			}
 	
 			$db->begin();
