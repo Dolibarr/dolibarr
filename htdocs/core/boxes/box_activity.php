@@ -37,7 +37,7 @@ class box_activity extends ModeleBoxes
 	var $db;
 	var $param;
 	var $enabled = 1;
-	
+
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
@@ -54,8 +54,8 @@ class box_activity extends ModeleBoxes
 		$langs->load("orders");
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
-		
-		// Disabled by default because, still has some bug (pgsl support, filters) and slow down seriously Dolibarr 
+
+		// Disabled by default because, still has some bug (pgsl support, filters) and slow down seriously Dolibarr
 		$this->enabled = (! empty($conf->global->MAIN_FEATURES_LEVEL) || ! empty($conf->global->MAIN_BOX_ACTIVITY_ENABLED));
 	}
 
@@ -154,9 +154,9 @@ class box_activity extends ModeleBoxes
 			$sql.= " AND c.fk_soc = s.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " AND c.datec between '".$db->idate(dol_get_first_day(date("Y"),1,1))."' AND '".$db->idate(dol_get_last_day(date("Y"),12,1))."'";
+			$sql.= " AND c.date_commande between '".$db->idate(dol_get_first_day(date("Y"),1,1))."' AND '".$db->idate(dol_get_last_day(date("Y"),12,1))."'";
 			$sql.= " AND c.facture=0";
-			$sql.= " GROUP BY c.fk_statut";
+			$sql.= " GROUP BY c.fk_statut,c.facture";
 			$sql.= " ORDER BY c.fk_statut DESC";
 
 			$result = $db->query($sql);
