@@ -104,10 +104,13 @@ print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sor
 $savehandler=ini_get("session.save_handler");
 $savepath=ini_get("session.save_path");
 $openbasedir=ini_get("open_basedir");
+$phparray=phpinfo_array();
+$suhosin=empty($phparray['suhosin']["suhosin.session.encrypt"]["local"])?'':$phparray['suhosin']["suhosin.session.encrypt"]["local"];
 
 print '<b>'.$langs->trans("SessionSaveHandler").'</b>: '.$savehandler.'<br>';
 print '<b>'.$langs->trans("SessionSavePath").'</b>: '.$savepath.'<br>';
 if ($openbasedir) print '<b>'.$langs->trans("OpenBaseDir").'</b>: '.$openbasedir.'<br>';
+if ($suhosin) print '<b>'.$langs->trans("SuhosinSessionEncrypt").'</b>: '.$suhosin.'<br>';
 print '<br>';
 
 if ($action == 'purge')
