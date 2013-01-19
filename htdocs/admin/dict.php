@@ -767,7 +767,7 @@ if ($id)
         // Line to type new values
         print "<tr ".$bc[$var].">";
 
-        $obj = (object) array();
+        $obj = new stdClass();
         // If data was already input, we define them in obj to populate input fields.
         if (GETPOST('actionadd'))
         {

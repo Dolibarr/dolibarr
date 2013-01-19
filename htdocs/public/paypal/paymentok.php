@@ -136,7 +136,7 @@ if ($PAYPALTOKEN)
         $ack = strtoupper($resArray["ACK"]);
         if($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
         {
-        	$object = (object) 'paypal';
+        	$object = new stdClass();
 
         	$object->source		= $source;
         	$object->ref		= $ref;

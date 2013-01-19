@@ -177,7 +177,7 @@ function paypaladmin_prepare_head()
 	$head[$h][2] = 'paypalaccount';
 	$h++;
 
-	$object=(object) array();
+	$object=new stdClass();
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

@@ -74,32 +74,32 @@ class Conf
 	function __construct()
 	{
 		// Avoid warnings when filling this->xxx
-		$this->file				= (object) array();
-		$this->db				= (object) array();
-		$this->global			= (object) array();
-		$this->mycompany		= (object) array();
-		$this->admin			= (object) array();
-		$this->user				= (object) array();
-		$this->syslog			= (object) array();
-		$this->browser			= (object) array();
-		$this->multicompany		= (object) array();
+		$this->file				= new stdClass();
+		$this->db				= new stdClass();
+		$this->global			= new stdClass();
+		$this->mycompany		= new stdClass();
+		$this->admin			= new stdClass();
+		$this->user				= new stdClass();
+		$this->syslog			= new stdClass();
+		$this->browser			= new stdClass();
+		$this->multicompany		= new stdClass();
 
 		// First level object
-		$this->expedition_bon	= (object) array();
-		$this->livraison_bon	= (object) array();
-		$this->fournisseur		= (object) array();
-		$this->product			= (object) array();
-		$this->service			= (object) array();
-		$this->contrat			= (object) array();
-		$this->actions			= (object) array();
-		$this->commande			= (object) array();
-		$this->propal			= (object) array();
-		$this->facture			= (object) array();
-		$this->contrat			= (object) array();
-		$this->adherent			= (object) array();
-		$this->bank				= (object) array();
-		$this->notification		= (object) array();
-		$this->mailing			= (object) array();
+		$this->expedition_bon	= new stdClass();
+		$this->livraison_bon	= new stdClass();
+		$this->fournisseur		= new stdClass();
+		$this->product			= new stdClass();
+		$this->service			= new stdClass();
+		$this->contrat			= new stdClass();
+		$this->actions			= new stdClass();
+		$this->commande			= new stdClass();
+		$this->propal			= new stdClass();
+		$this->facture			= new stdClass();
+		$this->contrat			= new stdClass();
+		$this->adherent			= new stdClass();
+		$this->bank				= new stdClass();
+		$this->notification		= new stdClass();
+		$this->mailing			= new stdClass();
 
 		//! Charset for HTML output and for storing data in memory
 		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
@@ -179,7 +179,7 @@ class Conf
 						{
 							$modulename=strtolower($reg[1]);
 							if ($modulename == 'propale') $modulename='propal';
-							if (! isset($this->$modulename) || ! is_object($this->$modulename)) $this->$modulename=(object) array();
+							if (! isset($this->$modulename) || ! is_object($this->$modulename)) $this->$modulename=new stdClass();
 							$this->$modulename->enabled=true;
 							$this->modules[]=$modulename;              // Add this module in list of enabled modules
 						}
@@ -202,20 +202,20 @@ class Conf
 		}
 
 		// Second or others levels object
-		$this->propal->cloture				= (object) array();
-		$this->propal->facturation			= (object) array();
-		$this->commande->client				= (object) array();
-		$this->commande->fournisseur		= (object) array();
-		$this->facture->client				= (object) array();
-		$this->facture->fournisseur			= (object) array();
-		$this->fournisseur->commande 		= (object) array();
-		$this->fournisseur->facture			= (object) array();
-		$this->contrat->services			= (object) array();
-		$this->contrat->services->inactifs	= (object) array();
-		$this->contrat->services->expires	= (object) array();
-		$this->adherent->cotisation			= (object) array();
-		$this->bank->rappro					= (object) array();
-		$this->bank->cheque					= (object) array();
+		$this->propal->cloture				= new stdClass();
+		$this->propal->facturation			= new stdClass();
+		$this->commande->client				= new stdClass();
+		$this->commande->fournisseur		= new stdClass();
+		$this->facture->client				= new stdClass();
+		$this->facture->fournisseur			= new stdClass();
+		$this->fournisseur->commande 		= new stdClass();
+		$this->fournisseur->facture			= new stdClass();
+		$this->contrat->services			= new stdClass();
+		$this->contrat->services->inactifs	= new stdClass();
+		$this->contrat->services->expires	= new stdClass();
+		$this->adherent->cotisation			= new stdClass();
+		$this->bank->rappro					= new stdClass();
+		$this->bank->cheque					= new stdClass();
 
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";
