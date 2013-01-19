@@ -66,7 +66,7 @@ $demoprofiles=array(
 
 $tmpaction = 'view';
 $parameters=array();
-$object=(object) 'nothing';
+$object=new stdClass();
 $reshook=$hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 

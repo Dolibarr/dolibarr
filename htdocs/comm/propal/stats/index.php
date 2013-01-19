@@ -212,7 +212,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$object=(object) array(); // TODO $object not defined ?
+$object=new stdClass(); // TODO $object not defined ?
 complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_stats');
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));

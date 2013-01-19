@@ -385,7 +385,7 @@ function agenda_prepare_head()
 	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda_admin');
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
@@ -455,7 +455,7 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'card';
     $h++;
 
-	$object=(object) array();
+	$object=new stdClass();
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
