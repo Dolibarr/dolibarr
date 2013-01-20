@@ -23,7 +23,7 @@ create table llx_product_price_by_qty
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_product_price	integer NOT NULL,
-  date_price		timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  date_price		timestamp NOT NULL,
   price				double(24,8) DEFAULT 0,
   quantity			double DEFAULT NULL,
   remise_percent	double NOT NULL DEFAULT 0,

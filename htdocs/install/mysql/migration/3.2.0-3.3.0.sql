@@ -192,14 +192,14 @@ ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_fin (date_fin);
 
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'userGroup', NULL);
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'lastUpdate', NULL);
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbUser', NULL);
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'delayForRequest', '31');
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidatorDelay', '0');
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidatorSolde', '0');
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDeducted', '1');
-INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.08334');
+INSERT INTO llx_holiday_config (name ,value) VALUES ('userGroup', NULL);
+INSERT INTO llx_holiday_config (name ,value) VALUES ('lastUpdate', NULL);
+INSERT INTO llx_holiday_config (name ,value) VALUES ('nbUser', NULL);
+INSERT INTO llx_holiday_config (name ,value) VALUES ('delayForRequest', '31');
+INSERT INTO llx_holiday_config (name ,value) VALUES ('AlertValidatorDelay', '0');
+INSERT INTO llx_holiday_config (name ,value) VALUES ('AlertValidatorSolde', '0');
+INSERT INTO llx_holiday_config (name ,value) VALUES ('nbHolidayDeducted', '1');
+INSERT INTO llx_holiday_config (name ,value) VALUES ('nbHolidayEveryMonth', '2.08334');
 
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (80, 'agenda',  'internal', 'ACTOR', 'Responsable', 1);
@@ -838,26 +838,32 @@ CREATE TABLE llx_product_price_by_qty
   qty_min		real DEFAULT 0
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_price ADD COLUMN price_by_qty INT NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_price ADD COLUMN price_by_qty integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, qty_min);
-
 ALTER TABLE llx_product_price_by_qty ADD INDEX idx_product_price_by_qty_fk_product_price (fk_product_price);
-
 ALTER TABLE llx_product_price_by_qty ADD CONSTRAINT fk_product_price_by_qty_fk_product_price FOREIGN KEY (fk_product_price) REFERENCES llx_product_price (rowid);
 
-ALTER TABLE `llx_product_price_by_qty` ADD `remise_percent` DOUBLE NOT NULL DEFAULT '0' AFTER `price_ttc` ,
-ADD `remise` DOUBLE NOT NULL DEFAULT '0' AFTER `remise_percent`;
+ALTER TABLE llx_product_price_by_qty ADD remise_percent DOUBLE NOT NULL DEFAULT '0' AFTER price_ttc;
+ALTER TABLE llx_product_price_by_qty ADD remise DOUBLE NOT NULL DEFAULT '0' AFTER remise_percent;
 
 -- Change index name to be compliant with SQL standard, index name must be unique in database schema
-ALTER TABLE llx_c_actioncomm DROP INDEX code, ADD UNIQUE uk_c_actioncomm (code);
-ALTER TABLE llx_c_civilite DROP INDEX code, ADD UNIQUE uk_c_civilite (code);
-ALTER TABLE llx_c_propalst DROP INDEX code, ADD UNIQUE uk_c_propalst (code);
-ALTER TABLE llx_c_stcomm DROP INDEX code, ADD UNIQUE uk_c_stcomm (code);
-ALTER TABLE llx_c_type_fees DROP INDEX code, ADD UNIQUE uk_c_type_fees (code);
-ALTER TABLE llx_c_typent DROP INDEX code, ADD UNIQUE uk_c_typent (code);
-ALTER TABLE llx_c_effectif DROP INDEX code, ADD UNIQUE uk_c_effectif (code);
-ALTER TABLE llx_c_paiement DROP INDEX code, ADD UNIQUE uk_c_paiement (code);
+ALTER TABLE llx_c_actioncomm DROP INDEX code;
+ALTER TABLE llx_c_actioncomm ADD UNIQUE INDEX uk_c_actioncomm(code);
+ALTER TABLE llx_c_civilite DROP INDEX code;
+ALTER TABLE llx_c_civilite ADD UNIQUE INDEX uk_c_civilite(code);
+ALTER TABLE llx_c_propalst DROP INDEX code;
+ALTER TABLE llx_c_propalst ADD UNIQUE INDEX uk_c_propalst(code);
+ALTER TABLE llx_c_stcomm DROP INDEX code;
+ALTER TABLE llx_c_stcomm ADD UNIQUE INDEX uk_c_stcomm(code);
+ALTER TABLE llx_c_type_fees DROP INDEX code;
+ALTER TABLE llx_c_type_fees ADD UNIQUE INDEX uk_c_type_fees(code);
+ALTER TABLE llx_c_typent DROP INDEX code;
+ALTER TABLE llx_c_typent ADD UNIQUE INDEX uk_c_typent(code);
+ALTER TABLE llx_c_effectif DROP INDEX code;
+ALTER TABLE llx_c_effectif ADD UNIQUE INDEX uk_c_effectif(code);
+ALTER TABLE llx_c_paiement DROP INDEX code;
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(code);
 
 delete from llx_c_actioncomm where id = 40;
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, position) values ( 40, 'AC_OTH_AUTO','systemauto', 'Other (automatically inserted events)' ,NULL, 20);
