@@ -61,7 +61,7 @@ if (! empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
 	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 print '<br>';
 print '<br>';
@@ -72,7 +72,7 @@ if (count($conf->modules) <= 1)	// If only user module enabled
 {
 	$langs->load("errors");
 	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 print '<br>';
 print '<br>';
