@@ -109,6 +109,7 @@ $server->wsdl->addComplexType(
         'pass_indatabase_crypted' => array('name'=>'pass_indatabase_crypted','type'=>'xsd:string'),
         'datec' => array('name'=>'datec','type'=>'xsd:dateTime'),
         'datem' => array('name'=>'datem','type'=>'xsd:dateTime'),
+        'societe_id' => array('name'=>'societe_id','type'=>'xsd:string'),
         'fk_socpeople' => array('name'=>'fk_socpeople','type'=>'xsd:string'),
         'fk_member' => array('name'=>'fk_member','type'=>'xsd:string'),
         'datelastlogin' => array('name'=>'datelastlogin','type'=>'xsd:dateTime'),
