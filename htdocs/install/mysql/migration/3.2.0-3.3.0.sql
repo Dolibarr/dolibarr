@@ -838,7 +838,7 @@ CREATE TABLE llx_product_price_by_qty
   qty_min		real DEFAULT 0
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_price ADD COLUMN price_by_qty INT NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_price ADD COLUMN price_by_qty integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, qty_min);
 ALTER TABLE llx_product_price_by_qty ADD INDEX idx_product_price_by_qty_fk_product_price (fk_product_price);
