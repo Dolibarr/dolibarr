@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -140,7 +140,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 							if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 							if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-							if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+							if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 							{
 								$file_list[] = array(
 										"name" => $file,
@@ -164,7 +164,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
 						if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
 
-						if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+						if (! $filter || preg_match('/'.$filter.'/i',$file))	// We do not search key $filter into $path, only into $file
 						{
 							$file_list[] = array(
 									"name" => $file,

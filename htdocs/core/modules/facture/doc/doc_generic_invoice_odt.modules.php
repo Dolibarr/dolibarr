@@ -4,7 +4,7 @@
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -124,7 +124,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
             'object_total_vat'=>price($object->total_tva,0,$outputlangs),
             'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-            'object_total_discount' => price($object->getTotalDiscount(), 0, $outputlangs),
+            'object_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
             'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,

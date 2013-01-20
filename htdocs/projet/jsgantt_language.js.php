@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -48,7 +48,7 @@ i18n["sDay"]= "<?php echo $langs->transnoentities("Day") ?>";
 i18n["sDays"]= "<?php echo $langs->transnoentities("Days") ?>";
 i18n["sWeek"] = "<?php echo $langs->transnoentities("Week") ?>";
 i18n["sMonth"] = "<?php echo $langs->transnoentities("Month") ?>";
-i18n["sQuarter"] = "<?php echo $langs->transnoentities("Quarter") ?>";
+i18n["sQuarter"] = "<?php echo $langs->transnoentities("Quadri") ?>";
 i18n["View"] = "<?php echo $langs->transnoentities("View") ?>";
 i18n["Resource"] = "<?php echo $langs->transnoentities("Resources") ?>";
 i18n["Duration"] = "<?php echo $langs->transnoentities("Duration") ?>";

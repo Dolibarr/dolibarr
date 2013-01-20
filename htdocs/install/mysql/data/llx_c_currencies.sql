@@ -9,7 +9,7 @@
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation; either version 3 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
@@ -85,6 +85,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ILS'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'JMD', '[74,36]', 1,				'Jamaica Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'JPY', '[165]', 1,				'Japan Yen');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'JEP', '[163]', 1,				'Jersey Pound');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KES', NULL, 1,				'Kenya Shilling');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KZT', '[1083,1074]', 1,			'Kazakhstan Tenge');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KPW', '[8361]', 1,				'Korea (North) Won');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KRW', '[8361]', 1,				'Korea (South) Won');

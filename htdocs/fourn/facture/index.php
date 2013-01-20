@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -57,7 +57,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="fac.datef";
+if (! $sortfield) $sortfield="fac.datef,fac.rowid";
 
 $month    = GETPOST('month','int');
 $year     = GETPOST('year','int');
@@ -126,7 +126,7 @@ if (GETPOST('filtre'))
 
 if (GETPOST("search_ref"))
 {
-	$sql .= " AND fac.rowid LIKE '%".$db->escape(GETPOST("search_ref"))."%'";
+	$sql .= " AND fac.rowid = ".$db->escape(GETPOST("search_ref"));
 }
 if (GETPOST("search_ref_supplier"))
 {
@@ -193,7 +193,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"facnumber","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fac.datef","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fac.datef,fac.rowid","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"fac.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"fac.libelle","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);

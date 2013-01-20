@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
+- New: Add holiday module, to declare and follow holidays of your employees.
+- New: Add margin management module.
+- New: Add new theme Amarok.
 - New: [ task #289 ] Can reorder tasks.
 - New: Add field "signature" into user card. If filled, text is added 
        at end of predefined email texts. If option MAIN_MAIL_DO_NOT_USE_SIGN is on, this
@@ -57,7 +60,7 @@ For users:
 - New: [ task #210 ] Can choose cash account during POS login.
 - New: [ task #104 ] Can create an invoice from several orders.
 - New: Update libs/tools/logo for DoliWamp (now use PHP 5.3).
-- New: Added ODT Template tag {object_total_discount}
+- New: Added ODT Template tag {object_total_discount_ht}
 - New: Add new import options: Third parties bank details, warehouses and stocks, categories and suppliers prices
 - New: English bank account need a bank code (called sort code) to identify an account. 
 - New: Can choose menu entry to show with external site module.
@@ -70,20 +73,18 @@ For users:
 - New: [ task #559 ] Can define a discount % regarding quantity in supplier prices and price by quantity in customer prices
 - New: [ task #527 ] After cloning a suplier invoice, go onto invoice ref into edit mode
 
-New experimental modules:
-- New: Add margin management module.
+New experimental module:
 - New: Add commissions management module.
 
-
 - Fix: [ bug #499 ] Supplier order input method not translated
-- Fix: No images into product description lines as PDF generation does
-  not work with this.
+- Fix: No images into product description lines as PDF generation does not work with this.
 - Fix: Errors weren't being shown in customer's & supplier's orders
 - Fix: Lastname wasn't being recorded in xinputuser emailing module.
 - Fix: [ bug #653 ] Error while creating agenda additional attributes
 - Fix: [ bug #654 ] Event rapport PDF showing ActionAC_OTH_AUTO
 - Fix: [ bug #658 ] Search on bank do not work for description
 - Fix: [ bug #659 ] Comment in recurrent invoices is not stored
+- Fix: [ bug #622 ] Attaching wrong file when sending the invoice via e-mail
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
@@ -104,6 +105,7 @@ For developers:
 - New: Add PRODUCT_PRICE_MODIFY trigger.
 - New: Created function to retrieve total amount of discount of an invoice/proposal...
 - New: We can use a dynamic value ($conf->global->XXX for example) into titles of menus.
+- New: Use PHP classes DateTime* for some data functions instead of adodb 
 - Qual: Renamed SUPPLIER_INVOICE_BUILDDOC trigger to BILL_SUPPLIER_BUILDDOC
 - Qual: Renamed INVOICE_SUPPLIER_DELETE trigger to BILL_SUPPLIER_DELETE
 - Qual: Renamed SUPLIER_ORDER_BUILDDOC trigger to ORDER_SUPPLIER_BUILDDOC
@@ -117,6 +119,9 @@ For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
 - New: Added bg_BG autotranslated language.
 - New: Translate the donation receipt.
+
+Dolibarr license has also been updated from GPLv2+ to GPLv3+.
+
 
 
 ***** ChangeLog for 3.2.3 compared to 3.2.2 *****

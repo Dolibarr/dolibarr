@@ -8,7 +8,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -384,6 +384,15 @@ if ($result)
 	        	print '<td align="center" nowrap="nowrap">';
 	        	print img_picto($langs->trans("Active"),'tick');
 	        	print '</td>';
+	        }
+	        else
+	        {
+	        	// Do not own permission
+	        	if ($caneditperms)
+	        	{
+	        		print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+	        	}
+	        	print '<td>&nbsp</td>';
 	        }
         }
         else

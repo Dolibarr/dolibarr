@@ -10,7 +10,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -307,8 +307,26 @@ if ($action == 'update' && ! $_POST["cancel"])
 
         if (! $error)
         {
-            $db->begin();
             $object->fetch($id);
+
+            // Test if new login
+            if (GETPOST("login") && GETPOST("login") != $object->login)
+            {
+				dol_syslog("New login ".$object->login." is requested. We test it does not exists.");
+				$tmpuser=new User($db);
+				$result=$tmpuser->fetch(0, GETPOST("login"));
+				if ($result > 0)
+				{
+					$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists").'</div>';
+					$action="edit";       // Go back to create page
+					$error++;
+				}
+            }
+       }
+
+       if (! $error)
+       {
+            $db->begin();
 
             $object->oldcopy=dol_clone($object);
 
@@ -454,6 +472,12 @@ if ($action == 'update' && ! $_POST["cancel"])
             {
                 $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
                 $db->commit();
+
+                $login=$_SESSION["dol_login"];
+                if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)	// Current user has changed its login
+                {
+                	$_SESSION["dol_login"]=$object->login;	// Set new login to avoid disconnect at next page
+                }
             }
             else
             {
@@ -769,7 +793,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         else
         {
             // We do not use a field password but a field text to show new password to use.
-            print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'">';
+            print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="off">';
         }
     }
     print '</td></tr>';
@@ -1648,7 +1672,7 @@ else
             }
             else if ($caneditpassword)
             {
-                $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'">';
+                $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="off">';
                 if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
                 {
                     $text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');

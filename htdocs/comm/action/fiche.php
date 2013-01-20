@@ -7,7 +7,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -555,7 +555,13 @@ if ($action == 'create')
 	}
 	else
 	{
-		print $form->select_company('','socid','',1,1);
+		//For external user force the company to user company
+		if (!empty($user->societe_id)) {
+			print $form->select_company($user->societe_id,'socid','',1,1);
+		} else {
+			print $form->select_company('','socid','',1,1);
+		}
+		
 	}
 	print '</td></tr>';
 

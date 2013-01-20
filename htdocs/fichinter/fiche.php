@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -653,7 +653,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 }
                 else    // Id du contact
                 {
-                    $sendto = $object->client->contact_get_email(GETPOST('receiver','alpha'));
+                    $sendto = $object->client->contact_get_property(GETPOST('receiver'),'email');
                     $sendtoid = GETPOST('receiver','alpha');
                 }
             }
@@ -1451,7 +1451,7 @@ else if ($id > 0 || ! empty($ref))
     {
         $ref = dol_sanitizeFileName($object->ref);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref);
+        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
         $file=$fileparams['fullname'];
 
         // Build document if it not exists
@@ -1474,7 +1474,7 @@ else if ($id > 0 || ! empty($ref))
                 dol_print_error($db,$result);
                 exit;
             }
-            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref);
+            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
             $file=$fileparams['fullname'];
         }
 

@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -130,7 +130,7 @@ if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 $bon = new BonPrelevement($db,"");
 $form = new Form($db);
 
-llxHeader('',$langs->trans("WithdrawalReceipts"));
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 
 if ($id > 0)
@@ -138,7 +138,7 @@ if ($id > 0)
 	$bon->fetch($id);
 
 	$head = prelevement_prepare_head($bon);
-	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipts"), '', 'payment');
+	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
 	if (GETPOST('error','alpha')!='')
 	{

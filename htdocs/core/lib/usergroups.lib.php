@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -229,8 +229,9 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	$dirthemes=array_merge(array($forcethemedir.'/theme'),(array) $conf->modules_parts['themes']);
     }
 
-    $selected_theme=$conf->global->MAIN_THEME;
-    if (! empty($fuser->conf->MAIN_THEME)) $selected_theme=$fuser->conf->MAIN_THEME;
+    $selected_theme='';
+    if (empty($foruserprofile)) $selected_theme=$conf->global->MAIN_THEME;
+    else $selected_theme=empty($fuser->conf->MAIN_THEME)?'':$fuser->conf->MAIN_THEME;
 
     $colspan=2;
     if ($foruserprofile) $colspan=4;

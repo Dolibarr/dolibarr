@@ -11,7 +11,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -92,9 +92,9 @@ if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);
 $dolibarr_main_url_root=trim($dolibarr_main_url_root);
-$dolibarr_main_url_root_alt=trim($dolibarr_main_url_root_alt);
+$dolibarr_main_url_root_alt=(empty($dolibarr_main_url_root_alt)?'':trim($dolibarr_main_url_root_alt));
 $dolibarr_main_document_root=trim($dolibarr_main_document_root);
-$dolibarr_main_document_root_alt=trim($dolibarr_main_document_root_alt);
+$dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'

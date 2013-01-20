@@ -7,7 +7,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -755,18 +755,14 @@ class pdf_azur extends ModelePDFPropales
 				//Local tax 1 before VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '1':
-							case '3':
-							case '5':
-							case '7':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+					{
+						// TODO: Place into a function to control showing by country or study better option
+						if (in_array((string) $localtax_type, array('1','3','5','7')) && $mysoc->country_code != 'ES') continue;
+
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -788,22 +784,18 @@ class pdf_azur extends ModelePDFPropales
 							}
 						}
 					}
-	      }
-				//Local tax 2  before VAT
+	      		}
+				//Local tax 2 before VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '1':
-							case '3':
-							case '5':
-							case '7':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+					{
+						// TODO: Place into a function to control showing by country or study better option
+						if (in_array((string) $localtax_type, array('1','3','5','7')) && $mysoc->country_code != 'ES') continue;
+
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -857,14 +849,10 @@ class pdf_azur extends ModelePDFPropales
 				//Local tax 1 after VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				{
-					foreach( $this->localtax1 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '2':
-							case '4':
-							case '6':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+					{
+						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
@@ -898,17 +886,13 @@ class pdf_azur extends ModelePDFPropales
 						}
 					}
 	      		}
-				//Local tax 2  after VAT
+				//Local tax 2 after VAT
 				if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				{
-					foreach( $this->localtax2 as $localtax_type => $localtax_rate ) {
-						switch ($localtax_type) {
-							case '2':
-							case '4':
-							case '6':
-								continue 2;
-								break;
-						}
+					foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+					{
+						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
 							if ($tvakey>0)    // On affiche pas taux 0

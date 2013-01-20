@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -89,12 +89,12 @@ class ActionComm extends CommonObject
     {
         $this->db = $db;
 
-        $this->author = (object) array();
-        $this->usermod = (object) array();
-        $this->usertodo = (object) array();
-        $this->userdone = (object) array();
-        $this->societe = (object) array();
-        $this->contact = (object) array();
+        $this->author = new stdClass();
+        $this->usermod = new stdClass();
+        $this->usertodo = new stdClass();
+        $this->userdone = new stdClass();
+        $this->societe = new stdClass();
+        $this->contact = new stdClass();
     }
 
     /**
@@ -541,7 +541,7 @@ class ActionComm extends CommonObject
      * 	 @param		int		$fk_element		Id of element action is linked to
      *   @param		string	$elementtype	Type of element action is linked to
      *   @param		string	$filter			Other filter
-     *   @return	array					<0 if KO, array with actions
+     *   @return	array or string			Error string if KO, array with actions if OK
      */
     static function getActions($db, $socid=0, $fk_element=0, $elementtype='', $filter='')
     {
@@ -580,9 +580,8 @@ class ActionComm extends CommonObject
             return $resarray;
         }
         else
-        {
-            $this->error=$db->lasterror();
-            return -1;
+       {
+            return $db->lasterror();
         }
     }
 

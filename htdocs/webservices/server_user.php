@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -28,6 +28,7 @@ require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 
@@ -512,8 +513,8 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 						*/
 						$contact = new Contact($db);
 						$contact->socid = $thirdparty->id;
-						$contact->lastname = $thirdparty->name;
-						$contact->firstname = $thirdparty->firstname;
+						$contact->lastname = $thirdpartywithuser['name'];
+						$contact->firstname = $thirdpartywithuser['firstname'];
 						$contact->civilite_id = $thirdparty->civilite_id;
 						$contact->address = $thirdparty->address;
 						$contact->zip = $thirdparty->zip;
@@ -523,7 +524,7 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->phone_mobile = $thirdparty->phone_mobile;
 						$contact->fax = $thirdparty->fax;
 
-						$contact_id =  $contact->create($user);
+						$contact_id =  $contact->create($fuser);
 						
 						if ($contact_id > 0)
 						{

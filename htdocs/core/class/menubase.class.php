@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -434,7 +434,7 @@ class Menubase
         $this->newmenu = $newmenu;
 
         // Load datas from database into $tabMenu, later we will complete this->newmenu with values into $tabMenu
-        if (count($tabMenu) == 0)
+        if (count($tabMenu) == 0)	// To avoid to read into database a second time
         {
             $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
         }
@@ -535,7 +535,7 @@ class Menubase
         // If type_user == 2, no test required
         $sql.= " ORDER BY m.position, m.rowid";
 
-        dol_syslog(get_class($this)."::menuLeftCharger sql=".$sql);
+        dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)." sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {

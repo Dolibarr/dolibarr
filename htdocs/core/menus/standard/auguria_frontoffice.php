@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -98,6 +98,8 @@ class MenuLeft
      */
     function showmenu()
     {
+    	global $conf;
+    	
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
         $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after);

@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -211,8 +211,6 @@ if ($action == 'switch')
  */
 
 $form=new Form($db);
-$emptyuser=new User($db);
-//$infobox=new InfoBox($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
@@ -316,7 +314,7 @@ if ($resql)
 
 
 // Available boxes
-$boxtoadd=InfoBox::listBoxes($db,'available',-1,$emptyuser,$actives);
+$boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
 
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
@@ -366,7 +364,7 @@ print '</table>';
 
 
 // Activated boxes
-$boxactivated=InfoBox::listBoxes($db,'activated',-1,$emptyuser);
+$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));

@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -45,10 +45,10 @@ require_once ADODB_PATH.'adodb-time.inc.php';
 
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
-$conf->global	= (object) array();
-$conf->file		= (object) array();
-$conf->db		= (object) array();
-$conf->syslog	= (object) array();
+$conf->global	= new stdClass();
+$conf->file		= new stdClass();
+$conf->db		= new stdClass();
+$conf->syslog	= new stdClass();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"]=1;

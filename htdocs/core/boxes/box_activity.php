@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2012 Charles-François BENKE <charles.fr@benke.fr>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -34,6 +36,7 @@ class box_activity extends ModeleBoxes
 
 	var $db;
 	var $param;
+	var $enabled = 1;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -43,7 +46,7 @@ class box_activity extends ModeleBoxes
 	 */
 	function __construct()
 	{
-		global $langs;
+		global $langs,$conf;
 
 		$langs->load("boxes");
 		$langs->load("bills");
@@ -51,6 +54,9 @@ class box_activity extends ModeleBoxes
 		$langs->load("orders");
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
+
+		// Disabled by default because, still has some bug (pgsl support, filters, getCurrencySymbol us a cache into a form object not defined, ...) and slow down seriously Dolibarr
+		$this->enabled = (! empty($conf->global->MAIN_FEATURES_LEVEL) || ! empty($conf->global->MAIN_BOX_ACTIVITY_ENABLED));
 	}
 
 	/**
@@ -148,9 +154,9 @@ class box_activity extends ModeleBoxes
 			$sql.= " AND c.fk_soc = s.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " AND c.datec between '".$db->idate(dol_get_first_day(date("Y"),1,1))."' AND '".$db->idate(dol_get_last_day(date("Y"),12,1))."'";
+			$sql.= " AND c.date_commande between '".$db->idate(dol_get_first_day(date("Y"),1,1))."' AND '".$db->idate(dol_get_last_day(date("Y"),12,1))."'";
 			$sql.= " AND c.facture=0";
-			$sql.= " GROUP BY c.fk_statut";
+			$sql.= " GROUP BY c.fk_statut,c.facture";
 			$sql.= " ORDER BY c.fk_statut DESC";
 
 			$result = $db->query($sql);

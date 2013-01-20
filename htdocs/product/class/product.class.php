@@ -8,7 +8,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -2571,7 +2571,7 @@ class Product extends CommonObject
 				while ($i < $num)
 				{
 					$row = $this->db->fetch_object($result);
-					$this->stock_warehouse[$row->fk_entrepot] = (object) array();
+					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
 					$this->stock_reel+=$row->reel;

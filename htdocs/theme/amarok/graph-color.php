@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -24,7 +24,7 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235,235,224);
-$theme_datacolor = array(array(101,191,112), array(164,206,230), array(248,128,128), array(252,245,184), array(190,190,190));
+$theme_datacolor = array(array(125,135,150), array(200,160,180), array(190,190,220), array(170,140,190), array(190,190,170));
 $theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 

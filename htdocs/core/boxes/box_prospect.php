@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -88,7 +88,7 @@ class box_prospect extends ModeleBoxes
 			$sql.= " ORDER BY s.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("box_prospect::loadBox sql=".$sql,LOG_DEBUG);
+			dol_syslog(get_class($this)."::loadBox sql=".$sql,LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{

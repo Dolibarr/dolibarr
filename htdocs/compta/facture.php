@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -10,7 +10,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -965,7 +965,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
     $idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
-	$tva_tx = GETPOST('tva_tx');
+	$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
@@ -1034,7 +1034,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				$desc = $product_desc;
             }
             else
-            {
+			{
             	$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
             	$tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
 
@@ -1091,16 +1091,17 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             	}
 
             	$desc=dol_concatdesc($desc,$product_desc);
-            }
 
-            if (! empty($prod->customcode) || ! empty($prod->country_code))
-            {
-                $tmptxt='(';
-                if (! empty($prod->customcode)) $tmptxt.=$langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
-                if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
-                if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
-                $tmptxt.=')';
-                $desc.= (dol_textishtml($desc)?"<br>\n":"\n").$tmptxt;
+	            // Add custom code and origin country into description
+	            if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
+	            {
+	                $tmptxt='(';
+	                if (! empty($prod->customcode)) $tmptxt.=$langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+	                if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
+	                if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
+	                $tmptxt.=')';
+	                $desc.= dol_concatdesc($desc, $tmptxt);
+	            }
             }
 
             $type = $prod->type;
@@ -1220,13 +1221,13 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
     $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
     $description=dol_htmlcleanlastbr(GETPOST('product_desc'));
     $pu_ht=GETPOST('price_ht');
+    $vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
     // Define info_bits
     $info_bits=0;
-    if (preg_match('/\*/', GETPOST('tva_tx'))) $info_bits |= 0x01;
+    if (preg_match('/\*/', $vat_rate)) $info_bits |= 0x01;
 
     // Define vat_rate
-    $vat_rate=$_POST['tva_tx'];
     $vat_rate=str_replace('*','',$vat_rate);
     $localtax1_rate=get_localtax($vat_rate,1,$object->client);
     $localtax2_rate=get_localtax($vat_rate,2,$object->client);
@@ -2689,7 +2690,7 @@ else if ($id > 0 || ! empty($ref))
         {
             $num = $db->num_rows($result);
             $i = 0;
-			
+
 			//if ($object->type != 2)
             //{
                 if ($num > 0)
@@ -3343,7 +3344,7 @@ else if ($id > 0 || ! empty($ref))
 
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -3366,7 +3367,7 @@ else if ($id > 0 || ! empty($ref))
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

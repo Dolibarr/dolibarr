@@ -5,7 +5,7 @@
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
+-- the Free Software Foundation; either version 3 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
@@ -24,7 +24,7 @@ create table llx_categorie
 	entity          integer DEFAULT 1 NOT NULL,			-- multi company id
 	fk_parent		integer DEFAULT 0 NOT NULL,
 	label 		    varchar(255) NOT NULL,				-- category name
-	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer)
+	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
 	fk_soc          integer DEFAULT NULL,				-- attribution of the category has a company (for product only)
 	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not

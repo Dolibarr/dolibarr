@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -120,6 +120,7 @@ class FormFile
             {
                 if ($perm)
                 {
+                	$langs->load('other');
                     print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
                     print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
                     print ')';
@@ -378,7 +379,7 @@ class FormFile
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             $out.= '<div class="titre">'.$titletoshow.'</div>';
-            $out.= '<table class="liste formdoc" summary="listofdocumentstable" width="100%">';
+            $out.= '<table class="liste formdoc noborder" summary="listofdocumentstable" width="100%">';
 
             $out.= '<tr class="liste_titre">';
 
