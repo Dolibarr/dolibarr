@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,52 @@ print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 print $langs->trans("DefaultRightsDesc");
 print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
+$db->begin();
+
+// Charge les modules soumis a permissions
+$modules = array();
+$modulesdir = dolGetModulesDirs();
+
+foreach ($modulesdir as $dir)
+{
+	// Load modules attributes in arrays (name, numero, orders) from dir directory
+	//print $dir."\n<br>";
+	$handle=@opendir(dol_osencode($dir));
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle))!==false)
+		{
+			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
+			{
+				$modName = substr($file, 0, dol_strlen($file) - 10);
+				if ($modName)
+				{
+					include_once $dir.$file;
+					$objMod = new $modName($db);
+
+					// Load all lang files of module
+					if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+					{
+						foreach($objMod->langfiles as $domain)
+						{
+							$langs->load($domain);
+						}
+					}
+					// Load all permissions
+					if ($objMod->rights_class)
+					{
+						$ret=$objMod->insert_permissions(0);
+						$modules[$objMod->rights_class]=$objMod;
+						//print "modules[".$objMod->rights_class."]=$objMod;";
+					}
+				}
+			}
+		}
+	}
+}
+
+$db->commit();
+
 // Show warning about external users
 print showModulesExludedForExternal($modules).'<br>'."\n";
 print "<br>\n";
@@ -80,54 +126,6 @@ dol_fiche_head($head, 'default', $langs->trans("Security"));
 
 
 print '<table class="noborder" width="100%">';
-
-
-$db->begin();
-
-// Charge les modules soumis a permissions
-$modules = array();
-$modulesdir = dolGetModulesDirs();
-
-foreach ($modulesdir as $dir)
-{
-    // Load modules attributes in arrays (name, numero, orders) from dir directory
-    //print $dir."\n<br>";
-    $handle=@opendir(dol_osencode($dir));
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-            {
-                $modName = substr($file, 0, dol_strlen($file) - 10);
-
-                if ($modName)
-                {
-                	include_once $dir.$file;
-    	            $objMod = new $modName($db);
-
-    	            // Load all lang files of module
-    	            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-    	            {
-    	            	foreach($objMod->langfiles as $domain)
-    	            	{
-    	            		$langs->load($domain);
-    	            	}
-    	            }
-    	            // Load all permissions
-    	            if ($objMod->rights_class)
-    	            {
-    	                $ret=$objMod->insert_permissions(0);
-    	                $modules[$objMod->rights_class]=$objMod;
-    	                //print "modules[".$objMod->rights_class."]=$objMod;";
-    	            }
-                }
-            }
-        }
-    }
-}
-
-$db->commit();
 
 // Affiche lignes des permissions
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
