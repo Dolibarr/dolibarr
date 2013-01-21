@@ -406,7 +406,7 @@ class FactureFournisseur extends CommonInvoice
                 {
                     $obj = $this->db->fetch_object($resql_rows);
 
-                    $this->lines[$i]					= (object) array();
+                    $this->lines[$i]					= new stdClass();
                     $this->lines[$i]->rowid				= $obj->rowid;
                     $this->lines[$i]->description		= $obj->description;
                     $this->lines[$i]->ref				= $obj->product_ref;       // TODO deprecated

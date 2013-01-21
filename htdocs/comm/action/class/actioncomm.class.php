@@ -89,12 +89,12 @@ class ActionComm extends CommonObject
     {
         $this->db = $db;
 
-        $this->author = (object) array();
-        $this->usermod = (object) array();
-        $this->usertodo = (object) array();
-        $this->userdone = (object) array();
-        $this->societe = (object) array();
-        $this->contact = (object) array();
+        $this->author = new stdClass();
+        $this->usermod = new stdClass();
+        $this->usertodo = new stdClass();
+        $this->userdone = new stdClass();
+        $this->societe = new stdClass();
+        $this->contact = new stdClass();
     }
 
     /**

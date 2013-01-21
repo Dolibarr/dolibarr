@@ -551,7 +551,7 @@ class Task extends CommonObject
 
                 if (! $error)
                 {
-                	$tasks[$i]					= (object) array();
+                	$tasks[$i]					= new stdClass();
                     $tasks[$i]->id				= $obj->taskid;
                     $tasks[$i]->ref				= $obj->taskid;
                     $tasks[$i]->fk_project		= $obj->projectid;

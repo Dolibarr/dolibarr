@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
@@ -736,6 +736,17 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				}
 
             	$desc=dol_concatdesc($desc,$product_desc);
+
+            	// Add custom code and origin country into description
+            	if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
+            	{
+            		$tmptxt='(';
+            		if (! empty($prod->customcode)) $tmptxt.=$langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+            		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
+            		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
+            		$tmptxt.=')';
+            		$desc.= dol_concatdesc($desc, $tmptxt);
+            	}
 			}
 
 			$type = $prod->type;

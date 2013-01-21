@@ -112,11 +112,11 @@ class User extends CommonObject
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
 
-		$this->conf				    = (object) array();
-		$this->rights				= (object) array();
-		$this->rights->user			= (object) array();
-		$this->rights->user->user	= (object) array();
-		$this->rights->user->self	= (object) array();
+		$this->conf				    = new stdClass();
+		$this->rights				= new stdClass();
+		$this->rights->user			= new stdClass();
+		$this->rights->user->user	= new stdClass();
+		$this->rights->user->self	= new stdClass();
 	}
 
 	/**
@@ -538,11 +538,11 @@ class User extends CommonObject
 
 				if ($perms)
 				{
-					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = (object) array(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = (object) array();
+					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = new stdClass(); // For avoid error
+					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
 					if ($subperms)
 					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
+						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
@@ -588,11 +588,11 @@ class User extends CommonObject
 
 				if ($perms)
 				{
-					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = (object) array(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = (object) array();
+					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = new stdClass(); // For avoid error
+					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
 					if ($subperms)
 					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
+						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
