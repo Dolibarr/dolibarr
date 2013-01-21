@@ -49,7 +49,6 @@ print $langs->trans("HelpCenterDesc2")."<br>\n";
 print '<br>';
 
 print $langs->trans("ToGoBackToDolibarr",DOL_URL_ROOT.'/');
-//print '<img src="dolibarr_logo2.png" height="22" alt="Dolibarr" title="Dolibarr">';
 
 print '<br><br>';
 
