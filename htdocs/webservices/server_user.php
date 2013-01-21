@@ -109,6 +109,7 @@ $server->wsdl->addComplexType(
         'pass_indatabase_crypted' => array('name'=>'pass_indatabase_crypted','type'=>'xsd:string'),
         'datec' => array('name'=>'datec','type'=>'xsd:dateTime'),
         'datem' => array('name'=>'datem','type'=>'xsd:dateTime'),
+        'fk_thirdparty' => array('name'=>'fk_thirdparty','type'=>'xsd:string'),
         'fk_socpeople' => array('name'=>'fk_socpeople','type'=>'xsd:string'),
         'fk_member' => array('name'=>'fk_member','type'=>'xsd:string'),
         'datelastlogin' => array('name'=>'datelastlogin','type'=>'xsd:dateTime'),
@@ -157,7 +158,7 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		// For thirdparty and contact 
+		// For thirdparty and contact
 		'name' => array('name'=>'name','type'=>'xsd:string'),
 		'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
 		'name_thirdparty' => array('name'=>'name_thirdparty','type'=>'xsd:string'),
@@ -303,7 +304,7 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
 'pass_indatabase_crypted' => $user->pass_indatabase_crypted,
 'datec' => dol_print_date($user->datec,'dayhourrfc'),
 'datem' => dol_print_date($user->datem,'dayhourrfc'),
-'societe_id' => $user->societe_id,
+'fk_thirdparty' => $user->societe_id,
 'fk_socpeople' => $user->fk_socpeople,
 'fk_member' => $user->fk_member,
 'webcal_login' => $user->webcal_login,
@@ -497,16 +498,16 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 					$thirdparty->idprof4=$thirdpartywithuser['prof4'];
 					$thirdparty->idprof5=$thirdpartywithuser['prof5'];
 					$thirdparty->idprof6=$thirdpartywithuser['prof6'];
-					
+
 					$thirdparty->client=$thirdpartywithuser['client'];
 					$thirdparty->fournisseur=$thirdpartywithuser['fournisseur'];
 
 					$socid_return=$thirdparty->create($fuser);
-				
+
 					if ($socid_return > 0)
 					{
 						$thirdparty->fetch($socid_return);
-					
+
 						/*
 						 * Contact creation
 						*
@@ -525,7 +526,7 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->fax = $thirdparty->fax;
 
 						$contact_id =  $contact->create($fuser);
-						
+
 						if ($contact_id > 0)
 						{
 							/*
@@ -534,7 +535,7 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 							*/
 							$edituser = new User($db);
 							$db->begin();
-	
+
 							$id = $edituser->create_from_contact($contact,$thirdpartywithuser["login"]);
 							if ($id > 0)
 							{
@@ -545,8 +546,8 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 								$error++;
 								$errorcode='NOT_CREATE'; $errorlabel='Object not create : no contact found or create';
 							}
-						
-	
+
+
 							if (! $error && $id > 0)
 							{
 								$db->commit();
@@ -558,7 +559,7 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 								$errorcode='NOT_CREATE'; $errorlabel='Contact not create';
 							}
 						}
-	
+
 						if(!$error) {
 							$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>'SUCCESS'),'id'=>$socid_return);
 							$error=0;
