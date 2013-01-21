@@ -291,7 +291,7 @@ function getActionComm($authentication,$id)
 			        	//Retreive all extrafield for actioncomm
 			        	// fetch optionals attributes and labels
 			        	$extrafields=new ExtraFields($db);
-			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 			        	//Get extrafield values
 			        	$actioncomm->fetch_optionals($actioncomm->id,$extralabels);
 
@@ -436,7 +436,7 @@ function createActionComm($authentication,$actioncomm)
 		//Retreive all extrafield for actioncomm
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$key='options_'.$key;

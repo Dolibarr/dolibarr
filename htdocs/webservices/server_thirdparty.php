@@ -123,7 +123,7 @@ $thirdparty_fields= array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('company');
+$extralabels=$extrafields->fetch_name_optionals_label('company',true);
 if (count($extrafields)>0) {
 	$extrafield_array = array();
 }
@@ -314,7 +314,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				//Retreive all extrafield for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
-				$extralabels=$extrafields->fetch_name_optionals_label('company');
+				$extralabels=$extrafields->fetch_name_optionals_label('company',true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals($thirdparty->id,$extralabels);
 				
@@ -428,7 +428,7 @@ function createThirdParty($authentication,$thirdparty)
         //Retreive all extrafield for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('company');
+        $extralabels=$extrafields->fetch_name_optionals_label('company',true);
         foreach($extrafields->attribute_label as $key=>$label)
         {
         	$key='options_'.$key;
