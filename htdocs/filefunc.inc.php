@@ -167,20 +167,16 @@ foreach($paths as $tmppath)
     }
     //else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
-
-if (! $found)	// If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT.
-{
-	$tmp=$dolibarr_main_url_root;
-}
+if (! $found) $tmp=$dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT.
 else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp;
-
 if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
 define('DOL_MAIN_URL_ROOT', $tmp);											// URL absolute root (https://sss/dolibarr, ...)
 $uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
 $suburi = strstr($uri, '/');												// $suburi contains url without domain
 if ($suburi == '/') $suburi = '';											// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr', ...)
+
 // Define DOL_MAIN_URL_ROOT_ALT and DOL_URL_ROOT_ALT
 if (! empty($dolibarr_main_url_root_alt))
 {
@@ -194,9 +190,11 @@ if (! empty($dolibarr_main_url_root_alt))
 	if ($suburi == '/') $suburi = '';   											// If $suburi is /, it is now ''
 	define('DOL_URL_ROOT_ALT', $suburi);    										// URL relative root ('', '/dolibarr/custom', ...)
 }
-// Define prefix
-define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+
 //print DOL_URL_ROOT.'-'.DOL_URL_ROOT_ALT;
+
+// Define prefix MAIN_DB_PREFIX
+define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 
 
 /*
@@ -220,10 +218,6 @@ if (! defined('JS_JQUERY_FLOT'))       { define('JS_JQUERY_FLOT',       (!isset(
 // Other required path
 if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
 if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
-// Old path to root deprecated (no more used).
-//if (! defined('ARTICHOW_FONT'))        { define('ARTICHOW_FONT',        (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts':dirname($dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
-//if (! defined('ARTICHOW_FONT_NAMES'))  { define('ARTICHOW_FONT_NAMES',  (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?'Aerial,AerialBd,AerialBdIt,AerialIt':'DejaVuSans,DejaVuSans-Bold,DejaVuSans-BoldOblique,DejaVuSans-Oblique'); }
-//if (! defined('ARTICHOW_PATH'))        { define('ARTICHOW_PATH',        (!isset($dolibarr_lib_ARTICHOW))?DOL_DOCUMENT_ROOT.'/includes/artichow/':(empty($dolibarr_lib_ARTICHOW)?'':$dolibarr_lib_ARTICHOW.'/')); }
 
 
 /*

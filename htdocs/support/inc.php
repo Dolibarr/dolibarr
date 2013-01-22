@@ -45,10 +45,10 @@ require_once ADODB_PATH.'adodb-time.inc.php';
 
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
-$conf->global	= (object) array();
-$conf->file		= (object) array();
-$conf->db		= (object) array();
-$conf->syslog	= (object) array();
+$conf->global	= new stdClass();
+$conf->file		= new stdClass();
+$conf->db		= new stdClass();
+$conf->syslog	= new stdClass();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"]=1;

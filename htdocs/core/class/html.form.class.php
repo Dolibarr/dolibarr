@@ -51,7 +51,6 @@ class Form
     var $cache_availability=array();
     var $cache_demand_reason=array();
     var $cache_types_fees=array();
-    var $cache_currencies=array();
     var $cache_vatrates=array();
 
     var $tva_taux_value;
@@ -2997,52 +2996,6 @@ class Form
     }
 
     /**
-     *      Load into the cache all currencies
-     *
-     *      @return     int             Nb of loaded lines, 0 if already loaded, <0 if KO
-     */
-    function load_cache_currencies()
-    {
-    	global $langs;
-
-    	$langs->load("dict");
-
-    	if (count($this->cache_currencies)) return 0;    // Cache deja charge
-
-    	$sql = "SELECT code_iso, label, unicode";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
-        $sql.= " WHERE active = 1";
-        $sql.= " ORDER BY code_iso ASC";
-
-    	dol_syslog(get_class($this).'::load_cache_currencies sql='.$sql, LOG_DEBUG);
-    	$resql = $this->db->query($sql);
-    	if ($resql)
-    	{
-    		$num = $this->db->num_rows($resql);
-    		$i = 0;
-    		while ($i < $num)
-    		{
-    			$obj = $this->db->fetch_object($resql);
-
-    			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-    			$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-    			$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
-    			$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
-    			$i++;
-    		}
-
-    		array_multisort($label, SORT_ASC, $this->cache_currencies);
-
-    		return $num;
-    	}
-    	else
-    	{
-    		dol_print_error($this->db);
-    		return -1;
-    	}
-    }
-
-    /**
      *  Retourne la liste des devises, dans la langue de l'utilisateur
      *
      *  @param	string	$selected    preselected currency code
@@ -3053,9 +3006,7 @@ class Form
     {
         global $conf,$langs,$user;
 
-        $langs->load("dict");
-
-        $this->load_cache_currencies();
+        $langs->load_cache_currencies();
 
         $out='';
 
@@ -3073,7 +3024,7 @@ class Form
         		$out.= '<option value="'.$code_iso.'">';
         	}
         	$out.= $currency['label'];
-        	$out.= ' ('.getCurrencySymbol($code_iso).')';
+        	$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
         	$out.= '</option>';
         }
         $out.= '</select>';

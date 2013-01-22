@@ -66,6 +66,8 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
+		//require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
+		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';

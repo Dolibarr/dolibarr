@@ -123,7 +123,7 @@ $thirdparty_fields= array(
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('company');
+$extralabels=$extrafields->fetch_name_optionals_label('company',true);
 if (count($extrafields)>0) {
 	$extrafield_array = array();
 }
@@ -233,7 +233,7 @@ $server->register(
 	// Entry values
 	array('authentication'=>'tns:authentication','thirdparty'=>'tns:thirdparty'),
 	// Exit values
-	array('result'=>'tns:result'),
+	array('result'=>'tns:result','id'=>'xsd:string'),
 	$ns,
 	$ns.'#updateThirdParty',
 	$styledoc,
@@ -328,7 +328,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				//Retreive all extrafield for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
-				$extralabels=$extrafields->fetch_name_optionals_label('company');
+				$extralabels=$extrafields->fetch_name_optionals_label('company',true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals($thirdparty->id,$extralabels);
 				
@@ -442,7 +442,7 @@ function createThirdParty($authentication,$thirdparty)
         //Retreive all extrafield for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('company');
+        $extralabels=$extrafields->fetch_name_optionals_label('company',true);
         foreach($extrafields->attribute_label as $key=>$label)
         {
         	$key='options_'.$key;
@@ -562,7 +562,7 @@ function updateThirdParty($authentication,$thirdparty)
 			//Retreive all extrafield for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('company');
+			$extralabels=$extrafields->fetch_name_optionals_label('company',true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
@@ -571,7 +571,7 @@ function updateThirdParty($authentication,$thirdparty)
 	
 			$db->begin();
 	
-			$result=$object->update($fuser);
+			$result=$object->update($thirdparty['id'],$fuser);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -580,7 +580,10 @@ function updateThirdParty($authentication,$thirdparty)
 		if ((! $error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id
+			);
 		}
 		elseif ($objectfound)
 		{

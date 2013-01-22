@@ -366,11 +366,11 @@ if ($resql)
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
-			print '<td align="right">'.price($objp->total_ht).' '.getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.price($objp->total_tva).' '.getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.price($objp->total_ttc).' '.getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.(! empty($objp->am)?price($objp->am).' '.getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
-			print '<td align="right">'.(! empty($objp->am)?price($objp->total_ttc-$objp->am).' '.getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
+			print '<td align="right">'.price($objp->total_ht).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+			print '<td align="right">'.price($objp->total_tva).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+			print '<td align="right">'.price($objp->total_ttc).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+			print '<td align="right">'.(! empty($objp->am)?price($objp->am).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
+			print '<td align="right">'.(! empty($objp->am)?price($objp->total_ttc-$objp->am).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
 
 			// Affiche statut de la facture
 			print '<td align="right" nowrap="nowrap">';
@@ -396,10 +396,10 @@ if ($resql)
 
 		print '<tr class="liste_total">';
 		print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
-		print '<td align="right"><b>'.price($total_ht).' '.getCurrencySymbol($conf->currency).'</b></td>';
-		print '<td align="right"><b>'.price($total_tva).' '.getCurrencySymbol($conf->currency).'</b></td>';
-		print '<td align="right"><b>'.price($total_ttc).' '.getCurrencySymbol($conf->currency).'</b></td>';
-		print '<td align="right"><b>'.price($total_paid).' '.getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($total_ht).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($total_tva).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($total_ttc).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($total_paid).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';

@@ -653,18 +653,17 @@ function createOrder($authentication,$order)
 		foreach($arrayoflines as $key => $line)
 		{
 			// $key can be 'line' or '0','1',...
-			$newline=new OrderLigne($db);
+			$newline=new OrderLine($db);
 
 			$newline->type=$line['type'];
 			$newline->desc=$line['desc'];
 			$newline->fk_product=$line['fk_product'];
 			$newline->tva_tx=$line['vat_rate'];
 			$newline->qty=$line['qty'];
-			$newline->subprice=$line['unitprice'];
+			$newline->subprice=$line['subprice'];
 			$newline->total_ht=$line['total_net'];
 			$newline->total_tva=$line['total_vat'];
 			$newline->total_ttc=$line['total'];
-			$newline->fk_product=$line['fk_product'];
 			$newobject->lines[]=$newline;
 		}
 

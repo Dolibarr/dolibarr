@@ -115,7 +115,7 @@ $actioncomm_fields= array(
 //Retreive all extrafield for actioncomm
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 if (count($extrafields)>0) {
 	$extrafield_array = array();
 }
@@ -226,7 +226,7 @@ $server->register(
 	// Entry values
 	array('authentication'=>'tns:authentication','actioncomm'=>'tns:actioncomm'),
 	// Exit values
-	array('result'=>'tns:result'),
+	array('result'=>'tns:result','id'=>'xsd:string'),
 	$ns,
 	$ns.'#updateActionComm',
 	$styledoc,
@@ -305,7 +305,7 @@ function getActionComm($authentication,$id)
 			        	//Retreive all extrafield for actioncomm
 			        	// fetch optionals attributes and labels
 			        	$extrafields=new ExtraFields($db);
-			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+			        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 			        	//Get extrafield values
 			        	$actioncomm->fetch_optionals($actioncomm->id,$extralabels);
 
@@ -450,7 +450,7 @@ function createActionComm($authentication,$actioncomm)
 		//Retreive all extrafield for actioncomm
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$key='options_'.$key;
@@ -545,11 +545,11 @@ function updateActionComm($authentication,$actioncomm)
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm',true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;
-				$newobject->array_options[$key]=$actioncomm[$key];
+				$object->array_options[$key]=$actioncomm[$key];
 			}
 	
 			$db->begin();
@@ -563,7 +563,10 @@ function updateActionComm($authentication,$actioncomm)
 		if ((! $error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''));
+			$objectresp=array(
+					'result'=>array('result_code'=>'OK', 'result_label'=>''),
+					'id'=>$object->id
+			);
 		}
 		elseif ($objectfound)
 		{

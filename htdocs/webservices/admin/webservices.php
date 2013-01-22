@@ -98,34 +98,26 @@ print '</form>';
 
 print '<br><br>';
 
+// Webservices list
+$webservices = array(
+		'user'				=> '',
+		'thirdparty'		=> '!empty($conf->societe->enabled)',
+		'productorservice'	=> '(!empty($conf->product->enabled) || !empty($conf->service->enabled))',
+		'order'				=> '!empty($conf->commande->enabled)',
+		'invoice'			=> '!empty($conf->facture->enabled)',
+		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
+		'actioncomm'		=> '!empty($conf->agenda->enabled)',
+		'category'			=> '!empty($conf->categorie->enabled)',
+		'other'				=> ''
+);
+
 
 // WSDL
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php?wsdl';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+foreach($webservices as $name => $right)
 {
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php?wsdl';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->societe->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php?wsdl';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->facture->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php?wsdl';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->fournisseur->enabled))
-{
-    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php?wsdl';
-    print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->agenda->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_actioncomm.php?wsdl';
+	if (!empty($right) && !verifCond($right)) continue;
+	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
@@ -133,31 +125,10 @@ print '<br>';
 
 // Endpoint
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+foreach($webservices as $name => $right)
 {
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->societe->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->facture->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->fournisseur->enabled))
-{
-    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php';
-    print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-if (! empty($conf->agenda->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_actioncomm.php';
+	if (!empty($right) && !verifCond($right)) continue;
+	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';

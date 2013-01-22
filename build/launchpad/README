@@ -110,6 +110,11 @@ https://launchpad.net/dolibarr/stable
 - Test package sources
     sudo pbuilder build <working-dir>/<project>_<version>.dsc
 
+List of recipes created
+https://code.launchpad.net/~eldy/+recipe/dolibarr-dev
+https://code.launchpad.net/~eldy/+recipe/dolibarr-beta
+https://code.launchpad.net/~eldy/+recipe/dolibarr-stable
+
     
 # To get/download package from PPA:
 #----------------------------------

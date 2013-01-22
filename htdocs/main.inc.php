@@ -773,6 +773,45 @@ if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity'
     }
 }
 
+//print 'eee'.$conf->standard_menu;
+
+// Init menu manager
+if (empty($user->societe_id))    // If internal user or not defined
+{
+	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
+}
+else                        // If external user
+{
+	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
+}
+// For backward compatibility
+if (empty($conf->standard_menu))  $conf->standard_menu ='eldy_backoffice.php';
+elseif ($conf->standard_menu == 'eldy.php') $conf->standard_menu='eldy_backoffice.php';
+
+// Load the menu manager (only if not already done)
+$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
+if (GETPOST('menu')) $file_menu=GETPOST('menu');     // menu=eldy_backoffice.php
+if (! class_exists('MenuManager'))
+{
+	$menufound=0;
+	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+	foreach($dirmenus as $dirmenu)
+	{
+		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
+		if ($menufound) break;
+	}
+	if (! $menufound)	// If failed to include, we try with standard
+	{
+		$file_menu='eldy_backoffice.php';
+		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+	}
+}
+$menumanager = new MenuManager($db);
+
+
+
 
 // Functions
 
@@ -797,8 +836,11 @@ if (! function_exists("llxHeader"))
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 	    global $conf;
+		
+	    // html header
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+		// top menu and left menu area
 		if (empty($conf->global->MAIN_HIDE_TOP_MENU))
 		{
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
@@ -807,6 +849,8 @@ if (! function_exists("llxHeader"))
 		{
 			left_menu('', $help_url, '', '', 1, $title);
 		}
+		
+		// main area
 		main_area($title);
 	}
 }
@@ -1150,7 +1194,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 {
     global $user, $conf, $langs, $db;
     global $dolibarr_main_authentication;
-    global $hookmanager;
+    global $hookmanager,$menumanager;
 
     // Instantiate hooks of thirdparty module only if not already define
     if (! is_object($hookmanager))
@@ -1161,22 +1205,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     $hookmanager->initHooks(array('toprightmenu'));
 
     $toprightmenu='';
-
-	// Define menu manager in setup
-	if (empty($user->societe_id))    // If internal user or not defined
-	{
-		$conf->top_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
-		$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
-	}
-	else                        // If external user
-	{
-		$conf->top_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-		$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-	}
-	// For backward compatibility
-	if ($conf->top_menu == 'eldy.php') $conf->top_menu='eldy_backoffice.php';
-	elseif ($conf->top_menu == 'rodolphe.php') $conf->top_menu='eldy_backoffice.php';
-    if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 
     // For backward compatibility with old modules
     if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
@@ -1267,27 +1295,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     /*
      * Top menu
      */
-    $top_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
-    if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
-
-    // Load the top menu manager (only if not already done)
-    if (! class_exists('MenuManager'))
-    {
-        $menufound=0;
-        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-        foreach($dirmenus as $dirmenu)
-        {
-        	$menufound=dol_include_once($dirmenu."standard/".$top_menu);
-            if ($menufound) break;
-        }
-        if (! $menufound)	// If failed to include, we try with standard
-        {
-            $top_menu='eldy_backoffice.php';
-            include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu;
-        }
-    }
-
-    print "\n".'<!-- Start top horizontal menu '.$top_menu.' -->'."\n";
+    print "\n".'<!-- Start top horizontal -->'."\n";
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
@@ -1296,10 +1304,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
 	    // Show menu
-	    $dummy1=array();$dummy2=array();
-	    $menutop = new MenuManager($db,$dummy1,$dummy2);
-	    $menutop->atarget=$target;
-	    $menutop->showmenu('top');      // This contains a \n
+	    $menumanager->atarget=$target;
+	    $menumanager->showmenu('top');      // This contains a \n
 
 	    print "</div>\n";
 
@@ -1313,7 +1319,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 	    }
 	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-	    $logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	    $logintext.=$target?(' target="'.$target.'"'):'';
 	    $logintext.='>'.$user->login.'</a>';
 	    if ($user->societe_id) $logintext.=$companylink;
 	    $logintext.='</div>';
@@ -1349,7 +1355,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    && $_SESSION["dol_authmode"] != 'http')
 	    {
 	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-	        $logouttext .=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	        $logouttext .=$atarget?(' target="'.$atarget.'"'):'';
 	        $logouttext .='>';
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
 	        $logouttext .='</a>';
@@ -1415,7 +1421,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 function left_menu($menu_array_before, $helppagename='', $moresearchform='', $menu_array_after='', $leftmenuwithoutmainarea=0, $title='')
 {
     global $user, $conf, $langs, $db;
-    global $hookmanager;
+    global $hookmanager, $menumanager;
 
     $searchform='';
     $bookmarks='';
@@ -1481,33 +1487,14 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        $bookmarks=printBookmarksList($db, $langs);
 	    }
 
-	    $left_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
-	    if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
-
-	    // Load the menu manager (only if not already done)
-	    if (! class_exists('MenuManager'))
-	    {
-	        $menufound=0;
-	        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-	        foreach($dirmenus as $dirmenu)
-	        {
-	            $menufound=dol_include_once($dirmenu."standard/".$left_menu);
-	            if ($menufound) break;
-	        }
-	        if (! $menufound)	// If failed to include, we try with standard
-	        {
-	            $top_menu='eldy_backoffice.php';
-	            include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu;
-	        }
-	    }
-
 	    // Left column
-	    print '<!-- Begin left menu - menu '.$left_menu.' -->'."\n";
+	    print '<!-- Begin left menu -->'."\n";
 
 	    print '<div class="vmenu">'."\n";
 
-	    $menuleft=new MenuManager($db,$menu_array_before,$menu_array_after);
-	    $menuleft->showmenu('left'); // output menu_array and menu found in database
+	    $menumanager->menu_array = $menu_array_before;
+    	$menumanager->menu_array_after = $menu_array_after;
+	    $menumanager->showmenu('left'); // output menu_array and menu found in database
 
 
 	    // Show other forms

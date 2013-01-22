@@ -467,17 +467,17 @@ class ExtraFields
 	 * 	Load array this->attribute_label
 	 *
 	 * 	@param	string		$elementtype		Type of element
-	 * 	@param	boolean		$forcecheck			override test of MAIN_EXTRAFIELDS_DISABLED
+	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='member',$forcecheck=false)
+	function fetch_name_optionals_label($elementtype='member',$forceload=false)
 	{
 		global $conf;
 
 		$array_name_label=array();
 
 		// For avoid conflicts with external modules
-		if (!empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && !$forcecheck)
+		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			return $array_name_label;
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired";
@@ -523,8 +523,8 @@ class ExtraFields
 	 */
 	function showInputField($key,$value,$moreparam='')
 	{
-		global $conf;
-		
+		global $conf,$langs;
+
         $label=$this->attribute_label[$key];
 	    $type =$this->attribute_type[$key];
         $size =$this->attribute_size[$key];
@@ -591,7 +591,7 @@ class ExtraFields
         }
         elseif ($type == 'price')
         {
-        	$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.getCurrencySymbol($conf->currency);
+        	$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
         }
         // Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -610,7 +610,7 @@ class ExtraFields
     function showOutputField($key,$value,$moreparam='')
     {
 		global $conf;
-		
+
         $label=$this->attribute_label[$key];
         $type=$this->attribute_type[$key];
         $size=$this->attribute_size[$key];
@@ -636,7 +636,7 @@ class ExtraFields
         		$checked=' checked="checked" ';
         	}
         	$value='<input type="checkbox" '.$checked.' '.($moreparam?$moreparam:'').' readonly="readonly">';
-        } 
+        }
         elseif ($type == 'mail')
         {
         	$value=dol_print_email($value);
@@ -647,7 +647,7 @@ class ExtraFields
         }
         elseif ($type == 'price')
         {
-        	$value=price($value).' '.getCurrencySymbol($conf->currency);
+        	$value=price($value).' '.$langs->getCurrencySymbol($conf->currency);
         }
         else
         {

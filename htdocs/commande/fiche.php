@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
@@ -201,6 +201,13 @@ else if ($action == 'add' && $user->rights->commande->creer)
 	if ($datecommande == '')
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Date')).'</div>';
+		$action='create';
+		$error++;
+	}
+	
+	if ($socid<1)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		$action='create';
 		$error++;
 	}
@@ -651,6 +658,17 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				}
 
             	$desc=dol_concatdesc($desc,$product_desc);
+
+            	// Add custom code and origin country into description
+            	if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
+            	{
+            		$tmptxt='(';
+            		if (! empty($prod->customcode)) $tmptxt.=$langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+            		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
+            		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
+            		$tmptxt.=')';
+            		$desc.= dol_concatdesc($desc, $tmptxt);
+            	}
 			}
 
 			$type = $prod->type;
@@ -681,7 +699,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').getCurrencySymbol($conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
 			setEventMessage($mesg, 'errors');
 		}
 		else
@@ -799,7 +817,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).getCurrencySymbol($conf->currency), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).$langs->getCurrencySymbol($conf->currency), 'errors');
 			$error++;
 		}
 	}
@@ -1355,7 +1373,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		dol_htmloutput_mesg($mesg,$mesgs,'error');
 
 		$soc = new Societe($db);
-		if ($socid) $res=$soc->fetch($socid);
+		if ($socid>0) $res=$soc->fetch($socid);
 
 		if (! empty($origin) && ! empty($originid))
 		{
@@ -1450,26 +1468,43 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		print '</tr>';
 
 		// Client
-		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td colspan="2">'.$soc->getNomUrl(1).'</td></tr>';
+		print '<tr>';
+		print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+		if($socid>0)
+		{
+			print '<td colspan="2">';
+			print $soc->getNomUrl(1);
+			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+			print '</td>';
+		}
+		else
+		{
+			print '<td colspan="2">';
+			print $form->select_company('','socid','s.client = 1',1);
+			print '</td>';
+		}
+		print '</tr>'."\n";
 
 		/*
 		 * Contact de la commande
 		*/
-		print "<tr><td>".$langs->trans("DefaultContact").'</td><td colspan="2">';
-		$form->select_contacts($soc->id,$setcontact,'contactidp',1,$srccontactslist);
-		print '</td></tr>';
-
-		// Ligne info remises tiers
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
-		else print $langs->trans("CompanyHasNoRelativeDiscount");
-		print '. ';
-		$absolute_discount=$soc->getAvailableDiscounts();
-		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
-		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print '.';
-		print '</td></tr>';
-
+		if($socid>0)
+		{
+			print "<tr><td>".$langs->trans("DefaultContact").'</td><td colspan="2">';
+			$form->select_contacts($soc->id,$setcontact,'contactidp',1,$srccontactslist);
+			print '</td></tr>';
+		
+			// Ligne info remises tiers
+			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			print '. ';
+			$absolute_discount=$soc->getAvailableDiscounts();
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+		}
 		// Date
 		print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 		$form->select_date('','re','','','',"crea_commande",1,1);
@@ -1506,7 +1541,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		print '</td></tr>';
 
 		// Project
-		if (! empty($conf->projet->enabled))
+		if (! empty($conf->projet->enabled) && $socid>0)
 		{
 			print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 			$numprojet=select_projects($soc->id,$projectid);

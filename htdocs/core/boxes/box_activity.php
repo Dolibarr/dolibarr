@@ -113,8 +113,9 @@ class box_activity extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".getCurrencySymbol($conf->currency)
+					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
 					);
+
 					// We add only for the current year
 					if ($objp->annee == date("Y"))
 					{
@@ -157,7 +158,7 @@ class box_activity extends ModeleBoxes
 					);
 					$totalnb += $objp->nb;
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".getCurrencySymbol($conf->currency)
+					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
 					);
 					$totalMnt += $objp->Mnttot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
@@ -211,7 +212,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $objp->nb;
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".getCurrencySymbol($conf->currency)
+					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
 					);
 					$totalMnt += $objp->Mnttot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"', 'text' => $commandestatic->LibStatut($objp->fk_statut,0,3));
@@ -262,7 +263,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $objp->nb;
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".getCurrencySymbol($conf->currency)
+					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
 					);
 					$totalMnt += $objp->Mnttot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"', 'text' => $propalstatic->LibStatut($objp->fk_statut,3));
@@ -276,7 +277,7 @@ class box_activity extends ModeleBoxes
 		// Add the sum in the bottom of the boxes
 		$this->info_box_contents[$i][1] = array('td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' '));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalMnt, 0, ',', ' ')."&nbsp;".getCurrencySymbol($conf->currency));
+		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalMnt, 0, ',', ' ')."&nbsp;".$langs->getCurrencySymbol($conf->currency));
 		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => "");
 		$this->info_box_contents[$i][5] = array('td' => 'align="right"', 'text' => "");
 	}

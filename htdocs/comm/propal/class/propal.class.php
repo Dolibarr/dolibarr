@@ -2405,7 +2405,7 @@ class Propal extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->lines[$i]					= (object) array();
+                $this->lines[$i]					= new stdClass();
                 $this->lines[$i]->id				= $obj->rowid; // for backward compatibility
                 $this->lines[$i]->rowid				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
