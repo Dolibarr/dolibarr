@@ -2279,16 +2279,16 @@ abstract class CommonObject
             	$qty= $obj->qty;
             	$discount_percent_line = $obj->remise_percent;
             	$total_ht = $obj->total_ht;
-            	
+
         		$total_discount_line = price2num(($pu_ht * $qty) - $total_ht, 'MT');
         		$total_discount += $total_discount_line;
-        		
+
         		$i++;
         	}
         }
         else dol_syslog(get_class($this).'::getTotalDiscount '.$this->db->lasterror(), LOG_ERR);
-		
-        //print $total_discount; exit;        
+
+        //print $total_discount; exit;
         return price2num($total_discount);
     }
 
@@ -2479,7 +2479,7 @@ abstract class CommonObject
         $parameters=array();
         $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
 
-        if (! $reshook)
+        if (empty($hookmanager->resPrint))
         {
         	$num = count($this->linkedObjects);
 

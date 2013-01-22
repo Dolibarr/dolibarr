@@ -41,6 +41,8 @@ class HookManager
 
 	// Array result
 	var $resArray=array();
+	// Printable result (int, string)
+	var $resPrint;
 
 	/**
 	 * Constructor
