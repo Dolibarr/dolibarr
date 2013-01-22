@@ -2033,6 +2033,7 @@ class Facture extends CommonObject
             // Clean parameters
             if (empty($qty)) $qty=0;
             if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+            if (empty($special_code) || $special_code == 3) $special_code=0;
 
             $remise_percent	= price2num($remise_percent);
             $qty			= price2num($qty);
