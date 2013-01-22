@@ -538,8 +538,6 @@ class Adherent extends CommonObject
                         $luser->office_phone=$this->phone;
                         $luser->user_mobile=$this->phone_mobile;
 
-                        $luser->note=$this->note;
-
                         $luser->fk_member=$this->id;
 
                         $result=$luser->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
