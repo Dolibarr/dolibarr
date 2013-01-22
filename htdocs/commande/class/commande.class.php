@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
@@ -995,7 +995,7 @@ class Commande extends CommonOrder
      *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
-     *	@param		int				$special_code		Special code
+     *	@param		int				$special_code		Special code (also used by externals modules!)
      *	@param		int				$fk_parent_line		Parent line
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
@@ -2176,9 +2176,10 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id of origin supplier price
      *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
+     *  @param		int				$special_code		Special code (also used by externals modules!)
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0)
     {
         global $conf;
 
@@ -2197,6 +2198,7 @@ class Commande extends CommonOrder
             if (empty($txlocaltax2)) $txlocaltax2=0;
             if (empty($remise)) $remise=0;
             if (empty($remise_percent)) $remise_percent=0;
+            if (empty($special_code) || $special_code == 3) $special_code=0;
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
             $pu = price2num($pu);
@@ -2251,7 +2253,7 @@ class Commande extends CommonOrder
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$subprice;
             $this->line->info_bits=$info_bits;
-            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
+            $this->line->special_code=$special_code;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
             $this->line->total_localtax1=$total_localtax1;

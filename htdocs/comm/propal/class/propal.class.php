@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012 Juanjo Menent			<jmenent@2byte.es>
@@ -301,7 +301,7 @@ class Propal extends CommonObject
      * 		@param    	int			$info_bits			Bits de type de lignes
      *      @param      int			$type               Type of line (product, service)
      *      @param      int			$rang               Position of line
-     *      @param		int			$special_code		Special code
+     *      @param		int			$special_code		Special code (also used by externals modules!)
      *      @param		int			$fk_parent_line		Id of parent line
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
@@ -457,7 +457,7 @@ class Propal extends CommonObject
      *  @param      string		$desc            	Description
      *	@param	  	double		$price_base_type	HT ou TTC
      *	@param      int			$info_bits        	Miscellanous informations
-     *	@param      int			$special_code      	Set special code ('' = we don't change it)
+     *	@param		int			$special_code		Special code (also used by externals modules!)
      * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
      *  @param		int			$fk_fournprice		Id of origin supplier price
@@ -480,7 +480,7 @@ class Propal extends CommonObject
         $txtva = price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
-    		$pa_ht=price2num($pa_ht);
+    	$pa_ht=price2num($pa_ht);
         if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
         if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 
