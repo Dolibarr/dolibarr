@@ -2479,7 +2479,7 @@ abstract class CommonObject
         $parameters=array();
         $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
 
-        if (empty($hookmanager->resPrint))
+        if (empty($reshook))
         {
         	$num = count($this->linkedObjects);
 
