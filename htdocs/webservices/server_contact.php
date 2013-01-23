@@ -28,6 +28,7 @@ require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 require_once(DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 dol_syslog("Call Contact webservices interfaces");
@@ -80,6 +81,58 @@ $server->wsdl->addComplexType(
     )
 );
 
+$contact_fields = array(
+	'id' => array('name'=>'id','type'=>'xsd:string'),
+	'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
+	'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
+	'address' => array('name'=>'address','type'=>'xsd:string'),
+	'zip' => array('name'=>'zip','type'=>'xsd:string'),
+	'town' => array('name'=>'town','type'=>'xsd:string'),
+	'state_id' => array('name'=>'state_id','type'=>'xsd:string'),
+	'state_code' => array('name'=>'state_code','type'=>'xsd:string'),
+	'state' => array('name'=>'state','type'=>'xsd:string'),
+	'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+	'country' => array('name'=>'country','type'=>'xsd:string'),
+	'socid' => array('name'=>'socid','type'=>'xsd:string'),
+	'status' => array('name'=>'status','type'=>'xsd:string'),
+	'phone_pro' => array('name'=>'phone_pro','type'=>'xsd:string'),
+	'fax' => array('name'=>'fax','type'=>'xsd:string'),
+	'phone_perso' => array('name'=>'phone_perso','type'=>'xsd:string'),
+	'phone_mobile' => array('name'=>'phone_mobile','type'=>'xsd:string'),
+	'code' => array('name'=>'code','type'=>'xsd:string'),
+	'email' => array('name'=>'email','type'=>'xsd:string'),
+	'birthday' => array('name'=>'birthday','type'=>'xsd:string'),
+	'default_lang' => array('name'=>'default_lang','type'=>'xsd:string'),
+	'note' => array('name'=>'note','type'=>'xsd:string'),
+	'no_email' => array('name'=>'no_email','type'=>'xsd:string'),
+	'ref_facturation' => array('name'=>'ref_facturation','type'=>'xsd:string'),
+	'ref_contrat' => array('name'=>'ref_contrat','type'=>'xsd:string'),
+	'ref_commande' => array('name'=>'ref_commande','type'=>'xsd:string'),
+	'ref_propal' => array('name'=>'ref_propal','type'=>'xsd:string'),
+	'user_id' => array('name'=>'user_id','type'=>'xsd:string'),
+	'user_login' => array('name'=>'user_login','type'=>'xsd:string'),
+	'civility_id' => array('name'=>'civility_id','type'=>'xsd:string')
+	//...
+);
+//Retreive all extrafield for contact
+// fetch optionals attributes and labels
+$extrafields=new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+if (count($extrafields)>0) {
+	$extrafield_array = array();
+}
+foreach($extrafields->attribute_label as $key=>$label)
+{
+	$type =$extrafields->attribute_type[$key];
+	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+	else {$type='xsd:string';}
+
+	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+}
+
+$contact_fields=array_merge($contact_fields,$extrafield_array);
+
 // Define other specific objects
 $server->wsdl->addComplexType(
     'contact',
@@ -87,36 +140,7 @@ $server->wsdl->addComplexType(
     'struct',
     'all',
     '',
-    array(
-		'id' => array('name'=>'id','type'=>'xsd:string'),
-		'lastname' => array('name'=>'lastname','type'=>'xsd:string'),
-		'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
-		'address' => array('name'=>'address','type'=>'xsd:string'),
-		'zip' => array('name'=>'zip','type'=>'xsd:string'),
-		'town' => array('name'=>'town','type'=>'xsd:string'),
-		'state_id' => array('name'=>'state_id','type'=>'xsd:string'),
-		'state_code' => array('name'=>'state_code','type'=>'xsd:string'),
-		'state' => array('name'=>'state','type'=>'xsd:string'),
-		'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
-		'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
-		'country' => array('name'=>'country','type'=>'xsd:string'),
-		'socid' => array('name'=>'socid','type'=>'xsd:string'),
-		'status' => array('name'=>'status','type'=>'xsd:string'),
-		'code' => array('name'=>'code','type'=>'xsd:string'),
-		'email' => array('name'=>'email','type'=>'xsd:string'),
-		'birthday' => array('name'=>'birthday','type'=>'xsd:string'),
-		'default_lang' => array('name'=>'default_lang','type'=>'xsd:string'),
-		'note' => array('name'=>'note','type'=>'xsd:string'),
-		'no_email' => array('name'=>'no_email','type'=>'xsd:string'),
-		'ref_facturation' => array('name'=>'ref_facturation','type'=>'xsd:string'),
-		'ref_contrat' => array('name'=>'ref_contrat','type'=>'xsd:string'),
-		'ref_commande' => array('name'=>'ref_commande','type'=>'xsd:string'),
-		'ref_propal' => array('name'=>'ref_propal','type'=>'xsd:string'),
-		'user_id' => array('name'=>'user_id','type'=>'xsd:string'),
-		'user_login' => array('name'=>'user_login','type'=>'xsd:string'),
-		'civility_id' => array('name'=>'civility_id','type'=>'xsd:string')
-    //...
-    )
+	$contact_fields
 );
 
 $server->wsdl->addComplexType(
@@ -223,44 +247,63 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
     {
         $fuser->getrights();
 
-        if ($fuser->rights->contact->read)
+        if ($fuser->rights->societe->contact->lire )
         {
             $contact=new Contact($db);
             $result=$contact->fetch($id,$ref,$ref_ext);
             if ($result > 0)
             {
+            	$contact_result_fields =array(
+	            	'id' => $contact->id,
+	            	'lastname' => $contact->lastname,
+	            	'firstname' => $contact->firstname,
+	            	'address' => $contact->address,
+	            	'zip' => $contact->zip,
+	            	'town' => $contact->town,
+	            	'state_id' => $contact->state_id,
+	            	'state_code' => $contact->state_code,
+	            	'state' => $contact->state,
+	            	'country_id' => $contact->country_id,
+	            	'country_code' => $contact->country_code,
+	            	'country' => $contact->country,
+	            	'socid' => $contact->socid,
+	            	'status' => $contact->status,
+	            	'phone_pro' => $contact->phone_pro,
+	            	'fax' => $contact->fax,
+	            	'phone_perso' => $contact->phone_perso,
+	            	'phone_mobile' => $contact->phone_mobile,
+	            	'code' => $contact->code,
+	            	'email' => $contact->email,
+	            	'birthday' => $contact->birthday,
+	            	'default_lang' => $contact->default_lang,
+	            	'note' => $contact->note,
+	            	'no_email' => $contact->no_email,
+	            	'ref_facturation' => $contact->ref_facturation,
+	            	'ref_contrat' => $contact->ref_contrat,
+	            	'ref_commande' => $contact->ref_commande,
+	            	'ref_propal' => $contact->ref_propal,
+	            	'user_id' => $contact->user_id,
+	            	'user_login' => $contact->user_login,
+	            	'civility_id' => $contact->civility_id
+            	);
+            	
+            	//Retreive all extrafield for thirdsparty
+            	// fetch optionals attributes and labels
+            	$extrafields=new ExtraFields($db);
+            	$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+            	//Get extrafield values
+            	$contact->fetch_optionals($contact->id,$extralabels);
+            	
+            	foreach($extrafields->attribute_label as $key=>$label)
+            	{
+            		$contact_result_fields=array_merge($contact_result_fields,array('options_'.$key => $contact->array_options['options_'.$key]));
+            	}
+            	
+            	
                 // Create
                 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			        'contact'=>array(
-						'id' => $contact->id,
-						'lastname' => $contact->lastname,
-						'firstname' => $contact->firstname,
-						'address' => $contact->address,
-						'zip' => $contact->zip,
-						'town' => $contact->town,
-						'state_id' => $contact->state_id,
-						'state_code' => $contact->state_code,
-						'state' => $contact->state,
-						'country_id' => $contact->country_id,
-						'country_code' => $contact->country_code,
-						'country' => $contact->country,
-						'socid' => $contact->socid,
-						'status' => $contact->status,
-						'code' => $contact->code,
-						'email' => $contact->email,
-						'birthday' => $contact->birthday,
-						'default_lang' => $contact->default_lang,
-						'note' => $contact->note,
-						'no_email' => $contact->no_email,
-						'ref_facturation' => $contact->ref_facturation,
-						'ref_contrat' => $contact->ref_contrat,
-						'ref_commande' => $contact->ref_commande,
-						'ref_propal' => $contact->ref_propal,
-						'user_id' => $contact->user_id,
-						'user_login' => $contact->user_login,
-						'civility_id' => $contact->civility_id
-                    )
+			        'contact'=>$contact_result_fields
                 );
             }
             else
@@ -334,6 +377,10 @@ function createContact($authentication,$contact)
 		$newobject->country=$contact['country'];
 		$newobject->socid=$contact['socid'];
 		$newobject->status=$contact['status'];
+		$newobject->phone_pro=$contact['phone_pro'];
+		$newobject->fax=$contact['fax'];
+		$newobject->phone_perso=$contact['phone_perso'];
+		$newobject->phone_mobile=$contact['phone_mobile'];
 		$newobject->code=$contact['code'];
 		$newobject->email=$contact['email'];
 		$newobject->birthday=$contact['birthday'];
@@ -346,6 +393,17 @@ function createContact($authentication,$contact)
 		$newobject->ref_propal=$contact['ref_propal'];
 		$newobject->user_id=$contact['user_id'];
 		$newobject->user_login=$contact['user_login'];
+		
+		//Retreive all extrafield for thirdsparty
+		// fetch optionals attributes and labels
+		$extrafields=new ExtraFields($db);
+		$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$key='options_'.$key;
+			$newobject->array_options[$key]=$contact[$key];
+		}
+		
 
 		
 		//...
