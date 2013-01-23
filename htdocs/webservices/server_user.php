@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
 dol_syslog("Call User webservices interfaces");
@@ -150,6 +151,56 @@ $server->wsdl->addComplexType(
 	),
 	'tns:group'
 );
+$thirdpartywithuser_fields = array(
+	// For thirdparty and contact
+	'name' => array('name'=>'name','type'=>'xsd:string'),
+	'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
+	'name_thirdparty' => array('name'=>'name_thirdparty','type'=>'xsd:string'),
+	'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+	'client' => array('name'=>'client','type'=>'xsd:string'),
+	'fournisseur' => array('name'=>'fournisseur','type'=>'xsd:string'),
+	'address' => array('name'=>'address','type'=>'xsd:string'),
+	'zip' => array('name'=>'zip','type'=>'xsd:string'),
+	'town' => array('name'=>'town','type'=>'xsd:string'),
+	'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
+	'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
+	'phone' => array('name'=>'phone','type'=>'xsd:string'),
+	'phone_mobile' => array('name'=>'phone_mobile','type'=>'xsd:string'),
+	'fax' => array('name'=>'fax','type'=>'xsd:string'),
+	'email' => array('name'=>'email','type'=>'xsd:string'),
+	'url' => array('name'=>'url','type'=>'xsd:string'),
+	'profid1' => array('name'=>'profid1','type'=>'xsd:string'),
+	'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
+	'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
+	'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
+	'profid5' => array('name'=>'profid5','type'=>'xsd:string'),
+	'profid6' => array('name'=>'profid6','type'=>'xsd:string'),
+	'capital' => array('name'=>'capital','type'=>'xsd:string'),
+	'tva_assuj' => array('name'=>'tva_assuj','type'=>'xsd:string'),
+	'tva_intra' => array('name'=>'tva_intra','type'=>'xsd:string'),
+	// 	For user
+	'login' => array('name'=>'login','type'=>'xsd:string'),
+	'password' => array('name'=>'password','type'=>'xsd:string')
+);
+
+//Retreive all extrafield for contact
+// fetch optionals attributes and labels
+$extrafields=new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+if (count($extrafields)>0) {
+	$extrafield_array = array();
+}
+foreach($extrafields->attribute_label as $key=>$label)
+{
+	$type =$extrafields->attribute_type[$key];
+	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+	else {$type='xsd:string';}
+
+	$extrafield_array['contact_options_'.$key]=array('name'=>'contact_options_'.$key,'type'=>$type);
+}
+
+$thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields,$extrafield_array);
+
 
 $server->wsdl->addComplexType(
 	'thirdpartywithuser',
@@ -157,36 +208,7 @@ $server->wsdl->addComplexType(
 	'struct',
 	'all',
 	'',
-	array(
-		// For thirdparty and contact
-		'name' => array('name'=>'name','type'=>'xsd:string'),
-		'firstname' => array('name'=>'firstname','type'=>'xsd:string'),
-		'name_thirdparty' => array('name'=>'name_thirdparty','type'=>'xsd:string'),
-		'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
-		'client' => array('name'=>'client','type'=>'xsd:string'),
-		'fournisseur' => array('name'=>'fournisseur','type'=>'xsd:string'),
-		'address' => array('name'=>'address','type'=>'xsd:string'),
-		'zip' => array('name'=>'zip','type'=>'xsd:string'),
-		'town' => array('name'=>'town','type'=>'xsd:string'),
-		'country_id' => array('name'=>'country_id','type'=>'xsd:string'),
-		'country_code' => array('name'=>'country_code','type'=>'xsd:string'),
-		'phone' => array('name'=>'phone','type'=>'xsd:string'),
-		'fax' => array('name'=>'fax','type'=>'xsd:string'),
-		'email' => array('name'=>'email','type'=>'xsd:string'),
-		'url' => array('name'=>'url','type'=>'xsd:string'),
-		'profid1' => array('name'=>'profid1','type'=>'xsd:string'),
-		'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
-		'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
-		'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
-		'profid5' => array('name'=>'profid5','type'=>'xsd:string'),
-		'profid6' => array('name'=>'profid6','type'=>'xsd:string'),
-		'capital' => array('name'=>'capital','type'=>'xsd:string'),
-		'tva_assuj' => array('name'=>'tva_assuj','type'=>'xsd:string'),
-		'tva_intra' => array('name'=>'tva_intra','type'=>'xsd:string'),
-		// 	For user
-		'login' => array('name'=>'login','type'=>'xsd:string'),
-		'password' => array('name'=>'password','type'=>'xsd:string')
-	)
+	$thirdpartywithuser_fields
 );
 
 
@@ -521,9 +543,21 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->zip = $thirdparty->zip;
 						$contact->town = $thirdparty->town;
 						$contact->email = $thirdparty->email;
-						$contact->phone_pro = $thirdparty->tel;
-						$contact->phone_mobile = $thirdparty->phone_mobile;
+						$contact->phone_pro = $thirdparty->phone;
+						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
+						
+						//Retreive all extrafield for thirdsparty
+						// fetch optionals attributes and labels
+						$extrafields=new ExtraFields($db);
+						$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+						foreach($extrafields->attribute_label as $key=>$label)
+						{
+							$key='contact_options_'.$key;
+							$contact->array_options[$key]=$thirdpartywithuser[$key];
+						}
+						
+						
 
 						$contact_id =  $contact->create($fuser);
 
