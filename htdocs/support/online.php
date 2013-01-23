@@ -72,6 +72,12 @@ array('name'=>'Auguria',
 		'sort'=>2,
 		//'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
 		'id'=>'7196',
+		'lang'=>'fr'),
+//Widget for Open-Concept
+array('name'=>'Open-Concept.pro',
+		'sort'=>2,
+		'logo'=>'logoUrl='.urlencode('http://www.open-concept.pro/CMS/images/Logo/logosimplecomplet.png'),
+		'id'=>'9340',
 		'lang'=>'fr')
 );
 $arrayofwidgets=dol_sort_array($arrayofwidgets,'sort','asc',0,0);
