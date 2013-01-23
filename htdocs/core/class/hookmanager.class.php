@@ -41,6 +41,8 @@ class HookManager
 
 	// Array result
 	var $resArray=array();
+	// Printable result
+	var $resPrint='';
 
 	/**
 	 * Constructor
@@ -176,6 +178,8 @@ class HookManager
                     	// TODO. remove this. result must not be a string. we must use $actionclassinstance->resprint to return a string
                     	if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
+
+                    //print "method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction;
                 }
             }
         }
