@@ -46,6 +46,7 @@ $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
+$versionmodule=GETPOST("versionmodule",'',3)?GETPOST("versionmodule",'',3):(empty($argv[3])?'':$argv[3]);
 
 $langs->load("admin");
 $langs->load("install");
@@ -319,8 +320,9 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     if ($ok)
     {
         $dir = "mysql/migration/";		// We use mysql migration scripts whatever is database driver
+		if (! empty($versionmodule)) $dir=dol_buildpath('/'.$versionmodule.'/sql/',0);
 
-        // For minor version
+		// For minor version
         $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.0',$versionfrom);
         $newversionto=preg_replace('/(\.[0-9]+)$/i','.0',$versionto);
 
@@ -387,7 +389,7 @@ $ret=0;
 if (! $ok && isset($argv[1])) $ret=1;
 dol_syslog("Exit ".$ret);
 
-pFooter(! $ok && empty($_GET["ignoreerrors"]),$setuplang);
+pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $versionmodule),$setuplang);
 
 if ($db->connected) $db->close();
 
