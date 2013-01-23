@@ -223,10 +223,6 @@ if ($action == 'add' && $canadduser)
         		$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
         	}
         }
-        else if (! empty($_POST["admin"]))
-        {
-        	$object->entity=0;
-        }
         else
         {
         	$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
@@ -371,10 +367,6 @@ if ($action == 'update' && ! $_POST["cancel"])
             	{
             		$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
             	}
-            }
-            else if(! empty($_POST["admin"]))
-            {
-            	$object->entity=0;
             }
             else
             {
@@ -1582,7 +1574,7 @@ else
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+            print '<input type="hidden" name="entity" value="'.$fuser->entity.'">';
             print '<table width="100%" class="border">';
 
             $rowspan=13;
