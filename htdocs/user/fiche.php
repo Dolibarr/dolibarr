@@ -1437,7 +1437,7 @@ else
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+            print '<input type="hidden" name="entity" value="'.$fuser->entity.'">';
             print '<table width="100%" class="border">';
 
             $rowspan=12;
