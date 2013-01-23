@@ -219,10 +219,6 @@ if ($action == 'add' && $canadduser)
         		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
         	}
         }
-        else if (! empty($_POST["admin"]))
-        {
-        	$edituser->entity=0;
-        }
         else
         {
         	$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
@@ -336,10 +332,6 @@ if ($action == 'update' && ! $_POST["cancel"])
             	{
             		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
             	}
-            }
-            else if(! empty($_POST["admin"]))
-            {
-            	$edituser->entity=0;
             }
             else
             {
