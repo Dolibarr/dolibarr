@@ -223,10 +223,6 @@ if ($action == 'add' && $canadduser)
         		$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
         	}
         }
-        else if (! empty($_POST["admin"]))
-        {
-        	$object->entity=0;
-        }
         else
         {
         	$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
@@ -371,10 +367,6 @@ if ($action == 'update' && ! $_POST["cancel"])
             	{
             		$object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
             	}
-            }
-            else if(! empty($_POST["admin"]))
-            {
-            	$object->entity=0;
             }
             else
             {
