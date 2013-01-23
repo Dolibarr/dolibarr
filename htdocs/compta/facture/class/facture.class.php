@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
@@ -1874,7 +1874,7 @@ class Facture extends CommonInvoice
      * 		@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
      * 		@param		int			$type				Type of line (0=product, 1=service)
      *      @param      int			$rang               Position of line
-     *      @param		int			$special_code		Special code
+     *      @param		int			$special_code		Special code (also used by externals modules!)
      *      @param		string		$origin				'order', ...
      *      @param		int			$origin_id			Id of origin object
      *      @param		int			$fk_parent_line		Id of parent line
@@ -2037,9 +2037,10 @@ class Facture extends CommonInvoice
      * 	@param		int			$fk_fournprice		Id of origin supplier price
      * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
      * 	@param		string		$label				Label of the line
+     * 	@param		int			$special_code		Special code (also used by externals modules!)
      *  @return    	int             				< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2052,11 +2053,12 @@ class Facture extends CommonInvoice
             // Clean parameters
             if (empty($qty)) $qty=0;
             if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+            if (empty($special_code) || $special_code == 3) $special_code=0;
 
             $remise_percent	= price2num($remise_percent);
             $qty			= price2num($qty);
             $pu 			= price2num($pu);
-            $pa_ht    = price2num($pa_ht);
+            $pa_ht			= price2num($pa_ht);
             $txtva			= price2num($txtva);
             $txlocaltax1	= price2num($txlocaltax1);
             $txlocaltax2	= price2num($txlocaltax2);
@@ -2105,21 +2107,21 @@ class Facture extends CommonInvoice
             $this->line->rowid				= $rowid;
             $this->line->label				= $label;
             $this->line->desc				= $desc;
-            $this->line->qty=            ($this->type==2?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
+            $this->line->qty				= ($this->type==2?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
             $this->line->tva_tx				= $txtva;
             $this->line->localtax1_tx		= $txlocaltax1;
             $this->line->localtax2_tx		= $txlocaltax2;
             $this->line->remise_percent		= $remise_percent;
-            $this->line->subprice=       ($this->type==2?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
+            $this->line->subprice			= ($this->type==2?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
             $this->line->date_start			= $date_start;
             $this->line->date_end			= $date_end;
-            $this->line->total_ht=       (($this->type==2||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
-            $this->line->total_tva=      (($this->type==2||$qty<0)?-abs($total_tva):$total_tva);
-            $this->line->total_localtax1=(($this->type==2||$qty<0)?-abs($total_localtax1):$total_localtax1);
-            $this->line->total_localtax2=(($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
-            $this->line->total_ttc=      (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
+            $this->line->total_ht			= (($this->type==2||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
+            $this->line->total_tva			= (($this->type==2||$qty<0)?-abs($total_tva):$total_tva);
+            $this->line->total_localtax1	= (($this->type==2||$qty<0)?-abs($total_localtax1):$total_localtax1);
+            $this->line->total_localtax2	= (($this->type==2||$qty<0)?-abs($total_localtax2):$total_localtax2);
+            $this->line->total_ttc			= (($this->type==2||$qty<0)?-abs($total_ttc):$total_ttc);
             $this->line->info_bits			= $info_bits;
-            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
+            $this->line->special_code		= $special_code;
             $this->line->product_type		= $type;
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
