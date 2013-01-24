@@ -522,7 +522,7 @@ else if ($id)
             print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
+            $parameters=array('colspan' => ' colspan="3"', 'showblocbydefault' => 1);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print "</table><br>";
@@ -578,7 +578,8 @@ else if ($id)
     }
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

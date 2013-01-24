@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,11 +14,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
-// Hide by default
-$hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
+$hide = true;	// Hide by default
+if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocbydefault']) ? true : false);
+if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);
 
 ?>
 
