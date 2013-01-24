@@ -479,13 +479,13 @@ class EcmDirectory // extends CommonObject
 
 		$this->motherof=array();
 
-		// Charge tableau des meres
+		// Load array[child]=parent
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog(get_class($this)."::get_full_arbo sql=".$sql);
+		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

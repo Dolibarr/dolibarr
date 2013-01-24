@@ -47,6 +47,7 @@ class Categorie
 	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
+	var $motherof=array();
 
 
 	/**
@@ -544,6 +545,40 @@ class Categorie
 
 
 	/**
+	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
+	 */
+	private function load_motherof()
+	{
+		global $conf;
+
+		$this->motherof=array();
+
+		// Load array[child]=parent
+		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE fk_parent != 0";
+		$sql.= " AND entity = ".$conf->entity;
+
+		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj= $this->db->fetch_object($resql))
+			{
+				$this->motherof[$obj->id_son]=$obj->id_parent;
+			}
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
 	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau
 	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
 	 *				id = id de la categorie
@@ -554,12 +589,15 @@ class Categorie
 	 *				fullpath = chemin complet compose des id
 	 *
 	 *	@param      string	$type		      Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     *  @param      int		$markafterid      Mark all categories after this leaf in category tree.
-	 *	@return		array		      		  Array of categories
+     *  @param      int		$markafterid      Removed all categories including the leaf $markafterid in category tree.
+	 *	@return		array		      		  Array of categories. this->cats and this->motherof are set.
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
 		$this->cats = array();
+
+		// Init this->motherof that is array(id_son=>id_parent, ...)
+		$this->load_motherof();
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
@@ -592,10 +630,11 @@ class Categorie
 		dol_syslog(get_class($this)."::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
 		foreach($this->cats as $key => $val)
 		{
+			//print 'key='.$key.'<br>'."\n";
 			$this->build_path_from_id_categ($key,0);	// Process a branch from the root category key (this category has no parent)
 		}
 
-        // Exclude tree for $markafterid
+        // Exclude leaf including $markafterid from tree
         if ($markafterid)
         {
             //print "Look to discard category ".$markafterid."\n";
@@ -608,8 +647,6 @@ class Categorie
                 if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
                 || preg_match('/'.$keyfilter3.'/',$val['fullpath']) || preg_match('/'.$keyfilter4.'/',$val['fullpath']))
                 {
-                    //print "Categ discarded ".$this->cats[$key]['fullpath']."\n";
-                    //$this->cats[$key]['marked']=1;
                     unset($this->cats[$key]);
                 }
             }
@@ -630,50 +667,37 @@ class Categorie
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
 	 */
-	function build_path_from_id_categ($id_categ,$protection=0)
+	function build_path_from_id_categ($id_categ,$protection=1000)
 	{
 		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
-		//if (! empty($this->cats[$id_categ]['fullpath']))
-		//{
-		// Already defined
-		//	dol_syslog(get_class($this)."::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
-		//	return;
-		//}
+		if (! empty($this->cats[$id_categ]['fullpath']))
+		{
+			// Already defined
+			dol_syslog(get_class($this)."::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+			return;
+		}
+
+		// First build full array $motherof
+		//$this->load_motherof();	// Disabled because already done by caller of build_path_from_id_categ
 
 		// Define fullpath and fulllabel
-		if (! empty($this->cats[$id_categ]['fk_parent']))
+		$this->cats[$id_categ]['fullpath'] = '_'.$id_categ;
+		$this->cats[$id_categ]['fulllabel'] = $this->cats[$id_categ]['label'];
+		$i=0; $cursor_categ=$id_categ;
+		//print 'Work for id_categ='.$id_categ.'<br>'."\n";
+		while ((empty($protection) || $i < $protection) && ! empty($this->motherof[$cursor_categ]))
 		{
-			$this->cats[$id_categ]['fullpath'] = $this->cats[$this->cats[$id_categ]['fk_parent']]['fullpath'];
-			$this->cats[$id_categ]['fullpath'].= '_'.$id_categ;
-			$this->cats[$id_categ]['fulllabel'] = $this->cats[$this->cats[$id_categ]['fk_parent']]['fulllabel'];
-			$this->cats[$id_categ]['fulllabel'].= ' >> '.$this->cats[$id_categ]['label'];
+			//print '&nbsp; cursor_categ='.$cursor_categ.' i='.$i.' '.$this->motherof[$cursor_categ].'<br>'."\n";
+			$this->cats[$id_categ]['fullpath'] = '_'.$this->motherof[$cursor_categ].$this->cats[$id_categ]['fullpath'];
+			$this->cats[$id_categ]['fulllabel'] = $this->cats[$this->motherof[$cursor_categ]]['label'].' >> '.$this->cats[$id_categ]['fulllabel'];
+			//print '&nbsp; Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].' '.$this->cats[$id_categ]['fulllabel'].'<br>'."\n";
+			$i++; $cursor_categ=$this->motherof[$cursor_categ];
 		}
-		else
-		{
-			$this->cats[$id_categ]['fullpath'] = '_'.$id_categ;
-			$this->cats[$id_categ]['fulllabel'] = $this->cats[$id_categ]['label'];
-		}
+		//print 'Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].'<br>'."\n";
+
 		// We count number of _ to have level
 		$this->cats[$id_categ]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->cats[$id_categ]['fullpath']));
-
-		/*
-		// Process all childs on several levels of this category
-		$protection++;
-		if ($protection > 10) return;	// On ne traite pas plus de 10 niveaux de profondeurs
-		if (empty($this->cats[$id_categ]['id_children'])) return;
-		foreach($this->cats[$id_categ]['id_children'] as $key => $idchild)
-		{
-			// Protection when a category has itself as a child (should not happen)
-			if ($idchild == $id_categ)
-			{
-				dol_syslog(get_class($this)."::build_path_from_id_categ bad couple (".$idchild.",".$id_categ.") in association table: An entry should not have itself has child", LOG_WARNING);
-				continue;
-			}
-
-			$this->build_path_from_id_categ($idchild,$protection);
-		}
-		*/
 
 		return;
 	}
