@@ -67,12 +67,6 @@ if ($id)
     || (($user->id != $id) && $user->rights->user->user->password));
 }
 
-//Multicompany in mode transversal
-if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multicompany->transverse_mode)
-{
-    accessforbidden();
-}
-
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
