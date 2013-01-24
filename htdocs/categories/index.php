@@ -209,12 +209,15 @@ foreach($fulltree as $key => $val)
 	// Define showline
 	$showline=0;
 
+	//var_dump($expandedsectionarray);
+
 	// If directory is son of expanded directory, we show line
 	if (isset($val['fk_parent']) && in_array($val['fk_parent'],$expandedsectionarray)) $showline=4;
 	// If directory is parent of selected directory or is selected directory, we show line
 	elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
 	// If we are level one we show line
 	elseif ($val['level'] < 2) $showline=1;
+	//print 'xxx '.$val['level'].' - '.$fullpathselected.' - '.$val['fullpath'].' - '.$val['fk_parent'].' showline='.$showline.'<br>'."\n";
 
 	if ($showline)
 	{

@@ -346,7 +346,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)&& empty($object->oldcopy->code_fournisseur)) $object->code_fournisseur='';
                 //var_dump($object);exit;
 
-                $result = $object->update($socid,$user,1,$object->oldcopy->codeclient_modifiable(),$object->oldcopy->codefournisseur_modifiable());
+                $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
                 if ($result <=  0)
                 {
                     $error = $object->error; $errors = $object->errors;
@@ -397,6 +397,22 @@ if (empty($reshook))
                 }
                 // Gestion du logo de la société
 
+                
+                // Update linked member
+                if (! $error && $object->fk_soc > 0)
+                {
+                	
+                	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+                	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
+                	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                	if (! $this->db->query($sql))
+                	{
+                		$error++;
+                		$this->error .= $this->db->lasterror();
+                		dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
+                	}
+                }
+                
                 if (! $error && ! count($errors))
                 {
 

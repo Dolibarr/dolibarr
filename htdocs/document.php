@@ -137,6 +137,17 @@ if ($modulepart)
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
+	// Wrapping pour les deplacements et notes de frais
+	else if ($modulepart == 'deplacement')
+	{
+		if ($user->rights->deplacement->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->deplacement->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
+	}
+	
 	// Wrapping pour les prelevements
 	else if ($modulepart == 'prelevement')
 	{
