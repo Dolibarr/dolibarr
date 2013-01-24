@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ print_titre($langs->trans('RelatedOrders'));
 </tr>
 <?php
 $var=true;
+$total=0;
 foreach($linkedObjectBlock as $object)
 {
 	$var=!$var;
