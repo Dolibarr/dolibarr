@@ -778,21 +778,18 @@ if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity'
 // Init menu manager
 if (empty($user->societe_id))    // If internal user or not defined
 {
-	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
+	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 }
 else                        // If external user
 {
-	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
+	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 }
-// For backward compatibility
-if (empty($conf->standard_menu))  $conf->standard_menu ='eldy_backoffice.php';
-elseif ($conf->standard_menu == 'eldy.php') $conf->standard_menu='eldy_backoffice.php';
 
 // Load the menu manager (only if not already done)
 $file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
-if (GETPOST('menu')) $file_menu=GETPOST('menu');     // menu=eldy_backoffice.php
+if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
 if (! class_exists('MenuManager'))
 {
 	$menufound=0;
@@ -804,11 +801,12 @@ if (! class_exists('MenuManager'))
 	}
 	if (! $menufound)	// If failed to include, we try with standard
 	{
-		$file_menu='eldy_backoffice.php';
+		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
+		$file_menu='eldy_menu.php';
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 	}
 }
-$menumanager = new MenuManager($db);
+$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 
 
 
@@ -1337,6 +1335,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $loginhtmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
 	    $loginhtmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
+	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentMenuManager").'</b>: '.$menumanager->name;
 	    $s=picto_from_langcode($langs->getDefaultLang());
 	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
 	    $loginhtmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';

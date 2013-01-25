@@ -4,9 +4,12 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.4 compared to 3.3 *****
 For users:
-- New: Some performance enhancements
+- New: Some performance enhancements.
+- New: Can attach files onto trip and expenses modules.
 
 For developers:
+- System of menu managers has been rewritten to reduce code to do same things. 
+- An external module can force its theme.
 
 For translators:
 
