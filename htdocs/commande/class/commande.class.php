@@ -880,8 +880,7 @@ class Commande extends CommonOrder
      */
     function createFromProposal($object)
     {
-        global $conf,$user,$langs;
-        global $hookmanager;
+        global $conf,$user,$langs,$hookmanager;
 
         $error=0;
 
@@ -945,11 +944,6 @@ class Commande extends CommonOrder
             if ($ret > 0)
             {
                 // Actions hooked (by external module)
-                if (! is_object($hookmanager))
-                {
-                	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                	$hookmanager=new HookManager($this->db);
-                }
                 $hookmanager->initHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);

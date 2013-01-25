@@ -394,7 +394,7 @@ class Adherent extends CommonObject
      */
     function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
     {
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $nbrowsaffected=0;
         $error=0;
@@ -462,8 +462,6 @@ class Adherent extends CommonObject
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
             // Actions on extra fields (by external module)
-            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-            $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';

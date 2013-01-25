@@ -590,18 +590,10 @@ class FormFile
      */
 	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
 	{
-		global $user, $conf, $langs;
-		global $bc, $hookmanager;
+		global $user, $conf, $langs, $hookmanager;
+		global $bc;
 		global $sortfield, $sortorder, $maxheightmini;
 
-		if (! is_object($hookmanager))
-		{
-			if (! class_exists('HookManager')) {
-				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($this->db);
-			}
-		}
 		$hookmanager->initHooks(array('formfile'));
 
 		$parameters=array(

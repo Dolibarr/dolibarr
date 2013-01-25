@@ -603,8 +603,6 @@ if (! defined('NOLOGIN'))
 
         // Hooks on successfull login
         $action='';
-        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        $hookmanager=new HookManager($db);
         $hookmanager->initHooks(array('login'));
         $parameters=array('dol_authmode'=>$dol_authmode);
         $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1194,12 +1192,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $dolibarr_main_authentication;
     global $hookmanager,$menumanager;
 
-    // Instantiate hooks of thirdparty module only if not already define
-    if (! is_object($hookmanager))
-    {
-    	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-    	$hookmanager=new HookManager($db);
-    }
+    // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('toprightmenu'));
 
     $toprightmenu='';
@@ -1426,11 +1419,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $bookmarks='';
 
     // Instantiate hooks of thirdparty module
-    if (! is_object($hookmanager))
-    {
-    	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-    	$hookmanager=new HookManager($db);
-	}
     $hookmanager->initHooks(array('searchform','leftblock'));
 
     if (empty($_SESSION['dol_hide_leftmenu']))
