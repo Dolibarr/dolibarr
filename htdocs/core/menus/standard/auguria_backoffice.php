@@ -34,7 +34,6 @@
 class MenuManager
 {
 	var $db;
-	var $require_left=array("auguria_backoffice");  // Si doit etre en phase avec un gestionnaire de menu gauche particulier
 	var $type_user=0;								// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 
