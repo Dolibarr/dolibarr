@@ -200,6 +200,7 @@ if ($result >= 0)
 			$fuser->user_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE];
 			$fuser->office_fax=$ldapuser[$conf->global->LDAP_FIELD_FAX];
 			$fuser->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL];
+			$fuser->ldap_sid=$ldapuser[$conf->global->LDAP_FIELD_SID];
 
 			$fuser->job=$ldapuser[$conf->global->LDAP_FIELD_TITLE];
 			$fuser->note=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
