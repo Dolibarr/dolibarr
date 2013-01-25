@@ -2078,7 +2078,7 @@ else
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
             $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$soc->id;
+            $formmail->withtosocid=$societe->id;
             $formmail->withtocc=1;
             $formmail->withtoccsocid=0;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
