@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,21 @@
  */
 
 /**
- *		\file       htdocs/core/menus/standard/eldy_backoffice.php
- *		\brief      Gestionnaire nomme eldy du menu du haut
- *
- *		\remarks    La construction d'un gestionnaire pour le menu du haut est simple:
- *		\remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
- *		\remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
- *		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a>
+ *	\file       htdocs/core/menus/standard/eldy_menu.php
+ *	\brief      Menu eldy manager
  */
 
 
 /**
- *  Classe to manage menu Eldy 
+ *	Class to manage menu Eldy
  */
 class MenuManager
 {
 	var $db;
-	var $require_left=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-	var $type_user=0;								// Put 0 for internal users, 1 for external users
+	var $type_user;									// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
-
+	var $name="eldy";
+	
     var $menu_array;
     var $menu_array_after;
 
@@ -44,10 +39,12 @@ class MenuManager
     /**
      *  Constructor
      *
-	 *  @param	DoliDB		$db     			Database handler
+	 *  @param	DoliDB		$db     	Database handler
+     *  @param	int			$type_user	Type of user
      */
-    function __construct($db)
+    function __construct($db, $type_user)
     {
+    	$this->type_user=$type_user;
         $this->db=$db;
     }
 
@@ -55,17 +52,25 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode		'top' or 'left'
-     *  @return	int     			Number of menu entries shown
+     *	@param	string	$mode			'top' or 'left'
+     *  @return int     				Number of menu entries shown
      */
     function showmenu($mode)
     {
+    	global $conf;
+
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
+
+        if ($this->type_user == 1)
+        {
+        	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
+        	$conf->global->MAIN_SEARCHFORM_CONTACT=0;
+        }
 
         $res='ErrorBadParameterForMode';
         if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user);
         if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
-
+        
         return $res;
     }
 

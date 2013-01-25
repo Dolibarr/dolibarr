@@ -380,7 +380,7 @@ class Societe extends CommonObject
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update', $nosyncmember=1)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$error=0;
@@ -612,8 +612,6 @@ class Societe extends CommonObject
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 // Actions on extra fields (by external module or standard code)
-                include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                $hookmanager=new HookManager($this->db);
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1064,8 +1062,6 @@ class Societe extends CommonObject
             if (! $error)
             {
             	// Additionnal action by hooks
-                include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                $hookmanager=new HookManager($this->db);
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array(); $action='delete';
                 $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

@@ -568,6 +568,7 @@ ThisLimitIsDefinedInSetup=Limite Dolibarr (Menu accueil-configuration-sécurité
 NoFileFound=Pas de documents stockés dans cette rubrique
 CurrentUserLanguage=Langue utilisateur actuelle
 CurrentTheme=Thème courant
+CurrentMenuManager=Gestionnaire de menu courant
 DisabledModules=Modules désactivés
 For=Pour
 ForCustomer=Pour le client

@@ -2468,16 +2468,12 @@ abstract class CommonObject
      */
     function showLinkedObjectBlock($hookmanager=false)
     {
-        global $conf,$langs,$bc;
+        global $conf,$langs,$hookmanager;
+        global $bc;
 
         $this->fetchObjectLinked();
 
         // Bypass the default method
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('commonobject'));
         $parameters=array();
         $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
