@@ -112,7 +112,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs, $hookmanager);
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs);
 		}
 
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);

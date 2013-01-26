@@ -867,12 +867,11 @@ class Propal extends CommonObject
      *		Load an object from its id and create a new one in database
      *
      *		@param		int				$socid			Id of thirdparty
-     *		@param		HookManager		$hookmanager	Hook manager instance
      * 	 	@return		int								New id of clone
      */
-    function createFromClone($socid=0,$hookmanager=false)
+    function createFromClone($socid=0)
     {
-        global $user,$langs,$conf;
+        global $user,$langs,$conf,$hookmanager;
 
         $error=0;
         $now=dol_now();

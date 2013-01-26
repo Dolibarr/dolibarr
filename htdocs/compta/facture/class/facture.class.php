@@ -541,7 +541,7 @@ class Facture extends CommonInvoice
 	 *		@param		HookManager		$hookmanager	Hook manager instance
      * 	 	@return		int								New id of clone
      */
-    function createFromClone($socid=0,$hookmanager=false)
+    function createFromClone($socid=0)
     {
         global $conf,$user,$langs;
 

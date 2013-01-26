@@ -101,10 +101,9 @@ class pdf_soleil extends ModelePDFFicheinter
      *  @param		int		$hidedetails		Do not show line details
      *  @param		int		$hidedesc			Do not show desc
      *  @param		int		$hideref			Do not show ref
-     *  @param		object	$hookmanager		Hookmanager object
      *  @return     int             			1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc;
 
@@ -174,7 +173,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
+				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
