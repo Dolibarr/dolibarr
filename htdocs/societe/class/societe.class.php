@@ -578,12 +578,12 @@ class Societe extends CommonObject
 	            	if (! $nosyncmember && ! empty($conf->adherent->enabled))
 	            	{
 		            	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		            	
+
 		            	dol_syslog(get_class($this)."::update update linked member");
-		            	
+
 		            	$lmember=new Adherent($this->db);
 		            	$result=$lmember->fetch(0, 0, $this->id);
-		            	
+
 		            	if ($result > 0)
 		            	{
 		            		$lmember->firstname=$this->firstname;
@@ -604,14 +604,15 @@ class Societe extends CommonObject
 		            	{
 		            		$this->error=$lmember->error;
 		            		$error++;
-		            	}            	
+		            	}
 	            	}
             	}
-            	
+
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 // Actions on extra fields (by external module or standard code)
+                // FIXME le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -982,7 +983,8 @@ class Societe extends CommonObject
      */
     function delete($id)
     {
-        global $user,$langs,$conf;
+        global $user, $langs, $conf, $hookmanager;
+
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -1062,6 +1064,7 @@ class Societe extends CommonObject
             if (! $error)
             {
             	// Additionnal action by hooks
+            	// FIXME on a déjà un trigger, pourquoi rajouter un hook !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array(); $action='delete';
                 $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
