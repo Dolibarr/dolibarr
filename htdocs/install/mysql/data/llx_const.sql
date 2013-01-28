@@ -55,10 +55,10 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0,0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_STANDARD','eldy.php','chaine','Menu manager for internal users',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_STANDARD','eldy.php','chaine','Menu manager for external users',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_SMARTPHONE','eldy.php','chaine','Menu manager for internal users using smartphones',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_SMARTPHONE','eldy.php','chaine','Menu manager for external users using smartphones',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_STANDARD','eldy_menu.php','chaine','Menu manager for internal users',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_STANDARD','eldy_menu.php','chaine','Menu manager for external users',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_SMARTPHONE','eldy_menu.php','chaine','Menu manager for internal users using smartphones',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_SMARTPHONE','eldy_menu.php','chaine','Menu manager for external users using smartphones',0);
 
 
 --
