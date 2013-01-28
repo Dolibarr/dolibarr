@@ -231,7 +231,6 @@ foreach ($handlers as $handler)
 	if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
 }
 
-
 // Removed magic_quotes
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.4
 {
