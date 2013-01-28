@@ -1347,7 +1347,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    && $_SESSION["dol_authmode"] != 'http')
 	    {
 	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-	        $logouttext .=$atarget?(' target="'.$atarget.'"'):'';
+	        //$logouttext .=empty($atarget?(' target="'.$atarget.'"'):'';
 	        $logouttext .='>';
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
 	        $logouttext .='</a>';
