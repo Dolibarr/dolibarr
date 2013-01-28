@@ -3005,14 +3005,14 @@ class Form
     {
         global $conf,$langs,$user;
 
-        $langs->load_cache_currencies();
+        $langs->load_cache_currencies('');
 
         $out='';
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
         $out.= '<select class="flat" name="'.$htmlname.'">';
-        foreach ($this->cache_currencies as $code_iso => $currency)
+        foreach ($langs->cache_currencies as $code_iso => $currency)
         {
         	if ($selected && $selected == $code_iso)
         	{
