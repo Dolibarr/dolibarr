@@ -228,7 +228,7 @@ foreach ($handlers as $handler)
 		throw new Exception('Log handler does not extend LogHandlerInterface');
 	}
 
-	$conf->loghandlers[]=$loghandlerinstance;
+	if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
 }
 
 
@@ -331,8 +331,8 @@ function conf($dolibarr_main_document_root)
     	{
     		throw new Exception('Log handler does not extend LogHandlerInterface');
     	}
-    
-    	$conf->loghandlers[]=$loghandlerinstance;
+
+		if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
     }
     
     return 1;

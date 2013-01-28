@@ -454,7 +454,7 @@ class Conf
         		throw new Exception('Log handler does not extend LogHandlerInterface');
         	}
 
-        	$this->loghandlers[]=$loghandlerinstance;
+        	$this->loghandlers[$handler]=$loghandlerinstance;
         }
 	}
 }
