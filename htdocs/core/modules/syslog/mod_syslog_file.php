@@ -138,7 +138,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				LOG_DEBUG => 'DEBUG'
 			);
 
-			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-5s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
+			$message = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident>0?str_pad('',$this->ident,' '):'').$content['message'];
 
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
