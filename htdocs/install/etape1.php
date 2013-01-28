@@ -255,8 +255,10 @@ if (! $error && $db->connected)
 {
     if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
     {
-    	$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
-    	$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
+    	//$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
+    	//$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
+    	$defaultCharacterSet=$db->forcecharset;
+    	$defaultDBSortingCollation=$db->forcecollate;
     }
     else	// If already created, we take current value
     {
@@ -268,6 +270,7 @@ if (! $error && $db->connected)
     print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultDBSortingCollation.'">';
     $db_character_set=$defaultCharacterSet;
     $db_collation=$defaultDBSortingCollation;
+    dolibarr_install_syslog("db_character_set=".$db_character_set." db_collation=".$db_collation);
 }
 
 
@@ -559,8 +562,8 @@ if (! $error && $db->connected && $action == "set")
         // If database creation is asked, we create it
         if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
         {
-            dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name, LOG_DEBUG);
-            $newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
+        	dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name." ".$dolibarr_main_db_character_set." ".$dolibarr_main_db_collation." ".$dolibarr_main_db_user, LOG_DEBUG);
+        	$newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
             //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
 
             if ($newdb->connected)
