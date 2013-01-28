@@ -675,14 +675,6 @@ if (! defined('NOREQUIRETRAN'))
     }
 }
 
-// Use php template engine
-if (! empty($conf->global->MAIN_USE_TEMPLATE_ENGINE) && ! defined('NOTEMPLATEENGINE'))
-{
-	require_once DOL_DOCUMENT_ROOT.'/includes/savant/Savant3.php';
-
-	$tpl = new Savant3();
-}
-
 // Case forcing style from url
 if (GETPOST('theme'))
 {
@@ -832,7 +824,7 @@ if (! function_exists("llxHeader"))
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 	    global $conf;
-		
+
 	    // html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
@@ -845,7 +837,7 @@ if (! function_exists("llxHeader"))
 		{
 			left_menu('', $help_url, '', '', 1, $title);
 		}
-		
+
 		// main area
 		main_area($title);
 	}
