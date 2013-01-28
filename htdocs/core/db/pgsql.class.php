@@ -41,7 +41,9 @@ class DoliDBPgsql
     //! Database label
 	static $label='PostgreSQL';      // Label of manager
 	//! Charset
-	var $forcecharset='UTF8';      // Can't be static as it may be forced with a dynamic value
+	var $forcecharset='UTF8';       // Can't be static as it may be forced with a dynamic value
+    //! Collate used to force collate when creating database
+    var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
 
