@@ -303,11 +303,12 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * 	@param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  *  @return	string					Return html string to convert a select field into a combo
  */
-function ajax_combobox($htmlname, $event=array())
+function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 {
 	$msg = '<script type="text/javascript">
     $(function() {
     	$("#'.$htmlname.'").combobox({
+    		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
     		selected : function(event,ui) {
     			var obj = '.json_encode($event).';
     			$.each(obj, function(key,values) {
