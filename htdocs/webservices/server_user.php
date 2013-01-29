@@ -327,7 +327,7 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
 'datec' => dol_print_date($user->datec,'dayhourrfc'),
 'datem' => dol_print_date($user->datem,'dayhourrfc'),
 'fk_thirdparty' => $user->societe_id,
-'fk_socpeople' => $user->fk_socpeople,
+'fk_socpeople' => $user->contact_id,
 'fk_member' => $user->fk_member,
 'webcal_login' => $user->webcal_login,
 'phenix_login' => $user->phenix_login,
