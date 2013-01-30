@@ -1029,12 +1029,11 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@param		HookManager	$hookmanager	Hook manager instance
      *	@return		int							New id of clone
      */
-    function createFromClone($hookmanager=false)
+    function createFromClone()
     {
-        global $conf,$user,$langs;
+        global $conf,$user,$langs,$hookmanager;
 
         $error=0;
 

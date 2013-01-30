@@ -72,7 +72,9 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+if (!$canreaduser) {
+	$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+}
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 $langs->load("users");
@@ -84,8 +86,6 @@ $object = new User($db);
 $extrafields = new ExtraFields($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('usercard'));
 
 

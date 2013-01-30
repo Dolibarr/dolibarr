@@ -59,8 +59,6 @@ $result=restrictedArea($user,'contrat',$id);
 $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('contractcard'));
 
 $object = new Contrat($db);
@@ -211,7 +209,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
     	setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")),'errors');
     	$error++;
     }
-    
+
     if (! $error)
     {
         $ret=$object->fetch($id);
@@ -1284,7 +1282,7 @@ else
         if ($user->rights->contrat->creer && ($object->statut >= 0))
         {
         	$dateSelector=1;
-        	
+
             print '<br>';
             print '<table id="tablelines" class="noborder" width="100%">';	// Array with (n*2)+1 lines
 
@@ -1300,28 +1298,28 @@ else
         		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
         		{
         			// Add free or predefined products/services
-        			$object->formAddObjectLine($dateSelector,$mysoc,$object->thirdparty,$hookmanager);
+        			$object->formAddObjectLine($dateSelector,$mysoc,$object->thirdparty);
         		}
         		else
         		{
         			// Add free products/services
-        			$object->formAddFreeProduct($dateSelector,$mysoc,$object->thirdparty,$hookmanager);
-        	
+        			$object->formAddFreeProduct($dateSelector,$mysoc,$object->thirdparty);
+
         			// Add predefined products/services
         			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
         			{
         				$var=!$var;
-        				$object->formAddPredefinedProduct($dateSelector,$mysoc,$object->thirdparty,$hookmanager);
+        				$object->formAddPredefinedProduct($dateSelector,$mysoc,$object->thirdparty);
         			}
         		}
-        	
+
         		$parameters=array();
         		$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         	}
-        	
+
         	// Restore correct setup
         	$conf->product->enabled = $savproductenabled;
-      
+
             print '</form>';
 
             print '</table>';

@@ -186,9 +186,7 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 	}
 }
 
-/*
- * Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
- */
+// Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
 	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
@@ -206,6 +204,12 @@ if (! defined('NOREQUIRETRAN'))
 {
 	$langs->setDefaultLang((! empty($conf->global->MAIN_LANG_DEFAULT)?$conf->global->MAIN_LANG_DEFAULT:''));
 }
+
+
+// Create the global $hookmanager object
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 

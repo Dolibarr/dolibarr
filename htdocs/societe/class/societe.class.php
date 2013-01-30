@@ -380,7 +380,7 @@ class Societe extends CommonObject
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update', $nosyncmember=1)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$error=0;
@@ -578,12 +578,12 @@ class Societe extends CommonObject
 	            	if (! $nosyncmember && ! empty($conf->adherent->enabled))
 	            	{
 		            	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		            	
+
 		            	dol_syslog(get_class($this)."::update update linked member");
-		            	
+
 		            	$lmember=new Adherent($this->db);
 		            	$result=$lmember->fetch(0, 0, $this->id);
-		            	
+
 		            	if ($result > 0)
 		            	{
 		            		$lmember->firstname=$this->firstname;
@@ -604,16 +604,15 @@ class Societe extends CommonObject
 		            	{
 		            		$this->error=$lmember->error;
 		            		$error++;
-		            	}            	
+		            	}
 	            	}
             	}
-            	
+
                 // Si le fournisseur est classe on l'ajoute
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 // Actions on extra fields (by external module or standard code)
-                include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                $hookmanager=new HookManager($this->db);
+                // FIXME le hook fait double emploi avec le trigger !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
                 $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -984,7 +983,8 @@ class Societe extends CommonObject
      */
     function delete($id)
     {
-        global $user,$langs,$conf;
+        global $user, $langs, $conf, $hookmanager;
+
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -1064,8 +1064,7 @@ class Societe extends CommonObject
             if (! $error)
             {
             	// Additionnal action by hooks
-                include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                $hookmanager=new HookManager($this->db);
+            	// FIXME on a déjà un trigger, pourquoi rajouter un hook !!
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array(); $action='delete';
                 $reshook=$hookmanager->executeHooks('deleteThirdparty',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2505,17 +2504,18 @@ class Societe extends CommonObject
     	global $langs;
 
     	$this->id=0;
-    	$this->name=(! empty($conf->global->MAIN_INFO_SOCIETE_NOM))?$conf->global->MAIN_INFO_SOCIETE_NOM:'';
-    	$this->nom=$this->name; 									// deprecated
-    	$this->address=(! empty($conf->global->MAIN_INFO_SOCIETE_ADRESSE))?$conf->global->MAIN_INFO_SOCIETE_ADRESSE:'';
-    	$this->adresse=$this->address; 							// deprecated
-    	$this->zip=(! empty($conf->global->MAIN_INFO_SOCIETE_CP))?$conf->global->MAIN_INFO_SOCIETE_CP:'';
-    	$this->cp=$this->zip;										// deprecated
-    	$this->town=(! empty($conf->global->MAIN_INFO_SOCIETE_VILLE))?$conf->global->MAIN_INFO_SOCIETE_VILLE:'';
-    	$this->ville=$this->town;									// deprecated
-    	$this->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
+    	$this->name=empty($conf->global->MAIN_INFO_SOCIETE_NOM)?'':$conf->global->MAIN_INFO_SOCIETE_NOM;
+    	$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADRESSE)?'':$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+    	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_CP)?'':$conf->global->MAIN_INFO_SOCIETE_CP;
+    	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_VILLE)?'':$conf->global->MAIN_INFO_SOCIETE_VILLE;
+    	$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)?'':$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
     	$this->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
-
+    	
+    	$this->nom=$this->name; 									// deprecated
+    	$this->adresse=$this->address; 								// deprecated
+    	$this->cp=$this->zip;										// deprecated
+    	$this->ville=$this->town;									// deprecated
+    	   
     	// We define country_id, country_code and country
     	$country_id=$country_code=$country_label='';
     	if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
@@ -2554,13 +2554,13 @@ class Societe extends CommonObject
     	$this->idprof4=empty($conf->global->MAIN_INFO_RCS)?'':$conf->global->MAIN_INFO_RCS;
     	$this->idprof5=empty($conf->global->MAIN_INFO_PROFID5)?'':$conf->global->MAIN_INFO_PROFID5;
     	$this->idprof6=empty($conf->global->MAIN_INFO_PROFID6)?'':$conf->global->MAIN_INFO_PROFID6;
-    	$this->tva_intra=(! empty($conf->global->MAIN_INFO_TVAINTRA))?$conf->global->MAIN_INFO_TVAINTRA:'';	// VAT number, not necessarly INTRA.
-    	$this->capital=(! empty($conf->global->MAIN_INFO_CAPITAL))?$conf->global->MAIN_INFO_CAPITAL:'';
-    	$this->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
-    	$this->email=(! empty($conf->global->MAIN_INFO_SOCIETE_MAIL))?$conf->global->MAIN_INFO_SOCIETE_MAIL:'';
-    	$this->logo=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO))?$conf->global->MAIN_INFO_SOCIETE_LOGO:'';
-    	$this->logo_small=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL))?$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL:'';
-    	$this->logo_mini=(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI))?$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI:'';
+    	$this->tva_intra=empty($conf->global->MAIN_INFO_TVAINTRA)?'':$conf->global->MAIN_INFO_TVAINTRA;	// VAT number, not necessarly INTRA.
+    	$this->capital=empty($conf->global->MAIN_INFO_CAPITAL)?'':$conf->global->MAIN_INFO_CAPITAL;
+    	$this->forme_juridique_code=empty($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)?'':$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
+    	$this->email=empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?'':$conf->global->MAIN_INFO_SOCIETE_MAIL;
+    	$this->logo=empty($conf->global->MAIN_INFO_SOCIETE_LOGO)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO;
+    	$this->logo_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
+    	$this->logo_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 
     	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
     	$this->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);

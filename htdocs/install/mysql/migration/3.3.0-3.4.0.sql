@@ -23,3 +23,13 @@ create table llx_adherent_type_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_adherent_type_extrafields ADD INDEX idx_adherent_type_extrafields (fk_object);
+
+UPDATE llx_const set value='eldy_menu.php' where value='eldy_backoffice.php';
+UPDATE llx_const set value='eldy_menu.php' where value='eldy_frontoffice.php';
+UPDATE llx_const set value='auguria_menu.php' where value='auguria_backoffice.php';
+UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.php';
+UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
+UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
+
+ALTER TABLE llx_user add COLUMN fk_user integer;
+

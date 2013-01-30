@@ -70,8 +70,6 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('thirdpartycard'));
 
 
@@ -202,7 +200,7 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
-            
+
             // We set country_id, country_code and country for the selected country
             $object->country_id=GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
             if ($object->country_id)
@@ -227,7 +225,7 @@ if (empty($reshook))
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}
-				
+
 				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
 				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 				{
@@ -238,7 +236,7 @@ if (empty($reshook))
 				}
 			}
         }
-          
+
         if (! $error)
         {
             if ($action == 'add')
@@ -397,11 +395,11 @@ if (empty($reshook))
                 }
                 // Gestion du logo de la société
 
-                
+
                 // Update linked member
                 if (! $error && $object->fk_soc > 0)
                 {
-                	
+
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
                 	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
@@ -412,7 +410,7 @@ if (empty($reshook))
                 		dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
                 	}
                 }
-                
+
                 if (! $error && ! count($errors))
                 {
 
@@ -869,13 +867,13 @@ else
             if ($idprof!='-')
             {
                 if (($j % 2) == 0) print '<tr>';
-                
+
                 $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
                	if(empty($conf->global->$idprof_mandatory))
                 	print '<td>'.$idprof.'</td><td>';
                 else
                 print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
-                
+
                 $key='idprof'.$i;
                 print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                 print '</td>';
@@ -947,7 +945,7 @@ else
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
-        // Local Taxes  
+        // Local Taxes
         //TODO: Place into a function to control showing by country or study better option
         if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
@@ -970,7 +968,7 @@ else
             print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
-        
+
         if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")=='')  )
         {
         	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
@@ -1319,13 +1317,13 @@ else
                 if ($idprof!='-')
                 {
                     if (($j % 2) == 0) print '<tr>';
-                    
+
 					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
 					if(empty($conf->global->$idprof_mandatory))
 						print '<td>'.$idprof.'</td><td>';
 					else
 						print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
-                    
+
                     $key='idprof'.$i;
                     print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                     print '</td>';
@@ -1395,7 +1393,7 @@ else
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 print '</td></tr>';
             }
-            
+
             if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && $object->fournisseur==1)
             {
             	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
@@ -1718,7 +1716,7 @@ else
             print yn($object->localtax2_assuj);
             print '</td><tr>';
         }
-        
+
         if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && $object->fournisseur==1)
         {
         	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
@@ -1881,7 +1879,7 @@ else
 
             $var=true;
 
-            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang,$hookmanager);
+            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
             print '</td>';
             print '<td></td>';

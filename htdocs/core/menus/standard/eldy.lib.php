@@ -68,7 +68,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 
 	// Third parties
-	$tmpentry=array('enabled'=>($conf->societe->enabled || $conf->fournisseur->enabled), 'perms'=>($user->rights->societe->lire || $user->rights->fournisseur->lire), 'module'=>'societe|fournisseur');
+	$tmpentry=array('enabled'=>(! empty($conf->societe->enabled) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -110,7 +110,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Products-Services
-	$tmpentry=array('enabled'=>($conf->product->enabled || $conf->service->enabled), 'perms'=>($user->rights->produit->lire || $user->rights->service->lire), 'module'=>'product|service');
+	$tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -160,7 +160,7 @@ function print_eldy_menu($db,$atarget,$type_user)
     if (! empty($conf->fournisseur->enabled)) $menuqualified++;
     if (! empty($conf->contrat->enabled)) $menuqualified++;
     if (! empty($conf->ficheinter->enabled)) $menuqualified++;
-	$tmpentry=array('enabled'=>$menuqualified, 'perms'=>($user->rights->societe->lire || $user->rights->societe->contact->lire), 'module'=>'propal|commande|fournisseur|contrat|ficheinter');
+	$tmpentry=array('enabled'=>$menuqualified, 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)), 'module'=>'propal|commande|fournisseur|contrat|ficheinter');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -201,7 +201,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Financial
 	$tmpentry=array('enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled)),
-		 	 		'perms'=>($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire || $user->rights->facture->lire || $user->rights->deplacement->lire || $user->rights->don->lire || $user->rights->tax->charges->lire),
+		 	 		'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->plancompte->lire) || ! empty($user->rights->facture->lire) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire)),
 					'module'=>'comptabilite|accounting|facture|deplacement|don|tax');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -243,7 +243,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
     // Bank
 	$tmpentry=array('enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
-		 	 		'perms'=>($user->rights->banque->lire || $user->rights->prelevement->lire),
+		 	 		'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
 					'module'=>'banque|prelevement');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -286,7 +286,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Projects
 	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
-		 	 		'perms'=>($user->rights->projet->lire),
+		 	 		'perms'=>(! empty($user->rights->projet->lire)),
 					'module'=>'projet');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -328,7 +328,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Tools
 	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
-		 	 		'perms'=>($user->rights->mailing->lire || $user->rights->export->lire || $user->rights->import->run),
+		 	 		'perms'=>(! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run)),
 					'module'=>'mailing|export|import');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -400,7 +400,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Members
 	$tmpentry=array('enabled'=>(! empty($conf->adherent->enabled)),
-		 	 		'perms'=>($user->rights->adherent->lire),
+		 	 		'perms'=>(! empty($user->rights->adherent->lire)),
 					'module'=>'adherent');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)

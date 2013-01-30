@@ -17,44 +17,55 @@
  */
 
 /**
- *	\file       htdocs/core/menus/smartphone/smartphone_frontoffice.php
- *	\brief      Gestionnaire nomme smartphone du menu smartphone
+ *	\file       htdocs/core/menus/smartphone/smartphone_menu.php
+ *	\brief      Menu smartphone manager
  */
 
 
 /**
- *	Class to manage smartphone menu smartphone (for external users)
+ *	Class to manage smartphone menu smartphone
  */
 class MenuSmart
 {
 
-	var $require_left=array("smartphone_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu particulier
 	var $hideifnotallowed=1;						// Put 0 for back office menu, 1 for front office menu
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
-
+	var $name="smartphone";
+	
 
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param	DoliDB		$db      	Database handler
+     *  @param	int			$type_user	Type of user
 	 */
-	function __construct($db)
+	function __construct($db, $type_user)
 	{
 		$this->db=$db;
 	}
 
 
 	/**
-	 *    Show menu
+	 *  Show menu
 	 *
-	 *    @param	string		$limitmenuto		To limit menu to a top or left menu value
-	 *    @return	void
+     *	@param	string	$mode			'top' or 'left'
+     *  @return int     				Number of menu entries shown
 	 */
-	function showmenu($limitmenuto)
+	function showmenu($mode)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/menus/smartphone/smartphone.lib.php';
+    	global $conf;
+		
+    	require_once DOL_DOCUMENT_ROOT.'/core/menus/smartphone/smartphone.lib.php';
 
-		print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$limitmenuto);
+	    if ($this->type_user == 1)
+        {
+        	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
+        	$conf->global->MAIN_SEARCHFORM_CONTACT=0;
+        }
+    	
+        print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$mode);
+        
+        return 1;
 	}
 
 }

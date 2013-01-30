@@ -51,15 +51,18 @@ function getStaticMember($class, $member)
 	$classObj = new ReflectionClass($class);
 	$result = null;
 
+	$found=0;
 	foreach($classObj->getStaticProperties() as $prop => $value)
 	{
-		if($prop == $member)
+		if ($prop == $member)
 		{
 			$result = $value;
+			$found++;
 			break;
 		}
 	}
 
+	if (! $found) dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
 	return $result;
 }
 
@@ -2122,7 +2125,7 @@ function dol_print_error($db='',$error='')
 		$out.="<br>\n";
 		$out.="<b>".$langs->trans("RequestedUrl").":</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
 		$out.="<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"])?$_SERVER["HTTP_REFERER"]:'')."<br>\n";;
-		$out.="<b>".$langs->trans("MenuManager").":</b> ".$conf->standard_menu."<br>\n";
+		$out.="<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu)?$conf->standard_menu:'')."<br>\n";
 		$out.="<br>\n";
 		$syslog.="url=".$_SERVER["REQUEST_URI"];
 		$syslog.=", query_string=".$_SERVER["QUERY_STRING"];

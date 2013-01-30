@@ -131,11 +131,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	global $smartphone,$hookmanager;
 
 	// Instantiate hooks of thirdparty module only if not already define
-	if (! is_object($hookmanager))
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		$hookmanager=new HookManager($db);
-	}
 	$hookmanager->initHooks(array('mainloginpage'));
 
 	$langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));

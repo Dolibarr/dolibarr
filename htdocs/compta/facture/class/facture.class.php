@@ -541,7 +541,7 @@ class Facture extends CommonInvoice
 	 *		@param		HookManager		$hookmanager	Hook manager instance
      * 	 	@return		int								New id of clone
      */
-    function createFromClone($socid=0,$hookmanager=false)
+    function createFromClone($socid=0)
     {
         global $conf,$user,$langs;
 
@@ -637,7 +637,7 @@ class Facture extends CommonInvoice
      */
     function createFromOrder($object)
     {
-        global $conf,$user,$langs;
+        global $conf,$user,$langs,$hookmanager;
 
         $error=0;
 
@@ -701,8 +701,6 @@ class Facture extends CommonInvoice
         if ($ret > 0)
         {
             // Actions hooked (by external module)
-            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-            $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('invoicedao'));
 
             $parameters=array('objFrom'=>$object);

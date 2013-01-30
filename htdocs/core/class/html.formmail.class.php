@@ -216,20 +216,11 @@ class FormMail
      */
     function get_form($addfileaction='addfile',$removefileaction='removefile')
     {
-        global $conf, $langs, $user;
-        global $hookmanager;
+        global $conf, $langs, $user, $hookmanager;
 
         $langs->load("other");
         $langs->load("mails");
 
-        if (! is_object($hookmanager))
-        {
-        	if (! class_exists('HookManager')) {
-        		// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-        		require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        		$hookmanager=new HookManager($this->db);
-        	}
-        }
         $hookmanager->initHooks(array('formmail'));
 
         $parameters=array(

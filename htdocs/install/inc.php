@@ -200,6 +200,7 @@ if (constant('DOL_DATA_ROOT') && file_exists($lockfile))
 // Force usage of log file for install and upgrades
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
+if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS','["mod_syslog_file"]');
 if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
 {
 	if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
@@ -227,9 +228,8 @@ foreach ($handlers as $handler)
 		throw new Exception('Log handler does not extend LogHandlerInterface');
 	}
 
-	$conf->loghandlers[]=$loghandlerinstance;
+	if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
 }
-
 
 // Removed magic_quotes
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.4
@@ -314,7 +314,26 @@ function conf($dolibarr_main_document_root)
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
     }
     if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
+    // We init log handler for install
+    $handlers = array('mod_syslog_file');
+    foreach ($handlers as $handler)
+    {
+    	$file = DOL_DOCUMENT_ROOT.'/core/modules/syslog/'.$handler.'.php';
+    	if (!file_exists($file))
+    	{
+    		throw new Exception('Missing log handler file '.$handler.'.php');
+    	}
+    
+    	require_once $file;
+    	$loghandlerinstance = new $handler();
+    	if (!$loghandlerinstance instanceof LogHandlerInterface)
+    	{
+    		throw new Exception('Log handler does not extend LogHandlerInterface');
+    	}
 
+		if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
+    }
+    
     return 1;
 }
 

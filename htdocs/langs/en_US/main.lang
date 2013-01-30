@@ -565,6 +565,7 @@ ThisLimitIsDefinedInSetup=Dolibarr limit (Menu home-setup-security): %s Kb, PHP 
 NoFileFound=No documents saved in this directory
 CurrentUserLanguage=Current language
 CurrentTheme=Current theme
+CurrentMenuManager=current men manager
 DisabledModules=Disabled modules
 For=For
 ForCustomer=For customer

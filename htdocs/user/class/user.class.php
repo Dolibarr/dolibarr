@@ -1079,7 +1079,7 @@ class User extends CommonObject
 	 */
 	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$nbrowsaffected=0;
 		$error=0;
@@ -1218,8 +1218,6 @@ class User extends CommonObject
 			}
 
 			// Actions on extra fields (by external module or standard code)
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
 			$hookmanager->initHooks(array('userdao'));
 			$parameters=array('socid'=>$this->id);
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

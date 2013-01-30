@@ -99,8 +99,6 @@ else
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('propalcard'));
 
 
@@ -123,7 +121,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
 		if ($object->id > 0)
 		{
-			$result=$object->createFromClone($socid, $hookmanager);
+			$result=$object->createFromClone($socid);
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -172,7 +170,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$ret=$object->fetch($id);    // Reload to get new records
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -196,7 +194,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret=$object->fetch($id);    // Reload to get new records
-			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+			propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}
 	else
@@ -373,7 +371,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
     					$outputlangs->setDefaultLang($newlang);
     				}
     				$ret=$object->fetch($id);    // Reload to get new records
-    				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+    				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     			}
 
     			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
@@ -609,7 +607,7 @@ if ($action == 'modif' && $user->rights->propal->creer)
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$ret=$object->fetch($id);    // Reload to get new records
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 }
 
@@ -816,7 +814,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$ret=$object->fetch($id);    // Reload to get new records
-					propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+					propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
 				unset($_POST['qty']);
@@ -937,7 +935,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$ret=$object->fetch($id);    // Reload to get new records
-				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+				propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
 			unset($_POST['qty']);
@@ -983,7 +981,7 @@ else if ($action == 'builddoc' && $user->rights->propal->creer)
 		$outputlangs->setDefaultLang($newlang);
 	}
 	$ret=$object->fetch($id);    // Reload to get new records
-	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+	$result=propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 	if ($result <= 0)
 	{
@@ -1072,7 +1070,7 @@ else if ($action == 'up' && $user->rights->propal->creer)
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$ret=$object->fetch($id);    // Reload to get new records
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
@@ -1094,7 +1092,7 @@ else if ($action == 'down' && $user->rights->propal->creer)
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$ret=$object->fetch($id);    // Reload to get new records
-		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
@@ -1628,7 +1626,7 @@ print '<table id="tablelines" class="noborder" width="100%">';
 // Show object lines
 $result = $object->getLinesArray();
 if (! empty($object->lines))
-	$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,0,$hookmanager);
+	$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid);
 
 // Form to add new line
 if ($object->statut == 0 && $user->rights->propal->creer)
@@ -1640,18 +1638,18 @@ if ($object->statut == 0 && $user->rights->propal->creer)
 		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
 		{
 			// Add free or predefined products/services
-			$object->formAddObjectLine(0,$mysoc,$soc,$hookmanager);
+			$object->formAddObjectLine(0,$mysoc,$soc);
 		}
 		else
 		{
 			// Add free products/services
-			$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
+			$object->formAddFreeProduct(0,$mysoc,$soc);
 
 			// Add predefined products/services
 			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 			{
 				$var=!$var;
-				$object->formAddPredefinedProduct(0,$mysoc,$soc,$hookmanager);
+				$object->formAddPredefinedProduct(0,$mysoc,$soc);
 			}
 		}
 
@@ -1801,7 +1799,7 @@ if ($action != 'presend')
 
 	$var=true;
 
-	$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang,$hookmanager);
+	$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang);
 
 
 	/*
@@ -1845,7 +1843,7 @@ if ($action == 'presend')
             $outputlangs->setDefaultLang($newlang);
         }
 
-        $result=propale_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+        $result=propale_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         if ($result <= 0)
         {
             dol_print_error($db,$result);

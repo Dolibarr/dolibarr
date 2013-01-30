@@ -65,15 +65,8 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
-	if (! $nohook) {
-		if (! is_object($hookmanager))
-		{
-			if (! class_exists('HookManager')) {
-				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($db);
-			}
-		}
+	if (! $nohook) 
+	{
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array(
@@ -653,14 +646,6 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -2;
 		}
 
-		if (! is_object($hookmanager))
-		{
-			if (! class_exists('HookManager')) {
-				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			}
-			$hookmanager=new HookManager($db);
-		}
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array('filename' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
@@ -722,14 +707,6 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	if (empty($nohook))
 	{
-		if (! is_object($hookmanager))
-		{
-			if (! class_exists('HookManager')) {
-				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($db);
-			}
-		}
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array(
