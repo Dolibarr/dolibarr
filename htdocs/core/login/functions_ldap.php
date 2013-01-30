@@ -175,7 +175,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 							// TODO Que faire si update echoue car on update avec un login deja existant.
 						}
 						
-						$resultUpdate = $user->update_ldap2dolibarr($ldap);
+						//$resultUpdate = $user->update_ldap2dolibarr($ldap);
 					}
 				}
 			}
