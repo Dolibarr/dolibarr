@@ -1153,7 +1153,7 @@ class User extends CommonObject
 				{
 					// Si mot de passe saisi et different de celui en base
 					$result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncmemberpass);
-					if (! $nbrowsaffected) $nbrowsaffected++;
+					if (! $nbrowsaffected) $nbrowsaffected++; 
 				}
 			}
 
@@ -2070,6 +2070,34 @@ class User extends CommonObject
 		}
 	}
 
+	/**
+	 * Update user using data from the LDAP
+	 * // TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
+	 */
+	function update_ldap2dolibarr(&$ldapuser) {
+		global $user, $conf;
+
+		$this->firstname=$ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
+		$this->lastname=$ldapuser->{$conf->global->LDAP_FIELD_NAME};
+		$this->login=$ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
+		$this->pass=$ldapuser->{$conf->global->LDAP_FIELD_PASSWORD};
+		$this->pass_indatabase_crypted=$ldapuser->{$conf->global->LDAP_FIELD_PASSWORD_CRYPTED};
+
+		$this->office_phone=$ldapuser->{$conf->global->LDAP_FIELD_PHONE};
+		$this->user_mobile=$ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
+		$this->office_fax=$ldapuser->{$conf->global->LDAP_FIELD_FAX};
+		$this->email=$ldapuser->{$conf->global->LDAP_FIELD_MAIL};
+		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
+
+		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};
+		$this->note=$ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
+		
+		$result = $this->update($user);
+		
+		dol_syslog(get_class($this)."::update_ldap2dolibarr result=".$result, LOG_DEBUG);
+		
+		return $result;
+	}
 }
 
 ?>
