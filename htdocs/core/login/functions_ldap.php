@@ -148,6 +148,8 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 				// ldap2dolibarr synchronisation
 				if ($login && ! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 				{
+					dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
+
 					// On charge les attributs du user ldap
 					if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
 					$resultFetchLdapUser = $ldap->fetch($login,$userSearchFilter);
@@ -164,6 +166,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 					$resultFetchUser=$user->fetch('',$login,$sid);
 					if ($resultFetchUser > 0)
 					{
+						dol_syslog("functions_ldap::check_user_password_ldap Sync user found id=".$user->id);
 						// On verifie si le login a change et on met a jour les attributs dolibarr
 						if ($user->login != $ldap->login && $ldap->login)
 						{
@@ -171,7 +174,8 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 							$user->update($user);
 							// TODO Que faire si update echoue car on update avec un login deja existant.
 						}
-						//$resultUpdate = $user->update_ldap2dolibarr();
+						
+						//$resultUpdate = $user->update_ldap2dolibarr($ldap);
 					}
 				}
 			}

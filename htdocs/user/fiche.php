@@ -324,7 +324,9 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->firstname	= GETPOST("prenom");
             $object->login		= GETPOST("login");
             $object->pass		= GETPOST("password");
-            $object->admin		= GETPOST("admin");
+			if($user->admin == 1) { // A user can only be set admin by an admin
+            	$object->admin = GETPOST("admin");
+			}
             $object->office_phone=GETPOST("office_phone");
             $object->office_fax	= GETPOST("office_fax");
             $object->user_mobile= GETPOST("user_mobile");
