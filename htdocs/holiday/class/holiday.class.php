@@ -32,14 +32,14 @@ class Holiday extends CommonObject
 {
 	public $element='holiday';
 	public $table_element='holiday';
-	
+
 	var $db;
     var $error;
     var $errors=array();
 
     var $rowid;
     var $ref;
-    
+
     var $fk_user;
     var $date_create='';
     var $description;
@@ -72,15 +72,23 @@ class Holiday extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-
-        // Mets à jour les congés payés en début de mois
-        $this->updateSoldeCP();
-
-        // Vérifie le nombre d'utilisateur et mets à jour si besoin
-        $this->verifNbUsers($this->countActiveUsers(),$this->getConfCP('nbUser'));
-        return 1;
     }
 
+
+    /**
+     * updateSold
+     *
+     * @return	int			Return 1
+     */
+    function updateSold()
+    {
+	    // Mets à jour les congés payés en début de mois
+	    $this->updateSoldeCP();
+
+	    // Vérifie le nombre d'utilisateur et mets à jour si besoin
+	    $this->verifNbUsers($this->countActiveUsers(),$this->getConfCP('nbUser'));
+	    return 1;
+    }
 
     /**
      *   Créer un congés payés dans la base de données
@@ -358,10 +366,10 @@ class Holiday extends CommonObject
 
         $sql.= " uu.name as user_lastname,";
         $sql.= " uu.firstname as user_firstname,";
-        
+
         $sql.= " ua.name as validator_lastname,";
         $sql.= " ua.firstname as validator_firstname";
-        
+
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
@@ -415,10 +423,10 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['user_firstname'] = $obj->user_firstname;
                 $tab_result[$i]['user_lastname'] = $obj->user_lastname;
-                
+
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-                
+
                 $i++;
             }
             // Retourne 1 et ajoute le tableau à la variable
@@ -601,13 +609,13 @@ class Holiday extends CommonObject
     {
         $this->fetchByUser($fk_user,'','');
 
-        foreach($this->holiday as $infos_CP) 
+        foreach($this->holiday as $infos_CP)
         {
         	if ($infos_CP['statut'] == 4) continue;		// ignore not validated holidays
         	if ($infos_CP['statut'] == 5) continue;		// ignore not validated holidays
-        	     
+
         	// TODO Also use halfday for the check
-            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut']) 
+            if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
             {
                 return false;
             }
@@ -627,23 +635,23 @@ class Holiday extends CommonObject
     function getNomUrl($withpicto=0)
     {
     	global $langs;
-    
+
     	$result='';
-    
+
     	$lien = '<a href="'.DOL_URL_ROOT.'/holiday/fiche.php?id='.$this->id.'">';
     	$lienfin='</a>';
-    
+
     	$picto='holiday';
-    
+
     	$label=$langs->trans("Show").': '.$this->ref;
-    
+
     	if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
     	if ($withpicto && $withpicto != 2) $result.=' ';
     	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
     	return $result;
     }
 
-    
+
     /**
      *	Returns the label status
      *
@@ -654,7 +662,7 @@ class Holiday extends CommonObject
     {
     	return $this->LibStatut($this->statut, $mode, $this->date_debut);
     }
-    
+
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -678,7 +686,7 @@ class Holiday extends CommonObject
 		if ($mode == 2)
 		{
 			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4'; 
+			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
 			if ($statut == 2) return img_picto($langs->trans('ToValidateCP'),'statut1').' '.$langs->trans('ToValidateCP');		// Waiting approval
 			if ($statut == 3) return img_picto($langs->trans('ValidateCP'),$pictoapproved).' '.$langs->trans('ValidateCP');
@@ -688,18 +696,18 @@ class Holiday extends CommonObject
 		if ($mode == 5)
 		{
 			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4'; 
+			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
 			if ($statut == 2) return $langs->trans('ToValidateCP').' '.img_picto($langs->trans('ToValidateCP'),'statut1');		// Waiting approval
 			if ($statut == 3) return $langs->trans('ValidateCP').' '.img_picto($langs->trans('ValidateCP'),$pictoapproved);
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
-		
+
 		return $statut;
     }
 
-    
+
     /**
      *   Affiche un select HTML des statuts de congés payés
      *
@@ -857,19 +865,21 @@ class Holiday extends CommonObject
         {
             // Si mise à jour pour tout le monde en début de mois
 			$now=dol_now();
-			
+
             // Mois actuel
             $month = date('m',$now);
             $lastUpdate = $this->getConfCP('lastUpdate');
-            $monthLastUpdate = date('m', $lastUpdate);
+            $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;
 
             // Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
             if ($month != $monthLastUpdate)
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
-                $sql.= " value = '".$this->db->idate($now)."'";
+                $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
                 $sql.= " WHERE name = 'lastUpdate'";
 
+                dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql);
                 $result = $this->db->query($sql);
 
                 // On ajoute x jours à chaque utilisateurs
