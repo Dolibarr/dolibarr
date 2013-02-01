@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
+ * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,7 @@ class User extends CommonObject
 	var $contact_id;
 
 	var $fk_member;
+	var $fk_user;
 
 	var $webcal_login;
 	var $phenix_login;
@@ -92,8 +94,10 @@ class User extends CommonObject
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
 	var $conf;           // To store personal config
-	var $oldcopy;                // To contains a clone of this when we need to save old properties of object
+	var $oldcopy;        // To contains a clone of this when we need to save old properties of object
 
+	var $users=array();			// Tableau en memoire des users
+	var $parentof=array();
 
 
 	/**
@@ -139,7 +143,7 @@ class User extends CommonObject
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
-		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
+		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
 		$sql.= " u.tms as datem,";
@@ -221,6 +225,7 @@ class User extends CommonObject
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
+				$this->fk_user				= $obj->fk_user;
 
 				if (! $this->lang) $this->lang='fr_FR';
 
@@ -1069,7 +1074,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  	Update a user into databse (and also password if this->pass is defined)
+	 *  	Update a user into database (and also password if this->pass is defined)
 	 *
 	 *		@param	User	$user				User qui fait la mise a jour
 	 *    	@param  int		$notrigger			1 ne declenche pas les triggers, 0 sinon
@@ -1153,7 +1158,7 @@ class User extends CommonObject
 				{
 					// Si mot de passe saisi et different de celui en base
 					$result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncmemberpass);
-					if (! $nbrowsaffected) $nbrowsaffected++; 
+					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}
 
@@ -1268,7 +1273,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    Mise e jour en base de la date de deniere connexion d'un utilisateur
+	 *    Mise a jour en base de la date de la derniere connexion d'un utilisateur
 	 *	  Fonction appelee lors d'une nouvelle connexion
 	 *
 	 *    @return     <0 si echec, >=0 si ok
@@ -1598,6 +1603,293 @@ class User extends CommonObject
 			$this->error=$this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 * Retourne les enfants du user
+	 *
+	 * @return	void
+	 */
+	function get_children()
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE fk_user = ".$this->id;
+
+		$res  = $this->db->query($sql);
+
+		if ($res)
+		{
+			$users = array ();
+			while ($rec = $this->db->fetch_array($res))
+			{
+				$user = new User($this->db);
+				$user->fetch($rec['rowid']);
+				$users[] = $user;
+			}
+			return $users;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
+	 * 	Load this->parentof that is array(id_son=>id_parent, ...)
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
+	 */
+	private function load_parentof()
+	{
+		global $conf;
+
+		$this->parentof=array();
+
+		// Load array[child]=parent
+		$sql = "SELECT fk_user as id_parent, rowid as id_son";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE fk_user != 0";
+		$sql.= " AND entity = ".$conf->entity;
+
+		dol_syslog(get_class($this)."::load_parentof sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj= $this->db->fetch_object($resql))
+			{
+				$this->parentof[$obj->id_son]=$obj->id_parent;
+			}
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
+	 *	Renvoi un tableau de tableau('id','id_parent',...) trie selon arbre et avec:
+	 *				id = id du user
+	 *				id_parent = id du user parent
+	 *				id_children = tableau des id enfant
+	 *				name = nom du user
+	 *				fullname = nom avec chemin complet du user
+	 *				fullpath = chemin complet compose des id
+	 *
+     *  @param      int		$markafterid      Removed all users including the leaf $markafterid in user tree.
+	 *	@return		array		      		  Array of users. this->users and this->parentof are set.
+	 */
+	function get_full_tree($markafterid=0)
+	{
+		$this->users = array();
+
+		// Init this->parentof that is array(id_son=>id_parent, ...)
+		$this->load_parentof();
+
+		// Init $this->users array
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.name, u.fk_user";	// Distinct reduce pb with old tables with duplicates
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+
+		dol_syslog(get_class($this)."::get_full_tree get user list sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$i=0;
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
+				$this->users[$obj->rowid]['id'] = $obj->rowid;
+				$this->users[$obj->rowid]['fk_user'] = $obj->fk_parent;
+				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
+				$this->users[$obj->rowid]['name'] = $obj->name;
+				$i++;
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		// We add the fullpath property to each elements of first level (no parent exists)
+		dol_syslog(get_class($this)."::get_full_tree call to build_path_from_id_user", LOG_DEBUG);
+		foreach($this->users as $key => $val)
+		{
+			$this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
+		}
+
+        // Exclude leaf including $markafterid from tree
+        if ($markafterid)
+        {
+            //print "Look to discard user ".$markafterid."\n";
+            $keyfilter1='^'.$markafterid.'$';
+            $keyfilter2='_'.$markafterid.'$';
+            $keyfilter3='^'.$markafterid.'_';
+            $keyfilter4='_'.$markafterid.'_';
+            foreach($this->users as $key => $val)
+            {
+                if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
+                || preg_match('/'.$keyfilter3.'/',$val['fullpath']) || preg_match('/'.$keyfilter4.'/',$val['fullpath']))
+                {
+                    unset($this->users[$key]);
+                }
+            }
+        }
+
+		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
+		$this->users=dol_sort_array($this->users, 'fullname', 'asc', true, false);
+
+		//$this->debug_users();
+
+		return $this->users;
+	}
+
+	/**
+	 *	For user id_user and its childs available in this->users, define property fullpath and fullname
+	 *
+	 * 	@param		int		$id_user		id_user entry to update
+	 * 	@param		int		$protection		Deep counter to avoid infinite loop
+	 *	@return		void
+	 */
+	function build_path_from_id_user($id_user,$protection=1000)
+	{
+		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
+
+		if (! empty($this->users[$id_user]['fullpath']))
+		{
+			// Already defined
+			dol_syslog(get_class($this)."::build_path_from_id_user fullpath and fullname already defined", LOG_WARNING);
+			return;
+		}
+
+		// Define fullpath and fullname
+		$this->users[$id_user]['fullpath'] = '_'.$id_user;
+		$this->users[$id_user]['fullname'] = $this->users[$id_user]['label'];
+		$i=0; $cursor_user=$id_user;
+
+		while ((empty($protection) || $i < $protection) && ! empty($this->parentof[$cursor_user]))
+		{
+			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
+			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['label'].' >> '.$this->users[$id_user]['fullname'];
+			$i++; $cursor_user=$this->parentof[$cursor_user];
+		}
+
+		// We count number of _ to have level
+		$this->users[$id_user]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->users[$id_user]['fullpath']));
+
+		return;
+	}
+
+	/**
+	 *	Affiche contenu de $this->users
+	 *
+	 *	@return	void
+	 */
+	function debug_users()
+	{
+		// Affiche $this->users
+		foreach($this->users as $key => $val)
+		{
+			print 'id: '.$this->users[$key]['id'];
+			print ' name: '.$this->users[$key]['name'];
+			print ' parent: '.$this->users[$key]['fk_parent'];
+			print ' fullpath: '.$this->users[$key]['fullpath'];
+			print ' fullname: '.$this->users[$key]['fullname'];
+			print "<br>\n";
+		}
+	}
+
+	/**
+	 * 	Retourne tous les users
+	 *
+	 *	@param	boolean		$parent		Just parent user if true
+	 *	@return	array					Tableau d'objet User
+	 */
+	function get_all_users($type=null, $parent=false)
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE entity IN (".getEntity('user',1).")";
+		if ($parent)
+			$sql.= " AND fk_user = 0";
+
+		$res = $this->db->query($sql);
+		if ($res)
+		{
+			$users = array ();
+			while ($rec = $this->db->fetch_array($res))
+			{
+				$user = new User($this->db);
+				$user->fetch($rec['rowid']);
+				$users[$rec['rowid']] = $user;
+			}
+			return $users;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+
+	/**
+	 * 	Check if no user with same name already exists for this cat's parent or root 
+	 *
+	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
+	 */
+	function already_exists()
+	{
+		/* We have to select any rowid from llx_user which user's parent and name
+		 * are equals to those of the calling user
+		 */
+		$sql = "SELECT u.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u ";
+		$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+		$sql.= " AND u.fk_user = ".$this->fk_user;
+		$sql.= " AND u.name = '".$this->db->escape($this->name)."'";
+
+		dol_syslog(get_class($this)."::already_exists sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql) > 0)						// Checking for empty resql
+			{
+				$obj = $this->db->fetch_array($resql);
+				/* If object called create, obj cannot have is id.
+				 * If object called update, he mustn't have the same name as an other user for this parent.
+				 * So if the result have the same id, update is not for name, and if result have an other one,
+				 * update may be for name.
+				 */
+				if($obj[0] > 0 && $obj[0] != $this->id)
+				{
+					dol_syslog(get_class($this)."::already_exists user with name=".$this->name." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+					return 1;
+				}
+			}
+			dol_syslog(get_class($this)."::already_exists no user with same name=".$this->name." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			return 0;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+            dol_syslog(get_class($this)."::already_exists error ".$this->error." sql=".$sql, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
+	 *	Retourne les users de premier niveau (qui ne sont pas enfants)
+	 *
+	 *	@return		void
+	 */
+	function get_main_users($type=null)
+	{
+		return $this->get_all_users($type, true);
 	}
 
 
@@ -2070,34 +2362,6 @@ class User extends CommonObject
 		}
 	}
 
-	/**
-	 * Update user using data from the LDAP
-	 * // TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
-	 */
-	function update_ldap2dolibarr(&$ldapuser) {
-		global $user, $conf;
-
-		$this->firstname=$ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
-		$this->lastname=$ldapuser->{$conf->global->LDAP_FIELD_NAME};
-		$this->login=$ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
-		$this->pass=$ldapuser->{$conf->global->LDAP_FIELD_PASSWORD};
-		$this->pass_indatabase_crypted=$ldapuser->{$conf->global->LDAP_FIELD_PASSWORD_CRYPTED};
-
-		$this->office_phone=$ldapuser->{$conf->global->LDAP_FIELD_PHONE};
-		$this->user_mobile=$ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
-		$this->office_fax=$ldapuser->{$conf->global->LDAP_FIELD_FAX};
-		$this->email=$ldapuser->{$conf->global->LDAP_FIELD_MAIL};
-		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
-
-		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};
-		$this->note=$ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
-		
-		$result = $this->update($user);
-		
-		dol_syslog(get_class($this)."::update_ldap2dolibarr result=".$result, LOG_DEBUG);
-		
-		return $result;
-	}
 }
 
 ?>
