@@ -296,7 +296,7 @@ if ($socid > 0)
 
     if (! empty($conf->propal->enabled) && $user->rights->propale->creer)
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     // Add action
