@@ -265,7 +265,7 @@ foreach ($listofreferent as $key => $value)
 			{
 				if ($key == 'propal' && ! empty($conf->propal->enabled) && $user->rights->propale->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddProp").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddProp").'</a>';
 				}
 				if ($key == 'order' && ! empty($conf->commande->enabled) && $user->rights->commande->creer)
 				{
