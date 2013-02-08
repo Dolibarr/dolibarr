@@ -2343,11 +2343,13 @@ class Product extends CommonObject
 			while ($rec = $this->db->fetch_array($res))
 			{
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
-				$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
+				$prods[$rec['rowid']]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type'],3=>$this->db->escape($rec['label']));
+				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				$listofchilds=$this->getChildsArbo($rec['id']);
 				foreach($listofchilds as $keyChild => $valueChild)
 				{
-					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
+					$prods[$rec['rowid']][$keyChild] = $valueChild;
+					//$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
 				}
 			}
 
