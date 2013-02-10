@@ -344,6 +344,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->note_private			= $obj->note_private;
                 $this->note_public			= $obj->note_public;
                 $this->model_pdf			= $obj->model_pdf;
+                $this->modelpdf			    = $obj->model_pdf;
                 $this->import_key			= $obj->import_key;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);

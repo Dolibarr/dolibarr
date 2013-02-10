@@ -2010,7 +2010,7 @@ else
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
-                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:'');
+                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
                 print '<br>';
                 print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
