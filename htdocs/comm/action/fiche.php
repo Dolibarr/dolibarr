@@ -100,7 +100,7 @@ if ($action == 'add_action')
 
     // Clean parameters
 	$datep=dol_mktime($fulldayevent?'00':$_POST["aphour"], $fulldayevent?'00':$_POST["apmin"], 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-	$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+	$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $fulldayevent?$_POST["apmonth"]:$_POST["p2month"], $fulldayevent?$_POST["apday"]:$_POST["p2day"], $fulldayevent?$_POST["apyear"]:$_POST["p2year"]);
 
 	// Check parameters
 	if (! $datef && $percentage == 100)
