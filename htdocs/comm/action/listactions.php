@@ -142,6 +142,7 @@ if ($socid) $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid) $param.="&projectid=".$pid;
 if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
+if ($actioncode) $param.="&actioncode=".$actioncode;
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
