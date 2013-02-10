@@ -265,8 +265,6 @@ $head[$h][2] = 'marketplace';
 $h++;
 
 
-// Show warning about external users
-print showModulesExludedForExternal($modules).'<br>'."\n";
 print "<br>\n";
 
 
@@ -498,6 +496,10 @@ else
 
 
 dol_fiche_end();
+
+
+// Show warning about external users
+print showModulesExludedForExternal($modules).'<br>'."\n";
 
 
 llxFooter();

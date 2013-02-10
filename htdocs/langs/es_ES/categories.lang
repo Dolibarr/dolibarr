@@ -91,3 +91,7 @@ CatSupList=Listado categorías de proveedores
 CatCusList=Listado categorías de clientes/potenciales
 CatProdList=Listado categorías de productos
 CatMemberList=Listado categorías de miembros
+# Imports
+CatProdLinks=Productos
+CatCusLinks=Clientes/Clientes potenciales
+CatSupLinks=Proveedores
