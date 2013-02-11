@@ -2186,7 +2186,7 @@ class Product extends CommonObject
 			}
 
 			// Recursive call
-			if (is_array($desc_pere))
+			if (is_array($desc_pere)>2)
 			{
 				$this ->fetch_prod_arbo($desc_pere, $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
 			}
@@ -2340,12 +2340,13 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
+				$prods[$rec['rowid']]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type'],3=>$this->db->escape($rec['label']));
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
-				$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
+				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				$listofchilds=$this->getChildsArbo($rec['id']);
 				foreach($listofchilds as $keyChild => $valueChild)
 				{
-					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
+					$prods[$rec['rowid']][$keyChild] = $valueChild;
 				}
 			}
 
