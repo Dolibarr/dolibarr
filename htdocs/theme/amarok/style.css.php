@@ -210,8 +210,8 @@ form#login {
 }
 form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
-	width:220px;
-	max-width:220px;
+	width:190px;
+	max-width:190px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
