@@ -584,6 +584,7 @@ if (! defined('NOLOGIN'))
         }
 
         // Create entity cookie, just used for login page
+        // TODO Multicompany Move this into hook
         if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
         {
             include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
@@ -754,6 +755,7 @@ else
 $heightforframes=52;
 
 // Switch to another entity
+// TODO Multicompany Remove this
 if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
     if ($mc->switchEntity(GETPOST('entity','int')) > 0)
