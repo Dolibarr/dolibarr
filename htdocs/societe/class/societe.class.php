@@ -2655,6 +2655,73 @@ class Societe extends CommonObject
 		    return false;
 
 	}
+	
+	/**
+	 *	Return prostect level 
+	 *
+	 *  @return     string        Libelle
+	 */
+	function getLibProspLevel()
+	{
+		return $this->LibProspLevel($this->fk_prospectlevel);
+	}
+	
+	/**
+	 *  Return label of prospect level
+	 *
+	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @return string        					label of level
+	 */
+	function LibProspLevel($fk_prospectlevel)
+	{
+		global $langs;
+	
+		$lib=$langs->trans("ProspectLevel".$fk_prospectlevel);
+		// If lib not found in language file, we get label from cache/databse
+		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel))
+		{
+			$lib=$langs->getLabelFromKey($this->db,$fk_prospectlevel,'c_prospectlevel','code','label');
+		}
+		return $lib;
+	}
+	
+	
+	/**
+	 *  Definit la societe comme un client
+	 *
+	 *  @param	float	$remise		Valeur en % de la remise
+	 *  @param  string	$note		Note/Motif de modification de la remise
+	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function set_prospect_level($user)
+	{
+		global $langs;
+	
+		if ($this->id)
+		{
+			$this->db->begin();
+	
+			$now=dol_now();
+	
+			// Positionne remise courante
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
+			$sql.= "	fk_prospectlevel='".$this->fk_prospectlevel."'";
+			$sql.= "	,fk_user_modif='".$user->id."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this)."::set_prospect_level sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+	
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 }
 

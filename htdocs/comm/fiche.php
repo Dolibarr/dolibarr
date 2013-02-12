@@ -27,10 +27,15 @@
  *       \brief      Page to show customer card of a third party
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -109,6 +114,15 @@ if ($action == 'setassujtva' && $user->rights->societe->creer)
 	if (! $result) dol_print_error($result);
 }
 
+// set prospect level
+if ($action == 'setprospectlevel' && $user->rights->societe->creer)
+{
+	$object->fetch($socid);
+	$object->fk_prospectlevel=GETPOST('prospect_level_id','int');
+	$object->set_prospect_level($user);
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
+
 
 
 /*
@@ -121,6 +135,7 @@ llxHeader('',$langs->trans('CustomerCard'));
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
+$formcompany=new FormCompany($db);
 
 
 if ($mode == 'search')
@@ -359,6 +374,21 @@ if ($id > 0)
 		print '</td><td colspan="3">'.$object->price_level."</td>";
 		print '</tr>';
 	}
+	
+	// Level of prospect
+	print '<tr><td nowrap>';
+	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print $langs->trans('ProspectLevelShort');
+	print '<td>';
+	if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editlevel')
+		$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
+	else
+		print $object->getLibProspLevel();
+	print "</td>";
+	print '</tr>';
 
 	// Sales representative
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
