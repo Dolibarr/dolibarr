@@ -73,6 +73,9 @@ $search_statut   = GETPOST('select_statut');
 $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 
+// Update sold
+$holiday->updateSold();
+
 $max_year = 5;
 $min_year = 10;
 $filter='';

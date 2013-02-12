@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (! empty($conf->projet->enabled)) 
+if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -260,7 +260,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
 		$action='create';
 		$error++;
 	}
-	
+
 	if ($socid<1)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
@@ -1174,7 +1174,7 @@ $now=dol_now();
 if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("NewProp"));
-	
+
 	$soc = new Societe($db);
 	if ($socid>0) $res=$soc->fetch($socid);
 
@@ -1214,7 +1214,7 @@ if ($action == 'create')
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-	
+
 	if ($origin != 'project' && $originid)
 	{
 		print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -1459,20 +1459,20 @@ if ($action == 'create')
 
 	print "</form>";
 }
-else 
+else
 {
 	/*
 	 * Show object in view mode
 	 */
-	
+
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
-	
+
 	$head = propal_prepare_head($object);
 	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
-	
+
 	$formconfirm='';
-	
+
 	// Clone confirmation
 	if ($action == 'clone')
 	{
@@ -1486,30 +1486,30 @@ else
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
 	}
-	
+
 	// Confirm delete
 	else if ($action == 'delete')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp',$object->ref), 'confirm_delete','',0,1);
 	}
-	
+
 	// Confirm reopen
 	else if ($action == 'reopen')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp',$object->ref), 'confirm_reopen','',0,1);
 	}
-	
+
 	// Confirmation delete product/service line
 	else if ($action == 'ask_deleteline')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
-	
+
 	// Confirm validate proposal
 	else if ($action == 'validate')
 	{
 	    $error=0;
-	
+
 		// on verifie si l'objet est en numerotation provisoire
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV')
@@ -1525,7 +1525,7 @@ else
 		{
 			$numref = $object->ref;
 		}
-	
+
 		$text=$langs->trans('ConfirmValidateProp',$numref);
 		if (! empty($conf->notification->enabled))
 		{
@@ -1534,29 +1534,29 @@ else
 			$text.='<br>';
 			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$object->socid);
 		}
-	
+
 		if (! $error) $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);
 	}
-	
+
 	if (! $formconfirm)
 	{
 	    $parameters=array('lineid'=>$lineid);
 	    $formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	}
-	
+
 	// Print form confirm
 	print $formconfirm;
-	
-	
+
+
 	print '<table class="border" width="100%">';
-	
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	// Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
-	
+
 	// Ref client
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
@@ -1580,11 +1580,11 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-	
+
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
-	
+
 	// Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -1614,7 +1614,7 @@ else
 	}
 	if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 	print '</td></tr>';
-	
+
 	// Date of proposal
 	print '<tr>';
 	print '<td>';
@@ -1645,7 +1645,7 @@ else
 		}
 	}
 	print '</td>';
-	
+
 	// Date end proposal
 	print '<tr>';
 	print '<td>';
@@ -1678,7 +1678,7 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-	
+
 	// Payment term
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1697,7 +1697,7 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-	
+
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
@@ -1722,7 +1722,7 @@ else
 	}
 	print '</td>';
 	print '</tr>';
-	
+
 	// Delivery delay
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1740,10 +1740,10 @@ else
 	{
 		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'none',1);
 	}
-	
+
 	print '</td>';
 	print '</tr>';
-	
+
 	// Origin of demand
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1761,10 +1761,10 @@ else
 	{
 		$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'none');
 	}
-	
+
 	print '</td>';
 	print '</tr>';
-	
+
 	// Payment mode
 	print '<tr>';
 	print '<td width="25%">';
@@ -1783,7 +1783,7 @@ else
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
-	
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1825,7 +1825,7 @@ else
 		}
 		print '</tr>';
 	}
-	
+
 	// Other attributes
 	$parameters=array('colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1841,12 +1841,12 @@ else
 	        print '</td></tr>'."\n";
 	    }
 	}
-	
+
 	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
-	
+
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
 	  print '<td valign="top" width="50%" rowspan="4">';
@@ -1854,12 +1854,12 @@ else
 	  print '</td>';
 	}
 	print '</tr>';
-	
+
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
 	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-	
+
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
@@ -1873,55 +1873,55 @@ else
 		print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
-	
-	
+
+
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
 	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-	
+
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="2">'.$object->getLibStatut(4).'</td></tr>';
-	
+
 	print '</table><br>';
-	
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
-	
+
 	if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 	{
 		$blocname = 'notes';
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
-	
+
 	/*
 	 * Lines
 	 */
-	
+
 	if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 	{
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
-	
+
 	print '<table id="tablelines" class="noborder" width="100%">';
-	
+
 	// Show object lines
 	$result = $object->getLinesArray();
 	if (! empty($object->lines))
 		$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid);
-	
+
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->propal->creer)
 	{
 		if ($action != 'editline')
 		{
 			$var=true;
-	
+
 			if ($conf->global->MAIN_FEATURES_LEVEL > 1)
 			{
 				// Add free or predefined products/services
@@ -1931,7 +1931,7 @@ else
 			{
 				// Add free products/services
 				$object->formAddFreeProduct(0,$mysoc,$soc);
-	
+
 				// Add predefined products/services
 				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 				{
@@ -1939,17 +1939,17 @@ else
 					$object->formAddPredefinedProduct(0,$mysoc,$soc);
 				}
 			}
-	
+
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		}
 	}
-	
+
 	print '</table>';
-	
+
 	print '</div>';
 	print "\n";
-	
+
 	if ($action == 'statut')
 	{
 		/*
@@ -1975,18 +1975,18 @@ else
 		$form_close.= '<a name="close">&nbsp;</a>';
 		$form_close.= '</td>';
 		$form_close.= '</tr></table></form>';
-	
+
 		print $form_close;
 	}
-	
-	
+
+
 	/*
 	 * Boutons Actions
 	 */
 	if ($action != 'presend')
 	{
 		print '<div class="tabsAction">';
-	
+
 		if ($action != 'statut' && $action <> 'editline')
 		{
 			// Validate
@@ -1995,20 +1995,20 @@ else
 			    if (count($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
 			    else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
-	
+
 			// Edit
 			if ($object->statut == 1 && $user->rights->propal->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 			}
-	
+
 			// ReOpen
 			if (($object->statut == 2 || $object->statut == 3) && $user->rights->propal->cloturer)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
 				print '>'.$langs->trans('ReOpen').'</a>';
 			}
-	
+
 			// Send
 			if ($object->statut == 1 || $object->statut == 2)
 			{
@@ -2018,7 +2018,7 @@ else
 	            }
 	            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
-	
+
 	        // Create an order
 	        if (! empty($conf->commande->enabled) && $object->statut == 2 && $user->societe_id == 0)
 	        {
@@ -2027,7 +2027,7 @@ else
 	                print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 	            }
 	        }
-	
+
 	        // Create an invoice and classify billed
 			if ($object->statut == 2 && $user->societe_id == 0)
 			{
@@ -2035,46 +2035,46 @@ else
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a>';
 				}
-	
+
 				$arraypropal=$object->getInvoiceArrayList();
 				if (is_array($arraypropal) && count($arraypropal) > 0)
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
 				}
 			}
-	
+
 			// Close
 			if ($object->statut == 1 && $user->rights->propal->cloturer)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
 				print '>'.$langs->trans('Close').'</a>';
 			}
-	
+
 			// Clone
 			if ($user->rights->propal->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
 			}
-	
+
 			// Delete
 			if ($user->rights->propal->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
 				print '>'.$langs->trans('Delete').'</a>';
 			}
-	
+
 		}
-	
+
 		print '</div>';
 		print "<br>\n";
 	}
-	
+
 	if ($action != 'presend')
 	{
 		print '<table width="100%"><tr><td width="50%" valign="top">';
 		print '<a name="builddoc"></a>'; // ancre
-	
-	
+
+
 		/*
 		 * Documents generes
 		 */
@@ -2083,28 +2083,28 @@ else
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed=$user->rights->propal->creer;
 		$delallowed=$user->rights->propal->supprimer;
-	
+
 		$var=true;
-	
+
 		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'',0,'',$soc->default_lang);
-	
-	
+
+
 		/*
 		 * Linked object block
 		 */
 		$somethingshown=$object->showLinkedObjectBlock();
-	
+
 		print '</td><td valign="top" width="50%">';
-	
+
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 		$somethingshown=$formactions->showactions($object,'propal',$socid);
-	
+
 		print '</td></tr></table>';
 	}
-	
-	
+
+
 	/*
 	 * Action presend
 	 *
@@ -2115,7 +2115,7 @@ else
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	    $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
 	    $file=$fileparams['fullname'];
-	
+
 	    // Build document if it not exists
 	    if (! $file || ! is_readable($file))
 	    {
@@ -2129,7 +2129,7 @@ else
 	            $outputlangs = new Translate("",$conf);
 	            $outputlangs->setDefaultLang($newlang);
 	        }
-	
+
 	        $result=propale_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	        if ($result <= 0)
 	        {
@@ -2139,10 +2139,10 @@ else
 	        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
 	        $file=$fileparams['fullname'];
 	    }
-	
+
 		print '<br>';
 		print_titre($langs->trans('SendPropalByMail'));
-	
+
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
@@ -2151,18 +2151,17 @@ else
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
-		$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-		$formmail->withtosocid=$soc->id;
-		$formmail->withtocc=1;
-		$formmail->withtoccsocid=0;
+		$liste=array();
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
+		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtocccsocid=0;
 		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
-	
+
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
 	    $formmail->substit['__SIGNATURE__']=$user->signature;
@@ -2172,16 +2171,16 @@ else
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	
+
 		// Init list of files
 	    if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 	        $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 		}
-	
+
 		$formmail->show_form();
-	
+
 		print '<br>';
 	}
 }

@@ -2075,12 +2075,11 @@ else
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
-            $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$societe->id;
-            $formmail->withtocc=1;
-            $formmail->withtoccsocid=0;
+			$liste=array();
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+			$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtocccsocid=0;
             $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;
