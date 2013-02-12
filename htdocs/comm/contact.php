@@ -55,15 +55,10 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 llxHeader('','Contacts');
 
-if ($type == "c")
+if ($type == "c" || $type == "p")
 {
   $label = $langs->trans("Customers");
   $urlfiche="fiche.php";
-}
-if ($type == "p")
-{
-  $label = $langs->trans("Prospects");
-  $urlfiche="prospect/fiche.php";
 }
 if ($type == "f")
 {
