@@ -2418,12 +2418,11 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$formmail->fromname = $user->getFullName($langs);
 				$formmail->frommail = $user->email;
 				$formmail->withfrom=1;
-				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):1;
-				$formmail->withtosocid=$soc->id;
-				$formmail->withtocc=1;
-				$formmail->withtoccsocid=0;
+				$liste=array();
+				foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+				$formmail->withtocc=$liste;
 				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withtocccsocid=0;
 				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
 				$formmail->withfile=2;
 				$formmail->withbody=1;

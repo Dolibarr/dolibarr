@@ -49,6 +49,7 @@ class FormMail
     var $withto;
     var $withtofree;
     var $withtocc;
+    var $withtoccc;
     var $withtopic;
     var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
     var $withbody;
@@ -428,22 +429,10 @@ class FormMail
         		else
         		{
         			$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
-        			if (! empty($this->withto) && is_array($this->withto))
+        			if (! empty($this->withtocc) && is_array($this->withtocc))
         			{
         				$out.= " ".$langs->trans("or")." ";
         				$out.= $form->selectarray("receivercc", $this->withto, GETPOST("receivercc"), 1);
-        			}
-        			if (! empty($this->withtoccsocid) && $this->withtoccsocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
-        			{
-        				$liste=array();
-        				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtoccsocid);
-        				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-        				{
-        					$liste[$key]=$value;
-        				}
-        				$out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receivercc", $liste, GETPOST("receivercc"), 1);
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -462,22 +451,10 @@ class FormMail
         		else
         		{
         			$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
-        			if (! empty($this->withto) && is_array($this->withto))
+        			if (! empty($this->withtoccc) && is_array($this->withtoccc))
         			{
         				$out.= " ".$langs->trans("or")." ";
         				$out.= $form->selectarray("receiverccc", $this->withto, GETPOST("receiverccc"), 1);
-        			}
-        			if (! empty($this->withtocccsocid) && $this->withtocccsocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
-        			{
-        				$liste=array();
-        				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtosocid);
-        				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
-        				{
-        					$liste[$key]=$value;
-        				}
-        				$out.= " ".$langs->trans("or")." ";
-        				$out.= $form->selectarray("receiverccc", $liste, GETPOST("receiverccc"), 1);
         			}
         		}
         		//if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
