@@ -65,15 +65,10 @@ $offset = $limit * $page;
 
 $langs->load("companies");
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-if ($type == "c")
+if ($type == "c" || $type=="p")
 {
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="fiche.php";
-}
-else if ($type == "p")
-{
-	$titre.='  ('.$langs->trans("ThirdPartyProspects").')';
-	$urlfiche="prospect/fiche.php";
 }
 else if ($type == "f")
 {
