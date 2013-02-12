@@ -27,10 +27,6 @@
  *       \brief      Page to show customer card of a third party
  */
 
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-ini_set('html_errors', false);
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -117,9 +113,18 @@ if ($action == 'setassujtva' && $user->rights->societe->creer)
 // set prospect level
 if ($action == 'setprospectlevel' && $user->rights->societe->creer)
 {
-	$object->fetch($socid);
-	$object->fk_prospectlevel=GETPOST('prospect_level_id','int');
-	$object->set_prospect_level($user);
+	$object->fetch($id);
+	$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
+	$result=$object->set_prospect_level($user);
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
+
+// Update communication level
+if ($action == 'cstc')
+{
+	$object->fetch($id);
+	$object->stcomm_id=GETPOST('stcomm','int');
+	$result=$object->set_commnucation_level($user);
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
@@ -190,6 +195,11 @@ if ($id > 0)
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
 	$object->next_prev_filter="te.client in (1,3)";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
+	print '</td></tr>';
+	
+	// Prospect/Customer
+	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';
+	print $object->getLibCustProspStatut();
 	print '</td></tr>';
 
 	// Prefix
@@ -389,6 +399,16 @@ if ($id > 0)
 		print $object->getLibProspLevel();
 	print "</td>";
 	print '</tr>';
+	
+	// Status
+	print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="2">'.$object->getLibProspCommStatut(4).'</td>';
+	print '<td>';
+	if ($object->stcomm_id != -1) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
+	if ($object->stcomm_id !=  0) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
+	if ($object->stcomm_id !=  1) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
+	if ($object->stcomm_id !=  2) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
+	if ($object->stcomm_id !=  3) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
+	print '</td></tr>';
 
 	// Sales representative
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
