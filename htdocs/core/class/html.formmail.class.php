@@ -433,11 +433,11 @@ class FormMail
         				$out.= " ".$langs->trans("or")." ";
         				$out.= $form->selectarray("receivercc", $this->withto, GETPOST("receivercc"), 1);
         			}
-        			if (! empty($this->withtoccsocid) && $this->withtoccsocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
+        			if (! empty($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
         			{
         				$liste=array();
         				$soc=new Societe($this->db);
-        				$soc->fetch($this->withtoccsocid);
+        				$soc->fetch($this->withtosocid);
         				foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
         				{
         					$liste[$key]=$value;
