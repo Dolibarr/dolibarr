@@ -183,7 +183,7 @@ if ($action == 'add_action')
 	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $actioncomm->use_phenix=1;
 
 	// Check parameters
-	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datef == ''))
+	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || ($datef == '' && empty($fulldayevent))))
 	{
 		$error++;
 		$action = 'create';
@@ -559,7 +559,7 @@ if ($action == 'create')
 		} else {
 			print $form->select_company('','socid','',1,1);
 		}
-		
+
 	}
 	print '</td></tr>';
 
