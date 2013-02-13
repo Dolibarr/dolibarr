@@ -1016,7 +1016,7 @@ class Contrat extends CommonObject
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1);
+		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
