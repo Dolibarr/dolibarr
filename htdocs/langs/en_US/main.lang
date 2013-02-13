@@ -58,6 +58,7 @@ NbOfEntries=Nb of entries
 GoToWikiHelpPage=Read online help (need Internet access)
 GoToHelpPage=Read help 
 RecordSaved=Record saved
+RecordDeleted=Record deleted
 LevelOfFeature=Level of features
 NotDefined=Not defined
 DefinedAndHasThisValue=Defined and value to
