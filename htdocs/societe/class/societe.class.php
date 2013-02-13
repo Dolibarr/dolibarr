@@ -1437,18 +1437,11 @@ class Societe extends CommonObject
 
         if ($option == 'customer' || $option == 'compta')
         {
-            if (($this->client == 1 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))  // Only customer
-            {
-                $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
-            }
-            elseif($this->client == 2 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))   // Only prospect
-            {
-                $lien = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id;
-            }
+           $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
         }
         else if ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
         {
-            $lien = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id;
+            $lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id;
         }
         else if ($option == 'supplier')
         {
@@ -2655,7 +2648,181 @@ class Societe extends CommonObject
 		    return false;
 
 	}
-
+	
+	/**
+	 *	Return prostect level 
+	 *
+	 *  @return     string        Libelle
+	 */
+	function getLibProspLevel()
+	{
+		return $this->LibProspLevel($this->fk_prospectlevel);
+	}
+	
+	/**
+	 *  Return label of prospect level
+	 *
+	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @return string        					label of level
+	 */
+	function LibProspLevel($fk_prospectlevel)
+	{
+		global $langs;
+	
+		$lib=$langs->trans("ProspectLevel".$fk_prospectlevel);
+		// If lib not found in language file, we get label from cache/databse
+		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel))
+		{
+			$lib=$langs->getLabelFromKey($this->db,$fk_prospectlevel,'c_prospectlevel','code','label');
+		}
+		return $lib;
+	}
+	
+	
+	/**
+	 *  Set prospect level
+	 *
+	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function set_prospect_level($user)
+	{	
+		if ($this->id)
+		{
+			$this->db->begin();
+	
+			$now=dol_now();
+	
+			// Positionne remise courante
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
+			$sql.= " fk_prospectlevel='".$this->fk_prospectlevel."'";
+			$sql.= ",fk_user_modif='".$user->id."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this)."::set_prospect_level sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+	
+			$this->db->commit();
+			return 1;
+		}
+	}
+	
+	/**
+	 *  Return status of prospect
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return string        		Libelle
+	 */
+	function getLibProspCommStatut($mode=0)
+	{
+		return $this->LibProspCommStatut($this->stcomm_id,$mode);
+	}
+	
+	/**
+	 *  Return label of a given status
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @return string        			Libelle du statut
+	 */
+	function LibProspCommStatut($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('customers');
+	
+		if ($mode == 2)
+		{
+			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
+			if ($statut ==  0) return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
+			if ($statut ==  1) return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
+			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
+			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+		}
+		if ($mode == 3)
+		{
+			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1);
+			if ($statut ==  0) return img_action($langs->trans("StatusProspect0"), 0);
+			if ($statut ==  1) return img_action($langs->trans("StatusProspect1"), 1);
+			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2);
+			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3);
+		}
+		if ($mode == 4)
+		{
+			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
+			if ($statut ==  0) return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
+			if ($statut ==  1) return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
+			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
+			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+		}
+	
+		return "Error, mode/status not found";
+	}
+	
+	/**
+	 *  Set commnunication level
+	 *
+	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function set_commnucation_level($user)
+	{	
+		if ($this->id)
+		{
+			$this->db->begin();
+	
+			$now=dol_now();
+	
+			// Positionne remise courante
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
+			$sql.= " fk_stcomm='".$this->stcomm_id."'";
+			$sql.= ",fk_user_modif='".$user->id."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			
+			dol_syslog(get_class($this)."::set_commnucation_level sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+	
+			$this->db->commit();
+			return 1;
+		}
+	}
+	
+	/**
+	 *    Return label of status customer is prospect/customer
+	 *
+	 *    @return   string        		Libelle
+	 */
+	function getLibCustProspStatut()
+	{
+		return $this->LibCustProspStatut($this->client,$mode);
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut         Id statut
+	 *  @return	string          		Libelle du statut
+	 */
+	function LibCustProspStatut($statut)
+	{
+		global $langs;
+		$langs->load('companies');		
+	
+		if ($statut==0) return $langs->trans("NorProspectNorCustomer");
+		if ($statut==1) return $langs->trans("Customer");
+		if ($statut==2) return $langs->trans("Prospect");
+		if ($statut==3) return $langs->trans("ProspectCustomer");
+		
+	}
+	
 }
-
-?>

@@ -82,6 +82,21 @@ if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 	}
 }
 
+if ($action == 'CONTACT_USE_SEARCH_TO_SELECT')
+{
+	$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT','alpha');
+	$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	}
+	else
+	{
+		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+}
+
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
 if ($action == 'setModuleOptions')
 {
@@ -647,7 +662,35 @@ else
 print '</tr>';
 print '</form>';
 
+
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="CONTACT_USE_SEARCH_TO_SELECT">';
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("UseSearchToSelectContact").'</td>';
+if (! $conf->use_javascript_ajax)
+{
+	print '<td nowrap="nowrap" align="right" colspan="2">';
+	print $langs->trans("NotAvailableWhenAjaxDisabled");
+	print "</td>";
+}
+else
+{
+	print '<td width="60" align="right">';
+	$arrval=array('0'=>$langs->trans("No"),
+	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",1).')',
+	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
+	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
+	);
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+}
+print '</tr>';
 print '</table>';
+
 
 
 dol_fiche_end();

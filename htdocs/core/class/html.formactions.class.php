@@ -135,9 +135,10 @@ class FormActions
      *  @param	Object	$object			Object
      *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
      *	@param	int		$socid			socid of user
+     *  @param	int		$forceshowtitle	Show title even if there is no actions to show
      *	@return	int						<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0)
+    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0)
     {
         global $langs,$conf,$user;
         global $bc;
@@ -148,7 +149,7 @@ class FormActions
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
-        if ($num)
+        if ($num || $forceshowtitle)
         {
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
