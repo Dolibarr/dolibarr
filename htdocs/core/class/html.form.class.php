@@ -1180,7 +1180,7 @@ class Form
             $sql.= ", pl.label as label_translated";
         }
 		// Price by quantity
-		if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1) $sql.= " AND price_level=".$price_level;
