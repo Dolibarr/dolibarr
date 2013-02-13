@@ -34,5 +34,5 @@ UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontof
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
 -- margin on contracts
-alter table llx_contratdet add column fk_product_fournisseur_price int(11) after info_bits;
+alter table llx_contratdet add column fk_product_fournisseur_price integer after info_bits;
 alter table llx_contratdet add column buy_price_ht double(24,8) DEFAULT 0 after fk_product_fournisseur_price;
