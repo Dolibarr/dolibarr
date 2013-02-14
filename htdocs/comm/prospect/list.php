@@ -398,7 +398,7 @@ if ($resql)
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		// Level
 		print '<td align="center">';
-		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+		print $prospectstatic->getLibProspLevel($obj->fk_prospectlevel);
 		print "</td>";
 		// Statut
 		print '<td align="center" nowrap="nowrap">';
