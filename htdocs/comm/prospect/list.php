@@ -24,6 +24,10 @@
  *	\brief      Page to list prospects
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -389,6 +393,7 @@ if ($resql)
 		$prospectstatic->id=$obj->rowid;
 		$prospectstatic->nom=$obj->nom;
         $prospectstatic->status=$obj->status;
+        $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
         print "<td>".$obj->zip."&nbsp;</td>";
@@ -398,7 +403,7 @@ if ($resql)
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		// Level
 		print '<td align="center">';
-		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+		print $prospectstatic->getLibProspLevel();
 		print "</td>";
 		// Statut
 		print '<td align="center" nowrap="nowrap">';
@@ -419,7 +424,7 @@ if ($resql)
 		print '</td>';
 
         print '<td align="right">';
-		print $prospectstatic->getLibStatut(3);
+		print $prospectstatic->LibStatut($prospectstatic->status,3);
         print '</td>';
 
         $parameters=array('obj' => $obj);
