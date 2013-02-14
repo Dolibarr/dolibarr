@@ -28,6 +28,7 @@ $extrasize=GETPOST('size');
 if (GETPOST('type')=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
 if (GETPOST('type')=='date')     $extrasize='';
 if (GETPOST('type')=='datetime') $extrasize='';
+if (GETPOST('type')=='select')    $extrasize='';
 
 
 // Add attribute
@@ -58,13 +59,29 @@ if ($action == 'add')
             $mesg=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'create';
         }
+        if (GETPOST('type')=='select' && !GETPOST('extra_value'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg=$langs->trans("ErrorNoValueForSelectType");
+        	$action = 'create';
+        }
 
 	    if (! $error)
 	    {
     		// Type et taille non encore pris en compte => varchar(255)
     		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0));
+    			// Construct array for parameter (value of select list)
+    			$parameters = GETPOST('extra_value');
+    			$parameters_array = explode("\r\n",$parameters);
+    			foreach($parameters_array as $param_ligne)
+    			{
+    				list($key,$value) = explode(',',$param_ligne);
+    				$params['options'][$key] = $value;
+    			}  			 
+    			
+                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params);
     			if ($result > 0)
     			{
     				header("Location: ".$_SERVER["PHP_SELF"]);
