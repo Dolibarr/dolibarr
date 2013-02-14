@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,6 +306,13 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         $localtax1_tx=get_localtax($tva_tx,1,$object->societe);
         $localtax2_tx=get_localtax($tva_tx,2,$object->societe);
 
+		// ajout prix achat
+		$fk_fournprice = $_POST['fournprice'];
+		if ( ! empty($_POST['buying_price']) )
+		  $pa_ht = $_POST['buying_price'];
+		else
+		  $pa_ht = null;
+
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
@@ -329,7 +337,9 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $date_end,
                 $price_base_type,
                 $pu_ttc,
-                $info_bits
+                $info_bits,
+      			$fk_fournprice,
+      			$pa_ht
             );
         }
 
@@ -353,13 +363,18 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
              }
              */
 
-        	unset($_POST['qty']);
-        	unset($_POST['type']);
-        	unset($_POST['idprod']);
-        	unset($_POST['remise_percent']);
-        	unset($_POST['price_ht']);
-        	unset($_POST['tva_tx']);
-        	unset($_POST['dp_desc']);
+			unset($_POST['qty']);
+			unset($_POST['type']);
+			unset($_POST['idprod']);
+			unset($_POST['remise_percent']);
+			unset($_POST['price_ht']);
+			unset($_POST['price_ttc']);
+			unset($_POST['tva_tx']);
+			unset($_POST['product_ref']);
+			unset($_POST['product_label']);
+			unset($_POST['product_desc']);
+			unset($_POST['fournprice']);
+			unset($_POST['buying_price']);
         }
         else
         {
@@ -389,6 +404,13 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
 		$localtax1_tx=get_localtax(GETPOST('eltva_tx'),1,$object->thirdparty);
         $localtax2_tx=get_localtax(GETPOST('eltva_tx'),2,$object->thirdparty);
 
+	  	// ajout prix d'achat
+	  	$fk_fournprice = $_POST['fournprice'];
+	  	if ( ! empty($_POST['buying_price']) )
+	  	  $pa_ht = $_POST['buying_price'];
+	  	else
+	  	  $pa_ht = null;
+
         $objectline->description=GETPOST('product_desc');
         $objectline->price_ht=GETPOST('elprice');
         $objectline->subprice=GETPOST('elprice');
@@ -402,6 +424,8 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->date_fin_validite=$date_end_update;
         $objectline->date_cloture=$date_end_real_update;
         $objectline->fk_user_cloture=$user->id;
+        $objectline->fk_fournprice=$fk_fournprice;
+        $objectline->pa_ht=$pa_ht;
 
         // TODO verifier price_min si fk_product et multiprix
 
@@ -872,7 +896,7 @@ else
             $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
             $sql.= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
             $sql.= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
-            $sql.= " cd.commentaire as comment,";
+            $sql.= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
             $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype";
             $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
@@ -889,6 +913,8 @@ else
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
+				if ($conf->margin->enabled)
+	                print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
                 print '<td width="30">&nbsp;</td>';
                 print "</tr>\n";
 
@@ -932,6 +958,10 @@ else
                     {
                         print '<td>&nbsp;</td>';
                     }
+
+					if ($conf->margin->enabled)
+						print '<td align="right" nowrap="nowrap">'.price($objp->pa_ht).'</td>';
+
                     // Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
                     print '<td align="right" nowrap="nowrap">';
                     if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
@@ -967,7 +997,7 @@ else
                     if ($objp->subprice >= 0)
                     {
                         print '<tr '.$bc[$var].'>';
-                        print '<td colspan="6">';
+                        print '<td colspan="'.($conf->margin->enabled?7:6).'">';
 
                         // Date planned
                         print $langs->trans("DateStartPlanned").': ';
@@ -998,6 +1028,8 @@ else
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="updateligne">';
                     print '<input type="hidden" name="elrowid" value="'.GETPOST('rowid').'">';
+                    print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
+                    print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
                     // Ligne carac
                     print "<tr $bc[$var]>";
                     print '<td>';
@@ -1030,12 +1062,18 @@ else
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                     print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+					if ($conf->margin->enabled) {
+					    print '<td align="right">';
+					    if ($objp->fk_product)
+					        print '<select id="fournprice" name="fournprice"></select>';
+						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht,0,'',0).'"></td>';
+					}
                     print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
                     // Ligne dates prevues
                     print "<tr $bc[$var]>";
-                    print '<td colspan="5">';
+                    print '<td colspan="'.($conf->margin->enabled?6:5).'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
                     print '<br>'.$langs->trans("DateEndPlanned").' ';
@@ -1056,7 +1094,7 @@ else
             if ($object->statut > 0)
             {
                 print '<tr '.$bc[false].'>';
-                print '<td colspan="6"><hr></td>';
+                print '<td colspan="'.($conf->margin->enabled?7:6).'"><hr></td>';
                 print "</tr>\n";
             }
 
@@ -1213,7 +1251,7 @@ else
 
                 print '</tr>';
 
-                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="80" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+                print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td></tr>';
 
                 print '</table>';
 
@@ -1395,3 +1433,59 @@ llxFooter();
 
 $db->close();
 ?>
+<?php
+if ($conf->margin->enabled) {
+?>
+<script type="text/javascript">
+<?php if ($action == 'editline') { ?>
+$(document).ready(function() {
+  var idprod = $("input[name='idprod']").val();
+  var fournprice = $("input[name='fournprice']").val();
+  if (idprod > 0) {
+	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': idprod}, function(data) {
+	    if (data.length > 0) {
+	      var options = '';
+	      var trouve=false;
+	      $(data).each(function() {
+	        options += '<option value="'+this.id+'" price="'+this.price+'"';
+	        if (fournprice > 0) {
+		        if (this.id == fournprice) {
+		          options += ' selected';
+		          $("#buying_price").val(this.price);
+		          trouve = true;
+		        }
+	        }
+	        options += '>'+this.label+'</option>';
+	      });
+	      options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
+	      $("#fournprice").html(options);
+	      if (trouve) {
+	        $("#buying_price").hide();
+	        $("#fournprice").show();
+	      }
+	      else {
+	        $("#buying_price").show();
+	      }
+	      $("#fournprice").change(function() {
+	        var selval = $(this).find('option:selected').attr("price");
+	        if (selval)
+	          $("#buying_price").val(selval).hide();
+	        else
+	          $('#buying_price').show();
+	      });
+	    }
+	    else {
+	      $("#fournprice").hide();
+	      $('#buying_price').show();
+	    }
+	  },
+	  'json');
+	}
+    else {
+      $("#fournprice").hide();
+      $('#buying_price').show();
+    }
+});
+<?php } ?>
+</script>
+<?php } ?>
