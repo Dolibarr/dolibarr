@@ -1239,11 +1239,12 @@ function dol_uncompress($inputfile,$outputdir)
  * @param 	string	$dir			Directory to scan
  * @param	string	$regexfilter	Regexfilter
  * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
- * @return	strnig					Full path to most recent file
+ *  @param	int		$nohook			Disable all hooks
+ * @return	string					Full path to most recent file
  */
-function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'))
+function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
 {
-    $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC);
+    $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,'',$nohook);
     return $tmparray[0];
 }
 ?>
