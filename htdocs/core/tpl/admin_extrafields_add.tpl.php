@@ -25,14 +25,22 @@
     		var size = jQuery("#size");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
-    		if (type == 'date') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); }
-    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); }
-    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
-    		else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
-    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); }
-    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
-    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
-    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');}
+    		<?php
+    		if(!GETPOST('type') == "select") 
+    		{
+    			print 'jQuery("#value_choice").hide();';
+    		}
+    		?>
+    		
+    		if (type == 'date') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
+    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
+    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
+    		else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
+    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.attr('disabled','disabled').removeAttr('checked'); jQuery("#value_choice").hide(); }
+    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
+    		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
+    		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
+    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields('');
@@ -56,6 +64,17 @@
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
 </td></tr>
+<!--  Value (for select list / radio) -->
+<tr id="value_choice">
+<td>
+	<?php echo $langs->trans("Value"); ?>
+</td>
+<td>
+	<textarea name="extra_value" id="extra_value"><?php echo GETPOST('extra_value'); ?></textarea>
+</td>
+</tr>
+<!-- Default Value -->
+<tr><td><?php echo $langs->trans("DefaultValue"); ?></td><td class="valeur"><input id="default_value" type="text" name=""default_value"" size="5" value="<?php echo (GETPOST('"default_value"')?GETPOST('"default_value"'):''); ?>"></td></tr>
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size')?GETPOST('size'):''); ?>"></td></tr>
 <!-- Unique -->
