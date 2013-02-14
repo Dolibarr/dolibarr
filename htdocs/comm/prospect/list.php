@@ -24,10 +24,6 @@
  *	\brief      Page to list prospects
  */
 
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-ini_set('html_errors', false);
-
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
