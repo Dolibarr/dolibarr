@@ -97,7 +97,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
     {
         global $conf;
 
-        return array(
+        $resarray=array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
@@ -120,6 +120,15 @@ class doc_generic_order_odt extends ModelePDFCommandes
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,
         );
+        
+        // Add vat by rates
+        foreach ($object->lines as $line)
+        {
+        	if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
+        	$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
+        }
+        
+        return $resarray;
     }
 
     /**
