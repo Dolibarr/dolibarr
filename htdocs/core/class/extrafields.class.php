@@ -207,7 +207,7 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
-     *  @param  array	$param				Params for field  (ex for select list : array('value'=>'label of option') )  
+     *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0,$param)
@@ -343,9 +343,11 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param	int		$pos				Position of attribute
+     *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0)
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos,$param='')
 	{
         $table=$elementtype.'_extrafields';
 
@@ -368,6 +370,9 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
+			} elseif ($type=='select') {
+				$typedb='text';
+				$lengthdb='';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -378,7 +383,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param);
 				}
 				if ($result > 0)
 				{
@@ -424,9 +429,11 @@ class ExtraFields
      *  @param  string	$elementtype		Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param	int		$pos				Position of attribute
+     *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
      *  @return	int							<=0 if KO, >0 if OK
      */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0)
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='')
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required);
@@ -434,7 +441,12 @@ class ExtraFields
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$this->db->begin();
-
+			
+			if(is_array($param) && count($param) > 0)
+			{
+				$param = serialize($param);
+			}
+				
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
@@ -450,7 +462,9 @@ class ExtraFields
 			$sql.= " size,";
 			$sql.= " elementtype,";
 			$sql.= " fieldunique,";
-			$sql.= " fieldrequired";
+			$sql.= " fieldrequired,";
+			$sql.= " pos,";
+			$sql.= " param";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -459,7 +473,9 @@ class ExtraFields
 			$sql.= " '".$size."',";
             $sql.= " '".$elementtype."',";
             $sql.= " '".$unique."',";
-            $sql.= " '".$required."'";
+            $sql.= " '".$required."',";
+            $sql.= " '".$pos."',";
+            $sql.= " '".$param."'";
             $sql.= ")";
 			dol_syslog(get_class($this)."::update_label sql=".$sql);
 			$resql2=$this->db->query($sql);
@@ -512,7 +528,7 @@ class ExtraFields
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			return $array_name_label;
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity = ".$conf->entity;
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -535,6 +551,7 @@ class ExtraFields
                     $this->attribute_unique[$tab->name]=$tab->fieldunique;
                     $this->attribute_required[$tab->name]=$tab->fieldrequired;
                     $this->attribute_param[$tab->name]=unserialize($tab->param);
+                    $this->attribute_pos[$tab->name]=$tab->pos;
 				}
 			}
 			return $array_name_label;
