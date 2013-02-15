@@ -327,6 +327,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->job		= GETPOST("job");
             $object->signature	= GETPOST("signature");
             $object->openid		= GETPOST("openid");
+            $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
             // Get extra fields
             foreach($_POST as $key => $value)
@@ -1049,6 +1050,8 @@ else
          */
         if ($action != 'edit')
         {
+            $rowspan=16;
+        	
             print '<table class="border" width="100%">';
 
             // Ref
@@ -1058,7 +1061,6 @@ else
             print '</td>';
             print '</tr>'."\n";
 
-            $rowspan=15;
             if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
@@ -1146,22 +1148,6 @@ else
             }
             print '</td></tr>'."\n";
 
-            // Multicompany
-            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-            {
-            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
-            	if ($object->admin && ! $object->entity)
-            	{
-            		print $langs->trans("AllEntities");
-            	}
-            	else
-            	{
-            		$mc->getInfo($object->entity);
-            		print $mc->label;
-            	}
-            	print "</td></tr>\n";
-            }
-
             // Type
             print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
             $type=$langs->trans("Internal");
@@ -1170,7 +1156,7 @@ else
             if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
 
-            // ldap sid
+            // Ldap sid
             if ($object->ldap_sid)
             {
             	print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
@@ -1202,7 +1188,19 @@ else
             print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td>';
             print dol_textishtml($object->signature)?$object->signature:dol_nl2br($object->signature,1,false);
             print "</td></tr>\n";
-
+            
+            // Hierarchy
+            print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<td>';
+            if (empty($object->fk_user)) print $langs->trans("None");
+            else {
+            	$huser=new User($db);
+            	$huser->fetch($object->fk_user);
+            	print $huser->getNomUrl(1);
+            }
+            print '</td>';
+            print "</tr>\n";
+            
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
@@ -1225,7 +1223,7 @@ else
                 print '<td>'.$object->openid.'</td>';
                 print "</tr>\n";
             }
-
+            
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1274,6 +1272,22 @@ else
                 print '</tr>'."\n";
             }
 
+            // Multicompany
+            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            {
+            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
+            	if ($object->admin && ! $object->entity)
+            	{
+            		print $langs->trans("AllEntities");
+            	}
+            	else
+            	{
+            		$mc->getInfo($object->entity);
+            		print $mc->label;
+            	}
+            	print "</td></tr>\n";
+            }
+            
           	// Other attributes
 			$parameters=array('colspan' => ' colspan="2"');
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1512,13 +1526,13 @@ else
 
         if ($action == 'edit' && ($canedituser || ($user->id == $object->id)))
         {
-            print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
+            $rowspan=14;
+
+        	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
-
-            $rowspan=13;
 
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
@@ -1693,21 +1707,6 @@ else
                 print '</td></tr>';
             }
 
-            // Multicompany
-            if (! empty($conf->multicompany->enabled))
-            {
-            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-            	{
-            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-            		print "<td>".$mc->select_entities($object->entity);
-            		print "</td></tr>\n";
-            	}
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
-            }
-
            	// Type
            	print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
            	print '<td>';
@@ -1788,7 +1787,7 @@ else
             print '<td>';
             print '<textarea name="signature" rows="5" cols="90">'.dol_htmlentitiesbr_decode($object->signature).'</textarea>';
             print '</td></tr>';
-
+            
             // openid
             if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
             {
@@ -1806,12 +1805,34 @@ else
                 print '</td></tr>';
             }
 
+            // Hierarchy
+            print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<td>';
+            print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id));
+            print '</td>';
+            print "</tr>\n";
+
             // Statut
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(4);
             print '</td></tr>';
-
+            
+            // Multicompany
+            if (! empty($conf->multicompany->enabled))
+            {
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	{
+            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($object->entity);
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
+            }
+            
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {

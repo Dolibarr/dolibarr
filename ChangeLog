@@ -7,6 +7,7 @@ For users:
 - New: Some performance enhancements.
 - New: Can attach files onto trip and expenses modules.
 - New: Add option MAIN_PDF_TITLE_BACKGROUND_COLOR
+- New: Can define a hierarchical responsible on user
 
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
