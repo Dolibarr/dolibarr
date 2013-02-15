@@ -964,7 +964,7 @@ abstract class CommonObject
      */
     function setDeliveryAddress($id)
     {
-    	$fieldname = 'fk_adresse_livraison';
+    	$fieldname = 'fk_delivery_address';
     	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
