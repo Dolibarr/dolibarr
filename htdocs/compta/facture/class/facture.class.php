@@ -1829,6 +1829,8 @@ class Facture extends CommonInvoice
 
             if ($error == 0)
             {
+            	$this->brouillon = 1;
+            	$this->statut = 0;
                 $this->db->commit();
                 return 1;
             }
