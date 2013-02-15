@@ -55,7 +55,8 @@
 <input type="hidden" name="action" value="add">
 
 <table summary="listofattributes" class="border centpercent">
-
+<!-- Position -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOST('pos'); ?>"></td></tr>
 <!-- Label -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
 <!-- Code -->
@@ -70,7 +71,7 @@
 	<?php echo $langs->trans("Value"); ?>
 </td>
 <td>
-	<textarea name="extra_value" id="extra_value"><?php echo GETPOST('extra_value'); ?></textarea>
+	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
 </td>
 </tr>
 <!-- Default Value -->
