@@ -1234,7 +1234,8 @@ class Form
             }
         }
         $sql.= $db->order("p.ref");
-        $sql.= $db->plimit($limit);
+        // if limit=0 on't use the plimit !
+        if ($limit > 0)     $sql.= $db->plimit($limit);
 
         // Build output string
         $outselect='';
