@@ -2185,10 +2185,10 @@ class Product extends CommonObject
 				$this->res[]= array($compl_path.$nom_pere,$desc_pere);
 			}
 
-			// Recursive call
-			if (is_array($desc_pere)>2)
+			// Recursive call if child is an array
+			if (is_array($desc_pere[0]))
 			{
-				$this ->fetch_prod_arbo($desc_pere, $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
+				$this ->fetch_prod_arbo($desc_pere[0], $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
 			}
 		}
 	}
