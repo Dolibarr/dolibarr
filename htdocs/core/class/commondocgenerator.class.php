@@ -134,7 +134,7 @@ abstract class CommonDocGenerator
         	$object->state=getState($object->state_code,0);
         }
 
-        return array(
+        $array_thirdparty = array(
             'company_name'=>$object->name,
             'company_email'=>$object->email,
             'company_phone'=>$object->phone,
@@ -163,6 +163,17 @@ abstract class CommonDocGenerator
             'company_idprof6'=>$object->idprof6,
         	'company_note'=>$object->note
         );
+
+        $extrafields = array();
+        if(is_array($object->array_options) && count($object->array_options))
+        {
+        	foreach($object->array_options as $key=>$label)
+        	{
+        		$extrafields['company_options_'.$key] = $label;
+        	}
+        	$array_thirdparty = array_merge($array_thirdparty,$extrafields);
+        }
+        return $array_thirdparty;
     }
 
 	/**
