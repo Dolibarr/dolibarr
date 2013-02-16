@@ -114,3 +114,4 @@ YourRole=Vos rôles
 YourQuotaOfUsersIsReached=Votre quota d'utilisateurs actifs est atteint !
 NbOfUsers=Nb d'utilisateurs
 DontDowngradeSuperAdmin=Seul un superadmin peut rétrograder un superadmin
+HierarchicalResponsible=Responsable hierarchique

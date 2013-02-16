@@ -941,7 +941,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
-    print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
+    print '<tr><td align="left" nowrap="nowrap">';
     print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
     print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
     print $newparam;
@@ -960,7 +960,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         print '</a>';
     }
     print '</td></tr>';
-    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" nowrap="nowrap">';
+    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" nowrap="nowrap" style="padding-bottom: 2px;">';
 
     //$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
@@ -1004,8 +1004,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     // Show rect of event
                     print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
-                    print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px;" width="100%"><tr>';
-                    print '<td nowrap="nowrap">';
+                    print '<ul class="cal_event"><li class="cal_event">';
+                    print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,2).')); " width="100%"><tr>';
+                    print '<td nowrap="nowrap" class="cal_event">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
                         print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
@@ -1130,6 +1131,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT') print $event->getLibStatut(3,1);
                     else print '&nbsp;';
                     print '</td></tr></table>';
+                    print '</li></ul>';
                     print '</div>';
                     $i++;
                 }
@@ -1172,6 +1174,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '</td></tr>';
     print '</table>';
     print '</div>'."\n";
+}
+
+function dol_color_minus($color, $minus)
+{
+	$newcolor=$color;
+	$newcolor[0]=((hexdec($newcolor[0])-$minus)<0)?0:dechex((hexdec($newcolor[0])-$minus));
+	$newcolor[2]=((hexdec($newcolor[2])-$minus)<0)?0:dechex((hexdec($newcolor[2])-$minus));
+	$newcolor[4]=((hexdec($newcolor[4])-$minus)<0)?0:dechex((hexdec($newcolor[4])-$minus));
+	return $newcolor;
 }
 
 ?>
