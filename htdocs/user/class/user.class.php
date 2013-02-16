@@ -154,13 +154,13 @@ class User extends CommonObject
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+		if ((empty($conf->multicompany->enabled) || empty($conf->multicompany->transverse_mode)) && (! empty($user->entity)))
 		{
-			$sql.= " WHERE u.entity IS NOT NULL";
+			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		}
 		else
 		{
-			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+			$sql.= " WHERE u.entity IS NOT NULL";
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
