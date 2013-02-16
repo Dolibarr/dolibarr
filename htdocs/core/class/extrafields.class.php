@@ -38,6 +38,8 @@ class ExtraFields
 	var $attribute_label;
 	// Tableau contenant le nom des champs en clef et la taille de ces champs en value
 	var $attribute_size;
+	// Tableau contenant le nom des choix en clef et la valeur de ces choix en value
+	var $attribute_choice;
 	// Array to store if attribute is unique or not
 	var $attribute_unique;
 	// Array to store if attribute is required or not
@@ -56,7 +58,8 @@ class ExtraFields
 		'boolean'=>'Boolean',
 		'price'=>'ExtrafieldPrice',
 		'phone'=>'ExtrafieldPhone',
-		'mail'=>'ExtrafieldMail'
+		'mail'=>'ExtrafieldMail',
+		'select' => 'ExtrafieldSelect'
 	);
 
 	/**
@@ -87,20 +90,22 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param  array	$param				Params for field 
      *  @return int      					<=0 if KO, >0 if OK
      */
-    function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0)
+    function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0,$default_value='', $param=0)
 	{
         if (empty($attrname)) return -1;
         if (empty($label)) return -1;
 
+        
         // Create field into database
-        $result=$this->create($attrname,$type,$size,$elementtype, $unique, $required);
+        $result=$this->create($attrname,$type,$size,$elementtype, $unique, $required, $default_value,$param);
         $err1=$this->errno;
         if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
         {
         	// Add declaration of field into table
-            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required);
+            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param);
             $err2=$this->errno;
             if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
             {
@@ -126,12 +131,15 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param  string  $default_value		Default value for field
+     *  @param  array	$param				Params for field  (ex for select list : array('options'=>array('value'=>'label of option'))
+     *  
      *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0)
+	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0, $required=0, $default_value='',$param='')
 	{
         $table=$elementtype.'_extrafields';
-
+        
         // Special case for not normalized table names
         if ($elementtype == 'member')  $table='adherent_extrafields';
         elseif ($elementtype == 'company') $table='societe_extrafields';
@@ -151,11 +159,20 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
+			} elseif ($type=='select') {
+				$typedb='text';
+				$lengthdb='';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
 			}
-			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'));
+			$field_desc = array(
+				'type'=>$typedb, 
+				'value'=>$lengthdb, 
+				'null'=>($required?'NOT NULL':'NULL'),
+				'default' => $default_value
+			);
+			
 			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
@@ -190,19 +207,33 @@ class ExtraFields
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0)
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0,$param)
 	{
 		global $conf;
 
 		// Clean parameters
 		if (empty($pos)) $pos=0;
 
-
+		
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired)";
+			if(is_array($param) and count($param) > 0)
+			{
+				$params = $this->db->escape(serialize($param));
+			}
+			elseif (strlen($param) > 0)
+			{
+				$params = trim($param);
+			}
+			else
+			{
+				$params='';
+			}
+			
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique, fieldrequired, param)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
@@ -211,7 +242,8 @@ class ExtraFields
 			$sql.= " ".$conf->entity.",";
             $sql.= " '".$elementtype."',";
             $sql.= " '".$unique."',";
-            $sql.= " '".$required."'";
+            $sql.= " '".$required."',";
+            $sql.= " '".$params."'";
             $sql.=')';
 
 			dol_syslog(get_class($this)."::create_label sql=".$sql);
@@ -311,9 +343,11 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', 'contact', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param	int		$pos				Position of attribute
+     *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0)
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos,$param='')
 	{
         $table=$elementtype.'_extrafields';
 
@@ -336,6 +370,9 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
+			} elseif ($type=='select') {
+				$typedb='text';
+				$lengthdb='';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -346,7 +383,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param);
 				}
 				if ($result > 0)
 				{
@@ -392,9 +429,11 @@ class ExtraFields
      *  @param  string	$elementtype		Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param	int		$pos				Position of attribute
+     *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
      *  @return	int							<=0 if KO, >0 if OK
      */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0)
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='')
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required);
@@ -402,7 +441,12 @@ class ExtraFields
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$this->db->begin();
-
+			
+			if(is_array($param) && count($param) > 0)
+			{
+				$param = serialize($param);
+			}
+				
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql_del.= " WHERE name = '".$attrname."'";
 			$sql_del.= " AND entity = ".$conf->entity;
@@ -418,7 +462,9 @@ class ExtraFields
 			$sql.= " size,";
 			$sql.= " elementtype,";
 			$sql.= " fieldunique,";
-			$sql.= " fieldrequired";
+			$sql.= " fieldrequired,";
+			$sql.= " pos,";
+			$sql.= " param";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
@@ -427,7 +473,9 @@ class ExtraFields
 			$sql.= " '".$size."',";
             $sql.= " '".$elementtype."',";
             $sql.= " '".$unique."',";
-            $sql.= " '".$required."'";
+            $sql.= " '".$required."',";
+            $sql.= " '".$pos."',";
+            $sql.= " '".$param."'";
             $sql.= ")";
 			dol_syslog(get_class($this)."::update_label sql=".$sql);
 			$resql2=$this->db->query($sql);
@@ -480,7 +528,7 @@ class ExtraFields
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			return $array_name_label;
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity = ".$conf->entity;
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -502,6 +550,8 @@ class ExtraFields
                     $this->attribute_elementtype[$tab->name]=$tab->elementtype;
                     $this->attribute_unique[$tab->name]=$tab->fieldunique;
                     $this->attribute_required[$tab->name]=$tab->fieldrequired;
+                    $this->attribute_param[$tab->name]=unserialize($tab->param);
+                    $this->attribute_pos[$tab->name]=$tab->pos;
 				}
 			}
 			return $array_name_label;
@@ -531,6 +581,7 @@ class ExtraFields
         $elementtype=$this->attribute_elementtype[$key];
         $unique=$this->attribute_unique[$key];
         $required=$this->attribute_required[$key];
+        $param=$this->attribute_param[$key];
         if ($type == 'date')
         {
             $showsize=10;
@@ -593,6 +644,15 @@ class ExtraFields
         {
         	$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
         }
+        elseif ($type == 'select')
+        {
+        	$out='<select name="options_'.$key.'">';
+        	foreach ($param['options'] as $key=>$value )
+        	{
+        		$out.='<option value="'.$key.'">'.$value.'</option>';
+        	}
+        	$out.='</select>';
+        }
         // Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
         elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -617,6 +677,7 @@ class ExtraFields
         $elementtype=$this->attribute_elementtype[$key];
         $unique=$this->attribute_unique[$key];
         $required=$this->attribute_required[$key];
+        $params=$this->attribute_param[$key];
         if ($type == 'date')
         {
             $showsize=10;
@@ -648,6 +709,10 @@ class ExtraFields
         elseif ($type == 'price')
         {
         	$value=price($value).' '.$langs->getCurrencySymbol($conf->currency);
+        }
+        elseif ($type == 'select')
+        {
+        	$value=$params['options'][$value];
         }
         else
         {
