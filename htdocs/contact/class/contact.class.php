@@ -520,7 +520,7 @@ class Contact extends CommonObject
 				$this->prenom			= $obj->firstname;		// TODO deprecated
 
 				$this->address			= $obj->address;
-				$this->adresse			= $obj->address; 		// TODO deprecated
+				//$this->adresse			= $obj->address; 		// TODO deprecated
 				$this->cp				= $obj->zip;			// TODO deprecated
 				$this->zip				= $obj->zip;
 				$this->ville			= $obj->town;			// TODO deprecated
