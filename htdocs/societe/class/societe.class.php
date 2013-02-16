@@ -857,6 +857,7 @@ class Societe extends CommonObject
                 
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label('company',true);
                 if (count($extralabels)>0) {
