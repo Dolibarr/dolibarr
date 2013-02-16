@@ -1020,7 +1020,7 @@ class CMailFile
 	/**
 	 * Return an address for SMTP protocol
 	 *
-	 * @param	string		$adresses		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
+	 * @param	string		$address		Example: 'John Doe <john@doe.com>' or 'john@doe.com'
 	 * @param	int			$format			0=auto, 1=emails with <>, 2=emails without <>, 3=auto + label between "
 	 * @param	int			$encode			1=Encode name to RFC2822
 	 * @return	string						If format 0: '<john@doe.com>' or 'John Doe <john@doe.com>' or '=?UTF-8?B?Sm9obiBEb2U=?= <john@doe.com>'
@@ -1028,13 +1028,13 @@ class CMailFile
 	 *										If format 2: 'john@doe.com'
 	 *										If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
 	 */
-	function getValidAddress($adresses,$format,$encode='')
+	function getValidAddress($address,$format,$encode='')
 	{
 		global $conf;
 
 		$ret='';
 
-		$arrayaddress=explode(',',$adresses);
+		$arrayaddress=explode(',',$address);
 
 		// Boucle sur chaque composant de l'adresse
 		foreach($arrayaddress as $val)

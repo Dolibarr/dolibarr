@@ -39,7 +39,7 @@ create table llx_adherent
   morphy           varchar(3) NOT NULL, -- personne morale / personne physique
   societe          varchar(50),
   fk_soc           integer NULL,		-- Link to third party linked to member
-  adresse          text,
+  address          text,
   cp               varchar(30),
   ville            varchar(50),
   fk_departement   integer,

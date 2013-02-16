@@ -90,7 +90,7 @@ class Propal extends CommonObject
     var $fk_delivery_address;		// deprecated (for compatibility)
     var $fk_address;
     var $address_type;
-    var $adresse;
+    var $address;
     var $availability_id;
     var $availability_code;
     var $demand_reason_id;
@@ -789,7 +789,7 @@ class Propal extends CommonObject
                 if (! $error && $this->fk_delivery_address)
                 {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-                    $sql.= " SET fk_adresse_livraison = ".$this->fk_delivery_address;
+                    $sql.= " SET fk_delivery_address = ".$this->fk_delivery_address;
                     $sql.= " WHERE ref = '".$this->ref."'";
                     $sql.= " AND entity = ".$conf->entity;
 
@@ -985,7 +985,7 @@ class Propal extends CommonObject
         $sql.= ", p.note as note_private, p.note_public";
         $sql.= ", p.fk_projet, p.fk_statut";
         $sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
-        $sql.= ", p.fk_adresse_livraison";
+        $sql.= ", p.fk_delivery_address";
         $sql.= ", p.fk_availability";
         $sql.= ", p.fk_input_reason";
         $sql.= ", p.fk_cond_reglement";
@@ -1049,8 +1049,8 @@ class Propal extends CommonObject
                 $this->demand_reason_id     = $obj->fk_input_reason;
                 $this->demand_reason_code   = $obj->demand_reason_code;
                 $this->demand_reason        = $obj->demand_reason;
-                $this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
-                $this->fk_address  			= $obj->fk_adresse_livraison;
+                //$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
+                $this->fk_address  			= $obj->fk_delivery_address;
 
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
                 $this->mode_reglement_code  = $obj->mode_reglement_code;
