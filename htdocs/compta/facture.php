@@ -1964,9 +1964,9 @@ if ($action == 'create')
 	    print '</td></tr>'."\n";
 	}
 
-	if (empty($origin) && $socid > 0)
-	{
-	    // Credit note
+    if (empty($origin) && $socid > 0)
+    {
+    	// Credit note
 	    print '<tr height="18"><td valign="middle">';
 	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
 	    if (! $optionsav) print ' disabled="disabled"';
@@ -1990,7 +1990,8 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
-	}
+    }
+
 	print '</table>';
 	print '</td></tr>';
 

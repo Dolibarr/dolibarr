@@ -33,11 +33,11 @@ complete release of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in /ChangeLog and /filefunc.inc.php
-- Update version number with x.x.x-y in htdocs/filefunc.inc.php
-- Update version number with x.x.x-y in build/makepack-dolibarr.pl
-- Update version number with x.x.x-y in build/debian/changelog
-- Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
-- Update version number with x.x.x-y in build/rpm/*.spec
+- Update version number with x.x.x in htdocs/filefunc.inc.php
+- Update version number with x.x.x in build/makepack-dolibarr.pl
+- Update version number with x.x.x in build/debian/changelog
+- Update version number with x.x.x in build/exe/doliwamp/doliwamp.iss
+- Update version number with x.x.x in build/rpm/*.spec
 - Update PAD files.
 - Commit all changes.
 - Add a Tag (DOLIBARR_x_y)
