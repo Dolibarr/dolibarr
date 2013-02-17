@@ -865,7 +865,7 @@ class Societe extends CommonObject
                 }
                 foreach($extrafields->attribute_label as $key=>$label)
                 {                	
-                	$this->array_options[$key]=$label;
+                	$this->array_options['options_'.$key]=$label;
                 }
             }
             else

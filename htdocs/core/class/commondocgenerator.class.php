@@ -169,7 +169,7 @@ abstract class CommonDocGenerator
         {
         	foreach($object->array_options as $key=>$label)
         	{
-        		$extrafields['company_options_'.$key] = $label;
+        		$extrafields['company_'.$key] = $label;
         	}
         	$array_thirdparty = array_merge($array_thirdparty,$extrafields);
         }
