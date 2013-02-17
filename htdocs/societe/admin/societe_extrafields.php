@@ -84,6 +84,7 @@ $extrafields->fetch_name_optionals_label($elementtype);
 print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
 
 print '<tr class="liste_titre">';
+print '<td align="center">'.$langs->trans("Position").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
@@ -98,6 +99,7 @@ foreach($extrafields->attribute_type as $key => $value)
 {
     $var=!$var;
     print "<tr ".$bc[$var].">";
+    print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
     print "<td>".$key."</td>\n";
     print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";

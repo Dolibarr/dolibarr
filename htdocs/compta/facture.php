@@ -1915,14 +1915,6 @@ if ($action == 'create')
     print $desc;
     print '</td></tr>'."\n";
 
-    // Deposit
-    print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
-    print '</td><td valign="middle">';
-    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
-
     // Proforma
     if (! empty($conf->global->FACTURE_USE_PROFORMAT))
     {
@@ -1934,7 +1926,18 @@ if ($action == 'create')
         print '</td></tr>'."\n";
     }
 
-	if ($socid>0)
+    if (empty($origin))
+    {
+	    // Deposit
+	    print '<tr height="18"><td width="16px" valign="middle">';
+	    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
+	    print '</td><td valign="middle">';
+	    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
+    }
+
+    if ($socid > 0)
 	{
 	    // Replacement
 	    print '<tr height="18"><td valign="middle">';
@@ -1959,8 +1962,11 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
+	}
 
-	    // Credit note
+    if (empty($origin) && $socid > 0)
+    {
+    	// Credit note
 	    print '<tr height="18"><td valign="middle">';
 	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
 	    if (! $optionsav) print ' disabled="disabled"';
@@ -1984,11 +1990,12 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
-	}
+    }
+
 	print '</table>';
 	print '</td></tr>';
 
-	if($socid>0)
+	if ($socid > 0)
 	{
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';

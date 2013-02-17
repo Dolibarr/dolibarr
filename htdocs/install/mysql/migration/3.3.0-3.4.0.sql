@@ -36,3 +36,12 @@ ALTER TABLE llx_user add COLUMN fk_user integer;
 -- margin on contracts
 alter table llx_contratdet add column fk_product_fournisseur_price integer after info_bits;
 alter table llx_contratdet add column buy_price_ht double(24,8) DEFAULT 0 after fk_product_fournisseur_price;
+
+-- serialised array, to store value of select list choices for example
+alter table llx_extrafields add column param text after pos;
+
+
+alter table llx_propal   CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
+alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
+alter table llx_don      CHANGE COLUMN adresse address text;
+

@@ -675,7 +675,7 @@ class Expedition extends CommonObject
 		if (isset($this->socid)) $this->socid=trim($this->socid);
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
 		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
-		if (isset($this->fk_adresse_livraison)) $this->fk_adresse_livraison=trim($this->fk_adresse_livraison);
+		if (isset($this->fk_delivery_address)) $this->fk_delivery_address=trim($this->fk_delivery_address);
 		if (isset($this->expedition_method_id)) $this->expedition_method_id=trim($this->expedition_method_id);
 		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
 		if (isset($this->statut)) $this->statut=trim($this->statut);
@@ -706,7 +706,7 @@ class Expedition extends CommonObject
 		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
 		$sql.= " date_expedition=".(dol_strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
 		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
-		$sql.= " fk_address=".(isset($this->fk_adresse_livraison)?$this->fk_adresse_livraison:"null").",";
+		$sql.= " fk_address=".(isset($this->fk_delivery_address)?$this->fk_delivery_address:"null").",";
 		$sql.= " fk_expedition_methode=".((isset($this->expedition_method_id) && $this->expedition_method_id > 0)?$this->expedition_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
@@ -909,8 +909,8 @@ class Expedition extends CommonObject
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 
-				//Invoicing
-				$line->desc				= $obj->product_label;
+				// For invoicing
+				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $obj->qty_shipped;
 				$line->total_ht			= $obj->total_ht;
 				$line->total_localtax1 	= $obj->total_localtax1;

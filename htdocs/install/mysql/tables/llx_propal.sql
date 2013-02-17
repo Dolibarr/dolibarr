@@ -65,6 +65,6 @@ create table llx_propal
   fk_input_reason		integer,
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
-  fk_adresse_livraison	integer							-- delivery address (deprecated)
+  fk_delivery_address	integer							-- delivery address (deprecated)
   
 )ENGINE=innodb;
