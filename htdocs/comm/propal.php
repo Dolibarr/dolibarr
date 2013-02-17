@@ -80,11 +80,11 @@ $result = restrictedArea($user, 'propal', $id);
 $object = new Propal($db);
 
 // Load object
-// Load object
 if ($id > 0 || ! empty($ref))
 {
 	$ret=$object->fetch($id, $ref);
-	$ret=$object->fetch_thirdparty();
+	if ($ret > 0) $ret=$object->fetch_thirdparty();
+	if ($ret < 0) dol_print_error('',$object->error);
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array

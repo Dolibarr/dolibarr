@@ -42,7 +42,7 @@ class Don extends CommonObject
     var $prenom;
     var $nom;
     var $societe;
-    var $adresse;
+    var $address;
     var $cp;
     var $ville;
     var $pays;
@@ -188,7 +188,7 @@ class Don extends CommonObject
         $this->amount = 100;
         $this->public = 1;
         $this->societe = 'The Company';
-        $this->adresse = 'Twist road';
+        $this->address = 'Twist road';
         $this->cp = '99999';
         $this->ville = 'Town';
         $this->note_public='SPECIMEN';
@@ -217,7 +217,7 @@ class Don extends CommonObject
             }
         }
 
-        if (dol_strlen(trim($this->adresse)) == 0)
+        if (dol_strlen(trim($this->address)) == 0)
         {
             $error_string[$err] = "L'adresse saisie est invalide";
             $err++;
@@ -297,7 +297,7 @@ class Don extends CommonObject
         global $conf;
 
         // Clean parameters
-        $this->address=($this->address>0?$this->address:$this->adresse);
+        $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->cp);
         $this->town=($this->town>0?$this->town:$this->ville);
         $this->country_id=($this->country_id>0?$this->country_id:$this->fk_pays);
@@ -313,7 +313,7 @@ class Don extends CommonObject
         $sql.= ", prenom";
         $sql.= ", nom";
         $sql.= ", societe";
-        $sql.= ", adresse";
+        $sql.= ", address";
         $sql.= ", cp";
         $sql.= ", ville";
         $sql.= ", pays";
@@ -334,7 +334,7 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->prenom)."'";
         $sql.= ", '".$this->db->escape($this->nom)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
-        $sql.= ", '".$this->db->escape($this->adresse)."'";
+        $sql.= ", '".$this->db->escape($this->address)."'";
         $sql.= ", '".$this->db->escape($this->zip)."'";
         $sql.= ", '".$this->db->escape($this->town)."'";
         $sql.= ", '".$this->db->escape($this->country)."'"; // TODO use country_id
@@ -382,7 +382,7 @@ class Don extends CommonObject
     function update($user)
     {
         // Clean parameters
-        $this->address=($this->address>0?$this->address:$this->adresse);
+        $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->cp);
         $this->town=($this->town>0?$this->town:$this->ville);
         $this->country_id=($this->country_id>0?$this->country_id:$this->fk_pays);
@@ -394,7 +394,7 @@ class Don extends CommonObject
         $sql .= ",prenom = '".$this->db->escape($this->prenom)."'";
         $sql .= ",nom='".$this->db->escape($this->nom)."'";
         $sql .= ",societe='".$this->db->escape($this->societe)."'";
-        $sql .= ",adresse='".$this->db->escape($this->address)."'";
+        $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",cp='".$this->db->escape($this->zip)."'";
         $sql .= ",ville='".$this->db->escape($this->town)."'";
         $sql .= ",pays='".$this->db->escape($this->country)."'"; // TODO use country_id
@@ -463,7 +463,7 @@ class Don extends CommonObject
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
-        $sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
+        $sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.address, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
@@ -487,7 +487,7 @@ class Don extends CommonObject
                 $this->nom            = $obj->nom;
                 $this->societe        = $obj->societe;
                 $this->statut         = $obj->fk_statut;
-                $this->adresse        = $obj->adresse;
+                $this->address        = $obj->address;
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
                 $this->zip            = $obj->cp;
