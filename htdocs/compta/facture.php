@@ -1899,14 +1899,6 @@ if ($action == 'create')
     print $desc;
     print '</td></tr>'."\n";
 
-    // Deposit
-    print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
-    print '</td><td valign="middle">';
-    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
-
     // Proforma
     if (! empty($conf->global->FACTURE_USE_PROFORMAT))
     {
@@ -1918,54 +1910,65 @@ if ($action == 'create')
         print '</td></tr>'."\n";
     }
 
-    // Replacement
-    print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
-    if (! $options) print ' disabled="disabled"';
-    print '>';
-    print '</td><td valign="middle">';
-    $text=$langs->trans("InvoiceReplacementAsk").' ';
-    $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
-    if (! $options) $text.=' disabled="disabled"';
-    $text.='>';
-    if ($options)
+    if (empty($origin))
     {
-        $text.='<option value="-1"></option>';
-        $text.=$options;
-    }
-    else
-    {
-        $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
-    }
-    $text.='</select>';
-    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
+	    // Deposit
+	    print '<tr height="18"><td width="16px" valign="middle">';
+	    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
+	    print '</td><td valign="middle">';
+	    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
 
-    // Credit note
-    print '<tr height="18"><td valign="middle">';
-    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
-    if (! $optionsav) print ' disabled="disabled"';
-    print '>';
-    print '</td><td valign="middle">';
-    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
-    //	$text.='<input type="text" value="">';
-    $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
-    if (! $optionsav) $text.=' disabled="disabled"';
-    $text.='>';
-    if ($optionsav)
-    {
-        $text.='<option value="-1"></option>';
-        $text.=$optionsav;
+	    // Replacement
+	    print '<tr height="18"><td valign="middle">';
+	    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
+	    if (! $options) print ' disabled="disabled"';
+	    print '>';
+	    print '</td><td valign="middle">';
+	    $text=$langs->trans("InvoiceReplacementAsk").' ';
+	    $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
+	    if (! $options) $text.=' disabled="disabled"';
+	    $text.='>';
+	    if ($options)
+	    {
+	        $text.='<option value="-1"></option>';
+	        $text.=$options;
+	    }
+	    else
+	    {
+	        $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
+	    }
+	    $text.='</select>';
+	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+	    print $desc;
+    	print '</td></tr>'."\n";
+
+	    // Credit note
+	    print '<tr height="18"><td valign="middle">';
+	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
+	    if (! $optionsav) print ' disabled="disabled"';
+	    print '>';
+	    print '</td><td valign="middle">';
+	    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
+	    //	$text.='<input type="text" value="">';
+	    $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
+	    if (! $optionsav) $text.=' disabled="disabled"';
+	    $text.='>';
+	    if ($optionsav)
+	    {
+	        $text.='<option value="-1"></option>';
+	        $text.=$optionsav;
+	    }
+	    else
+	    {
+	        $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
+	    }
+	    $text.='</select>';
+	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
     }
-    else
-    {
-        $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
-    }
-    $text.='</select>';
-    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
 
     print '</table>';
     print '</td></tr>';
