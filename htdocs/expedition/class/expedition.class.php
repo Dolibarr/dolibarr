@@ -909,8 +909,8 @@ class Expedition extends CommonObject
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 
-				//Invoicing
-				$line->desc				= $obj->product_label;
+				// For invoicing
+				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $obj->qty_shipped;
 				$line->total_ht			= $obj->total_ht;
 				$line->total_localtax1 	= $obj->total_localtax1;
