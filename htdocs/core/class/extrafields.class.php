@@ -669,7 +669,7 @@ class ExtraFields
      */
     function showOutputField($key,$value,$moreparam='')
     {
-		global $conf;
+		global $conf,$langs;
 
         $label=$this->attribute_label[$key];
         $type=$this->attribute_type[$key];
