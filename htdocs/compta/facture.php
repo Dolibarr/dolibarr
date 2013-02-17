@@ -1935,63 +1935,66 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
+    }
 
-    	if ($socid > 0)
-		{
-		    // Replacement
-		    print '<tr height="18"><td valign="middle">';
-		    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
-		    if (! $options) print ' disabled="disabled"';
-		    print '>';
-		    print '</td><td valign="middle">';
-		    $text=$langs->trans("InvoiceReplacementAsk").' ';
-		    $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
-		    if (! $options) $text.=' disabled="disabled"';
-		    $text.='>';
-		    if ($options)
-		    {
-		        $text.='<option value="-1"></option>';
-		        $text.=$options;
-		    }
-		    else
-		    {
-		        $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
-		    }
-		    $text.='</select>';
-		    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
-		    print $desc;
-		    print '</td></tr>'."\n";
+    if ($socid > 0)
+	{
+	    // Replacement
+	    print '<tr height="18"><td valign="middle">';
+	    print '<input type="radio" name="type" value="1"'.(GETPOST('type')==1?' checked="checked"':'');
+	    if (! $options) print ' disabled="disabled"';
+	    print '>';
+	    print '</td><td valign="middle">';
+	    $text=$langs->trans("InvoiceReplacementAsk").' ';
+	    $text.='<select class="flat" name="fac_replacement" id="fac_replacement"';
+	    if (! $options) $text.=' disabled="disabled"';
+	    $text.='>';
+	    if ($options)
+	    {
+	        $text.='<option value="-1"></option>';
+	        $text.=$options;
+	    }
+	    else
+	    {
+	        $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
+	    }
+	    $text.='</select>';
+	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
+	}
 
-		    // Credit note
-		    print '<tr height="18"><td valign="middle">';
-		    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
-		    if (! $optionsav) print ' disabled="disabled"';
-		    print '>';
-		    print '</td><td valign="middle">';
-		    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
-		    //	$text.='<input type="text" value="">';
-		    $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
-		    if (! $optionsav) $text.=' disabled="disabled"';
-		    $text.='>';
-		    if ($optionsav)
-		    {
-		        $text.='<option value="-1"></option>';
-		        $text.=$optionsav;
-		    }
-		    else
-		    {
-		        $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
-		    }
-		    $text.='</select>';
-		    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
-		    print $desc;
-		    print '</td></tr>'."\n";
-		}
+	if (empty($origin) && $socid > 0)
+	{
+	    // Credit note
+	    print '<tr height="18"><td valign="middle">';
+	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
+	    if (! $optionsav) print ' disabled="disabled"';
+	    print '>';
+	    print '</td><td valign="middle">';
+	    $text=$langs->transnoentities("InvoiceAvoirAsk").' ';
+	    //	$text.='<input type="text" value="">';
+	    $text.='<select class="flat" name="fac_avoir" id="fac_avoir"';
+	    if (! $optionsav) $text.=' disabled="disabled"';
+	    $text.='>';
+	    if ($optionsav)
+	    {
+	        $text.='<option value="-1"></option>';
+	        $text.=$optionsav;
+	    }
+	    else
+	    {
+	        $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
+	    }
+	    $text.='</select>';
+	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
 	}
 	print '</table>';
 	print '</td></tr>';
 
-	if($socid>0)
+	if ($socid > 0)
 	{
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
