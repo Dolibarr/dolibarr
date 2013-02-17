@@ -1168,7 +1168,7 @@ div.error {
 
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #664400; }
- 
+
 .fieldrequired {
 	font-weight:bold;
 	color:#333333;
@@ -1468,6 +1468,9 @@ table.cal_event {
 	border-collapse:collapse;
 	margin-bottom:1px;
 }
+
+ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; -webkit-padding-start: 2px !important; }
+li.cal_event       { border: none; list-style-type: none; }
 
 .cal_event a:link {
 	color:#232323;

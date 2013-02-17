@@ -47,21 +47,53 @@
 
 <table summary="listofattributes" class="border centpercent">
 
-<!-- Label -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $extrafields->attribute_label[$attrname]; ?>"></td></tr>
-<!-- Code -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
-<!-- Type -->
 <?php
 $type=$extrafields->attribute_type[$attrname];
 $size=$extrafields->attribute_size[$attrname];
 $unique=$extrafields->attribute_unique[$attrname];
 $required=$extrafields->attribute_required[$attrname];
+$pos=$extrafields->attribute_pos[$attrname];
+$param=$extrafields->attribute_param[$attrname];
+
+if($type == 'select' && is_array($param))
+{
+	$param_chain = '';
+	foreach ($param['options'] as $key => $value)
+	{
+		if(strlen($key)) 
+		{
+			$param_chain .= $key.', '.$value."\n";
+		}
+	}
+}
 ?>
+<!-- Position -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
+<!-- Label -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $extrafields->attribute_label[$attrname]; ?>"></td></tr>
+<!-- Code -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
+<!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
 <?php print $type2label[$type]; ?>
 <input type="hidden" name="type" id="type" value="<?php print $type; ?>">
 </td></tr>
+<!--  Value (for select list / radio) -->
+<?php 
+if($type == 'select') 
+{
+?>
+<tr id="value_choice">
+<td>
+	<?php echo $langs->trans("Value"); ?>
+</td>
+<td>
+	<textarea name="param" id="param"><?php echo $param_chain; ?></textarea>
+</td>
+</tr>
+<?php 
+}
+?>
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
 <!-- Unique -->

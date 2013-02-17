@@ -66,7 +66,7 @@ class Commande extends CommonOrder
     var $demand_reason_id;
     var $demand_reason_code;
     var $fk_delivery_address;
-    var $adresse;
+    var $address;
     var $date;				// Date commande
     var $date_commande;		// Date commande (deprecated)
     var $date_livraison;	// Date livraison souhaitee
@@ -631,7 +631,7 @@ class Commande extends CommonOrder
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
         $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client, ref_int";
-        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_input_reason, date_livraison, fk_adresse_livraison";
+        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
@@ -1240,7 +1240,7 @@ class Commande extends CommonOrder
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
-        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison, c.extraparams';
+        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1301,7 +1301,7 @@ class Commande extends CommonOrder
                 $this->demand_reason_id		= $obj->fk_input_reason;
                 $this->demand_reason_code	= $obj->demand_reason_code;
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
-                $this->fk_delivery_address	= $obj->fk_adresse_livraison;
+                $this->fk_delivery_address	= $obj->fk_delivery_address;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 

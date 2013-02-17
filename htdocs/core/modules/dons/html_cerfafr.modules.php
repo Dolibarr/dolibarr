@@ -144,7 +144,7 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->zip,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->town,$form);
 		        $form = str_replace('__DONATOR_NAME__',$don->nom,$form);
-		        $form = str_replace('__DONATOR_ADDRESS__',$don->adresse,$form);
+		        $form = str_replace('__DONATOR_ADDRESS__',$don->address,$form);
 		        $form = str_replace('__DONATOR_ZIP__',$don->cp,$form);
 		        $form = str_replace('__DONATOR_TOWN__',$don->ville,$form);
 		        $form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode,$form);
