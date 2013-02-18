@@ -72,6 +72,13 @@ if ($action == 'update' && isset($_POST['update_cp']))
     // Mise à jour des congés de l'utilisateur
     $holiday->updateSoldeCP($userID,$userValue);
 
+    // If it first update of sold, we set date to havoid to have sold incremented by new month
+	$now=dol_now();
+    $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
+    $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
+    $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
+    dol_syslog('define_holiday update lastUpdate entry sql='.$sql);
+    $result = $db->query($sql);    
 
     $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
 
