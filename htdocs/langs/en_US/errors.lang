@@ -58,6 +58,7 @@ ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
 ErrorFileSizeTooLarge=File size is too large.
 ErrorSizeTooLongForIntType=Size too long for int type (%s digits maximum)
 ErrorSizeTooLongForVarcharType=Size too long for string type (%s chars maximum)
+ErrorNoValueForSelectType=Please fill value for select list
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
 ErrorExportDuplicateProfil=This profil name already exists for this export set.

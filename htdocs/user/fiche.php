@@ -819,21 +819,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print "</td></tr>\n";
     }
 
-    //Multicompany
-    if (! empty($conf->multicompany->enabled))
-    {
-        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-        {
-            print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-            print "<td>".$mc->select_entities($conf->entity);
-            print "</td></tr>\n";
-        }
-        else
-        {
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-        }
-    }
-
     // Type
     print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
     print '<td>';
@@ -902,6 +887,28 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<textarea rows="'.ROWS_5.'" cols="90" name="signature">'.GETPOST('signature').'</textarea>';
     print '</td></tr>';
 
+    // Multicompany
+    if (! empty($conf->multicompany->enabled))
+    {
+        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            print "<td>".$mc->select_entities($conf->entity);
+            print "</td></tr>\n";
+        }
+        else
+        {
+            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+        }
+    }
+
+    // Hierarchy
+    print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+    print '<td>';
+    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print '</td>';
+    print "</tr>\n";
+
     // Note
     print '<tr><td valign="top">';
     print $langs->trans("Note");
@@ -941,7 +948,7 @@ else
     /*                                                                            */
     /* ************************************************************************** */
 
-    if ($id)
+    if ($id > 0)
     {
         $object->fetch($id);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
@@ -1051,7 +1058,7 @@ else
         if ($action != 'edit')
         {
             $rowspan=16;
-        	
+
             print '<table class="border" width="100%">';
 
             // Ref
@@ -1188,7 +1195,7 @@ else
             print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td>';
             print dol_textishtml($object->signature)?$object->signature:dol_nl2br($object->signature,1,false);
             print "</td></tr>\n";
-            
+
             // Hierarchy
             print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td>';
@@ -1200,8 +1207,8 @@ else
             }
             print '</td>';
             print "</tr>\n";
-            
-            // Statut
+
+            // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(4);
@@ -1223,7 +1230,7 @@ else
                 print '<td>'.$object->openid.'</td>';
                 print "</tr>\n";
             }
-            
+
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1287,7 +1294,7 @@ else
             	}
             	print "</td></tr>\n";
             }
-            
+
           	// Other attributes
 			$parameters=array('colspan' => ' colspan="2"');
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1315,7 +1322,7 @@ else
 
             print '<div class="tabsAction">';
 
-            if ($caneditfield && ((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
                 {
@@ -1327,7 +1334,7 @@ else
                 }
             }
             elseif ($caneditpassword && ! $object->ldap_sid &&
-            ((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
@@ -1787,7 +1794,7 @@ else
             print '<td>';
             print '<textarea name="signature" rows="5" cols="90">'.dol_htmlentitiesbr_decode($object->signature).'</textarea>';
             print '</td></tr>';
-            
+
             // openid
             if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
             {
@@ -1808,16 +1815,16 @@ else
             // Hierarchy
             print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td>';
-            print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id));
+            print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
             print '</td>';
             print "</tr>\n";
 
-            // Statut
+            // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(4);
             print '</td></tr>';
-            
+
             // Multicompany
             if (! empty($conf->multicompany->enabled))
             {
@@ -1832,7 +1839,7 @@ else
             		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
             	}
             }
-            
+
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
