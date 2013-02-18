@@ -4224,6 +4224,18 @@ function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
 }
 
+/**
+ * Set focus onto field with selector
+ *
+ * @param 	string	$selector	Selector ('#id')
+ * @return	string				HTML code to set focus
+ */
+function dol_set_focus($selector)
+{
+	print '<!-- Set focus onto a specific field -->'."\n";
+	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.$selector.'").focus(); });</script>'."\n";
+}
+
 
 if (! function_exists('getmypid'))
 {

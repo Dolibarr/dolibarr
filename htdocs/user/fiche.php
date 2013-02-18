@@ -682,6 +682,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
        	print '<br>';
     }
 
+    print dol_set_focus('#nom');
+    
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -697,12 +699,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<td>';
     if (! empty($ldap_nom))
     {
-        print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
+        print '<input type="hidden" id="nom" name="nom" value="'.$ldap_nom.'">';
         print $ldap_nom;
     }
     else
     {
-        print '<input size="30" type="text" name="nom" value="'.GETPOST('nom').'">';
+        print '<input size="30" type="text" id="nom" name="nom" value="'.GETPOST('nom').'">';
     }
     print '</td></tr>';
 

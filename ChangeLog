@@ -13,9 +13,10 @@ For users:
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
 - An external module can force its theme.
+- Add function dol_set_focus('#xxx').
 
 For translators:
-
+- Update language files.
 
 
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
