@@ -222,19 +222,20 @@ if (empty($reshook))
 					{
 						$langs->load("errors");
                 		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-                		$action = ($action=='add'?'create':'edit');
+                		$action = (($action=='add'||$action=='create')?'create':'edit');
 					}
 				}
 
 				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+	
 				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 				{
 					$langs->load("errors");
 					$error++;
 					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-					$action = ($action=='add'?'create':'edit');
+					$action = (($action=='add'||$action=='create')?'create':'edit');
 				}
-			}
+        	}
         }
 
         if (! $error)
@@ -712,8 +713,7 @@ else
             print "<br>\n";
         }
 
-
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
