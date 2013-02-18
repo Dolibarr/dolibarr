@@ -222,19 +222,20 @@ if (empty($reshook))
 					{
 						$langs->load("errors");
                 		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-                		$action = ($action=='add'?'create':'edit');
+                		$action = (($action=='add'||$action=='create')?'create':'edit');
 					}
 				}
 
 				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+	
 				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 				{
 					$langs->load("errors");
 					$error++;
 					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-					$action = ($action=='add'?'create':'edit');
+					$action = (($action=='add'||$action=='create')?'create':'edit');
 				}
-			}
+        	}
         }
 
         if (! $error)
@@ -712,8 +713,7 @@ else
             print "<br>\n";
         }
 
-
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
@@ -998,14 +998,25 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
+        	$e=0;
             foreach($extrafields->attribute_label as $key=>$label)
             {
+            	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-           		print '<tr><td';
+                if (($e % 2) == 0)
+                {
+                	print '<tr>';
+                	$colspan='0';
+                }           		
+           		print '<td';
            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td colspan="3">';
+           		print '>'.$label.'</td>';
+           		print '<td colspan="'.$colspan.'">';
                 print $extrafields->showInputField($key,$value);
-                print '</td></tr>'."\n";
+                print '</td>';
+                
+                if (($e % 2) == 1) print '</tr>'."\n";
+                $e++;
             }
         }
 
@@ -1426,23 +1437,38 @@ else
                 print '</td>';
                 print '</tr>';
             }
-
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
+            	$old_pos=0;
+            	$e=0;
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
+	                $colspan = '3';
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
+                    
+                    if (($e % 2) == 0)
+                    {
+                    	print '<tr>'."\n";
+                    	$colspan = '0';
+                    }
+            		print '<td';
             		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
+            		print '>'.$label.'</td>'."\n";
+            		print '<td colspan="'.$colspan.'">';
                     print $extrafields->showInputField($key,$value);
-                    print "</td></tr>\n";
+                    print "</td>"."\n";
+                    
+                    if (($e % 2) == 1 )
+                    {
+                    	print "</tr>\n";
+                    }
+                    $old_pos = $extrafields->attribute_pos[$key];
+                    $e++;
                 }
             }
-
             // Logo
             print '<tr>';
             print '<td>'.$langs->trans("Logo").'</td>';
@@ -1756,12 +1782,23 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
+        	$e=0;
             foreach($extrafields->attribute_label as $key=>$label)
             {
+            	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                print '<tr><td>'.$label.'</td><td colspan="3">';
+                if (($e % 2) == 0) 
+                {
+                	print '<tr>';
+                	$colspan='0';
+                }
+                print '<td>'.$label.'</td>';
+                print '<td colspan="'.$colspan.'">';
                 print $extrafields->showOutputField($key,$value);
-                print "</td></tr>\n";
+                print "</td>";
+                
+                if (($e % 2) == 1) print '</tr>';
+                $e++;
             }
         }
 
