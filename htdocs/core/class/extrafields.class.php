@@ -44,6 +44,10 @@ class ExtraFields
 	var $attribute_unique;
 	// Array to store if attribute is required or not
 	var $attribute_required;
+	// Array to store parameters of attribute (used in select type)
+	var $attribute_param;
+	// Int to store position of attribute
+	var $attribute_pos;
 
 	var $error;
 	var $errno;
@@ -669,7 +673,7 @@ class ExtraFields
      */
     function showOutputField($key,$value,$moreparam='')
     {
-		global $conf;
+		global $conf,$langs;
 
         $label=$this->attribute_label[$key];
         $type=$this->attribute_type[$key];

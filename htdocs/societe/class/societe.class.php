@@ -139,6 +139,8 @@ class Societe extends CommonObject
     var $logo;
     var $logo_small;
     var $logo_mini;
+    
+    var $array_options;
 
     var $oldcopy;
 
@@ -852,6 +854,19 @@ class Societe extends CommonObject
                 $this->import_key = $obj->import_key;
 
                 $result = 1;
+                
+                // Retreive all extrafield for thirdparty
+                // fetch optionals attributes and labels
+                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label('company',true);
+                if (count($extralabels)>0) {
+                	$this->array_options = array();
+                }
+                foreach($extrafields->attribute_label as $key=>$label)
+                {                	
+                	$this->array_options['options_'.$key]=$label;
+                }
             }
             else
             {
