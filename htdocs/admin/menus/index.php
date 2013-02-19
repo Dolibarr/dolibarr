@@ -208,9 +208,11 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 
 $form=new Form($db);
 $formadmin=new FormAdmin($db);
-$arrayofjs=array('/admin/menus/menu.js.php?lang='.$langs->defaultlang);
 
-llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs);
+$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js?lang='.$langs->defaultlang);
+$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css?lang='.$langs->defaultlang);
+
+llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
