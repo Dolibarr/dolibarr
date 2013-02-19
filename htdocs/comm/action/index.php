@@ -753,7 +753,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     $newparam=preg_replace('/month=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
-    echo '<table width="100%" class="nocellnopadd">';
+    echo '<table width="100%" class="nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     $i=0;
     while ($i < 7)
@@ -778,6 +778,7 @@ if (empty($action) || $action == 'show_month')      // View by month
             if ($tmpday <= 0)
             {
                 $style='cal_other_month cal_past';
+        		if ($iter_day == 6) $style.=' cal_other_month_right';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
@@ -788,6 +789,7 @@ if (empty($action) || $action == 'show_month')      // View by month
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
                 $style='cal_current_month';
+                if ($iter_day == 6) $style.=' cal_current_month_right';
                 $today=0;
                 if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
                 if ($today) $style='cal_today';
@@ -801,6 +803,7 @@ if (empty($action) || $action == 'show_month')      // View by month
             else
             {
                 $style='cal_other_month';
+                if ($iter_day == 6) $style.=' cal_other_month_right';
                 echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
                 show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "</td>\n";
@@ -821,7 +824,7 @@ elseif ($action == 'show_week') // View by week
     $newparam=preg_replace('/month=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
-    echo '<table width="100%" class="nocellnopadd">';
+    echo '<table width="100%" class="nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     $i=0;
     while ($i < 7)
@@ -845,6 +848,7 @@ elseif ($action == 'show_week') // View by week
             $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
 
             $style='cal_current_month';
+        	if ($iter_day == 6) $style.=' cal_other_month_right';
             $today=0;
             $todayarray=dol_getdate($now,'fast');
             if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
@@ -857,6 +861,7 @@ elseif ($action == 'show_week') // View by week
         else
         {
             $style='cal_current_month';
+        	if ($iter_day == 6) $style.=' cal_other_month_right';
             echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
             show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
             echo "</td>\n";
@@ -1005,7 +1010,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     // Show rect of event
                     print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
                     print '<ul class="cal_event"><li class="cal_event">';
-                    print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,2).')); " width="100%"><tr>';
+                    print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).')); " width="100%"><tr>';
                     print '<td nowrap="nowrap" class="cal_event">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {

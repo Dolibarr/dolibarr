@@ -115,3 +115,4 @@ YourQuotaOfUsersIsReached=Your quota of active users is reached !
 NbOfUsers=Nb of users
 DontDowngradeSuperAdmin=Only a superadmin can downgrade a superadmin
 HierarchicalResponsible=Hierarchical responsible
+HierarchicView=Hierarchical view

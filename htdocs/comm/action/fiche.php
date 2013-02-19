@@ -407,6 +407,8 @@ if ($action == 'create')
 		if ($result < 0) dol_print_error($db,$contact->error);
 	}
 
+	dol_set_focus("#label");
+	
     if (! empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript">';
@@ -480,7 +482,7 @@ if ($action == 'create')
 	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
