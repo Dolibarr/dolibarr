@@ -2321,7 +2321,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Return childs of prodcut with if fk_parent
+	 *  Return childs of product with if fk_parent
 	 *
 	 * 	@param		int		$fk_parent	Id of product to search childs of
 	 *  @return     array       		Prod
@@ -2333,7 +2333,9 @@ class Product extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
 		$sql.= " AND pa.fk_product_pere = ".$fk_parent;
+		$sql.= " AND pa.fk_product_fils != ".$fk_parent;	// This should not happens, it is to avoid invinite loop if it happens
 
+		dol_syslog(get_class($this).'::getChildsArbo sql='.$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
