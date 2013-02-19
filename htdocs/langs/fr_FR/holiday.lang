@@ -84,8 +84,8 @@ NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.
 UserName=Nom Prénom
 Employee=Salarié
-FirstDayOfHoliday=Premier jour de congès
-LastDayOfHoliday=Dernier jour de congès
+FirstDayOfHoliday=Premier jour de congés
+LastDayOfHoliday=Dernier jour de congés
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés
@@ -127,4 +127,4 @@ NoCPforMonth=Aucun congé ce mois-ci.
 Jours=jours
 nbJours=Nombre jours
 TitleAdminCP=Configuration des Congés
-Permission20001=Lire / Créer / modifier ses congès
+Permission20001=Lire / Créer / modifier ses congés
