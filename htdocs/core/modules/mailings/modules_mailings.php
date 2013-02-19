@@ -150,9 +150,9 @@ class MailingTargets    // This can't be abstract as it is used for some method
         // Insert emailing targest from array into database
         $j = 0;
         $num = count($cibles);
-        for ($i = 0 ; $i < $num ; $i++)
+        foreach ($cibles as $targetarray)
         {
-        	if (! empty($cibles[$i]['email'])) // avoid empty email address
+        	if (! empty($targetarray['email'])) // avoid empty email address
         	{
         		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
         		$sql .= " (fk_mailing,";
@@ -163,17 +163,17 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		}
         		$sql.= " source_type)";
         		$sql .= " VALUES (".$mailing_id.",";
-        		$sql .= (empty($cibles[$i]['fk_contact']) ? '0' : "'".$cibles[$i]['fk_contact']."'") .",";
-        		$sql .= "'".$this->db->escape($cibles[$i]['name'])."',";
-        		$sql .= "'".$this->db->escape($cibles[$i]['firstname'])."',";
-        		$sql .= "'".$this->db->escape($cibles[$i]['email'])."',";
-        		$sql .= "'".$this->db->escape($cibles[$i]['other'])."',";
-        		$sql .= "'".$this->db->escape($cibles[$i]['source_url'])."',";
-        		$sql .= "'".$this->db->escape($cibles[$i]['source_id'])."',";
+        		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'") .",";
+        		$sql .= "'".$this->db->escape($targetarray['name'])."',";
+        		$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
+        		$sql .= "'".$this->db->escape($targetarray['email'])."',";
+        		$sql .= "'".$this->db->escape($targetarray['other'])."',";
+        		$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
+        		$sql .= "'".$this->db->escape($targetarray['source_id'])."',";
         		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
-        			$sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
+        			$sql .= "'".$this->db->escape(md5($targetarray['email'].';'.$targetarray['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		}
-        		$sql .= "'".$this->db->escape($cibles[$i]['source_type'])."')";
+        		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
         		$result=$this->db->query($sql);
         		if ($result)
         		{
