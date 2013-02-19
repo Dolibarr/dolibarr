@@ -42,7 +42,7 @@ $type 		= GETPOST('type','alpha');
 $urlfrom	= GETPOST('urlfrom','alpha');
 
 $socid=GETPOST('socid','int');
-$nom=GETPOST('nom');
+$label=GETPOST('label');
 $description=GETPOST('description');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
@@ -107,7 +107,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 	$object = new Categorie($db);
 
-	$object->label			= $nom;
+	$object->label			= $label;
 	$object->description	= $description;
 	$object->socid			= ($socid ? $socid : 'null');
 	$object->visible		= $visible;
@@ -191,6 +191,8 @@ if ($user->rights->categorie->creer)
 	 */
 	if ($action == 'create' || $_POST["addcat"] == 'addcat')
 	{
+		dol_set_focus('#label');
+		
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$type.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
@@ -198,7 +200,6 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="addcat" value="addcat">';
 		print '<input type="hidden" name="id" value="'.GETPOST('origin').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
-		print '<input type="hidden" name="nom" value="'.dol_escape_htmltag($nom).'">';
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
@@ -210,7 +211,7 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$nom.'">';
+		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
@@ -237,7 +238,8 @@ if ($user->rights->categorie->creer)
 	}
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
