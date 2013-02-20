@@ -259,12 +259,16 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
     {
         $fuser->getrights();
 
-        if ($fuser->rights->societe->contact->lire )
+        $contact=new Contact($db);
+        $result=$contact->fetch($id,$ref,$ref_ext);
+        if ($result > 0)
         {
-            $contact=new Contact($db);
-            $result=$contact->fetch($id,$ref,$ref_ext);
-            if ($result > 0)
-            {
+        	// Only internal user who have contact read permission
+        	// Or for external user who have contact read permission, with restrict on societe_id
+	        if (
+	        	$fuser->rights->societe->contact->lire && !$fuser->societe_id
+	        	|| ( $fuser->rights->societe->contact->lire && ($fuser->societe_id == $contact->socid))
+	        ){
             	$contact_result_fields =array(
 	            	'id' => $contact->id,
 	            	'lastname' => $contact->lastname,
@@ -317,18 +321,18 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'contact'=>$contact_result_fields
                 );
-            }
-            else
-            {
-                $error++;
-                $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-            }
-        }
-        else
-        {
-            $error++;
-            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
-        }
+	        }
+	        else
+	        {
+	            $error++;
+	            $errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+	        }
+         }
+         else
+         {
+             $error++;
+             $errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+         }
     }
 
     if ($error)
