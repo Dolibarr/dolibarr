@@ -350,7 +350,7 @@ class FormFile
             else
             {
                 // Generic feature, for external modules
-                $file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
+                $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
                 if (file_exists($file))
                 {
                     $res=include_once $file;
