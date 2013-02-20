@@ -104,7 +104,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Date").'</td>';
 	print '<td align="center">'.$langs->trans("EventsNb").'</td>';
-	print '<td>'.$langs->trans("Action").'</td>';
+	print '<td align="center">'.$langs->trans("Action").'</td>';
 	print '<td align="center">'.$langs->trans("PDF").'</td>';
 	print '<td align="center">'.$langs->trans("Date").'</td>';
 	print '<td align="center">'.$langs->trans("Size").'</td>';
@@ -122,7 +122,7 @@ if ($resql)
 			print "<td>".$obj->df."</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';
 
-			print '<td>';
+			print '<td align="center">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('GenerateReport'),'filenew').'</a>';
 			print '</td>';
 
