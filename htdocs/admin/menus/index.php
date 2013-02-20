@@ -318,7 +318,23 @@ if ($conf->use_javascript_ajax)
 		{
 			if (! empty($menu['langs'])) $langs->load($menu['langs']);
 			$titre = $langs->trans($menu['titre']);
-			$data[] = array('rowid'=>$menu['rowid'],'fk_menu'=>$menu['fk_menu'],'title'=>$titre,'mainmenu'=>$menu['mainmenu'],'leftmenu'=>$menu['leftmenu'],'fk_mainmenu'=>$menu['fk_mainmenu'],'fk_leftmenu'=>$menu['fk_leftmenu']);
+			$data[] = array(
+				'rowid'=>$menu['rowid'],
+				'fk_menu'=>$menu['fk_menu'],
+				'title'=>$titre,
+				'mainmenu'=>$menu['mainmenu'],
+				'leftmenu'=>$menu['leftmenu'],
+				'fk_mainmenu'=>$menu['fk_mainmenu'],
+				'fk_leftmenu'=>$menu['fk_leftmenu'],
+				'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
+						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
+						'</td><td align="right">'.
+						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
+						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$menu['rowid'].'"').'</a> '.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$menu['rowid'].'"').'</a> '.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>'.
+						'</td></tr></table>'
+			);
 			$i++;
 		}
 	}

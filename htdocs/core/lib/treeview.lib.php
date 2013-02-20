@@ -145,56 +145,30 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 // ------------------------------- Used by menu editor -----------------
 
 /**
- *  Show an element with correct offset
- *
- *  @param	array	$tab    	Array of element
- *  @param  int	    $rang   	Level of offset
- *  @return	void
- */
-function tree_showline($tab,$rang)
-{
-	global $conf, $rangLast, $idLast, $menu_handler;
-
-	// Content of line
-	print '<table class="nobordernopadding centpercent"><tr><td>';
-	print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab['rowid'].'">'.$tab['title'].'</a></strong>';
-	print '</td><td align="right">';
-	print '<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$tab['rowid'].'"').'</a> ';
-	print '<a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$tab['rowid'].'"').'</a> ';
-	print '<a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$tab['rowid'].'"').'</a> ';
-	print '<a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler.'&action=down&menuId='.$tab['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>';
-	print '</td></tr></table>';
-
-	$rangLast = $rang;
-	$idLast = $tab['rowid'];
-}
-
-
-/**
- *  Recursive function to output menu tree
+ *  Recursive function to output menu tree. <ul><li>...</li></ul>
  *
  *  @param	array	$tab    Array of all elements
  *  @param  int	    $pere   Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
  *  @param  int	    $rang   Level of element
  *  @return	void
  */
-function tree_recur($tab,$pere,$rang)
+function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 {
 	if (empty($pere['rowid']))
 	{
 		// Test also done with jstree and dynatree (not able to have <a> inside label)
 		print '<script type="text/javascript" language="javascript">
 		$(document).ready(function(){
-			$("#iddivjstree").treeview({
+			$("#'.$iddivjstree.'").treeview({
 				collapsed: true,
 				animated: "fast",
 				persist: "location",
-				control: "#iddivjstreecontrol"
+				control: "#'.$iddivjstree.'control"
 			});
 		})
 		</script>';
 
-		print '<ul id="iddivjstree" style="min-height:300px;">';
+		print '<ul id="'.$iddivjstree.'" style="min-height:300px;">';
 	}
 
 	if ($rang > 10)	return;	// Protection contre boucle infinie
@@ -210,9 +184,7 @@ function tree_recur($tab,$pere,$rang)
 		{
 			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
 			print "\n".'<li>';
-			// We shot it with an offset
-			tree_showline($tab[$x],$rang);
-
+			print $tab[$x]['entry'];
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);
 			print '</li>';
@@ -221,9 +193,7 @@ function tree_recur($tab,$pere,$rang)
 		{
 			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
 			print "\n".'<li>';
-			// We shot it with an offset
-			tree_showline($tab[$x],$rang);
-
+			print $tab[$x]['entry'];
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);
 			print '</li>';
