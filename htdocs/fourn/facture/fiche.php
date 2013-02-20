@@ -61,8 +61,6 @@ if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('invoicesuppliercard'));
 
 $object=new FactureFournisseur($db);
@@ -564,7 +562,7 @@ elseif ($action == 'addline')
     		$outputlangs = new Translate("",$conf);
     		$outputlangs->setDefaultLang($newlang);
     	}
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -615,7 +613,7 @@ elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
             $outputlangs = new Translate("",$conf);
             $outputlangs->setDefaultLang($_REQUEST['lang_id']);
         }
-        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+        //if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_invoice_pdf_create($db, $object->id, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
         $action='';
     }
@@ -841,7 +839,7 @@ elseif ($action	== 'builddoc')
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+    $result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
@@ -1223,7 +1221,7 @@ if ($action == 'create')
 
         print '<table class="noborder" width="100%">';
 
-        $objectsrc->printOriginLinesList($hookmanager);
+        $objectsrc->printOriginLinesList();
 
         print '</table>';
     }
@@ -2010,7 +2008,7 @@ else
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
-                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:'');
+                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
                 print '<br>';
                 print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
@@ -2056,7 +2054,7 @@ else
                     $outputlangs->setDefaultLang($newlang);
                 }
 
-                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
                     dol_print_error($db,$result);
@@ -2077,12 +2075,11 @@ else
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
-            $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$soc->id;
-            $formmail->withtocc=1;
-            $formmail->withtoccsocid=0;
+			$liste=array();
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+			$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtocccsocid=0;
             $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;

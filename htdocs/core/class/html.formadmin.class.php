@@ -121,7 +121,7 @@ class FormAdmin
         global $langs,$conf;
 
         // Clean parameters
-        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // For compatibility
+
 
         // Check parameters
         if (! is_array($dirmenuarray)) return -1;
@@ -143,7 +143,11 @@ class FormAdmin
     	                    if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index')
     	                    {
     	                        if (preg_match('/lib\.php$/i',$file)) continue;	// We exclude library files
-    	                    	$filelib=preg_replace('/\.php$/i','',$file);
+    	                        if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i',$file)) continue;		// We exclude all menu manager files
+    	                        if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
+    	                        if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i',$file)) continue;	// We exclude all menu manager files
+    	                        
+    	                        $filelib=preg_replace('/\.php$/i','',$file);
     	        				$prefix='';
     	        				// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
     	        				if (preg_match('/^eldy/i',$file)) $prefix='0';

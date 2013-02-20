@@ -646,13 +646,13 @@ else
     print '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br($conf->global->MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(empty($conf->global->MAIN_INFO_SOCIETE_ADRESSE)?'':$conf->global->MAIN_INFO_SOCIETE_ADRESSE) . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyZip").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_CP . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyZip").'</td><td>' . (empty($conf->global->MAIN_INFO_SOCIETE_CP)?'':$conf->global->MAIN_INFO_SOCIETE_CP) . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyTown").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_VILLE . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyTown").'</td><td>' . (empty($conf->global->MAIN_INFO_SOCIETE_VILLE)?'':$conf->global->MAIN_INFO_SOCIETE_VILLE) . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';

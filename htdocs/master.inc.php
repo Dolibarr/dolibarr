@@ -75,6 +75,7 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 
 // Set properties specific to multicompany
+// TODO Multicompany Remove this. Useless. Var should be read when required.
 $conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;		// Force Multi-Company transverse mode
 $conf->multicompany->force_entity = empty($multicompany_force_entity)?'':(int) $multicompany_force_entity;			// Force entity in login page
 
@@ -141,6 +142,7 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = DOLENTITY;
 	}
+	// TODO Multicompany Remove this.
 	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
 	{
 		$conf->entity = $conf->multicompany->force_entity;
@@ -186,9 +188,7 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 	}
 }
 
-/*
- * Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
- */
+// Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
 	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
@@ -206,6 +206,12 @@ if (! defined('NOREQUIRETRAN'))
 {
 	$langs->setDefaultLang((! empty($conf->global->MAIN_LANG_DEFAULT)?$conf->global->MAIN_LANG_DEFAULT:''));
 }
+
+
+// Create the global $hookmanager object
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager=new HookManager($db);
+
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 

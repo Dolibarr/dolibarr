@@ -105,7 +105,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sumpayed = $object->getSommePaiement();
 		$alreadypayed=price($sumpayed,0,$outputlangs);
 
-        return array(
+        $resarray=array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
@@ -132,6 +132,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_already_payed'=>$alreadypayed,
             'object_remain_to_pay'=>price($object->total_ttc - $sumpayed,0,$outputlangs)
         );
+
+        // Add vat by rates
+		foreach ($object->lines as $line)
+		{
+			if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
+			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
+		}
+		
+        return $resarray;
     }
 
     /**
@@ -250,12 +259,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
      *  @param		int			$hidedetails		Do not show line details
      *  @param		int			$hidedesc			Do not show desc
      *  @param		int			$hideref			Do not show ref
-     *  @param		object		$hookmanager		Hookmanager object
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
+	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc;
+		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
 		{

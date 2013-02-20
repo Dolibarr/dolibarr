@@ -964,7 +964,7 @@ abstract class CommonObject
      */
     function setDeliveryAddress($id)
     {
-    	$fieldname = 'fk_adresse_livraison';
+    	$fieldname = 'fk_delivery_address';
     	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
@@ -1023,7 +1023,7 @@ abstract class CommonObject
 
     /**
      *  Save a new position (field rang) for details lines.
-     *  You can choose to ser position for lines with already a position or lines wihtout any position defined.
+     *  You can choose to set position for lines with already a position or lines without any position defined.
      *  Call this function only for table that contains a field fk_parent_line.
      *
      * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
@@ -1064,7 +1064,7 @@ abstract class CommonObject
 			// counter that parents.
 			$rows=array();
 
-			// We frist search all lines that are parent lines (for multilevel details lines)
+			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line IS NULL';
@@ -1080,10 +1080,10 @@ abstract class CommonObject
 				{
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0];	// Add parent line into array rows
-					$childrens = $this->getChildrensOfLine($row[0]);
-					if (! empty($childrens))
+					$childrens = $this->getChildrenOfLine($row[0]);
+					if (! empty($children))
 					{
-						foreach($childrens as $child)
+						foreach($children as $child)
 						{
 							array_push($rows, $child);
 						}
@@ -1108,12 +1108,12 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	Get childrens of line
+	 * 	Get children of line
 	 *
 	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of child lines id
+	 * 	@return	array			Array with list of children lines id
 	 */
-	function getChildrensOfLine($id)
+	function getChildrenOfLine($id)
 	{
 		$rows=array();
 
@@ -1122,7 +1122,7 @@ abstract class CommonObject
 		$sql.= ' AND fk_parent_line = '.$id;
 		$sql.= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLines search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2463,21 +2463,16 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *	@param	HookManager		$hookmanager		Hook manager instance
      *  @return	void
      */
-    function showLinkedObjectBlock($hookmanager=false)
+    function showLinkedObjectBlock()
     {
-        global $conf,$langs,$bc;
+        global $conf,$langs,$hookmanager;
+        global $bc;
 
         $this->fetchObjectLinked();
 
         // Bypass the default method
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('commonobject'));
         $parameters=array();
         $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
@@ -2547,13 +2542,12 @@ abstract class CommonObject
      *  @param  int	    		$dateSelector       1=Show also date range input fields
      *  @param	Societe			$seller				Object thirdparty who sell
      *  @param	Societe			$buyer				Object thirdparty who buy
-     *	@param	HookManager		$hookmanager		Hook manager instance
      *	@return	void
      *	@deprecated
      */
-    function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+    function formAddPredefinedProduct($dateSelector,$seller,$buyer)
     {
-    	global $conf,$langs,$object;
+    	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
 
     	// Use global variables + $dateSelector + $seller and $buyer
@@ -2568,13 +2562,12 @@ abstract class CommonObject
      *  @param	int		        $dateSelector       1=Show also date range input fields
      *  @param	Societe			$seller				Object thirdparty who sell
      *  @param	Societe			$buyer				Object thirdparty who buy
-     *	@param	HookManager		$hookmanager		Hook manager instance
      *	@return	void
      *	@deprecated
      */
-    function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+    function formAddFreeProduct($dateSelector,$seller,$buyer)
     {
-    	global $conf,$langs,$object;
+    	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
 
     	// Use global variables + $dateSelector + $seller and $buyer
@@ -2590,12 +2583,11 @@ abstract class CommonObject
      *  @param	int		        $dateSelector       1=Show also date range input fields
      *  @param	Societe			$seller				Object thirdparty who sell
      *  @param	Societe			$buyer				Object thirdparty who buy
-     *	@param	HookManager		$hookmanager		Hook manager instance
      *	@return	void
      */
-	function formAddObjectLine($dateSelector,$seller,$buyer,$hookmanager=false)
+	function formAddObjectLine($dateSelector,$seller,$buyer)
 	{
-		global $conf,$user,$langs,$object;
+		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -2629,12 +2621,11 @@ abstract class CommonObject
 	 *	@param  string  	$buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
-	 *	@param	HookManager	$hookmanager		Hookmanager
 	 *	@return	void
 	 */
-	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $hookmanager=false)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$hookmanager;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -2702,12 +2693,11 @@ abstract class CommonObject
 	 *	@param  string	    $seller            	Object of seller third party
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
-	 *	@param	HookManager	$hookmanager		Hook manager
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$hookmanager=false)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0)
 	{
-		global $conf,$langs,$user;
+		global $conf,$langs,$user,$hookmanager;
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;
@@ -2812,12 +2802,11 @@ abstract class CommonObject
      *  If lines are into a template, title must also be into a template
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @param	HookManager	$hookmanager		Hook manager
      *  @return	void
      */
-    function printOriginLinesList($hookmanager=false)
+    function printOriginLinesList()
     {
-        global $langs;
+        global $langs, $hookmanager;
 
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans('Ref').'</td>';

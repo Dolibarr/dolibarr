@@ -26,7 +26,6 @@
 class MenuManager
 {
 	var $db;
-	var $require_left=array("empty");   // If this top menu handler must be used with a particular left menu handler
 	var $type_user=0;					// Put 0 for internal users, 1 for external users
 	var $atarget="";               		// To store arget to use in menu links
 

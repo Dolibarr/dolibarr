@@ -2054,17 +2054,29 @@ td.hidden {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { opacity: 0.6; background: #DDDDDD; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_past_month    { opacity: 0.6; background: #EEEEEE; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+table.cal_month    { border-spacing: 0px; }
+.cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_current_month_right { border-right: solid 1px #E0E0E0; }
+.cal_other_month_right   { border-right: solid 1px #C0C0C0; } 
+.cal_other_month   { opacity: 0.6; background: #DDDDDD; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { opacity: 0.6; background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
-table.cal_event    { border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px; }
-table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
+table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px;
+						-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
+						moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
+						box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.25);
+						background: -webkit-gradient(linear, left top, left bottom, from(#006aac), to(#00438d));
+						}
+table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
+ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -moz-padding-start: 0px; -webkit-padding-start: 0px; }
+li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
+.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
 
 
 /* ============================================================================== */
@@ -2130,113 +2142,10 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /* ============================================================================== */
 
 /* CSS for treeview */
+.treeview ul { background-color: transparent !important; margin-top: 0; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
+.treeview .hover { color: black !important; }
 
-/* Lien plier /deplier tout */
-.arbre-switch {
-    text-align: right;
-    padding: 0 5px;
-    margin: 0 0 -18px 0;
-}
-
-/* Arbre */
-ul.arbre {
-    padding: 5px 10px;
-}
-/* strong : A modifier en fonction de la balise choisie */
-ul.arbre strong {
-    font-weight: normal;
-    padding: 0 0 0 20px;
-    margin: 0 0 0 -7px;
-    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/branch.gif',1) ?>);
-    background-repeat: no-repeat;
-    background-position: 1px 50%;
-}
-ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/plus.gif',1) ?>);
-    cursor: pointer;
-}
-ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/minus.gif',1) ?>);
-    cursor: pointer;
-}
-ul.arbre ul {
-    padding: 0;
-    margin: 0;
-}
-ul.arbre li {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-/* This is to create an indent */
-ul.arbre li li {
-    margin: 0 0 0 16px;
-}
-/* Classe pour masquer */
-.hide {
-    display: none;
-}
-
-img.menuNew
-{
-	display:block;
-	border:0px;
-}
-
-img.menuEdit
-{
-	border: 0px;
-	display: block;
-}
-
-img.menuDel
-{
-	display:none;
-	border: 0px;
-}
-
-div.menuNew
-{
-	margin-top:-20px;
-	margin-<?php print $left; ?>:270px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuEdit
-{
-	margin-top:-15px;
-	margin-<?php print $left; ?>:250px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-
-}
-
-div.menuDel
-{
-	margin-top:-20px;
-	margin-<?php print $left; ?>:290px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-
-}
-
-div.menuFleche
-{
-	margin-top:-16px;
-	margin-<?php print $left; ?>:320px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-
-}
 
 
 /* ============================================================================== */

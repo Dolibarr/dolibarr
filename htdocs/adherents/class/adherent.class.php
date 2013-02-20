@@ -51,7 +51,7 @@ class Adherent extends CommonObject
     var $login;
     var $pass;
     var $societe;
-    var $adresse;
+    //var $adresse;
     var $address;
     var $cp;
     var $zip;
@@ -394,7 +394,7 @@ class Adherent extends CommonObject
      */
     function update($user,$notrigger=0,$nosyncuser=0,$nosyncuserpass=0,$nosyncthirdparty=0,$action='update')
     {
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $nbrowsaffected=0;
         $error=0;
@@ -429,7 +429,7 @@ class Adherent extends CommonObject
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
         $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
-        $sql.= ", adresse=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
+        $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
         $sql.= ", cp="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", ville="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
@@ -462,8 +462,6 @@ class Adherent extends CommonObject
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
             // Actions on extra fields (by external module)
-            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-            $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
@@ -537,8 +535,6 @@ class Adherent extends CommonObject
                         $luser->email=$this->email;
                         $luser->office_phone=$this->phone;
                         $luser->user_mobile=$this->phone_mobile;
-
-                        $luser->note=$this->note;
 
                         $luser->fk_member=$this->id;
 
@@ -1023,7 +1019,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.cp as zip, d.ville as town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1069,7 +1065,7 @@ class Adherent extends CommonObject
                 $this->pass				= $obj->pass;
                 $this->societe			= $obj->societe;
                 $this->fk_soc			= $obj->fk_soc;
-                $this->adresse			= $obj->address;	// deprecated
+                //$this->adresse			= $obj->address;	// deprecated
                 $this->address			= $obj->address;
                 $this->cp				= $obj->zip;		// deprecated
                 $this->zip				= $obj->zip;
@@ -1828,7 +1824,7 @@ class Adherent extends CommonObject
         if ($this->login && ! empty($conf->global->LDAP_MEMBER_FIELD_LOGIN))      $info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
         if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))    $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
         if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))      $info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
-        if ($this->adresse && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->adresse;
+        if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
         if ($this->cp && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->cp;
         if ($this->ville && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))       $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->ville;
         if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;

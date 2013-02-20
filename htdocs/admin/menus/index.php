@@ -47,20 +47,24 @@ $mesg=GETPOST('mesg');
 
 $menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
-$menu_handler_top=preg_replace('/_backoffice.php/i','',$menu_handler_top);
-$menu_handler_top=preg_replace('/_frontoffice.php/i','',$menu_handler_top);
-$menu_handler_smartphone=preg_replace('/_backoffice.php/i','',$menu_handler_smartphone);
-$menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_smartphone);
+$menu_handler_top=preg_replace('/(_backoffice\.php|_menu\.php)/i','',$menu_handler_top);
+$menu_handler_top=preg_replace('/(_frontoffice\.php|_menu\.php)/i','',$menu_handler_top);
+$menu_handler_smartphone=preg_replace('/(_backoffice\.php|_menu\.php)/i','',$menu_handler_smartphone);
+$menu_handler_smartphone=preg_replace('/(_frontoffice\.php|_menu\.php)/i','',$menu_handler_smartphone);
 
 $menu_handler=$menu_handler_top;
+
 
 if (GETPOST("handler_origine")) $menu_handler=GETPOST("handler_origine");
 if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
+$menu_handler_to_search=preg_replace('/(_backoffice|_menu)?(\.php)?/i','',$menu_handler);
+$menu_handler_to_search=preg_replace('/(_frontoffice|_menu)?(\.php)?/i','',$menu_handler);
+
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 if ($action == 'up')
 {
@@ -89,7 +93,7 @@ if ($action == 'up')
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler."'";
+	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
 	$sql.= " AND m.entity = ".$conf->entity;
 	$sql.= " AND m.type = '".$current['type']."'";
 	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
@@ -145,7 +149,7 @@ elseif ($action == 'down')
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler."'";
+	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
 	$sql.= " AND m.entity = ".$conf->entity;
 	$sql.= " AND m.type = '".$current['type']."'";
 	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
@@ -204,9 +208,11 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 
 $form=new Form($db);
 $formadmin=new FormAdmin($db);
-$arrayofjs=array('/admin/menus/menu.js.php?lang='.$langs->defaultlang);
 
-llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs);
+$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js?lang='.$langs->defaultlang);
+$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css?lang='.$langs->defaultlang);
+
+llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
 print_fiche_titre($langs->trans("Menus"),'','setup');
@@ -255,7 +261,7 @@ if ($action == 'delete')
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $formadmin->select_menu_families($menu_handler,'menu_handler',array_merge($dirstandard,$dirsmartphone));
+print $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/',$menu_handler)?'':'_menu'),'menu_handler',array_merge($dirstandard,$dirsmartphone));
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 
@@ -294,7 +300,7 @@ if ($conf->use_javascript_ajax)
 
 	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE menu_handler = '".$menu_handler."'";
+	$sql.= " WHERE menu_handler = '".$menu_handler_to_search."'";
 	$sql.= " AND entity = ".$conf->entity;
 	$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)

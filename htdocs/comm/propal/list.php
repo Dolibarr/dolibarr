@@ -77,8 +77,6 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('propalcard'));
 
 
@@ -324,14 +322,7 @@ if ($result)
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
 
-		if ($objp->client == 1)
-		{
-			$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
-		}
-		else
-		{
-			$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
-		}
+		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
 
 		// Company
 		$companystatic->id=$objp->rowid;

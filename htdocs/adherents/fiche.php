@@ -107,8 +107,6 @@ if ($rowid)
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('membercard'));
 
 
@@ -261,7 +259,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->pass        = trim($_POST["pass"]);
 
 		$object->societe     = trim($_POST["societe"]);
-		$object->adresse     = trim($_POST["address"]);    // deprecated
+		//$object->adresse     = trim($_POST["address"]);    // deprecated
 		$object->address     = trim($_POST["address"]);
 		$object->cp          = trim($_POST["zipcode"]);    // deprecated
 		$object->zip         = trim($_POST["zipcode"]);
@@ -442,7 +440,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->firstname   = $prenom;
 	$object->lastname    = $nom;
 	$object->societe     = $societe;
-	$object->adresse     = $address; // deprecated
+	//$object->adresse     = $address; // deprecated
 	$object->address     = $address;
 	$object->cp          = $zip;     // deprecated
 	$object->zip         = $zip;

@@ -688,8 +688,21 @@ class Form
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-
-                $out.= ajax_combobox($htmlname, $event);
+                $out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				/*
+				if ($selected && empty($selected_input_value))
+                {
+                	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+                	$product = new Product($this->db);
+                	$product->fetch($selected);
+                	$selected_input_value=$product->ref;
+                }
+                // mode=1 means customers products
+                $ajaxoptions=array();
+                $urloption='htmlname='.$htmlname.'&outjson=1&filter='.urlencode($filter).'&showtype='.$showtype;
+				$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+                $out.='<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
+				*/
             }
 
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
@@ -810,11 +823,13 @@ class Form
      *	@param	string	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
      *	@param	string	$showsoc	    Add company into label
+     * 	@param	int		$forcecombo		Force to use combo box
+     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@return	int						<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0)
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $event=array())
     {
-    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $showsoc);
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $showsoc, $forcecombo, $event);
     	return $this->num;
     }
 
@@ -831,9 +846,11 @@ class Form
      *	@param	string	$moreclass		Add more class to class style
      *	@param	bool	$options_only	Return options only (for ajax treatment)
      *	@param	string	$showsoc	    Add company into label
+     * 	@param	int		$forcecombo		Force to use combo box
+     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@return	 int						<0 if KO, Nb of contact in list if OK
      */
-    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0)
+    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $event=array())
     {
         global $conf,$langs;
 
@@ -859,6 +876,11 @@ class Form
         if ($resql)
         {
             $num=$this->db->num_rows($resql);
+
+            if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo)
+            {
+            	$out.= ajax_combobox($htmlname, $event);
+            }
 
             if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
             if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected="selected"':'').'></option>';
@@ -946,10 +968,10 @@ class Form
      * 	@param	int		$disabled		If select list must be disabled
      *  @param  array	$include        Array list of users id to include
      * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-     *  @param	int		$force_entity	Possibility to force entity
+     *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	void
      */
-    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=false)
+    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
         print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
     }
@@ -964,15 +986,15 @@ class Form
      * 	@param	int		$disabled		If select list must be disabled
      *  @param  array	$include        Array list of users id to include
      * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-     *  @param	int		$force_entity	Possibility to force entity
+     *  @param	int		$force_entity	0 or Id of environment to force
      * 	@return	string					HTML select string
      */
-    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=false)
+    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
     {
         global $conf,$user,$langs;
 
         // If no preselected user defined, we take current user
-        if ($selected < -1 && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
+        if ((is_numeric($selected) && ($selected < -1 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
         // Permettre l'exclusion d'utilisateurs
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
@@ -1021,7 +1043,7 @@ class Form
             if ($num)
             {
                 $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
-                if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+                if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
                 $userstatic=new User($this->db);
 
@@ -1158,7 +1180,7 @@ class Form
             $sql.= ", pl.label as label_translated";
         }
 		// Price by quantity
-		if (! empty($conf->global->PRODUIT_PRICE_BY_QTY))
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1) $sql.= " AND price_level=".$price_level;
@@ -3005,14 +3027,14 @@ class Form
     {
         global $conf,$langs,$user;
 
-        $langs->load_cache_currencies();
+        $langs->load_cache_currencies('');
 
         $out='';
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
         $out.= '<select class="flat" name="'.$htmlname.'">';
-        foreach ($this->cache_currencies as $code_iso => $currency)
+        foreach ($langs->cache_currencies as $code_iso => $currency)
         {
         	if ($selected && $selected == $code_iso)
         	{
@@ -3924,17 +3946,17 @@ class Form
     /**
      *	Return select list of groups
      *
-     *  @param	string	$selected        Id group preselected
-     *  @param  string	$htmlname        Field name in form
-     *  @param  int		$show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *  @param  string	$exclude         Array list of groups id to exclude
+     *  @param	string	$selected       Id group preselected
+     *  @param  string	$htmlname       Field name in form
+     *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  string	$exclude        Array list of groups id to exclude
      * 	@param	int		$disabled		If select list must be disabled
-     *  @param  string	$include         Array list of groups id to include
+     *  @param  string	$include        Array list of groups id to include
      * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
-     * 	@param	int		$force_entity	Possibility to force entity
+     * 	@param	int		$force_entity	0 or Id of environment to force
      *  @return	void
      */
-    function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity='')
+    function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0)
     {
         global $conf,$user,$langs;
 

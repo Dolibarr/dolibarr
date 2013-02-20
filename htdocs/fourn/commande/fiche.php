@@ -70,8 +70,6 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('ordersuppliercard'));
 
 $object = new CommandeFournisseur($db);
@@ -310,7 +308,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             	}
 
                 $ret=$object->fetch($object->id);    // Reload to get new records
-                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
             unset($_POST['qty']);
             unset($_POST['type']);
@@ -369,7 +367,7 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($object->id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -394,7 +392,7 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($object->id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -425,7 +423,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($object->id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -524,7 +522,7 @@ else if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->fourn
 	{
 		if ($object->id > 0)
 		{
-			$result=$object->createFromClone($hookmanager);
+			$result=$object->createFromClone();
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -594,7 +592,7 @@ else if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
@@ -608,7 +606,7 @@ else if ($action == 'down' && $user->rights->fournisseur->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
@@ -630,7 +628,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang(GETPOST('lang_id'));
     }
-    $result=supplier_order_pdf_create($db, $object,$object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+    $result=supplier_order_pdf_create($db, $object,$object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
@@ -1799,7 +1797,7 @@ if (! empty($object->id))
 				$outputlangs->setDefaultLang($newlang);
 			}
 
-			$result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+			$result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
 				dol_print_error($db,$result);
@@ -1821,12 +1819,11 @@ if (! empty($object->id))
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
-		$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-		$formmail->withtosocid=$object->thirdparty->id;
-		$formmail->withtocc=1;
-		$formmail->withtoccsocid=0;
+		$liste=array();
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+		$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtocccsocid=0;
 		$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;

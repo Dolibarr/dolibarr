@@ -38,8 +38,6 @@ global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('demo'));
 
 $demoprofiles=array(
@@ -78,7 +76,7 @@ $alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial
                                 'memcached','numberwords','zipautofillfr');
 $alwayshiddenuncheckedmodules=array('boutique','ftp',
                                 // Extended modules
-                                'awstats','bittorrent','cabinetmed','cmcic','concatpdf','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','nltechno','numberingpack','openstreetmap',
+                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
                                 'ovh','phenix','phpsysinfo','pibarcode','postnuke','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
 
 // Search modules

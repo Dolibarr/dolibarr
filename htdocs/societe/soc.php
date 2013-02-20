@@ -70,8 +70,6 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('thirdpartycard'));
 
 
@@ -202,7 +200,7 @@ if (empty($reshook))
                 $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
                 $action = ($action=='add'?'create':'edit');
             }
-            
+
             // We set country_id, country_code and country for the selected country
             $object->country_id=GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
             if ($object->country_id)
@@ -224,21 +222,22 @@ if (empty($reshook))
 					{
 						$langs->load("errors");
                 		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-                		$action = ($action=='add'?'create':'edit');
+                		$action = (($action=='add'||$action=='create')?'create':'edit');
 					}
 				}
-				
+
 				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+	
 				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 				{
 					$langs->load("errors");
 					$error++;
 					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-					$action = ($action=='add'?'create':'edit');
+					$action = (($action=='add'||$action=='create')?'create':'edit');
 				}
-			}
+        	}
         }
-          
+
         if (! $error)
         {
             if ($action == 'add')
@@ -346,7 +345,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)&& empty($object->oldcopy->code_fournisseur)) $object->code_fournisseur='';
                 //var_dump($object);exit;
 
-                $result = $object->update($socid,$user,1,$object->oldcopy->codeclient_modifiable(),$object->oldcopy->codefournisseur_modifiable());
+                $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
                 if ($result <=  0)
                 {
                     $error = $object->error; $errors = $object->errors;
@@ -396,6 +395,22 @@ if (empty($reshook))
                     }
                 }
                 // Gestion du logo de la société
+
+
+                // Update linked member
+                if (! $error && $object->fk_soc > 0)
+                {
+
+                	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+                	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
+                	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                	if (! $this->db->query($sql))
+                	{
+                		$error++;
+                		$this->error .= $this->db->lasterror();
+                		dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
+                	}
+                }
 
                 if (! $error && ! count($errors))
                 {
@@ -698,8 +713,7 @@ else
             print "<br>\n";
         }
 
-
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
@@ -853,13 +867,13 @@ else
             if ($idprof!='-')
             {
                 if (($j % 2) == 0) print '<tr>';
-                
+
                 $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
                	if(empty($conf->global->$idprof_mandatory))
                 	print '<td>'.$idprof.'</td><td>';
                 else
                 print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
-                
+
                 $key='idprof'.$i;
                 print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                 print '</td>';
@@ -931,7 +945,7 @@ else
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
-        // Local Taxes  
+        // Local Taxes
         //TODO: Place into a function to control showing by country or study better option
         if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
@@ -954,7 +968,7 @@ else
             print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
-        
+
         if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")=='')  )
         {
         	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
@@ -984,14 +998,25 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
+        	$e=0;
             foreach($extrafields->attribute_label as $key=>$label)
             {
+            	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-           		print '<tr><td';
+                if (($e % 2) == 0)
+                {
+                	print '<tr>';
+                	$colspan='0';
+                }           		
+           		print '<td';
            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td colspan="3">';
+           		print '>'.$label.'</td>';
+           		print '<td colspan="'.$colspan.'">';
                 print $extrafields->showInputField($key,$value);
-                print '</td></tr>'."\n";
+                print '</td>';
+                
+                if (($e % 2) == 1) print '</tr>'."\n";
+                $e++;
             }
         }
 
@@ -1303,13 +1328,13 @@ else
                 if ($idprof!='-')
                 {
                     if (($j % 2) == 0) print '<tr>';
-                    
+
 					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
 					if(empty($conf->global->$idprof_mandatory))
 						print '<td>'.$idprof.'</td><td>';
 					else
 						print '<td><span class="fieldrequired">'.$idprof.'</td><td>';
-                    
+
                     $key='idprof'.$i;
                     print $formcompany->get_input_id_prof($i,'idprof'.$i,$object->$key,$object->country_code);
                     print '</td>';
@@ -1379,7 +1404,7 @@ else
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 print '</td></tr>';
             }
-            
+
             if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && $object->fournisseur==1)
             {
             	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
@@ -1412,23 +1437,38 @@ else
                 print '</td>';
                 print '</tr>';
             }
-
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
+            	$old_pos=0;
+            	$e=0;
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
+	                $colspan = '3';
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
+                    
+                    if (($e % 2) == 0)
+                    {
+                    	print '<tr>'."\n";
+                    	$colspan = '0';
+                    }
+            		print '<td';
             		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
+            		print '>'.$label.'</td>'."\n";
+            		print '<td colspan="'.$colspan.'">';
                     print $extrafields->showInputField($key,$value);
-                    print "</td></tr>\n";
+                    print "</td>"."\n";
+                    
+                    if (($e % 2) == 1 )
+                    {
+                    	print "</tr>\n";
+                    }
+                    $old_pos = $extrafields->attribute_pos[$key];
+                    $e++;
                 }
             }
-
             // Logo
             print '<tr>';
             print '<td>'.$langs->trans("Logo").'</td>';
@@ -1702,7 +1742,7 @@ else
             print yn($object->localtax2_assuj);
             print '</td><tr>';
         }
-        
+
         if ($mysoc->country_code=='ES' && $mysoc->localtax2_assuj!="1" && ! empty($conf->fournisseur->enabled) && $object->fournisseur==1)
         {
         	print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
@@ -1742,12 +1782,23 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
+        	$e=0;
             foreach($extrafields->attribute_label as $key=>$label)
             {
+            	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                print '<tr><td>'.$label.'</td><td colspan="3">';
+                if (($e % 2) == 0) 
+                {
+                	print '<tr>';
+                	$colspan='0';
+                }
+                print '<td>'.$label.'</td>';
+                print '<td colspan="'.$colspan.'">';
                 print $extrafields->showOutputField($key,$value);
-                print "</td></tr>\n";
+                print "</td>";
+                
+                if (($e % 2) == 1) print '</tr>';
+                $e++;
             }
         }
 
@@ -1865,7 +1916,7 @@ else
 
             $var=true;
 
-            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang,$hookmanager);
+            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
             print '</td>';
             print '<td></td>';

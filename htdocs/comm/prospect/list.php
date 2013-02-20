@@ -148,8 +148,6 @@ $sts = array(-1,0,1,2,3);
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('prospectlist'));
 
 
@@ -391,6 +389,7 @@ if ($resql)
 		$prospectstatic->id=$obj->rowid;
 		$prospectstatic->nom=$obj->nom;
         $prospectstatic->status=$obj->status;
+        $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
         print "<td>".$obj->zip."&nbsp;</td>";
@@ -400,7 +399,7 @@ if ($resql)
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		// Level
 		print '<td align="center">';
-		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+		print $prospectstatic->getLibProspLevel();
 		print "</td>";
 		// Statut
 		print '<td align="center" nowrap="nowrap">';
@@ -421,7 +420,7 @@ if ($resql)
 		print '</td>';
 
         print '<td align="right">';
-		print $prospectstatic->getLibStatut(3);
+		print $prospectstatic->LibStatut($prospectstatic->status,3);
         print '</td>';
 
         $parameters=array('obj' => $obj);

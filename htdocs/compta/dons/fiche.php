@@ -50,8 +50,6 @@ $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOS
 $result = restrictedArea($user, 'don', $id);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('doncard'));
 
 
@@ -90,7 +88,7 @@ if ($action == 'update')
 		$don->prenom      = $_POST["prenom"];
 		$don->nom         = $_POST["nom"];
 		$don->societe     = $_POST["societe"];
-		$don->adresse     = $_POST["adresse"];
+		$don->address     = $_POST["address"];
 		$don->amount      = price2num($_POST["amount"]);
 		$don->cp          = $_POST["zipcode"];
 		$don->ville       = $_POST["town"];
@@ -142,7 +140,7 @@ if ($action == 'add')
 		$don->prenom      = $_POST["prenom"];
 		$don->nom         = $_POST["nom"];
 		$don->societe     = $_POST["societe"];
-		$don->adresse     = $_POST["adresse"];
+		$don->address     = $_POST["address"];
 		$don->amount      = price2num($_POST["amount"]);
 		$don->cp          = $_POST["zipcode"];
 		$don->ville       = $_POST["town"];
@@ -302,7 +300,7 @@ if ($action == 'create')
 	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" value="'.$_POST["prenom"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.$_POST["nom"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$_POST["adresse"].'</textarea></td></tr>';
+	print '<textarea name="address" wrap="soft" cols="40" rows="3">'.$_POST["address"].'</textarea></td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
@@ -392,7 +390,7 @@ if (! empty($id) && $action == 'edit')
 	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.$don->prenom.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="adresse" wrap="soft" cols="40" rows="'.ROWS_3.'">'.$don->adresse.'</textarea></td></tr>';
+	print '<textarea name="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.$don->address.'</textarea></td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
@@ -487,7 +485,7 @@ if (! empty($id) && $action != 'edit')
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td>'.$don->societe.'</td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td>'.$don->prenom.'</td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td>'.$don->nom.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($don->adresse).'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($don->address).'</td></tr>';
 
 	// Zip / Town
 	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.($don->cp && $don->ville?' / ':'').$don->ville.'</td></tr>';

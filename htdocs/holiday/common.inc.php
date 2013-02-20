@@ -50,7 +50,7 @@ $sql.= " WHERE name = 'userGroup'";
 $result = $db->query($sql);
 $obj = $db->fetch_object($result);
 
-if ($obj->value == null)
+if ($obj->value == null || $obj->value < 0)
 {
     llxHeader('',$langs->trans('CPTitreMenu'));
 

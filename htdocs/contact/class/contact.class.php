@@ -210,7 +210,7 @@ class Contact extends CommonObject
 	 */
 	function update($id, $user=0, $notrigger=0, $action='update')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$error=0;
 
@@ -266,8 +266,6 @@ class Contact extends CommonObject
 		    unset($this->state);
 
 		    // Actions on extra fields (by external module or standard code)
-		    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		    $hookmanager=new HookManager($this->db);
 		    $hookmanager->initHooks(array('contactdao'));
 		    $parameters=array('socid'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -522,7 +520,7 @@ class Contact extends CommonObject
 				$this->prenom			= $obj->firstname;		// TODO deprecated
 
 				$this->address			= $obj->address;
-				$this->adresse			= $obj->address; 		// TODO deprecated
+				//$this->adresse			= $obj->address; 		// TODO deprecated
 				$this->cp				= $obj->zip;			// TODO deprecated
 				$this->zip				= $obj->zip;
 				$this->ville			= $obj->town;			// TODO deprecated

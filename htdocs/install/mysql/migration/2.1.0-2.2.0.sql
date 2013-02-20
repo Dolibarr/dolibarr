@@ -143,8 +143,8 @@ alter table llx_categorie ADD type int not null default '0';
 -- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 
 create table `llx_categorie_societe` (
-  `fk_categorie` int(11) not null,
-  `fk_societe` int(11) not null,
+  `fk_categorie` integer not null,
+  `fk_societe` integer not null,
   UNIQUE KEY `fk_categorie` (`fk_categorie`,`fk_societe`),
   KEY `fk_societe` (`fk_societe`)
 ) ENGINE=innodb;
@@ -154,8 +154,8 @@ alter table `llx_categorie_societe` add constraint `fk_categorie_societe_categor
 alter table `llx_categorie_societe` add constraint `fk_categorie_societe_fk_soc` foreign key(`fk_societe`) REFERENCES `llx_societe` (`rowid`);
 
 create table `llx_categorie_product` (
-  `fk_categorie` int(11) not null,
-  `fk_product` int(11) not null,
+  `fk_categorie` integer not null,
+  `fk_product` integer not null,
   PRIMARY KEY  (`fk_categorie`,`fk_product`),
   KEY `idx_categorie_product_fk_categorie` (`fk_categorie`),
   KEY `idx_categorie_product_fk_product` (`fk_product`)
@@ -169,24 +169,24 @@ alter table `llx_categorie_product`
 -- Ajout gestion du droit de pret
 drop table if exists `llx_droitpret_rapport`;
 create table `llx_droitpret_rapport` (
-  `rowid` int(11) NOT NULL auto_increment,
+  `rowid` integer NOT NULL auto_increment,
   `date_envoie` datetime NOT NULL,
   `format` varchar(10) NOT NULL,
   `date_debut` datetime NOT NULL,
   `date_fin` datetime NOT NULL,
   `fichier` varchar(255) NOT NULL,
-  `nbfact` int(11) NOT NULL,
+  `nbfact` integer NOT NULL,
   PRIMARY KEY  (`rowid`)
 ) ENGINE=innodb;
 
 
 -- Gestion des menu
 CREATE TABLE `llx_menu` (
-  `rowid` int(11) NOT NULL,
+  `rowid` integer NOT NULL,
   `menu_handler` varchar(16) NOT NULL default 'auguria',
   `type` enum('top','left') NOT NULL default 'left',
   `mainmenu` varchar(100) NOT NULL,
-  `fk_menu` int(11) NOT NULL,
+  `fk_menu` integer NOT NULL,
   `order` tinyint(4) NOT NULL,
   `url` varchar(255) NOT NULL,
   `target` varchar(100) NULL,
@@ -200,15 +200,15 @@ CREATE TABLE `llx_menu` (
 ) ENGINE=innodb;
 
 create table `llx_menu_constraint` (
-  `rowid` int(11) NOT NULL,
+  `rowid` integer NOT NULL,
   `action` varchar(255) NOT NULL,
   PRIMARY KEY  (`rowid`)
 ) ENGINE=innodb;
 
 create table `llx_menu_const` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_menu` int(11) NOT NULL,
-  `fk_constraint` int(11) NOT NULL,
+  `rowid` integer NOT NULL auto_increment,
+  `fk_menu` integer NOT NULL,
+  `fk_constraint` integer NOT NULL,
   `user` tinyint(4) NOT NULL default '2',
   PRIMARY KEY  (`rowid`)
 ) ENGINE=innodb;

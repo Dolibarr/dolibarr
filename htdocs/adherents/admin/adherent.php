@@ -189,7 +189,7 @@ if (! empty($conf->banque->enabled))
 else
 {
     print '<td align="right" colspan="2">';
-    print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name")).' '.img_warning("","");
+    print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
     print '</td>';
 }
 print "</tr>\n";

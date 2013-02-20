@@ -61,17 +61,17 @@ array('name'=>'Laurent Destailleur',	// id user 4702
 		'logo'=>'logoUrl='.urlencode('http://www.nltechno.com/images/logo_nltechno_long.jpg'), // Put your own logo
 		'id'=>'4256,4255',	// Put of list of sparkangels widget id (for each language)
 		'lang'=>'fr,en'),	// Put list of language code of widgets (always english at end)
-// Widget for Regis Houssin
-array('name'=>'R&eacute;gis Houssin',
-		'sort'=>2,
-		'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
-		'id'=>'5391',
-		'lang'=>'fr'),
 // Widget for Auguria
 array('name'=>'Auguria',
 		'sort'=>2,
 		//'logo'=>'logoUrl='.urlencode('http://www.cap-networks.com/images/logo_small.jpg'),
 		'id'=>'7196',
+		'lang'=>'fr'),
+//Widget for Open-Concept
+array('name'=>'Open-Concept.pro',
+		'sort'=>2,
+		'logo'=>'logoUrl='.urlencode('http://www.open-concept.pro/CMS/images/Logo/logosimplecomplet.png'),
+		'id'=>'9340',
 		'lang'=>'fr')
 );
 $arrayofwidgets=dol_sort_array($arrayofwidgets,'sort','asc',0,0);

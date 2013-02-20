@@ -110,7 +110,7 @@ abstract class ModeleNumRefProjects
 
 	/**
 	 *  Renvoi prochaine valeur attribuee
-	 *	
+	 *
 	 *	@param	Societe		$objsoc		Object third party
 	 *	@param	Project		$project	Object project
 	 *	@return	string					Valeur
@@ -149,10 +149,9 @@ abstract class ModeleNumRefProjects
  *  @param  int			$hidedetails    Hide details of lines
  *  @param  int			$hidedesc       Hide description
  *  @param  int			$hideref        Hide ref
- *  @param  HookManager	$hookmanager	Hook manager instance
  *  @return int         				0 if KO, 1 if OK
  */
-function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
+function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	global $conf,$langs;
 	$langs->load("projects");
@@ -214,7 +213,7 @@ function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 

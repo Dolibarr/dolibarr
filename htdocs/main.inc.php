@@ -584,6 +584,7 @@ if (! defined('NOLOGIN'))
         }
 
         // Create entity cookie, just used for login page
+        // TODO Multicompany Move this into hook
         if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
         {
             include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
@@ -603,8 +604,6 @@ if (! defined('NOLOGIN'))
 
         // Hooks on successfull login
         $action='';
-        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        $hookmanager=new HookManager($db);
         $hookmanager->initHooks(array('login'));
         $parameters=array('dol_authmode'=>$dol_authmode);
         $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
@@ -675,14 +674,6 @@ if (! defined('NOREQUIRETRAN'))
     {
         $langs->setDefaultLang(GETPOST('lang','alpha',1));
     }
-}
-
-// Use php template engine
-if (! empty($conf->global->MAIN_USE_TEMPLATE_ENGINE) && ! defined('NOTEMPLATEENGINE'))
-{
-	require_once DOL_DOCUMENT_ROOT.'/includes/savant/Savant3.php';
-
-	$tpl = new Savant3();
 }
 
 // Case forcing style from url
@@ -764,6 +755,7 @@ else
 $heightforframes=52;
 
 // Switch to another entity
+// TODO Multicompany Remove this
 if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
     if ($mc->switchEntity(GETPOST('entity','int')) > 0)
@@ -778,21 +770,18 @@ if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity'
 // Init menu manager
 if (empty($user->societe_id))    // If internal user or not defined
 {
-	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
+	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 }
 else                        // If external user
 {
-	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?$conf->global->MAIN_MENUFRONT_STANDARD:$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
+	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 }
-// For backward compatibility
-if (empty($conf->standard_menu))  $conf->standard_menu ='eldy_backoffice.php';
-elseif ($conf->standard_menu == 'eldy.php') $conf->standard_menu='eldy_backoffice.php';
 
 // Load the menu manager (only if not already done)
 $file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
-if (GETPOST('menu')) $file_menu=GETPOST('menu');     // menu=eldy_backoffice.php
+if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
 if (! class_exists('MenuManager'))
 {
 	$menufound=0;
@@ -804,11 +793,12 @@ if (! class_exists('MenuManager'))
 	}
 	if (! $menufound)	// If failed to include, we try with standard
 	{
-		$file_menu='eldy_backoffice.php';
+		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
+		$file_menu='eldy_menu.php';
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 	}
 }
-$menumanager = new MenuManager($db);
+$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 
 
 
@@ -836,7 +826,7 @@ if (! function_exists("llxHeader"))
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 	    global $conf;
-		
+
 	    // html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
@@ -849,7 +839,7 @@ if (! function_exists("llxHeader"))
 		{
 			left_menu('', $help_url, '', '', 1, $title);
 		}
-		
+
 		// main area
 		main_area($title);
 	}
@@ -1196,12 +1186,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $dolibarr_main_authentication;
     global $hookmanager,$menumanager;
 
-    // Instantiate hooks of thirdparty module only if not already define
-    if (! is_object($hookmanager))
-    {
-    	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-    	$hookmanager=new HookManager($db);
-    }
+    // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('toprightmenu'));
 
     $toprightmenu='';
@@ -1337,6 +1322,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $loginhtmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
 	    $loginhtmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
+	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentMenuManager").'</b>: '.$menumanager->name;
 	    $s=picto_from_langcode($langs->getDefaultLang());
 	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
 	    $loginhtmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
@@ -1355,7 +1341,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    && $_SESSION["dol_authmode"] != 'http')
 	    {
 	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-	        $logouttext .=$atarget?(' target="'.$atarget.'"'):'';
+	        //$logouttext .=empty($atarget?(' target="'.$atarget.'"'):'';
 	        $logouttext .='>';
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
 	        $logouttext .='</a>';
@@ -1427,11 +1413,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $bookmarks='';
 
     // Instantiate hooks of thirdparty module
-    if (! is_object($hookmanager))
-    {
-    	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-    	$hookmanager=new HookManager($db);
-	}
     $hookmanager->initHooks(array('searchform','leftblock'));
 
     if (empty($_SESSION['dol_hide_leftmenu']))

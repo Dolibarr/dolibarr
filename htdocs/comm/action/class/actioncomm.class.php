@@ -106,8 +106,8 @@ class ActionComm extends CommonObject
      */
     function add($user,$notrigger=0)
     {
-        global $langs,$conf;
-
+        global $langs,$conf,$hookmanager;
+        
         $error=0;
         $now=dol_now();
 
@@ -210,8 +210,6 @@ class ActionComm extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm","id");
 
             // Actions on extra fields (by external module or standard code)
-            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-            $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('actioncommdao'));
             $parameters=array('actcomm'=>$this->id);
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -430,7 +428,7 @@ class ActionComm extends CommonObject
      */
     function update($user,$notrigger=0)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
 
         $error=0;
 
@@ -482,8 +480,6 @@ class ActionComm extends CommonObject
         {
 
         	// Actions on extra fields (by external module or standard code)
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
         	$hookmanager->initHooks(array('actioncommdao'));
         	$parameters=array('actcomm'=>$this->id);
         	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

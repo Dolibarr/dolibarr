@@ -315,9 +315,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
 				print '<td align="right" nowrap>';
-				if ($objp->client == 2 || $objp->client == 3) print $langs->trans("Prospect");
-				if ($objp->client == 3) print ' / ';
-				if ($objp->client == 1 || $objp->client == 3) print $langs->trans("Customer");
+				print $companystatic->getLibCustProspStatut();
 				print "</td>";
 				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';

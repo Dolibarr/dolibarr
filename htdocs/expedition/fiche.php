@@ -59,8 +59,6 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('expeditioncard'));
 
 $action		= GETPOST('action','alpha');
@@ -1424,7 +1422,7 @@ else
                     $outputlangs->setDefaultLang($newlang);
                 }
 
-                $result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+                $result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
                     dol_print_error($db,$result);
@@ -1445,12 +1443,11 @@ else
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
-            $formmail->withto=GETPOST('sendto','int')?GETPOST('sendto','int'):1;
-            $formmail->withtosocid=$soc->id;
-            $formmail->withtocc=1;
-            $formmail->withtoccsocid=0;
+			$liste=array();
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+			$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtocccsocid=0;
             $formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;
