@@ -180,19 +180,20 @@ function tree_showline($tab,$rang)
  */
 function tree_recur($tab,$pere,$rang)
 {
-	if (empty($pere['rowid'])) 
+	if (empty($pere['rowid']))
 	{
-		// Test also done with jstree and dynatree (not able to have <a> inside label) 
+		// Test also done with jstree and dynatree (not able to have <a> inside label)
 		print '<script type="text/javascript" language="javascript">
 		$(document).ready(function(){
 			$("#iddivjstree").treeview({
 				collapsed: true,
 				animated: "fast",
-				persist: "location"
+				persist: "location",
+				control: "#iddivjstreecontrol"
 			});
 		})
 		</script>';
-		
+
 		print '<ul id="iddivjstree" style="min-height:300px;">';
 	}
 
@@ -207,7 +208,7 @@ function tree_recur($tab,$pere,$rang)
 		// If an element has $pere for parent
 		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid'])
 		{
-			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; } 
+			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
 			print "\n".'<li>';
 			// We shot it with an offset
 			tree_showline($tab[$x],$rang);
@@ -218,7 +219,7 @@ function tree_recur($tab,$pere,$rang)
 		}
 		elseif (! empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'])
 		{
-			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; } 
+			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
 			print "\n".'<li>';
 			// We shot it with an offset
 			tree_showline($tab[$x],$rang);
@@ -229,7 +230,7 @@ function tree_recur($tab,$pere,$rang)
 		}
 	}
 	if (! empty($ulprinted) && ! empty($pere['rowid'])) { print '</ul>'."\n"; }
-	
+
 	if (empty($pere['rowid'])) print '</ul>';
 }
 

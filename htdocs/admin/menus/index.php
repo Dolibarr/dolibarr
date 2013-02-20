@@ -271,10 +271,12 @@ print '<table class="border" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
+print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
 print '</tr>';
 
 print '<tr>';
-print '<td>';
+print '<td colspan="2">';
 
 // ARBORESCENCE
 
