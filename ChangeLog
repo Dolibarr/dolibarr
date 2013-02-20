@@ -9,6 +9,7 @@ For users:
 - New: Add option MAIN_PDF_TITLE_BACKGROUND_COLOR
 - New: Can define a hierarchical responsible on user
 - New: Merge tab customer and prospect
+- New: Add ES formated address country rule
 
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
