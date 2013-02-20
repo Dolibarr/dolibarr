@@ -23,55 +23,7 @@
  */
 
 
-// ------------------------------- Used by category tree view -----------------
-
-/**
- * Return if a child id is in descendance of parentid
- *
- * @param	array	 $fulltree		Full tree. Tree must be an array of records that looks like:
- *									id = id record
- *									id_mere = id record mother
- *									id_children = array of direct child id
- *									label = record label
- * 									fullpath = Full path of id
- * 									level =	Level of record
- * @param	int		$parentid		Parent id
- * @param	int		$childid		Child id
- * @return	int						1=Yes, 0=No
- */
-function is_in_subtree($fulltree,$parentid,$childid)
-{
-	if ($parentid == $childid) return 1;
-
-	// Get fullpath of parent
-	$fullpathparent='';
-	foreach($fulltree as $key => $val)
-	{
-		//print $val['id']."-".$section."<br>";
-		if ($val['id'] == $parentid)
-		{
-			$fullpathparent=$val['fullpath'];
-			break;
-		}
-	}
-	//print '> parent='.$parentid.' - child='.$childid.' - '.$fullpathparent.'<br>';
-
-	foreach($fulltree as $record)
-	{
-		if ($record['id'] == $childid)
-		{
-			//print $record['fullpath'].'_'.' - '.$fullpathparent.'_';
-			if (preg_match('/'.$fullpathparent.'_/i',$record['fullpath'].'_'))
-			{
-				//print 'DEL='.$childid;
-				return 1;
-			}
-		}
-	}
-
-	return 0;
-}
-
+// ------------------------------- Used by ajax tree view -----------------
 
 /**
  * Show indent and picto of a tree line. Return array with information of line.
@@ -145,11 +97,16 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 // ------------------------------- Used by menu editor -----------------
 
 /**
- *  Recursive function to output menu tree. <ul><li>...</li></ul>
+ *  Recursive function to output menu tree. <ul id="iddivjstree"><li>...</li></ul>
+ *  Note: To have this function working, check you have loaded the js and css for treeview.
+ *  $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+ *                   '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+ *	$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
  *
- *  @param	array	$tab    Array of all elements
- *  @param  int	    $pere   Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
- *  @param  int	    $rang   Level of element
+ *  @param	array	$tab    		Array of all elements
+ *  @param  int	    $pere   		Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
+ *  @param  int	    $rang   		Level of element
+ *  @param	string	$iddivjstree	Id to use for parent ul element
  *  @return	void
  */
 function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
@@ -162,13 +119,16 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 			$("#'.$iddivjstree.'").treeview({
 				collapsed: true,
 				animated: "fast",
-				persist: "location",
-				control: "#'.$iddivjstree.'control"
+				persist: "cookie",
+				control: "#'.$iddivjstree.'control",
+				toggle: function() {
+					/* window.console && console.log("%o was toggled", this); */
+				}
 			});
 		})
 		</script>';
 
-		print '<ul id="'.$iddivjstree.'" style="min-height:300px;">';
+		print '<ul id="'.$iddivjstree.'">';
 	}
 
 	if ($rang > 10)	return;	// Protection contre boucle infinie

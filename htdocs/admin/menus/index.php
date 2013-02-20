@@ -209,8 +209,8 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 $form=new Form($db);
 $formadmin=new FormAdmin($db);
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js?lang='.$langs->defaultlang);
-$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css?lang='.$langs->defaultlang);
+$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
