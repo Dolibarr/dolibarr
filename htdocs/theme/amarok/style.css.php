@@ -1446,7 +1446,7 @@ table.cal_month    { border-spacing: 0px; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
-.cal_other_month_right   { border-right: solid 1px #C0C0C0; } 
+.cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 
 .cal_other_month {
 	background:#dddddd;
@@ -1581,105 +1581,10 @@ form.inplaceeditor-form a {/* The cancel link */
 /* Admin Menu                                                                     */
 /* ============================================================================== */
 
-/* CSS à appliquer à l'arbre hierarchique */
-
-/* Lien plier / déplier tout */
-.arbre-switch {
-    text-align:right;
-    padding:0 5px;
-    margin:0 0 -18px 0;
-}
-
-/* Arbre */
-ul.arbre {padding:5px 10px;}
-
-/* strong:A modifier en fonction de la balise choisie */
-ul.arbre strong {
-    font-weight:normal;
-    padding:0 0 0 20px;
-    margin:0 0 0 -7px;
-    background-image:url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
-    background-repeat:no-repeat;
-    background-position:1px 50%;
-}
-
-ul.arbre strong.arbre-plier {
-    background-image:url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
-    cursor:pointer;
-}
-
-ul.arbre strong.arbre-deplier {
-    background-image:url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
-    cursor:pointer;
-}
-
-ul.arbre ul {
-    padding:0;
-    margin:0;
-}
-
-ul.arbre li {
-    padding:0;
-    margin:0;
-    list-style:none;
-}
-
-/* This is to create an indent */
-ul.arbre li li {margin:0 0 0 16px;}
-
-/* Classe pour masquer */
-.hide {display:none;}
-
-img.menuNew {
-	display:block;
-	border:0px;
-}
-
-img.menuEdit {
-	border:0px;
-	display:block;
-}
-
-img.menuDel {
-	display:none;
-	border:0px;
-}
-
-div.menuNew {
-	margin-top:-20px;
-	margin-left:270px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuEdit {
-	margin-top:-15px;
-	margin-left:250px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuDel {
-	margin-top:-20px;
-	margin-left:290px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuFleche {
-	margin-top:-16px;
-	margin-left:320px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
+/* CSS for treeview */
+.treeview ul { background-color: transparent !important; margin-top: 0; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
+.treeview .hover { color: black !important; }
 
 
 /* ============================================================================== */
