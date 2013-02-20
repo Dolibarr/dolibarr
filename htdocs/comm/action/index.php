@@ -88,6 +88,7 @@ if (GETPOST('viewday'))  {
     $action='show_day'; $day=($day?$day:date("d"));
 }                                  // View by day
 
+$langs->load("agenda");
 $langs->load("other");
 $langs->load("commercial");
 
