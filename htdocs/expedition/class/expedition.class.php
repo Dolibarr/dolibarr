@@ -1168,6 +1168,65 @@ class Expedition extends CommonObject
 		}
 	}
 
+    /**
+     *  Fetch all deliveries method and return an array. Load array this->listmeths.
+     *
+     *  @return void
+     */
+    function all_delivery_methods()
+    {
+        global $langs;
+        $meths = array();
+        $i=0;
+
+        $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.active";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+        //$sql.= " ORDER BY em.libelle ASC";
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $this->listmeths[$i][rowid] = $obj->rowid;
+                $this->listmeths[$i][code] = $obj->code;
+                $label=$langs->trans('SendingMethod'.$obj->code);
+                $this->listmeths[$i][libelle] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+                $this->listmeths[$i][description] = $obj->description;
+                $this->listmeths[$i][active] = $obj->active;
+                $i++;
+            }
+        }
+    }
+
+    /**
+     *  Activate delivery method.
+     *  @param      id      $id     id method to activate
+     *  @return void
+     */
+    function activ_delivery_method($id)
+    {
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
+        $sql.= ' WHERE rowid='.$id;
+
+        $resql = $this->db->query($sql);
+
+    }
+
+    /**
+     *  DesActivate delivery method.
+     *  @param      id      $id     id method to desactivate
+     *  @return void
+     */
+    function disable_delivery_method($id)
+    {
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
+        $sql.= ' WHERE rowid='.$id;
+
+        $resql = $this->db->query($sql);
+
+    }
+
 	/**
 	 * Get tracking url status
 	 *
