@@ -1292,7 +1292,22 @@ class CommandeFournisseur extends CommonOrder
 
             dol_syslog(get_class($this)."::DispatchProduct sql=".$sql);
             $resql = $this->db->query($sql);
-            if (! $resql)
+            if ($resql)
+            {
+                if (! $notrigger)
+                {
+                    global $conf, $langs, $user;
+                    // Appel des triggers
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('LINEORDER_SUPPLIER_DISPATCH',$this,$user,$langs,$conf);
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    // Fin appel triggers
+                }
+
+                $this->db->commit();
+            }
+            else
             {
                 $this->error=$this->db->lasterror();
                 $error++;
