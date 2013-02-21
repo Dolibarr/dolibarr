@@ -33,3 +33,7 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'COLUPS','UPS','United Parcel Service',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'COLKIALA','KIALA','Relais Kiala',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'COLGLS','GLS','General Logistics Systems',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'COLCHRONO','Chronopost','Chronopost',0);
