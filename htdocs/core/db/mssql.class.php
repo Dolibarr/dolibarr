@@ -25,9 +25,7 @@
 
 
 /**
- *	\class      DoliDBMssql
- *	\brief      Classe de gestion de la database de dolibarr
- *	\remarks	Works with PHP5 Only
+ *	Classe de gestion de la database de dolibarr
  */
 class DoliDBMssql
 {

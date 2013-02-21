@@ -29,8 +29,7 @@
 
 
 /**
- *	\class      DoliDBPgsql
- *	\brief      Class to drive a Postgresql database for Dolibarr
+ *	Class to drive a Postgresql database for Dolibarr
  */
 class DoliDBPgsql
 {
@@ -245,17 +244,17 @@ class DoliDBPgsql
     			$line=preg_replace('/\sAFTER [a-z0-9_]+/i','',$line);
 
     			// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
-    			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
+    			$line=preg_replace('/ALTER TABLE [a-z0-9_]+\s+DROP INDEX/i','DROP INDEX',$line);
 
                 // Translate order to rename fields
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
                 {
                 	$line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
                 // Translate order to modify field format
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $newreg3=$reg[3];
