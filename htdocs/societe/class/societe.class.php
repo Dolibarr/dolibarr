@@ -143,7 +143,8 @@ class Societe extends CommonObject
     var $array_options;
 
     var $oldcopy;
-
+    
+    
     /**
      *    Constructor
      *
@@ -241,9 +242,6 @@ class Societe extends CommonObject
                 {
                     $this->add_commercial($user, $user->id);
                 }
-
-                // si le fournisseur est classe on l'ajoute
-                $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 if ($ret >= 0)
                 {
@@ -609,9 +607,6 @@ class Societe extends CommonObject
 		            	}
 	            	}
             	}
-
-                // Si le fournisseur est classe on l'ajoute
-                $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 // Actions on extra fields (by external module or standard code)
                 // FIXME le hook fait double emploi avec le trigger !!
