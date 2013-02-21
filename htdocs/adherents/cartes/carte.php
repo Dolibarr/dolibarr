@@ -62,7 +62,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
     // requete en prenant que les adherents a jour de cotisation
     $sql = "SELECT d.rowid, d.prenom as firstname, d.nom as lastname, d.login, d.societe as company, d.datefin,";
-    $sql.= " d.adresse as address, d.cp as zip, d.ville as town, d.naiss, d.email, d.photo,";
+    $sql.= " d.address, d.cp as zip, d.ville as town, d.naiss, d.email, d.photo,";
     $sql.= " t.libelle as type,";
     $sql.= " p.code as country_code, p.libelle as country";
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
@@ -112,7 +112,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             '%PRENOM%'=>$objp->firstname,
             '%NOM%'=>$objp->lastname,
             '%SOCIETE%'=>$objp->company,
-            '%ADRESSE%'=>$objp->address,
+            '%ADDRESS%'=>$objp->address,
             '%CP%'=>$objp->zip,
             '%VILLE%'=>$objp->town,
             '%PAYS%'=>$objp->country,
