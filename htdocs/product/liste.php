@@ -442,18 +442,12 @@ else
     			$i++;
     		}
 
-    		if ($num > $conf->liste_limit)
-    		{
-    			if ($sref || $snom || $sall || $sbarcode || GETPOST('search'))
-    			{
-    				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
-    			}
-    			else
-    			{
-    				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
-    			}
-    		}
-
+    		$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
+    		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
+    		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+    		$param.=isset($type)?"&amp;type=".$type:"";
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		
     		$db->free($resql);
 
     		print "</table>";
