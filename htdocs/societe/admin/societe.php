@@ -210,7 +210,7 @@ if ($action == 'setprofid')
 	}
 }
 
-//Activate ProfId
+//Activate ProfId mandatory
 if ($action == 'setprofidmandatory')
 {
 	$status = GETPOST('status','alpha');
@@ -227,6 +227,22 @@ if ($action == 'setprofidmandatory')
 	}
 }
 
+//Activate ProfId invoice mandatory
+if ($action == 'setprofidinvoicemandatory')
+{
+	$status = GETPOST('status','alpha');
+
+	$idprof="SOCIETE_IDPROF".$value."_INVOICE_MANDATORY";
+	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 /*
  * 	View
@@ -554,6 +570,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center">'.$langs->trans("MustBeUnique").'</td>';
 print '<td align="center">'.$langs->trans("MustBeMandatory").'</td>';
+print '<td align="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
 $profid[0][0]=$langs->trans("ProfId1");
@@ -586,8 +603,10 @@ while ($i < $nbofloop)
 	
 		$idprof_unique ='SOCIETE_IDPROF'.($i+1).'_UNIQUE';
 		$idprof_mandatory ='SOCIETE_IDPROF'.($i+1).'_MANDATORY';
+		$idprof_invoice_mandatory ='SOCIETE_IDPROF'.($i+1).'_INVOICE_MANDATORY';
 		$verif=(empty($conf->global->$idprof_unique)?false:true);
 		$mandatory=(empty($conf->global->$idprof_mandatory)?false:true);
+		$invoice_mandatory=(empty($conf->global->$idprof_invoice_mandatory)?false:true);
 	
 		if ($verif)
 		{
@@ -614,6 +633,20 @@ while ($i < $nbofloop)
 			print img_picto($langs->trans("Disabled"),'switch_off');
 			print '</a></td>';
 		}
+		
+		if ($invoice_mandatory)
+		{
+			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.($i+1).'&status=0">';
+			print img_picto($langs->trans("Activated"),'switch_on');
+			print '</a></td>';
+		}
+		else
+		{
+			print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.($i+1).'&status=1">';
+			print img_picto($langs->trans("Disabled"),'switch_off');
+			print '</a></td>';
+		}
+		
 		print "</tr>\n";
 	}
 	$i++;

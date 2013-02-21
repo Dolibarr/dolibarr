@@ -975,7 +975,8 @@ DocumentModelOdt=Genération depuis des modèles OpenDocument (Fichier .ODT Open
 WatermarkOnDraft=Filigrane sur les documents brouillons
 CompanyIdProfChecker=Règles sur les Ids professionnels 
 MustBeUnique=Doit être unique ?
-MustBeMandatory=Doit être obligatoire?
+MustBeMandatory=Doit être obligatoire pour creer tiers ?
+MustBeInvoiceMandatory=Doit être obligatoire pour valider factures ?
 Miscellanous=Divers
 ##### Webcal setup #####
 WebCalSetup= Configuration du lien vers le calendrier Webcalendar
