@@ -1785,7 +1785,7 @@ class User extends CommonObject
 	/**
 	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
 	function getLibStatut($mode=0)
@@ -2191,7 +2191,7 @@ class User extends CommonObject
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.name, u.fk_user";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.name, u.fk_user, u.login, u.statut";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 
@@ -2204,9 +2204,11 @@ class User extends CommonObject
 			{
 				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->users[$obj->rowid]['id'] = $obj->rowid;
-				$this->users[$obj->rowid]['fk_user'] = $obj->fk_parent;
+				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
 				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
 				$this->users[$obj->rowid]['name'] = $obj->name;
+				$this->users[$obj->rowid]['login'] = $obj->login;
+				$this->users[$obj->rowid]['statut'] = $obj->statut;
 				$i++;
 			}
 		}
@@ -2297,7 +2299,7 @@ class User extends CommonObject
 		{
 			print 'id: '.$this->users[$key]['id'];
 			print ' name: '.$this->users[$key]['name'];
-			print ' parent: '.$this->users[$key]['fk_parent'];
+			print ' parent: '.$this->users[$key]['fk_user'];
 			print ' fullpath: '.$this->users[$key]['fullpath'];
 			print ' fullname: '.$this->users[$key]['fullname'];
 			print "<br>\n";

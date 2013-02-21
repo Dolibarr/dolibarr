@@ -6,15 +6,27 @@ English Dolibarr ChangeLog
 For users:
 - New: Some performance enhancements.
 - New: Can attach files onto trip and expenses modules.
-- New: Add option MAIN_PDF_TITLE_BACKGROUND_COLOR
-- New: Can define a hierarchical responsible on user
-- New: Merge tab customer and prospect
-- New: Add ES formated address country rule
-
+- New: Add option MAIN_PDF_TITLE_BACKGROUND_COLOR.
+- New: Merge tab customer and prospect.
+- New: Add ES formated address country rule.
+- New: Can define a hierarchical responsible on user.
+- New: Add a hierarchical view for users.
+- New: Can expand/collapse menus, categories and users list.
+- New: extra parameters are supported into ODT templates.
+- New: total per vat rate are available as tags for ODT templates.
+- New: Add more types for extra parameters (lists, phone, emails, checkbox, prices)
+- New: Some part of interface use more CSS3 (ie: agenda)
+  
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
 - An external module can force its theme.
 - Add function dol_set_focus('#xxx').
+- A mymodule can bring its own core/modules/mymodule/modules_mymodule.php file.
+- Removed not used libraries.
+- More web services. 
+- Renamed some french fields into english.
+- First change to manage margins on contracts.
+- Add hook getFormMail.
 
 For translators:
 - Update language files.
