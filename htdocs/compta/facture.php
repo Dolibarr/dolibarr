@@ -366,6 +366,22 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
     $object->fetch_thirdparty();
 
     // Check parameters
+    
+    // Check for  mandatory prof id
+    for ($i = 1; $i < 5; $i++)
+    {
+    	 
+    	$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_INVOICE_MANDATORY';
+    	if (! $object->thirdparty->idprof.$i && ! empty($conf->global->$idprof_mandatory))
+        {
+        	if (! $error) $langs->load("errors");
+    		$error++;
+    	
+    		setEventMessage($langs->trans('ErrorProdIdIsMandatory',$langs->transcountry('ProfId'.$i, $object->thirdparty->country_code)),'errors');
+    	}
+    } 
+    
+    //Check for warehouse
     if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
     {
         if (! $idwarehouse || $idwarehouse == -1)
@@ -375,7 +391,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
             $action='';
         }
     }
-
+    
     if (! $error)
     {
         $result = $object->validate($user,'',$idwarehouse);

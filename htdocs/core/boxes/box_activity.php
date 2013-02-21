@@ -71,7 +71,7 @@ class box_activity extends ModeleBoxes
 
 		$nbofyears=2;
 		if (! empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) $nbofyears=$conf->global->MAIN_BOX_ACTIVITY_DURATION;
-		$textHead = $langs->trans("Activity").' ('.$nbofyears.' '.$langs->trans("years").')';
+		$textHead = $langs->trans("Activity").' ('.$nbofyears.' '.$langs->trans("DurationYears").')';
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// compute the year limit to show
