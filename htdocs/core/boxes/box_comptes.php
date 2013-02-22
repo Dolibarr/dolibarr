@@ -76,7 +76,7 @@ class box_comptes extends ModeleBoxes
 		{
 			$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
 			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
-			$sql.= " domiciliation, proprio, adresse_proprio,";
+			$sql.= " domiciliation, proprio, owner_address,";
 			$sql.= " account_number, currency_code,";
 			$sql.= " min_allowed, min_desired, comment";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";

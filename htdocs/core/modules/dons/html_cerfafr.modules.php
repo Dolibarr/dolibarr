@@ -140,7 +140,7 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->currency),$form);
 		        $form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->name,$form);
-		        $form = str_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->address,$form);
+		        $form = str_replace('__MAIN_INFO_SOCIETE_ADDRESS__',$mysoc->address,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_CP__',$mysoc->zip,$form);
 		        $form = str_replace('__MAIN_INFO_SOCIETE_VILLE__',$mysoc->town,$form);
 		        $form = str_replace('__DONATOR_NAME__',$don->nom,$form);

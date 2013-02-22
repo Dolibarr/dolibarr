@@ -570,7 +570,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     $posy=$pdf->GetY()+1;
                     $pdf->SetXY($this->marge_gauche, $posy);
                     $pdf->SetFont('','', $default_font_size - 3);
-                    $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+                    $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
                     $posy=$pdf->GetY()+2;
                 }
                 if ($conf->global->FACTURE_CHQ_NUMBER == -1)
