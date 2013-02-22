@@ -91,7 +91,7 @@ if ($action == 'update')
 		$don->address     = $_POST["address"];
 		$don->amount      = price2num($_POST["amount"]);
 		$don->cp          = $_POST["zipcode"];
-		$don->ville       = $_POST["town"];
+		$don->town        = $_POST["town"];
         $don->zip         = $_POST["zipcode"];
         $don->town        = $_POST["town"];
 		$don->email       = $_POST["email"];
@@ -143,7 +143,7 @@ if ($action == 'add')
 		$don->address     = $_POST["address"];
 		$don->amount      = price2num($_POST["amount"]);
 		$don->cp          = $_POST["zipcode"];
-		$don->ville       = $_POST["town"];
+		$don->town        = $_POST["town"];
         $don->zip         = $_POST["zipcode"];
         $don->town        = $_POST["town"];
 		$don->email       = $_POST["email"];
@@ -488,7 +488,7 @@ if (! empty($id) && $action != 'edit')
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($don->address).'</td></tr>';
 
 	// Zip / Town
-	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.($don->cp && $don->ville?' / ':'').$don->ville.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.($don->cp && $don->town?' / ':'').$don->town.'</td></tr>';
 
 	// Country
 	print "<tr>".'<td>'.$langs->trans("Country").'</td><td>'.$don->pays.'</td></tr>';
