@@ -51,7 +51,6 @@ class Adherent extends CommonObject
     var $login;
     var $pass;
     var $societe;
-    //var $adresse;
     var $address;
     var $cp;
     var $zip;
@@ -233,7 +232,7 @@ class Adherent extends CommonObject
 				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
 				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-				'%ADRESSE%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+				'%ADDRESS%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
 				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
 				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
@@ -404,7 +403,7 @@ class Adherent extends CommonObject
         // Clean parameters
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->nom);
 		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->prenom);
-		$this->address=($this->address?$this->address:$this->adresse);
+		$this->address=($this->address?$this->address:$this->address);
 		$this->zip=($this->zip?$this->zip:$this->cp);
 		$this->town=($this->town?$this->town:$this->ville);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
@@ -1065,7 +1064,6 @@ class Adherent extends CommonObject
                 $this->pass				= $obj->pass;
                 $this->societe			= $obj->societe;
                 $this->fk_soc			= $obj->fk_soc;
-                //$this->adresse			= $obj->address;	// deprecated
                 $this->address			= $obj->address;
                 $this->cp				= $obj->zip;		// deprecated
                 $this->zip				= $obj->zip;
@@ -1201,7 +1199,7 @@ class Adherent extends CommonObject
      *	Insert subscription into database and eventually add links to banks, mailman, etc...
      *
      *	@param	timestamp	$date        		Date d'effet de la cotisation
-     *	@param	amount		$montant     		Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
+     *	@param	amount		$montant     		Montant cotisation (accepte 0 pour les adherents non soumis a cotisation)
      *	@param	int			$accountid			Id compte bancaire
      *	@param	string		$operation			Type operation (si Id compte bancaire fourni)
      *	@param	string		$label				Label operation (si Id compte bancaire fourni)
@@ -1386,7 +1384,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui ajoute l'adherent au abonnements automatiques mailing-list, spip, etc.
+     *  Fonction qui ajoute l'adherent aux abonnements automatiques mailing-list, spip, etc.
      *  TODO Move this into member creation trigger (trigger of mailmanspip module)
      *
      *  @return		int		<0 if KO, >0 if OK
@@ -1479,7 +1477,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *    Return label of a civility of a contact
+     *    Return civility label of a contact
      *
      *    @param	int		$nohtmlentities     0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation
      *    @return   string              		Name translated of civility

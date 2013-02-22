@@ -162,7 +162,6 @@ if (empty($reshook))
 
         $object->client                = GETPOST('client');
         $object->fournisseur           = GETPOST('fournisseur');
-        $object->fournisseur_categorie = GETPOST('fournisseur_categorie');
 
         $object->commercial_id         = GETPOST('commercial_id');
         $object->default_lang          = GETPOST('default_lang');
@@ -794,23 +793,6 @@ else
             print $form->textwithpicto('',$s,1);
             print '</td></tr></table>';
             print '</td></tr>';
-
-            // Category
-            /* This must be set into category tab, like for customer category
-            if ($object->fournisseur)
-            {
-                $load = $object->LoadSupplierCateg();
-                if ( $load == 0)
-                {
-                    if (count($object->SupplierCategories) > 0)
-                    {
-                        print '<tr>';
-                        print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-                        print $form->selectarray("fournisseur_categorie",$object->SupplierCategories,GETPOST('fournisseur_categorie'),1);
-                        print '</td></tr>';
-                    }
-                }
-            }*/
         }
 
         // Status
@@ -1256,22 +1238,6 @@ else
                 print '</td></tr></table>';
 
                 print '</td></tr>';
-
-                // Category
-                if (! empty($conf->categorie->enabled) && $object->fournisseur)
-                {
-                    $load = $object->LoadSupplierCateg();
-                    if ( $load == 0)
-                    {
-                        if (count($object->SupplierCategories) > 0)
-                        {
-                            print '<tr>';
-                            print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-                            print $form->selectarray("fournisseur_categorie",$object->SupplierCategories,'',1);
-                            print '</td></tr>';
-                        }
-                    }
-                }
             }
 
             // Barcode

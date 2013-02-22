@@ -16,6 +16,7 @@ For users:
 - New: total per vat rate are available as tags for ODT templates.
 - New: Add more types for extra parameters (lists, phone, emails, checkbox, prices)
 - New: Some part of interface use more CSS3 (ie: agenda)
+- New: [ task #707 ] Create option ProfIdx are mandatory to validate a invoice
   
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
@@ -24,7 +25,7 @@ For developers:
 - A mymodule can bring its own core/modules/mymodule/modules_mymodule.php file.
 - Removed not used libraries.
 - More web services. 
-- Renamed some french fields into english.
+- Renamed some database fields, code variables and parameters from french to english.
 - First change to manage margins on contracts.
 - Add hook getFormMail.
 
