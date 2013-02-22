@@ -50,6 +50,7 @@ alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;
+alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'COLUPS','UPS','United Parcel Service',0);
