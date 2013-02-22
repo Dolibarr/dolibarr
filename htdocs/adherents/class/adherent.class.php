@@ -54,7 +54,7 @@ class Adherent extends CommonObject
     var $address;
     var $cp;
     var $zip;
-    var $ville;
+    //var $ville;  // deprecated
     var $town;
 
     var $state_id;              // Id of department
@@ -234,7 +234,7 @@ class Adherent extends CommonObject
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
 				'%ADDRESS%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
 				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+				'%TOWN%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
 
@@ -405,7 +405,7 @@ class Adherent extends CommonObject
 		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->prenom);
 		$this->address=($this->address?$this->address:$this->address);
 		$this->zip=($this->zip?$this->zip:$this->cp);
-		$this->town=($this->town?$this->town:$this->ville);
+		$this->town=($this->town?$this->town:$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
@@ -430,7 +430,7 @@ class Adherent extends CommonObject
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
         $sql.= ", cp="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
-        $sql.= ", ville="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
+        $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
@@ -1018,7 +1018,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.cp as zip, d.ville as town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.cp as zip, d.town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1067,7 +1067,7 @@ class Adherent extends CommonObject
                 $this->address			= $obj->address;
                 $this->cp				= $obj->zip;		// deprecated
                 $this->zip				= $obj->zip;
-                $this->ville			= $obj->town;	    // deprecated
+                //$this->ville			= $obj->town;	    // deprecated
                 $this->town				= $obj->town;
 
                 $this->state_id			= $obj->fk_departement;
@@ -1824,7 +1824,7 @@ class Adherent extends CommonObject
         if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))      $info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
         if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
         if ($this->cp && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->cp;
-        if ($this->ville && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))       $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->ville;
+        if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))        $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
         if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
         if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
         if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
