@@ -46,7 +46,7 @@ alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address 
 alter table llx_don      CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
 
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'COLUPS','UPS','United Parcel Service',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'COLKIALA','KIALA','Relais Kiala',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'COLGLS','GLS','General Logistics Systems',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'COLCHRONO','Chronopost','Chronopost',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'UPS','UPS','United Parcel Service',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'KIALA','KIALA','Relais Kiala',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'GLS','GLS','General Logistics Systems',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'CHRONO','Chronopost','Chronopost',0);
