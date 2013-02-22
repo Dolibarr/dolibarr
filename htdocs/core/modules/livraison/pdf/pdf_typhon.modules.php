@@ -214,7 +214,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?22:10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -252,7 +252,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
@@ -355,12 +355,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0);
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1);
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
@@ -472,35 +472,43 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// Rect prend une longueur en 3eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 		// line prend une position y en 3eme param
-		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+		if (empty($hidetop))
+			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
+			$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
+		}
 
 		// Modif SEB pour avoir une col en plus pour les commentaires clients
 		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxcomm, $tab_top+1);
-		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Comments"),'','L');
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->posxcomm, $tab_top+1);
+			$pdf->MultiCell(80,2, $outputlangs->transnoentities("Comments"),'','L');
+		}
 
 		// Qty
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->posxqty-1, $tab_top+1);
+			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+		}
 
-		// Modif Seb cadres signatures
-		$pdf->SetFont('','', $default_font_size);
-		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
-		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
-		$pdf->SetXY($this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":",'','L');
+		if (empty($hidebottom)) {
+			// Modif Seb cadres signatures
+			$pdf->SetFont('','', $default_font_size);
+			$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
+			$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
+			$pdf->SetXY($this->marge_gauche + 2, $tab_top + $tab_height + 5);
+			$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":",'','L');
 
-		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
-		$pdf->SetXY(2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
-		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
-
+			$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
+			$pdf->SetXY(2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
+			$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
+		}
 	}
 
 	/**
