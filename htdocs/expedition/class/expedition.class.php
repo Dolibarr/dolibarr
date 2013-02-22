@@ -1170,10 +1170,10 @@ class Expedition extends CommonObject
 
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
-     *
+     *  @param  id      $id     only this carrier, all if none
      *  @return void
      */
-    function all_delivery_methods()
+    function list_delivery_methods($id='')
     {
         global $langs;
         $listmeths = array();
@@ -1181,6 +1181,7 @@ class Expedition extends CommonObject
 
         $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+        if ($id) $sql.= " WHERE em.rowid=".$id;
 
         $resql = $this->db->query($sql);
         if ($resql)
