@@ -1,3 +1,4 @@
+alter table llx_contratdet add column fk_product_fournisseur_price integer after info_bits;
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
@@ -50,3 +51,6 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'KIALA','KIALA','Relais Kiala',0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'GLS','GLS','General Logistics Systems',0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'CHRONO','Chronopost','Chronopost',0);
+
+ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'EDIT','EDITABLE','Transporteur Modifiable','http://www.website.com/dir/{TRACKID}',0);

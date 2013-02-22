@@ -105,11 +105,12 @@ print_titre($langs->trans("CarrierList"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Code").'</td>';
-print '<td width="200">'.$langs->trans("Name").'</td>';
+print '<td width="80">'.$langs->trans("Code").'</td>';
+print '<td width="150">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("TracingUrl").'</td>';
+print '<td>'.$langs->trans("TrackingUrl").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="30">'.$langs->trans("Edit").'</td>';
 print "</tr>\n";
 for ($i=0; $i<sizeof($object->listmeths); $i++)
 {
@@ -118,8 +119,8 @@ for ($i=0; $i<sizeof($object->listmeths); $i++)
     print '<td>'.$object->listmeths[$i][code].'</td>';
     print '<td>'.$object->listmeths[$i][libelle].'</td>';
     print '<td>'.$object->listmeths[$i][description].'</td>';
-    print '<td>'.$object->listmeths[$i][tracing].'</td>';
-    print '<td>';
+    print '<td>'.$object->listmeths[$i][tracking].'</td>';
+    print '<td align="center">';
     if($object->listmeths[$i][active] == 0)
     {
         print '<a href="carrier.php?action=activate_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
@@ -128,8 +129,17 @@ for ($i=0; $i<sizeof($object->listmeths); $i++)
     {
         print '<a href="carrier.php?action=disable_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
     }
+    print '</td><td align="center">';
+    if($object->listmeths[$i][editable] == 1)
+    {
+        print '<a href="carrier.php?action=edit_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Edit"),'edit').'</a>';
+    }
+    else
+    {
+        print '&nbsp;';
+    }
+    print '</td>';
 }
-print '</td>';
 print "</tr>\n";
 
 print '</table><br>';
