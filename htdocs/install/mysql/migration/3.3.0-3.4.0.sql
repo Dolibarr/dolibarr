@@ -31,6 +31,7 @@ UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.p
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
 UPDATE llx_const set value='MAIN_INFO_SOCIETE_ADDRESS' where value='MAIN_INFO_SOCIETE_ADRESSE';
+UPDATE llx_const set value='MAIN_INFO_SOCIETE_TOWN' where value='MAIN_INFO_SOCIETE_VILLE';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 

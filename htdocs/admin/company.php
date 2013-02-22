@@ -66,7 +66,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS",$_POST["address"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN",$_POST["town"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DEPARTEMENT",$_POST["departement_id"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"],'chaine',0,'',$conf->entity);
@@ -284,7 +284,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
-    print '<input name="ville" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_VILLE?$conf->global->MAIN_INFO_SOCIETE_VILLE:$_POST["ville"]) . '"></td></tr>'."\n";
+    print '<input name="town" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN:$_POST["town"]) . '"></td></tr>'."\n";
 
     // Country
     $var=!$var;
@@ -652,7 +652,7 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyZip").'</td><td>' . (empty($conf->global->MAIN_INFO_SOCIETE_CP)?'':$conf->global->MAIN_INFO_SOCIETE_CP) . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyTown").'</td><td>' . (empty($conf->global->MAIN_INFO_SOCIETE_VILLE)?'':$conf->global->MAIN_INFO_SOCIETE_VILLE) . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyTown").'</td><td>' . (empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN) . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
