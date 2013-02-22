@@ -1,4 +1,3 @@
-alter table llx_contratdet add column fk_product_fournisseur_price integer after info_bits;
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
