@@ -228,7 +228,7 @@ print '<td valign="top" width="70%" class="notopnoleftnoright">';
  * List last modified supliers
  */
 $max=10;
-$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
+$sql = "SELECT s.rowid as socid, s.nom, s.town, s.datec, s.datea, s.tms, s.prefix_comm, s.code_fournisseur, s.code_compta_fournisseur";
 $sql.= ", st.libelle as stcomm";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
