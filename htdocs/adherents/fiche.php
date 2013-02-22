@@ -262,7 +262,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->address     = trim($_POST["address"]);
 		$object->cp          = trim($_POST["zipcode"]);    // deprecated
 		$object->zip         = trim($_POST["zipcode"]);
-		$object->ville       = trim($_POST["town"]);       // deprecated
+		//$object->ville       = trim($_POST["town"]);       // deprecated
 		$object->town        = trim($_POST["town"]);
 		$object->state_id    = $_POST["departement_id"];
 		$object->country_id  = $_POST["country_id"];
@@ -442,7 +442,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->address     = $address;
 	$object->cp          = $zip;     // deprecated
 	$object->zip         = $zip;
-	$object->ville       = $town;    // deprecated
+	//$object->ville       = $town;    // deprecated
 	$object->town        = $town;
 	$object->fk_departement = $state_id;
 	$object->state_id    = $state_id;

@@ -105,7 +105,7 @@ if ($sall)
 	if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
 	$sql.=" d.prenom LIKE '%".$sall."%' OR d.nom LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
 	$sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
-	$sql.=" OR d.ville LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+	$sql.=" OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 }
 if ($type > 0)
 {
