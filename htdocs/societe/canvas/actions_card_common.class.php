@@ -168,7 +168,6 @@ abstract class ActionsCardCommon
             }
             $this->object->client				= $_POST["client"];
             $this->object->fournisseur			= $_POST["fournisseur"];
-            $this->object->fournisseur_categorie	= $_POST["fournisseur_categorie"];
 
             $this->object->commercial_id		= $_POST["commercial_id"];
             $this->object->default_lang			= $_POST["default_lang"];
@@ -488,7 +487,6 @@ abstract class ActionsCardCommon
 
             	$this->object->LoadSupplierCateg();
             	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
-            	$this->tpl['select_suppliercategory'] = $form->selectarray("fournisseur_categorie",$this->object->SupplierCategories,$_POST["fournisseur_categorie"],1);
             }
 
             // Zip
