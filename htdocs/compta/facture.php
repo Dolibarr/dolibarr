@@ -1503,11 +1503,9 @@ else if ($action == 'builddoc')	// En get ou en post
     $object->fetch($id);
     $object->fetch_thirdparty();
 
-    if (GETPOST('model'))
-    {
-        $object->setDocModel($user, GETPOST('model'));
-    }
-
+    if (GETPOST('model'))   $object->setDocModel($user, GETPOST('model'));
+	if (GETPOST('fk_bank')) $object->fk_bank=GETPOST('fk_bank');
+	
     // Define output language
     $outputlangs = $langs;
     $newlang='';
