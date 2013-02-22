@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,9 +98,9 @@ if ($rowid > 0)
 	}
 }
 
-// Define variables to know what current user can do on members
+// Define variables to determine what the current user can do on the members
 $canaddmember=$user->rights->adherent->creer;
-// Define variables to know what current user can do on properties of a member
+// Define variables to determine what the current user can do on the properties of a member
 if ($rowid)
 {
 	$caneditfieldmember=$user->rights->adherent->creer;
@@ -259,7 +259,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->pass        = trim($_POST["pass"]);
 
 		$object->societe     = trim($_POST["societe"]);
-		//$object->adresse     = trim($_POST["address"]);    // deprecated
 		$object->address     = trim($_POST["address"]);
 		$object->cp          = trim($_POST["zipcode"]);    // deprecated
 		$object->zip         = trim($_POST["zipcode"]);
@@ -440,7 +439,6 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->firstname   = $prenom;
 	$object->lastname    = $nom;
 	$object->societe     = $societe;
-	//$object->adresse     = $address; // deprecated
 	$object->address     = $address;
 	$object->cp          = $zip;     // deprecated
 	$object->zip         = $zip;

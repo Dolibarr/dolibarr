@@ -565,6 +565,7 @@ ThisLimitIsDefinedInSetup=Límit Dolibarr (Menú inici-configuració-seguretat):
 NoFileFound=No hi ha documents guardats en aquesta carpeta
 CurrentUserLanguage=Idioma actual
 CurrentTheme=Tema actual
+CurrentMenuManager=Gestor menú actual
 DisabledModules=Mòduls desactivats
 For=Per a
 ForCustomer=Per a client

@@ -26,8 +26,7 @@
 
 
 /**
- *	\class      DoliDBSqlite
- *	\brief      Class to manage Dolibarr database access for a Sqlite database
+ *	Class to manage Dolibarr database access for a Sqlite database
  */
 class DoliDBSqlite
 {
