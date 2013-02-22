@@ -64,7 +64,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->iban_prefix     = trim($_POST["iban_prefix"]);	// deprecated
 	$account->domiciliation   = trim($_POST["domiciliation"]);
 	$account->proprio 	      = trim($_POST["proprio"]);
-	$account->adresse_proprio = trim($_POST["adresse_proprio"]);
+	$account->owner_address   = trim($_POST["owner_address"]);
 	$account->fk_departement  = trim($_POST["fk_departement"]);
 	//$account->fk_pays         = trim($_POST["fk_pays"]);		// We do not change this.
 
@@ -223,7 +223,7 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 		print "</td></tr>\n";
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-		print nl2br($account->adresse_proprio);
+		print nl2br($account->owner_address);
 		print "</td></tr>\n";
 
 	}
@@ -368,8 +368,8 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
-		print "<textarea class=\"flat\" name=\"adresse_proprio\" rows=\"2\" cols=\"40\">";
-		print $account->adresse_proprio;
+		print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
+		print $account->owner_address;
 		print "</textarea></td></tr>";
 
 	}
