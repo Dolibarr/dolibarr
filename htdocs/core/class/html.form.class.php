@@ -825,11 +825,12 @@ class Form
      *	@param	string	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	bool	$options_only	Return options only (for ajax treatment)
      *	@return	int						<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $event=array())
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $event=array(), $options_only=false)
     {
-    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $showsoc, $forcecombo, $event);
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $event);
     	return $this->num;
     }
 
@@ -877,7 +878,7 @@ class Form
         {
             $num=$this->db->num_rows($resql);
 
-            if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo)
+            if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo && ! $options_only)
             {
             	$out.= ajax_combobox($htmlname, $event);
             }
