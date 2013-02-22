@@ -29,11 +29,12 @@
 --
 -- Sending method
 --
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (1,'CATCH','Catch','Catch by client',1);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (2,'TRANS','Transporter','Generic transporter',1);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'COLUPS','UPS','United Parcel Service',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'COLKIALA','KIALA','Relais Kiala',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'COLGLS','GLS','General Logistics Systems',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'COLCHRONO','Chronopost','Chronopost',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (1,'CATCH','Catch','Catch by client','',1);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (2,'TRANS','Transporter','Generic transporter','',1);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi','',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max','',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (5,'UPS','UPS','United Parcel Service','',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (6,'KIALA','KIALA','Relais Kiala','',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (7,'GLS','GLS','General Logistics Systems','',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (8,'CHRONO','Chronopost','Chronopost','',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'EDIT','EDITABLE','Transporteur Modifiable','http://www.website.com/dir/{TRACKID}',0);

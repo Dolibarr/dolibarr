@@ -201,6 +201,10 @@ $head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 $head[$h][1] = $langs->trans("Setup");
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT."/admin/carrier.php";
+$head[$h][1] = $langs->trans("Carriers");
+$h++;
+
 $head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 $head[$h][1] = $langs->trans("Sending");
 $hselected=$h;
@@ -208,9 +212,9 @@ $h++;
 
 if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
-	$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-	$head[$h][1] = $langs->trans("Receivings");
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
+    $head[$h][1] = $langs->trans("Receivings");
+    $h++;
 }
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
