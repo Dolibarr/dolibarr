@@ -25,7 +25,7 @@ For developers:
 - A mymodule can bring its own core/modules/mymodule/modules_mymodule.php file.
 - Removed not used libraries.
 - More web services. 
-- Renamed some french fields into english.
+- Renamed some database fields, code variables and parameters from french to english.
 - First change to manage margins on contracts.
 - Add hook getFormMail.
 
