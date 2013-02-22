@@ -49,6 +49,7 @@ alter table llx_don      CHANGE COLUMN adresse address text;
 alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN ville town text;
+alter table llx_entrepot CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;
 alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
