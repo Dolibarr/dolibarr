@@ -39,8 +39,8 @@ class Don extends CommonObject
     var $ref;
     var $date;
     var $amount;
-    var $prenom;
-    var $nom;
+    var $firstname;
+    var $lastname;
     var $societe;
     var $address;
     var $cp;
@@ -181,8 +181,8 @@ class Don extends CommonObject
         $this->id=0;
         $this->ref = 'SPECIMEN';
         $this->specimen=1;
-        $this->nom = 'Doe';
-        $this->prenom = 'John';
+        $this->lastname = 'Doe';
+        $this->firstname = 'John';
         $this->socid = 1;
         $this->date = dol_now();
         $this->amount = 100;
@@ -210,7 +210,7 @@ class Don extends CommonObject
 
         if (dol_strlen(trim($this->societe)) == 0)
         {
-            if ((dol_strlen(trim($this->nom)) + dol_strlen(trim($this->prenom))) == 0)
+            if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0)
             {
                 $error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
                 $err++;
@@ -310,8 +310,8 @@ class Don extends CommonObject
         $sql.= ", entity";
         $sql.= ", amount";
         $sql.= ", fk_paiement";
-        $sql.= ", prenom";
-        $sql.= ", nom";
+        $sql.= ", firstname";
+        $sql.= ", lastname";
         $sql.= ", societe";
         $sql.= ", address";
         $sql.= ", cp";
@@ -331,8 +331,8 @@ class Don extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
         $sql.= ", ".($this->modepaiementid?$this->modepaiementid:"null");
-        $sql.= ", '".$this->db->escape($this->prenom)."'";
-        $sql.= ", '".$this->db->escape($this->nom)."'";
+        $sql.= ", '".$this->db->escape($this->firstname)."'";
+        $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
         $sql.= ", '".$this->db->escape($this->address)."'";
         $sql.= ", '".$this->db->escape($this->zip)."'";
@@ -391,8 +391,8 @@ class Don extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
         $sql .= ",fk_paiement = ".($this->modepaiementid?$this->modepaiementid:"null");
-        $sql .= ",prenom = '".$this->db->escape($this->prenom)."'";
-        $sql .= ",nom='".$this->db->escape($this->nom)."'";
+        $sql .= ",firstname = '".$this->db->escape($this->firstname)."'";
+        $sql .= ",lastname='".$this->db->escape($this->lastname)."'";
         $sql .= ",societe='".$this->db->escape($this->societe)."'";
         $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",cp='".$this->db->escape($this->zip)."'";
@@ -463,7 +463,7 @@ class Don extends CommonObject
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
-        $sql.= " d.prenom, d.nom, d.societe, d.amount, d.fk_statut, d.address, d.cp, d.town, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
+        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.cp, d.town, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
@@ -483,8 +483,8 @@ class Don extends CommonObject
                 $this->datec          = $this->db->jdate($obj->datec);
                 $this->datem          = $this->db->jdate($obj->datem);
                 $this->date           = $this->db->jdate($obj->datedon);
-                $this->prenom         = $obj->prenom;
-                $this->nom            = $obj->nom;
+                $this->firstname      = $obj->firstname;
+                $this->lastname       = $obj->lastname;
                 $this->societe        = $obj->societe;
                 $this->statut         = $obj->fk_statut;
                 $this->address        = $obj->address;

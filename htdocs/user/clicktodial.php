@@ -102,9 +102,9 @@ if ($id > 0)
     print '<td colspan="2">'.$fuser->lastname.'</td>';
     print "</tr>\n";
 
-    // Prenom
+    // Firstname
     print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-    print '<td colspan="2">'.$fuser->name.'</td>';
+    print '<td colspan="2">'.$fuser->firstname.'</td>';
     print "</tr>\n";
 
     print "</table>\n";

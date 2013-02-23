@@ -40,7 +40,7 @@ $statut=GETPOST("statut");
 $search=GETPOST("search");
 $search_ref=GETPOST("search_ref");
 $search_lastname=GETPOST("search_lastname");
-$search_prenom=GETPOST("search_prenom");
+$search_firstname=GETPOST("search_firstname");
 $search_login=GETPOST("search_login");
 $type=GETPOST("type");
 $search_email=GETPOST("search_email");
@@ -63,7 +63,7 @@ if (GETPOST("button_removefilter"))
     $search="";
 	$search_ref="";
     $search_lastname="";
-	$search_prenom="";
+	$search_firstname="";
 	$search_login="";
 	$type="";
 	$search_email="";
@@ -86,7 +86,7 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $now=dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.lastname, d.prenom as firstname, d.societe as company, d.fk_soc,";
+$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
@@ -103,7 +103,7 @@ if ($sall)
 {
 	$sql.=" AND (";
 	if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
-	$sql.=" d.prenom LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+	$sql.=" d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
 	$sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
 	$sql.=" OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 }
@@ -122,7 +122,7 @@ if ($search_ref)
 }
 if ($search_lastname)
 {
-	$sql.= " AND (d.prenom LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
+	$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
 }
 if ($search_login)
 {

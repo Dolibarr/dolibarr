@@ -64,7 +64,7 @@ abstract class CommonObject
         $lastname=$this->lastname;
         $firstname=$this->firstname;
         if (empty($lastname))  $lastname=($this->name?$this->name:$this->nom);
-        if (empty($firstname)) $firstname=$this->prenom;
+        if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';
         if ($option && $this->civilite_id)

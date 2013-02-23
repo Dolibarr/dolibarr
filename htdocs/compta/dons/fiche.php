@@ -85,8 +85,8 @@ if ($action == 'update')
 	{
 		$don->fetch($id);
 
-		$don->prenom      = $_POST["prenom"];
-		$don->nom         = $_POST["nom"];
+		$don->firstname   = $_POST["firstname"];
+		$don->lastname    = $_POST["lastname"];
 		$don->societe     = $_POST["societe"];
 		$don->address     = $_POST["address"];
 		$don->amount      = price2num($_POST["amount"]);
@@ -137,8 +137,8 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-		$don->prenom      = $_POST["prenom"];
-		$don->nom         = $_POST["nom"];
+		$don->firstname   = $_POST["firstname"];
+		$don->lastname    = $_POST["lastname"];
 		$don->societe     = $_POST["societe"];
 		$don->address     = $_POST["address"];
 		$don->amount      = price2num($_POST["amount"]);
@@ -297,8 +297,8 @@ if ($action == 'create')
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.$_POST["societe"].'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" value="'.$_POST["prenom"].'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.$_POST["nom"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.$_POST["firstname"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.$_POST["lastname"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="address" wrap="soft" cols="40" rows="3">'.$_POST["address"].'</textarea></td></tr>';
 
@@ -387,8 +387,8 @@ if (! empty($id) && $action == 'edit')
 
 	$langs->load("companies");
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$don->societe.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.$don->prenom.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.$don->firstname.'"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.$don->lastname.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="address" wrap="soft" cols="40" rows="'.ROWS_3.'">'.$don->address.'</textarea></td></tr>';
 
@@ -483,8 +483,8 @@ if (! empty($id) && $action != 'edit')
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td>'.$don->societe.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td>'.$don->prenom.'</td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td>'.$don->nom.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td>'.$don->firstname.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td>'.$don->lastname.'</td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>'.dol_nl2br($don->address).'</td></tr>';
 
 	// Zip / Town

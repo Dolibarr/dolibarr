@@ -155,9 +155,9 @@ class modCategorie extends DolibarrModules
 		$this->export_icon[$r]='category';
         $this->export_enabled[$r]='$conf->adherent->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("adherent","lire"));
-		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'MemberId','p.nom'=>'LastName','p.prenom'=>'Firstname');
-		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.rowid'=>'List:adherent:nom','p.nom'=>'Text','p.prenom'=>'Text');
-		$this->export_entities_array[$r]=array('p.rowid'=>'member','p.nom'=>'member','p.prenom'=>'member');	// We define here only fields that use another picto
+		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'MemberId','p.lastname'=>'LastName','p.firstname'=>'Firstname');
+		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.rowid'=>'List:adherent:nom','p.lastname'=>'Text','p.firstname'=>'Text');
+		$this->export_entities_array[$r]=array('p.rowid'=>'member','p.lastname'=>'member','p.firstname'=>'member');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_member as cp, '.MAIN_DB_PREFIX.'adherent as p';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
