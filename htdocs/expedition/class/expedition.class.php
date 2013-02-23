@@ -1181,7 +1181,7 @@ class Expedition extends CommonObject
 
         $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-        if ($id) $sql.= " WHERE em.rowid=".$id;
+        if ($id!='') $sql.= " WHERE em.rowid=".$id;
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -1196,8 +1196,6 @@ class Expedition extends CommonObject
                 if ($obj->tracking)
                 {
                     $this->listmeths[$i][tracking] = $obj->tracking;
-                    // editable or hardcoded
-                    $this->listmeths[$i][editable] = 1;
                 }
                 else
                 {
@@ -1217,6 +1215,32 @@ class Expedition extends CommonObject
                 $i++;
             }
         }
+    }
+
+    /**
+     *  Update/create delivery method.
+     *  @param      id      $id     id method to activate
+     *  @return void
+     */
+    function update_delivery_method($id='')
+    {
+        if ($id=='')
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (rowid, code, libelle, description, tracking)";
+            $sql.=" VALUES ('','".$this->update[code]."','".$this->update[libelle]."','".$this->update[description]."','".$this->update[tracking]."')";
+            $resql = $this->db->query($sql);
+        }
+        else
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
+            $sql.= " code='".$this->update[code]."'";
+            $sql.= ",libelle='".$this->update[libelle]."'";
+            $sql.= ",description='".$this->update[description]."'";
+            $sql.= ",tracking='".$this->update[tracking]."'";
+            $sql.= " WHERE rowid=".$id;
+            $resql = $this->db->query($sql);
+        }
+
     }
 
     /**

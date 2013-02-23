@@ -52,4 +52,9 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'CHRONO','Chronopost','Chronopost',0);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'EDIT','EDITABLE','Transporteur Modifiable','http://www.website.com/dir/{TRACKID}',0);
+ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('UPS','UPS','United Parcel Service','http://wwwapps.ups.com/etracking/tracking.cgi?InquiryNumber2=&InquiryNumber3=&tracknums_displayed=3&loc=fr_FR&TypeOfInquiryNumber=T&HTMLVersion=4.0&InquiryNumber22=&InquiryNumber32=&track=Track&Suivi.x=64&Suivi.y=7&Suivi=Valider&InquiryNumber1={TRACKID}',0);
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('KIALA','KIALA','Relais Kiala','http://www.kiala.fr/tnt/delivery/{TRACKID}',0);
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('GLS','GLS','General Logistics Systems','http://www.gls-group.eu/276-I-PORTAL-WEB/content/GLS/FR01/FR/5004.htm?txtAction=71000&txtRefNo={TRACKID}',0);
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('CHRONO','Chronopost','Chronopost','http://www.chronopost.fr/expedier/inputLTNumbersNoJahia.do?listeNumeros={TRACKID}',0);
