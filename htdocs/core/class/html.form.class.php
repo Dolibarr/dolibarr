@@ -860,7 +860,7 @@ class Form
         $out='';
 
         // On recherche les societes
-        $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
+        $sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.poste";
         if ($showsoc > 0) {
         	$sql.= " , s.nom as company";
         }
@@ -870,7 +870,7 @@ class Form
         }
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
-        $sql.= " ORDER BY sp.name ASC";
+        $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts sql=".$sql);
         $resql=$this->db->query($sql);
