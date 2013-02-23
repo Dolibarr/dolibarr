@@ -34,7 +34,7 @@ class methode_expedition_ups extends ModeleShippingMethod
     { 
         $this->db = $db;
         $this->id = 5;          // Do not change this value
-        $this->code = "COLUPS"; // Do not change this value
+        $this->code = "UPS";    // Do not change this value
         $this->name = "UPS";
         $this->description = "United Parcel Service";
     }
