@@ -139,7 +139,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
