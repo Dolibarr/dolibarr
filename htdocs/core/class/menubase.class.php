@@ -391,12 +391,6 @@ class Menubase
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-        // Load datas into tabMenu
-        if (count($tabMenu) == 0)
-        {
-            $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
-        }
-
         $newTabMenu=array();
         if (is_array($tabMenu))
         {
@@ -431,13 +425,6 @@ class Menubase
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-        // Load datas from database into $tabMenu, later we will complete this->newmenu with values into $tabMenu
-        if (count($tabMenu) == 0)	// To avoid to read into database a second time
-        {
-            $this->menuLoad($mainmenu, $leftmenu, $type_user, $menu_handler, $tabMenu);
-        }
-        //var_dump($tabMenu); exit;
-
         if (is_array($tabMenu))
         {
             $menutopid='';
@@ -451,11 +438,10 @@ class Menubase
                 }
             }
 
-            // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed
-            $this->recur($tabMenu, $menutopid, 1, $leftmenu);
-            //var_dump($this->newmenu->liste);exit;
+            // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
+            $this->recur($tabMenu, $menutopid, 1);
 
-            // Update fk_menu when value is -1 (left menu added by modules with no top menu)
+            // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
             foreach($tabMenu as $key => $val)
             {
                 //var_dump($tabMenu);
@@ -466,7 +452,7 @@ class Menubase
 
                     if (empty($val['fk_leftmenu']))
                     {
-                        $this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+                        $this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);	// TODO Add position
                         //var_dump($this->newmenu->liste);
                     }
                     else
@@ -515,7 +501,7 @@ class Menubase
      *  @param  array	&$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
-    private function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
         global $mainmenu, $leftmenu; // To export to dol_eval function
@@ -651,9 +637,8 @@ class Menubase
         for ($x = 0; $x < $num; $x++)
         {
             //si un element a pour pere : $pere
-            if ($tab[$x]['fk_menu'] == $pere && $tab[$x]['enabled'])
+            if ( (($tab[$x]['fk_menu'] >= 0 && $tab[$x]['fk_menu'] == $pere)) && $tab[$x]['enabled'])
             {
-                //print 'mainmenu='.$tab[$x]['mainmenu'];
                 $this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level-1), $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu']);
                 $this->recur($tab, $tab[$x]['rowid'], ($level+1));
             }

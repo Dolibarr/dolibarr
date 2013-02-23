@@ -32,7 +32,9 @@ class MenuSmart
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 	var $name="smartphone";
 	
-
+	var $tabMenu;
+	
+	
 	/**
 	 *	Constructor
 	 *
@@ -41,7 +43,52 @@ class MenuSmart
 	 */
 	function __construct($db, $type_user)
 	{
+    	$this->type_user=$type_user;
 		$this->db=$db;
+		
+		// On sauve en session le menu principal choisi
+		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+		 
+		// Read mainmenu and leftmenu that define which menu to show
+		if (isset($_GET["mainmenu"]))
+		{
+			// On sauve en session le menu principal choisi
+			$mainmenu=$_GET["mainmenu"];
+			$_SESSION["mainmenu"]=$mainmenu;
+			$_SESSION["leftmenuopened"]="";
+		}
+		else
+		{
+			// On va le chercher en session si non defini par le lien
+			$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
+		}
+		 
+		if (isset($_GET["leftmenu"]))
+		{
+			// On sauve en session le menu principal choisi
+			$leftmenu=$_GET["leftmenu"];
+			$_SESSION["leftmenu"]=$leftmenu;
+			 
+			if ($_SESSION["leftmenuopened"]==$leftmenu)	// To collapse
+			{
+				//$leftmenu="";
+				$_SESSION["leftmenuopened"]="";
+			}
+			else
+			{
+				$_SESSION["leftmenuopened"]=$leftmenu;
+			}
+		} else {
+			// On va le chercher en session si non defini par le lien
+			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
+		}
+		 
+		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
+		$tabMenu=array();
+		$menuArbo = new Menubase($db,'smartphone');
+		$menuArbo->menuLoad($mainmenu, $leftmenu, $type_user, 'smartphone', $tabMenu);
+		$this->tabMenu=$tabMenu;		
 	}
 
 
@@ -63,7 +110,7 @@ class MenuSmart
         	$conf->global->MAIN_SEARCHFORM_CONTACT=0;
         }
     	
-        print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$mode);
+        print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$mode,$this->tabMenu);
         
         return 1;
 	}

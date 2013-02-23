@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 	Juanjo Menent			<jmenent@2byte.es>
  *
@@ -68,7 +68,7 @@ if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->pho
         include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
     }
 
-    $menusmart = new MenuSmart($db);
+    $menusmart = new MenuSmart($db, $user->societe_id?1:0);
 
     include_once DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php';
     exit;

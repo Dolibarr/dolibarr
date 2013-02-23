@@ -21,6 +21,7 @@
  *  \file		htdocs/core/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 
 
@@ -30,22 +31,19 @@
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target
  * @param 	int		$type_user     	0=Internal,1=External,2=All
+ * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @return	void
  */
-function print_auguria_menu($db,$atarget,$type_user)
+function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
-
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
-	// On sauve en session le menu principal choisi
-	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
-	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-	$_SESSION["leftmenuopened"]="";
-
+	$mainmenu=$_SESSION["mainmenu"];
+	$leftmenu=$_SESSION["leftmenu"];
+	
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
-	$tabMenu=array();
+	//$tabMenu=array();
 	$menuArbo = new Menubase($db,'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria',$tabMenu);
 
@@ -177,45 +175,19 @@ function print_end_menu_array_auguria()
  * @param	DoliDB		$db                  Database handler
  * @param 	array		$menu_array_before   Table of menu entries to show before entries of menu handler
  * @param   array		$menu_array_after    Table of menu entries to show after entries of menu handler
+ * @param  	array		&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @return	void
  */
-function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
+function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu)
 {
     global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
     $overwritemenufor = array();
     $newmenu = new Menu();
 
-    // Read mainmenu and leftmenu that define which menu to show
-    if (isset($_GET["mainmenu"])) {
-        // On sauve en session le menu principal choisi
-        $mainmenu=$_GET["mainmenu"];
-        $_SESSION["mainmenu"]=$mainmenu;
-        $_SESSION["leftmenuopened"]="";
-    } else {
-        // On va le chercher en session si non defini par le lien
-        $mainmenu=$_SESSION["mainmenu"];
-    }
-
-    if (isset($_GET["leftmenu"])) {
-        // On sauve en session le menu principal choisi
-        $leftmenu=$_GET["leftmenu"];
-        $_SESSION["leftmenu"]=$leftmenu;
-        if ($_SESSION["leftmenuopened"]==$leftmenu) {
-            //$leftmenu="";
-            $_SESSION["leftmenuopened"]="";
-        }
-        else {
-            $_SESSION["leftmenuopened"]=$leftmenu;
-        }
-    } else {
-        // On va le chercher en session si non defini par le lien
-        $leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
-    }
-
-    //this->menu_array contains menu in pre.inc.php
-
-
+    $mainmenu=$_SESSION["mainmenu"];
+    $leftmenu=$_SESSION["leftmenu"];
+    
     // Show logo company
     if (! empty($conf->global->MAIN_SHOW_LOGO))
     {
@@ -235,35 +207,12 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
         }
     }
 
-	// Modules system tools
-	// TODO Find a way to add parent menu only if child menu exists. For the moment, no ther method than hard coded methods.
-    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
-    {
-    	if (empty($user->societe_id))
-    	{
-	       	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
-	       	if ($leftmenu=="modulesadmintools" && $user->admin)
-	       	{
-	    		$langs->load("products");
-	       		$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
-	      	}
-    	}
-    }
-
     /**
      * We update newmenu with entries found into database
      * --------------------------------------------------
      */
-    if ($mainmenu)
-    {
-        require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
-
-        $tabMenu=array();
-        $menuArbo = new Menubase($db,'auguria');
-        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
-        //var_dump($newmenu);
-    }
-
+    $menuArbo = new Menubase($db,'auguria');
+    $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
 
     //var_dump($menu_array_before);exit;
     //var_dump($menu_array_after);exit;
