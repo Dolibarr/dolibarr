@@ -46,7 +46,6 @@ class User extends CommonObject
 	var $ref_ext;
 	var $ldap_sid;
 	var $search_sid;
-	var $prenom;	// TODO deprecated
 	var $lastname;
 	var $firstname;
 	var $note;
@@ -190,7 +189,6 @@ class User extends CommonObject
 
 				$this->ldap_sid 	= $obj->ldap_sid;
 				$this->lastname		= $obj->name;
-				$this->prenom 		= $obj->firstname;	// TODO deprecated
 				$this->firstname 	= $obj->firstname;
 
 				$this->login		= $obj->login;
@@ -908,7 +906,6 @@ class User extends CommonObject
 
 		// Positionne parametres
 		$this->admin		= 0;
-		$this->prenom		= $contact->prenom;	// TODO deprecated
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
 		$this->email		= $contact->email;
@@ -1087,7 +1084,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->prenom       = trim($this->prenom);  // deprecated
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->login        = trim($this->login);
@@ -1184,7 +1180,6 @@ class User extends CommonObject
 
 					if ($result >= 0)
 					{
-						$adh->prenom=$this->firstname;    // deprecated
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
 						$adh->login=$this->login;
@@ -1723,7 +1718,7 @@ class User extends CommonObject
 
 	/**
 	 *  Return a link to the user card (with optionnaly the picto)
-	 * 	Use this->id,this->lastname, this->prenom
+	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
 	 *	@param	string	$option			On what the link point to
@@ -1941,7 +1936,6 @@ class User extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 
-		$this->prenom='SPECIMEN';     // deprecated
 		$this->lastname='DOLIBARR';
 		$this->firstname='SPECIMEN';
 		$this->note='This is a note';

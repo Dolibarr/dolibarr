@@ -48,9 +48,12 @@ alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address 
 alter table llx_don      CHANGE COLUMN adresse address text;
 alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
-alter table llx_adherent CHANGE COLUMN nom lastname text;
+alter table llx_adherent CHANGE COLUMN nom lastname varchar(50);
+alter table llx_adherent CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_adherent CHANGE COLUMN ville town text;
-alter table llx_user     CHANGE COLUMN name lastname text;
+alter table llx_mailing_cibles CHANGE COLUMN nom lastname varchar(50);
+alter table llx_mailing_cibles CHANGE COLUMN prenom firstname varchar(50);
+alter table llx_user     CHANGE COLUMN name lastname varchar(50);
 alter table llx_entrepot CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;
 alter table llx_socpeople  CHANGE COLUMN ville town text;

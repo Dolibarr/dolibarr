@@ -251,8 +251,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 
 		// Change values
 		$object->civilite_id = trim($_POST["civilite_id"]);
-		$object->prenom      = trim($_POST["prenom"]);     // deprecated
-		$object->firstname   = trim($_POST["prenom"]);
+		$object->firstname   = trim($_POST["firstname"]);
 		$object->lastname    = trim($_POST["lastname"]);
 		$object->login       = trim($_POST["login"]);
 		$object->pass        = trim($_POST["pass"]);
@@ -408,7 +407,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$typeid=$_POST["typeid"];
 	$civilite_id=$_POST["civilite_id"];
 	$lastname=$_POST["lastname"];
-	$prenom=$_POST["prenom"];
+	$firstname=$_POST["firstname"];
 	$societe=$_POST["societe"];
 	$address=$_POST["address"];
 	$zip=$_POST["zipcode"];
@@ -432,8 +431,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$socid=$_POST["socid"];
 
 	$object->civilite_id = $civilite_id;
-	$object->prenom      = $prenom;    // deprecated
-	$object->firstname   = $prenom;
+	$object->firstname   = $firstname;
 	$object->lastname    = $lastname;
 	$object->societe     = $societe;
 	$object->address     = $address;
@@ -502,7 +500,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
 	}
-	if ($morphy != 'mor' && (!isset($prenom) || $prenom=='')) {
+	if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
@@ -821,7 +819,7 @@ else
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(GETPOST('firstname','alpha')?GETPOST('firstname','alpha'):$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password
@@ -1078,7 +1076,7 @@ else
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password

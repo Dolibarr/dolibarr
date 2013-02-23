@@ -405,7 +405,7 @@ if ($rowid > 0)
 		
 		$now=dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.lastname, d.societe, ";
+		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 		$sql.= " t.libelle as type, t.cotisation";
@@ -415,7 +415,7 @@ if ($rowid > 0)
 		$sql.= " AND t.rowid = ".$adht->id;
 		if ($sall)
 		{
-		    $sql.= " AND (d.prenom LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+		    $sql.= " AND (d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
 		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
 		    $sql.= " OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 		}
@@ -427,12 +427,12 @@ if ($rowid > 0)
 		{
 		  if (isset($_POST['search']) && $_POST['search'] != '')
 		  {
-		    $sql.= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.lastname LIKE '%".$_POST['search']."%')";
+		    $sql.= " AND (d.firstname LIKE '%".$_POST['search']."%' OR d.lastname LIKE '%".$_POST['search']."%')";
 		  }
 		}
 		if (! empty($search_lastname))
 		{
-			$sql.= " AND (d.prenom LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
+			$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
 		}
 		if (! empty($search_login))
 		{
@@ -493,7 +493,7 @@ if ($rowid > 0)
 		    $param="&rowid=".$rowid;
 		    if (! empty($status))			$param.="&status=".$status;
 		    if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
-		    if (! empty($search_firstname))	$param.="&search_prenom=".$search_firstname;
+		    if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
 		    if (! empty($search_login))		$param.="&search_login=".$search_login;
 		    if (! empty($search_email))		$param.="&search_email=".$search_email;
 		    if (! empty($filter))			$param.="&filter=".$filter;

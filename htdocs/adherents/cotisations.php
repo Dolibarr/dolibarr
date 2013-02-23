@@ -64,7 +64,7 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 if ($msg)	print $msg.'<br>';
 
 // Liste des cotisations
-$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " c.dateadh,";
 $sql.= " c.datef,";
