@@ -654,7 +654,7 @@ if ($rowid)
      */
     if ($action != 'addsubscription' && $action != 'create_thirdparty')
     {
-        $sql = "SELECT d.rowid, d.prenom, d.lastname, d.societe,";
+        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
         $sql.= " c.rowid as crowid, c.cotisation,";
         $sql.= " c.dateadh,";
         $sql.= " c.datef,";

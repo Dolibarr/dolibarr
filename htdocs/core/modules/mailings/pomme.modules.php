@@ -146,7 +146,7 @@ class mailing_pomme extends MailingTargets
 
 		// La requete doit retourner: id, email, fk_contact, name, firstname
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
-		$sql.= " u.name as name, u.firstname as firstname, u.login, u.office_phone";
+		$sql.= " u.lastname as name, u.firstname as firstname, u.login, u.office_phone";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";

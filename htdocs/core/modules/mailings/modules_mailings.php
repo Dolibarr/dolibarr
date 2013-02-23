@@ -157,14 +157,14 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
         		$sql .= " (fk_mailing,";
         		$sql .= " fk_contact,";
-        		$sql .= " nom, prenom, email, other, source_url, source_id,";
+        		$sql .= " lastname, firstname, email, other, source_url, source_id,";
         		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
         			$sql .= " tag,";
         		}
         		$sql.= " source_type)";
         		$sql .= " VALUES (".$mailing_id.",";
         		$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$targetarray['fk_contact']."'") .",";
-        		$sql .= "'".$this->db->escape($targetarray['name'])."',";
+        		$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
         		$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
         		$sql .= "'".$this->db->escape($targetarray['email'])."',";
         		$sql .= "'".$this->db->escape($targetarray['other'])."',";

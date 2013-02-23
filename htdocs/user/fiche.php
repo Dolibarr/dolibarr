@@ -175,7 +175,7 @@ if ($action == 'add' && $canadduser)
     if (! $message)
     {
         $object->lastname		= $_POST["lastname"];
-        $object->firstname	= $_POST["prenom"];
+        $object->firstname	= $_POST["firstname"];
         $object->login		= $_POST["login"];
         $object->admin		= $_POST["admin"];
         $object->office_phone	= $_POST["office_phone"];
@@ -316,7 +316,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->oldcopy=dol_clone($object);
 
             $object->lastname	= GETPOST("lastname");
-            $object->firstname	= GETPOST("prenom");
+            $object->firstname	= GETPOST("firstname");
             $object->login		= GETPOST("login");
             $object->pass		= GETPOST("password");
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
@@ -546,8 +546,8 @@ if ($action == 'adduserldap')
         {
             foreach ($ldapusers as $key => $attribute)
             {
-                $ldap_lastname			= $attribute[$conf->global->LDAP_FIELD_NAME];
-                $ldap_prenom		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
+                $ldap_lastname		= $attribute[$conf->global->LDAP_FIELD_NAME];
+                $ldap_firstname		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
                 $ldap_login			= $attribute[$conf->global->LDAP_FIELD_LOGIN];
                 $ldap_loginsmb		= $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
                 $ldap_pass			= $attribute[$conf->global->LDAP_FIELD_PASSWORD];
@@ -708,17 +708,17 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
     print '</td></tr>';
 
-    // Prenom
+    // Firstname
     print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
     print '<td>';
-    if (! empty($ldap_prenom))
+    if (! empty($ldap_firstname))
     {
-        print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
-        print $ldap_prenom;
+        print '<input type="hidden" name="firstname" value="'.$ldap_firstname.'">';
+        print $ldap_firstname;
     }
     else
     {
-        print '<input size="30" type="text" name="prenom" value="'.GETPOST('prenom').'">';
+        print '<input size="30" type="text" name="firstname" value="'.GETPOST('firstname').'">';
     }
     print '</td></tr>';
 
@@ -1087,7 +1087,7 @@ else
 
             // Firstname
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td>'.$object->prenom.'</td>';
+            print '<td>'.$object->Firstname.'</td>';
             print '</tr>'."\n";
 
             // Position/Job
@@ -1587,12 +1587,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="prenom" value="'.$object->prenom.'">';
+                print '<input size="30" type="text" class="flat" name="Firstname" value="'.$object->Firstname.'">';
             }
             else
             {
-                print '<input type="hidden" name="prenom" value="'.$object->prenom.'">';
-                print $object->prenom;
+                print '<input type="hidden" name="Firstname" value="'.$object->Firstname.'">';
+                print $object->Firstname;
             }
             print '</td></tr>';
 

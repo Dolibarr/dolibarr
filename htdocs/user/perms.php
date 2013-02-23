@@ -261,7 +261,7 @@ print '</tr>'."\n";
 
 // Firstname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$fuser->prenom.'</td>';
+print '<td>'.$fuser->firstname.'</td>';
 print '</tr>'."\n";
 
 print '</table><br>';
