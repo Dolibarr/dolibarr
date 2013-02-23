@@ -78,7 +78,7 @@ class box_members extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT a.rowid, a.lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
+			$sql = "SELECT a.rowid, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql.= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql.= " t.cotisation";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
