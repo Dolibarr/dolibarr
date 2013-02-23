@@ -140,7 +140,7 @@ print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class
 print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr $bc[$var]>";
 print '<td>';
-print $langs->trans("Name").':</td><td><input type="text" name="search_nom" class="flat" size="16">';
+print $langs->trans("Name").':</td><td><input type="text" name="search_lastname" class="flat" size="16">';
 print '</td></tr>';
 print "<tr $bc[$var]>";
 print '<td>';
@@ -205,7 +205,7 @@ $var=true;
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
+$sql = "SELECT a.rowid, a.statut, a.lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
@@ -265,7 +265,7 @@ else
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
+$sql = "SELECT a.rowid, a.statut, a.lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
 $sql.= " datefin as date_end_subscription,";
 $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";

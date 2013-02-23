@@ -46,7 +46,6 @@ class User extends CommonObject
 	var $ref_ext;
 	var $ldap_sid;
 	var $search_sid;
-	var $nom;		// TODO deprecated
 	var $prenom;	// TODO deprecated
 	var $lastname;
 	var $firstname;
@@ -190,7 +189,6 @@ class User extends CommonObject
 				$this->ref_ext 		= $obj->ref_ext;
 
 				$this->ldap_sid 	= $obj->ldap_sid;
-				$this->nom 			= $obj->name;		// TODO deprecated
 				$this->lastname		= $obj->name;
 				$this->prenom 		= $obj->firstname;	// TODO deprecated
 				$this->firstname 	= $obj->firstname;
@@ -910,7 +908,6 @@ class User extends CommonObject
 
 		// Positionne parametres
 		$this->admin		= 0;
-		$this->nom			= $contact->nom;			// TODO deprecated
 		$this->prenom		= $contact->prenom;	// TODO deprecated
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
@@ -1090,7 +1087,6 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->nom          = trim($this->nom);		// deprecated
 		$this->prenom       = trim($this->prenom);  // deprecated
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
@@ -1124,7 +1120,7 @@ class User extends CommonObject
 
 		// Mise a jour autres infos
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql.= " name = '".$this->db->escape($this->lastname)."'";
+		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", admin = ".$this->admin;
@@ -1189,7 +1185,6 @@ class User extends CommonObject
 					if ($result >= 0)
 					{
 						$adh->prenom=$this->firstname;    // deprecated
-						$adh->nom=$this->lastname;        // deprecated
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
 						$adh->login=$this->login;
@@ -1728,7 +1723,7 @@ class User extends CommonObject
 
 	/**
 	 *  Return a link to the user card (with optionnaly the picto)
-	 * 	Use this->id,this->nom, this->prenom
+	 * 	Use this->id,this->lastname, this->prenom
 	 *
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)
 	 *	@param	string	$option			On what the link point to
@@ -1887,7 +1882,7 @@ class User extends CommonObject
 			$soc = new Societe($this->db);
 			$soc->fetch($this->societe_id);
 
-			$info["o"] = $soc->nom;
+			$info["o"] = $soc->lastname;
 			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
@@ -1946,7 +1941,6 @@ class User extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 
-		$this->nom='DOLIBARR';        // deprecated
 		$this->prenom='SPECIMEN';     // deprecated
 		$this->lastname='DOLIBARR';
 		$this->firstname='SPECIMEN';
