@@ -41,17 +41,25 @@ $object = new Expedition($db);
 /*
  * Actions
  */
-if ($action==setvalue AND $carrier)
+//if ($action==setvalue AND $carrier)
+if ($action==setvalue)
 {
-    //$object->update_delivery_method($carrier);
+    // need to add check on values
+    $object->update[code]=GETPOST('code','alpha');
+    $object->update[libelle]=GETPOST('libelle','alpha');
+    $object->update[description]=GETPOST('description','alpha');
+    $object->update[tracking]=GETPOST('tracking','alpha');
+    $object->update_delivery_method($carrier);
+    header("Location: carrier.php");
+    exit;
 }
 
-if ($action==activate_carrier AND $carrier)
+if ($action==activate_carrier AND $carrier!='')
 {
     $object->activ_delivery_method($carrier);
 }
 
-if ($action==disable_carrier AND $carrier)
+if ($action==disable_carrier AND $carrier!='')
 {
     $object->disable_delivery_method($carrier);
 }
@@ -105,7 +113,7 @@ dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 if ($action=='edit_carrier' || $action=='setvalue')
 {
     // Carrier Edit
-    if ($carrier) $object->list_delivery_methods($carrier);
+    if ($carrier!='') $object->list_delivery_methods($carrier);
     print_titre($langs->trans("CarrierEdit"));
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?carrier='.$carrier.'">';
@@ -131,7 +139,7 @@ if ($action=='edit_carrier' || $action=='setvalue')
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("Name").'</td><td>';
-    print '<input size="32" type="text" name="name" value="'.$object->listmeths[0][libelle].'">';
+    print '<input size="32" type="text" name="libelle" value="'.$object->listmeths[0][libelle].'">';
     print '</td></tr>';
 
     $var=!$var;
@@ -194,14 +202,7 @@ else
             print '<a href="carrier.php?action=disable_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
         print '</td><td align="center">';
-        if($object->listmeths[$i][editable] == 1)
-        {
-            print '<a href="carrier.php?action=edit_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Edit"),'edit').'</a>';
-        }
-        else
-        {
-            print '&nbsp;';
-        }
+        print '<a href="carrier.php?action=edit_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Edit"),'edit').'</a>';
         print '</td>';
         print "</tr>\n";
     }
