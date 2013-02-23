@@ -35,7 +35,7 @@ class methode_expedition_chrono extends ModeleShippingMethod
     { 
       $this->db = $db;
       $this->id = 8;                // Do not change this value
-      $this->code = "COLCHRONO";    // Do not change this value
+      $this->code = "CHRONO";       // Do not change this value
       $this->name = "Chronopost";
       $this->description = "Chronopost";
     }

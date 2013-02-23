@@ -368,7 +368,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
     $board->load_board($user,"inactives");
     $board->warning_delay=$conf->contrat->services->inactifs->warning_delay/60/60/24;
     $board->label=$langs->trans("BoardNotActivatedServices");
-    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=0';
+    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
     $board->img=img_object($langs->trans("Contract"),"contract");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -384,7 +384,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
     $board->load_board($user,"expired");
     $board->warning_delay=$conf->contrat->services->expires->warning_delay/60/60/24;
     $board->label=$langs->trans("BoardRunningServices");
-    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired';
+    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
     $board->img=img_object($langs->trans("Contract"),"contract");
     $rowspan++;
     $dashboardlines[]=$board;

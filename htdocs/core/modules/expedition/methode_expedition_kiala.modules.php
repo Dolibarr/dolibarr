@@ -35,7 +35,7 @@ Class methode_expedition_kiala extends ModeleShippingMethod
     { 
         $this->db = $db;
         $this->id = 6;              // Do not change this value
-        $this->code = "COLKIALA";   // Do not change this value
+        $this->code = "KIALA";      // Do not change this value
         $this->name = "KIALA";
         $this->description = "KIALA";
     }
