@@ -253,7 +253,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->civilite_id = trim($_POST["civilite_id"]);
 		$object->prenom      = trim($_POST["prenom"]);     // deprecated
 		$object->firstname   = trim($_POST["prenom"]);
-		$object->lastname    = trim($_POST["nom"]);
+		$object->lastname    = trim($_POST["lastname"]);
 		$object->login       = trim($_POST["login"]);
 		$object->pass        = trim($_POST["pass"]);
 
@@ -434,7 +434,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->civilite_id = $civilite_id;
 	$object->prenom      = $prenom;    // deprecated
 	$object->firstname   = $prenom;
-	$object->lastname    = $nom;
+	$object->lastname    = $lastname;
 	$object->societe     = $societe;
 	$object->address     = $address;
 	$object->cp          = $zip;     // deprecated
