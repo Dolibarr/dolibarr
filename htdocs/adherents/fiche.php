@@ -252,7 +252,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		// Change values
 		$object->civilite_id = trim($_POST["civilite_id"]);
 		$object->prenom      = trim($_POST["prenom"]);     // deprecated
-		$object->nom         = trim($_POST["nom"]);        // deprecated
 		$object->firstname   = trim($_POST["prenom"]);
 		$object->lastname    = trim($_POST["nom"]);
 		$object->login       = trim($_POST["login"]);
@@ -262,7 +261,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->address     = trim($_POST["address"]);
 		$object->cp          = trim($_POST["zipcode"]);    // deprecated
 		$object->zip         = trim($_POST["zipcode"]);
-		//$object->ville       = trim($_POST["town"]);       // deprecated
 		$object->town        = trim($_POST["town"]);
 		$object->state_id    = $_POST["departement_id"];
 		$object->country_id  = $_POST["country_id"];
@@ -409,7 +407,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 
 	$typeid=$_POST["typeid"];
 	$civilite_id=$_POST["civilite_id"];
-	$nom=$_POST["nom"];
+	$lastname=$_POST["lastname"];
 	$prenom=$_POST["prenom"];
 	$societe=$_POST["societe"];
 	$address=$_POST["address"];
@@ -435,14 +433,12 @@ if ($action == 'add' && $user->rights->adherent->creer)
 
 	$object->civilite_id = $civilite_id;
 	$object->prenom      = $prenom;    // deprecated
-	$object->nom         = $nom;       // deprecated
 	$object->firstname   = $prenom;
 	$object->lastname    = $nom;
 	$object->societe     = $societe;
 	$object->address     = $address;
 	$object->cp          = $zip;     // deprecated
 	$object->zip         = $zip;
-	//$object->ville       = $town;    // deprecated
 	$object->town        = $town;
 	$object->fk_departement = $state_id;
 	$object->state_id    = $state_id;
@@ -501,7 +497,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
 		}
 	}
-	if (empty($nom)) {
+	if (empty($lastname)) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
@@ -821,7 +817,7 @@ else
 		print '</tr>';
 
 		// Lastname
-		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.(GETPOST('lastname','alpha')?GETPOST('lastname','alpha'):$object->lastname).'" size="40"></td>';
 		print '</tr>';
 
 		// Firstname
@@ -1077,8 +1073,8 @@ else
 		print '</td>';
 		print '</tr>';
 
-		// Name
-		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->lastname).'"></td>';
+		// Lastname
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
 		print '</tr>';
 
 		// Firstname

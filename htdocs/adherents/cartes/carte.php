@@ -61,7 +61,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     $arrayofmembers=array();
 
     // requete en prenant que les adherents a jour de cotisation
-    $sql = "SELECT d.rowid, d.prenom as firstname, d.nom as lastname, d.login, d.societe as company, d.datefin,";
+    $sql = "SELECT d.rowid, d.prenom as firstname, d.lastname, d.login, d.societe as company, d.datefin,";
     $sql.= " d.address, d.cp as zip, d.town, d.naiss, d.email, d.photo,";
     $sql.= " t.libelle as type,";
     $sql.= " p.code as country_code, p.libelle as country";
@@ -110,7 +110,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/",	// deprecated
             // For backward compatibility
             '%PRENOM%'=>$objp->firstname,
-            '%NOM%'=>$objp->lastname,
+            '%LASTNAME%'=>$objp->lastname,
             '%SOCIETE%'=>$objp->company,
             '%ADDRESS%'=>$objp->address,
             '%CP%'=>$objp->zip,

@@ -159,7 +159,7 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$member->getCivilityLabel().'&nbsp;</td>';
         print '</tr>';
 
-        // Nom
+        // Lastname
         print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$member->lastname.'&nbsp;</td>';
         print '</tr>';
 

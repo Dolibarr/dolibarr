@@ -48,6 +48,7 @@ alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address 
 alter table llx_don      CHANGE COLUMN adresse address text;
 alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
+alter table llx_adherent CHANGE COLUMN nom lastname text;
 alter table llx_adherent CHANGE COLUMN ville town text;
 alter table llx_entrepot CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;

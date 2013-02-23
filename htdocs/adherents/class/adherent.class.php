@@ -47,14 +47,12 @@ class Adherent extends CommonObject
     var $firstname;
     var $prenom;                // deprecated
     var $lastname;
-    var $nom;                   // deprecated
     var $login;
     var $pass;
     var $societe;
     var $address;
     var $cp;
     var $zip;
-    //var $ville;  // deprecated
     var $town;
 
     var $state_id;              // Id of department
@@ -230,7 +228,7 @@ class Adherent extends CommonObject
 				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
-				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'%LASTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
 				'%ADDRESS%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
 				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
@@ -401,7 +399,7 @@ class Adherent extends CommonObject
         dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass.", email=".$this->email);
 
         // Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->nom);
+		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->prenom);
 		$this->address=($this->address?$this->address:$this->address);
 		$this->zip=($this->zip?$this->zip:$this->cp);
@@ -424,7 +422,7 @@ class Adherent extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
         $sql.= " civilite = ".(!is_null($this->civilite_id)?"'".$this->civilite_id."'":"null");
         $sql.= ", prenom = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
-        $sql.= ", nom="     .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
+        $sql.= ", lastname=" .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
         $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
@@ -526,7 +524,6 @@ class Adherent extends CommonObject
                         $luser->firstname=$this->firstname;
                         $luser->lastname=$this->lastname;
                         $luser->prenom=$this->firstname;    // deprecated
-                        $luser->nom=$this->lastname;        // deprecated
                         $luser->login=$this->user_login;
                         $luser->pass=$this->pass;
                         $luser->societe_id=$this->societe;
@@ -1018,7 +1015,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.cp as zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.cp as zip, d.town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1058,7 +1055,6 @@ class Adherent extends CommonObject
                 $this->civilite_id		= $obj->civilite;
                 $this->prenom			= $obj->firstname;   // deprecated
                 $this->firstname		= $obj->firstname;
-                $this->nom				= $obj->lastname;    // deprecated
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
                 $this->pass				= $obj->pass;
@@ -1067,7 +1063,6 @@ class Adherent extends CommonObject
                 $this->address			= $obj->address;
                 $this->cp				= $obj->zip;		// deprecated
                 $this->zip				= $obj->zip;
-                //$this->ville			= $obj->town;	    // deprecated
                 $this->town				= $obj->town;
 
                 $this->state_id			= $obj->fk_departement;
@@ -1817,7 +1812,7 @@ class Adherent extends CommonObject
 
         // Member
         if ($this->fullname && ! empty($conf->global->LDAP_MEMBER_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
-        if ($this->nom && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))         $info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->nom;
+        if ($this->lastname && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))     $info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->lastname;
         if ($this->prenom && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME)) $info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->prenom;
         if ($this->login && ! empty($conf->global->LDAP_MEMBER_FIELD_LOGIN))      $info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
         if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))    $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
