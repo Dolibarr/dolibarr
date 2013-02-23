@@ -122,7 +122,7 @@
 	<td><?php echo $langs->trans('Zip'); ?></td>
 	<td><input size="6" type="text" name="cp" value="<?php echo $this->control->tpl['cp']; ?>"><?php echo $this->control->tpl['autofilltownfromzip']; ?></td>
 	<td><?php echo $langs->trans('Town'); ?></td>
-	<td><input type="text" name="ville" value="<?php echo $this->control->tpl['ville']; ?>"></td>
+	<td><input type="text" name="town" value="<?php echo $this->control->tpl['town']; ?>"></td>
 </tr>
 
 <tr>
