@@ -425,7 +425,7 @@ if ($object->id > 0)
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
 	$sql .= " , pfd.date_traite as date_traite";
 	$sql .= " , pfd.amount";
-	$sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
+	$sql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " , ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE fk_facture = ".$object->id;
@@ -516,7 +516,7 @@ if ($object->id > 0)
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande,";
 	$sql.= " pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql.= " pb.ref,";
-	$sql.= " u.rowid as user_id, u.name, u.firstname, u.login";
+	$sql.= " u.rowid as user_id, u.lastname, u.firstname, u.login";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd,";
 	$sql.= " ".MAIN_DB_PREFIX."prelevement_bons as pb,";
 	$sql.= " ".MAIN_DB_PREFIX."user as u";

@@ -576,7 +576,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
     $langs->load("boxes");
 
-	$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.km";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.km";
 	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = d.fk_user";
