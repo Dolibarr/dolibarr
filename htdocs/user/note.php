@@ -101,8 +101,8 @@ if ($id)
 	print '</td>';
 	print '</tr>';
 
-    // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$fuser->nom.'&nbsp;</td>';
+    // Lastname
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$fuser->lastname.'&nbsp;</td>';
 	print '</tr>';
 
     // Prenom
