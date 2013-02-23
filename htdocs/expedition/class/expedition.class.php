@@ -403,6 +403,11 @@ class Expedition extends CommonObject
 				$this->GetUrlTrackingStatus($obj->tracking_number);
 
 				/*
+				 * Thirparty
+				 */
+				$result=$this->fetch_thirdparty();
+				
+				/*
 				 * Lines
 				 */
 				$result=$this->fetch_lines();
