@@ -126,7 +126,7 @@ if($num == '0') {
 
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
-		print '<td>'.$user->nom.' '.$user->prenom.'</td>';
+		print '<td>'.$user->lastname.' '.$user->firstname.'</td>';
 		print '<td>'.dol_print_date($start_date,'day');
 		print '</td>';
 		print '<td>'.dol_print_date($end_date,'day');

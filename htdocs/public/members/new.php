@@ -187,7 +187,7 @@ if ($action == 'add')
         $error+=1;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Lastname"))."<br>\n";
     }
-    if (empty($_POST["prenom"]))
+    if (empty($_POST["firstname"]))
     {
         $error+=1;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Firstname"))."<br>\n";
@@ -223,8 +223,8 @@ if ($action == 'add')
         $adh = new Adherent($db);
         $adh->statut      = -1;
         $adh->public      = $_POST["public"];
-        $adh->prenom      = $_POST["prenom"];
-        $adh->nom         = $_POST["nom"];
+        $adh->firstname   = $_POST["firstname"];
+        $adh->lastname    = $_POST["lastname"];
         $adh->civilite_id = $_POST["civilite_id"];
         $adh->societe     = $_POST["societe"];
         $adh->address     = $_POST["address"];
@@ -448,9 +448,9 @@ else
 print '<tr><td>'.$langs->trans('UserTitle').'</td><td>';
 print $formcompany->select_civility(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" size="40" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="prenom" size="40" value="'.dol_escape_htmltag(GETPOST('prenom')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" size="40" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
