@@ -100,9 +100,9 @@ print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user-
 print '</td>';
 print '</tr>';
 
-// Nom
+// Lastname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-print '<td>'.$fuser->nom.'</td>';
+print '<td>'.$fuser->lastname.'</td>';
 print "</tr>\n";
 
 // Prenom

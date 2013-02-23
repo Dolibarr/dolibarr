@@ -30,6 +30,8 @@ UPDATE llx_const set value='auguria_menu.php' where value='auguria_backoffice.ph
 UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
+UPDATE llx_const set value='MAIN_INFO_SOCIETE_ADDRESS' where value='MAIN_INFO_SOCIETE_ADRESSE';
+UPDATE llx_const set value='MAIN_INFO_SOCIETE_TOWN' where value='MAIN_INFO_SOCIETE_VILLE';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
@@ -44,7 +46,15 @@ alter table llx_extrafields add column param text after pos;
 alter table llx_propal   CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
 alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
 alter table llx_don      CHANGE COLUMN adresse address text;
+alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
+alter table llx_adherent CHANGE COLUMN nom lastname text;
+alter table llx_adherent CHANGE COLUMN ville town text;
+alter table llx_user     CHANGE COLUMN name lastname text;
+alter table llx_entrepot CHANGE COLUMN ville town text;
+alter table llx_societe  CHANGE COLUMN ville town text;
+alter table llx_socpeople  CHANGE COLUMN ville town text;
+alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'COLUPS','UPS','United Parcel Service',0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'COLKIALA','KIALA','Relais Kiala',0);

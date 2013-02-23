@@ -885,7 +885,7 @@ else
         print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
         print $object->cp;
         if ($object->cp) print '&nbsp;';
-        print $object->ville.'</td></tr>';
+        print $object->town.'</td></tr>';
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';

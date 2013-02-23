@@ -193,11 +193,9 @@ if ($result >= 0)
 			$member->pass=$ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
 
 			//$member->societe;
-			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];   // deprecated
 			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
 			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP];            // deprecated
 			$member->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
-			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN];        // deprecated
 			$member->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
 			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	     // deprecated
 			$member->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];

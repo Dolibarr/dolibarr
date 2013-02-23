@@ -1049,7 +1049,6 @@ class Propal extends CommonObject
                 $this->demand_reason_id     = $obj->fk_input_reason;
                 $this->demand_reason_code   = $obj->demand_reason_code;
                 $this->demand_reason        = $obj->demand_reason;
-                //$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
                 $this->fk_address  			= $obj->fk_delivery_address;
 
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;

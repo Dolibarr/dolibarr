@@ -230,7 +230,7 @@ print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ADDRESS"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_ADDRESS?' checked="checked"':'')."></td>";
 print '</tr>';
 
-// CP
+// ZIP
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
 print '<input size="25" type="text" name="fieldzip" value="'.$conf->global->LDAP_CONTACT_FIELD_ZIP.'">';
@@ -238,7 +238,7 @@ print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ZIP"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_ZIP?' checked="checked"':'')."></td>";
 print '</tr>';
 
-// Ville
+// TOWN
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
 print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_CONTACT_FIELD_TOWN.'">';
@@ -246,7 +246,7 @@ print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_TOWN"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_CONTACT_FIELD_TOWN?' checked="checked"':'')."></td>";
 print '</tr>';
 
-// Pays
+// COUNTRY
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
 print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_CONTACT_FIELD_COUNTRY.'">';

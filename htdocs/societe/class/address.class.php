@@ -40,7 +40,6 @@ class Address
 	var $address;
 	var $cp;			// deprecated
 	var $zip;
-	var $ville;			// deprecated
 	var $town;
 	var $pays_id;		// deprecated
 	var $country_id;
@@ -271,7 +270,7 @@ class Address
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as dc';
 				$sql .= ', a.tms as date_update, a.fk_soc';
-				$sql .= ', a.cp as zip, a.ville as town, a.note, a.fk_pays as country_id, a.tel, a.fax';
+				$sql .= ', a.cp as zip, a.town, a.note, a.fk_pays as country_id, a.tel, a.fax';
 				$sql .= ', p.code as country_code, p.libelle as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
@@ -305,7 +304,6 @@ class Address
 
 						// deprecated
 						$line->cp				= $line->zip;
-						$line->ville			= $line->town;
 						$line->pays_id			= $line->country_id;
 						$line->pays_code		= $line->country_code;
 						$line->pays				= $line->country;
@@ -350,7 +348,7 @@ class Address
 
 		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation';
 		$sql .= ', a.tms as date_update';
-		$sql .= ', a.cp as zip, a.ville as town, a.note, a.fk_pays as country_id, a.tel, a.fax';
+		$sql .= ', a.cp as zip, a.town, a.note, a.fk_pays as country_id, a.tel, a.fax';
 		$sql .= ', p.code as country_code, p.libelle as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
@@ -384,7 +382,6 @@ class Address
 
 				// deprecated
 				$this->cp				= $this->zip;
-				$this->ville			= $this->town;
 				$this->pays_id			= $this->country_id;
 				$this->pays_code		= $this->country_code;
 				$this->pays				= $this->country;

@@ -64,7 +64,7 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 if ($msg)	print $msg.'<br>';
 
 // Liste des cotisations
-$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as lastname, d.societe,";
+$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.lastname, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " c.dateadh,";
 $sql.= " c.datef,";
@@ -96,7 +96,7 @@ if ($result)
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.lastname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Login"),"cotisations.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield,$sortorder);
     if (! empty($conf->banque->enabled))
@@ -141,7 +141,7 @@ if ($result)
         // Ref
         print '<td>'.$cotisation->getNomUrl(1).'</td>';
 
-        // Nom
+        // Lastname
         print '<td>'.$adherent->getNomUrl(1).'</td>';
 
         // Login
