@@ -463,7 +463,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu)
 				{
 					if (! preg_match('/\?/',$url)) $url.='?';
 					else $url.='&';
-					$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
+					$url.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
 				}
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 			}
@@ -617,7 +617,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                 $langs->load("help");
 
                 // Setup
-                $newmenu->add("/admin/index.php?mainmenu=home&leftmenu=setup", $langs->trans("Setup"), 0, 1, '', $mainmenu, 'setup');
+                $newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, 1, '', $mainmenu, 'setup');
                 if ($leftmenu=="setup")
                 {
                 	$warnpicto='';
@@ -652,38 +652,38 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                 }
 
                 // System tools
-                $newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
+                $newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
                 if (preg_match('/^admintools/',$leftmenu))
                 {
-                	$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
-                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('Modules'), 2);
-                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('Triggers'), 2);
-                	$newmenu->add('/admin/system/os.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoOS'), 1);
-                	$newmenu->add('/admin/system/web.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
-                	$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoPHP'), 1);
+                	$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
+                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Modules'), 2);
+                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&amp;leftmenu=admintools_info', $langs->trans('Triggers'), 2);
+                	$newmenu->add('/admin/system/os.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoOS'), 1);
+                	$newmenu->add('/admin/system/web.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
+                	$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
                 	//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
-                	$newmenu->add('/admin/system/database.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
+                	$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
 
-                    $newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&leftmenu=admintools", $langs->trans("Backup"),1);
-                    $newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&leftmenu=admintools", $langs->trans("Restore"),1);
-                    $newmenu->add("/admin/tools/update.php?mainmenu=home&leftmenu=admintools", $langs->trans("MenuUpgrade"),1);
-                    if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home&leftmenu=admintools", $langs->trans("EAccelerator"),1);
-                    $newmenu->add("/admin/tools/listevents.php?mainmenu=home&leftmenu=admintools", $langs->trans("Audit"),1);
-                    $newmenu->add("/admin/tools/listsessions.php?mainmenu=home&leftmenu=admintools", $langs->trans("Sessions"),1);
-                    $newmenu->add("/admin/tools/purge.php?mainmenu=home&leftmenu=admintools", $langs->trans("Purge"),1);
-                    $newmenu->add('/admin/system/about.php?mainmenu=home&leftmenu=admintools', $langs->trans('About'), 1);
-                    $newmenu->add("/support/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
+                    $newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"),1);
+                    $newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"),1);
+                    $newmenu->add("/admin/tools/update.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("MenuUpgrade"),1);
+                    if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("EAccelerator"),1);
+                    $newmenu->add("/admin/tools/listevents.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Audit"),1);
+                    $newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"),1);
+                    $newmenu->add("/admin/tools/purge.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Purge"),1);
+                    $newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('About'), 1);
+                    $newmenu->add("/support/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
                 }
 				// Modules system tools
                 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
 	            {
 			    	if (empty($user->societe_id))
 			    	{
-		            	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
+		            	$newmenu->add("/admin/tools/index.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
 		            	if ($leftmenu=="modulesadmintools" && $user->admin)
 		            	{
 		            		$langs->load("products");
-		            		$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+		            		$newmenu->add("/product/admin/product_tools.php?mainmenu=home&amp;leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
 		            	}
 			    	}
 	            }
@@ -860,7 +860,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
             {
                 $langs->load("interventions");
                 $newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire, '', $mainmenu, 'ficheinter');
-                $newmenu->add("/fichinter/fiche.php?action=create&leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
+                $newmenu->add("/fichinter/fiche.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
                 $newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->rights->ficheinter->lire);
             }
 
@@ -1148,7 +1148,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
             {
                 $langs->load("sendings");
                 $newmenu->add("/expedition/index.php?leftmenu=sendings", $langs->trans("Shipments"), 0, $user->rights->expedition->lire, '', $mainmenu, 'sendings');
-                if ($leftmenu=="sendings") $newmenu->add("/expedition/fiche.php?action=create2&leftmenu=sendings", $langs->trans("NewSending"), 1, $user->rights->expedition->creer);
+                if ($leftmenu=="sendings") $newmenu->add("/expedition/fiche.php?action=create2&amp;leftmenu=sendings", $langs->trans("NewSending"), 1, $user->rights->expedition->creer);
                 if ($leftmenu=="sendings") $newmenu->add("/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1, $user->rights->expedition->lire);
                 if ($leftmenu=="sendings") $newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->rights->expedition->lire);
             }

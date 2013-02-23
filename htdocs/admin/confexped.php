@@ -84,6 +84,10 @@ $head[$h][1] = $langs->trans("Setup");
 $hselected=$h;
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT."/admin/carrier.php";
+$head[$h][1] = $langs->trans("Carriers");
+$h++;
+
 if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";

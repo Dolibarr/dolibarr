@@ -59,7 +59,10 @@ alter table llx_societe  CHANGE COLUMN ville town text;
 alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'COLUPS','UPS','United Parcel Service',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'COLKIALA','KIALA','Relais Kiala',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'COLGLS','GLS','General Logistics Systems',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'COLCHRONO','Chronopost','Chronopost',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'UPS','UPS','United Parcel Service',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'KIALA','KIALA','Relais Kiala',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'GLS','GLS','General Logistics Systems',0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'CHRONO','Chronopost','Chronopost',0);
+
+ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'EDIT','EDITABLE','Transporteur Modifiable','http://www.website.com/dir/{TRACKID}',0);

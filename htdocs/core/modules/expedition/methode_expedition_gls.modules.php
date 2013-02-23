@@ -35,7 +35,7 @@ class methode_expedition_gls extends ModeleShippingMethod
     { 
         $this->db = $db;
         $this->id = 7;          // Do not change this value
-        $this->code = "COLGLS"; // Do not change this value
+        $this->code = "GLS";    // Do not change this value
         $this->name = "GLS";
         $this->description = "General Logistics Systems";
     }
