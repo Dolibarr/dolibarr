@@ -146,7 +146,7 @@ if ($_GET["socid"])
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE sc.fk_soc =".$soc->id;
 	$sql .= " AND sc.fk_user = u.rowid";
-	$sql .= " ORDER BY u.name ASC ";
+	$sql .= " ORDER BY u.lastname ASC ";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -199,7 +199,7 @@ if ($_GET["socid"])
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-		$sql.= " ORDER BY u.name ASC ";
+		$sql.= " ORDER BY u.lastname ASC ";
 
 		$resql = $db->query($sql);
 		if ($resql)

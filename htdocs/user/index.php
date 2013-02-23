@@ -84,9 +84,9 @@ else
 if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if (! empty($search_user))
 {
-    $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.name LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
+    $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
 }
-if ($sall) $sql.= " AND (u.login LIKE '%".$db->escape($sall)."%' OR u.name LIKE '%".$db->escape($sall)."%' OR u.firstname LIKE '%".$db->escape($sall)."%' OR u.email LIKE '%".$db->escape($sall)."%' OR u.note LIKE '%".$db->escape($sall)."%')";
+if ($sall) $sql.= " AND (u.login LIKE '%".$db->escape($sall)."%' OR u.lastname LIKE '%".$db->escape($sall)."%' OR u.firstname LIKE '%".$db->escape($sall)."%' OR u.email LIKE '%".$db->escape($sall)."%' OR u.note LIKE '%".$db->escape($sall)."%')";
 $sql.=$db->order($sortfield,$sortorder);
 
 $result = $db->query($sql);
