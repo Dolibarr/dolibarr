@@ -1120,7 +1120,7 @@ class User extends CommonObject
 
 		// Mise a jour autres infos
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql.= " name = '".$this->db->escape($this->lastname)."'";
+		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", admin = ".$this->admin;

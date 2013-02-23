@@ -50,6 +50,7 @@ alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN nom lastname text;
 alter table llx_adherent CHANGE COLUMN ville town text;
+alter table llx_user     CHANGE COLUMN name lastname text;
 alter table llx_entrepot CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;
 alter table llx_socpeople  CHANGE COLUMN ville town text;
