@@ -42,7 +42,6 @@ class Contact extends CommonObject
 	var $name;         // TODO deprecated
 	var $nom;          // TODO deprecated
 	var $firstname;
-	var $prenom;       // TODO deprecated
 	var $address;
 	var $cp;	       // TODO deprecated
 	var $zip;
@@ -110,7 +109,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->lastname=$this->lastname?trim($this->lastname):$this->name;
+		$this->lastname=$this->lastname?trim($this->lastname):$this->lastname;
         $this->firstname=trim($this->firstname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
@@ -120,7 +119,7 @@ class Contact extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
-        $sql.= ", name";
+        $sql.= ", lastname";
         $sql.= ", firstname";
         $sql.= ", fk_user_creat";
 		$sql.= ", priv";
@@ -216,7 +215,7 @@ class Contact extends CommonObject
 		$this->id = $id;
 
 		// Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->name);
+		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname);
 		$this->email=trim($this->email);
 		$this->phone_pro=trim($this->phone_pro);
@@ -234,7 +233,7 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		else if ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
-		$sql .= ", name='".$this->db->escape($this->lastname)."'";
+		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
 		$sql .= ", cp='".$this->db->escape($this->zip)."'";
@@ -482,7 +481,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name as lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.cp as zip, c.town as town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -513,11 +512,7 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->civilite_id		= $obj->civilite_id;
 				$this->lastname			= $obj->lastname;
-				$this->name				= $obj->lastname;       // TODO deprecated
 				$this->firstname		= $obj->firstname;
-				$this->nom				= $obj->lastname;		// TODO deprecated
-				$this->prenom			= $obj->firstname;		// TODO deprecated
-
 				$this->address			= $obj->address;
 				$this->cp				= $obj->zip;			// TODO deprecated
 				$this->zip				= $obj->zip;
@@ -683,7 +678,7 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_name           = $obj->name;
+		$this->old_lastname       = $obj->lastname;
 		$this->old_firstname      = $obj->firstname;
 
 		$this->db->begin();
@@ -853,7 +848,7 @@ class Contact extends CommonObject
 
 	/**
 	 *  Return name of contact with link (and eventually picto)
-	 *	Use $this->id, $this->name, $this->firstname, this->civilite_id
+	 *	Use $this->id, $this->lastname, $this->firstname, this->civilite_id
 	 *
 	 *	@param		int			$withpicto		Include picto with link
 	 *	@param		string		$option			Where the link point to

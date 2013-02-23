@@ -58,6 +58,7 @@ alter table llx_mailing_cibles CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_user     CHANGE COLUMN name lastname varchar(50);
 alter table llx_entrepot CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;
+alter table llx_socpeople  CHANGE COLUMN name lastname varchar(50);
 alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 
