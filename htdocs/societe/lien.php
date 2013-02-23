@@ -193,7 +193,7 @@ if ($socid)
 		$socm = new Societe($db);
 		$socm->fetch($soc->parent);
 		print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$socm->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?" (".$socm->code_client.")":"");
-		print ($socm->ville?' - '.$socm->ville:'');
+		print ($socm->town?' - '.$socm->town:'');
 		print '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?socid='.$_GET["socid"].'&amp;delsocid='.$socm->id.'">';
 		print img_delete();
 		print '</a><br>';
@@ -233,7 +233,7 @@ if ($socid)
 
 			$title=$langs->trans("CompanyList");
 
-			$sql = "SELECT s.rowid as socid, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur,";
+			$sql = "SELECT s.rowid as socid, s.nom, s.town, s.prefix_comm, s.client, s.fournisseur,";
 			$sql.= " te.code, te.libelle";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."c_typent as te";
@@ -284,7 +284,7 @@ if ($socid)
 					$var=!$var;
 					print "<tr $bc[$var]><td>";
 					print $obj->nom."</td>\n";
-					print "<td>".$obj->ville."&nbsp;</td>\n";
+					print "<td>".$obj->town."&nbsp;</td>\n";
 					print "<td>".$langs->getLabelFromKey($db,$obj->code,'c_typent','code','libelle')."</td>\n";
 					print '<td align="center">';
 					if ($obj->client==1)
