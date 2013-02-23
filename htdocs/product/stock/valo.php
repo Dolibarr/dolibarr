@@ -68,7 +68,7 @@ if ($sall)
     $sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
-    $sql.= " OR e.ville LIKE '%".$db->escape($sall)."%')";
+    $sql.= " OR e.town LIKE '%".$db->escape($sall)."%')";
 }
 $sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu";
 $sql.= $db->order($sortfield,$sortorder);

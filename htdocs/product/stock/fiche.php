@@ -65,7 +65,6 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->lieu        = $_POST["lieu"];
 	$object->address     = $_POST["address"];
 	$object->cp          = $_POST["zipcode"];
-	$object->ville       = $_POST["town"];
 	$object->pays_id     = $_POST["country_id"];
 	$object->zip         = $_POST["zipcode"];
 	$object->town        = $_POST["town"];
@@ -118,7 +117,6 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		$object->lieu        = $_POST["lieu"];
 		$object->address     = $_POST["address"];
 		$object->cp          = $_POST["zipcode"];
-		$object->ville       = $_POST["town"];
 		$object->pays_id     = $_POST["country_id"];
 		$object->zip         = $_POST["zipcode"];
 		$object->town        = $_POST["town"];
@@ -270,7 +268,7 @@ else
 			print $object->address;
 			print '</td></tr>';
 
-			// Ville
+			// Town
 			print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$object->zip.'</td>';
 			print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$object->town.'</td></tr>';
 
@@ -281,7 +279,7 @@ else
 			print $object->country;
 			print '</td></tr>';
 
-			// Statut
+			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			$calcproducts=$object->nb_products();
