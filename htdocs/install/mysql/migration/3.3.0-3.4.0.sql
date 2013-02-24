@@ -53,6 +53,7 @@ alter table llx_adherent CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN nom lastname varchar(50);
 alter table llx_adherent CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_adherent CHANGE COLUMN ville town text;
+alter table llx_adherent CHANGE COLUMN cp zip varchar(10);
 alter table llx_mailing_cibles CHANGE COLUMN nom lastname varchar(50);
 alter table llx_mailing_cibles CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_user     CHANGE COLUMN name lastname varchar(50);
