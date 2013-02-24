@@ -64,11 +64,6 @@ alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'UPS','UPS','United Parcel Service',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'KIALA','KIALA','Relais Kiala',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (7,'GLS','GLS','General Logistics Systems',0);
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'CHRONO','Chronopost','Chronopost',0);
-
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
 
