@@ -51,12 +51,47 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
  */
 
 // URL http://mydolibarr/core/getmenu_jmobime?mainmenu=mainmenu&leftmenu=leftmenu can be used for tests
+$arrayofjs=array('/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js');
+$arrayofcss=array('/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css');
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 
-print 'zzz'."\n";
+if (empty($user->societe_id))    // If internal user or not defined
+{
+	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
+}
+else                        // If external user
+{
+	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
+}
+
+// Load the menu manager (only if not already done)
+$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
+if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
+if (! class_exists('MenuManager'))
+{
+	$menufound=0;
+	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+	foreach($dirmenus as $dirmenu)
+	{
+		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
+		if ($menufound) break;
+	}
+	if (! $menufound)	// If failed to include, we try with standard
+	{
+		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
+		$file_menu='eldy_menu.php';
+		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+	}
+}
+$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+
+$menumanager->showmenu('jmobile');
 
 print '</body></html>'."\n";
 
+$db->close();
 ?>

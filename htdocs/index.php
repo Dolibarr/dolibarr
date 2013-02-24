@@ -28,11 +28,9 @@ define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-
 // If not defined, we select menu "home"
 $_GET['mainmenu']=GETPOST('mainmenu', 'alpha')?GETPOST('mainmenu', 'alpha'):'home';
 $action=GETPOST('action');
-
 
 $hookmanager->initHooks(array('index'));
 
@@ -54,28 +52,14 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-// If smartphone mode, we do not show main page, we show only menu
+// If smartphone mode, we do not show main page, we show only menu. TODO Remove this
 if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
 {
-    $limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
-    $limitmenuto=1;	// A virer
-
-    // Load the smartphone menu manager
-    $result=@include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
-    if (! $result)	// If failed to include, we try with standard
-    {
-        $conf->smart_menu='smartphone_backoffice.php';
-        include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
-    }
-
-    $menusmart = new MenuSmart($db, $user->societe_id?1:0);
-
     include_once DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php';
     exit;
 }
 
-
-llxHeader();
+llxHeader('',$langs->trans("HomeArea"));
 
 print_fiche_titre($langs->trans("HomeArea"));
 
