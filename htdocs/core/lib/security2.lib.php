@@ -148,6 +148,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
 
 	// Title
 	$title='Dolibarr '.DOL_VERSION;
@@ -190,7 +191,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 	}
-		
+
 	// Set cookie for timeout management
 	$prefix=dol_getprefix();
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
