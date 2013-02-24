@@ -47,7 +47,7 @@ require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 $error = 0;
 
-$sql = "SELECT f.facnumber, f.total_ttc, s.nom as name, u.name, u.firstname, u.email";
+$sql = "SELECT f.facnumber, f.total_ttc, s.nom as name, u.lastname, u.firstname, u.email";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";

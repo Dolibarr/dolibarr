@@ -344,7 +344,7 @@ if ($id > 0 || ! empty($ref))
 		 *  List of time spent
 		 */
 		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
-		$sql.= ", u.name, u.firstname";
+		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_task =".$object->id;

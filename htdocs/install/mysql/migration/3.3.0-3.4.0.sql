@@ -53,6 +53,7 @@ alter table llx_adherent CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN nom lastname varchar(50);
 alter table llx_adherent CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_adherent CHANGE COLUMN ville town text;
+alter table llx_adherent CHANGE COLUMN cp zip varchar(10);
 alter table llx_mailing_cibles CHANGE COLUMN nom lastname varchar(50);
 alter table llx_mailing_cibles CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_user     CHANGE COLUMN name lastname varchar(50);
@@ -61,6 +62,7 @@ alter table llx_societe  CHANGE COLUMN ville town text;
 alter table llx_socpeople  CHANGE COLUMN name lastname varchar(50);
 alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
+alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (5,'UPS','UPS','United Parcel Service',0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (6,'KIALA','KIALA','Relais Kiala',0);

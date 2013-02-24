@@ -133,7 +133,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td class="liste_titre" align="left">'.$langs->trans("Comment").'</td>';
 		print '</tr>';
 
-		$sql = "SELECT l.fk_statut, l.datelog as dl, l.comment, u.rowid, u.login, u.firstname, u.name";
+		$sql = "SELECT l.fk_statut, l.datelog as dl, l.comment, u.rowid, u.login, u.firstname, u.lastname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l";
 		$sql.= " , ".MAIN_DB_PREFIX."user as u ";
 		$sql.= " WHERE l.fk_commande = ".$commande->id;
