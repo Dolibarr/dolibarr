@@ -89,8 +89,8 @@ $(document).ready(function () {
 <input type="hidden" name="dst_second" id="dst_second" value="" />
 <input type="hidden" name="screenwidth" id="screenwidth" value="" />
 <input type="hidden" name="screenheight" id="screenheight" value="" />
-<input type="hidden" name="dol_hide_topmenu" id="dol_hide_topmenu" value="" />
-<input type="hidden" name="dol_hide_leftmenu" id="dol_hide_leftmenu" value="" />
+<input type="hidden" name="dol_hide_topmenu" id="dol_hide_topmenu" value="<?php echo $dol_hide_topmenu; ?>" />
+<input type="hidden" name="dol_hide_leftmenu" id="dol_hide_leftmenu" value="<?php echo $dol_hide_leftmenu; ?>" />
 
 <table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
