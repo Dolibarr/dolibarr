@@ -301,7 +301,7 @@ if (! empty($_SESSION["disablemodules"]))
 
 /*
  * Phase authentication / login
-*/
+ */
 $login='';
 if (! defined('NOLOGIN'))
 {
@@ -384,10 +384,18 @@ if (! defined('NOLOGIN'))
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
         if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
+        $langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
+        if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need lang for error messages.
+        {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+            $langs=new Translate("",$conf);
+        }
+        $langs->setDefaultLang($langcode);
+
         if ($test && $goontestloop)
         {
-            $login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
-            if ($login)
+        	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+        	if ($login)
             {
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
@@ -434,11 +442,6 @@ if (! defined('NOLOGIN'))
         if (! $login)
         {
             // We show login page
-            if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined
-            {
-                include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-                $langs=new Translate("",$conf);
-            }
             dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
