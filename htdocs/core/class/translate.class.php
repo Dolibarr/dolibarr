@@ -61,7 +61,7 @@ class Translate
 	/**
 	 *  Set accessor for this->defaultlang
 	 *
-	 *  @param	string	$srclang     	Language to use
+	 *  @param	string	$srclang     	Language to use. If '' or 'auto', we use browser lang.
 	 *  @return	void
 	 */
 	function setDefaultLang($srclang='en_US')
