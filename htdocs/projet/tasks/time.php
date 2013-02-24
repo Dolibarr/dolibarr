@@ -412,8 +412,8 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				$userstatic->id         = $task_time->fk_user;
-				$userstatic->nom		= $task_time->name;
-				$userstatic->prenom 	= $task_time->firstname;
+				$userstatic->lastname	= $task_time->lastname;
+				$userstatic->firstname 	= $task_time->firstname;
 				print $userstatic->getNomUrl(1);
 			}
 		    print '</td>';

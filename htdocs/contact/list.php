@@ -35,8 +35,8 @@ $contactid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
-$search_nom=GETPOST("search_nom");
-$search_prenom=GETPOST("search_prenom");
+$search_lastname=GETPOST("search_lastname");
+$search_firstname=GETPOST("search_firstname");
 $search_societe=GETPOST("search_societe");
 $search_poste=GETPOST("search_poste");
 $search_phone=GETPOST("search_phone");
@@ -87,8 +87,8 @@ if (! empty($text)) $titre.= " $text";
 
 if (GETPOST('button_removefilter'))
 {
-    $search_nom="";
-    $search_prenom="";
+    $search_lastname="";
+    $search_firstname="";
     $search_societe="";
     $search_poste="";
     $search_phone="";
@@ -142,13 +142,13 @@ else
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_nom)        // filtre sur le nom
+if ($search_lastname)        // filtre sur le nom
 {
-    $sql .= " AND p.name LIKE '%".$db->escape($search_nom)."%'";
+    $sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
-if ($search_prenom)     // filtre sur le prenom
+if ($search_firstname)     // filtre sur le prenom
 {
-    $sql .= " AND p.firstname LIKE '%".$db->escape($search_prenom)."%'";
+    $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
@@ -233,7 +233,7 @@ if ($result)
 	$contactstatic=new Contact($db);
 
     $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_nom='.urlencode($search_nom).'&search_prenom='.urlencode($search_prenom).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
+    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
 	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
 	$num = $db->num_rows($result);
@@ -279,10 +279,10 @@ if ($result)
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_nom" size="9" value="'.$search_nom.'">';
+    print '<input class="flat" type="text" name="search_lastname" size="9" value="'.$search_lastname.'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_prenom" size="9" value="'.$search_prenom.'">';
+    print '<input class="flat" type="text" name="search_firstname" size="9" value="'.$search_firstname.'">';
     print '</td>';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_poste" size="9" value="'.$search_poste.'">';

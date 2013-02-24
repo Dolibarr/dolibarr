@@ -163,7 +163,7 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$member->lastname.'&nbsp;</td>';
         print '</tr>';
 
-        // Prenom
+        // Firstname
         print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$member->firstname.'&nbsp;</td>';
         print '</tr>';
 

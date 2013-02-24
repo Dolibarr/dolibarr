@@ -59,7 +59,7 @@
 
 <tr>
 	<td><?php echo $langs->trans('FirstName'); ?></td>
-	<td><input type="text" size="30" name="prenom" value="<?php echo $this->control->tpl['firstname']; ?>"></td>
+	<td><input type="text" size="30" name="firstname" value="<?php echo $this->control->tpl['firstname']; ?>"></td>
 	<td colspan="2">&nbsp;</td>
 </tr>
 

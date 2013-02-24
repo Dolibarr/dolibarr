@@ -633,7 +633,7 @@ else
             print $object->ref;
             print '</td></tr>';
 
-            // Name
+            // Lastname
             print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
             print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
@@ -811,9 +811,9 @@ else
 
         if ($action == 'create_user')
         {
-            // Full firstname and name separated with a dot : firstname.name
+            // Full firstname and lastname separated with a dot : firstname.lastname
             include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            $login=dol_buildlogin($object->nom,$object->prenom);
+            $login=dol_buildlogin($object->lastname,$object->firstname);
 
             $generated_password='';
             if (! $ldap_sid) // TODO ldap_sid ?

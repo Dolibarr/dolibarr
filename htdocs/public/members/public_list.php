@@ -101,14 +101,14 @@ if (! $sortfield) {  $sortfield="nom"; }
 
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"));
 
-$sql = "SELECT rowid, prenom, nom, societe, cp as zip, town, email, naiss, photo";
+$sql = "SELECT rowid, firstname, lastname, societe, cp as zip, town, email, naiss, photo";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent";
 $sql.= " WHERE entity = ".$entity;
 $sql.= " AND statut = 1";
 $sql.= " AND public = 1";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
-//$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, cp, town, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
+//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, cp, town, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
 //$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 //$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -124,8 +124,8 @@ if ($result)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=prenom">'.$langs->trans("Firstname").'</a>';
-	print ' <a href="'.$_SERVER['PHP_SELF'].'?page='.$page.'&sortorder=ASC&sortfield=nom">'.$langs->trans("Lastname").'</a>';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.$langs->trans("Firstname").'</a>';
+	print ' <a href="'.$_SERVER['PHP_SELF'].'?page='.$page.'&sortorder=ASC&sortfield=lastname">'.$langs->trans("Lastname").'</a>';
 	print ' / <a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
 	//print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
 	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email",'',$param,$sortfield,$sortorder);
@@ -140,7 +140,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.$objp->prenom.' '.$objp->nom.($objp->societe?' / '.$objp->societe:'').'</a></td>'."\n";
+		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.$objp->firstname.' '.$objp->lastname.($objp->societe?' / '.$objp->societe:'').'</a></td>'."\n";
 		//print "<td>$objp->naiss</td>\n"; // est-ce nécessaire ??
 		print '<td>'.$objp->email.'</td>'."\n";
 		print '<td>'.$objp->zip.'</td>'."\n";

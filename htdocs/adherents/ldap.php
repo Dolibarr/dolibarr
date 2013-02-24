@@ -108,11 +108,11 @@ print '<td class="valeur">';
 print $form->showrefnav($adh,'id');
 print '</td></tr>';
 
-// Nom
+// Lastname
 print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->lastname.'&nbsp;</td>';
 print '</tr>';
 
-// Prenom
+// Firstname
 print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->firstname.'&nbsp;</td>';
 print '</tr>';
 

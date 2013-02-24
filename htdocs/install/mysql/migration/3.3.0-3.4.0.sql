@@ -47,12 +47,18 @@ alter table llx_propal   CHANGE COLUMN fk_adresse_livraison fk_delivery_address 
 alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
 alter table llx_don      CHANGE COLUMN adresse address text;
 alter table llx_don      CHANGE COLUMN ville town text;
+alter table llx_don      CHANGE COLUMN prenom firstname varchar(50);
+alter table llx_don      CHANGE COLUMN nom lastname varchar(50);
 alter table llx_adherent CHANGE COLUMN adresse address text;
-alter table llx_adherent CHANGE COLUMN nom lastname text;
+alter table llx_adherent CHANGE COLUMN nom lastname varchar(50);
+alter table llx_adherent CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_adherent CHANGE COLUMN ville town text;
-alter table llx_user     CHANGE COLUMN name lastname text;
+alter table llx_mailing_cibles CHANGE COLUMN nom lastname varchar(50);
+alter table llx_mailing_cibles CHANGE COLUMN prenom firstname varchar(50);
+alter table llx_user     CHANGE COLUMN name lastname varchar(50);
 alter table llx_entrepot CHANGE COLUMN ville town text;
 alter table llx_societe  CHANGE COLUMN ville town text;
+alter table llx_socpeople  CHANGE COLUMN name lastname varchar(50);
 alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 
@@ -62,4 +68,9 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,active) VALUES (8,'CHRONO','Chronopost','Chronopost',0);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
-INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'EDIT','EDITABLE','Transporteur Modifiable','http://www.website.com/dir/{TRACKID}',0);
+ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
+
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('UPS','UPS','United Parcel Service','http://wwwapps.ups.com/etracking/tracking.cgi?InquiryNumber2=&InquiryNumber3=&tracknums_displayed=3&loc=fr_FR&TypeOfInquiryNumber=T&HTMLVersion=4.0&InquiryNumber22=&InquiryNumber32=&track=Track&Suivi.x=64&Suivi.y=7&Suivi=Valider&InquiryNumber1={TRACKID}',0);
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('KIALA','KIALA','Relais Kiala','http://www.kiala.fr/tnt/delivery/{TRACKID}',0);
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('GLS','GLS','General Logistics Systems','http://www.gls-group.eu/276-I-PORTAL-WEB/content/GLS/FR01/FR/5004.htm?txtAction=71000&txtRefNo={TRACKID}',0);
+INSERT INTO llx_c_shipment_mode (code,libelle,description,tracking,active) VALUES ('CHRONO','Chronopost','Chronopost','http://www.chronopost.fr/expedier/inputLTNumbersNoJahia.do?listeNumeros={TRACKID}',0);

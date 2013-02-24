@@ -105,9 +105,9 @@ print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
 print '<td>'.$fuser->lastname.'</td>';
 print "</tr>\n";
 
-// Prenom
+// Firstname
 print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-print '<td>'.$fuser->prenom.'</td>';
+print '<td>'.$fuser->firstname.'</td>';
 print "</tr>\n";
 
 // Login

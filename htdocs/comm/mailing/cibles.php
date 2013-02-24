@@ -51,8 +51,8 @@ if (! $sortfield) $sortfield="email";
 $id=GETPOST('id','int');
 $rowid=GETPOST('rowid','int');
 $action=GETPOST("action");
-$search_nom=GETPOST("search_nom");
-$search_prenom=GETPOST("search_prenom");
+$search_lastname=GETPOST("search_lastname");
+$search_firstname=GETPOST("search_firstname");
 $search_email=GETPOST("search_email");
 
 // Search modules dirs
@@ -154,8 +154,8 @@ if ($action == 'delete')
 
 if ($_POST["button_removefilter"])
 {
-	$search_nom='';
-	$search_prenom='';
+	$search_lastname='';
+	$search_firstname='';
 	$search_email='';
 }
 
@@ -369,11 +369,11 @@ if ($object->fetch($id) >= 0)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	$sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
-	if ($search_nom)    $sql.= " AND mc.nom    LIKE '%".$db->escape($search_nom)."%'";
-	if ($search_prenom) $sql.= " AND mc.prenom LIKE '%".$db->escape($search_prenom)."%'";
+	if ($search_lastname)    $sql.= " AND mc.lastname    LIKE '%".$db->escape($search_lastname)."%'";
+	if ($search_firstname) $sql.= " AND mc.firstname LIKE '%".$db->escape($search_firstname)."%'";
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
 	$sql .= $db->order($sortfield,$sortorder);
 	$sql .= $db->plimit($conf->liste_limit+1, $offset);
@@ -384,8 +384,8 @@ if ($object->fetch($id) >= 0)
 		$num = $db->num_rows($resql);
 
 		$parm = "&amp;id=".$object->id;
-		if ($search_nom)    $parm.= "&amp;search_nom=".urlencode($search_nom);
-		if ($search_prenom) $parm.= "&amp;search_prenom=".urlencode($search_prenom);
+		if ($search_lastname)    $parm.= "&amp;search_lastname=".urlencode($search_lastname);
+		if ($search_firstname) $parm.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)  $parm.= "&amp;search_email=".urlencode($search_email);
 
 		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$parm,$sortfield,$sortorder,"",$num,$object->nbemail,'');
@@ -394,8 +394,8 @@ if ($object->fetch($id) >= 0)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$parm,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$parm,"","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$parm,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.lastname",$parm,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.firstname",$parm,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$parm,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$parm,"",'align="center"',$sortfield,$sortorder);
 
@@ -422,11 +422,11 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		// Name
 		print '<td class="liste_titre">';
-		print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
+		print '<input class="flat" type="text" name="search_lastname" size="12" value="'.$search_lastname.'">';
 		print '</td>';
 		// Firstname
 		print '<td class="liste_titre">';
-		print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
+		print '<input class="flat" type="text" name="search_firstname" size="10" value="'.$search_firstname.'">';
 		print '</td>';
 		// Other
 		print '<td class="liste_titre">';
@@ -452,8 +452,8 @@ if ($object->fetch($id) >= 0)
 
 				print "<tr $bc[$var]>";
 				print '<td>'.$obj->email.'</td>';
-				print '<td>'.$obj->nom.'</td>';
-				print '<td>'.$obj->prenom.'</td>';
+				print '<td>'.$obj->lastname.'</td>';
+				print '<td>'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
 				print '<td align="center">';
                 if (empty($obj->source_id) || empty($obj->source_type))

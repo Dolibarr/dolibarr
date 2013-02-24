@@ -769,8 +769,8 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid";
-        if (get_class($object) == 'Adherent') $sql.= ", m.nom as name, m.prenom as firstname";
-        if (get_class($object) == 'Societe')  $sql.= ", sp.name, sp.firstname";
+        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -908,8 +908,8 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid as user_id";
-        if (get_class($object) == 'Adherent') $sql.= ", m.nom as name, m.prenom as firstname";
-        if (get_class($object) == 'Societe')  $sql.= ", sp.name, sp.firstname";
+        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
