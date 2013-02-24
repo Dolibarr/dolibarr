@@ -301,7 +301,7 @@ if (! empty($_SESSION["disablemodules"]))
 
 /*
  * Phase authentication / login
-*/
+ */
 $login='';
 if (! defined('NOLOGIN'))
 {
@@ -384,10 +384,18 @@ if (! defined('NOLOGIN'))
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
         if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
+        $langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
+        if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need lang for error messages.
+        {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+            $langs=new Translate("",$conf);
+        }
+        $langs->setDefaultLang($langcode);
+
         if ($test && $goontestloop)
         {
-            $login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
-            if ($login)
+        	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+        	if ($login)
             {
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
@@ -434,11 +442,6 @@ if (! defined('NOLOGIN'))
         if (! $login)
         {
             // We show login page
-            if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined
-            {
-                include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-                $langs=new Translate("",$conf);
-            }
             dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
@@ -765,41 +768,42 @@ if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity'
     }
 }
 
-//print 'eee'.$conf->standard_menu;
 
 // Init menu manager
-if (empty($user->societe_id))    // If internal user or not defined
+if (! defined('NOREQUIREMENU'))
 {
-	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
-}
-else                        // If external user
-{
-	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-}
-
-// Load the menu manager (only if not already done)
-$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
-if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
-if (! class_exists('MenuManager'))
-{
-	$menufound=0;
-	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-	foreach($dirmenus as $dirmenu)
+	if (empty($user->societe_id))    // If internal user or not defined
 	{
-		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
-		if ($menufound) break;
+		$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
+		$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 	}
-	if (! $menufound)	// If failed to include, we try with standard
+	else                        // If external user
 	{
-		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
-		$file_menu='eldy_menu.php';
-		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+		$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+		$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 	}
-}
-$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 
+	// Load the menu manager (only if not already done)
+	$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
+	if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
+	if (! class_exists('MenuManager'))
+	{
+		$menufound=0;
+		$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+		foreach($dirmenus as $dirmenu)
+		{
+			$menufound=dol_include_once($dirmenu."standard/".$file_menu);
+			if ($menufound) break;
+		}
+		if (! $menufound)	// If failed to include, we try with standard
+		{
+			dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
+			$file_menu='eldy_menu.php';
+			include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+		}
+	}
+	$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+}
 
 
 

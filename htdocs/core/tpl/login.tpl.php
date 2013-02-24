@@ -190,9 +190,9 @@ if ($forgetpasslink || $helpcenterlink) {
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
-	<center><table width="60%"><tr><td align="center"><div class="error">
+	<center><div align="center" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
 	<?php echo $_SESSION['dol_loginmesg']; ?>
-	</div></td></tr></table></center>
+	</div></div></center>
 <?php
 }
 ?>
@@ -200,10 +200,9 @@ if ($forgetpasslink || $helpcenterlink) {
 <?php if ($main_home)
 {
 ?>
-	<center><table summary="info" cellpadding="0" cellspacing="0" border="0" align="center" width="750">
-	<tr><td align="center">
+	<center><div align="center" style="max-width: 80%">
 	<?php echo $main_home; ?>
-	</td></tr></table></center><br>
+	</div></center><br>
 <?php
 }
 ?>
