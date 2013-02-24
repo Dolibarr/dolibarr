@@ -51,7 +51,8 @@ print $langs->trans("ToolsDesc").'<br><br>';
 
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

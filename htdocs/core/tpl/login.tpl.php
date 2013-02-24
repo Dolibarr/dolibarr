@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,10 @@ $(document).ready(function () {
 });
 </script>
 
+<center>
+
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+<input type="hidden" name="mainmenu" value="home" />
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
@@ -94,11 +97,14 @@ $(document).ready(function () {
 </table>
 <br>
 
-<table class="login_table" summary="Login area" cellpadding="2" align="center">
+<div class="login_table">
 
-<tr><td colspan="2" valign="middle">
-<table class="none" summary="Login pass" cellpadding="2" align="center">
+<!-- <tr><td colspan="2" valign="middle"> -->
+<div id="login_line1">
 
+<div id="login_left">
+
+<table class="left" summary="Login pass" cellpadding="2">
 <!-- Login -->
 <tr>
 <td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
@@ -106,13 +112,11 @@ $(document).ready(function () {
 <input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
 </td>
 </tr>
-
 <!-- Password -->
 <tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong> &nbsp; </td>
 <td valign="top" nowrap="nowrap">
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
 </td></tr>
-
 <?php
 if (! empty($hookmanager->resArray['options'])) {
 	foreach ($hookmanager->resArray['options'] as $format => $option)
@@ -124,7 +128,6 @@ if (! empty($hookmanager->resArray['options'])) {
 	}
 }
 ?>
-
 <?php if ($captcha) { ?>
 	<!-- Captcha -->
 	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
@@ -138,24 +141,27 @@ if (! empty($hookmanager->resArray['options'])) {
 
 	</td></tr>
 <?php } ?>
-
 </table>
-</td>
 
-<td align="center" valign="middle">
+</div> <!-- end div left -->
+
+<div id="login_right">
+
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
-</td>
 
-</tr>
+</div>
+</div>
+
+<div id="login_line2" style="clear: both">
 
 <!-- Button Connection -->
-<tr><td colspan="3" style="text-align:center;"><br>
-<input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
-</td></tr>
+<br><input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 
 <?php
-if ($forgetpasslink || $helpcenterlink) {
-	echo '<tr><td colspan="3" align="center">';
+if ($forgetpasslink || $helpcenterlink)
+{
+	echo '<br>';
+	echo '<div align="center" style="margin-top: 4px;">';
 	if ($forgetpasslink) {
 		echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">(';
 		echo $langs->trans('PasswordForgotten');
@@ -176,11 +182,13 @@ if ($forgetpasslink || $helpcenterlink) {
 		}
 		echo $langs->trans('NeedHelpCenter').')</a>';
 	}
-	echo '</td></tr>';
+	echo '</div>';
 }
 ?>
 
-</table>
+</div>
+
+</div>
 
 </form>
 
@@ -232,6 +240,8 @@ if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN
 <!-- urlfrom in this session = <?php echo $_SESSION["urlfrom"] ?> -->
 
 <?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
+
+</center>	<!-- end of center -->
 
 </body>
 </html>
