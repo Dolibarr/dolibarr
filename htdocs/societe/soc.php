@@ -583,7 +583,7 @@ else
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('nom');
-        $object->firstname			= GETPOST('prenom');
+        $object->firstname			= GETPOST('firstname');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;

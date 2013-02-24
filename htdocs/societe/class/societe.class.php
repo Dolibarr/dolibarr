@@ -49,7 +49,6 @@ class Societe extends CommonObject
     var $particulier;
     var $civility_id;
     var $address;
-    var $cp;       // TODO obsolete
     var $zip;
     var $town;
     var $status;   // 0=activity ceased, 1= in activity
@@ -394,8 +393,7 @@ class Societe extends CommonObject
         $this->nom			= trim($this->nom);		// TODO obsolete
         $this->ref_ext		= trim($this->ref_ext);
         $this->address		= $this->address?trim($this->address):trim($this->address);
-        $this->zip			= $this->zip?trim($this->zip):trim($this->cp);
-        $this->cp			= $this->zip;			// TODO obsolete
+        $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
         $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->pays_id;
@@ -497,7 +495,7 @@ class Societe extends CommonObject
             $sql .= ",datea = '".$this->db->idate($now)."'";
             $sql .= ",address = '" . $this->db->escape($this->address) ."'";
 
-            $sql .= ",cp = ".(! empty($this->zip)?"'".$this->zip."'":"null");
+            $sql .= ",zip = ".(! empty($this->zip)?"'".$this->zip."'":"null");
             $sql .= ",town = ".(! empty($this->town)?"'".$this->db->escape($this->town)."'":"null");
 
             $sql .= ",fk_departement = '" . (! empty($this->state_id)?$this->state_id:'0') ."'";
@@ -696,7 +694,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.tel as phone, s.fax, s.email, s.url, s.cp as zip, s.town, s.note, s.client, s.fournisseur';
+        $sql .= ', s.tel as phone, s.fax, s.email, s.url, s.zip, s.town, s.note, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -758,7 +756,6 @@ class Societe extends CommonObject
 
                 $this->address 		= $obj->address;
                 $this->zip 			= $obj->zip;
-                $this->cp           = $obj->zip;		// TODO obsolete
                 $this->town 		= $obj->town;
 
                 $this->pays_id 		= $obj->country_id;	// TODO obsolete
@@ -2438,8 +2435,7 @@ class Societe extends CommonObject
         $this->nom=$name;				// TODO obsolete
         $this->name=$name;
         $this->address=$member->address;
-        $this->cp=$member->cp;			// TODO obsolete
-        $this->zip=$member->cp;
+        $this->zip=$member->zip;
         $this->town=$member->town;
         $this->pays_code=$member->country_code;	// TODO obsolete
         $this->country_code=$member->country_code;
@@ -2502,13 +2498,12 @@ class Societe extends CommonObject
     	$this->id=0;
     	$this->name=empty($conf->global->MAIN_INFO_SOCIETE_NOM)?'':$conf->global->MAIN_INFO_SOCIETE_NOM;
     	$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
-    	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_CP)?'':$conf->global->MAIN_INFO_SOCIETE_CP;
+    	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
     	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
     	$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)?'':$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
     	$this->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
     	
     	$this->nom=$this->name; 									// deprecated
-    	$this->cp=$this->zip;										// deprecated
     	   
     	// We define country_id, country_code and country
     	$country_id=$country_code=$country_label='';

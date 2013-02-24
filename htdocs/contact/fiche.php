@@ -881,10 +881,10 @@ else
         dol_print_address($object->address,'gmap','contact',$object->id);
         print '</td></tr>';
 
-        // Zip Town
+        // Zip/Town
         print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
-        print $object->cp;
-        if ($object->cp) print '&nbsp;';
+        print $object->zip;
+        if ($object->zip) print '&nbsp;';
         print $object->town.'</td></tr>';
 
         // Country

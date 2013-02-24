@@ -125,7 +125,7 @@ if ($_GET["socid"])
 
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->cp."</td>";
+	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->zip."</td>";
 	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->town."</td></tr>";
 
 	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';

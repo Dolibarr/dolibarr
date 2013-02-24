@@ -55,8 +55,8 @@ if ($id > 0)
 
 		print "<tr><td>".$langs->trans("Address")."</td><td>".$langs->trans("Delivery")."</td><td>".$langs->trans("Invoice")."</td></tr>";
 
-		print "<td>&nbsp;</td><td>".$commande->delivery_adr->name."<br>".$commande->delivery_adr->street."<br>".$commande->delivery_adr->cp."<br>".$commande->delivery_adr->city."<br>".$commande->delivery_adr->country."</td>";
-		print "<td>".$commande->billing_adr->name."<br>".$commande->billing_adr->street."<br>".$commande->billing_adr->cp."<br>".$commande->billing_adr->city."<br>".$commande->billing_adr->country."</td>";
+		print "<td>&nbsp;</td><td>".$commande->delivery_adr->name."<br>".$commande->delivery_adr->street."<br>".$commande->delivery_adr->zip."<br>".$commande->delivery_adr->city."<br>".$commande->delivery_adr->country."</td>";
+		print "<td>".$commande->billing_adr->name."<br>".$commande->billing_adr->street."<br>".$commande->billing_adr->zip."<br>".$commande->billing_adr->city."<br>".$commande->billing_adr->country."</td>";
 		print "</tr>";
 
 		print "</table>";
