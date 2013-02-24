@@ -233,7 +233,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 }
 // List of current notifications for objet_type='withdraw'
-$sql = "SELECT u.name, u.firstname";
+$sql = "SELECT u.lastname, u.firstname";
 $sql.= ", nd.rowid, ad.code, ad.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."notify_def as nd";

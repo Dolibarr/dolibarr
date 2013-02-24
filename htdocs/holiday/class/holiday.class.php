@@ -364,7 +364,7 @@ class Holiday extends CommonObject
         $sql.= " cp.fk_user_cancel,";
         $sql.= " cp.detail_refuse,";
 
-        $sql.= " uu.name as user_lastname,";
+        $sql.= " uu.lastname as user_lastname,";
         $sql.= " uu.firstname as user_firstname,";
 
         $sql.= " ua.name as validator_lastname,";
@@ -1116,7 +1116,7 @@ class Holiday extends CommonObject
             // Si c'est pour les utilisateurs de Dolibarr
             if($type) {
 
-                $sql = "SELECT u.rowid, u.name, u.firstname";
+                $sql = "SELECT u.rowid, u.lastname, u.firstname";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE statut > '0'";
 
@@ -1155,7 +1155,7 @@ class Holiday extends CommonObject
                 // Si c'est pour les utilisateurs du module Congés Payés
             } else {
 
-                $sql = "SELECT cpu.fk_user, u.name, u.firstname";
+                $sql = "SELECT cpu.fk_user, u.lastname, u.firstname";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu,";
                 $sql.= " ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE cpu.fk_user = u.rowid";
@@ -1232,7 +1232,7 @@ class Holiday extends CommonObject
             $listUsersCP = $this->fetchUsers(true,false);
 
             // On séléctionne les utilisateurs qui ne sont pas déjà dans le module
-            $sql = "SELECT u.rowid, u.name, u.firstname";
+            $sql = "SELECT u.rowid, u.lastname, u.firstname";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             $sql.= " WHERE u.rowid NOT IN(".$listUsersCP.")";
 

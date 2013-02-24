@@ -95,7 +95,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";

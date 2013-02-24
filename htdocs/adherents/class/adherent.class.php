@@ -50,7 +50,6 @@ class Adherent extends CommonObject
     var $pass;
     var $societe;
     var $address;
-    var $cp;
     var $zip;
     var $town;
 
@@ -227,7 +226,7 @@ class Adherent extends CommonObject
 				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
 
@@ -397,7 +396,7 @@ class Adherent extends CommonObject
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname)?trim($this->firstname):trim($this->firstname);
 		$this->address=($this->address?$this->address:$this->address);
-		$this->zip=($this->zip?$this->zip:$this->cp);
+		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
@@ -1009,7 +1008,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.cp as zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1054,7 +1053,6 @@ class Adherent extends CommonObject
                 $this->societe			= $obj->societe;
                 $this->fk_soc			= $obj->fk_soc;
                 $this->address			= $obj->address;
-                $this->cp				= $obj->zip;		// deprecated
                 $this->zip				= $obj->zip;
                 $this->town				= $obj->town;
 
@@ -1811,7 +1809,7 @@ class Adherent extends CommonObject
         if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))    $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
         if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))      $info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
         if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
-        if ($this->cp && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->cp;
+        if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
         if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))        $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
         if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
         if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
