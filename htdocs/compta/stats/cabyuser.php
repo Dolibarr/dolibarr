@@ -159,7 +159,7 @@ else
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-$sql .= " GROUP BY u.rowid, u.name, u.firstname";
+$sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
 
 $result = $db->query($sql);

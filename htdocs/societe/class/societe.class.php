@@ -45,6 +45,7 @@ class Societe extends CommonObject
     var $name;
     var $nom;      // TODO obsolete
     var $firstname;
+    var $lastname;
     var $particulier;
     var $civility_id;
     var $address;
@@ -1314,7 +1315,7 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT u.rowid, u.name, u.firstname";
+        $sql = "SELECT u.rowid, u.lastname, u.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
         $sql.= " AND entity in (0, ".$conf->entity.")";
@@ -1328,7 +1329,7 @@ class Societe extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
                 $reparray[$i]['id']=$obj->rowid;
-                $reparray[$i]['name']=$obj->name;
+                $reparray[$i]['lastname']=$obj->lastname;
                 $reparray[$i]['firstname']=$obj->firstname;
                 $i++;
             }
@@ -1608,7 +1609,7 @@ class Societe extends CommonObject
     {
         $contact_property = array();
 
-        $sql = "SELECT rowid, email, phone_mobile, name, firstname";
+        $sql = "SELECT rowid, email, phone_mobile, lastname, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE fk_soc = '".$this->id."'";
 
@@ -1624,7 +1625,7 @@ class Societe extends CommonObject
                     $obj = $this->db->fetch_object($resql);
                     if ($mode == 'email') $property=$obj->email;
                     else if ($mode == 'mobile') $property=$obj->phone_mobile;
-                    $contact_property[$obj->rowid] = trim($obj->firstname." ".$obj->name)." &lt;".$property."&gt;";
+                    $contact_property[$obj->rowid] = trim($obj->firstname." ".$obj->lastname)." &lt;".$property."&gt;";
                     $i++;
                 }
             }
@@ -1646,7 +1647,7 @@ class Societe extends CommonObject
     {
         $contacts = array();
 
-        $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
+        $sql = "SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1657,7 +1658,7 @@ class Societe extends CommonObject
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    $contacts[$obj->rowid] = $obj->firstname." ".$obj->name;
+                    $contacts[$obj->rowid] = $obj->firstname." ".$obj->lastname;
                     $i++;
                 }
             }
@@ -1680,7 +1681,7 @@ class Societe extends CommonObject
     {
         $contact_property='';
 
-        $sql = "SELECT rowid, email, phone_mobile, name, firstname";
+        $sql = "SELECT rowid, email, phone_mobile, lastname, firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
         $sql.= " WHERE rowid = '".$rowid."'";
 
@@ -1693,7 +1694,7 @@ class Societe extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                if ($mode == 'email') $contact_property = "$obj->firstname $obj->name <$obj->email>";
+                if ($mode == 'email') $contact_property = "$obj->firstname $obj->lastname <$obj->email>";
                 else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
             }
             return $contact_property;

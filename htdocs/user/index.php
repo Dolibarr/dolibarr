@@ -65,7 +65,7 @@ llxHeader('',$langs->trans("ListOfUsers"));
 
 print_fiche_titre($langs->trans("ListOfUsers"), '<form action="'.DOL_URL_ROOT.'/user/hierarchy.php" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>');
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_societe, u.login,";
 $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";

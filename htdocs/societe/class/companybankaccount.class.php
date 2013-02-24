@@ -45,7 +45,7 @@ class CompanyBankAccount extends Account
     var $iban;
     var $iban_prefix;		// deprecated
     var $proprio;
-    var $adresse_proprio;
+    var $owner_address;
 
     /**
 	 *  Constructor
@@ -124,7 +124,7 @@ class CompanyBankAccount extends Account
         $sql .= ",iban_prefix = '".$this->iban_prefix."'";
         $sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
-        $sql .= ",adresse_proprio = '".$this->db->escape($this->adresse_proprio)."'";
+        $sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
         $sql .= " WHERE fk_soc = ".$this->socid;
 
         $result = $this->db->query($sql);
@@ -150,7 +150,7 @@ class CompanyBankAccount extends Account
     {
         if (empty($id) && empty($socid)) return -1;
 
-        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, adresse_proprio";
+        $sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio, owner_address";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
         if ($id)    $sql.= " WHERE rowid = ".$id;
         if ($socid) $sql.= " WHERE fk_soc  = ".$socid;
@@ -174,7 +174,7 @@ class CompanyBankAccount extends Account
                 $this->iban_prefix     = $obj->iban;	// deprecated
                 $this->domiciliation   = $obj->domiciliation;
                 $this->proprio         = $obj->proprio;
-                $this->adresse_proprio = $obj->adresse_proprio;
+                $this->owner_address   = $obj->owner_address;
             }
             $this->db->free($resql);
 
