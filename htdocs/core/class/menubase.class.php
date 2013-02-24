@@ -494,7 +494,7 @@ class Menubase
     /**
      *  Load entries found in database into variable $tabMenu. Note that only "database menu entries" are loaded here, hardcoded will not be present into output.
      *
-     *  @param	string	$mymainmenu     Value for left that defined mainmenu
+     *  @param	string	$mymainmenu     Value for mainmenu that defined mainmenu
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
@@ -584,7 +584,7 @@ class Menubase
                     }
 //$tmp4=dol_microtime_float();
 //print '>>> 3 '.($tmp4 - $tmp3).'<br>';
-                    
+
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
                     $tabMenu[$b]['module']      = $menu['module'];
@@ -606,10 +606,10 @@ class Menubase
                     $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
                     $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
                     $tabMenu[$b]['position']    = $menu['position'];
-                    
+
                     $b++;
                 }
-                
+
                 $a++;
             }
             $this->db->free($resql);
