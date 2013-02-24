@@ -45,6 +45,7 @@ class Societe extends CommonObject
     var $name;
     var $nom;      // TODO obsolete
     var $firstname;
+    var $lastname;
     var $particulier;
     var $civility_id;
     var $address;
