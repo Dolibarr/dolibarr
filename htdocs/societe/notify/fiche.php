@@ -50,7 +50,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="c.name";
+if (! $sortfield) $sortfield="c.lastname";
 
 $now=dol_now();
 
@@ -214,7 +214,7 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
