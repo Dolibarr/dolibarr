@@ -269,7 +269,7 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.lastname",'',$param,'"width="45%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'"width="35%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),"fiche.php","",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
@@ -278,7 +278,7 @@ if ($result > 0)
     // List of notifications for contacts
     $sql = "SELECT n.rowid, n.type,";
     $sql.= " a.code, a.label,";
-    $sql.= " c.rowid as contactid, c.name, c.firstname, c.email";
+    $sql.= " c.rowid as contactid, c.lastname, c.firstname, c.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
     $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
     $sql.= " ".MAIN_DB_PREFIX."socpeople c";
@@ -347,14 +347,14 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.lastname",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),"fiche.php","a.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';
 
     // List
     $sql = "SELECT n.rowid, n.daten, n.email, n.objet_type, n.objet_id,";
-    $sql.= " c.rowid as id, c.name, c.firstname, c.email,";
+    $sql.= " c.rowid as id, c.lastname, c.firstname, c.email,";
     $sql.= " a.code, a.label";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
     $sql.= " ".MAIN_DB_PREFIX."notify as n, ";
