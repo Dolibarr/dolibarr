@@ -532,7 +532,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -554,7 +554,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             print '<td>';
             $contactstatic->id = $obj->rowid;
-            $contactstatic->name = $obj->name;
+            $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             print $contactstatic->getNomUrl(1);
             print '</td>';
@@ -830,7 +830,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     // Contact pour cette action
                     if (empty($objcon->id) && $obj->fk_contact > 0)
                     {
-                        $contactstatic->name=$obj->name;
+                        $contactstatic->lastname=$obj->lastname;
                         $contactstatic->firstname=$obj->firstname;
                         $contactstatic->id=$obj->fk_contact;
                         $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
@@ -945,7 +945,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 		'userid'=>$obj->user_id,
                 		'login'=>$obj->login,
                 		'contact_id'=>$obj->fk_contact,
-                		'name'=>$obj->name,
+                		'lastname'=>$obj->lastname,
                 		'firstname'=>$obj->firstname,
                 		'fk_element'=>$obj->fk_element,
                 		'elementtype'=>$obj->elementtype
@@ -1114,7 +1114,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             // Contact pour cette action
             if (! empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
-                $contactstatic->name=$histo[$key]['name'];
+                $contactstatic->lastname=$histo[$key]['lastname'];
                 $contactstatic->firstname=$histo[$key]['firstname'];
                 $contactstatic->id=$histo[$key]['contact_id'];
                 $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
