@@ -238,7 +238,7 @@ class FormCompany
 			dol_syslog(get_class($this)."::select_departement num=".$num,LOG_DEBUG);
 			if ($num)
 			{
-				$pays='';
+				$country='';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
@@ -247,13 +247,13 @@ class FormCompany
 						$out.= '<option value="0">&nbsp;</option>';
 					}
 					else {
-						if (! $pays || $pays != $obj->country)
+						if (! $country || $country != $obj->country)
 						{
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $country_codeid && $obj->country_code)
 							{
 								$out.= '<option value="-1" disabled="disabled">----- '.$obj->country." -----</option>\n";
-								$pays=$obj->country;
+								$country=$obj->country;
 							}
 						}
 
@@ -312,7 +312,7 @@ class FormCompany
 			$i = 0;
 			if ($num)
 			{
-				$pays='';
+				$country='';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -320,13 +320,13 @@ class FormCompany
 						print '<option value="0">&nbsp;</option>';
 					}
 					else {
-						if ($pays == '' || $pays != $obj->country)
+						if ($country == '' || $country != $obj->country)
 						{
 							// Show break
 							$key=$langs->trans("Country".strtoupper($obj->country_code));
 							$valuetoshow=($key != "Country".strtoupper($obj->country_code))?$obj->country_code." - ".$key:$obj->country;
 							print '<option value="-1" disabled="disabled">----- '.$valuetoshow." -----</option>\n";
-							$pays=$obj->country;
+							$country=$obj->country;
 						}
 
 						if ($selected > 0 && $selected == $obj->code)
@@ -454,7 +454,7 @@ class FormCompany
 			$i = 0;
 			if ($num)
 			{
-				$pays='';
+				$country='';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
@@ -462,11 +462,11 @@ class FormCompany
 						$out.= '<option value="0">&nbsp;</option>';
 					}
 					else {
-						if (! $pays || $pays != $obj->country) {
+						if (! $country || $country != $obj->country) {
 							// Affiche la rupture si on est en mode liste multipays
 							if (! $country_codeid && $obj->country_code) {
 								$out.= '<option value="0">----- '.$obj->country." -----</option>\n";
-								$pays=$obj->country;
+								$country=$obj->country;
 							}
 						}
 

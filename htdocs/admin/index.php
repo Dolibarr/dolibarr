@@ -55,7 +55,7 @@ print $langs->trans("SetupDescription2")."<br><br>";
 
 print '<br>';
 //print '<hr style="color: #DDDDDD;">';
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_PAYS)) $setupcompanynotcomplete=1;
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
 print img_picto('','puce').' '.$langs->trans("SetupDescription3",DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit'));
 if (! empty($setupcompanynotcomplete))
 {

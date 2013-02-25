@@ -62,11 +62,11 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 
     // requete en prenant que les adherents a jour de cotisation
     $sql = "SELECT d.rowid, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
-    $sql.= " d.address, d.zip, d.town, d.naiss, d.email, d.photo,";
+    $sql.= " d.address, d.zip, d.town, d.country, d.naiss, d.email, d.photo,";
     $sql.= " t.libelle as type,";
     $sql.= " p.code as country_code, p.libelle as country";
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.country = p.rowid";
     $sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
     if (is_numeric($foruserid)) $sql.=" AND d.rowid=".$foruserid;
     if ($foruserlogin) $sql.=" AND d.login='".$db->escape($foruserlogin)."'";
@@ -111,7 +111,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             // For backward compatibility
             '%SOCIETE%'=>$objp->company,
             '%ZIP%'=>$objp->zip,
-            '%PAYS%'=>$objp->country,
+            '%COUNTRY%'=>$objp->country,
             '%ANNEE%'=>$year,
             '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/"	// deprecated
             );
