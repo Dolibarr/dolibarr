@@ -98,7 +98,7 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode			'top' or 'left'
+     *	@param	string	$mode			'top', 'left', 'jmobile'
      *  @return int     				Number of menu entries shown
      */
     function showmenu($mode)
@@ -116,6 +116,7 @@ class MenuManager
         $res='ErrorBadParameterForMode';
         if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu);
         if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
+        if ($mode == 'jmobile') $res=print_jmobile_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
 
         return $res;
     }

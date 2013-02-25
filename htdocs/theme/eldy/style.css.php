@@ -188,7 +188,7 @@ print '*/'."\n";
 /* ============================================================================== */
 
 body {
-<?php if (GETPOST("optioncss") == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->browser->phone)) {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
