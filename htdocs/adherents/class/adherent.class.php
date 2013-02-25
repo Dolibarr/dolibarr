@@ -419,7 +419,7 @@ class Adherent extends CommonObject
         $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
-        $sql.= ", cp="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
+        $sql.= ", zip="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
