@@ -388,13 +388,13 @@ if (! defined('NOLOGIN'))
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
         if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
-        $langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
-        if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need lang for error messages.
+        if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
         {
             include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
             $langs=new Translate("",$conf);
+    		$langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+        	$langs->setDefaultLang($langcode);
         }
-        $langs->setDefaultLang($langcode);
 
         if ($test && $goontestloop)
         {
@@ -677,10 +677,10 @@ if (! defined('NOREQUIRETRAN'))
             }
         }
     }
-    else	// If language was forced on URL
+/*    else	// If language was forced on URL
     {
         $langs->setDefaultLang(GETPOST('lang','alpha',1));
-    }
+    }*/
 }
 
 // Case forcing style from url
