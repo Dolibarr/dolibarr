@@ -499,16 +499,16 @@ class DoliDBMssql
 
 
 	/**
-	 *	Define limits of request
-	 *
-	 *	@param	int		$limit      nombre maximum de lignes retournees
-	 *	@param	int		$offset     numero de la ligne a partir de laquelle recuperer les ligne
-	 *	@return	string      		chaine exprimant la syntax sql de la limite
+     *	Define limits and offset of request
+     *
+     *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
+     *	@param	int		$offset     Numero of line from where starting fetch
+     *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
 	function plimit($limit=0,$offset=0)
 	{
 		global $conf;
-		if (! $limit) $limit=$conf->liste_limit;
+		if ($limit < 0) $limit=$conf->liste_limit;
 		if ($offset > 0) return " LIMIT $offset,$limit ";
 		else return " LIMIT $limit ";
 	}

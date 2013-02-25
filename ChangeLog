@@ -28,6 +28,8 @@ For developers:
 - Renamed some database fields, code variables and parameters from french to english.
 - First change to manage margins on contracts.
 - Add hook getFormMail.
+- Function plimit of databases drivers accept -1 as value (it means default value set
+  into conf->liste_limit).
 - New: Add option dol_hide_topmenu and dol_hide_leftmenu onto login page.
  
 For translators:
