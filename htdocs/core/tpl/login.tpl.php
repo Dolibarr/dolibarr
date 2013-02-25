@@ -46,8 +46,7 @@ if (isset($conf->modules_parts['css']))
 			// cssfile is a relative path
 			print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
 			// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-			if (!preg_match('/\.css$/i',$cssfile) && ! empty($themeparam))
-				print $themeparam;
+			if (!preg_match('/\.css$/i',$cssfile) && ! empty($themeparam)) print $themeparam;
 			print '"><!-- Added by module '.$modcss. '-->'."\n";
 		}
 	}
@@ -78,7 +77,6 @@ $(document).ready(function () {
 <center>
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
-<input type="hidden" name="mainmenu" value="home" />
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
@@ -99,7 +97,6 @@ $(document).ready(function () {
 
 <div class="login_table">
 
-<!-- <tr><td colspan="2" valign="middle"> -->
 <div id="login_line1">
 
 <div id="login_left">
