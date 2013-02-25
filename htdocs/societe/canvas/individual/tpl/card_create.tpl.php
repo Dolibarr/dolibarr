@@ -59,7 +59,7 @@
 
 <tr>
 	<td><?php echo $langs->trans('FirstName'); ?></td>
-	<td><input type="text" size="30" name="prenom" value="<?php echo $this->control->tpl['firstname']; ?>"></td>
+	<td><input type="text" size="30" name="firstname" value="<?php echo $this->control->tpl['firstname']; ?>"></td>
 	<td colspan="2">&nbsp;</td>
 </tr>
 
@@ -120,9 +120,9 @@
 
 <tr>
 	<td><?php echo $langs->trans('Zip'); ?></td>
-	<td><input size="6" type="text" name="cp" value="<?php echo $this->control->tpl['cp']; ?>"><?php echo $this->control->tpl['autofilltownfromzip']; ?></td>
+	<td><input size="6" type="text" name="zip" value="<?php echo $this->control->tpl['zip']; ?>"><?php echo $this->control->tpl['autofilltownfromzip']; ?></td>
 	<td><?php echo $langs->trans('Town'); ?></td>
-	<td><input type="text" name="ville" value="<?php echo $this->control->tpl['ville']; ?>"></td>
+	<td><input type="text" name="town" value="<?php echo $this->control->tpl['town']; ?>"></td>
 </tr>
 
 <tr>

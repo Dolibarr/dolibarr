@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
 
 	$mainmenu=$_SESSION["mainmenu"];
 	$leftmenu=$_SESSION["leftmenu"];
-	
+
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	//$tabMenu=array();
@@ -55,7 +55,6 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
 		$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
 
 		$showmode=dol_auguria_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
-
 		if ($showmode == 1)
 		{
 			// Define url
@@ -163,7 +162,7 @@ function print_end_menu_entry_auguria()
 function print_end_menu_array_auguria()
 {
 	print '</ul>';
-    print '</div>';
+	print '</div>';
 	print "\n";
 }
 
@@ -180,135 +179,133 @@ function print_end_menu_array_auguria()
  */
 function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu)
 {
-    global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
+	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
-    $overwritemenufor = array();
-    $newmenu = new Menu();
+	$overwritemenufor = array();
+	$newmenu = new Menu();
 
-    $mainmenu=$_SESSION["mainmenu"];
-    $leftmenu=$_SESSION["leftmenu"];
-    
-    // Show logo company
-    if (! empty($conf->global->MAIN_SHOW_LOGO))
-    {
-        $mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
-        if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-        {
-            $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
-            print "\n".'<!-- Show logo on menu -->'."\n";
-            print '<div class="blockvmenuimpair">'."\n";
-            print '<div class="menu_titre" id="menu_titre_logo"></div>';
-            print '<div class="menu_top" id="menu_top_logo"></div>';
-            print '<div class="menu_contenu" id="menu_contenu_logo">';
-            print '<center><img title="" src="'.$urllogo.'"></center>'."\n";
-            print '</div>';
-            print '<div class="menu_end" id="menu_end_logo"></div>';
-            print '</div>'."\n";
-        }
-    }
+	$mainmenu=$_SESSION["mainmenu"];
+	$leftmenu=$_SESSION["leftmenu"];
 
-    /**
-     * We update newmenu with entries found into database
-     * --------------------------------------------------
-     */
-    $menuArbo = new Menubase($db,'auguria');
-    $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
+	// Show logo company
+	if (! empty($conf->global->MAIN_SHOW_LOGO))
+	{
+		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+		{
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_mini);
+			print "\n".'<!-- Show logo on menu -->'."\n";
+			print '<div class="blockvmenuimpair">'."\n";
+			print '<div class="menu_titre" id="menu_titre_logo"></div>';
+			print '<div class="menu_top" id="menu_top_logo"></div>';
+			print '<div class="menu_contenu" id="menu_contenu_logo">';
+			print '<center><img title="" src="'.$urllogo.'"></center>'."\n";
+			print '</div>';
+			print '<div class="menu_end" id="menu_end_logo"></div>';
+			print '</div>'."\n";
+		}
+	}
 
-    //var_dump($menu_array_before);exit;
-    //var_dump($menu_array_after);exit;
-    $menu_array=$newmenu->liste;
-    if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
-    if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
-    //var_dump($menu_array);exit;
+	/**
+	 * We update newmenu with entries found into database
+	 * --------------------------------------------------
+	 */
+	$menuArbo = new Menubase($db,'auguria');
+	$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,($user->societe_id?1:0),'auguria',$tabMenu);
 
-    // Show menu
-    $alt=0;
-    if (is_array($menu_array))
-    {
-        $num=count($menu_array);
-    	for ($i = 0; $i < $num; $i++)
-        {
-            $alt++;
-            if (empty($menu_array[$i]['level']))
-            {
-                if (($alt%2==0))
-                {
-                	if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION))
-                	{
-                		print '<div class="blockvmenupair">'."\n";
-                	}
-                	else
-                	{
-                		print '<div class="blockvmenuimpair">'."\n";
-                	}
-                }
-                else
-                {
-                    print '<div class="blockvmenupair">'."\n";
-                }
-            }
+	//var_dump($menu_array_before);exit;
+	//var_dump($menu_array_after);exit;
+	$menu_array=$newmenu->liste;
+	if (is_array($menu_array_before)) $menu_array=array_merge($menu_array_before, $menu_array);
+	if (is_array($menu_array_after))  $menu_array=array_merge($menu_array, $menu_array_after);
+	//var_dump($menu_array);exit;
+	if (! is_array($menu_array)) return 0;
 
-            // Place tabulation
-            $tabstring='';
-            $tabul=($menu_array[$i]['level'] - 1);
-            if ($tabul > 0)
-            {
-                for ($j=0; $j < $tabul; $j++)
-                {
-                    $tabstring.='&nbsp; &nbsp;';
-                }
-            }
+	// Show menu
+	$alt=0;
+	$num=count($menu_array);
+	for ($i = 0; $i < $num; $i++)
+	{
+		$alt++;
+		if (empty($menu_array[$i]['level']))
+		{
+			if (($alt%2==0))
+			{
+				if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION))
+				{
+					print '<div class="blockvmenupair">'."\n";
+				}
+				else
+				{
+					print '<div class="blockvmenuimpair">'."\n";
+				}
+			}
+			else
+			{
+				print '<div class="blockvmenupair">'."\n";
+			}
+		}
 
-            // Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
-            $url=dol_buildpath($menu_array[$i]['url'],1);
+		// Place tabulation
+		$tabstring='';
+		$tabul=($menu_array[$i]['level'] - 1);
+		if ($tabul > 0)
+		{
+			for ($j=0; $j < $tabul; $j++)
+			{
+				$tabstring.='&nbsp; &nbsp;';
+			}
+		}
 
-            if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
-            {
-                if (! preg_match('/\?/',$url)) $url.='?';
-                else $url.='&';
-                $url.='mainmenu='.$mainmenu;
-            }
+		// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
+		$url=dol_buildpath($menu_array[$i]['url'],1);
 
-            print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['mainmenu'].' -->'."\n";
+		if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
+		{
+			if (! preg_match('/\?/',$url)) $url.='?';
+			else $url.='&';
+			$url.='mainmenu='.$mainmenu;
+		}
 
-            // Menu niveau 0
-            if ($menu_array[$i]['level'] == 0)
-            {
-                if ($menu_array[$i]['enabled'])
-                {
-                    print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
-                }
-                else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
-                {
-                    print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
-                }
-                print "\n".'<div id="section_content_'.$i.'">'."\n";
-                print '<div class="menu_top"></div>'."\n";
-            }
-            // Menu niveau > 0
-            if ($menu_array[$i]['level'] > 0)
-            {
-                if ($menu_array[$i]['enabled'])
-                {
-                    print '<div class="menu_contenu">'.$tabstring.'<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
-                }
-                else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
-                {
-                    print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
-                }
-            }
+		print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['mainmenu'].' -->'."\n";
 
-            // If next is a new block or end
-            if (empty($menu_array[$i+1]['level']))
-            {
-                print '<div class="menu_end"></div>'."\n";
-                print "</div><!-- end section content -->\n";
-                print "</div><!-- end blockvmenu  pair/impair -->\n";
-            }
-        }
-    }
+		// Menu niveau 0
+		if ($menu_array[$i]['level'] == 0)
+		{
+			if ($menu_array[$i]['enabled'])
+			{
+				print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
+			}
+			else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+			{
+				print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
+			}
+			print "\n".'<div id="section_content_'.$i.'">'."\n";
+			print '<div class="menu_top"></div>'."\n";
+		}
+		// Menu niveau > 0
+		if ($menu_array[$i]['level'] > 0)
+		{
+			if ($menu_array[$i]['enabled'])
+			{
+				print '<div class="menu_contenu">'.$tabstring.'<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
+			}
+			else if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
+			{
+				print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font></div>';
+			}
+		}
 
-    return count($menu_array);
+		// If next is a new block or end
+		if (empty($menu_array[$i+1]['level']))
+		{
+			print '<div class="menu_end"></div>'."\n";
+			print "</div><!-- end section content -->\n";
+			print "</div><!-- end blockvmenu  pair/impair -->\n";
+		}
+	}
+
+	return count($menu_array);
 }
 
 
@@ -332,7 +329,9 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 		$found=0;
 		foreach($tmploops as $tmploop)
 		{
-		 	if (in_array($tmploop, $listofmodulesforexternal)) { $found++; break; }
+			if (in_array($tmploop, $listofmodulesforexternal)) {
+				$found++; break;
+			}
 		}
 		if (! $found) return 0;	// Entry is for menus all excluded to external users
 	}

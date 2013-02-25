@@ -385,19 +385,16 @@ class Menubase
      */
     function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
-        global $langs, $user, $conf;
-        global $mainmenu,$leftmenu;	// To export to dol_eval function
+        global $langs, $user, $conf;	// To export to dol_eval function
+        global $mainmenu,$leftmenu;		// To export to dol_eval function
 
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
         $newTabMenu=array();
-        if (is_array($tabMenu))
+        foreach($tabMenu as $val)
         {
-            foreach($tabMenu as $val)
-            {
-                if ($val['type']=='top') $newTabMenu[]=$val;
-            }
+            if ($val['type']=='top') $newTabMenu[]=$val;
         }
 
         return $newTabMenu;
@@ -411,80 +408,78 @@ class Menubase
      * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
      * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-     * 	@param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+     * 	@param  array	&$tabMenu       Array with menu entries already loaded
      * 	@return array    		       	Menu array for particular mainmenu value or full tabArray
      */
     function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
-        global $langs, $user, $conf; // To export to dol_eval function
-        global $mainmenu,$leftmenu; // To export to dol_eval function
-
-        // We initialize newmenu with first already found menu entries
-        $this->newmenu = $newmenu;
+        global $langs, $user, $conf; 	// To export to dol_eval function
+        global $mainmenu,$leftmenu; 	// To export to dol_eval function
 
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-        if (is_array($tabMenu))
+		// Detect what is top mainmenu id
+        $menutopid='';
+        foreach($tabMenu as $key => $val)
         {
-            $menutopid='';
-            foreach($tabMenu as $key => $val)
-            {
-                // Define menutopid of mainmenu
-                if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
-                {
-                    $menutopid=$val['rowid'];
-                    break;
-                }
-            }
+        	// Define menutopid of mainmenu
+        	if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
+        	{
+        		$menutopid=$val['rowid'];
+        		break;
+        	}
+        }
 
-            // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
-            $this->recur($tabMenu, $menutopid, 1);
+        // We initialize newmenu with first already found menu entries
+        $this->newmenu = $newmenu;
 
-            // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
-            foreach($tabMenu as $key => $val)
-            {
-                //var_dump($tabMenu);
-                if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
-                {
-                    //print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
-                    //var_dump($this->newmenu->liste);exit;
+        // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
+        $this->recur($tabMenu, $menutopid, 1);
 
-                    if (empty($val['fk_leftmenu']))
-                    {
-                        $this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);	// TODO Add position
-                        //var_dump($this->newmenu->liste);
-                    }
-                    else
-                    {
-                        // Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
-                        $searchlastsub=0;$lastid=0;$nextid=0;$found=0;
-                        foreach($this->newmenu->liste as $keyparent => $valparent)
-                        {
-                            //var_dump($valparent);
-                            if ($searchlastsub)    // If we started to search for last submenu
-                            {
-                                if ($valparent['level'] >= $searchlastsub) $lastid=$keyparent;
-                                if ($valparent['level'] < $searchlastsub)
-                                {
-                                    $nextid=$keyparent;
-                                    break;
-                                }
-                            }
-                            if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
-                            {
-                                //print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.join(',',$valparent).'<br>';
-                                // Now we look to find last subelement of this parent (we add at end)
-                                $searchlastsub=($valparent['level']+1);
-                                $lastid=$keyparent;
-                                $found=1;
-                            }
-                        }
-                        //print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
-                        if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
-                    }
-                }
-            }
+        // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
+        foreach($tabMenu as $key => $val)
+        {
+        	//var_dump($tabMenu);
+        	if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
+        	{
+        		//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
+        		//var_dump($this->newmenu->liste);exit;
+
+        		if (empty($val['fk_leftmenu']))
+        		{
+        			$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);	// TODO Add position
+        			//var_dump($this->newmenu->liste);
+        		}
+        		else
+        		{
+        			// Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
+        			$searchlastsub=0;$lastid=0;$nextid=0;$found=0;
+        			foreach($this->newmenu->liste as $keyparent => $valparent)
+        			{
+        				//var_dump($valparent);
+        				if ($searchlastsub)    // If we started to search for last submenu
+        				{
+        					if ($valparent['level'] >= $searchlastsub) $lastid=$keyparent;
+        					if ($valparent['level'] < $searchlastsub)
+        					{
+        						$nextid=$keyparent;
+        						break;
+        					}
+        				}
+        				if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
+        				{
+        					//print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.join(',',$valparent).'<br>';
+        					// Now we look to find last subelement of this parent (we add at end)
+        					$searchlastsub=($valparent['level']+1);
+        					$lastid=$keyparent;
+        					$found=1;
+        				}
+        			}
+        			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
+        			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu']);
+        		}
+        	}
         }
 
         return $this->newmenu;
@@ -494,7 +489,7 @@ class Menubase
     /**
      *  Load entries found in database into variable $tabMenu. Note that only "database menu entries" are loaded here, hardcoded will not be present into output.
      *
-     *  @param	string	$mymainmenu     Value for left that defined mainmenu
+     *  @param	string	$mymainmenu     Value for mainmenu that defined mainmenu
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
@@ -584,7 +579,7 @@ class Menubase
                     }
 //$tmp4=dol_microtime_float();
 //print '>>> 3 '.($tmp4 - $tmp3).'<br>';
-                    
+
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
                     $tabMenu[$b]['module']      = $menu['module'];
@@ -606,10 +601,10 @@ class Menubase
                     $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
                     $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
                     $tabMenu[$b]['position']    = $menu['position'];
-                    
+
                     $b++;
                 }
-                
+
                 $a++;
             }
             $this->db->free($resql);

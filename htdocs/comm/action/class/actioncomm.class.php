@@ -287,7 +287,7 @@ class ActionComm extends CommonObject
         $sql.= " a.priority, a.fulldayevent, a.location,";
         $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
         $sql.= " s.nom as socname,";
-        $sql.= " u.firstname, u.name as lastname";
+        $sql.= " u.firstname, u.lastname as lastname";
         $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
@@ -874,7 +874,7 @@ class ActionComm extends CommonObject
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
             $sql.= " a.priority, a.fulldayevent, a.location,";
-            $sql.= " u.firstname, u.name,";
+            $sql.= " u.firstname, u.lastname,";
             $sql.= " s.nom as socname,";
             $sql.= " c.id as type_id, c.code as type_code, c.libelle";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";

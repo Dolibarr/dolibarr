@@ -64,7 +64,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // By default if not defined
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;

@@ -403,6 +403,11 @@ class Expedition extends CommonObject
 				$this->GetUrlTrackingStatus($obj->tracking_number);
 
 				/*
+				 * Thirparty
+				 */
+				$result=$this->fetch_thirdparty();
+				
+				/*
 				 * Lines
 				 */
 				$result=$this->fetch_lines();
@@ -1168,6 +1173,109 @@ class Expedition extends CommonObject
 		}
 	}
 
+    /**
+     *  Fetch all deliveries method and return an array. Load array this->listmeths.
+     *  @param  id      $id     only this carrier, all if none
+     *  @return void
+     */
+    function list_delivery_methods($id='')
+    {
+        global $langs;
+        $listmeths = array();
+        $i=0;
+
+        $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
+        if ($id!='') $sql.= " WHERE em.rowid=".$id;
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $this->listmeths[$i][rowid] = $obj->rowid;
+                $this->listmeths[$i][code] = $obj->code;
+                $label=$langs->trans('SendingMethod'.$obj->code);
+                $this->listmeths[$i][libelle] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+                $this->listmeths[$i][description] = $obj->description;
+                if ($obj->tracking)
+                {
+                    $this->listmeths[$i][tracking] = $obj->tracking;
+                }
+                else
+                {
+                    if ($obj->code)
+                    {
+                        $classname = "methode_expedition_".strtolower($obj->code);
+
+                        if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($obj->code).".modules.php") )
+                        {
+                            require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($obj->code).'.modules.php';
+                            $shipmethod = new $classname();
+                            $this->listmeths[$i][tracking] = $shipmethod->provider_url_status('{TRACKID}');
+                        }
+                    }
+                }
+                $this->listmeths[$i][active] = $obj->active;
+                $i++;
+            }
+        }
+    }
+
+    /**
+     *  Update/create delivery method.
+     *  @param      id      $id     id method to activate
+     *  @return void
+     */
+    function update_delivery_method($id='')
+    {
+        if ($id=='')
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (rowid, code, libelle, description, tracking)";
+            $sql.=" VALUES ('','".$this->update[code]."','".$this->update[libelle]."','".$this->update[description]."','".$this->update[tracking]."')";
+            $resql = $this->db->query($sql);
+        }
+        else
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
+            $sql.= " code='".$this->update[code]."'";
+            $sql.= ",libelle='".$this->update[libelle]."'";
+            $sql.= ",description='".$this->update[description]."'";
+            $sql.= ",tracking='".$this->update[tracking]."'";
+            $sql.= " WHERE rowid=".$id;
+            $resql = $this->db->query($sql);
+        }
+
+    }
+
+    /**
+     *  Activate delivery method.
+     *  @param      id      $id     id method to activate
+     *  @return void
+     */
+    function activ_delivery_method($id)
+    {
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
+        $sql.= ' WHERE rowid='.$id;
+
+        $resql = $this->db->query($sql);
+
+    }
+
+    /**
+     *  DesActivate delivery method.
+     *  @param      id      $id     id method to desactivate
+     *  @return void
+     */
+    function disable_delivery_method($id)
+    {
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
+        $sql.= ' WHERE rowid='.$id;
+
+        $resql = $this->db->query($sql);
+
+    }
+
 	/**
 	 * Get tracking url status
 	 *
@@ -1180,7 +1288,7 @@ class Expedition extends CommonObject
 
 		if (! empty($this->expedition_method_id))
 		{
-			$sql = "SELECT em.code";
+			$sql = "SELECT em.code, em.tracking";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 			$sql.= " WHERE em.rowid = ".$this->expedition_method_id;
 
@@ -1190,36 +1298,45 @@ class Expedition extends CommonObject
 				if ($obj = $this->db->fetch_object($resql))
 				{
 					$code = $obj->code;
+                    $tracking = $obj->tracking;
 				}
 			}
 		}
 
-		if ($code)
-		{
-			$classname = "methode_expedition_".strtolower($code);
+        if ($tracking)
+        {
+                $url = str_replace('{TRACKID}', $value, $tracking);
+                $this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
+        }
+        else
+        {
+            if ($code)
+            {
+                $classname = "methode_expedition_".strtolower($code);
 
-			$url='';
-			if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
-			{
-				require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).'.modules.php';
-				$shipmethod = new $classname();
-				$url = $shipmethod->provider_url_status($this->tracking_number);
-			}
+                $url='';
+                if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
+                {
+                    require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).'.modules.php';
+                    $shipmethod = new $classname();
+                    $url = $shipmethod->provider_url_status($this->tracking_number);
+                }
 
-			if ($url)
-			{
-				$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
-			}
-			else
-			{
-				$this->tracking_url = $value;
-			}
-		}
-		else
-		{
-			$this->tracking_url = $value;
-		}
-	}
+                if ($url)
+                {
+                    $this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
+                }
+                else
+                {
+                    $this->tracking_url = $value;
+                }
+            }
+            else
+            {
+                $this->tracking_url = $value;
+            }
+        }
+    }
 
 	/**
 	 *	Classify the shipping as invoiced

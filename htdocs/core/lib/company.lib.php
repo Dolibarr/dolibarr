@@ -532,7 +532,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -554,7 +554,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             print '<td>';
             $contactstatic->id = $obj->rowid;
-            $contactstatic->name = $obj->name;
+            $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             print $contactstatic->getNomUrl(1);
             print '</td>';
@@ -769,8 +769,8 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid";
-        if (get_class($object) == 'Adherent') $sql.= ", m.nom as name, m.prenom as firstname";
-        if (get_class($object) == 'Societe')  $sql.= ", sp.name, sp.firstname";
+        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -830,7 +830,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                     // Contact pour cette action
                     if (empty($objcon->id) && $obj->fk_contact > 0)
                     {
-                        $contactstatic->name=$obj->name;
+                        $contactstatic->lastname=$obj->lastname;
                         $contactstatic->firstname=$obj->firstname;
                         $contactstatic->id=$obj->fk_contact;
                         $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
@@ -908,8 +908,8 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " a.fk_user_author, a.fk_contact,";
         $sql.= " c.code as acode, c.libelle,";
         $sql.= " u.login, u.rowid as user_id";
-        if (get_class($object) == 'Adherent') $sql.= ", m.nom as name, m.prenom as firstname";
-        if (get_class($object) == 'Societe')  $sql.= ", sp.name, sp.firstname";
+        if (get_class($object) == 'Adherent') $sql.= ", m.lastname, m.firstname";
+        if (get_class($object) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -945,7 +945,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 		'userid'=>$obj->user_id,
                 		'login'=>$obj->login,
                 		'contact_id'=>$obj->fk_contact,
-                		'name'=>$obj->name,
+                		'lastname'=>$obj->lastname,
                 		'firstname'=>$obj->firstname,
                 		'fk_element'=>$obj->fk_element,
                 		'elementtype'=>$obj->elementtype
@@ -1114,7 +1114,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             // Contact pour cette action
             if (! empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
-                $contactstatic->name=$histo[$key]['name'];
+                $contactstatic->lastname=$histo[$key]['lastname'];
                 $contactstatic->firstname=$histo[$key]['firstname'];
                 $contactstatic->id=$histo[$key]['contact_id'];
                 $out.='<td width="120">'.$contactstatic->getNomUrl(1,'',10).'</td>';
@@ -1161,7 +1161,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 
 	$i=-1;
 
-	$sql = "SELECT s.rowid, s.nom as name, s.address, s.cp as zip, s.ville as town, s.code_client, s.canvas";
+	$sql = "SELECT s.rowid, s.nom as name, s.address, s.zip, s.town, s.code_client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE s.parent = ".$object->id;
 	$sql.= " AND s.entity IN (".getEntity('societe', 1).")";

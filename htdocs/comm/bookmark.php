@@ -87,7 +87,7 @@ if ($_GET["action"] == 'delete')
 
 print_fiche_titre($langs->trans("Bookmarks"));
 
-$sql = "SELECT s.rowid, s.nom, b.dateb as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname";
+$sql = "SELECT s.rowid, s.nom, b.dateb as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.lastname, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_soc = s.rowid AND b.fk_user=u.rowid";
 if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;
@@ -108,7 +108,7 @@ if ($resql)
   print "<tr class=\"liste_titre\">";
   //print "<td>&nbsp;</td>";
   print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"],"bid","","",'align="center"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.name","","","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.lastname","","","",$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Url"),$_SERVER["PHP_SELF"],"b.url","","",'',$sortfield,$sortorder);

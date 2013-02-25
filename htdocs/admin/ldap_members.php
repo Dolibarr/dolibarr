@@ -271,7 +271,7 @@ print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
-// CP
+// ZIP
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
 print '<input size="25" type="text" name="fieldzip" value="'.$conf->global->LDAP_MEMBER_FIELD_ZIP.'">';
@@ -279,7 +279,7 @@ print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
-// Ville
+// TOWN
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
 print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_MEMBER_FIELD_TOWN.'">';
@@ -287,7 +287,7 @@ print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
-// Pays
+// COUNTRY
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
 print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_MEMBER_FIELD_COUNTRY.'">';

@@ -78,7 +78,7 @@ if ($_GET["id"])
 	print '</td></tr>';
 
 	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
-	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
+	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->town.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 	print $entrepot->pays;

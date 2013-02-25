@@ -395,10 +395,10 @@ abstract class ActionsContactCardCommon
 
         if ($action == 'create_user')
         {
-        	// Full firstname and name separated with a dot : firstname.name
+        	// Full firstname and lastname separated with a dot : firstname.lastname
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        	$login=dol_buildlogin($this->object->nom, $this->object->prenom);
+        	$login=dol_buildlogin($this->object->lastname, $this->object->firstname);
 
        		$generated_password=getRandomPassword('');
         	$password=$generated_password;
@@ -459,7 +459,6 @@ abstract class ActionsContactCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->pays_code	=	$obj->code;
             $this->object->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
             $this->object->country_code	=	$obj->code;
             $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;

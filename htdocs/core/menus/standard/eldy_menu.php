@@ -31,12 +31,12 @@ class MenuManager
 	var $type_user;									// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 	var $name="eldy";
-	
+
     var $menu_array;
     var $menu_array_after;
 
     var $tabMenu;
-    
+
 
     /**
      *  Constructor
@@ -52,7 +52,7 @@ class MenuManager
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-        
+
 		// Read mainmenu and leftmenu that define which menu to show
         if (isset($_GET["mainmenu"]))
         {
@@ -62,11 +62,11 @@ class MenuManager
         	$_SESSION["leftmenuopened"]="";
         }
         else
-        {
+       {
         	// On va le chercher en session si non defini par le lien
         	$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
         }
-        
+
         if (isset($_GET["leftmenu"]))
         {
         	// On sauve en session le menu principal choisi
@@ -86,7 +86,7 @@ class MenuManager
         	// On va le chercher en session si non defini par le lien
         	$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
-        
+
         require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
         $tabMenu=array();
         $menuArbo = new Menubase($db,'eldy');
@@ -98,7 +98,7 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode			'top' or 'left'
+     *	@param	string	$mode			'top', 'left', 'jmobile'
      *  @return int     				Number of menu entries shown
      */
     function showmenu($mode)
@@ -112,11 +112,12 @@ class MenuManager
         	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
         	$conf->global->MAIN_SEARCHFORM_CONTACT=0;
         }
-        
+
         $res='ErrorBadParameterForMode';
         if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu);
         if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
-        
+        if ($mode == 'jmobile') $res=print_jmobile_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
+
         return $res;
     }
 
