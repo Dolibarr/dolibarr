@@ -485,8 +485,8 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.name as lastname, c.firstname,";
-		$sql.= " c.address, c.cp as zip, c.ville as town,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.lastname, c.firstname,";
+		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
@@ -495,7 +495,7 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
-		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
+		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
@@ -535,7 +535,6 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				
 				'fk_pays' => $contact->fk_pays?$contact->fk_pays:'',
 				'country_id' => $contact->country_id?$contact->country_id:'',
-				'pays_code' => $contact->pays_code?$contact->pays_code:'',
 				'country_code' => $contact->country_code?$contact->country_code:'',
 				'pays' => $contact->pays?$contact->pays:'',
 				'country' => $contact->country?$contact->country:'',

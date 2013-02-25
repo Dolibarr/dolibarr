@@ -583,7 +583,7 @@ else
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('nom');
-        $object->firstname			= GETPOST('prenom');
+        $object->firstname			= GETPOST('firstname');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
@@ -1114,7 +1114,7 @@ else
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
 
-                // We set country_id, and pays_code label of the chosen country
+                // We set country_id, and country_code label of the chosen country
                 // TODO move to DAO class
                 if ($object->country_id)
                 {

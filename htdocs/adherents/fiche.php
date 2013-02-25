@@ -263,7 +263,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->state_id    = $_POST["departement_id"];
 		$object->country_id  = $_POST["country_id"];
 		$object->fk_departement = $_POST["departement_id"];   // deprecated
-		$object->pays_id     = $_POST["country_id"];   // deprecated
 
 		$object->phone       = trim($_POST["phone"]);
 		$object->phone_perso = trim($_POST["phone_perso"]);
@@ -438,7 +437,6 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->town        = $town;
 	$object->fk_departement = $state_id;
 	$object->state_id    = $state_id;
-	$object->pays_id     = $country_id;
 	$object->country_id  = $country_id;
 	$object->phone       = $phone;
 	$object->phone_perso = $phone_perso;
@@ -730,7 +728,6 @@ else
 		if ($object->country_id)
 		{
 			$tmparray=getCountry($object->country_id,'all');
-			$object->pays_code=$tmparray['code'];
 			$object->pays=$tmparray['code'];
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
@@ -959,8 +956,6 @@ else
 			{
 				dol_print_error($db);
 			}
-			$object->pays_id=$obj->rowid;
-			$object->pays_code=$obj->code;
 			$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
 			$object->country_id=$obj->rowid;
 			$object->country_code=$obj->code;

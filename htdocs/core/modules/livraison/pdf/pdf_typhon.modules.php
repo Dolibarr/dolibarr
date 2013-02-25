@@ -77,7 +77,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;

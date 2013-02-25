@@ -444,7 +444,7 @@ class Form
      *  @param  string	$htmloption     Options html on select object
      *  @return	void
      */
-    function select_pays($selected='',$htmlname='pays_id',$htmloption='')
+    function select_pays($selected='',$htmlname='country_id',$htmloption='')
     {
         print $this->select_country($selected,$htmlname,$htmloption);
     }
@@ -458,7 +458,7 @@ class Form
      *  @param	string	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
-    function select_country($selected='',$htmlname='pays_id',$htmloption='',$maxlength=0)
+    function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0)
     {
         global $conf,$langs;
 

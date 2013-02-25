@@ -491,7 +491,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	    $pdf->SetFont('','', $default_font_size - 1);
 
 	    // If France, show VAT mention if not applicable
-	    /*if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+	    /*if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
 	    {
 	        $pdf->SetFont('','B', $default_font_size - 2);
 	        $pdf->SetXY($this->marge_gauche, $posy);

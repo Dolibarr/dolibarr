@@ -132,7 +132,7 @@ abstract class ActionsCardCommon
             $this->object->address				= $_POST["adresse"];
             $this->object->zip					= $_POST["zipcode"];
             $this->object->town					= $_POST["town"];
-            $this->object->country_id			= $_POST["pays_id"];
+            $this->object->country_id			= $_POST["country_id"];
             $this->object->state_id				= $_POST["departement_id"];
             $this->object->tel					= $_POST["tel"];
             $this->object->fax					= $_POST["fax"];
@@ -558,7 +558,7 @@ abstract class ActionsCardCommon
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
             $this->tpl['address'] 			= dol_nl2br($this->object->address);
 
-            $img=picto_from_langcode($this->object->pays_code);
+            $img=picto_from_langcode($this->object->country_code);
             if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
@@ -701,7 +701,7 @@ abstract class ActionsCardCommon
         $this->object->localtax1_assuj		= 	$_POST["localtax1assuj_value"];
         $this->object->localtax2_assuj		= 	$_POST["localtax2assuj_value"];
 
-        // We set pays_id, and pays_code label of the chosen country
+        // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
         {
             $tmparray=getCountry($this->object->country_id,'all',$this->db,$langs,0);

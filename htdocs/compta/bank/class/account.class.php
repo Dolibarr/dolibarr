@@ -71,7 +71,6 @@ class Account extends CommonObject
     var $state;
 
     var $fk_pays;            // deprecated
-    var $pays_code;            // deprecated
     var $pays;                // deprecated
     var $country_id;
     var $country_code;
@@ -661,7 +660,6 @@ class Account extends CommonObject
                 $this->state           = $obj->state;
 
                 $this->fk_pays       = $obj->country_id;          // deprecated
-                $this->pays_code     = $obj->country_code;        // deprecated
                 $this->pays          = $obj->country;             // deprecated
                 $this->country_id    = $obj->country_id;
                 $this->country_code  = $obj->country_code;

@@ -64,8 +64,6 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->statut      = $_POST["statut"];
 	$object->lieu        = $_POST["lieu"];
 	$object->address     = $_POST["address"];
-	$object->cp          = $_POST["zipcode"];
-	$object->pays_id     = $_POST["country_id"];
 	$object->zip         = $_POST["zipcode"];
 	$object->town        = $_POST["town"];
 	$object->country_id  = $_POST["country_id"];
@@ -116,8 +114,6 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		$object->statut      = $_POST["statut"];
 		$object->lieu        = $_POST["lieu"];
 		$object->address     = $_POST["address"];
-		$object->cp          = $_POST["zipcode"];
-		$object->pays_id     = $_POST["country_id"];
 		$object->zip         = $_POST["zipcode"];
 		$object->town        = $_POST["town"];
 		$object->country_id  = $_POST["country_id"];

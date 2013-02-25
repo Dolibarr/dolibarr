@@ -194,14 +194,11 @@ if ($result >= 0)
 
 			//$member->societe;
 			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
-			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP];            // deprecated
 			$member->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
 			$member->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
 			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	     // deprecated
 			$member->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
-			$member->pays_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];    // deprecated
 			$member->country_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];
-			$member->pays_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];   // deprecated
 			$member->country_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];
 
 			$member->phone=$ldapuser[$conf->global->LDAP_FIELD_PHONE];
