@@ -874,9 +874,10 @@ class Ldap
 	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
 	 *	@param	int		$activefilter		1=use field this->filter as filter instead of parameter $search
+	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array						Array of [id_record][ldap_field]=value
 	 */
-	function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
+	function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0, $attributeAsArray=array())
 	{
 		$fulllist=array();
 
@@ -955,7 +956,15 @@ class Ldap
 					}
 					else
 					{
-						$fulllist[$recordid][$attributeArray[$j]] = $this->convToOutputCharset($info[$i][$keyattributelower][0],$this->ldapcharset);
+						if(in_array($attributeArray[$j], $attributeAsArray) && is_array($info[$i][$keyattributelower])) {
+							$valueTab = array();
+							foreach($info[$i][$keyattributelower] as $key => $value) {
+								$valueTab[$key] = $this->convToOutputCharset($value,$this->ldapcharset);
+							}
+							$fulllist[$recordid][$attributeArray[$j]] = $valueTab;
+						} else {
+							$fulllist[$recordid][$attributeArray[$j]] = $this->convToOutputCharset($info[$i][$keyattributelower][0],$this->ldapcharset);
+						}
 					}
 				}
 			}
