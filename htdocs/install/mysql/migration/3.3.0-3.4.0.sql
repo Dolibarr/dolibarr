@@ -8,6 +8,7 @@
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
 
