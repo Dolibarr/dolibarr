@@ -127,3 +127,6 @@
 [submodule "htdocs/custom/fidelite"]
 	path = htdocs/custom/fidelite
 	url = gitolite@doliforge.org:fidelite/fidelite.git
+[submodule "htdocs/custom/dol2speed"]
+	path = htdocs/custom/dol2speed
+	url = git@bitbucket.org:speedealing/dol2speed.git
