@@ -205,7 +205,7 @@ if ($action == 'create')
             $object->note		=	$_POST["note"];
         }
 
-        // On positionne pays_id, pays_code et libelle du pays choisi
+        // On positionne country_id, pays_code et libelle du pays choisi
         $object->country_id = (GETPOST('country_id','int') ? GETPOST('country_id','int') : $mysoc->country_id);
         if ($object->country_id)
         {

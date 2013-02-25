@@ -49,7 +49,6 @@ class Entrepot extends CommonObject
 	var $country;
 	var $country_id;
 	var $country_code;
-	var $pays_id;   // deprecated
 
 
 	/**
@@ -144,7 +143,7 @@ class Entrepot extends CommonObject
 		$this->address=$this->db->escape(trim($this->address));
         $this->zip=$this->zip?trim($this->zip):trim($this->zip);
         $this->town=$this->town?trim($this->town):trim($this->town);
-		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->pays_id);
+		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
@@ -274,7 +273,6 @@ class Entrepot extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
-				$this->pays_id        = $obj->country_id;  // deprecated
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;

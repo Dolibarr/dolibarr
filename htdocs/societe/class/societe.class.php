@@ -60,7 +60,6 @@ class Societe extends CommonObject
     var $departement_code;   // deprecated
     var $departement;        // deprecated
 
-    var $pays_id;   // deprecated
     var $pays_code; // deprecated
     var $pays;	    // deprecated
     var $country_id;
@@ -396,8 +395,7 @@ class Societe extends CommonObject
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
-        $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->pays_id;
-        $this->pays_id      = $this->country_id;	// TODO obsolete
+        $this->country_id	= ($this->country_id > 0)?$this->country_id:$this->country_id;
         $this->phone		= trim($this->phone?$this->phone:$this->tel);
         $this->phone		= preg_replace("/\s/","",$this->phone);
         $this->phone		= preg_replace("/\./","",$this->phone);
@@ -758,7 +756,6 @@ class Societe extends CommonObject
                 $this->zip 			= $obj->zip;
                 $this->town 		= $obj->town;
 
-                $this->pays_id 		= $obj->country_id;	// TODO obsolete
                 $this->country_id   = $obj->country_id;
                 $this->pays_code 	= $obj->country_id?$obj->country_code:'';		// TODO obsolete
                 $this->country_code = $obj->country_id?$obj->country_code:'';
@@ -2439,7 +2436,6 @@ class Societe extends CommonObject
         $this->town=$member->town;
         $this->pays_code=$member->country_code;	// TODO obsolete
         $this->country_code=$member->country_code;
-        $this->pays_id=$member->country_id;	// TODO obsolete
         $this->country_id=$member->country_id;
         $this->tel=$member->phone;				// deprecated
         $this->phone=$member->phone;       // Prof phone
@@ -2524,7 +2520,6 @@ class Societe extends CommonObject
     			$country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
     		}
     	}
-    	$this->pays_id=$country_id;		// TODO deprecated
     	$this->country_id=$country_id;
     	$this->pays_code=$country_code;	// TODO deprecated
     	$this->country_code=$country_code;

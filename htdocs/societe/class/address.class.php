@@ -40,7 +40,6 @@ class Address
 	var $address;
 	var $zip;
 	var $town;
-	var $pays_id;		// deprecated
 	var $country_id;
 	var $pays_code;		// deprecated
 	var $country_code;
@@ -302,7 +301,6 @@ class Address
 						$line->note				= $objp->note;
 
 						// deprecated
-						$line->pays_id			= $line->country_id;
 						$line->pays_code		= $line->country_code;
 						$line->pays				= $line->country;
 						$line->tel				= $line->phone;
@@ -379,7 +377,6 @@ class Address
 				$this->note				= $obj->note;
 
 				// deprecated
-				$this->pays_id			= $this->country_id;
 				$this->pays_code		= $this->country_code;
 				$this->pays				= $this->country;
 				$this->tel				= $this->phone;

@@ -63,7 +63,6 @@ class Adherent extends CommonObject
     var $country_id;
     var $country_code;
     var $country;
-    var $pays_id;              // deprecated
     var $pays_code;            // deprecated
     var $pays;                 // deprecated
 
@@ -563,7 +562,7 @@ class Adherent extends CommonObject
                         $lthirdparty->tel=$this->phone;
                         $lthirdparty->state_id=$this->state_id;
                         $lthirdparty->country_id=$this->country_id;
-                        $lthirdparty->pays_id=$this->country_id;
+                        $lthirdparty->country_id=$this->country_id;
                         //$lthirdparty->phone_mobile=$this->phone_mobile;
 
                         $result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
@@ -1069,7 +1068,6 @@ class Adherent extends CommonObject
                 	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else
                 	$this->country=$obj->country;
-                $this->pays_id			= $obj->country_id;      // deprecated
                 $this->pays_code		= $obj->country_code;    // deprecated
                 $this->pays				= $this->country;        // deprecated
 
