@@ -43,14 +43,12 @@ class Entrepot extends CommonObject
 	var $lieu;
 	var $address;
 	//! Code Postal
-	var $cp;        // deprecated
 	var $zip;
 	var $town;
 
 	var $country;
 	var $country_id;
 	var $country_code;
-	var $pays_id;   // deprecated
 
 
 	/**
@@ -143,9 +141,9 @@ class Entrepot extends CommonObject
 		$this->lieu=$this->db->escape(trim($this->lieu));
 
 		$this->address=$this->db->escape(trim($this->address));
-        $this->zip=$this->zip?trim($this->zip):trim($this->cp);
-        $this->town=$this->town?trim($this->town):trim($this->ville);
-		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->pays_id);
+        $this->zip=$this->zip?trim($this->zip):trim($this->zip);
+        $this->town=$this->town?trim($this->town):trim($this->town);
+		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
@@ -153,7 +151,7 @@ class Entrepot extends CommonObject
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
 		$sql .= ", address = '" . $this->db->escape($this->address) ."'";
-		$sql .= ", cp = '" . $this->db->escape($this->zip) ."'";
+		$sql .= ", zip = '" . $this->db->escape($this->zip) ."'";
 		$sql .= ", town = '" . $this->db->escape($this->town) ."'";
 		$sql .= ", fk_pays = " . $this->country_id;
 		$sql .= " WHERE rowid = " . $id;
@@ -246,7 +244,7 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 			
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, cp as zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 	
 		if ($id) 
@@ -275,8 +273,6 @@ class Entrepot extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
-				$this->cp             = $obj->zip;         // deprecated
-				$this->pays_id        = $obj->country_id;  // deprecated
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
@@ -284,7 +280,6 @@ class Entrepot extends CommonObject
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	            $tmp=getCountry($this->country_id,'all');
 				$this->pays=$tmp['label'];                // deprecated
-				$this->pays_code=$tmp['code'];            // deprecated
 				$this->country=$tmp['label'];
 				$this->country_code=$tmp['code'];
 	
