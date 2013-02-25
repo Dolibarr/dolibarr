@@ -125,8 +125,8 @@ if ($_GET["socid"])
 
 	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->address)."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->cp."</td>";
-	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->zip."</td>";
+	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->town."</td></tr>";
 
 	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
 
@@ -141,12 +141,12 @@ if ($_GET["socid"])
 	print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT u.rowid, u.name, u.firstname";
+	$sql = "SELECT u.rowid, u.lastname, u.firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE sc.fk_soc =".$soc->id;
 	$sql .= " AND sc.fk_user = u.rowid";
-	$sql .= " ORDER BY u.name ASC ";
+	$sql .= " ORDER BY u.lastname ASC ";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -196,10 +196,10 @@ if ($_GET["socid"])
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT u.rowid, u.name, u.firstname, u.login";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
-		$sql.= " ORDER BY u.name ASC ";
+		$sql.= " ORDER BY u.lastname ASC ";
 
 		$resql = $db->query($sql);
 		if ($resql)

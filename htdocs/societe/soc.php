@@ -112,17 +112,17 @@ if (empty($reshook))
         {
             $object->particulier       = GETPOST("private");
 
-            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?GETPOST('prenom').' '.GETPOST('nom'):GETPOST('nom').' '.GETPOST('prenom');
+            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?GETPOST('firstname').' '.GETPOST('nom'):GETPOST('nom').' '.GETPOST('firstname');
             $object->civilite_id       = GETPOST('civilite_id');
             // Add non official properties
             $object->name_bis          = GETPOST('nom');
-            $object->firstname         = GETPOST('prenom');
+            $object->firstname         = GETPOST('firstname');
         }
         else
         {
             $object->name              = GETPOST('nom');
         }
-        $object->address               = GETPOST('adresse');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode');
         $object->town                  = GETPOST('town');
         $object->country_id            = GETPOST('country_id');
@@ -583,14 +583,14 @@ else
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('nom');
-        $object->firstname			= GETPOST('prenom');
+        $object->firstname			= GETPOST('firstname');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
         $object->code_client		= GETPOST('code_client');
         $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
         $object->code_fournisseur	= GETPOST('code_fournisseur');
-        $object->address			= GETPOST('adresse');
+        $object->address			= GETPOST('address');
         $object->zip				= GETPOST('zipcode');
         $object->town				= GETPOST('town');
         $object->state_id			= GETPOST('departement_id');
@@ -748,7 +748,7 @@ else
         // If javascript on, we show option individual
         if ($conf->use_javascript_ajax)
         {
-            print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$object->firstname.'"></td>';
+            print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="firstname" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
             print '<tr class="individualline"><td>'.$langs->trans("UserTitle").'</td><td>';
             print $formcompany->select_civility($object->civility_id).'</td>';
@@ -808,7 +808,7 @@ else
         }
 
         // Address
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -1086,7 +1086,7 @@ else
                 $object->code_client			= GETPOST('code_client');
                 $object->fournisseur			= GETPOST('fournisseur');
                 $object->code_fournisseur		= GETPOST('code_fournisseur');
-                $object->address				= GETPOST('adresse');
+                $object->address				= GETPOST('address');
                 $object->zip					= GETPOST('zipcode');
                 $object->town					= GETPOST('town');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
@@ -1114,7 +1114,7 @@ else
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
 
-                // We set country_id, and pays_code label of the chosen country
+                // We set country_id, and country_code label of the chosen country
                 // TODO move to DAO class
                 if ($object->country_id)
                 {

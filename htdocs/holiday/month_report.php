@@ -66,7 +66,7 @@ $sql.= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
 $sql.= " WHERE cp.statut = 3";	// Approved
 // TODO Use BETWEEN instead of date_format
 $sql.= " AND (date_format(cp.date_debut, '%Y-%m') = '$year-$month' OR date_format(cp.date_fin, '%Y-%m') = '$year-$month')";
-$sql.= " ORDER BY u.name,cp.date_debut";
+$sql.= " ORDER BY u.lastname,cp.date_debut";
 
 $result  = $db->query($sql);
 $num = $db->num_rows($result);
@@ -126,7 +126,7 @@ if($num == '0') {
 
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
-		print '<td>'.$user->nom.' '.$user->prenom.'</td>';
+		print '<td>'.$user->lastname.' '.$user->firstname.'</td>';
 		print '<td>'.dol_print_date($start_date,'day');
 		print '</td>';
 		print '<td>'.dol_print_date($end_date,'day');

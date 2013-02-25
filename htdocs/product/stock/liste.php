@@ -45,7 +45,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
 
-$sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
+$sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)
@@ -54,7 +54,7 @@ if ($sref)
 }
 if ($sall)
 {
-    $sql.= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
+    $sql.= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.town like '%".$sall."%')";
 }
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit+1, $offset);

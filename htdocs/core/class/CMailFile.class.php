@@ -85,8 +85,8 @@ class CMailFile
 	 *	CMailFile
 	 *
 	 *	@param 	string	$subject             Topic/Subject of mail
-	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
-	 *	@param 	string	$from                Sender email      (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Nom firstname <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
+	 *	@param 	string	$from                Sender email      (RFC 2822: "Nom firstname <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
 	 *	@param 	string	$msg                 Message
 	 *	@param 	array	$filename_list       List of files to attach (full path of filename on file system)
 	 *	@param 	array	$mimetype_list       List of MIME type of attached files

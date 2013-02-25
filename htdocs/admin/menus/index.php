@@ -54,12 +54,10 @@ $menu_handler_smartphone=preg_replace('/(_frontoffice\.php|_menu\.php)/i','',$me
 
 $menu_handler=$menu_handler_top;
 
-
 if (GETPOST("handler_origine")) $menu_handler=GETPOST("handler_origine");
 if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
-$menu_handler_to_search=preg_replace('/(_backoffice|_menu)?(\.php)?/i','',$menu_handler);
-$menu_handler_to_search=preg_replace('/(_frontoffice|_menu)?(\.php)?/i','',$menu_handler);
+$menu_handler_to_search=preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i','',$menu_handler);
 
 
 /*

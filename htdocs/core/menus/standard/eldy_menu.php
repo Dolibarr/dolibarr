@@ -31,9 +31,11 @@ class MenuManager
 	var $type_user;									// Put 0 for internal users, 1 for external users
 	var $atarget="";                                // Valeur du target a utiliser dans les liens
 	var $name="eldy";
-	
+
     var $menu_array;
     var $menu_array_after;
+
+    var $tabMenu;
 
 
     /**
@@ -46,13 +48,57 @@ class MenuManager
     {
     	$this->type_user=$type_user;
         $this->db=$db;
+
+		// On sauve en session le menu principal choisi
+		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+
+		// Read mainmenu and leftmenu that define which menu to show
+        if (isset($_GET["mainmenu"]))
+        {
+        	// On sauve en session le menu principal choisi
+        	$mainmenu=$_GET["mainmenu"];
+        	$_SESSION["mainmenu"]=$mainmenu;
+        	$_SESSION["leftmenuopened"]="";
+        }
+        else
+       {
+        	// On va le chercher en session si non defini par le lien
+        	$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
+        }
+
+        if (isset($_GET["leftmenu"]))
+        {
+        	// On sauve en session le menu principal choisi
+        	$leftmenu=$_GET["leftmenu"];
+        	$_SESSION["leftmenu"]=$leftmenu;
+
+        	if ($_SESSION["leftmenuopened"]==$leftmenu)	// To collapse
+        	{
+        		//$leftmenu="";
+        		$_SESSION["leftmenuopened"]="";
+        	}
+        	else
+        	{
+        		$_SESSION["leftmenuopened"]=$leftmenu;
+        	}
+        } else {
+        	// On va le chercher en session si non defini par le lien
+        	$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
+        }
+
+        require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
+        $tabMenu=array();
+        $menuArbo = new Menubase($db,'eldy');
+        $menuArbo->menuLoad($mainmenu, $leftmenu, $type_user, 'eldy', $tabMenu);
+        $this->tabMenu=$tabMenu;
     }
 
 
     /**
      *  Show menu
      *
-     *	@param	string	$mode			'top' or 'left'
+     *	@param	string	$mode			'top', 'left', 'jmobile'
      *  @return int     				Number of menu entries shown
      */
     function showmenu($mode)
@@ -68,9 +114,10 @@ class MenuManager
         }
 
         $res='ErrorBadParameterForMode';
-        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user);
-        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
-        
+        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu);
+        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
+        if ($mode == 'jmobile') $res=print_jmobile_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
+
         return $res;
     }
 

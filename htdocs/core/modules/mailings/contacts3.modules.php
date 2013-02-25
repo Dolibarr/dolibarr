@@ -77,7 +77,7 @@ class mailing_contacts3 extends MailingTargets
 
         // La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
-        $sql.= " sp.name as name, sp.firstname as firstname, sp.civilite,";
+        $sql.= " sp.lastname, sp.firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -90,7 +90,7 @@ class mailing_contacts3 extends MailingTargets
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
-    	$sql.= " ORDER BY sp.name, sp.firstname";
+    	$sql.= " ORDER BY sp.lastname, sp.firstname";
 
     	$resql = $this->db->query($sql);
     	if ($resql)

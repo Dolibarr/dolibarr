@@ -151,7 +151,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 // Action ajout user
 if ($action == 'add' && $canadduser)
 {
-    if (! $_POST["nom"])
+    if (! $_POST["lastname"])
     {
         $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
         $action="create";       // Go back to create page
@@ -174,8 +174,8 @@ if ($action == 'add' && $canadduser)
 
     if (! $message)
     {
-        $object->lastname		= $_POST["nom"];
-        $object->firstname	= $_POST["prenom"];
+        $object->lastname		= $_POST["lastname"];
+        $object->firstname	= $_POST["firstname"];
         $object->login		= $_POST["login"];
         $object->admin		= $_POST["admin"];
         $object->office_phone	= $_POST["office_phone"];
@@ -277,7 +277,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $error=0;
 
-    	if (! $_POST["nom"])
+    	if (! $_POST["lastname"])
         {
             $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
             $action="edit";       // Go back to create page
@@ -315,8 +315,8 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             $object->oldcopy=dol_clone($object);
 
-            $object->lastname	= GETPOST("nom");
-            $object->firstname	= GETPOST("prenom");
+            $object->lastname	= GETPOST("lastname");
+            $object->firstname	= GETPOST("firstname");
             $object->login		= GETPOST("login");
             $object->pass		= GETPOST("password");
             $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
@@ -546,8 +546,8 @@ if ($action == 'adduserldap')
         {
             foreach ($ldapusers as $key => $attribute)
             {
-                $ldap_nom			= $attribute[$conf->global->LDAP_FIELD_NAME];
-                $ldap_prenom		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
+                $ldap_lastname		= $attribute[$conf->global->LDAP_FIELD_NAME];
+                $ldap_firstname		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
                 $ldap_login			= $attribute[$conf->global->LDAP_FIELD_LOGIN];
                 $ldap_loginsmb		= $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
                 $ldap_pass			= $attribute[$conf->global->LDAP_FIELD_PASSWORD];
@@ -682,7 +682,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
        	print '<br>';
     }
 
-    print dol_set_focus('#nom');
+    print dol_set_focus('#lastname');
     
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -694,31 +694,31 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print '<tr>';
 
-    // Nom
+    // Lastname
     print '<td valign="top" width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
-    if (! empty($ldap_nom))
+    if (! empty($ldap_lastname))
     {
-        print '<input type="hidden" id="nom" name="nom" value="'.$ldap_nom.'">';
-        print $ldap_nom;
+        print '<input type="hidden" id="lastname" name="lastname" value="'.$ldap_lastname.'">';
+        print $ldap_lastname;
     }
     else
     {
-        print '<input size="30" type="text" id="nom" name="nom" value="'.GETPOST('nom').'">';
+        print '<input size="30" type="text" id="lastname" name="lastname" value="'.GETPOST('lastname').'">';
     }
     print '</td></tr>';
 
-    // Prenom
+    // Firstname
     print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
     print '<td>';
-    if (! empty($ldap_prenom))
+    if (! empty($ldap_firstname))
     {
-        print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
-        print $ldap_prenom;
+        print '<input type="hidden" name="firstname" value="'.$ldap_firstname.'">';
+        print $ldap_firstname;
     }
     else
     {
-        print '<input size="30" type="text" name="prenom" value="'.GETPOST('prenom').'">';
+        print '<input size="30" type="text" name="firstname" value="'.GETPOST('firstname').'">';
     }
     print '</td></tr>';
 
@@ -1087,7 +1087,7 @@ else
 
             // Firstname
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td>'.$object->prenom.'</td>';
+            print '<td>'.$object->Firstname.'</td>';
             print '</tr>'."\n";
 
             // Position/Job
@@ -1558,12 +1558,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="nom" value="'.$object->nom.'">';
+                print '<input size="30" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';
             }
             else
             {
-                print '<input type="hidden" name="nom" value="'.$object->nom.'">';
-                print $object->nom;
+                print '<input type="hidden" name="lastname" value="'.$object->lastname.'">';
+                print $object->lastname;
             }
             print '</td>';
             // Photo
@@ -1587,12 +1587,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="prenom" value="'.$object->prenom.'">';
+                print '<input size="30" type="text" class="flat" name="Firstname" value="'.$object->Firstname.'">';
             }
             else
             {
-                print '<input type="hidden" name="prenom" value="'.$object->prenom.'">';
-                print $object->prenom;
+                print '<input type="hidden" name="Firstname" value="'.$object->Firstname.'">';
+                print $object->Firstname;
             }
             print '</td></tr>';
 

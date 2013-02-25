@@ -38,13 +38,9 @@ class Address
 	var $socid;
 	var $name;
 	var $address;
-	var $cp;			// deprecated
 	var $zip;
-	var $ville;			// deprecated
 	var $town;
-	var $pays_id;		// deprecated
 	var $country_id;
-	var $pays_code;		// deprecated
 	var $country_code;
 	var $tel;			// deprecated
 	var $phone;
@@ -195,8 +191,8 @@ class Address
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'"; // Champ obligatoire
 			$sql.= ", name = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
 			$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
-			$sql.= ", cp = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
-			$sql.= ", ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
+			$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
+			$sql.= ", town = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
 			$sql.= ", fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
 			$sql.= ", note = ".($this->note?"'".$this->db->escape($this->note)."'":"null");
 			$sql.= ", tel = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
@@ -271,7 +267,7 @@ class Address
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as dc';
 				$sql .= ', a.tms as date_update, a.fk_soc';
-				$sql .= ', a.cp as zip, a.ville as town, a.note, a.fk_pays as country_id, a.tel, a.fax';
+				$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.tel, a.fax';
 				$sql .= ', p.code as country_code, p.libelle as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
@@ -304,10 +300,6 @@ class Address
 						$line->note				= $objp->note;
 
 						// deprecated
-						$line->cp				= $line->zip;
-						$line->ville			= $line->town;
-						$line->pays_id			= $line->country_id;
-						$line->pays_code		= $line->country_code;
 						$line->pays				= $line->country;
 						$line->tel				= $line->phone;
 
@@ -350,7 +342,7 @@ class Address
 
 		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation';
 		$sql .= ', a.tms as date_update';
-		$sql .= ', a.cp as zip, a.ville as town, a.note, a.fk_pays as country_id, a.tel, a.fax';
+		$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.tel, a.fax';
 		$sql .= ', p.code as country_code, p.libelle as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
@@ -383,9 +375,6 @@ class Address
 				$this->note				= $obj->note;
 
 				// deprecated
-				$this->cp				= $this->zip;
-				$this->ville			= $this->town;
-				$this->pays_id			= $this->country_id;
 				$this->pays_code		= $this->country_code;
 				$this->pays				= $this->country;
 				$this->tel				= $this->phone;

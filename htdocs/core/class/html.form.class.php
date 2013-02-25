@@ -444,7 +444,7 @@ class Form
      *  @param  string	$htmloption     Options html on select object
      *  @return	void
      */
-    function select_pays($selected='',$htmlname='pays_id',$htmloption='')
+    function select_pays($selected='',$htmlname='country_id',$htmloption='')
     {
         print $this->select_country($selected,$htmlname,$htmloption);
     }
@@ -458,7 +458,7 @@ class Form
      *  @param	string	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
-    function select_country($selected='',$htmlname='pays_id',$htmloption='',$maxlength=0)
+    function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0)
     {
         global $conf,$langs;
 
@@ -825,11 +825,12 @@ class Form
      *	@param	string	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	bool	$options_only	Return options only (for ajax treatment)
      *	@return	int						<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $event=array())
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $event=array(), $options_only=false)
     {
-    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $showsoc, $forcecombo, $event);
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $event);
     	return $this->num;
     }
 
@@ -859,7 +860,7 @@ class Form
         $out='';
 
         // On recherche les societes
-        $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
+        $sql = "SELECT sp.rowid, sp.lastname, sp.firstname, sp.poste";
         if ($showsoc > 0) {
         	$sql.= " , s.nom as company";
         }
@@ -869,7 +870,7 @@ class Form
         }
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
-        $sql.= " ORDER BY sp.name ASC";
+        $sql.= " ORDER BY sp.lastname ASC";
 
         dol_syslog(get_class($this)."::select_contacts sql=".$sql);
         $resql=$this->db->query($sql);
@@ -877,7 +878,7 @@ class Form
         {
             $num=$this->db->num_rows($resql);
 
-            if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo)
+            if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo && ! $options_only)
             {
             	$out.= ajax_combobox($htmlname, $event);
             }
@@ -1004,7 +1005,7 @@ class Form
         $out='';
 
         // On recherche les utilisateurs
-        $sql = "SELECT DISTINCT u.rowid, u.name as lastname, u.firstname, u.login, u.admin, u.entity";
+        $sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.login, u.admin, u.entity";
         if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= ", e.label";
@@ -1032,7 +1033,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
-        $sql.= " ORDER BY u.name ASC";
+        $sql.= " ORDER BY u.lastname ASC";
 
         dol_syslog(get_class($this)."::select_dolusers sql=".$sql);
         $resql=$this->db->query($sql);

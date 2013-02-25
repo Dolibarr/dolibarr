@@ -188,7 +188,7 @@ print '*/'."\n";
 /* ============================================================================== */
 
 body {
-<?php if (GETPOST("optioncss") == 'print') {  ?>
+<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->browser->phone)) {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
@@ -303,11 +303,21 @@ th .button {
 	-webkit-border-radius:0px !important;
 	border-radius:0px !important;
 }
+
 .valignmiddle {
 	vertical-align: middle;
 }
 .centpercent {
 	width: 100%;
+}
+.center {
+    text-align: center;
+}
+.left {
+	text-align: <?php print $left; ?>;
+}
+.right {
+	text-align: <?php print $right; ?>;
 }
 
 
@@ -712,12 +722,13 @@ foreach($mainmenuusedarray as $val)
 /* Login */
 
 form#login {
-	margin-top: 70px;
+	margin-top: 60px;
 	margin-bottom: 30px;
 	font-size: 13px;
+	vertical-align: middle;
 }
 .login_table_title {
-	width: 540px;
+	max-width: 540px;
 	color: #888888;
 	text-shadow: 1px 1px 1px #FFF;
 }
@@ -725,11 +736,13 @@ form#login {
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
+	margin-left: 10px;
+	margin-right: 10px;
 	padding-left:6px;
 	padding-right:6px;
-	padding-top:14px;
+	padding-top:12px;
 	padding-bottom:12px;
-	width: 540px;
+	max-width: 540px;
 	border: 1px solid #C0C0C0;
 	background-color: #E0E0E0;
 
@@ -746,6 +759,13 @@ form#login {
 	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+}
+div#login_left, div#login_right {
+	display: inline-block;
+	min-width: 250px;
+	padding-top: 10px;
+	text-align: center;
+	vertical-align: middle;
 }
 table.login_table tr td table.none tr td {
 	padding: 2px;
@@ -2058,7 +2078,7 @@ table.cal_month    { border-spacing: 0px; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
-.cal_other_month_right   { border-right: solid 1px #C0C0C0; } 
+.cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { opacity: 0.6; background: #DDDDDD; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { opacity: 0.6; background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }

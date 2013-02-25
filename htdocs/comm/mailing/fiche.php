@@ -174,7 +174,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 
 		// On choisit les mails non deja envoyes pour ce mailing (statut=0)
 		// ou envoyes en erreur (statut=-1)
-		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
+		$sql = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
 
@@ -209,7 +209,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 					$obj = $db->fetch_object($resql);
 
 					// sendto en RFC2822
-					$sendto = str_replace(',',' ',$obj->prenom." ".$obj->nom)." <".$obj->email.">";
+					$sendto = str_replace(',',' ',$obj->firstname." ".$obj->lastname)." <".$obj->email.">";
 
 					// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
 					$other=explode(';',$obj->other);
@@ -224,8 +224,8 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
-							'__LASTNAME__' => $obj->nom,
-							'__FIRSTNAME__' => $obj->prenom,
+							'__LASTNAME__' => $obj->lastname,
+							'__FIRSTNAME__' => $obj->firstname,
 							'__OTHER1__' => $other1,
 							'__OTHER2__' => $other2,
 							'__OTHER3__' => $other3,

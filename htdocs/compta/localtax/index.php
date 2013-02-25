@@ -100,7 +100,7 @@ $tva = new Tva($db);
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->transcountry("LT2",$mysoc->pays_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print_fiche_titre($langs->transcountry("LT2",$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
@@ -108,10 +108,10 @@ print '<br>';
 
 print '<table width="100%" class="nobordernopadding">';
 print '<tr><td>';
-print_titre($langs->transcountry("LT2Summary",$mysoc->pays_code));
+print_titre($langs->transcountry("LT2Summary",$mysoc->country_code));
 
 print '</td><td width="5">&nbsp;</td><td>';
-print_titre($langs->transcountry("LT2Paid",$mysoc->pays_code));
+print_titre($langs->transcountry("LT2Paid",$mysoc->country_code));
 print '</td></tr>';
 
 print '<tr><td width="50%" valign="top">';

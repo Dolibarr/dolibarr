@@ -211,12 +211,12 @@ if ($id > 0)
 	print '</td>';
 	print '</tr>';
 
-	// Nom
+	// LastName
 	print '<tr><td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
 	print '<td colspan="2">'.$fuser->lastname.'</td>';
 	print "</tr>\n";
 
-	// Prenom
+	// FirstName
 	print '<tr><td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
 	print '<td colspan="2">'.$fuser->firstname.'</td>';
 	print "</tr>\n";

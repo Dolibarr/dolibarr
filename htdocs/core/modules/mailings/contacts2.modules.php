@@ -78,7 +78,7 @@ class mailing_contacts2 extends MailingTargets
 
         // La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
-        $sql.= " sp.name as name, sp.firstname as firstname, sp.civilite,";
+        $sql.= " sp.lastname, sp.firstname as firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
     	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
         $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -88,7 +88,7 @@ class mailing_contacts2 extends MailingTargets
     	//$sql.= " AND sp.poste != ''";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$filtersarray[0]."'";
-    	$sql.= " ORDER BY sp.name, sp.firstname";
+    	$sql.= " ORDER BY sp.lastname, sp.firstname";
     	$resql = $this->db->query($sql);
     	if ($resql)
     	{
@@ -100,7 +100,7 @@ class mailing_contacts2 extends MailingTargets
     			$target[] = array(
                             'email' => $obj->email,
                             'fk_contact' => $obj->fk_contact,
-                            'name' => $obj->name,
+                            'lastname' => $obj->lastname,
                             'firstname' => $obj->firstname,
                             'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.

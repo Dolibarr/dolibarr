@@ -133,9 +133,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Instantiate hooks of thirdparty module only if not already define
 	$hookmanager->initHooks(array('mainloginpage'));
 
-	$langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
-	$langs->setDefaultLang($langcode);
-
 	$langs->load("main");
 	$langs->load("other");
 	$langs->load("help");
@@ -148,6 +145,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$php_self = $_SERVER['PHP_SELF'];
 	$php_self.= $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
 
 	// Title
 	$title='Dolibarr '.DOL_VERSION;
@@ -190,7 +188,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 	}
-		
+
 	// Set cookie for timeout management
 	$prefix=dol_getprefix();
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
@@ -291,13 +289,18 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Google AD
 	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
 
+	// Set jquery theme
 	$dol_loginmesg = (! empty($_SESSION["dol_loginmesg"])?$_SESSION["dol_loginmesg"]:'');
 	$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
 	$jquerytheme = 'smoothness';
 	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
+	// Set dol_hide_topmenu and dol_hide_leftmenu
+	$dol_hide_topmenu=GETPOST('dol_hide_topmenu');
+	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu');
 
-	include $template_dir.'login.tpl.php';	// To use native PHP
+	// Include login page template
+	include $template_dir.'login.tpl.php';
 
 
 	$_SESSION["dol_loginmesg"] = '';

@@ -80,12 +80,6 @@ $img_button=dol_buildpath($path.'/theme/amarok/img/button_bg.png',1);
 font-size:100%;
 }
 
-/*.fiche ul {
-	margin:0.5em;
-	padding:0.5em;
-	padding-left: 2em;
-}*/
-
 body {
 	background-color:#f5f5f5;
 	<?php if ($_SESSION['dol_login'] != '') {?>
@@ -178,10 +172,28 @@ form {
     margin:0px;
 }
 
+.valignmiddle {
+	vertical-align: middle;
+}
+.centpercent {
+	width: 100%;
+}
+.center {
+    text-align: center;
+}
+.left {
+	text-align: <?php print $left; ?>;
+}
+.right {
+	text-align: <?php print $right; ?>;
+}
+
 
 /* ============================================================================== */
 /* Login																		  */
 /* ============================================================================== */
+
+body.body center{color:white;}
 
 form#login {
 	display:block;
@@ -240,7 +252,12 @@ form#login table.login_table {
 	background:none !important;
 }
 
-body.body center{color:white;}
+div#login_left, div#login_right {
+	display: inline-block;
+	min-width: 220px;
+	text-align: center;
+	vertical-align: middle;
+}
 
 table.login_table { background-color: red  !important;}
 table.login_table tr td {vertical-align:middle;}

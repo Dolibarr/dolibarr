@@ -60,7 +60,7 @@ llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M
 $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
-$sql = "SELECT d.rowid, d.datedon, d.prenom, d.nom, d.societe,";
+$sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
@@ -79,7 +79,7 @@ if (trim($search_company) != '')
 }
 if (trim($search_name) != '')
 {
-    $sql.= ' AND d.nom LIKE \'%'.$db->escape(trim($search_name)) . '%\' OR d.prenom LIKE \'%'.$db->escape(trim($search_name)) . '%\'';
+    $sql.= ' AND d.lastname LIKE \'%'.$db->escape(trim($search_name)) . '%\' OR d.firstname LIKE \'%'.$db->escape(trim($search_name)) . '%\'';
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -109,7 +109,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","&page=$page&statut=$statut","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.nom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","&page=$page&statut=$statut","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
 	if (! empty($conf->projet->enabled))
 	{
@@ -154,8 +154,8 @@ if ($resql)
 		print "<tr ".$bc[$var].">";
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
-		$donationstatic->nom=$objp->nom;
-		$donationstatic->prenom=$objp->prenom;
+		$donationstatic->lastname=$objp->lastname;
+		$donationstatic->firstname=$objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
         print "<td>".$objp->societe."</td>\n";
 		print "<td>".$donationstatic->getFullName($langs)."</td>\n";

@@ -65,7 +65,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 
 <tr>
 	<td><?php echo $langs->trans("Zip").' / '.$langs->trans("Town"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['zip'].$this->control->tpl['ville']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['zip'].$this->control->tpl['town']; ?></td>
 </tr>
 
 <tr>

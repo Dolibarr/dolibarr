@@ -1615,11 +1615,9 @@ else if ($action == 'builddoc')	// En get ou en post
     $object->fetch($id);
     $object->fetch_thirdparty();
 
-    if (GETPOST('model'))
-    {
-        $object->setDocModel($user, GETPOST('model'));
-    }
-
+    if (GETPOST('model'))   $object->setDocModel($user, GETPOST('model'));
+	if (GETPOST('fk_bank')) $object->fk_bank=GETPOST('fk_bank');
+	
     // Define output language
     $outputlangs = $langs;
     $newlang='';
@@ -2126,12 +2124,12 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
         }
 
         if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
         }
         print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
     }
@@ -2982,13 +2980,13 @@ else if ($id > 0 || ! empty($ref))
         // Amount Local Taxes
         if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
             print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
         if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
             print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
