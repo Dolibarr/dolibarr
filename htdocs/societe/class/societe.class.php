@@ -60,7 +60,6 @@ class Societe extends CommonObject
     var $departement_code;   // deprecated
     var $departement;        // deprecated
 
-    var $pays_code; // deprecated
     var $pays;	    // deprecated
     var $country_id;
     var $country_code;
@@ -757,7 +756,6 @@ class Societe extends CommonObject
                 $this->town 		= $obj->town;
 
                 $this->country_id   = $obj->country_id;
-                $this->pays_code 	= $obj->country_id?$obj->country_code:'';		// TODO obsolete
                 $this->country_code = $obj->country_id?$obj->country_code:'';
                 $this->pays 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):''; // TODO obsolete
                 $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
@@ -2434,7 +2432,6 @@ class Societe extends CommonObject
         $this->address=$member->address;
         $this->zip=$member->zip;
         $this->town=$member->town;
-        $this->pays_code=$member->country_code;	// TODO obsolete
         $this->country_code=$member->country_code;
         $this->country_id=$member->country_id;
         $this->tel=$member->phone;				// deprecated
@@ -2521,7 +2518,6 @@ class Societe extends CommonObject
     		}
     	}
     	$this->country_id=$country_id;
-    	$this->pays_code=$country_code;	// TODO deprecated
     	$this->country_code=$country_code;
     	$this->country=$country_label;
     	if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;

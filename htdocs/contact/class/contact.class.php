@@ -54,7 +54,6 @@ class Contact extends CommonObject
 	var $state;			        // Label of department
 
 	var $fk_pays;				// deprecated
-	var $pays_code;				// deprecated
 	var $pays;					// deprecated
 	var $country_id;			// Id of country
 	var $country_code;			// Code of country
@@ -525,7 +524,6 @@ class Contact extends CommonObject
 
 				$this->fk_pays			= $obj->country_id;
 				$this->country_id 		= $obj->country_id;
-				$this->pays_code		= $obj->country_id?$obj->country_code:'';
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->pays				= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 				$this->country			= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';

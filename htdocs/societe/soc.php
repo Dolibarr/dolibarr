@@ -1114,7 +1114,7 @@ else
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
 
-                // We set country_id, and pays_code label of the chosen country
+                // We set country_id, and country_code label of the chosen country
                 // TODO move to DAO class
                 if ($object->country_id)
                 {

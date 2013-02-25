@@ -199,7 +199,6 @@ if ($result >= 0)
 			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	     // deprecated
 			$member->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
 			$member->country_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];
-			$member->pays_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];   // deprecated
 			$member->country_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];
 
 			$member->phone=$ldapuser[$conf->global->LDAP_FIELD_PHONE];

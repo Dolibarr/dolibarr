@@ -41,7 +41,6 @@ class Address
 	var $zip;
 	var $town;
 	var $country_id;
-	var $pays_code;		// deprecated
 	var $country_code;
 	var $tel;			// deprecated
 	var $phone;
@@ -301,7 +300,6 @@ class Address
 						$line->note				= $objp->note;
 
 						// deprecated
-						$line->pays_code		= $line->country_code;
 						$line->pays				= $line->country;
 						$line->tel				= $line->phone;
 

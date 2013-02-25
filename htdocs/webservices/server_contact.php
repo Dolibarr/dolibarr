@@ -535,7 +535,6 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				
 				'fk_pays' => $contact->fk_pays?$contact->fk_pays:'',
 				'country_id' => $contact->country_id?$contact->country_id:'',
-				'pays_code' => $contact->pays_code?$contact->pays_code:'',
 				'country_code' => $contact->country_code?$contact->country_code:'',
 				'pays' => $contact->pays?$contact->pays:'',
 				'country' => $contact->country?$contact->country:'',

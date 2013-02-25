@@ -63,7 +63,6 @@ class Adherent extends CommonObject
     var $country_id;
     var $country_code;
     var $country;
-    var $pays_code;            // deprecated
     var $pays;                 // deprecated
 
     var $email;
@@ -1068,7 +1067,6 @@ class Adherent extends CommonObject
                 	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else
                 	$this->country=$obj->country;
-                $this->pays_code		= $obj->country_code;    // deprecated
                 $this->pays				= $this->country;        // deprecated
 
                 $this->phone			= $obj->phone;

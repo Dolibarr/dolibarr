@@ -728,7 +728,6 @@ else
 		if ($object->country_id)
 		{
 			$tmparray=getCountry($object->country_id,'all');
-			$object->pays_code=$tmparray['code'];
 			$object->pays=$tmparray['code'];
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
@@ -957,7 +956,6 @@ else
 			{
 				dol_print_error($db);
 			}
-			$object->pays_code=$obj->code;
 			$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
 			$object->country_id=$obj->rowid;
 			$object->country_code=$obj->code;

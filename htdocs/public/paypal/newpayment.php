@@ -775,7 +775,7 @@ if (GETPOST("source") == 'contractline' && $valid)
     $shipToStreet=$contract->thirdparty->address;
     $shipToCity=$contract->thirdparty->town;
     $shipToState=$contract->thirdparty->state_code;
-    $shipToCountryCode=$contract->thirdparty->pays_code;
+    $shipToCountryCode=$contract->thirdparty->country_code;
     $shipToZip=$contract->thirdparty->zip;
     $shipToStreet2='';
     $phoneNum=$contract->thirdparty->tel;
