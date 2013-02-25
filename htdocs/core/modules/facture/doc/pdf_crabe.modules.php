@@ -670,7 +670,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// If France, show VAT mention if not applicable
-		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+		if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -752,7 +752,7 @@ class pdf_crabe extends ModelePDFFactures
 			            {
 							$pdf->SetXY($this->marge_gauche, $posy);
 							$pdf->SetFont('','', $default_font_size - 3);
-							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
 							$posy=$pdf->GetY()+2;
 			            }
 					}
@@ -777,10 +777,11 @@ class pdf_crabe extends ModelePDFFactures
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
 			{
-				if (! empty($conf->global->FACTURE_RIB_NUMBER))
+				if (! empty($object->fk_bank) || ! empty($conf->global->FACTURE_RIB_NUMBER))
 				{
+					$bankid=(empty($object->fk_bank)?$conf->global->FACTURE_RIB_NUMBER:$object->fk_bank);
 					$account = new Account($this->db);
-					$account->fetch($conf->global->FACTURE_RIB_NUMBER);
+					$account->fetch($bankid);
 
 					$curx=$this->marge_gauche;
 					$cury=$posy;
@@ -873,7 +874,7 @@ class pdf_crabe extends ModelePDFFactures
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -908,7 +909,7 @@ class pdf_crabe extends ModelePDFFactures
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -966,7 +967,7 @@ class pdf_crabe extends ModelePDFFactures
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->pays_code).' ';
+								$totalvat = $outputlangs->transnoentities("TotalLT1".$mysoc->country_code).' ';
 								if ($localtax_type == '7') {  // amount on order
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1007,7 +1008,7 @@ class pdf_crabe extends ModelePDFFactures
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->country_code).' ';
 
 								if ($localtax_type == '7') {  // amount on order
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
@@ -1128,6 +1129,9 @@ class pdf_crabe extends ModelePDFFactures
 			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+
+			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
 		$pdf->SetDrawColor(128,128,128);

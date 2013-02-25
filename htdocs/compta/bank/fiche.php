@@ -134,7 +134,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->domiciliation   = trim($_POST["domiciliation"]);
 
     $account->proprio 	      = trim($_POST["proprio"]);
-    $account->adresse_proprio = trim($_POST["adresse_proprio"]);
+    $account->owner_address   = trim($_POST["owner_address"]);
 
     $account->account_number  = trim($_POST["account_number"]);
 

@@ -82,7 +82,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
 
@@ -105,7 +105,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$sumpayed = $object->getSommePaiement();
 		$alreadypayed=price($sumpayed,0,$outputlangs);
 
-        return array(
+        $resarray=array(
             'object_id'=>$object->id,
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
@@ -132,6 +132,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_already_payed'=>$alreadypayed,
             'object_remain_to_pay'=>price($object->total_ttc - $sumpayed,0,$outputlangs)
         );
+
+        // Add vat by rates
+		foreach ($object->lines as $line)
+		{
+			if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
+			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
+		}
+		
+        return $resarray;
     }
 
     /**

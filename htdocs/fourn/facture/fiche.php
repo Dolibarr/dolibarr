@@ -2008,7 +2008,7 @@ else
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
-                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:'');
+                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
                 print '<br>';
                 print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
@@ -2075,12 +2075,11 @@ else
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
-            $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$societe->id;
-            $formmail->withtocc=1;
-            $formmail->withtoccsocid=0;
+			$liste=array();
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+			$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtocccsocid=0;
             $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;

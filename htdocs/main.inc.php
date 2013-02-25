@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -136,6 +136,10 @@ function analyse_sql_and_script(&$var, $type)
         return (test_sql_and_script_inject($var,$type) <= 0);
     }
 }
+
+
+// Check consitency of NOREQUIREXXX DEFINES
+if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && ! defined('NOREQUIREMENU')) dol_print_error('','If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not use them');
 
 // Sanity check on URL
 if (! empty($_SERVER["PHP_SELF"]))
@@ -301,7 +305,7 @@ if (! empty($_SESSION["disablemodules"]))
 
 /*
  * Phase authentication / login
-*/
+ */
 $login='';
 if (! defined('NOLOGIN'))
 {
@@ -384,10 +388,18 @@ if (! defined('NOLOGIN'))
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
         if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
+        if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
+        {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+            $langs=new Translate("",$conf);
+    		$langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+        	$langs->setDefaultLang($langcode);
+        }
+
         if ($test && $goontestloop)
         {
-            $login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
-            if ($login)
+        	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
+        	if ($login)
             {
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
@@ -434,11 +446,6 @@ if (! defined('NOLOGIN'))
         if (! $login)
         {
             // We show login page
-            if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined
-            {
-                include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-                $langs=new Translate("",$conf);
-            }
             dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
@@ -584,6 +591,7 @@ if (! defined('NOLOGIN'))
         }
 
         // Create entity cookie, just used for login page
+        // TODO Multicompany Move this into hook
         if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
         {
             include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
@@ -669,10 +677,10 @@ if (! defined('NOREQUIRETRAN'))
             }
         }
     }
-    else	// If language was forced on URL
+/*    else	// If language was forced on URL
     {
         $langs->setDefaultLang(GETPOST('lang','alpha',1));
-    }
+    }*/
 }
 
 // Case forcing style from url
@@ -754,6 +762,7 @@ else
 $heightforframes=52;
 
 // Switch to another entity
+// TODO Multicompany Remove this
 if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
     if ($mc->switchEntity(GETPOST('entity','int')) > 0)
@@ -763,41 +772,42 @@ if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity'
     }
 }
 
-//print 'eee'.$conf->standard_menu;
 
 // Init menu manager
-if (empty($user->societe_id))    // If internal user or not defined
+if (! defined('NOREQUIREMENU'))
 {
-	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
-}
-else                        // If external user
-{
-	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
-}
-
-// Load the menu manager (only if not already done)
-$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
-if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
-if (! class_exists('MenuManager'))
-{
-	$menufound=0;
-	$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-	foreach($dirmenus as $dirmenu)
+	if (empty($user->societe_id))    // If internal user or not defined
 	{
-		$menufound=dol_include_once($dirmenu."standard/".$file_menu);
-		if ($menufound) break;
+		$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
+		$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 	}
-	if (! $menufound)	// If failed to include, we try with standard
+	else                        // If external user
 	{
-		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
-		$file_menu='eldy_menu.php';
-		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+		$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+		$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 	}
-}
-$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
 
+	// Load the menu manager (only if not already done)
+	$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
+	if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
+	if (! class_exists('MenuManager'))
+	{
+		$menufound=0;
+		$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+		foreach($dirmenus as $dirmenu)
+		{
+			$menufound=dol_include_once($dirmenu."standard/".$file_menu);
+			if ($menufound) break;
+		}
+		if (! $menufound)	// If failed to include, we try with standard
+		{
+			dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
+			$file_menu='eldy_menu.php';
+			include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+		}
+	}
+	$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+}
 
 
 
@@ -910,7 +920,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
-            print '<!-- Includes for JQuery (Ajax library) -->'."\n";
+            print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
             $jquerytheme = 'smoothness';
             if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
             if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
@@ -941,7 +951,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             }
         }
 
-        print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
+        print '<!-- Includes CSS for Dolibarr theme -->'."\n";
         // Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
         $themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
         $themesubdir='';
@@ -972,7 +982,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         		foreach($filescss as $cssfile)
         		{
 	        		// cssfile is a relative path
-	        		print '<!-- Added by module '.$modcss. '-->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+	        		print '<!-- Includes CSS added by module '.$modcss. '-->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
 	        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
 	        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
 	        		print '">'."\n";
@@ -984,7 +994,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         {
             foreach($arrayofcss as $cssfile)
             {
-                print '<!-- Added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+                print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
                 if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
                 print '">'."\n";
@@ -1132,14 +1142,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		            foreach($filesjs as $jsfile)
 		            {
 	    	    		// jsfile is a relative path
-	        	    	print '<!-- Added by module '.$modjs. '-->'."\n".'<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
+	        	    	print '<!-- Include JS added by module '.$modjs. '-->'."\n".'<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script>'."\n";
 		            }
 	            }
         	}
             // JS forced by page in top_htmlhead (relative url starting with /)
             if (is_array($arrayofjs))
             {
-                print '<!-- Includes JS specific to page -->'."\n";
+                print '<!-- Includes JS added by page -->'."\n";
                 foreach($arrayofjs as $jsfile)
                 {
                     if (preg_match('/^http/i',$jsfile))
@@ -1367,7 +1377,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
 	    {
 	        $qs=$_SERVER["QUERY_STRING"].($_SERVER["QUERY_STRING"]?'&':'').$morequerystring;
-	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
+	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&amp;':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto('', 'printer.png', 'class="printer"');
 	        $text.='</a>';
 	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);

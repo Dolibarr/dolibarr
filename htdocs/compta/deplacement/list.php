@@ -62,7 +62,7 @@ llxHeader();
 $sql = "SELECT s.nom, s.rowid as socid,";				// Ou
 $sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
 $sql.= " d.fk_statut,";
-$sql.= " u.name, u.firstname";							// Qui
+$sql.= " u.lastname, u.firstname";							// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
@@ -93,7 +93,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"d.type","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.name","","&socid=$socid",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.lastname","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"], '');

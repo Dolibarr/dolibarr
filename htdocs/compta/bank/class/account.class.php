@@ -60,7 +60,7 @@ class Account extends CommonObject
     //! IBAN number (International Bank Account Number)
     var $iban_prefix;
     var $proprio;
-    var $adresse_proprio;
+    var $owner_address;
 
 
     var $fk_departement;    // deprecated
@@ -71,7 +71,6 @@ class Account extends CommonObject
     var $state;
 
     var $fk_pays;            // deprecated
-    var $pays_code;            // deprecated
     var $pays;                // deprecated
     var $country_id;
     var $country_code;
@@ -570,7 +569,7 @@ class Account extends CommonObject
         $sql.= ",iban_prefix = '".$this->iban."'";
         $sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
         $sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
-        $sql.= ",adresse_proprio = '".$this->db->escape($this->adresse_proprio)."'";
+        $sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
         $sql.= ",fk_departement = ".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ",fk_pays = ".$this->country_id;
         $sql.= " WHERE rowid = ".$this->id;
@@ -611,7 +610,7 @@ class Account extends CommonObject
 
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-        $sql.= " ba.domiciliation, ba.proprio, ba.adresse_proprio, ba.fk_departement, ba.fk_pays as country_id,";
+        $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.fk_departement, ba.fk_pays as country_id,";
         $sql.= " ba.account_number, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
         $sql.= ' p.code as country_code, p.libelle as country,';
@@ -651,7 +650,7 @@ class Account extends CommonObject
                 $this->iban_prefix   = $obj->iban;	// deprecated
                 $this->domiciliation = $obj->domiciliation;
                 $this->proprio       = $obj->proprio;
-                $this->adresse_proprio = $obj->adresse_proprio;
+                $this->owner_address = $obj->owner_address;
 
                 $this->fk_departement  = $obj->fk_departement;    // deprecated
                 $this->departement_code= $obj->state_code;        // deprecated
@@ -661,7 +660,6 @@ class Account extends CommonObject
                 $this->state           = $obj->state;
 
                 $this->fk_pays       = $obj->country_id;          // deprecated
-                $this->pays_code     = $obj->country_code;        // deprecated
                 $this->pays          = $obj->country;             // deprecated
                 $this->country_id    = $obj->country_id;
                 $this->country_code  = $obj->country_code;
@@ -1026,7 +1024,7 @@ class Account extends CommonObject
         $this->iban_prefix     = 'FR';  // deprecated
         $this->domiciliation   = 'The bank addresse';
         $this->proprio         = 'Owner';
-        $this->adresse_proprio = 'Owner address';
+        $this->owner_address   = 'Owner address';
         $this->country_id      = 1;
     }
 

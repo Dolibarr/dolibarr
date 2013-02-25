@@ -72,7 +72,9 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
-$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+if (!$canreaduser) {
+	$result = restrictedArea($user, 'user', $id, '&user', $feature2);
+}
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 $langs->load("users");
@@ -149,7 +151,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 // Action ajout user
 if ($action == 'add' && $canadduser)
 {
-    if (! $_POST["nom"])
+    if (! $_POST["lastname"])
     {
         $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
         $action="create";       // Go back to create page
@@ -172,8 +174,8 @@ if ($action == 'add' && $canadduser)
 
     if (! $message)
     {
-        $object->lastname		= $_POST["nom"];
-        $object->firstname	= $_POST["prenom"];
+        $object->lastname		= $_POST["lastname"];
+        $object->firstname	= $_POST["firstname"];
         $object->login		= $_POST["login"];
         $object->admin		= $_POST["admin"];
         $object->office_phone	= $_POST["office_phone"];
@@ -193,11 +195,6 @@ if ($action == 'add' && $canadduser)
         		$object->array_options[$key]=GETPOST($key);
         	}
         }
-
-        // FIXME external module
-        $object->webcal_login	= $_POST["webcal_login"];
-        $object->phenix_login	= $_POST["phenix_login"];
-        $object->phenix_pass	= $_POST["phenix_pass"];
 
         // If multicompany is off, admin users must all be on entity 0.
         if (! empty($conf->multicompany->enabled))
@@ -280,7 +277,7 @@ if ($action == 'update' && ! $_POST["cancel"])
     {
         $error=0;
 
-    	if (! $_POST["nom"])
+    	if (! $_POST["lastname"])
         {
             $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
             $action="edit";       // Go back to create page
@@ -318,11 +315,11 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             $object->oldcopy=dol_clone($object);
 
-            $object->lastname	= GETPOST("nom");
-            $object->firstname	= GETPOST("prenom");
+            $object->lastname	= GETPOST("lastname");
+            $object->firstname	= GETPOST("firstname");
             $object->login		= GETPOST("login");
             $object->pass		= GETPOST("password");
-            $object->admin		= GETPOST("admin");
+            $object->admin		= empty($user->admin)?0:GETPOST("admin"); // A user can only be set admin by an admin
             $object->office_phone=GETPOST("office_phone");
             $object->office_fax	= GETPOST("office_fax");
             $object->user_mobile= GETPOST("user_mobile");
@@ -330,6 +327,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->job		= GETPOST("job");
             $object->signature	= GETPOST("signature");
             $object->openid		= GETPOST("openid");
+            $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
             // Get extra fields
             foreach($_POST as $key => $value)
@@ -339,11 +337,6 @@ if ($action == 'update' && ! $_POST["cancel"])
             		$object->array_options[$key]=GETPOST($key);
             	}
             }
-
-            // FIXME external module
-            $object->webcal_login	= $_POST["webcal_login"];
-            $object->phenix_login	= $_POST["phenix_login"];
-            $object->phenix_pass	= $_POST["phenix_pass"];
 
             if (! empty($conf->multicompany->enabled))
             {
@@ -553,8 +546,8 @@ if ($action == 'adduserldap')
         {
             foreach ($ldapusers as $key => $attribute)
             {
-                $ldap_nom			= $attribute[$conf->global->LDAP_FIELD_NAME];
-                $ldap_prenom		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
+                $ldap_lastname		= $attribute[$conf->global->LDAP_FIELD_NAME];
+                $ldap_firstname		= $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
                 $ldap_login			= $attribute[$conf->global->LDAP_FIELD_LOGIN];
                 $ldap_loginsmb		= $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
                 $ldap_pass			= $attribute[$conf->global->LDAP_FIELD_PASSWORD];
@@ -689,6 +682,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
        	print '<br>';
     }
 
+    print dol_set_focus('#lastname');
+    
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -699,31 +694,31 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     print '<tr>';
 
-    // Nom
+    // Lastname
     print '<td valign="top" width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
-    if (! empty($ldap_nom))
+    if (! empty($ldap_lastname))
     {
-        print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
-        print $ldap_nom;
+        print '<input type="hidden" id="lastname" name="lastname" value="'.$ldap_lastname.'">';
+        print $ldap_lastname;
     }
     else
     {
-        print '<input size="30" type="text" name="nom" value="'.GETPOST('nom').'">';
+        print '<input size="30" type="text" id="lastname" name="lastname" value="'.GETPOST('lastname').'">';
     }
     print '</td></tr>';
 
-    // Prenom
+    // Firstname
     print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
     print '<td>';
-    if (! empty($ldap_prenom))
+    if (! empty($ldap_firstname))
     {
-        print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
-        print $ldap_prenom;
+        print '<input type="hidden" name="firstname" value="'.$ldap_firstname.'">';
+        print $ldap_firstname;
     }
     else
     {
-        print '<input size="30" type="text" name="prenom" value="'.GETPOST('prenom').'">';
+        print '<input size="30" type="text" name="firstname" value="'.GETPOST('firstname').'">';
     }
     print '</td></tr>';
 
@@ -826,21 +821,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print "</td></tr>\n";
     }
 
-    //Multicompany
-    if (! empty($conf->multicompany->enabled))
-    {
-        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-        {
-            print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-            print "<td>".$mc->select_entities($conf->entity);
-            print "</td></tr>\n";
-        }
-        else
-        {
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-        }
-    }
-
     // Type
     print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
     print '<td>';
@@ -909,6 +889,28 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<textarea rows="'.ROWS_5.'" cols="90" name="signature">'.GETPOST('signature').'</textarea>';
     print '</td></tr>';
 
+    // Multicompany
+    if (! empty($conf->multicompany->enabled))
+    {
+        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        {
+            print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            print "<td>".$mc->select_entities($conf->entity);
+            print "</td></tr>\n";
+        }
+        else
+        {
+            print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+        }
+    }
+
+    // Hierarchy
+    print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+    print '<td>';
+    print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$conf->entity);
+    print '</td>';
+    print "</tr>\n";
+
     // Note
     print '<tr><td valign="top">';
     print $langs->trans("Note");
@@ -934,23 +936,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
     	}
     }
 
-    // Module Webcalendar
-    // TODO external module
-    if (! empty($conf->webcalendar->enabled))
-    {
-        print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-        print '<td><input size="30" type="text" name="webcal_login" value="'.$_POST["webcal_login"].'"></td></tr>';
-    }
-
-    // Module Phenix
-    // TODO external module
-    if (! empty($conf->phenix->enabled))
-    {
-        print "<tr>".'<td valign="top">'.$langs->trans("LoginPenix").'</td>';
-        print '<td><input size="30" type="text" name="phenix_login" value="'.$_POST["phenix_login"].'"></td></tr>';
-        print "<tr>".'<td valign="top">'.$langs->trans("PassPenix").'</td>';
-        print '<td><input size="30" type="text" name="phenix_pass" value="'.$_POST["phenix_pass"].'"></td></tr>';
-    }
  	print "</table>\n";
 
     print '<center><br><input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit"></center>';
@@ -965,7 +950,7 @@ else
     /*                                                                            */
     /* ************************************************************************** */
 
-    if ($id)
+    if ($id > 0)
     {
         $object->fetch($id);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
@@ -1074,6 +1059,8 @@ else
          */
         if ($action != 'edit')
         {
+            $rowspan=16;
+
             print '<table class="border" width="100%">';
 
             // Ref
@@ -1083,13 +1070,9 @@ else
             print '</td>';
             print '</tr>'."\n";
 
-            $rowspan=15;
             if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
-            if (! empty($conf->webcalendar->enabled)) $rowspan++;	// TODO external module
-            if (! empty($conf->phenix->enabled)) $rowspan+=2;		// TODO external module
-
 
             // Lastname
             print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
@@ -1104,7 +1087,7 @@ else
 
             // Firstname
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td>'.$object->prenom.'</td>';
+            print '<td>'.$object->Firstname.'</td>';
             print '</tr>'."\n";
 
             // Position/Job
@@ -1174,22 +1157,6 @@ else
             }
             print '</td></tr>'."\n";
 
-            // Multicompany
-            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-            {
-            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
-            	if ($object->admin && ! $object->entity)
-            	{
-            		print $langs->trans("AllEntities");
-            	}
-            	else
-            	{
-            		$mc->getInfo($object->entity);
-            		print $mc->label;
-            	}
-            	print "</td></tr>\n";
-            }
-
             // Type
             print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
             $type=$langs->trans("Internal");
@@ -1198,7 +1165,7 @@ else
             if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
             print '</td></tr>'."\n";
 
-            // ldap sid
+            // Ldap sid
             if ($object->ldap_sid)
             {
             	print '<tr><td valign="top">'.$langs->trans("Type").'</td><td>';
@@ -1231,7 +1198,19 @@ else
             print dol_textishtml($object->signature)?$object->signature:dol_nl2br($object->signature,1,false);
             print "</td></tr>\n";
 
-            // Statut
+            // Hierarchy
+            print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<td>';
+            if (empty($object->fk_user)) print $langs->trans("None");
+            else {
+            	$huser=new User($db);
+            	$huser->fetch($object->fk_user);
+            	print $huser->getNomUrl(1);
+            }
+            print '</td>';
+            print "</tr>\n";
+
+            // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(4);
@@ -1252,29 +1231,6 @@ else
                 print '<tr><td valign="top">'.$langs->trans("url_openid").'</td>';
                 print '<td>'.$object->openid.'</td>';
                 print "</tr>\n";
-            }
-
-            // Module Webcalendar
-            // TODO external module
-            if (! empty($conf->webcalendar->enabled))
-            {
-                $langs->load("other");
-                print '<tr><td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-                print '<td>'.$object->webcal_login.'&nbsp;</td>';
-                print '</tr>'."\n";
-            }
-
-            // Module Phenix
-            // TODO external module
-            if (! empty($conf->phenix->enabled))
-            {
-                $langs->load("other");
-                print '<tr><td valign="top">'.$langs->trans("LoginPhenix").'</td>';
-                print '<td>'.$object->phenix_login.'&nbsp;</td>';
-                print "</tr>\n";
-                print '<tr><td valign="top">'.$langs->trans("PassPhenix").'</td>';
-                print '<td>'.preg_replace('/./i','*',$object->phenix_pass_crypted).'&nbsp;</td>';
-                print '</tr>'."\n";
             }
 
             // Company / Contact
@@ -1325,6 +1281,22 @@ else
                 print '</tr>'."\n";
             }
 
+            // Multicompany
+            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            {
+            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
+            	if ($object->admin && ! $object->entity)
+            	{
+            		print $langs->trans("AllEntities");
+            	}
+            	else
+            	{
+            		$mc->getInfo($object->entity);
+            		print $mc->label;
+            	}
+            	print "</td></tr>\n";
+            }
+
           	// Other attributes
 			$parameters=array('colspan' => ' colspan="2"');
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1352,7 +1324,7 @@ else
 
             print '<div class="tabsAction">';
 
-            if ($caneditfield && ((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
                 {
@@ -1364,7 +1336,7 @@ else
                 }
             }
             elseif ($caneditpassword && ! $object->ldap_sid &&
-            ((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
@@ -1563,18 +1535,16 @@ else
 
         if ($action == 'edit' && ($canedituser || ($user->id == $object->id)))
         {
-            print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
+            $rowspan=14;
+
+        	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             print '<table width="100%" class="border">';
 
-            $rowspan=13;
-
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
-            if (! empty($conf->webcalendar->enabled)) $rowspan++;	// TODO external module
-            if (! empty($conf->phenix->enabled)) $rowspan+=2;		// TODO external module
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
@@ -1588,12 +1558,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="nom" value="'.$object->nom.'">';
+                print '<input size="30" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';
             }
             else
             {
-                print '<input type="hidden" name="nom" value="'.$object->nom.'">';
-                print $object->nom;
+                print '<input type="hidden" name="lastname" value="'.$object->lastname.'">';
+                print $object->lastname;
             }
             print '</td>';
             // Photo
@@ -1617,12 +1587,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="prenom" value="'.$object->prenom.'">';
+                print '<input size="30" type="text" class="flat" name="Firstname" value="'.$object->Firstname.'">';
             }
             else
             {
-                print '<input type="hidden" name="prenom" value="'.$object->prenom.'">';
-                print $object->prenom;
+                print '<input type="hidden" name="Firstname" value="'.$object->Firstname.'">';
+                print $object->Firstname;
             }
             print '</td></tr>';
 
@@ -1746,21 +1716,6 @@ else
                 print '</td></tr>';
             }
 
-            // Multicompany
-            if (! empty($conf->multicompany->enabled))
-            {
-            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-            	{
-            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-            		print "<td>".$mc->select_entities($object->entity);
-            		print "</td></tr>\n";
-            	}
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
-            }
-
            	// Type
            	print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
            	print '<td>';
@@ -1859,39 +1814,32 @@ else
                 print '</td></tr>';
             }
 
-            // Statut
+            // Hierarchy
+            print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
+            print '<td>';
+            print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
+            print '</td>';
+            print "</tr>\n";
+
+            // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
             print '<td>';
             print $object->getLibStatut(4);
             print '</td></tr>';
 
-            // Module Webcalendar
-            // TODO external module
-            if (! empty($conf->webcalendar->enabled))
+            // Multicompany
+            if (! empty($conf->multicompany->enabled))
             {
-                $langs->load("other");
-                print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-                print '<td>';
-                if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$object->webcal_login.'">';
-                else print $object->webcal_login;
-                print '</td></tr>';
-            }
-
-            // Module Phenix
-            // TODO external module
-            if (! empty($conf->phenix->enabled))
-            {
-                $langs->load("other");
-                print "<tr>".'<td valign="top">'.$langs->trans("LoginPhenix").'</td>';
-                print '<td>';
-                if ($caneditfield) print '<input size="30" type="text" class="flat" name="phenix_login" value="'.$object->phenix_login.'">';
-                else print $object->phenix_login;
-                print '</td></tr>';
-                print "<tr>".'<td valign="top">'.$langs->trans("PassPhenix").'</td>';
-                print '<td>';
-                if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$object->phenix_pass_crypted.'">';
-                else print preg_replace('/./i','*',$object->phenix_pass_crypted);
-                print '</td></tr>';
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	{
+            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($object->entity);
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
             }
 
             // Company / Contact

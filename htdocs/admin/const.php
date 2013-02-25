@@ -35,7 +35,7 @@ $rowid=GETPOST('rowid','int');
 $entity=GETPOST('entity','int');
 $action=GETPOST('action','alpha');
 $update=GETPOST('update','alpha');
-$delete=GETPOST('delete','alpha');
+$delete=GETPOST('delete');	// Do not use alpha here
 $debug=GETPOST('debug','int');
 $consts=GETPOST('const');
 $constname=GETPOST('constname','alpha');
@@ -45,6 +45,7 @@ $consttype=(GETPOST('consttype','alpha')?GETPOST('consttype','alpha'):'chaine');
 
 $typeconst=array('yesno' => 'yesno', 'texte' => 'texte', 'chaine' => 'chaine');
 $mesg='';
+
 
 
 /*
@@ -68,46 +69,70 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-		if (dolibarr_set_const($db, $constname, $constvalue, $typeconst[$consttype], 1, $constnote, $entity) < 0)
+		if (dolibarr_set_const($db, $constname, $constvalue, $typeconst[$consttype], 1, $constnote, $entity) >= 0)
+		{
+			setEventMessage($langs->trans("RecordSaved"));
+		}
+		else
 		{
 			dol_print_error($db);
 		}
 	}
 }
 
-if (! empty($consts) && $update == $langs->trans("Modify"))
+// Mass update
+if (! empty($consts) && $action == 'update')
 {
+	$nbmodified=0;
 	foreach($consts as $const)
 	{
 		if (! empty($const["check"]))
 		{
-			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) < 0)
+			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0)
+			{
+				$nbmodified++;
+			}
+			else
 			{
 				dol_print_error($db);
 			}
 		}
 	}
+	if ($nbmodified > 0) setEventMessage($langs->trans("RecordSaved"));
+	$action='';
 }
 
-// Delete several lines at once
-if (! empty($consts) && $delete == $langs->trans("Delete"))
+// Mass delete
+if (! empty($consts) && $action == 'delete')
 {
+
+	$nbdeleted=0;
 	foreach($consts as $const)
 	{
 		if (! empty($const["check"]))	// Is checkbox checked
 		{
-			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
+			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0)
+			{
+				$nbdeleted++;
+			}
+			else
 			{
 				dol_print_error($db);
 			}
 		}
 	}
+	if ($nbdeleted > 0) setEventMessage($langs->trans("RecordDeleted"));
+	$action='';
 }
 
 // Delete line from delete picto
 if ($action == 'delete')
 {
-	if (dolibarr_del_const($db, $rowid, $entity) < 0)
+	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
+	{
+		setEventMessage($langs->trans("RecordDeleted"));
+	}
+	else
 	{
 		dol_print_error($db);
 	}
@@ -130,11 +155,13 @@ jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
 	jQuery(".checkboxfordelete").click(function() {
 		jQuery("#delconst").show();
+		jQuery("#action").val('delete');
 	});
 	jQuery(".inputforupdate").keypress(function() {
 		var field_id = jQuery(this).attr("id");
 		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
+		jQuery("#action").val('update');
 		jQuery("#check_" + row_num[1]).attr("checked",true);
 	});
 });
@@ -196,6 +223,7 @@ print "\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" id="action" name="action" value="">';
 
 // Show constants
 $sql = "SELECT";

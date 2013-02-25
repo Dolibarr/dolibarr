@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,9 +98,9 @@ if ($rowid > 0)
 	}
 }
 
-// Define variables to know what current user can do on members
+// Define variables to determine what the current user can do on the members
 $canaddmember=$user->rights->adherent->creer;
-// Define variables to know what current user can do on properties of a member
+// Define variables to determine what the current user can do on the properties of a member
 if ($rowid)
 {
 	$caneditfieldmember=$user->rights->adherent->creer;
@@ -251,24 +251,18 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 
 		// Change values
 		$object->civilite_id = trim($_POST["civilite_id"]);
-		$object->prenom      = trim($_POST["prenom"]);     // deprecated
-		$object->nom         = trim($_POST["nom"]);        // deprecated
-		$object->firstname   = trim($_POST["prenom"]);
-		$object->lastname    = trim($_POST["nom"]);
+		$object->firstname   = trim($_POST["firstname"]);
+		$object->lastname    = trim($_POST["lastname"]);
 		$object->login       = trim($_POST["login"]);
 		$object->pass        = trim($_POST["pass"]);
 
 		$object->societe     = trim($_POST["societe"]);
-		$object->adresse     = trim($_POST["address"]);    // deprecated
 		$object->address     = trim($_POST["address"]);
-		$object->cp          = trim($_POST["zipcode"]);    // deprecated
 		$object->zip         = trim($_POST["zipcode"]);
-		$object->ville       = trim($_POST["town"]);       // deprecated
 		$object->town        = trim($_POST["town"]);
 		$object->state_id    = $_POST["departement_id"];
 		$object->country_id  = $_POST["country_id"];
 		$object->fk_departement = $_POST["departement_id"];   // deprecated
-		$object->pays_id     = $_POST["country_id"];   // deprecated
 
 		$object->phone       = trim($_POST["phone"]);
 		$object->phone_perso = trim($_POST["phone_perso"]);
@@ -410,8 +404,8 @@ if ($action == 'add' && $user->rights->adherent->creer)
 
 	$typeid=$_POST["typeid"];
 	$civilite_id=$_POST["civilite_id"];
-	$nom=$_POST["nom"];
-	$prenom=$_POST["prenom"];
+	$lastname=$_POST["lastname"];
+	$firstname=$_POST["firstname"];
 	$societe=$_POST["societe"];
 	$address=$_POST["address"];
 	$zip=$_POST["zipcode"];
@@ -435,20 +429,14 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$socid=$_POST["socid"];
 
 	$object->civilite_id = $civilite_id;
-	$object->prenom      = $prenom;    // deprecated
-	$object->nom         = $nom;       // deprecated
-	$object->firstname   = $prenom;
-	$object->lastname    = $nom;
+	$object->firstname   = $firstname;
+	$object->lastname    = $lastname;
 	$object->societe     = $societe;
-	$object->adresse     = $address; // deprecated
 	$object->address     = $address;
-	$object->cp          = $zip;     // deprecated
 	$object->zip         = $zip;
-	$object->ville       = $town;    // deprecated
 	$object->town        = $town;
 	$object->fk_departement = $state_id;
 	$object->state_id    = $state_id;
-	$object->pays_id     = $country_id;
 	$object->country_id  = $country_id;
 	$object->phone       = $phone;
 	$object->phone_perso = $phone_perso;
@@ -503,12 +491,12 @@ if ($action == 'add' && $user->rights->adherent->creer)
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
 		}
 	}
-	if (empty($nom)) {
+	if (empty($lastname)) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
 	}
-	if ($morphy != 'mor' && (!isset($prenom) || $prenom=='')) {
+	if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
@@ -740,7 +728,6 @@ else
 		if ($object->country_id)
 		{
 			$tmparray=getCountry($object->country_id,'all');
-			$object->pays_code=$tmparray['code'];
 			$object->pays=$tmparray['code'];
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
@@ -823,11 +810,11 @@ else
 		print '</tr>';
 
 		// Lastname
-		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.(GETPOST('lastname','alpha')?GETPOST('lastname','alpha'):$object->lastname).'" size="40"></td>';
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(GETPOST('firstname','alpha')?GETPOST('firstname','alpha'):$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password
@@ -969,8 +956,6 @@ else
 			{
 				dol_print_error($db);
 			}
-			$object->pays_id=$obj->rowid;
-			$object->pays_code=$obj->code;
 			$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
 			$object->country_id=$obj->rowid;
 			$object->country_code=$obj->code;
@@ -1079,12 +1064,12 @@ else
 		print '</td>';
 		print '</tr>';
 
-		// Name
-		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.(isset($_POST["nom"])?$_POST["nom"]:$object->lastname).'"></td>';
+		// Lastname
+		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(isset($_POST["prenom"])?$_POST["prenom"]:$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -442,18 +443,12 @@ else
     			$i++;
     		}
 
-    		if ($num > $conf->liste_limit)
-    		{
-    			if ($sref || $snom || $sall || $sbarcode || GETPOST('search'))
-    			{
-    				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
-    			}
-    			else
-    			{
-    				print_barre_liste('', $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"")."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
-    			}
-    		}
-
+    		$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
+    		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
+    		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
+    		$param.=isset($type)?"&amp;type=".$type:"";
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		
     		$db->free($resql);
 
     		print "</table>";

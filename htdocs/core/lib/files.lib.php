@@ -264,6 +264,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
     if (preg_match('/\.(h)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h'; }
     if (preg_match('/\.(java|jsp)$/i',$tmpfile))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java'; }
 	if (preg_match('/\.php([0-9]{1})?$/i',$tmpfile))           { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
+	if (preg_match('/\.phtml$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
 	if (preg_match('/\.(pl|pm)$/i',$tmpfile))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl'; }
 	if (preg_match('/\.sql$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql'; }
 	if (preg_match('/\.js$/i',$tmpfile))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js'; }
@@ -908,7 +909,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->cp . " " . $object->client->ville;
+			$client = $object->client->nom . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
@@ -1216,11 +1217,12 @@ function dol_uncompress($inputfile,$outputdir)
  * @param 	string	$dir			Directory to scan
  * @param	string	$regexfilter	Regexfilter
  * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
- * @return	strnig					Full path to most recent file
+ *  @param	int		$nohook			Disable all hooks
+ * @return	string					Full path to most recent file
  */
-function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'))
+function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
 {
-    $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC);
+    $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,'',$nohook);
     return $tmparray[0];
 }
 ?>

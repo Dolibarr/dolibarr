@@ -35,7 +35,7 @@ $langs->load("members");
 $rowid		= GETPOST('rowid','int');
 $action		= GETPOST('action','alpha');
 
-$search_lastname	= GETPOST('search_nom','alpha');
+$search_lastname	= GETPOST('search_lastname','alpha');
 $search_login		= GETPOST('search_login','alpha');
 $search_email		= GETPOST('search_email','alpha');
 $type				= GETPOST('type','alpha');
@@ -49,7 +49,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
-if (! $sortfield) {  $sortfield="d.nom"; }
+if (! $sortfield) {  $sortfield="d.lastname"; }
 
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
@@ -405,7 +405,7 @@ if ($rowid > 0)
 		
 		$now=dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as lastname, d.societe, ";
+		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 		$sql.= " t.libelle as type, t.cotisation";
@@ -415,9 +415,9 @@ if ($rowid > 0)
 		$sql.= " AND t.rowid = ".$adht->id;
 		if ($sall)
 		{
-		    $sql.= " AND (d.prenom LIKE '%".$sall."%' OR d.nom LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
-		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.adresse LIKE '%".$sall."%'";
-		    $sql.= " OR d.ville LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+		    $sql.= " AND (d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+		    $sql.= " OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
+		    $sql.= " OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 		}
 		if ($status != '')
 		{
@@ -427,12 +427,12 @@ if ($rowid > 0)
 		{
 		  if (isset($_POST['search']) && $_POST['search'] != '')
 		  {
-		    $sql.= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.nom LIKE '%".$_POST['search']."%')";
+		    $sql.= " AND (d.firstname LIKE '%".$_POST['search']."%' OR d.lastname LIKE '%".$_POST['search']."%')";
 		  }
 		}
 		if (! empty($search_lastname))
 		{
-			$sql.= " AND (d.prenom LIKE '%".$search_lastname."%' OR d.nom LIKE '%".$search_lastname."%')";
+			$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
 		}
 		if (! empty($search_login))
 		{
@@ -492,8 +492,8 @@ if ($rowid > 0)
 
 		    $param="&rowid=".$rowid;
 		    if (! empty($status))			$param.="&status=".$status;
-		    if (! empty($search_lastname))	$param.="&search_nom=".$search_lastname;
-		    if (! empty($search_firstname))	$param.="&search_prenom=".$search_firstname;
+		    if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
+		    if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
 		    if (! empty($search_login))		$param.="&search_login=".$search_login;
 		    if (! empty($search_email))		$param.="&search_email=".$search_email;
 		    if (! empty($filter))			$param.="&filter=".$filter;
@@ -508,7 +508,7 @@ if ($rowid > 0)
 		    print '<table class="noborder" width="100%">';
 
 		    print '<tr class="liste_titre">';
-		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.nom",$param,"","",$sortfield,$sortorder);
+		    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
 		    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
 		    print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
 		    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
@@ -524,7 +524,7 @@ if ($rowid > 0)
 			print '<tr class="liste_titre">';
 
 			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_nom" value="'.$search_lastname.'" size="12"></td>';
+			print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
 
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
@@ -556,7 +556,7 @@ if ($rowid > 0)
 		        $adh->lastname=$objp->lastname;
 		        $adh->firstname=$objp->firstname;
 
-		        // Nom
+		        // Lastname
 		        $var=!$var;
 		        print '<tr '.$bc[$var].'>';
 		        if ($objp->societe != '')

@@ -30,17 +30,21 @@
  * @param 	string		$atarget		Target
  * @param 	int			$type_user     	0=Internal,1=External,2=All
  * @param 	string		$limitmenuto	To limit menu to a top or left menu value
+ * @param  	array		&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @return	void
  */
-function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
+function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto,&$tabMenu)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
+	$mainmenu=$_SESSION["mainmenu"];
+	$leftmenu=$_SESSION["leftmenu"];
+
 	$submenus='';
 
-	$tabMenu=array();
+	//$tabMenu=array();
 
 	$menutop = new Menubase($db,'smartphone');
 	$menuleft = new Menubase($db,'smartphone');

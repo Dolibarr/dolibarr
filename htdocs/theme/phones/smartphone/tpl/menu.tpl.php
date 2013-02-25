@@ -13,13 +13,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Load the smartphone menu manager
+$result=@include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
+if (! $result)	// If failed to include, we try with standard
+{
+	$conf->smart_menu='smartphone_menu.php';
+	include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
+}
+$menusmart = new MenuSmart($db, $user->societe_id?1:0);
+
+
 top_httphead();
 ?>
 <!DOCTYPE html>
 <html>
-<?php 
+<?php
 require 'header.tpl.php';
 ?>
 <body>
@@ -50,7 +60,7 @@ jQuery(document).bind("mobileinit", function(){
         </ul>
 -->
 
-	<?php $menusmart->showmenu($limitmenuto); ?>
+	<?php $menusmart->showmenu(1); ?>
 
 	</div><!-- /content -->
 

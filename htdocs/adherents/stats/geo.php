@@ -100,12 +100,12 @@ if ($mode)
         $tab='statstown';
 
         $data = array();
-        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, d.ville as label2";
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, p.code, p.libelle as label, d.town as label2";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p on d.pays = p.rowid";
         $sql.=" WHERE d.entity IN (".getEntity().")";
         $sql.=" AND d.statut = 1";
-        $sql.=" GROUP BY p.libelle, p.code, d.ville";
+        $sql.=" GROUP BY p.libelle, p.code, d.town";
         //print $sql;
     }
 

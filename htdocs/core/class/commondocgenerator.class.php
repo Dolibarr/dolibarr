@@ -134,7 +134,7 @@ abstract class CommonDocGenerator
         	$object->state=getState($object->state_code,0);
         }
 
-        return array(
+        $array_thirdparty = array(
             'company_name'=>$object->name,
             'company_email'=>$object->email,
             'company_phone'=>$object->phone,
@@ -163,6 +163,30 @@ abstract class CommonDocGenerator
             'company_idprof6'=>$object->idprof6,
         	'company_note'=>$object->note
         );
+
+        // Retrieve extrafields
+        if(is_array($object->array_options) && count($object->array_options))
+        {
+      		if(!class_exists('Extrafields'))
+        		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+        	$extrafields = new ExtraFields($this->db);
+        	$extralabels = $extrafields->fetch_name_optionals_label('company',true);
+        	$object->fetch_optionals($object->id,$extralabels);
+        	 
+        	foreach($extrafields->attribute_label as $key=>$label)
+        	{
+        		if($extrafields->attribute_type[$key] == 'price')
+        		{
+        			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
+        		}
+        		else if($extrafields->attribute_type[$key] == 'select')
+        		{        			
+        			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+        		}
+        		$array_thirdparty=array_merge($array_thirdparty,array('company_options_'.$key => $object->array_options['options_'.$key]));
+        	}
+        }        
+        return $array_thirdparty;
     }
 
 	/**

@@ -41,7 +41,7 @@ $socname            = GETPOST("socname",'alpha');
 $stcomm             = GETPOST("stcomm",'int');
 $search_nom         = GETPOST("search_nom");
 $search_zipcode     = GETPOST("search_zipcode");
-$search_ville       = GETPOST("search_ville");
+$search_town       = GETPOST("search_town");
 $search_departement = GETPOST("search_departement");
 $search_datec       = GETPOST("search_datec");
 $search_categ       = GETPOST("search_categ",'int');
@@ -172,7 +172,7 @@ if ($action == 'cstc')
 
 $formother=new FormOther($db);
 
-$sql = "SELECT s.rowid, s.nom, s.cp as zip, s.ville, s.datec, s.datea, s.status as status,";
+$sql = "SELECT s.rowid, s.nom, s.zip, s.town, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 // Updated by Matelli
@@ -193,8 +193,8 @@ if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
 if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
-if ($search_zipcode) $sql .= " AND s.cp LIKE '".$db->escape(strtolower($search_zipcode))."%'";
-if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
+if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape(strtolower($search_zipcode))."%'";
+if ($search_town) $sql .= " AND s.town LIKE '%".$db->escape(strtolower($search_town))."%'";
 if ($search_departement) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_departement))."%'";
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 // Insert levels filters
@@ -242,7 +242,7 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_zipcode='.urlencode($search_code).'&amp;search_ville='.urlencode($search_ville);
+	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_zipcode='.urlencode($search_code).'&amp;search_town='.urlencode($search_town);
  	// Added by Matelli
  	// Store the status filter in the URL
  	if (isSet($search_cstc))
@@ -293,8 +293,8 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.cp","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("State"),$_SERVER["PHP_SELF"],"s.fk_departement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"s.datec","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
@@ -315,7 +315,7 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_zipcode" size="10" value="'.$search_zipcode.'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ville" size="10" value="'.$search_ville.'">';
+	print '<input type="text" class="flat" name="search_town" size="10" value="'.$search_town.'">';
 	print '</td>';
  	print '<td class="liste_titre" align="center">';
     print '<input type="text" class="flat" name="search_departement" size="10" value="'.$search_departement.'">';
@@ -389,16 +389,17 @@ if ($resql)
 		$prospectstatic->id=$obj->rowid;
 		$prospectstatic->nom=$obj->nom;
         $prospectstatic->status=$obj->status;
+        $prospectstatic->fk_prospectlevel=$obj->fk_prospectlevel;
 		print $prospectstatic->getNomUrl(1,'prospect');
         print '</td>';
         print "<td>".$obj->zip."&nbsp;</td>";
-		print "<td>".$obj->ville."&nbsp;</td>";
+		print "<td>".$obj->town."&nbsp;</td>";
 		print '<td align="center">'.$obj->departement.'</td>';
 		// Creation date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datec)).'</td>';
 		// Level
 		print '<td align="center">';
-		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+		print $prospectstatic->getLibProspLevel();
 		print "</td>";
 		// Statut
 		print '<td align="center" nowrap="nowrap">';
@@ -419,7 +420,7 @@ if ($resql)
 		print '</td>';
 
         print '<td align="right">';
-		print $prospectstatic->getLibStatut(3);
+		print $prospectstatic->LibStatut($prospectstatic->status,3);
         print '</td>';
 
         $parameters=array('obj' => $obj);

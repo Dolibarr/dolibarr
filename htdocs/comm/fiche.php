@@ -31,6 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -109,6 +110,24 @@ if ($action == 'setassujtva' && $user->rights->societe->creer)
 	if (! $result) dol_print_error($result);
 }
 
+// set prospect level
+if ($action == 'setprospectlevel' && $user->rights->societe->creer)
+{
+	$object->fetch($id);
+	$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
+	$result=$object->set_prospect_level($user);
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
+
+// Update communication level
+if ($action == 'cstc')
+{
+	$object->fetch($id);
+	$object->stcomm_id=GETPOST('stcomm','int');
+	$result=$object->set_commnucation_level($user);
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
+
 
 
 /*
@@ -121,6 +140,7 @@ llxHeader('',$langs->trans('CustomerCard'));
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 $form = new Form($db);
+$formcompany=new FormCompany($db);
 
 
 if ($mode == 'search')
@@ -175,6 +195,11 @@ if ($id > 0)
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
 	$object->next_prev_filter="te.client in (1,3)";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
+	print '</td></tr>';
+	
+	// Prospect/Customer
+	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';
+	print $object->getLibCustProspStatut();
 	print '</td></tr>';
 
 	// Prefix
@@ -358,6 +383,34 @@ if ($id > 0)
 		print '</td></tr></table>';
 		print '</td><td colspan="3">'.$object->price_level."</td>";
 		print '</tr>';
+	}
+	
+	// Level of prospect
+	if ($object->client == 2 || $object->client == 3)
+	{
+		print '<tr><td nowrap>';
+		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print $langs->trans('ProspectLevel');
+		print '<td>';
+		if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editlevel')
+			$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
+		else
+			print $object->getLibProspLevel();
+		print "</td>";
+		print '</tr>';
+		
+		// Status
+		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="2">'.$object->getLibProspCommStatut(4).'</td>';
+		print '<td>';
+		if ($object->stcomm_id != -1) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
+		if ($object->stcomm_id !=  0) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
+		if ($object->stcomm_id !=  1) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
+		if ($object->stcomm_id !=  2) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
+		if ($object->stcomm_id !=  3) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
+		print '</td></tr>';
 	}
 
 	// Sales representative
@@ -742,7 +795,7 @@ if ($id > 0)
 	if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
 	{
 		$langs->load("propal");
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
 	}
 
 	if (! empty($conf->commande->enabled) && $user->rights->commande->creer)

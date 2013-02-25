@@ -77,16 +77,16 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	}
 	else                                               // Use table of third parties
 	{
-        $sql = "SELECT DISTINCT s.cp as zip, s.ville as town, s.fk_departement as fk_county, s.fk_pays as fk_country";
+        $sql = "SELECT DISTINCT s.zip, s.town, s.fk_departement as fk_county, s.fk_pays as fk_country";
         $sql.= ", p.code as country_code, p.libelle as country";
         $sql.= ", d.code_departement as county_code , d.nom as county";
         $sql.= " FROM ".MAIN_DB_PREFIX.'societe as s';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON fk_departement = d.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_pays as p ON fk_pays = p.rowid';
         $sql.= " WHERE";
-        if ($zipcode) $sql.= " s.cp LIKE '".$db->escape($zipcode)."%'";
-        if ($town)    $sql.= " s.ville LIKE '%" . $db->escape($town) . "%'";
-        $sql.= " ORDER BY s.fk_pays, s.cp, s.ville";
+        if ($zipcode) $sql.= " s.zip LIKE '".$db->escape($zipcode)."%'";
+        if ($town)    $sql.= " s.town LIKE '%" . $db->escape($town) . "%'";
+        $sql.= " ORDER BY s.fk_pays, s.zip, s.town";
         $sql.= $db->plimit(50); // Avoid pb with bad criteria
 	}
 

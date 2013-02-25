@@ -338,8 +338,8 @@ if ($object->type == 3)
 				print '<td nowrap="nowrap" valign="top">';
 				print $member->getNomUrl(1);
 				print "</td>\n";
-				print '<td valign="top">'.$member->nom."</td>\n";
-				print '<td valign="top">'.$member->prenom."</td>\n";
+				print '<td valign="top">'.$member->lastname."</td>\n";
+				print '<td valign="top">'.$member->firstname."</td>\n";
 				print "</tr>\n";
 			}
 		}

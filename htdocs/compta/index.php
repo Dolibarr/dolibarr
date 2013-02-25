@@ -512,7 +512,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 	$langs->load("boxes");
     $donationstatic=new Don($db);
 
-	$sql = "SELECT d.rowid, d.nom, d.prenom, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
+	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.entity = ".$conf->entity;
 	$sql.= $db->order("d.tms","DESC");
@@ -544,8 +544,8 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				$donationstatic->id=$objp->rowid;
-				$donationstatic->nom=$objp->nom;
-				$donationstatic->prenom=$objp->prenom;
+				$donationstatic->lastname=$objp->lastname;
+				$donationstatic->firstname=$objp->firstname;
 				$label=$donationstatic->getFullName($langs);
 				if ($objp->societe) $label.=($label?' - ':'').$objp->societe;
 				$donationstatic->ref=$label;
@@ -576,7 +576,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
     $langs->load("boxes");
 
-	$sql = "SELECT u.rowid as uid, u.name, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.km";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.km";
 	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = d.fk_user";

@@ -215,6 +215,8 @@ if ($action == 'create')
 
     if ($message) { print $message."<br>"; }
 
+    print dol_set_focus('#nom');
+
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -222,7 +224,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	print "<tr>".'<td valign="top" class="fieldrequired">'.$langs->trans("Name").'</td>';
-	print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
+	print '<td class="valeur"><input size="30" type="text" id="nom" name="nom" value=""></td></tr>';
 
 	// Multicompany
 	if (! empty($conf->multicompany->enabled))

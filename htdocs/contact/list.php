@@ -35,8 +35,8 @@ $contactid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
-$search_nom=GETPOST("search_nom");
-$search_prenom=GETPOST("search_prenom");
+$search_lastname=GETPOST("search_lastname");
+$search_firstname=GETPOST("search_firstname");
 $search_societe=GETPOST("search_societe");
 $search_poste=GETPOST("search_poste");
 $search_phone=GETPOST("search_phone");
@@ -65,15 +65,10 @@ $offset = $limit * $page;
 
 $langs->load("companies");
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-if ($type == "c")
+if ($type == "c" || $type=="p")
 {
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="fiche.php";
-}
-else if ($type == "p")
-{
-	$titre.='  ('.$langs->trans("ThirdPartyProspects").')';
-	$urlfiche="prospect/fiche.php";
 }
 else if ($type == "f")
 {
@@ -92,8 +87,8 @@ if (! empty($text)) $titre.= " $text";
 
 if (GETPOST('button_removefilter'))
 {
-    $search_nom="";
-    $search_prenom="";
+    $search_lastname="";
+    $search_firstname="";
     $search_societe="";
     $search_poste="";
     $search_phone="";
@@ -121,7 +116,7 @@ $form=new Form($db);
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid as cidp, p.name as lastname, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
-$sql.= " cp.code as pays_code";
+$sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
@@ -147,13 +142,13 @@ else
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_nom)        // filtre sur le nom
+if ($search_lastname)        // filtre sur le nom
 {
-    $sql .= " AND p.name LIKE '%".$db->escape($search_nom)."%'";
+    $sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
-if ($search_prenom)     // filtre sur le prenom
+if ($search_firstname)     // filtre sur le prenom
 {
-    $sql .= " AND p.firstname LIKE '%".$db->escape($search_prenom)."%'";
+    $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 if ($search_societe)    // filtre sur la societe
 {
@@ -238,7 +233,7 @@ if ($result)
 	$contactstatic=new Contact($db);
 
     $param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_nom='.urlencode($search_nom).'&search_prenom='.urlencode($search_prenom).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
+    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
 	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 
 	$num = $db->num_rows($result);
@@ -284,10 +279,10 @@ if ($result)
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_nom" size="9" value="'.$search_nom.'">';
+    print '<input class="flat" type="text" name="search_lastname" size="9" value="'.$search_lastname.'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_prenom" size="9" value="'.$search_prenom.'">';
+    print '<input class="flat" type="text" name="search_firstname" size="9" value="'.$search_firstname.'">';
     print '</td>';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_poste" size="9" value="'.$search_poste.'">';
@@ -373,16 +368,16 @@ if ($result)
         if ($view == 'phone')
         {
             // Phone
-            print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+            print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
             // Phone mobile
-            print '<td>'.dol_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+            print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
             // Fax
-            print '<td>'.dol_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+            print '<td>'.dol_print_phone($obj->fax,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
         }
         else
         {
             // Phone
-            print '<td>'.dol_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+            print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
             // EMail
             print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
         }

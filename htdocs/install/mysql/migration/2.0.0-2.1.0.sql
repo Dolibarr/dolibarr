@@ -75,8 +75,8 @@ insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_
 
 alter table llx_cond_reglement add (decalage smallint(6) default 0);
 
-alter table llx_commande add fk_cond_reglement int(11) DEFAULT NULL;
-alter table llx_commande add fk_mode_reglement int(11) DEFAULT NULL;
+alter table llx_commande add fk_cond_reglement integer DEFAULT NULL;
+alter table llx_commande add fk_mode_reglement integer DEFAULT NULL;
 
 
 alter table llx_categorie drop column fk_statut;

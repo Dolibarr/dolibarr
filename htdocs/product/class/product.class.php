@@ -2185,10 +2185,10 @@ class Product extends CommonObject
 				$this->res[]= array($compl_path.$nom_pere,$desc_pere);
 			}
 
-			// Recursive call
-			if (is_array($desc_pere))
+			// Recursive call if child is an array
+			if (is_array($desc_pere[0]))
 			{
-				$this ->fetch_prod_arbo($desc_pere, $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
+				$this ->fetch_prod_arbo($desc_pere[0], $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
 			}
 		}
 	}
@@ -2321,7 +2321,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Return childs of prodcut with if fk_parent
+	 *  Return childs of product with if fk_parent
 	 *
 	 * 	@param		int		$fk_parent	Id of product to search childs of
 	 *  @return     array       		Prod
@@ -2333,19 +2333,22 @@ class Product extends CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
 		$sql.= " AND pa.fk_product_pere = ".$fk_parent;
+		$sql.= " AND pa.fk_product_fils != ".$fk_parent;	// This should not happens, it is to avoid invinite loop if it happens
 
+		dol_syslog(get_class($this).'::getChildsArbo sql='.$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
+				$prods[$rec['rowid']]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type'],3=>$this->db->escape($rec['label']));
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
-				$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
+				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				$listofchilds=$this->getChildsArbo($rec['id']);
 				foreach($listofchilds as $keyChild => $valueChild)
 				{
-					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
+					$prods[$rec['rowid']][$keyChild] = $valueChild;
 				}
 			}
 

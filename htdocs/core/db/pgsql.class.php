@@ -29,8 +29,7 @@
 
 
 /**
- *	\class      DoliDBPgsql
- *	\brief      Class to drive a Postgresql database for Dolibarr
+ *	Class to drive a Postgresql database for Dolibarr
  */
 class DoliDBPgsql
 {
@@ -245,17 +244,17 @@ class DoliDBPgsql
     			$line=preg_replace('/\sAFTER [a-z0-9_]+/i','',$line);
 
     			// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
-    			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
+    			$line=preg_replace('/ALTER TABLE [a-z0-9_]+\s+DROP INDEX/i','DROP INDEX',$line);
 
                 // Translate order to rename fields
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+) CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+CHANGE(?: COLUMN)? ([a-z0-9_]+) ([a-z0-9_]+)(.*)$/i',$line,$reg))
                 {
                 	$line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
                 // Translate order to modify field format
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+) MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $newreg3=$reg[3];
@@ -692,16 +691,16 @@ class DoliDBPgsql
 
 
 	/**
-	 * Defini les limites de la requete
-	 *
-	 * @param	int		$limit      nombre maximum de lignes retournees
-	 * @param	int		$offset     numero de la ligne a partir de laquelle recuperer les lignes
-	 * @return	string      		chaine exprimant la syntax sql de la limite
+     *	Define limits and offset of request
+     *
+     *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
+     *	@param	int		$offset     Numero of line from where starting fetch
+     *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
 	function plimit($limit=0,$offset=0)
 	{
 		global $conf;
-		if (! $limit) $limit=$conf->liste_limit;
+		if ($limit < 0) $limit=$conf->liste_limit;
 		if ($offset > 0) return " LIMIT ".$limit." OFFSET ".$offset." ";
 		else return " LIMIT $limit ";
 	}

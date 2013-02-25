@@ -366,6 +366,22 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
     $object->fetch_thirdparty();
 
     // Check parameters
+    
+    // Check for  mandatory prof id
+    for ($i = 1; $i < 5; $i++)
+    {
+    	 
+    	$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_INVOICE_MANDATORY';
+    	if (! $object->thirdparty->idprof.$i && ! empty($conf->global->$idprof_mandatory))
+        {
+        	if (! $error) $langs->load("errors");
+    		$error++;
+    	
+    		setEventMessage($langs->trans('ErrorProdIdIsMandatory',$langs->transcountry('ProfId'.$i, $object->thirdparty->country_code)),'errors');
+    	}
+    } 
+    
+    //Check for warehouse
     if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
     {
         if (! $idwarehouse || $idwarehouse == -1)
@@ -375,7 +391,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
             $action='';
         }
     }
-
+    
     if (! $error)
     {
         $result = $object->validate($user,'',$idwarehouse);
@@ -1599,11 +1615,9 @@ else if ($action == 'builddoc')	// En get ou en post
     $object->fetch($id);
     $object->fetch_thirdparty();
 
-    if (GETPOST('model'))
-    {
-        $object->setDocModel($user, GETPOST('model'));
-    }
-
+    if (GETPOST('model'))   $object->setDocModel($user, GETPOST('model'));
+	if (GETPOST('fk_bank')) $object->fk_bank=GETPOST('fk_bank');
+	
     // Define output language
     $outputlangs = $langs;
     $newlang='';
@@ -1915,14 +1929,6 @@ if ($action == 'create')
     print $desc;
     print '</td></tr>'."\n";
 
-    // Deposit
-    print '<tr height="18"><td width="16px" valign="middle">';
-    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
-    print '</td><td valign="middle">';
-    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
-    print $desc;
-    print '</td></tr>'."\n";
-
     // Proforma
     if (! empty($conf->global->FACTURE_USE_PROFORMAT))
     {
@@ -1934,7 +1940,18 @@ if ($action == 'create')
         print '</td></tr>'."\n";
     }
 
-	if ($socid>0)
+    if (empty($origin))
+    {
+	    // Deposit
+	    print '<tr height="18"><td width="16px" valign="middle">';
+	    print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
+	    print '</td><td valign="middle">';
+	    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+	    print $desc;
+	    print '</td></tr>'."\n";
+    }
+
+    if ($socid > 0)
 	{
 	    // Replacement
 	    print '<tr height="18"><td valign="middle">';
@@ -1959,8 +1976,11 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
+	}
 
-	    // Credit note
+    if (empty($origin) && $socid > 0)
+    {
+    	// Credit note
 	    print '<tr height="18"><td valign="middle">';
 	    print '<input type="radio" name="type" value="2"'.(GETPOST('type')==2?' checked=true':'');
 	    if (! $optionsav) print ' disabled="disabled"';
@@ -1984,11 +2004,12 @@ if ($action == 'create')
 	    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
 	    print $desc;
 	    print '</td></tr>'."\n";
-	}
+    }
+
 	print '</table>';
 	print '</td></tr>';
 
-	if($socid>0)
+	if ($socid > 0)
 	{
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
@@ -2103,12 +2124,12 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
         }
 
         if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
         }
         print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
     }
@@ -2959,13 +2980,13 @@ else if ($id > 0 || ! empty($ref))
         // Amount Local Taxes
         if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->pays_code).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
             print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
         if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->pays_code).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
             print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
             print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
         }
@@ -3403,12 +3424,11 @@ else if ($id > 0 || ! empty($ref))
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
             $formmail->withfrom=1;
-            $formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
-            $formmail->withtosocid=$soc->id;
-            $formmail->withtocc=1;
-            $formmail->withtoccsocid=0;
+			$liste=array();
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+            $formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtocccsocid=0;
             $formmail->withtopic=$langs->transnoentities($topicmail,'__FACREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;

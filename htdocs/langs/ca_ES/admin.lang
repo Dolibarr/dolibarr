@@ -960,9 +960,10 @@ NotificationsDesc=La funció de les notificacions permet enviar automàticament 
 ModelModules=Models de documents
 DocumentModelOdt=Generació des dels documents amb format OpenDocument (Arxiu .ODT OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Marca d'aigua en els documents esborrany
-CompanyIdProfChecker=Id Professional únic
+CompanyIdProfChecker=Règles sobre els ID professionals
 MustBeUnique=Ha de ser únic?
-MustBeMandatory=Ha de ser obligatori?
+MustBeMandatory=Ha de ser obligatori per a crear tercers?
+MustBeInvoiceMandatory=Ha de ser obligatori per a validar factures?
 Miscellanous=Miscel·lània
 ##### Webcal setup #####
 WebCalSetup=Configuració d'enllaç amb el calendari webcalendar

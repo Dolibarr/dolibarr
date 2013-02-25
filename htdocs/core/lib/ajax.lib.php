@@ -303,11 +303,12 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * 	@param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
  *  @return	string					Return html string to convert a select field into a combo
  */
-function ajax_combobox($htmlname, $event=array())
+function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 {
 	$msg = '<script type="text/javascript">
     $(function() {
     	$("#'.$htmlname.'").combobox({
+    		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
     		selected : function(event,ui) {
     			var obj = '.json_encode($event).';
     			$.each(obj, function(key,values) {
@@ -363,7 +364,8 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 
-	$out= '<script type="text/javascript">
+	$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
+	<script type="text/javascript">
 		$(function() {
 			var input = '.json_encode($input).';
 			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
@@ -375,11 +377,8 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 			// Set constant
 			$("#set_" + code).click(function() {
 				if (input.alert && input.alert.set) {
-					// Posibility to force label of buttons
-					if (input.alert.set.yesButton)
-						yesButton = input.alert.set.yesButton;
-					if (input.alert.set.noButton)
-						noButton = input.alert.set.noButton;
+					if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
+					if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
 				} else {
 					setConstant(url, code, input, entity);
@@ -389,22 +388,20 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 			// Del constant
 			$("#del_" + code).click(function() {
 				if (input.alert && input.alert.del) {
-					// Posibility to force label of buttons
-					if (input.alert.del.yesButton)
-						yesButton = input.alert.del.yesButton;
-					if (input.alert.del.noButton)
-						noButton = input.alert.del.noButton;
+					if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
+					if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
 					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
 				} else {
 					delConstant(url, code, input, entity);
 				}
 			});
 		});
-	</script>';
+	</script>'."\n";
 
 	$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
 	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
 	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+	$out.="\n";
 
 	return $out;
 }

@@ -80,12 +80,6 @@ $img_button=dol_buildpath($path.'/theme/amarok/img/button_bg.png',1);
 font-size:100%;
 }
 
-/*.fiche ul {
-	margin:0.5em;
-	padding:0.5em;
-	padding-left: 2em;
-}*/
-
 body {
 	background-color:#f5f5f5;
 	<?php if ($_SESSION['dol_login'] != '') {?>
@@ -178,10 +172,28 @@ form {
     margin:0px;
 }
 
+.valignmiddle {
+	vertical-align: middle;
+}
+.centpercent {
+	width: 100%;
+}
+.center {
+    text-align: center;
+}
+.left {
+	text-align: <?php print $left; ?>;
+}
+.right {
+	text-align: <?php print $right; ?>;
+}
+
 
 /* ============================================================================== */
 /* Login																		  */
 /* ============================================================================== */
+
+body.body center{color:white;}
 
 form#login {
 	display:block;
@@ -210,8 +222,8 @@ form#login {
 }
 form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
-	width:220px;
-	max-width:220px;
+	width:190px;
+	max-width:190px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
@@ -240,7 +252,12 @@ form#login table.login_table {
 	background:none !important;
 }
 
-body.body center{color:white;}
+div#login_left, div#login_right {
+	display: inline-block;
+	min-width: 220px;
+	text-align: center;
+	vertical-align: middle;
+}
 
 table.login_table { background-color: red  !important;}
 table.login_table tr td {vertical-align:middle;}
@@ -1168,7 +1185,7 @@ div.error {
 
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #664400; }
- 
+
 .fieldrequired {
 	font-weight:bold;
 	color:#333333;
@@ -1442,19 +1459,22 @@ td.hidden {display:none;}
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
+table.cal_month    { border-spacing: 0px; }
+.cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_current_month_right { border-right: solid 1px #E0E0E0; }
+.cal_other_month_right   { border-right: solid 1px #C0C0C0; }
+
 .cal_other_month {
 	background:#dddddd;
-	border:solid 1px #bbbbbb;
 }
 
 .cal_past_month {
 	background:#eeeeee;
-	border:solid 1px #bbbbbb;
 }
 
 .cal_current_month {
 	background:#ffffff;
-	border:solid 1px #bbbbbb;
 }
 
 .cal_today {
@@ -1468,6 +1488,9 @@ table.cal_event {
 	border-collapse:collapse;
 	margin-bottom:1px;
 }
+
+ul.cal_event       { padding-right: 2px; padding-top: 1px; border: none; list-style-type: none; margin: 0 auto; padding-left: 0px; padding-start: 0px; -khtml-padding-start: 0px; -o-padding-start: 0px; -webkit-padding-start: 0px; -webkit-padding-start: 0px; }
+li.cal_event       { border: none; list-style-type: none; }
 
 .cal_event a:link {
 	color:#232323;
@@ -1575,105 +1598,10 @@ form.inplaceeditor-form a {/* The cancel link */
 /* Admin Menu                                                                     */
 /* ============================================================================== */
 
-/* CSS à appliquer à l'arbre hierarchique */
-
-/* Lien plier / déplier tout */
-.arbre-switch {
-    text-align:right;
-    padding:0 5px;
-    margin:0 0 -18px 0;
-}
-
-/* Arbre */
-ul.arbre {padding:5px 10px;}
-
-/* strong:A modifier en fonction de la balise choisie */
-ul.arbre strong {
-    font-weight:normal;
-    padding:0 0 0 20px;
-    margin:0 0 0 -7px;
-    background-image:url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/branch.gif' ?>);
-    background-repeat:no-repeat;
-    background-position:1px 50%;
-}
-
-ul.arbre strong.arbre-plier {
-    background-image:url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/plus.gif' ?>);
-    cursor:pointer;
-}
-
-ul.arbre strong.arbre-deplier {
-    background-image:url(<?php echo DOL_URL_ROOT.'/theme/common/treemenu/minus.gif' ?>);
-    cursor:pointer;
-}
-
-ul.arbre ul {
-    padding:0;
-    margin:0;
-}
-
-ul.arbre li {
-    padding:0;
-    margin:0;
-    list-style:none;
-}
-
-/* This is to create an indent */
-ul.arbre li li {margin:0 0 0 16px;}
-
-/* Classe pour masquer */
-.hide {display:none;}
-
-img.menuNew {
-	display:block;
-	border:0px;
-}
-
-img.menuEdit {
-	border:0px;
-	display:block;
-}
-
-img.menuDel {
-	display:none;
-	border:0px;
-}
-
-div.menuNew {
-	margin-top:-20px;
-	margin-left:270px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuEdit {
-	margin-top:-15px;
-	margin-left:250px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuDel {
-	margin-top:-20px;
-	margin-left:290px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
-
-div.menuFleche {
-	margin-top:-16px;
-	margin-left:320px;
-	height:20px;
-	padding:0px;
-	width:30px;
-	position:relative;
-}
+/* CSS for treeview */
+.treeview ul { background-color: transparent !important; margin-top: 0; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
+.treeview .hover { color: black !important; }
 
 
 /* ============================================================================== */

@@ -265,7 +265,8 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
 	if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
-	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
+	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO: Deprecated
+	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state)) $sourcecompany->state=getState($sourcecompany->state_id);
 	if (! empty($targetcompany->state_id) && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
 
 	if ($mode == 'source')
@@ -292,7 +293,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
 			// Country
-			if ($targetcontact->country_code && $targetcontact->country_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
+			if ($targetcontact->country_code && $targetcontact->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->pays_code))."\n";
 
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
     		{
@@ -310,7 +311,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
 			// Country
-			if ($targetcompany->country_code && $targetcompany->country_code != $sourcecompany->pays_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
+			if ($targetcompany->country_code && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->pays_code))."\n";
 
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
     		{

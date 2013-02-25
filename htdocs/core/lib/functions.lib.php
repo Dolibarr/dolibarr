@@ -673,7 +673,7 @@ function dol_get_fiche_end($notab=0)
 function dol_format_address($object)
 {
 	$ret='';
-	$countriesusingstate=array('US','IN','GB');
+	$countriesusingstate=array('US','IN','GB','ES');
 
 	// Address
 	$ret .= $object->address;
@@ -696,6 +696,16 @@ function dol_format_address($object)
 		}
 		if ($object->zip) $ret .= ($ret ? "\n" : '' ).$object->zip;
 	}
+	else if (in_array($object->country_code,array('ES'))) // title firstname name \n address lines \n zip town \n state \n country
+	{
+		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ' '.$object->town;
+		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		{
+			$ret.="\n".$object->state;
+		}
+	}
+	
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->zip;
@@ -4222,6 +4232,18 @@ function colorArrayToHex($arraycolor,$colorifnotfound='888888')
 {
 	if (! is_array($arraycolor)) return $colorifnotfound;
 	return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
+}
+
+/**
+ * Set focus onto field with selector
+ *
+ * @param 	string	$selector	Selector ('#id')
+ * @return	string				HTML code to set focus
+ */
+function dol_set_focus($selector)
+{
+	print '<!-- Set focus onto a specific field -->'."\n";
+	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() { jQuery("'.$selector.'").focus(); });</script>'."\n";
 }
 
 

@@ -42,11 +42,8 @@ class Contact extends CommonObject
 	var $name;         // TODO deprecated
 	var $nom;          // TODO deprecated
 	var $firstname;
-	var $prenom;       // TODO deprecated
 	var $address;
-	var $cp;	       // TODO deprecated
 	var $zip;
-	var $ville;	       // TODO deprecated
 	var $town;
 
 	var $fk_departement;		// deprecated
@@ -57,7 +54,6 @@ class Contact extends CommonObject
 	var $state;			        // Label of department
 
 	var $fk_pays;				// deprecated
-	var $pays_code;				// deprecated
 	var $pays;					// deprecated
 	var $country_id;			// Id of country
 	var $country_code;			// Code of country
@@ -111,7 +107,7 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->lastname=$this->lastname?trim($this->lastname):$this->name;
+		$this->lastname=$this->lastname?trim($this->lastname):$this->lastname;
         $this->firstname=trim($this->firstname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
@@ -121,7 +117,7 @@ class Contact extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
-        $sql.= ", name";
+        $sql.= ", lastname";
         $sql.= ", firstname";
         $sql.= ", fk_user_creat";
 		$sql.= ", priv";
@@ -217,15 +213,15 @@ class Contact extends CommonObject
 		$this->id = $id;
 
 		// Clean parameters
-		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->name);
+		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname);
 		$this->email=trim($this->email);
 		$this->phone_pro=trim($this->phone_pro);
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->fax=trim($this->fax);
-		$this->zip=($this->zip?$this->zip:$this->cp);
-		$this->town=($this->town?$this->town:$this->ville);
+		$this->zip=($this->zip?$this->zip:$this->zip);
+		$this->town=($this->town?$this->town:$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 
@@ -235,11 +231,11 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		else if ($this->socid == -1) $sql .= " fk_soc=null,";
 		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
-		$sql .= ", name='".$this->db->escape($this->lastname)."'";
+		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
-		$sql .= ", cp='".$this->db->escape($this->zip)."'";
-		$sql .= ", ville='".$this->db->escape($this->town)."'";
+		$sql .= ", zip='".$this->db->escape($this->zip)."'";
+		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_pays=".($this->country_id>0?$this->country_id:'NULL');
 		$sql .= ", fk_departement=".($this->state_id>0?$this->state_id:'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
@@ -366,8 +362,8 @@ class Contact extends CommonObject
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
 		if ($this->address && ! empty($conf->global->LDAP_CONTACT_FIELD_ADDRESS)) $info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
-		if ($this->cp && ! empty($conf->global->LDAP_CONTACT_FIELD_ZIP))          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->cp;
-		if ($this->ville && ! empty($conf->global->LDAP_CONTACT_FIELD_TOWN))      $info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->ville;
+		if ($this->zip && ! empty($conf->global->LDAP_CONTACT_FIELD_ZIP))          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->zip;
+		if ($this->town && ! empty($conf->global->LDAP_CONTACT_FIELD_TOWN))      $info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->town;
 		if ($this->country_code && ! empty($conf->global->LDAP_CONTACT_FIELD_COUNTRY))      $info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->country_code;
 		if ($this->phone_pro && ! empty($conf->global->LDAP_CONTACT_FIELD_PHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
@@ -483,8 +479,8 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name as lastname, c.firstname,";
-		$sql.= " c.address, c.cp as zip, c.ville as town,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.lastname, c.firstname,";
+		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
@@ -494,7 +490,7 @@ class Contact extends CommonObject
 		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
-		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.ville as soccity, s.default_lang as socdefault_lang";
+		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
@@ -514,16 +510,9 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->civilite_id		= $obj->civilite_id;
 				$this->lastname			= $obj->lastname;
-				$this->name				= $obj->lastname;       // TODO deprecated
 				$this->firstname		= $obj->firstname;
-				$this->nom				= $obj->lastname;		// TODO deprecated
-				$this->prenom			= $obj->firstname;		// TODO deprecated
-
 				$this->address			= $obj->address;
-				$this->adresse			= $obj->address; 		// TODO deprecated
-				$this->cp				= $obj->zip;			// TODO deprecated
 				$this->zip				= $obj->zip;
-				$this->ville			= $obj->town;			// TODO deprecated
 				$this->town				= $obj->town;
 
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
@@ -535,7 +524,6 @@ class Contact extends CommonObject
 
 				$this->fk_pays			= $obj->country_id;
 				$this->country_id 		= $obj->country_id;
-				$this->pays_code		= $obj->country_id?$obj->country_code:'';
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->pays				= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 				$this->country			= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
@@ -686,7 +674,7 @@ class Contact extends CommonObject
 
 		$error=0;
 
-		$this->old_name           = $obj->name;
+		$this->old_lastname       = $obj->lastname;
 		$this->old_firstname      = $obj->firstname;
 
 		$this->db->begin();
@@ -856,7 +844,7 @@ class Contact extends CommonObject
 
 	/**
 	 *  Return name of contact with link (and eventually picto)
-	 *	Use $this->id, $this->name, $this->firstname, this->civilite_id
+	 *	Use $this->id, $this->lastname, $this->firstname, this->civilite_id
 	 *
 	 *	@param		int			$withpicto		Include picto with link
 	 *	@param		string		$option			Where the link point to

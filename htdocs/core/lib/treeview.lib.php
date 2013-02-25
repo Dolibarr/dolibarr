@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,53 +23,7 @@
  */
 
 
-/**
- * Return if a child id is in descendance of parentid
- *
- * @param	array	 $fulltree		Full tree. Tree must be an array of records that looks like:
- *									id = id record
- *									id_mere = id record mother
- *									id_children = array of direct child id
- *									label = record label
- * 									fullpath = Full path of id
- * 									level =	Level of record
- * @param	int		$parentid		Parent id
- * @param	int		$childid		Child id
- * @return	int						1=Yes, 0=No
- */
-function is_in_subtree($fulltree,$parentid,$childid)
-{
-	if ($parentid == $childid) return 1;
-
-	// Get fullpath of parent
-	$fullpathparent='';
-	foreach($fulltree as $key => $val)
-	{
-		//print $val['id']."-".$section."<br>";
-		if ($val['id'] == $parentid)
-		{
-			$fullpathparent=$val['fullpath'];
-			break;
-		}
-	}
-	//print '> parent='.$parentid.' - child='.$childid.' - '.$fullpathparent.'<br>';
-
-	foreach($fulltree as $record)
-	{
-		if ($record['id'] == $childid)
-		{
-			//print $record['fullpath'].'_'.' - '.$fullpathparent.'_';
-			if (preg_match('/'.$fullpathparent.'_/i',$record['fullpath'].'_'))
-			{
-				//print 'DEL='.$childid;
-				return 1;
-			}
-		}
-	}
-
-	return 0;
-}
-
+// ------------------------------- Used by ajax tree view -----------------
 
 /**
  * Show indent and picto of a tree line. Return array with information of line.
@@ -143,115 +97,69 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 // ------------------------------- Used by menu editor -----------------
 
 /**
- *  Show an element with correct offset
+ *  Recursive function to output menu tree. <ul id="iddivjstree"><li>...</li></ul>
+ *  Note: To have this function working, check you have loaded the js and css for treeview.
+ *  $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+ *                   '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+ *	$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
  *
- *  @param	array	$tab    	Array of all elements
- *  @param  int	    $rang   	Level of offset
+ *  @param	array	$tab    		Array of all elements
+ *  @param  int	    $pere   		Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
+ *  @param  int	    $rang   		Level of element
+ *  @param	string	$iddivjstree	Id to use for parent ul element
  *  @return	void
  */
-function tree_showline($tab,$rang)
+function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 {
-	global $conf, $rangLast, $idLast, $menu_handler;
-
-	if ($conf->use_javascript_ajax)
+	if (empty($pere['rowid']))
 	{
-		if($rang == $rangLast)
-		{
-			print '<script type="text/javascript">imgDel('.$idLast.');</script>';
-			//print '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php?menu_handler=eldy&action=delete&menuId='.$idLast.'">aa</a>';
-		}
-		elseif($rang > $rangLast)
-		{
+		// Test also done with jstree and dynatree (not able to have <a> inside label)
+		print '<script type="text/javascript" language="javascript">
+		$(document).ready(function(){
+			$("#'.$iddivjstree.'").treeview({
+				collapsed: true,
+				animated: "fast",
+				persist: "cookie",
+				control: "#'.$iddivjstree.'control",
+				toggle: function() {
+					/* window.console && console.log("%o was toggled", this); */
+				}
+			});
+		})
+		</script>';
 
-			print '<li><ul>';
-
-		}
-		elseif($rang < $rangLast)
-		{
-			print '<script type="text/javascript">imgDel('.$idLast.')</script>';
-
-			for($i=$rang; $i < $rangLast; $i++)
-			{
-				print '</ul></li>';
-				echo "\n";
-			}
-
-		}
+		print '<ul id="'.$iddivjstree.'">';
 	}
-	else
-	{
-		if($rang > $rangLast)
-		{
-
-			print '<li><ul>';
-
-		}
-		elseif($rang < $rangLast)
-		{
-
-			for($i=$rang; $i < $rangLast; $i++)
-			{
-				print '</ul></li>';
-				echo "\n";
-			}
-
-		}
-	}
-
-	print '<li id=li'.$tab['rowid'].'>';
-
-	// Content of line
-	print '<strong> &nbsp;<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab['rowid'].'">'.$tab['title'].'</a></strong>';
-	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$tab['rowid'].'"').'</a></div>';
-	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab['rowid'].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$tab['rowid'].'"').'</a></div>';
-	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab['rowid'].'">'.img_delete('default',0,'class="menuDel" id="del'.$tab['rowid'].'"').'</a></div>';
-	print '<div class="menuFleche"><a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler.'&action=down&menuId='.$tab['rowid'].'">'.img_picto("Descendre","1downarrow").'</a></div>';
-
-	print '</li>';
-	echo "\n";
-
-	$rangLast = $rang;
-	$idLast = $tab['rowid'];
-}
-
-
-/**
- *  Recursive function to output menu tree
- *
- *  @param	array	$tab    Array of elements
- *  @param  int	    $pere   Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
- *  @param  int	    $rang   Level of element
- *  @return	void
- */
-function tree_recur($tab,$pere,$rang)
-{
-	if (empty($pere['rowid'])) print '<ul class="arbre">';
 
 	if ($rang > 10)	return;	// Protection contre boucle infinie
 
 	//ballayage du tableau
 	$sizeoftab=count($tab);
+	$ulprinted=0;
 	for ($x=0; $x < $sizeoftab; $x++)
 	{
 		//var_dump($tab[$x]);exit;
 		// If an element has $pere for parent
 		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid'])
 		{
-			// We shot it with an offset
-			tree_showline($tab[$x],$rang);
-
+			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
+			print "\n".'<li>';
+			print $tab[$x]['entry'];
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);
+			print '</li>';
 		}
 		elseif (! empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'])
 		{
-			// We shot it with an offset
-			tree_showline($tab[$x],$rang);
-
+			if (empty($ulprinted) && ! empty($pere['rowid'])) { print '<ul'.(empty($pere['rowid'])?' id="treeData"':'').'>'; $ulprinted++; }
+			print "\n".'<li>';
+			print $tab[$x]['entry'];
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);
+			print '</li>';
 		}
 	}
+	if (! empty($ulprinted) && ! empty($pere['rowid'])) { print '</ul>'."\n"; }
 
 	if (empty($pere['rowid'])) print '</ul>';
 }

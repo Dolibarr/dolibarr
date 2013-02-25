@@ -151,6 +151,7 @@ $server->wsdl->addComplexType(
 	),
 	'tns:group'
 );
+
 $thirdpartywithuser_fields = array(
 	// For thirdparty and contact
 	'name' => array('name'=>'name','type'=>'xsd:string'),
@@ -211,6 +212,20 @@ $server->wsdl->addComplexType(
 	$thirdpartywithuser_fields
 );
 
+// Define WSDL user short object
+$server->wsdl->addComplexType(
+	'shortuser',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
+	'login' => array('name'=>'login','type'=>'xsd:string'),
+	'password' => array('name'=>'password','type'=>'xsd:string'),
+	'entity' => array('name'=>'entity','type'=>'xsd:string'),
+	)
+);
+
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
@@ -259,6 +274,19 @@ $server->register(
 	$styledoc,
 	$styleuse,
 	'WS to create an external user with thirdparty and contact'
+);
+
+$server->register(
+	'SetUserPassword',
+	// Entry values
+	array('authentication'=>'tns:authentication','shortuser'=>'tns:shortuser'),
+	// Exit values
+	array('result'=>'tns:result','id'=>'xsd:string'),
+	$ns,
+	$ns.'#SetUserPassword',
+	$styledoc,
+	$styleuse,
+	'WS to change password of an user'
 );
 
 
@@ -327,7 +355,7 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
 'datec' => dol_print_date($user->datec,'dayhourrfc'),
 'datem' => dol_print_date($user->datem,'dayhourrfc'),
 'fk_thirdparty' => $user->societe_id,
-'fk_socpeople' => $user->fk_socpeople,
+'fk_socpeople' => $user->contact_id,
 'fk_member' => $user->fk_member,
 'webcal_login' => $user->webcal_login,
 'phenix_login' => $user->phenix_login,
@@ -554,10 +582,9 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 						foreach($extrafields->attribute_label as $key=>$label)
 						{
 							$key='contact_options_'.$key;
+							$key=substr($key,8);   // Remove 'contact_' prefix
 							$contact->array_options[$key]=$thirdpartywithuser[$key];
 						}
-						
-						
 
 						$contact_id =  $contact->create($fuser);
 
@@ -629,6 +656,86 @@ function CreateUserFromThirdparty($authentication,$thirdpartywithuser)
 
 	return $objectresp;
 }
+
+
+/**
+ * Set password of an user
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$shortuser			Array of login/password info
+ * @return	mixed
+ */
+function SetUserPassword($authentication,$shortuser) {
+	
+	global $db,$conf,$langs;
+	
+	dol_syslog("Function: SetUserPassword login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	
+	$objectresp=array();
+	$errorcode='';$errorlabel='';
+	$error=0;
+	
+	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	
+	if ($fuser->societe_id) $socid=$fuser->societe_id;
+	
+	if (! $error && ! $shortuser)
+	{
+		$error++;
+		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter shortuser must be provided.";
+	}
+	
+	if (! $error)
+	{
+		$fuser->getrights();
+	
+		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password)
+		{
+			$userstat=new User($db);
+			$res = $userstat->fetch('',$shortuser['login']);
+			if($res)
+			{
+				$res = $userstat->setPassword($userstat,$shortuser['password']);
+				if($res) 
+				{
+					$objectresp = array(
+						'result'=>array('result_code' => 'OK', 'result_label' => ''),
+						'groups'=>$arraygroups
+					);
+				}
+				else
+				{
+					$error++;
+					$errorcode='NOT_MODIFIED'; $errorlabel='Error when changing password';
+				}
+			}
+			else
+			{
+				$error++;
+				$errorcode='NOT_FOUND'; $errorlabel='User not found';
+			}
+			
+		}
+		else
+		{
+			$error++;
+			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
+		}
+	}
+		
+			
+	if ($error)
+	{
+		$objectresp = array(
+			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
+		);
+	}
+	
+	return $objectresp;
+}
+
 
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);

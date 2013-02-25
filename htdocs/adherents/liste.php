@@ -39,8 +39,8 @@ $filter=GETPOST("filter");
 $statut=GETPOST("statut");
 $search=GETPOST("search");
 $search_ref=GETPOST("search_ref");
-$search_nom=GETPOST("search_nom");
-$search_prenom=GETPOST("search_prenom");
+$search_lastname=GETPOST("search_lastname");
+$search_firstname=GETPOST("search_firstname");
 $search_login=GETPOST("search_login");
 $type=GETPOST("type");
 $search_email=GETPOST("search_email");
@@ -56,14 +56,14 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
-if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.nom"); }
+if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 if (GETPOST("button_removefilter"))
 {
     $search="";
 	$search_ref="";
-    $search_nom="";
-	$search_prenom="";
+    $search_lastname="";
+	$search_firstname="";
 	$search_login="";
 	$type="";
 	$search_email="";
@@ -86,7 +86,7 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $now=dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.nom as lastname, d.prenom as firstname, d.societe as company, d.fk_soc,";
+$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
@@ -103,9 +103,9 @@ if ($sall)
 {
 	$sql.=" AND (";
 	if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
-	$sql.=" d.prenom LIKE '%".$sall."%' OR d.nom LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
-	$sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.adresse LIKE '%".$sall."%'";
-	$sql.=" OR d.ville LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+	$sql.=" d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+	$sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
+	$sql.=" OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 }
 if ($type > 0)
 {
@@ -120,9 +120,9 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$search_ref.")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
-if ($search_nom)
+if ($search_lastname)
 {
-	$sql.= " AND (d.prenom LIKE '%".$search_nom."%' OR d.nom LIKE '%".$search_nom."%')";
+	$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
 }
 if ($search_login)
 {
@@ -216,7 +216,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
@@ -233,7 +233,7 @@ if ($resql)
 	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
 
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';

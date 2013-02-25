@@ -178,6 +178,8 @@ if ($result >= 0)
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			$fuser = new User($db);
+			
+			$fuser->fetch('','',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné
 
 			// Propriete membre
 			$fuser->firstname=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
@@ -200,6 +202,7 @@ if ($result >= 0)
 			$fuser->user_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE];
 			$fuser->office_fax=$ldapuser[$conf->global->LDAP_FIELD_FAX];
 			$fuser->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL];
+			$fuser->ldap_sid=$ldapuser[$conf->global->LDAP_FIELD_SID];
 
 			$fuser->job=$ldapuser[$conf->global->LDAP_FIELD_TITLE];
 			$fuser->note=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
@@ -209,6 +212,7 @@ if ($result >= 0)
 			$fuser->fk_member=0;
 
 			$fuser->statut=1;
+			// TODO : revoir la gestion du status
 			/*if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))
 			{
 				$fuser->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
@@ -218,25 +222,44 @@ if ($result >= 0)
 			//if ($fuser->statut > 1) $fuser->statut=1;
 
 			//print_r($ldapuser);
-
-			// Group of user
-			// We should use here $groupid
-
-			// Creation member
-			print $langs->transnoentities("UserCreate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
-			$fuser_id=$fuser->create($user);
-			if ($fuser_id > 0)
-			{
-				print ' --> Created member id='.$fuser_id.' login='.$fuser->login;
-			}
-			else
-			{
-				$error++;
-				print ' --> '.$fuser_id.' '.$fuser->error;
+			
+			if($fuser->id > 0) { // User update
+				print $langs->transnoentities("UserUpdate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
+				$res=$fuser->update($user);
+				
+				if ($res < 0)
+				{
+					$error++;
+					print ' --> '.$res.' '.$fuser->error;
+				}
+				else
+				{
+					print ' --> Updated user id='.$fuser->id.' login='.$fuser->login;
+				}
+			} else { // User creation
+				print $langs->transnoentities("UserCreate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
+				$res=$fuser->create($user);
+				
+				if ($res > 0)
+				{
+					print ' --> Created user id='.$fuser->id.' login='.$fuser->login;
+				}
+				else
+				{
+					$error++;
+					print ' --> '.$res.' '.$fuser->error;
+				}
 			}
 			print "\n";
-
 			//print_r($fuser);
+			
+			// Gestion des groupes
+			// TODO : revoir la gestion des groupes (ou script de sync groupes)
+			/*if(!$error) {
+				foreach ($ldapuser[$conf->global->LDAP_FIELD_USERGROUPS] as $groupdn) {
+					$groupdn;
+				}
+			}*/
 		}
 
 		if (! $error || $forcecommit)

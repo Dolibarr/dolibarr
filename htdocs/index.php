@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 	Juanjo Menent			<jmenent@2byte.es>
  *
@@ -28,11 +28,9 @@ define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-
 // If not defined, we select menu "home"
 $_GET['mainmenu']=GETPOST('mainmenu', 'alpha')?GETPOST('mainmenu', 'alpha'):'home';
 $action=GETPOST('action');
-
 
 $hookmanager->initHooks(array('index'));
 
@@ -54,28 +52,14 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-// If smartphone mode, we do not show main page, we show only menu
+// If smartphone mode, we do not show main page, we show only menu. TODO Remove this
 if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
 {
-    $limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
-    $limitmenuto=1;	// A virer
-
-    // Load the smartphone menu manager
-    $result=@include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
-    if (! $result)	// If failed to include, we try with standard
-    {
-        $conf->smart_menu='smartphone_backoffice.php';
-        include_once DOL_DOCUMENT_ROOT ."/core/menus/smartphone/".$conf->smart_menu;
-    }
-
-    $menusmart = new MenuSmart($db);
-
     include_once DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php';
     exit;
 }
 
-
-llxHeader();
+llxHeader('',$langs->trans("HomeArea"));
 
 print_fiche_titre($langs->trans("HomeArea"));
 
@@ -368,7 +352,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
     $board->load_board($user,"inactives");
     $board->warning_delay=$conf->contrat->services->inactifs->warning_delay/60/60/24;
     $board->label=$langs->trans("BoardNotActivatedServices");
-    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=0';
+    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
     $board->img=img_object($langs->trans("Contract"),"contract");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -384,7 +368,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
     $board->load_board($user,"expired");
     $board->warning_delay=$conf->contrat->services->expires->warning_delay/60/60/24;
     $board->label=$langs->trans("BoardRunningServices");
-    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired';
+    $board->url=DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
     $board->img=img_object($langs->trans("Contract"),"contract");
     $rowspan++;
     $dashboardlines[]=$board;

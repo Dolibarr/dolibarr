@@ -75,6 +75,7 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 
 // Set properties specific to multicompany
+// TODO Multicompany Remove this. Useless. Var should be read when required.
 $conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;		// Force Multi-Company transverse mode
 $conf->multicompany->force_entity = empty($multicompany_force_entity)?'':(int) $multicompany_force_entity;			// Force entity in login page
 
@@ -141,6 +142,7 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = DOLENTITY;
 	}
+	// TODO Multicompany Remove this.
 	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
 	{
 		$conf->entity = $conf->multicompany->force_entity;
@@ -199,10 +201,11 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 }
 
 
-// Set default language (must be after the setValues of $conf)
+// Set default language (must be after the setValues setting global $conf->global->MAIN_LANG_DEFAULT. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs->setDefaultLang((! empty($conf->global->MAIN_LANG_DEFAULT)?$conf->global->MAIN_LANG_DEFAULT:''));
+    $langcode=(GETPOST('lang')?GETPOST('lang','alpha',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+	$langs->setDefaultLang($langcode);
 }
 
 

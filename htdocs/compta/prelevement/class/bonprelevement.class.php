@@ -540,7 +540,7 @@ class BonPrelevement extends CommonObject
                 $this->method_trans = $method;
                 $langs->load('withdrawals');
                 $subject = $langs->trans("InfoTransSubject", $this->ref);
-                $message = $langs->trans("InfoTransMessage", $this->ref, $user->prenom, $user->nom);
+                $message = $langs->trans("InfoTransMessage", $this->ref, $user->firstname, $user->lastname);
                 $message .=$langs->trans("InfoTransData", price($this->amount), $this->methodes_trans[$this->method_trans], dol_print_date($date,'day'));
 
                 // TODO Call trigger to create a notification using notification module

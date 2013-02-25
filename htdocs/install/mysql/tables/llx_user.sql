@@ -50,6 +50,7 @@ create table llx_user
   fk_societe        integer,
   fk_socpeople      integer,
   fk_member         integer,
+  fk_user           integer,               -- Hierarchic parent
   note              text DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,

@@ -100,6 +100,7 @@ class Facture extends CommonInvoice
     var $cond_reglement_code;		// Code in llx_c_paiement
     var $mode_reglement_id;			// Id in llx_c_paiement
     var $mode_reglement_code;		// Code in llx_c_paiement
+    var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
     var $modelpdf;
     var $products=array();	// deprecated
     var $lines=array();
@@ -1829,6 +1830,8 @@ class Facture extends CommonInvoice
 
             if ($error == 0)
             {
+            	$this->brouillon = 1;
+            	$this->statut = 0;
                 $this->db->commit();
                 return 1;
             }

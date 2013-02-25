@@ -64,7 +64,7 @@ abstract class CommonObject
         $lastname=$this->lastname;
         $firstname=$this->firstname;
         if (empty($lastname))  $lastname=($this->name?$this->name:$this->nom);
-        if (empty($firstname)) $firstname=$this->prenom;
+        if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';
         if ($option && $this->civilite_id)
@@ -964,7 +964,7 @@ abstract class CommonObject
      */
     function setDeliveryAddress($id)
     {
-    	$fieldname = 'fk_adresse_livraison';
+    	$fieldname = 'fk_delivery_address';
     	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
@@ -1023,7 +1023,7 @@ abstract class CommonObject
 
     /**
      *  Save a new position (field rang) for details lines.
-     *  You can choose to ser position for lines with already a position or lines wihtout any position defined.
+     *  You can choose to set position for lines with already a position or lines without any position defined.
      *  Call this function only for table that contains a field fk_parent_line.
      *
      * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
@@ -1064,7 +1064,7 @@ abstract class CommonObject
 			// counter that parents.
 			$rows=array();
 
-			// We frist search all lines that are parent lines (for multilevel details lines)
+			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line IS NULL';
@@ -1080,10 +1080,10 @@ abstract class CommonObject
 				{
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0];	// Add parent line into array rows
-					$childrens = $this->getChildrensOfLine($row[0]);
-					if (! empty($childrens))
+					$childrens = $this->getChildrenOfLine($row[0]);
+					if (! empty($children))
 					{
-						foreach($childrens as $child)
+						foreach($children as $child)
 						{
 							array_push($rows, $child);
 						}
@@ -1108,12 +1108,12 @@ abstract class CommonObject
 	}
 
 	/**
-	 * 	Get childrens of line
+	 * 	Get children of line
 	 *
 	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of child lines id
+	 * 	@return	array			Array with list of children lines id
 	 */
-	function getChildrensOfLine($id)
+	function getChildrenOfLine($id)
 	{
 		$rows=array();
 
@@ -1122,7 +1122,7 @@ abstract class CommonObject
 		$sql.= ' AND fk_parent_line = '.$id;
 		$sql.= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLines search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

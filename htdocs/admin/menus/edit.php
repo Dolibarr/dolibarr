@@ -49,8 +49,8 @@ $menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_sma
 
 $menu_handler=$menu_handler_top;
 
-if ($_REQUEST["handler_origine"]) $menu_handler=$_REQUEST["handler_origine"];
-if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
+if (GETPOST("handler_origine")) $menu_handler=GETPOST("handler_origine");
+if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
 
 
@@ -173,7 +173,7 @@ if ($action == 'add')
     if (! $error)
     {
         $menu = new Menubase($db);
-        $menu->menu_handler=$_POST['menu_handler'];
+        $menu->menu_handler=preg_replace('/_menu$/','',$_POST['menu_handler']);
         $menu->type=$_POST['type'];
         $menu->titre=$_POST['titre'];
         $menu->url=$_POST['url'];

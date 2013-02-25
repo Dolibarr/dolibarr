@@ -143,6 +143,7 @@ if ($socid) $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid) $param.="&projectid=".$pid;
 if ($type) $param.="&type=".$type;
+if ($actioncode) $param.="&actioncode=".$actioncode;
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
@@ -151,7 +152,7 @@ $sql.= " c.code as acode, c.libelle,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
-$sql.= " sp.name, sp.firstname";
+$sql.= " sp.lastname, sp.firstname";
 $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c,";
 $sql.= " ".MAIN_DB_PREFIX.'user as u,';
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";

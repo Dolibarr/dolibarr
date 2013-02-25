@@ -771,7 +771,11 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
  */
 (function( $ ) {
 	$.widget( "ui.combobox", {
+		options: {
+			minLengthToAutocomplete: 0,
+		},
         _create: function() {
+        	var savMinLengthToAutocomplete = this.options.minLengthToAutocomplete;
             var self = this,
                 select = this.element.hide(),
                 selected = select.children( ":selected" ),
@@ -781,7 +785,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                 .val( value )
                 .autocomplete({
                     delay: 0,
-                    minLength: 0,
+                    minLength: this.options.minLengthToAutocomplete,
                     source: function( request, response ) {
                         var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
                         response( select.children( "option" ).map(function() {
@@ -854,7 +858,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
                     }
 
                     // pass empty string as value to search for, displaying all results
+                    input.autocomplete({ minLength: 0 });
                     input.autocomplete( "search", "" );
+                    input.autocomplete({ minLength: savMinLengthToAutocomplete });
                     input.focus();
                 });
         },

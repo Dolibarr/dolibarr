@@ -322,14 +322,7 @@ if ($result)
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
 
-		if ($objp->client == 1)
-		{
-			$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
-		}
-		else
-		{
-			$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
-		}
+		$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
 
 		// Company
 		$companystatic->id=$objp->rowid;

@@ -39,7 +39,7 @@ $offset = $limit * $page ;
 
 $type=GETPOST('type', 'alpha');
 $search_lastname=GETPOST('search_nom')?GETPOST('search_nom'):GETPOST('search_lastname');			// For backward compatibility
-$search_firstname=GETPOST('search_prenom')?GETPOST('search_prenom'):GETPOST('search_firstname');	// For backward compatibility
+$search_firstname=GETPOST('search_firstname')?GETPOST('search_firstname'):GETPOST('search_firstname');	// For backward compatibility
 $search_company=GETPOST('search_societe')?GETPOST('search_societe'):GETPOST('search_company');		// For backward compatibility
 $contactname=GETPOST('contactname');
 
@@ -55,15 +55,10 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 llxHeader('','Contacts');
 
-if ($type == "c")
+if ($type == "c" || $type == "p")
 {
   $label = $langs->trans("Customers");
   $urlfiche="fiche.php";
-}
-if ($type == "p")
-{
-  $label = $langs->trans("Prospects");
-  $urlfiche="prospect/fiche.php";
 }
 if ($type == "f")
 {

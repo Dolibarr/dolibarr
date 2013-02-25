@@ -112,17 +112,17 @@ if (empty($reshook))
         {
             $object->particulier       = GETPOST("private");
 
-            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?GETPOST('prenom').' '.GETPOST('nom'):GETPOST('nom').' '.GETPOST('prenom');
+            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?GETPOST('firstname').' '.GETPOST('nom'):GETPOST('nom').' '.GETPOST('firstname');
             $object->civilite_id       = GETPOST('civilite_id');
             // Add non official properties
             $object->name_bis          = GETPOST('nom');
-            $object->firstname         = GETPOST('prenom');
+            $object->firstname         = GETPOST('firstname');
         }
         else
         {
             $object->name              = GETPOST('nom');
         }
-        $object->address               = GETPOST('adresse');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode');
         $object->town                  = GETPOST('town');
         $object->country_id            = GETPOST('country_id');
@@ -162,7 +162,6 @@ if (empty($reshook))
 
         $object->client                = GETPOST('client');
         $object->fournisseur           = GETPOST('fournisseur');
-        $object->fournisseur_categorie = GETPOST('fournisseur_categorie');
 
         $object->commercial_id         = GETPOST('commercial_id');
         $object->default_lang          = GETPOST('default_lang');
@@ -222,19 +221,20 @@ if (empty($reshook))
 					{
 						$langs->load("errors");
                 		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-                		$action = ($action=='add'?'create':'edit');
+                		$action = (($action=='add'||$action=='create')?'create':'edit');
 					}
 				}
 
 				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+	
 				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 				{
 					$langs->load("errors");
 					$error++;
 					$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-					$action = ($action=='add'?'create':'edit');
+					$action = (($action=='add'||$action=='create')?'create':'edit');
 				}
-			}
+        	}
         }
 
         if (! $error)
@@ -583,14 +583,14 @@ else
         if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
 
         $object->name				= GETPOST('nom');
-        $object->firstname			= GETPOST('prenom');
+        $object->firstname			= GETPOST('firstname');
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
         $object->code_client		= GETPOST('code_client');
         $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
         $object->code_fournisseur	= GETPOST('code_fournisseur');
-        $object->address			= GETPOST('adresse');
+        $object->address			= GETPOST('address');
         $object->zip				= GETPOST('zipcode');
         $object->town				= GETPOST('town');
         $object->state_id			= GETPOST('departement_id');
@@ -712,8 +712,7 @@ else
             print "<br>\n";
         }
 
-
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
@@ -749,7 +748,7 @@ else
         // If javascript on, we show option individual
         if ($conf->use_javascript_ajax)
         {
-            print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$object->firstname.'"></td>';
+            print '<tr class="individualline"><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="firstname" value="'.$object->firstname.'"></td>';
             print '<td colspan=2>&nbsp;</td></tr>';
             print '<tr class="individualline"><td>'.$langs->trans("UserTitle").'</td><td>';
             print $formcompany->select_civility($object->civility_id).'</td>';
@@ -794,23 +793,6 @@ else
             print $form->textwithpicto('',$s,1);
             print '</td></tr></table>';
             print '</td></tr>';
-
-            // Category
-            /* This must be set into category tab, like for customer category
-            if ($object->fournisseur)
-            {
-                $load = $object->LoadSupplierCateg();
-                if ( $load == 0)
-                {
-                    if (count($object->SupplierCategories) > 0)
-                    {
-                        print '<tr>';
-                        print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-                        print $form->selectarray("fournisseur_categorie",$object->SupplierCategories,GETPOST('fournisseur_categorie'),1);
-                        print '</td></tr>';
-                    }
-                }
-            }*/
         }
 
         // Status
@@ -826,7 +808,7 @@ else
         }
 
         // Address
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -998,14 +980,25 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
+        	$e=0;
             foreach($extrafields->attribute_label as $key=>$label)
             {
+            	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-           		print '<tr><td';
+                if (($e % 2) == 0)
+                {
+                	print '<tr>';
+                	$colspan='0';
+                }           		
+           		print '<td';
            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td colspan="3">';
+           		print '>'.$label.'</td>';
+           		print '<td colspan="'.$colspan.'">';
                 print $extrafields->showInputField($key,$value);
-                print '</td></tr>'."\n";
+                print '</td>';
+                
+                if (($e % 2) == 1) print '</tr>'."\n";
+                $e++;
             }
         }
 
@@ -1093,7 +1086,7 @@ else
                 $object->code_client			= GETPOST('code_client');
                 $object->fournisseur			= GETPOST('fournisseur');
                 $object->code_fournisseur		= GETPOST('code_fournisseur');
-                $object->address				= GETPOST('adresse');
+                $object->address				= GETPOST('address');
                 $object->zip					= GETPOST('zipcode');
                 $object->town					= GETPOST('town');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
@@ -1121,7 +1114,7 @@ else
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
 
-                // We set country_id, and pays_code label of the chosen country
+                // We set country_id, and country_code label of the chosen country
                 // TODO move to DAO class
                 if ($object->country_id)
                 {
@@ -1245,22 +1238,6 @@ else
                 print '</td></tr></table>';
 
                 print '</td></tr>';
-
-                // Category
-                if (! empty($conf->categorie->enabled) && $object->fournisseur)
-                {
-                    $load = $object->LoadSupplierCateg();
-                    if ( $load == 0)
-                    {
-                        if (count($object->SupplierCategories) > 0)
-                        {
-                            print '<tr>';
-                            print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-                            print $form->selectarray("fournisseur_categorie",$object->SupplierCategories,'',1);
-                            print '</td></tr>';
-                        }
-                    }
-                }
             }
 
             // Barcode
@@ -1426,23 +1403,38 @@ else
                 print '</td>';
                 print '</tr>';
             }
-
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
+            	$old_pos=0;
+            	$e=0;
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
+	                $colspan = '3';
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
+                    
+                    if (($e % 2) == 0)
+                    {
+                    	print '<tr>'."\n";
+                    	$colspan = '0';
+                    }
+            		print '<td';
             		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
+            		print '>'.$label.'</td>'."\n";
+            		print '<td colspan="'.$colspan.'">';
                     print $extrafields->showInputField($key,$value);
-                    print "</td></tr>\n";
+                    print "</td>"."\n";
+                    
+                    if (($e % 2) == 1 )
+                    {
+                    	print "</tr>\n";
+                    }
+                    $old_pos = $extrafields->attribute_pos[$key];
+                    $e++;
                 }
             }
-
             // Logo
             print '<tr>';
             print '<td>'.$langs->trans("Logo").'</td>';
@@ -1756,12 +1748,23 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
+        	$e=0;
             foreach($extrafields->attribute_label as $key=>$label)
             {
+            	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                print '<tr><td>'.$label.'</td><td colspan="3">';
+                if (($e % 2) == 0) 
+                {
+                	print '<tr>';
+                	$colspan='0';
+                }
+                print '<td>'.$label.'</td>';
+                print '<td colspan="'.$colspan.'">';
                 print $extrafields->showOutputField($key,$value);
-                print "</td></tr>\n";
+                print "</td>";
+                
+                if (($e % 2) == 1) print '</tr>';
+                $e++;
             }
         }
 
