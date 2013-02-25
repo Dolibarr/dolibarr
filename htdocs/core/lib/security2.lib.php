@@ -133,9 +133,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Instantiate hooks of thirdparty module only if not already define
 	$hookmanager->initHooks(array('mainloginpage'));
 
-	$langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
-	$langs->setDefaultLang($langcode);
-
 	$langs->load("main");
 	$langs->load("other");
 	$langs->load("help");
