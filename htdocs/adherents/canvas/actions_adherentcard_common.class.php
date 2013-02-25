@@ -423,7 +423,6 @@ abstract class ActionsAdherentCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->pays_code	=	$obj->code;
             $this->object->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
             $this->object->country_code	=	$obj->code;
             $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;

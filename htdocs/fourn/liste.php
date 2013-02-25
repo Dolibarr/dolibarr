@@ -77,7 +77,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid as socid, s.nom, s.cp as zip, s.town, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
+$sql = "SELECT s.rowid as socid, s.nom, s.zip, s.town, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -95,7 +95,7 @@ if ($socname)
 	$sortorder = "ASC";
 }
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
-if ($search_zipcode) $sql .= " AND s.cp LIKE '".$db->escape($search_zipcode)."%'";
+if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape($search_zipcode)."%'";
 if ($search_town) $sql .= " AND s.town LIKE '%".$db->escape($search_town)."%'";
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
@@ -146,7 +146,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.cp","",$param,'valign="middle"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'valign="middle"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'align="left"',$sortfield,$sortorder);

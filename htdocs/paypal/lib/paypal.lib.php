@@ -116,7 +116,7 @@ function html_print_paypal_footer($fromcompany,$langs)
 		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->idprof2))
+	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
 	{
 		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];

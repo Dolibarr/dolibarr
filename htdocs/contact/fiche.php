@@ -585,7 +585,6 @@ else
             if (isset($_POST["country_id"]) || $object->country_id)
             {
 	            $tmparray=getCountry($object->country_id,'all');
-	            $object->pays_code    =	$tmparray['code'];
 	            $object->pays         =	$tmparray['label'];
 	            $object->country_code =	$tmparray['code'];
 	            $object->country      =	$tmparray['label'];
@@ -881,10 +880,10 @@ else
         dol_print_address($object->address,'gmap','contact',$object->id);
         print '</td></tr>';
 
-        // Zip Town
+        // Zip/Town
         print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">';
-        print $object->cp;
-        if ($object->cp) print '&nbsp;';
+        print $object->zip;
+        if ($object->zip) print '&nbsp;';
         print $object->town.'</td></tr>';
 
         // Country

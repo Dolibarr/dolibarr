@@ -243,7 +243,7 @@ if ($socid)
 	print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3">'.nl2br($soc->address).'</td></tr>';
 
 	// Zip / Town
-	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
+	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->zip."</td>";
 	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->town."</td></tr>";
 
 	// Country

@@ -45,7 +45,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
 
-$sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.cp, e.town, e.fk_pays";
+$sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if ($sref)

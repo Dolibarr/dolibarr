@@ -101,14 +101,14 @@ if (! $sortfield) {  $sortfield="nom"; }
 
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"));
 
-$sql = "SELECT rowid, firstname, lastname, societe, cp as zip, town, email, naiss, photo";
+$sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, naiss, photo";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent";
 $sql.= " WHERE entity = ".$entity;
 $sql.= " AND statut = 1";
 $sql.= " AND public = 1";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
-//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, cp, town, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
+//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
 //$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 //$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -129,7 +129,7 @@ if ($result)
 	print ' / <a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
 	//print_liste_field_titre($langs->trans("DateToBirth"),"public_list.php","naiss",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
 	print_liste_field_titre($langs->trans("EMail"),"public_list.php","email",'',$param,$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zip"),"public_list.php","cp","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),"public_list.php","zip","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"public_list.php","town","",$param,$sortfield,$sortorder);
 	print "<td>".$langs->trans("Photo")."</td>\n";
 	print "</tr>\n";

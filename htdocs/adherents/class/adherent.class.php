@@ -63,8 +63,6 @@ class Adherent extends CommonObject
     var $country_id;
     var $country_code;
     var $country;
-    var $pays_id;              // deprecated
-    var $pays_code;            // deprecated
     var $pays;                 // deprecated
 
     var $email;
@@ -421,7 +419,7 @@ class Adherent extends CommonObject
         $sql.= ", societe=" .($this->societe?"'".$this->db->escape($this->societe)."'":"null");
         $sql.= ", fk_soc="  .($this->fk_soc > 0?"'".$this->fk_soc."'":"null");
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
-        $sql.= ", cp="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
+        $sql.= ", zip="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
         $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
@@ -563,7 +561,7 @@ class Adherent extends CommonObject
                         $lthirdparty->tel=$this->phone;
                         $lthirdparty->state_id=$this->state_id;
                         $lthirdparty->country_id=$this->country_id;
-                        $lthirdparty->pays_id=$this->country_id;
+                        $lthirdparty->country_id=$this->country_id;
                         //$lthirdparty->phone_mobile=$this->phone_mobile;
 
                         $result=$lthirdparty->update($this->fk_soc,$user,0,1,1,'update');	// Use sync to 0 to avoid cyclic updates
@@ -1069,8 +1067,6 @@ class Adherent extends CommonObject
                 	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else
                 	$this->country=$obj->country;
-                $this->pays_id			= $obj->country_id;      // deprecated
-                $this->pays_code		= $obj->country_code;    // deprecated
                 $this->pays				= $this->country;        // deprecated
 
                 $this->phone			= $obj->phone;

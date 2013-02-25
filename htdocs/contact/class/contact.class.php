@@ -43,7 +43,6 @@ class Contact extends CommonObject
 	var $nom;          // TODO deprecated
 	var $firstname;
 	var $address;
-	var $cp;	       // TODO deprecated
 	var $zip;
 	var $town;
 
@@ -55,7 +54,6 @@ class Contact extends CommonObject
 	var $state;			        // Label of department
 
 	var $fk_pays;				// deprecated
-	var $pays_code;				// deprecated
 	var $pays;					// deprecated
 	var $country_id;			// Id of country
 	var $country_code;			// Code of country
@@ -222,7 +220,7 @@ class Contact extends CommonObject
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->fax=trim($this->fax);
-		$this->zip=($this->zip?$this->zip:$this->cp);
+		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
@@ -236,7 +234,7 @@ class Contact extends CommonObject
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
-		$sql .= ", cp='".$this->db->escape($this->zip)."'";
+		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_pays=".($this->country_id>0?$this->country_id:'NULL');
 		$sql .= ", fk_departement=".($this->state_id>0?$this->state_id:'NULL');
@@ -364,7 +362,7 @@ class Contact extends CommonObject
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
 		if ($this->address && ! empty($conf->global->LDAP_CONTACT_FIELD_ADDRESS)) $info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
-		if ($this->cp && ! empty($conf->global->LDAP_CONTACT_FIELD_ZIP))          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->cp;
+		if ($this->zip && ! empty($conf->global->LDAP_CONTACT_FIELD_ZIP))          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->zip;
 		if ($this->town && ! empty($conf->global->LDAP_CONTACT_FIELD_TOWN))      $info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->town;
 		if ($this->country_code && ! empty($conf->global->LDAP_CONTACT_FIELD_COUNTRY))      $info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->country_code;
 		if ($this->phone_pro && ! empty($conf->global->LDAP_CONTACT_FIELD_PHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
@@ -482,7 +480,7 @@ class Contact extends CommonObject
 		$langs->load("companies");
 
 		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.lastname, c.firstname,";
-		$sql.= " c.address, c.cp as zip, c.town as town,";
+		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
@@ -514,7 +512,6 @@ class Contact extends CommonObject
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
-				$this->cp				= $obj->zip;			// TODO deprecated
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
 
@@ -527,7 +524,6 @@ class Contact extends CommonObject
 
 				$this->fk_pays			= $obj->country_id;
 				$this->country_id 		= $obj->country_id;
-				$this->pays_code		= $obj->country_id?$obj->country_code:'';
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->pays				= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 				$this->country			= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
