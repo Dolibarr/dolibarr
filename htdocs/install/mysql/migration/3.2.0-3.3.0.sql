@@ -923,3 +923,5 @@ DELETE FROM llx_c_action_trigger WHERE elementtype='withdraw';
 UPDATE llx_c_action_trigger SET code='FICHINTER_VALIDATE' WHERE code='FICHEINTER_VALIDATE';
 
 UPDATE llx_c_departements SET ncc='ALAVA', nom='Álava' WHERE code_departement='01' AND fk_region=419;
+
+ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
