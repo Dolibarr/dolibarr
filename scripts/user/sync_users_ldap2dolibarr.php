@@ -179,7 +179,11 @@ if ($result >= 0)
 		{
 			$fuser = new User($db);
 			
-			$fuser->fetch('','',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné
+			if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
+				$fuser->fetch('','',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
+			} else if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
+				$fuser->fetch('',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le login
+			}
 
 			// Propriete membre
 			$fuser->firstname=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];

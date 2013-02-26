@@ -66,18 +66,24 @@ class UserGroup extends CommonObject
 	/**
 	 *	Charge un objet group avec toutes ces caracteristiques (excpet ->members array)
 	 *
-	 *	@param      int		$id     id du groupe a charger
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@param      int		$id			id du groupe a charger
+	 *	@param      string	$groupname	nom du groupe a charger
+	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	function fetch($id='', $groupname='')
 	{
 		global $conf;
 
-		$this->id = $id;
-
 		$sql = "SELECT g.rowid, g.entity, g.nom as name, g.note, g.datec, g.tms as datem";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-		$sql.= " WHERE g.rowid = ".$this->id;
+		if ($groupname)
+		{
+			$sql.= " WHERE g.nom = '".$this->db->escape($groupname)."'";
+		}
+		else
+		{
+			$sql.= " WHERE g.rowid = ".$id;
+		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result = $this->db->query($sql);
