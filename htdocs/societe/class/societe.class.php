@@ -2500,11 +2500,11 @@ class Societe extends CommonObject
     	   
     	// We define country_id, country_code and country
     	$country_id=$country_code=$country_label='';
-    	if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
+    	if (! empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
     	{
-    		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
+    		$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_COUNTRY);
     		$country_id=$tmp[0];
-    		if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
+    		if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
     		{
     			$country_code=$tmp[1];
     			$country_label=$tmp[2];
@@ -2521,7 +2521,6 @@ class Societe extends CommonObject
     	$this->country_code=$country_code;
     	$this->country=$country_label;
     	if (is_object($langs)) $this->country=($langs->trans('Country'.$country_code)!='Country'.$country_code)?$langs->trans('Country'.$country_code):$country_label;
-    	$this->pays=$this->country;    	// TODO deprecated
 
     	$this->tel=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;   // TODO deprecated
     	$this->phone=empty($conf->global->MAIN_INFO_SOCIETE_TEL)?'':$conf->global->MAIN_INFO_SOCIETE_TEL;

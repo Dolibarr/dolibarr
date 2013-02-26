@@ -81,7 +81,7 @@ if ($_GET["id"])
 	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->town.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-	print $entrepot->pays;
+	print $entrepot->country;
 	print '</td></tr>';
 
 	// Statut

@@ -63,7 +63,6 @@ class Adherent extends CommonObject
     var $country_id;
     var $country_code;
     var $country;
-    var $pays;                 // deprecated
 
     var $email;
     var $phone;
@@ -225,7 +224,7 @@ class Adherent extends CommonObject
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
 				'%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+				'%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
 
 		complete_substitutions_array($substitutionarray, $langs);
@@ -396,7 +395,7 @@ class Adherent extends CommonObject
 		$this->address=($this->address?$this->address:$this->address);
 		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
+		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
@@ -421,7 +420,7 @@ class Adherent extends CommonObject
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
         $sql.= ", zip="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
-        $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
+        $sql.= ", country="          .($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
@@ -1014,14 +1013,14 @@ class Adherent extends CommonObject
         $sql.= " d.datefin as datefin,";
         $sql.= " d.naiss as datenaiss,";
         $sql.= " d.datevalid as datev,";
-        $sql.= " d.pays,";
+        $sql.= " d.country,";
         $sql.= " d.fk_departement,";
         $sql.= " p.rowid as country_id, p.code as country_code, p.libelle as country,";
         $sql.= " dep.nom as state, dep.code_departement as state_code,";
         $sql.= " t.libelle as type, t.cotisation as cotisation,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.country = p.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.fk_departement = dep.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
@@ -1067,7 +1066,6 @@ class Adherent extends CommonObject
                 	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else
                 	$this->country=$obj->country;
-                $this->pays				= $this->country;        // deprecated
 
                 $this->phone			= $obj->phone;
                 $this->phone_perso		= $obj->phone_perso;

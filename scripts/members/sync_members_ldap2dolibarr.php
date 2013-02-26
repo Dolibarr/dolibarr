@@ -196,7 +196,6 @@ if ($result >= 0)
 			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
 			$member->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
 			$member->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
-			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	     // deprecated
 			$member->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
 			$member->country_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];
 			$member->country_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];

@@ -61,7 +61,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
         $mysoc->country_label=$tmparray['label'];
 
         $s=$mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS", $s,'chaine',0,'',$conf->entity);
+        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s,'chaine',0,'',$conf->entity);
     }
 
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"],'chaine',0,'',$conf->entity);
@@ -289,7 +289,7 @@ if ($action == 'edit' || $action == 'updateedit')
     // Country
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("Country").'</td><td>';
-    //if (empty($pays_selected)) $pays_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+    //if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
     print $form->select_country($mysoc->country_id,'country_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>'."\n";
@@ -366,7 +366,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     print '<br>';
 
-    // Identifiants de la societe (propre au pays)
+    // Identifiants de la societe (country-specific)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
@@ -731,7 +731,7 @@ else
     print '<br>';
 
 
-    // Identifiants de la societe (propre au pays)
+    // Identifiants de la societe (country-specific)
     print '<form name="formsoc" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder" width="100%">';
@@ -860,7 +860,7 @@ else
             }
             else
             {
-                $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+                $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_country).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
             }
         }
         print $s;

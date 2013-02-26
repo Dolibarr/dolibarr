@@ -92,11 +92,10 @@ if ($action == 'update')
 		$don->amount      = price2num($_POST["amount"]);
 		$don->town        = $_POST["town"];
         $don->zip         = $_POST["zipcode"];
-        $don->town        = $_POST["town"];
+        $don->country     = $_POST["country"];
 		$don->email       = $_POST["email"];
 		$don->date        = $donation_date;
 		$don->note        = $_POST["note"];
-		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
 		$don->fk_project  = $_POST["projectid"];
 		$don->note        = $_POST["comment"];
@@ -144,10 +143,10 @@ if ($action == 'add')
 		$don->town        = $_POST["town"];
         $don->zip         = $_POST["zipcode"];
         $don->town        = $_POST["town"];
+        $don->country     = $_POST["country"];
 		$don->email       = $_POST["email"];
 		$don->date        = $donation_date;
 		$don->note        = $_POST["note"];
-		$don->pays        = $_POST["pays"];
 		$don->public      = $_POST["public"];
 		$don->fk_project  = $_POST["projectid"];
 		$don->note        = $_POST["comment"];
@@ -307,7 +306,7 @@ if ($action == 'create')
     print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</tr>';
 
-	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" value="'.$_POST["pays"].'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="country" value="'.$_POST["country"].'" size="40"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.$_POST["email"].'" size="40"></td></tr>';
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
@@ -397,7 +396,7 @@ if (! empty($id) && $action == 'edit')
     print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$don->town),'town',array('zipcode','selectcountry_id','departement_id'));
     print '</tr>';
 
-	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Country").'</td><td><input type="text" name="country" size="40" value="'.$don->country.'"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
@@ -489,7 +488,7 @@ if (! empty($id) && $action != 'edit')
 	print "<tr>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->zip.($don->zip && $don->town?' / ':'').$don->town.'</td></tr>';
 
 	// Country
-	print "<tr>".'<td>'.$langs->trans("Country").'</td><td>'.$don->pays.'</td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Country").'</td><td>'.$don->country.'</td></tr>';
 
 	// EMail
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($don->email).'</td></tr>';

@@ -70,8 +70,6 @@ class Account extends CommonObject
     var $state_code;
     var $state;
 
-    var $fk_pays;            // deprecated
-    var $pays;                // deprecated
     var $country_id;
     var $country_code;
     var $country;
@@ -354,7 +352,7 @@ class Account extends CommonObject
         if (! $this->min_allowed) $this->min_allowed=0;
         if (! $this->min_desired) $this->min_desired=0;
         $this->state_id = ($this->state_id?$this->state_id:$this->fk_departement);
-        $this->country_id = ($this->country_id?$this->country_id:$this->fk_pays);
+        $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
 
         // Check parameters
         if (empty($this->country_id))
@@ -478,7 +476,7 @@ class Account extends CommonObject
         if (! $this->min_allowed) $this->min_allowed=0;
         if (! $this->min_desired) $this->min_desired=0;
         $this->state_id = ($this->state_id?$this->state_id:$this->fk_departement);
-        $this->country_id = ($this->country_id?$this->country_id:$this->fk_pays);
+        $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
 
         // Check parameters
         if (empty($this->country_id))
@@ -545,7 +543,7 @@ class Account extends CommonObject
 
         // Clean parameters
         $this->state_id = ($this->state_id?$this->state_id:$this->fk_departement);
-        $this->country_id = ($this->country_id?$this->country_id:$this->fk_pays);
+        $this->country_id = ($this->country_id?$this->country_id:$this->country_id);
 
         // Chargement librairie pour acces fonction controle RIB
         require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -659,8 +657,6 @@ class Account extends CommonObject
                 $this->state_code      = $obj->state_code;
                 $this->state           = $obj->state;
 
-                $this->fk_pays       = $obj->country_id;          // deprecated
-                $this->pays          = $obj->country;             // deprecated
                 $this->country_id    = $obj->country_id;
                 $this->country_code  = $obj->country_code;
                 $this->country       = $obj->country;
