@@ -169,6 +169,9 @@ class DolEditor
             	//$skin='office2003';
             	//$skin='v2';
             	$skin='kama';
+            	
+            	if ($this->toolbarname=='dolibarr_mailings') {$htmlencode_force='true';}
+            	else {$htmlencode_force='false';}
 
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
@@ -177,6 +180,7 @@ class DolEditor
                             CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						customConfig : ckeditorConfig,
+                            		htmlEncodeOutput :'.$htmlencode_force.',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
