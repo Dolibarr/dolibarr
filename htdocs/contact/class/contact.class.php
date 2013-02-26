@@ -53,8 +53,6 @@ class Contact extends CommonObject
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
 
-	var $fk_pays;				// deprecated
-	var $pays;					// deprecated
 	var $country_id;			// Id of country
 	var $country_code;			// Code of country
 	var $country;				// Label of country
@@ -222,7 +220,7 @@ class Contact extends CommonObject
 		$this->fax=trim($this->fax);
 		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
+		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 
 		$this->db->begin();
@@ -522,10 +520,8 @@ class Contact extends CommonObject
 				$this->departement		= $obj->state;	           // deprecated
 				$this->state			= $obj->state;
 
-				$this->fk_pays			= $obj->country_id;
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
-				$this->pays				= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 				$this->country			= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 
 				$this->socid			= $obj->fk_soc;
