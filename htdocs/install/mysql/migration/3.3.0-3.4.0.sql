@@ -31,10 +31,10 @@ UPDATE llx_const set value='auguria_menu.php' where value='auguria_backoffice.ph
 UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_ADDRESS' where value='MAIN_INFO_SOCIETE_ADRESSE';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_TOWN' where value='MAIN_INFO_SOCIETE_VILLE';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_ZIP' where value='MAIN_INFO_SOCIETE_CP';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_COUNTRY' where value='MAIN_INFO_SOCIETE_PAYS';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_ADDRESS' where name='MAIN_INFO_SOCIETE_ADRESSE';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_TOWN' where name='MAIN_INFO_SOCIETE_VILLE';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_ZIP' where name='MAIN_INFO_SOCIETE_CP';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_COUNTRY' where name='MAIN_INFO_SOCIETE_PAYS';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
