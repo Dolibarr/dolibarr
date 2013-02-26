@@ -179,6 +179,8 @@ class Mailing extends CommonObject
 	 */
 	function fetch($rowid)
 	{
+		global $conf;
+		
 		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
 		$sql.= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql.= ", m.statut, m.nbemail";
@@ -203,8 +205,14 @@ class Mailing extends CommonObject
 				$this->statut			= $obj->statut;
 				$this->nbemail			= $obj->nbemail;
 				$this->titre			= $obj->titre;
-				$this->sujet			= $obj->sujet;
-				$this->body				= $obj->body;
+				
+				$this->sujet			= $obj->sujet;				
+				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401))) {
+					$this->body				= dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML401);
+				}else {
+					$this->body				= $obj->body;
+				}
+				
 				$this->bgcolor			= $obj->bgcolor;
 				$this->bgimage			= $obj->bgimage;
 
