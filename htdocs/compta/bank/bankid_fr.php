@@ -65,7 +65,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$account->domiciliation   = trim($_POST["domiciliation"]);
 	$account->proprio 	      = trim($_POST["proprio"]);
 	$account->owner_address   = trim($_POST["owner_address"]);
-	$account->fk_departement  = trim($_POST["fk_departement"]);
+	$account->state_id  	  = trim($_POST["state_id"]);
 	//$account->country_id       = trim($_POST["country_id"]);		// We do not change this.
 
 	if ($account->id)
