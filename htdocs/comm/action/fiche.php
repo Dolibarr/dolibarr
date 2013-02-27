@@ -467,7 +467,7 @@ if ($action == 'create')
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		if (GETPOST("actioncode"))
+		if (GETPOST("actioncode") && ! GETPOST('actioncode'))	// Force selection only if not a post that fails
 		{
 			print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
 			$cactioncomm->fetch(GETPOST("actioncode"));
