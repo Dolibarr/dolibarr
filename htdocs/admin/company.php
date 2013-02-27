@@ -68,7 +68,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS",$_POST["address"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN",$_POST["town"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP",$_POST["zipcode"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_DEPARTEMENT",$_POST["departement_id"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE",$_POST["state_id"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"],'chaine',0,'',$conf->entity);
@@ -296,7 +296,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
-    $formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT,$mysoc->country_code,'departement_id');
+    $formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE,$mysoc->country_code,'state_id');
     print '</td></tr>'."\n";
 
     $var=!$var;
@@ -667,7 +667,7 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
-    if (! empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)) print getState($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT);
+    if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE);
     else print '&nbsp;';
     print '</td></tr>';
 
