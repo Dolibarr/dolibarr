@@ -56,9 +56,6 @@ class Adherent extends CommonObject
     var $state_id;              // Id of department
     var $state_code;            // Code of department
     var $state;                 // Label of department
-    var $fk_departement;		// deprecated
-    var $departement_code;		// deprecated
-    var $departement;			// deprecated
 
     var $country_id;
     var $country_code;
@@ -396,7 +393,7 @@ class Adherent extends CommonObject
 		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
+		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
 
@@ -420,8 +417,8 @@ class Adherent extends CommonObject
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
         $sql.= ", zip="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
-        $sql.= ", country="          .($this->country_id>0?"'".$this->country_id."'":"null");
-        $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
+        $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
+        $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
@@ -1014,14 +1011,14 @@ class Adherent extends CommonObject
         $sql.= " d.naiss as datenaiss,";
         $sql.= " d.datevalid as datev,";
         $sql.= " d.country,";
-        $sql.= " d.fk_departement,";
+        $sql.= " d.state_id,";
         $sql.= " p.rowid as country_id, p.code as country_code, p.libelle as country,";
         $sql.= " dep.nom as state, dep.code_departement as state_code,";
         $sql.= " t.libelle as type, t.cotisation as cotisation,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.country = p.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.fk_departement = dep.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.state_id = dep.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
         if ($rowid) $sql.= " AND d.rowid=".$rowid;
@@ -1053,12 +1050,9 @@ class Adherent extends CommonObject
                 $this->zip				= $obj->zip;
                 $this->town				= $obj->town;
 
-                $this->state_id			= $obj->fk_departement;
-                $this->state_code		= $obj->fk_departement?$obj->state_code:'';
-                $this->state			= $obj->fk_departement?$obj->state:'';
-                $this->fk_departement	= $obj->fk_departement;                        // deprecated
-                $this->departement_code	= $obj->fk_departement?$obj->state_code:'';    // deprecated
-                $this->departement		= $obj->fk_departement?$obj->state:'';         // deprecated
+                $this->state_id			= $obj->state_id;
+                $this->state_code		= $obj->state_id?$obj->state_code:'';
+                $this->state			= $obj->state_id?$obj->state:'';
 
                 $this->country_id		= $obj->country_id;
                 $this->country_code		= $obj->country_code;
