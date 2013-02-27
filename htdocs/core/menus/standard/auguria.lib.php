@@ -41,6 +41,7 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
 	$mainmenu=$_SESSION["mainmenu"];
 	$leftmenu=$_SESSION["leftmenu"];
 
+	$id='mainmenu';
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	//$tabMenu=array();
@@ -79,23 +80,12 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
 			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
 			else $classname='class="tmenu"';
+		}
+		else if ($showmode == 2) $classname='class="tmenu"';
 
-			print_start_menu_entry_auguria($idsel,$classname);
-			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?' target="'.$newTabMenu[$i]['target'].'"':($atarget?' target="'.$atarget.'"':'')).'>';
-			print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
-			print '</a>';
-			print_end_menu_entry_auguria();
-		}
-		else if ($showmode == 2)
-		{
-			print_start_menu_entry_auguria($idsel,'class="tmenu"');
-			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
-			print '</a>';
-			print_end_menu_entry_auguria();
-		}
+		print_start_menu_entry_auguria($idsel,$classname);
+		print_text_menu_entry_auguria($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, $atarget, $newTabMenu[$i]['target']);
+		print_end_menu_entry_auguria();
 	}
 
 	print_end_menu_array_auguria();
@@ -111,7 +101,6 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
  */
 function print_start_menu_array_auguria()
 {
-	global $conf;
 	print '<div class="tmenudiv">';
 	print '<ul class="tmenu">';
 }
@@ -133,13 +122,35 @@ function print_start_menu_entry_auguria($idsel,$classname)
  * Output menu entry
  *
  * @param	string	$text		Text
+ * @param	int		$showmode	1 or 2
+ * @param	string	$url		Url
+ * @param	string	$id			Id
+ * @param	string	$idsel		Id sel
+ * @param	string	$classname	Class name
+ * @param	string	$atarget	Target
+ * @param	string	$menutarget	Menu target (may be empty)
  * @return	void
  */
-function print_text_menu_entry_auguria($text)
+function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menutarget='')
 {
-	print '<span class="mainmenuaspan">';
-	print $text;
-	print '</span>';
+	global $langs;
+
+	if ($showmode == 1)
+	{
+		print '<a class="tmenuimage" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<div class="'.$id.' '.$idsel.'"><span class="mainmenu_'.$idsel.' '.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</a>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
+	}
+	if ($showmode == 2)
+	{
+		print '<div class="'.$id.' '.$idsel.'"><span class="mainmenu_'.$idsel.' '.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+	}
 }
 
 /**
@@ -149,8 +160,7 @@ function print_text_menu_entry_auguria($text)
  */
 function print_end_menu_entry_auguria()
 {
-	print '</div>';
-	print '</li>';
+	print '</div></li>';
 	print "\n";
 }
 
