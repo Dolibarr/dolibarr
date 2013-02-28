@@ -31,7 +31,8 @@ For developers:
 - Function plimit of databases drivers accept -1 as value (it means default value set
   into conf->liste_limit).
 - New: Add option dol_hide_topmenu and dol_hide_leftmenu onto login page.
- 
+- New: dol_syslog method accept a suffix to use different log files for log. 
+
 For translators:
 - Update language files.
 
