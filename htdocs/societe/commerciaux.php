@@ -37,6 +37,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
+$hookmanager->initHooks(array('salesrepresentativescard'));
 
 /*
  *	Actions
@@ -44,11 +45,21 @@ $result = restrictedArea($user, 'societe','','');
 
 if($_GET["socid"] && $_GET["commid"])
 {
+	$action = 'add';
+	
 	if ($user->rights->societe->creer)
 	{
+
 		$soc = new Societe($db);
 		$soc->id = $_GET["socid"];
 		$soc->fetch($_GET["socid"]);
+
+	
+		$parameters=array('id'=>$_GET["commid"]);
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);		
+
+
 		$soc->add_commercial($user, $_GET["commid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
@@ -63,11 +74,19 @@ if($_GET["socid"] && $_GET["commid"])
 
 if($_GET["socid"] && $_GET["delcommid"])
 {
+	$action = 'delete';	
+	
 	if ($user->rights->societe->creer)
 	{
 		$soc = new Societe($db);
 		$soc->id = $_GET["socid"];
 		$soc->fetch($_GET["socid"]);
+		
+		$parameters=array('id'=>$_GET["delcommid"]);
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);		
+		
+		
 		$soc->del_commercial($user, $_GET["delcommid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
@@ -96,6 +115,8 @@ if ($_GET["socid"])
 	$soc->id = $_GET["socid"];
 	$result=$soc->fetch($_GET["socid"]);
 
+	$action='view';
+	
 	$head=societe_prepare_head2($soc);
 
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"),0,'company');
@@ -157,6 +178,10 @@ if ($_GET["socid"])
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
+
+ 			$parameters=array('socid'=>$soc->id);
+        	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
+      
 
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
