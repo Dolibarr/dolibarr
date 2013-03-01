@@ -583,6 +583,7 @@ class InterfaceActionsAuto
 			$ret=$actioncomm->add($user);       // User qui saisit l'action
 			if ($ret > 0)
 			{
+				$_SESSION['LAST_ACTION_CREATED'] = $ret;
 				return 1;
 			}
 			else
