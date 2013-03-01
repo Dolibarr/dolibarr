@@ -60,7 +60,7 @@ if($_GET["socid"] && $_GET["commid"])
 		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);		
 
 
-		$soc->add_commercial($user, $_GET["commid"]);
+		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
 		exit;
@@ -87,7 +87,7 @@ if($_GET["socid"] && $_GET["delcommid"])
 		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);		
 		
 		
-		$soc->del_commercial($user, $_GET["delcommid"]);
+		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
 		exit;
@@ -181,7 +181,10 @@ if ($_GET["socid"])
 
  			$parameters=array('socid'=>$soc->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
-      
+      		if (empty($reshook)) {
+      			
+				null; // actions in normal case
+      		}
 
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
