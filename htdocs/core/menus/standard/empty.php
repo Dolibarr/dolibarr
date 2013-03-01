@@ -36,10 +36,12 @@ class MenuManager
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDB		$db     			Database handler
+	 *  @param	DoliDB		$db     		Database handler
+     *  @param	int			$type_user		Type of user
 	 */
-	function __construct($db)
+	function __construct($db, $type_user)
 	{
+		$this->type_user=$type_user;
 		$this->db=$db;
 	}
 
