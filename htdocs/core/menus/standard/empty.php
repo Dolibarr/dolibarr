@@ -27,7 +27,7 @@ class MenuManager
 {
 	var $db;
 	var $type_user=0;					// Put 0 for internal users, 1 for external users
-	var $atarget="";               		// To store arget to use in menu links
+	var $atarget="";               		// To store default target to use onto links
 
 	var $menu_array;
 	var $menu_array_after;
@@ -36,10 +36,12 @@ class MenuManager
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDB		$db     			Database handler
+	 *  @param	DoliDB		$db     		Database handler
+     *  @param	int			$type_user		Type of user
 	 */
-	function __construct($db)
+	function __construct($db, $type_user)
 	{
+		$this->type_user=$type_user;
 		$this->db=$db;
 	}
 
@@ -54,20 +56,17 @@ class MenuManager
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name;
 
+		$id='mainmenu';
+
 		if ($mode == 'top')
 		{
 			print_start_menu_array_empty();
 
 			$idsel='home';
-			$classname='class="tmenu"';
+			$classname='class="tmenusel"';
 
-			print_start_menu_entry_empty($idsel);
-			print '<a class="tmenuimage" href="'.dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu="'.($this->atarget?' target="'.$this->atarget.'"':'').'>';
-			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '</a>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.DOL_URL_ROOT.'"'.($this->atarget?' target="'.$this->atarget.'"':'').'>';
-			print_text_menu_entry_empty($langs->trans("Home"));
-			print '</a>';
+			print_start_menu_entry_empty($idsel, $classname);
+			print_text_menu_entry_empty($langs->trans("Home"), 1, dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $this->atarget);
 			print_end_menu_entry_empty();
 
 			print_end_menu_array_empty();
@@ -173,36 +172,56 @@ class MenuManager
  */
 function print_start_menu_array_empty()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
-	else print '<ul class="tmenu">';
+	print '<div class="tmenudiv">';
+	print '<ul class="tmenu">';
 }
 
 /**
  * Output start menu entry
  *
  * @param	string	$idsel		Text
+ * @param	string	$classname	String to add a css class
  * @return	void
  */
-function print_start_menu_entry_empty($idsel)
+function print_start_menu_entry_empty($idsel,$classname)
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
-	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
+	print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
+	print '<div class="tmenuleft"></div><div class="tmenucenter">';
 }
 
 /**
  * Output menu entry
  *
  * @param	string	$text		Text
+ * @param	int		$showmode	1 or 2
+ * @param	string	$url		Url
+ * @param	string	$id			Id
+ * @param	string	$idsel		Id sel
+ * @param	string	$classname	Class name
+ * @param	string	$atarget	Target
+ * @param	string	$menutarget	Menu target (may be empty)
  * @return	void
  */
-function print_text_menu_entry_empty($text)
+function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menutarget='')
 {
 	global $conf;
-	print '<span class="mainmenuaspan">';
-	print $text;
-	print '</span>';
+
+	if ($showmode == 1)
+	{
+		print '<a class="tmenuimage" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</a>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
+	}
+	if ($showmode == 2)
+	{
+		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+	}
 }
 
 /**
@@ -212,9 +231,7 @@ function print_text_menu_entry_empty($text)
  */
 function print_end_menu_entry_empty()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</td>';
-	else print '</li>';
+	print '</div></li>';
 	print "\n";
 }
 
@@ -225,9 +242,8 @@ function print_end_menu_entry_empty()
  */
 function print_end_menu_array_empty()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</tr></table>';
-	else print '</ul>';
+	print '</ul>';
+	print '</div>';
 	print "\n";
 }
 

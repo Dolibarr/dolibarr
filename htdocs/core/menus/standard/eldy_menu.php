@@ -29,7 +29,7 @@ class MenuManager
 {
 	var $db;
 	var $type_user;									// Put 0 for internal users, 1 for external users
-	var $atarget="";                                // Valeur du target a utiliser dans les liens
+	var $atarget="";                                // To store default target to use onto links
 	var $name="eldy";
 
     var $menu_array;

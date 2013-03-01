@@ -90,7 +90,7 @@ else  $description.= $langs->trans("DepositsAreIncluded");
 $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
-$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
+$p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.libelle,";

@@ -282,7 +282,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
         $template = '%DOL_MAIN_URL_ROOT%,%ID%,%CIVILITE%,%FIRSTNAME%,%LASTNAME%,%FULLNAME%,%COMPANY%,'.
                     '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%NAISS%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
-                    '%NOM%,%SOCIETE%,%ADDRESS%,%CP%,%TOWN%,%PAYS%';
+                    '%NOM%,%SOCIETE%,%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%';
 
         $expected = DOL_MAIN_URL_ROOT.','.$localobject->id.',0,New firstname,New name,New firstname New name,'.
                     'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->naiss,'day').',,'.

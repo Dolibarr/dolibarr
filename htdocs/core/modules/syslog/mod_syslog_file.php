@@ -96,22 +96,25 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	/**
 	 * Return the parsed logfile path
 	 *
-	 * @return string
+	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename. 	
+	 * @return	string
 	 */
-	private function getFilename()
+	private function getFilename($suffixinfilename='')
 	{
-		return str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, SYSLOG_FILE);
+		$tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, SYSLOG_FILE);
+		return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
 	}
 
 	/**
 	 * Export the message
 	 *
-	 * @param  	array 	$content 	Array containing the info about the message
+	 * @param  	array 	$content 			Array containing the info about the message
+	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename. 	
 	 * @return	void
 	 */
-	public function export($content)
+	public function export($content, $suffixinfilename='')
 	{
-		$logfile = $this->getFilename();
+		$logfile = $this->getFilename($suffixinfilename);
 
 		if (defined("SYSLOG_FILE_NO_ERROR")) $filefd = @fopen($logfile, 'a+');
 		else $filefd = fopen($logfile, 'a+');

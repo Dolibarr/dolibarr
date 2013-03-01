@@ -375,8 +375,6 @@ class Address
 				$this->note				= $obj->note;
 
 				// deprecated
-				$this->pays_code		= $this->country_code;
-				$this->pays				= $this->country;
 				$this->tel				= $this->phone;
 
 				$result = 1;

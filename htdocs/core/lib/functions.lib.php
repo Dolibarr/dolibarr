@@ -485,15 +485,16 @@ function dol_strtoupper($utf8_string)
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
- * 	@param  string		$message	Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *  @param  int			$level		Log level
- *                                  0=Show nothing
- *									On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident		1=Increase ident of 1, -1=Decrease ident of 1
+ * 	@param  string		$message			Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *  @param  int			$level				Log level
+ *                                  		0=Show nothing
+ *											On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
+ *											On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *  @param	int			$ident				1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename. 	
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO, $ident = 0)
+function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='')
 {
 	global $conf, $user;
 
@@ -543,7 +544,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0)
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
-			$loghandlerinstance->export($data);
+			$loghandlerinstance->export($data,$suffixinfilename);
 		}
 		unset($data);
 	}

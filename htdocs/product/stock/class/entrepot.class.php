@@ -279,7 +279,6 @@ class Entrepot extends CommonObject
 	
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	            $tmp=getCountry($this->country_id,'all');
-				$this->pays=$tmp['label'];                // deprecated
 				$this->country=$tmp['label'];
 				$this->country_code=$tmp['code'];
 	

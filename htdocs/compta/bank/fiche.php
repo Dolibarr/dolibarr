@@ -69,8 +69,8 @@ if ($_POST["action"] == 'add')
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->fk_departement  = $_POST["account_departement_id"];
-    $account->fk_pays         = $_POST["account_country_id"];
+    $account->state_id  	  = $_POST["account_departement_id"];
+    $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
     $account->min_desired     = $_POST["account_min_desired"];
@@ -140,7 +140,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->state_id        = $_POST["account_departement_id"];
+    $account->state_id        = $_POST["account_state_id"];
     $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
@@ -282,7 +282,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 	if ($selectedcode)
 	{
-		$formcompany->select_departement(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:'',$selectedcode,'account_departement_id');
+		$formcompany->select_departement(isset($_POST["account_state_id"])?$_POST["account_state_id"]:'',$selectedcode,'account_state_id');
 	}
 	else
 	{
@@ -407,7 +407,7 @@ else
 
 		// Country
 		print '<tr><td>'.$langs->trans("BankAccountCountry").'</td><td>';
-		if ($account->fk_pays > 0)
+		if ($account->country_id > 0)
 		{
 			$img=picto_from_langcode($account->country_code);
 			print $img?$img.' ':'';
@@ -555,7 +555,7 @@ else
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 		if ($selectedcode)
 		{
-			print $formcompany->select_state(isset($_POST["account_departement_id"])?$_POST["account_departement_id"]:$account->fk_departement,$selectedcode,'account_departement_id');
+			print $formcompany->select_state(isset($_POST["account_state_id"])?$_POST["account_state_id"]:$account->state_id,$selectedcode,'account_state_id');
 		}
 		else
 		{

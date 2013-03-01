@@ -26,8 +26,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
 
 
 /**
- *	    \class      ExportCsv
- *		\brief      Class to build export files with format CSV
+ *	Class to build export files with format CSV
  */
 class ExportCsv extends ModeleExports
 {
@@ -239,7 +238,8 @@ class ExportCsv extends ModeleExports
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
-			$alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			else $alias=substr($code, strpos($code, ' as ') + 4);
 			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
 

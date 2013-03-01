@@ -31,9 +31,11 @@ UPDATE llx_const set value='auguria_menu.php' where value='auguria_backoffice.ph
 UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
 UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_ADDRESS' where value='MAIN_INFO_SOCIETE_ADRESSE';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_TOWN' where value='MAIN_INFO_SOCIETE_VILLE';
-UPDATE llx_const set value='MAIN_INFO_SOCIETE_ZIP' where value='MAIN_INFO_SOCIETE_CP';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_ADDRESS' where name='MAIN_INFO_SOCIETE_ADRESSE';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_TOWN' where name='MAIN_INFO_SOCIETE_VILLE';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_ZIP' where name='MAIN_INFO_SOCIETE_CP';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_COUNTRY' where name='MAIN_INFO_SOCIETE_PAYS';
+UPDATE llx_const set name='MAIN_INFO_SOCIETE_STATE' where name='MAIN_INFO_SOCIETE_DEPARTEMENT';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
@@ -52,11 +54,14 @@ alter table llx_don      CHANGE COLUMN ville town text;
 alter table llx_don      CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_don      CHANGE COLUMN nom lastname varchar(50);
 alter table llx_don 	 CHANGE COLUMN cp zip varchar(10);
+alter table llx_don      CHANGE COLUMN pays country varchar(50);
 alter table llx_adherent CHANGE COLUMN adresse address text;
 alter table llx_adherent CHANGE COLUMN nom lastname varchar(50);
 alter table llx_adherent CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_adherent CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN cp zip varchar(10);
+alter table llx_adherent CHANGE COLUMN pays country varchar(50);
+alter table llx_adherent CHANGE COLUMN fk_departement state_id varchar(50);
 alter table llx_mailing_cibles CHANGE COLUMN nom lastname varchar(50);
 alter table llx_mailing_cibles CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_user     CHANGE COLUMN name lastname varchar(50);
@@ -68,6 +73,7 @@ alter table llx_socpeople  CHANGE COLUMN name lastname varchar(50);
 alter table llx_socpeople  CHANGE COLUMN ville town text;
 alter table llx_socpeople  CHANGE COLUMN cp zip varchar(10);
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
+alter table llx_bank_account CHANGE COLUMN fk_departement state_id varchar(50);
 alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);

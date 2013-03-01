@@ -65,12 +65,12 @@ if (! empty($country))
 	if ($resql)
 	{
 		print '<ul>';
-		while($pays = $db->fetch_object($resql))
+		while($country = $db->fetch_object($resql))
 		{
 			print '<li>';
 			// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-			print ($pays->code && $langs->trans("Country".$pays->code)!="Country".$pays->code?$langs->trans("Country".$pays->code):($pays->libelle!='-'?$pays->libelle:'&nbsp;'));
-			print '<span class="informal" style="display:none">'.$pays->rowid.'-idcache</span>';
+			print ($country->code && $langs->trans("Country".$country->code)!="Country".$country->code?$langs->trans("Country".$country->code):($country->libelle!='-'?$country->libelle:'&nbsp;'));
+			print '<span class="informal" style="display:none">'.$country->rowid.'-idcache</span>';
 			print '</li>';
 		}
 		print '</ul>';

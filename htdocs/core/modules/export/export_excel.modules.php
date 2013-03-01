@@ -28,8 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	\class      ExportExcel
- *	\brief      Class to build export files with Excel format
+ *	Class to build export files with Excel format
  */
 class ExportExcel extends ModeleExports
 {
@@ -276,7 +275,8 @@ class ExportExcel extends ModeleExports
 
 		foreach($array_selected_sorted as $code => $value)
 		{
-			$alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;
 

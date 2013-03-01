@@ -260,9 +260,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->address     = trim($_POST["address"]);
 		$object->zip         = trim($_POST["zipcode"]);
 		$object->town        = trim($_POST["town"]);
-		$object->state_id    = $_POST["departement_id"];
+		$object->state_id    = $_POST["state_id"];
 		$object->country_id  = $_POST["country_id"];
-		$object->fk_departement = $_POST["departement_id"];   // deprecated
 
 		$object->phone       = trim($_POST["phone"]);
 		$object->phone_perso = trim($_POST["phone_perso"]);
@@ -410,7 +409,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$address=$_POST["address"];
 	$zip=$_POST["zipcode"];
 	$town=$_POST["town"];
-	$state_id=$_POST["departement_id"];
+	$state_id=$_POST["state_id"];
 	$country_id=$_POST["country_id"];
 
 	$phone=$_POST["phone"];
@@ -435,7 +434,6 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->address     = $address;
 	$object->zip         = $zip;
 	$object->town        = $town;
-	$object->fk_departement = $state_id;
 	$object->state_id    = $state_id;
 	$object->country_id  = $country_id;
 	$object->phone       = $phone;
@@ -721,14 +719,13 @@ else
 		/*                                                                            */
 		/* ************************************************************************** */
 		$object->canvas=$canvas;
-		$object->fk_departement = GETPOST('departement_id', 'int');
+		$object->state_id = GETPOST('departement_id', 'int');
 
 		// We set country_id, country_code and country for the selected country
 		$object->country_id=GETPOST('country_id','int')?GETPOST('country_id','int'):$mysoc->country_id;
 		if ($object->country_id)
 		{
 			$tmparray=getCountry($object->country_id,'all');
-			$object->pays=$tmparray['code'];
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
 		}
@@ -834,9 +831,9 @@ else
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((GETPOST('zipcode','alpha')?GETPOST('zipcode','alpha'):$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
+		print $formcompany->select_ziptown((GETPOST('zipcode','alpha')?GETPOST('zipcode','alpha'):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
 		print ' ';
-		print $formcompany->select_ziptown((GETPOST('town','alpha')?GETPOST('town','alpha'):$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
+		print $formcompany->select_ziptown((GETPOST('town','alpha')?GETPOST('town','alpha'):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
 		print '</td></tr>';
 
 		// Country
@@ -852,7 +849,7 @@ else
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
 			if ($object->country_id)
 			{
-				print $formcompany->select_state(GETPOST('departement_id','int')?GETPOST('departement_id','int'):$object->fk_departement,$object->country_code);
+				print $formcompany->select_state(GETPOST('state_id','int')?GETPOST('state_id','int'):$object->state_id,$object->country_code);
 			}
 			else
 			{
@@ -944,9 +941,9 @@ else
 		$adht->fetch($object->typeid);
 
 		// We set country_id, and country_code, country of the chosen country
-		if (isset($_POST["pays"]) || $object->country_id)
+		if (isset($_POST["country"]) || $object->country_id)
 		{
-			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$object->country_id);
+			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["country"])?$_POST["country"]:$object->country_id);
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -956,7 +953,6 @@ else
 			{
 				dol_print_error($db);
 			}
-			$object->pays=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
 			$object->country_id=$obj->rowid;
 			$object->country_code=$obj->code;
 			$object->country=$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
@@ -1085,9 +1081,9 @@ else
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','departement_id'),6);
+		print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
 		print ' ';
-		print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','departement_id'));
+		print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
 		print '</td></tr>';
 
 		// Country
@@ -1101,7 +1097,7 @@ else
 		if (empty($conf->global->MEMBER_DISABLE_STATE))
 		{
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			print $formcompany->select_state($object->fk_departement,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id);
+			print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id);
 			print '</td></tr>';
 		}
 
@@ -1434,7 +1430,7 @@ else
 		print '</td></tr>';
 
 		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$object->departement.'</td>';
+		print '<tr><td>'.$langs->trans('State').'</td><td class="valeur">'.$object->state.'</td>';
 
 		// Tel pro.
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.dol_print_phone($object->phone,$object->country_code,0,$object->fk_soc,1).'</td></tr>';

@@ -123,11 +123,11 @@ if ($socid)
 	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->town."</td></tr>";
 
 	// Country
-	if ($soc->pays) {
+	if ($soc->country) {
 		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 		$img=picto_from_langcode($soc->country_code);
 		print ($img?$img.' ':'');
-		print $soc->pays;
+		print $soc->country;
 		print '</td></tr>';
 	}
 

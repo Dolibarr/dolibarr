@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
 
 
 /**
- *	    \class      ExportTsv
- *		\brief      Class to build export files with format TSV
+ *	Class to build export files with format TSV
  */
 class ExportTsv extends ModeleExports
 {
@@ -212,7 +211,8 @@ class ExportTsv extends ModeleExports
 		$this->col=0;
  		foreach($array_selected_sorted as $code => $value)
         {
-            $alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;
 
