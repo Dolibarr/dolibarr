@@ -141,8 +141,17 @@ class AllTests
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
-        require_once dirname(__FILE__).'/WebservicesTest.php';
-        $suite->addTestSuite('WebservicesTest');
+        require_once dirname(__FILE__).'/WebservicesInvoices.php';
+        $suite->addTestSuite('WebservicesInvoices');
+        require_once dirname(__FILE__).'/WebservicesOrders.php';
+        $suite->addTestSuite('WebservicesOrders');
+        require_once dirname(__FILE__).'/WebservicesOther.php';
+        $suite->addTestSuite('WebservicesOther');
+        require_once dirname(__FILE__).'/WebservicesThirparty.php';
+        $suite->addTestSuite('WebservicesThirdparty');
+        require_once dirname(__FILE__).'/WebservicesUserTest.php';
+        $suite->addTestSuite('WebservicesUserTest');
+
         require_once dirname(__FILE__).'/ExportTest.php';
         $suite->addTestSuite('ExportTest');
         require_once dirname(__FILE__).'/ImportTest.php';
