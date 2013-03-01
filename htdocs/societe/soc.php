@@ -1253,7 +1253,7 @@ else
             print '</td></tr>';
 
             // Address
-            print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+            print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 

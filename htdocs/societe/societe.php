@@ -85,6 +85,7 @@ if ($mode == 'search')
 	$sql.= " OR s.code_client LIKE '%".$db->escape($socname)."%'";
 	$sql.= " OR s.email LIKE '%".$db->escape($socname)."%'";
 	$sql.= " OR s.url LIKE '%".$db->escape($socname)."%'";
+	$sql.= " OR s.siren LIKE '%".$db->escape($socname)."%'";
 
 	if (!empty($conf->barcode->enabled))
 	{
