@@ -154,6 +154,8 @@ input.button[type=submit] {
     display: inline;
 }
 
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+
 .button {
     font-family: <?php print $fontlist ?>;
 	border: 0px;

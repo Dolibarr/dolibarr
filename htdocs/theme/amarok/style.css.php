@@ -145,6 +145,8 @@ input.flat {
 
 input:disabled {background:#b6b6b6;}
 
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+
 textarea.flat {
 	font-size:<?php print $fontsize ?>px;
 	font-family:<?php print $fontlist ?>;

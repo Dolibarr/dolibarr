@@ -108,7 +108,7 @@ input:disabled {
 textarea:disabled {
 	background:#ddd;
 }
-
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
 	background: #A51B00;
 	-moz-border-radius:8px;
