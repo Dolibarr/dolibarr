@@ -3,6 +3,16 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+
+***** ChangeLog for 3.3.1 compared to 3.3 *****
+
+- Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
+- Fix: Package for launchpad
+- Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
+- Fix: Localtax2 for Spain must be based into buyer
+
+
+
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:
 - New: Add holiday module, to declare and follow holidays of your employees.
