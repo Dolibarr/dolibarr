@@ -80,3 +80,5 @@ alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
