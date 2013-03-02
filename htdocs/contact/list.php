@@ -58,7 +58,7 @@ $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
 
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="p.name";
+if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
@@ -114,7 +114,7 @@ llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Em
 $form=new Form($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql.= " p.rowid as cidp, p.name as lastname, p.firstname, p.poste, p.email,";
+$sql.= " p.rowid as cidp, p.lastname as lastname, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -144,7 +144,7 @@ else
 
 if ($search_lastname)        // filtre sur le nom
 {
-    $sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+    $sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
 }
 if ($search_firstname)     // filtre sur le prenom
 {
@@ -200,7 +200,7 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= " AND (p.name LIKE '%".$db->escape($sall)."%' OR p.firstname LIKE '%".$db->escape($sall)."%' OR p.email LIKE '%".$db->escape($sall)."%')";
+    $sql .= " AND (p.lastname LIKE '%".$db->escape($sall)."%' OR p.firstname LIKE '%".$db->escape($sall)."%' OR p.email LIKE '%".$db->escape($sall)."%')";
 }
 if (! empty($socid))
 {
@@ -256,7 +256,7 @@ if ($result)
 
     // Ligne des titres
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("PostOrFunction"),$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
