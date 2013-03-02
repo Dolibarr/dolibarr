@@ -297,7 +297,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
         //print "xx".$tva_tx; exit;
         if ($result > 0)
         {
-            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            $ret=$object->fetch($object->id);    // Reload to get new records
+
+        	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
             {
             	// Define output language
             	$outputlangs = $langs;
@@ -309,7 +311,6 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             		$outputlangs->setDefaultLang($newlang);
             	}
 
-                $ret=$object->fetch($object->id);    // Reload to get new records
                 supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
             }
             unset($_POST['qty']);
