@@ -283,8 +283,25 @@ class Contrat extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
+		
+		// Definition du nom de module de numerotation de commande
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socid);
+		
+		// Class of company linked to order
+		$result=$soc->set_as_client();
+		
+		// Define new ref
+		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+		{
+			$num = $this->getNextNumRef($soc);
+		}
+		else
+		{
+			$num = $this->ref;
+		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$num."', statut = 1";
 		$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
 		$resql = $this->db->query($sql);
@@ -647,6 +664,16 @@ class Contrat extends CommonObject
 			$error=0;
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
+			
+			// Mise a jour ref
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+			if ($this->db->query($sql))
+			{
+				if ($this->id)
+				{
+					$this->ref="(PROV".$this->id.")";
+				}
+			}
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
