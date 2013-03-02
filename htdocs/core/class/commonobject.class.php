@@ -722,9 +722,10 @@ abstract class CommonObject
      *	@param	string	$table		To force other table element or element line
      *	@param	int		$id			To force other object id
      *	@param	string	$format		Data format ('text' by default, 'date')
+     *	@param	string	$id_field	To force rowid field name
      *	@return	int					<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id='', $format='text')
+    function setValueFrom($field, $value, $table='', $id='', $format='text', $id_field='rowid')
     {
         global $conf;
 
@@ -736,7 +737,7 @@ abstract class CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
-        $sql.= " WHERE rowid = ".$id;
+        $sql.= " WHERE ".$id_field." = ".$id;
 
         dol_syslog(get_class($this)."::setValueFrom sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
