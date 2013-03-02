@@ -158,27 +158,35 @@ if (GETPOST('remonth') && GETPOST('reday') && GETPOST('reyear'))
 
 if ($action == 'add' && $user->rights->contrat->creer)
 {
-    $object->socid						= $socid;
-    $object->date_contrat				= $datecontrat;
+	
+	// Check
+	if (empty($datecontrat))
+	{
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
+		$action='create';
+	}
+	
+	if ($socid<1)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
+		$action='create';
+		$error++;
+	}
+	
+	if (! $error)
+	{
+    	$object->socid						= $socid;
+    	$object->date_contrat				= $datecontrat;
 
-    $object->commercial_suivi_id		= GETPOST('commercial_suivi_id','int');
-    $object->commercial_signature_id	= GETPOST('commercial_signature_id','int');
+    	$object->commercial_suivi_id		= GETPOST('commercial_suivi_id','int');
+    	$object->commercial_signature_id	= GETPOST('commercial_signature_id','int');
 
-    $object->note						= GETPOST('note','alpha');
-    $object->fk_project					= GETPOST('projectid','int');
-    $object->remise_percent				= GETPOST('remise_percent','alpha');
-    $object->ref						= GETPOST('ref','alpha');
+    	$object->note						= GETPOST('note','alpha');
+    	$object->fk_project					= GETPOST('projectid','int');
+    	$object->remise_percent				= GETPOST('remise_percent','alpha');
+    	$object->ref						= GETPOST('ref','alpha');
 
-    // Check
-    if (empty($datecontrat))
-    {
-        $error++;
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
-        $action='create';
-    }
-
-    if (! $error)
-    {
         $result = $object->create($user,$langs,$conf);
         if ($result > 0)
         {
@@ -612,7 +620,7 @@ if ($action == 'create')
     dol_htmloutput_errors($mesg,'');
 
     $soc = new Societe($db);
-    $soc->fetch($socid);
+    if ($socid>0) $soc->fetch($socid);
 
     $object->date_contrat = dol_now();
 
@@ -628,22 +636,39 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td>'.$langs->trans("Ref").'</td>';
-    print '<td><input type="text" maxlength="30" name="ref" size="20" value="'.$numct.'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
     // Customer
-    print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+	print '<tr>';
+	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+	if($socid>0)
+	{
+		print '<td colspan="2">';
+		print $soc->getNomUrl(1);
+		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+		print '</td>';
+	}
+	else
+	{
+		print '<td colspan="2">';
+		print $form->select_company('','socid','s.client = 1',1);
+		print '</td>';
+	}
+	print '</tr>'."\n";
 
-    // Ligne info remises tiers
-    print '<tr><td>'.$langs->trans('Discount').'</td><td>';
-    if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
-    else print $langs->trans("CompanyHasNoRelativeDiscount");
-    $absolute_discount=$soc->getAvailableDiscounts();
-    print '. ';
-    if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
-    else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-    print '.';
-    print '</td></tr>';
+	if($socid>0)
+	{
+		// Ligne info remises tiers
+		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
+		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+		print '. ';
+		$absolute_discount=$soc->getAvailableDiscounts();
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->currency));
+		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		print '.';
+		print '</td></tr>';
+	}
 
     // Commercial suivi
     print '<tr><td width="20%" nowrap><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
@@ -760,8 +785,19 @@ else
          */
         if ($action == 'valid')
         {
-            //$numfa = contrat_get_num($soc);
-            $ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid",'',0,1);
+        	$ref = substr($object->ref, 1, 4);
+        	if ($ref == 'PROV')
+        	{
+        		$numref = $object->getNextNumRef($soc);
+        	}
+        	else
+        	{
+        		$numref = $object->ref;
+        	}
+        	
+        	$text=$langs->trans('ConfirmValidateContract',$numref);
+            
+            $ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
             if ($ret == 'html') print '<br>';
         }
 
