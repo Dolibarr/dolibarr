@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/fourn.lib.php";
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 if ($conf->produit->enabled) require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
@@ -551,7 +552,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     // Sauvegarde le dernier module	choisi pour	generer	un document
     $object->fetch($id);
     $object->fetch_thirdparty();
-    
+
     if ($_REQUEST['model'])
     {
         $object->setDocModel($user, $_REQUEST['model']);
@@ -584,7 +585,7 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
     if ($object->fetch($id))
     {
     	$object->fetch_thirdparty();
-    	
+
         $langs->load("other");
         $upload_dir =	$conf->fournisseur->commande->dir_output;
         $file =	$upload_dir	. '/' .	GETPOST('file');

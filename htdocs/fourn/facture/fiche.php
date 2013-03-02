@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
- * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefo
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
