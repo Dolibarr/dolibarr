@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2012 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
@@ -720,7 +720,7 @@ class Propal extends CommonObject
 
             if ($this->id)
             {
-                if (empty($this->ref)) $this->ref='(PROV'.$this->id.')';
+                $this->ref='(PROV'.$this->id.')';
                 $sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
                 dol_syslog(get_class($this)."::create sql=".$sql);
@@ -1178,11 +1178,29 @@ class Propal extends CommonObject
         $now=dol_now();
 
         if ($user->rights->propale->valider)
-        {
+        {	
             $this->db->begin();
+            
+            // Numbering module definition
+            $soc = new Societe($this->db);
+            $soc->fetch($this->socid);
+            
+            // Class of company linked to propal
+            $result=$soc->set_as_client();
+            
+            // Define new ref
+            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+            {
+            	$num = $this->getNextNumRef($soc);
+            }
+            else
+          {
+            	$num = $this->ref;
+            }
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-            $sql.= " SET fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
+            $sql.= " SET ref = '".$num."',";
+            $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
             dol_syslog(get_class($this).'::valid sql='.$sql);
