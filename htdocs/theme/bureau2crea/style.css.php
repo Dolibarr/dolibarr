@@ -143,6 +143,9 @@ textarea:disabled {
 	background:#ddd;
 }
 
+
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnGreen.jpg',1); ?>);
     display: block;
@@ -157,8 +160,6 @@ input.button[type=submit] {
     font-size: 10px;
     display: inline;
 }
-
-input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 
 .button {
     font-family: <?php print $fontlist ?>;

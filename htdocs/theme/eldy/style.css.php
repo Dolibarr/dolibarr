@@ -249,6 +249,7 @@ textarea:disabled {
 	background:#ddd;
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 .button {
     font-family: <?php print $fontlist ?>;
 	background-image: url(<?php echo $img_button ?>);
