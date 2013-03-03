@@ -52,19 +52,19 @@ $object = new Prospect($db);
 
 if ($action == 'cstc')
 {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
-	$sql .= " WHERE rowid = ".$socid;
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$db->escape(GETPOST('stcomm'));
+	$sql.= " WHERE rowid = ".$socid;
 	$db->query($sql);
 }
 // set prospect level
 if ($action == 'setprospectlevel' && $user->rights->societe->creer)
 {
 	$object->fetch($socid);
-	$object->fk_prospectlevel=$_POST['prospect_level_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$db->escape(GETPOST('prospect_level_id'))."'";
 	$sql.= " WHERE rowid = ".$socid;
 	$result = $db->query($sql);
 	if (! $result) dol_print_error($result);
+	else $object->fk_prospectlevel=GETPOST('prospect_level_id');
 }
 
 
