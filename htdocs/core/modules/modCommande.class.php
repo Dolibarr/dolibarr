@@ -80,14 +80,14 @@ class modCommande extends DolibarrModules
 		$this->const[$r][0] = "COMMANDE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "einstein";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des commandes en PDF';
+		$this->const[$r][3] = 'Name of PDF model of order';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "COMMANDE_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_commande_marbre";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes';
+		$this->const[$r][3] = 'Name of numbering numerotation rules of order';
 		$this->const[$r][4] = 0;
 
 		$r++;
