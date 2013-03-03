@@ -4,6 +4,6 @@ dolibarr (3.4.0+nmu1) unstable; urgency=low
   * New upstream release.
     closes: bug#634783
     
- -- Dolibarr team <contact@dolibarr.org>  Thu, 28 Feb 2013 12:00:00 +0100     
+ -- Dolibarr team <contact@dolibarr.org>  Sat, 2 Mar 2013 12:00:00 +0100     
 
-# For a changelog file dedicated to end users, see /usr/share/doc/dolibarr/ChangeLog.gz 
+# For a changelog file dedicated to end users, see /usr/share/doc/dolibarr/ChangeLog.gz  
