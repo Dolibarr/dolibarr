@@ -133,14 +133,14 @@ class modHoliday extends DolibarrModules
 		$r=0;
 
 		$this->rights[$r][0] = 20001; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Créer / Modifier / Lire ses demandes de congés payés';	// Permission label
+		$this->rights[$r][1] = 'Lire/créer/modifier ses demandes de congés payés';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20002; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Lire / Modifier toutes les demandes de congés payés';	// Permission label
+		$this->rights[$r][1] = 'Lire/créer/modifier toutes les demandes de congés payés';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire_tous';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
