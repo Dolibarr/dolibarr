@@ -1395,3 +1395,6 @@ TestGeoIPResult=Test of a conversion IP -> country
 ProjectsNumberingModules=Projects numbering module
 ProjectsSetup=Project module setup
 ProjectsModelModule=Project reports document model
+##### ECM (GED) #####
+ECMSetup = GED Setup
+ECMAutoTree = Automatic tree folder and document  
