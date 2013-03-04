@@ -335,7 +335,7 @@ abstract class CommonObject
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";    // This field contains id of llx_socpeople or id of llx_user
         if ($source == 'internal') $sql.=", '-1' as socid";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
-        $sql.= ", t.civilite as civility, t.name as lastname, t.firstname, t.email";
+        $sql.= ", t.civilite as civility, t.lastname as lastname, t.firstname, t.email";
         $sql.= ", tc.source, tc.element, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
         $sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
@@ -348,7 +348,7 @@ abstract class CommonObject
         if ($source == 'external' || $source == 'thirdparty') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
         if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
-        $sql.=" ORDER BY t.name ASC";
+        $sql.=" ORDER BY t.lastname ASC";
 
         dol_syslog(get_class($this)."::liste_contact sql=".$sql);
         $resql=$this->db->query($sql);
