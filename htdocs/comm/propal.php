@@ -1096,6 +1096,36 @@ else if ($action == 'down' && $user->rights->propal->creer)
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
+else if ($action == 'update_extras')
+{
+	// Get extra fields
+	foreach($_POST as $key => $value)
+	{
+		if (preg_match("/^options_/",$key))
+		{
+			$object->array_options[$key]=$_POST[$key];
+		}
+	}
+	
+	// Actions on extra fields (by external module or standard code)
+	// FIXME le hook fait double emploi avec le trigger !!
+	$hookmanager->initHooks(array('propaldao'));
+	$parameters=array('id'=>$object->id);
+	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	if (empty($reshook))
+	{
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$object->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+	}
+	else if ($reshook < 0) $error++;
+	 
+}
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
 {
@@ -1798,18 +1828,52 @@ else
 	}
 
 	// Other attributes
+	$res=$object->fetch_optionals($object->id,$extralabels);
 	$parameters=array('colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
+		
+		if ($action == 'edit_extras')
+		{
+			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+			print '<input type="hidden" name="action" value="update_extras">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+		}
+		
+		
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
 	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
 	   		print '<tr><td';
 	   		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	   		print '>'.$label.'</td><td colspan="3">';
-	        print $extrafields->showInputField($key,$value);
+	   		if ($action == 'edit_extras')
+	   		{
+	        	print $extrafields->showInputField($key,$value);
+	   		}
+	   		else
+	   		{ 
+	   			print $extrafields->showOutputField($key,$value);
+	   		}
+	   		
 	        print '</td></tr>'."\n";
+	    }
+	    
+	    if(count($extrafields->attribute_label) > 0) {
+	    	
+	    	if ($action == 'edit_extras')
+	    	{
+	    		print '<tr><td></td><td>';
+	    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+	    		print '</form>';
+	    		print '</td></tr>';
+	    		
+	    	}
+	    	else {	    		
+	    		print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' Modifier les valeurs</a></td></tr>';
+	    	}
 	    }
 	}
 
