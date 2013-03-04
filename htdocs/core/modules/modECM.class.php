@@ -65,7 +65,7 @@ class modECM extends DolibarrModules
 		$this->dirs = array("/ecm/temp");
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array('ECM.php');
+		$this->config_page_url = array('ecm.php');
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled

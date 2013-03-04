@@ -16,7 +16,7 @@
  */
 
 /**
- *   	\file       htdocs/admin/ECM.php
+ *   	\file       htdocs/admin/ecm.php
  *		\ingroup    core
  *		\brief      Page to setup ECM (GED) module
  */
