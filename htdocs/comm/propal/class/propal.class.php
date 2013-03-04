@@ -1149,6 +1149,20 @@ class Propal extends CommonObject
                     return -1;
                 }
 
+                // Retreive all extrafield for propal
+                // fetch optionals attributes and labels
+                if(!class_exists('Extrafields'))
+                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label('propal',true);
+                if (count($extralabels)>0) {
+                	$this->array_options = array();
+                }
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                	$this->array_options['options_'.$key]=$label;
+                }
+                
                 return 1;
             }
 

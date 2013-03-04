@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -78,6 +79,7 @@ if (! empty($user->societe_id))	$socid=$user->societe_id;
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
+$extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -1167,6 +1169,9 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('propal');
 
 $now=dol_now();
 
