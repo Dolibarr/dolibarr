@@ -65,7 +65,7 @@ class modECM extends DolibarrModules
 		$this->dirs = array("/ecm/temp");
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array();
+		$this->config_page_url = array('ecm.php');
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -73,7 +73,14 @@ class modECM extends DolibarrModules
 
 		// Constants
 		$this->const = array();			// List of parameters
-
+		$r=0;
+		
+		$this->const[$r][0] = "ECM_AUTO_TREE_ENABLED";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = 'Auto tree is enabled by default';
+		$this->const[$r][4] = 0;
+		
 		// Boxes
 		$this->boxes = array();			// List of boxes
 		$r=0;
