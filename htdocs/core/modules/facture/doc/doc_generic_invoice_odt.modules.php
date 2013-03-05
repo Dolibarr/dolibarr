@@ -347,7 +347,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 {
                     $socobject=$object->client;
                 }
+                
+                // Fetch info for linked propal
+                $linked_propal = $object->fetchObjectLinked('','','','');
+                print '<pre>';
+                //print_r($object->linkedObjects['propal']); exit;
 
+                $propal_object = $object->linkedObjects['propal'][0];
+                
                 // Make substitution
                 $substitutionarray=array(
                     '__FROM_NAME__' => $this->emetteur->nom,
@@ -397,8 +404,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
+				$array_propal=$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
                 //var_dump($tmparray); exit;
