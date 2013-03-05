@@ -174,10 +174,11 @@ if ($result >= 0)
 			$userList = array();
 			$userIdList = array();
 			foreach($ldapgroup[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] as $key => $userdn) {
-				if($key == 'count') continue;
+				if($key === 'count') continue;
 				if(empty($userList[$userdn])) { // Récupération de l'utilisateur
 					$userFilter = explode(',', $userdn);
 					$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
+					if(!is_array($userKey)) continue;
 					
 					$fuser = new User($db);
 					
@@ -187,7 +188,7 @@ if ($result >= 0)
 						$fuser->fetch('',$userKey[0]); // Chargement du user concerné par le login
 					}
 					
-					$userList[$userdn] = &$fuser;
+					$userList[$userdn] = $fuser;
 				} else {
 					$fuser = &$userList[$userdn];
 				}
@@ -195,12 +196,18 @@ if ($result >= 0)
 				$userIdList[$userdn] = $fuser->id;
 				
 				// Ajout de l'utilisateur dans le groupe
-				if(!in_array($fuser->id, array_keys($group->members))) $fuser->SetInGroup($group->id, $group->entity);
+				if(!in_array($fuser->id, array_keys($group->members))) {
+					$fuser->SetInGroup($group->id, $group->entity);
+					echo $fuser->login.' added'."\n";
+				}
 			}
 			
 			// 2 - Suppression des utilisateurs du groupe Dolibarr qui ne sont plus dans le groupe LDAP
-			foreach ($group->members as $user_id => $infos) {
-				if(!in_array($user_id, $userIdList)) $fuser->RemoveFromGroup($group->id, $group->entity);
+			foreach ($group->members as $guser) {
+				if(!in_array($guser->id, $userIdList)) {
+					$guser->RemoveFromGroup($group->id, $group->entity);
+					echo $guser->login.' removed'."\n";
+				}
 			}
 		}
 
