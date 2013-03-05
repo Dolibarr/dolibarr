@@ -629,6 +629,7 @@ class DoliDBSqlite
     function plimit($limit=0,$offset=0)
     {
         global $conf;
+        if (empty($limit)) return "";
         if ($limit < 0) $limit=$conf->liste_limit;
         if ($offset > 0) return " LIMIT $offset,$limit ";
         else return " LIMIT $limit ";
