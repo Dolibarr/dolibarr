@@ -45,7 +45,15 @@ class MenuSmart
 	{
     	$this->type_user=$type_user;
 		$this->db=$db;
-		
+	}
+
+	/**
+	 * Load this->tabMenu
+	 *
+	 * @return	void
+	 */
+	function loadMenu()
+	{	
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
@@ -86,8 +94,8 @@ class MenuSmart
 		 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 		$tabMenu=array();
-		$menuArbo = new Menubase($db,'smartphone');
-		$menuArbo->menuLoad($mainmenu, $leftmenu, $type_user, 'smartphone', $tabMenu);
+		$menuArbo = new Menubase($this->db,'smartphone');
+		$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'smartphone', $tabMenu);
 		$this->tabMenu=$tabMenu;		
 	}
 
@@ -110,7 +118,11 @@ class MenuSmart
         	$conf->global->MAIN_SEARCHFORM_CONTACT=0;
         }
     	
-        print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$mode,$this->tabMenu);
+        $this->menu=new Menu();
+        
+        print_smartphone_menu($this->db,$this->atarget,$this->hideifnotallowed,$mode,$this->tabMenu,$this->menu);
+        
+        unset($this->menu);
         
         return 1;
 	}

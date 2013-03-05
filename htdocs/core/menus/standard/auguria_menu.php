@@ -47,12 +47,21 @@ class MenuManager
      */
     function __construct($db, $type_user)
     {
-    	global $conf, $user, $langs;
-
     	$this->type_user=$type_user;
     	$this->db=$db;
+    }
 
-    	// On sauve en session le menu principal choisi
+    
+   	/**
+   	 * Load this->tabMenu
+   	 *
+   	 * @return	void
+   	 */
+   	function loadMenu()
+   	{
+    	global $conf, $user, $langs;
+
+   		// On sauve en session le menu principal choisi
     	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
     	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
 
@@ -92,8 +101,8 @@ class MenuManager
 
     	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
     	$tabMenu=array();
-    	$menuArbo = new Menubase($db,'auguria');
-    	$menuArbo->menuLoad($mainmenu, $leftmenu, $type_user, 'auguria', $tabMenu);
+    	$menuArbo = new Menubase($this->db,'auguria');
+    	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
 
     	// Modules system tools
     	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
@@ -158,9 +167,14 @@ class MenuManager
         }
 
         $res='ErrorBadParameterForMode';
-        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu);
-        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
+        
+        $this->menu=new Menu();
+        
+        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
+        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
 
+        unset($this->menu);
+        
         return $res;
     }
 }

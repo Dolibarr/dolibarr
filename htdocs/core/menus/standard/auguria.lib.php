@@ -32,9 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	string	$atarget		Target
  * @param 	int		$type_user     	0=Internal,1=External,2=All
  * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array	&$menu			Object Menu to return back list of menu entries
  * @return	void
  */
-function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
+function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -122,7 +123,7 @@ function print_start_menu_entry_auguria($idsel,$classname)
  * Output menu entry
  *
  * @param	string	$text		Text
- * @param	int		$showmode	1 or 2
+ * @param	int		$showmode	1 = allowed or 2 = not allowed
  * @param	string	$url		Url
  * @param	string	$id			Id
  * @param	string	$idsel		Id sel
@@ -150,6 +151,10 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	{
 		print '<div class="'.$id.' '.$idsel.'"><span class="mainmenu_'.$idsel.' '.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
 	}
 }
 
@@ -181,18 +186,19 @@ function print_end_menu_array_auguria()
 /**
  * Core function to output left menu auguria
  *
- * @param	DoliDB		$db                  Database handler
- * @param 	array		$menu_array_before   Table of menu entries to show before entries of menu handler
- * @param   array		$menu_array_after    Table of menu entries to show after entries of menu handler
- * @param  	array		&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	DoliDB		$db                 Database handler
+ * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
+ * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
+ * @param  	array		&$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array		&$menu				Object Menu to return back list of menu entries
  * @return	void
  */
-function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu)
+function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
 	$overwritemenufor = array();
-	$newmenu = new Menu();
+	$newmenu = $menu;
 
 	$mainmenu=$_SESSION["mainmenu"];
 	$leftmenu=$_SESSION["leftmenu"];

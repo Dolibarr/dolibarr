@@ -29,7 +29,7 @@ class MenuManager
 	var $type_user=0;					// Put 0 for internal users, 1 for external users
 	var $atarget="";               		// To store default target to use onto links
 
-	var $menu_array;
+	var $menu;
 	var $menu_array_after;
 
 
@@ -47,6 +47,17 @@ class MenuManager
 
 
 	/**
+	 * Load this->tabMenu
+	 *
+	 * @return	void
+	 */
+	function loadMenu()
+	{
+		
+	}	
+	
+
+	/**
 	 *  Show menu
 	 *
      *	@param	string	$mode		'top' or 'left'
@@ -58,6 +69,8 @@ class MenuManager
 
 		$id='mainmenu';
 
+		$this->menu=new Menu();
+		
 		if ($mode == 'top')
 		{
 			print_start_menu_array_empty();
@@ -74,40 +87,35 @@ class MenuManager
 
 		if ($mode == 'left')
 		{
-			$newmenu = new Menu();
-
 			// Put here left menu entries
 			// ***** START *****
 
 			$langs->load("admin");  // Load translation file admin.lang
-			$newmenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
-			$newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
-			$newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
-			$newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
-			$newmenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
-			$newmenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
-			$newmenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
-			$newmenu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"),1);
-			$newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
-			$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
-			$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
-			$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
-			$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionnarySetup"),1);
-			$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
+			$this->menu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"),0);
+			$this->menu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
+			$this->menu->add("/admin/modules.php", $langs->trans("Modules"),1);
+			$this->menu->add("/admin/menus.php", $langs->trans("Menus"),1);
+			$this->menu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
+			$this->menu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
+			$this->menu->add("/admin/delais.php",$langs->trans("Alerts"),1);
+			$this->menu->add("/admin/proxy.php?mainmenu=home", $langs->trans("Security"),1);
+			$this->menu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
+			$this->menu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
+			$this->menu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
+			$this->menu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
+			$this->menu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionnarySetup"),1);
+			$this->menu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
 
 			// ***** END *****
 
 			// do not change code after this
 
-			// override menu_array by value array in $newmenu
-			$this->menu_array=$newmenu->liste;
-
 			$alt=0;
-			$num=count($this->menu_array);
+			$num=count($this->menu->liste);
 			for ($i = 0; $i < $num; $i++)
 			{
 				$alt++;
-				if (empty($this->menu_array[$i]['level']))
+				if (empty($this->menu->liste[$i]['level']))
 				{
 					if (($alt%2==0))
 					{
@@ -121,7 +129,7 @@ class MenuManager
 
 				// Place tabulation
 				$tabstring='';
-				$tabul=($this->menu_array[$i]['level'] - 1);
+				$tabul=($this->menu->liste[$i]['level'] - 1);
 				if ($tabul > 0)
 				{
 					for ($j=0; $j < $tabul; $j++)
@@ -130,31 +138,31 @@ class MenuManager
 					}
 				}
 
-				if ($this->menu_array[$i]['level'] == 0) {
-					if ($this->menu_array[$i]['enabled'])
+				if ($this->menu->liste[$i]['level'] == 0) {
+					if ($this->menu->liste[$i]['enabled'])
 					{
-						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu_array[$i]['url'],1).'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>'."\n";
+						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'],1).'"'.($this->menu->liste[$i]['target']?' target="'.$this->menu->liste[$i]['target'].'"':'').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
 					}
 					else
 					{
-						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>'."\n";
+						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu->liste[$i]['titre'].'</font></div>'."\n";
 					}
 					print '<div class="menu_top"></div>'."\n";
 				}
 
-				if ($this->menu_array[$i]['level'] > 0) {
+				if ($this->menu->liste[$i]['level'] > 0) {
 					print '<div class="menu_contenu">';
 
-					if ($this->menu_array[$i]['enabled'])
-						print $tabstring.'<a class="vsmenu" href="'.dol_buildpath($this->menu_array[$i]['url'],1).'">'.$this->menu_array[$i]['titre'].'</a><br>';
+					if ($this->menu->liste[$i]['enabled'])
+						print $tabstring.'<a class="vsmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'],1).'">'.$this->menu->liste[$i]['titre'].'</a><br>';
 					else
-						print $tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+						print $tabstring.'<font class="vsmenudisabled">'.$this->menu->liste[$i]['titre'].'</font><br>';
 
 					print '</div>'."\n";
 				}
 
 				// If next is a new block or end
-				if (empty($this->menu_array[$i+1]['level']))
+				if (empty($this->menu->liste[$i+1]['level']))
 				{
 					print '<div class="menu_end"></div>'."\n";
 					print "</div>\n";

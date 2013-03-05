@@ -807,6 +807,7 @@ if (! defined('NOREQUIREMENU'))
 		}
 	}
 	$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+	$menumanager->loadMenu();
 }
 
 

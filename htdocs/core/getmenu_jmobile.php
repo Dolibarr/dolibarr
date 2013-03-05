@@ -88,10 +88,13 @@ if (! class_exists('MenuManager'))
 	}
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+$menumanager->loadMenu();
 
 $menumanager->showmenu('jmobile');
 
-print '</body></html>'."\n";
+print '</body>';
+
+print '</html>'."\n";
 
 $db->close();
 ?>
