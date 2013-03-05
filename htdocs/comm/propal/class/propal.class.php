@@ -622,7 +622,7 @@ class Propal extends CommonObject
      */
     function create($user='', $notrigger=0)
     {
-        global $langs,$conf,$mysoc;
+        global $langs,$conf,$mysoc,$hookmanager;
         $error=0;
 
         $now=dol_now();
@@ -802,6 +802,24 @@ class Propal extends CommonObject
                     $resql=$this->update_price(1);
                     if ($resql)
                     {
+                    	// Actions on extra fields (by external module or standard code)
+                    	// FIXME le hook fait double emploi avec le trigger !!
+                    	$hookmanager->initHooks(array('propaldao'));
+                    	$parameters=array('socid'=>$this->id);
+                    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                    	if (empty($reshook))
+                    	{
+                    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    		{
+                    			$result=$this->insertExtraFields();
+                    			if ($result < 0)
+                    			{
+                    				$error++;
+                    			}
+                    		}
+                    	}
+                    	else if ($reshook < 0) $error++;
+                    	
                         if (! $notrigger)
                         {
                             // Appel des triggers

@@ -338,6 +338,15 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     		}
 
+    		// Get extra fields
+    		foreach($_POST as $key => $value)
+    		{
+    			if (preg_match("/^options_/",$key))
+    			{
+    				$object->array_options[$key]=GETPOST($key);
+    			}
+    		}
+    		
     		$id = $object->create($user);
     	}
 
