@@ -78,11 +78,15 @@ class modFacture extends DolibarrModules
 		$this->const[$r][0] = "FACTURE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "crabe";
+		$this->const[$r][3] = 'Name of PDF model of invoice';
+		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "FACTURE_ADDON";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "terre";
+		$this->const[$r][2] = "mod_facture_terre";
+		$this->const[$r][3] = 'Name of numbering numerotation rules of invoice';
+		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";

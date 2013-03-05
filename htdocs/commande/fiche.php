@@ -665,7 +665,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
             		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
             		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
             		$tmptxt.=')';
-            		$desc.= dol_concatdesc($desc, $tmptxt);
+            		$desc= dol_concatdesc($desc, $tmptxt);
             	}
 			}
 
