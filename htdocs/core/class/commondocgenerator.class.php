@@ -195,41 +195,41 @@ abstract class CommonDocGenerator
      *
      * @param   Object			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   key		$key	        Name of the key for return array
+     * @param   array_key		$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
-    function get_substitutionarray_propal($object,$outputlangs,$key='object')
+    function get_substitutionarray_propal($object,$outputlangs,$array_key='object')
     {
     	global $conf;
     
     	$array_propal=array(
-	    	$key.'_id'=>$object->id,
-	    	$key.'_ref'=>$object->ref,
-	    	$key.'_ref_ext'=>$object->ref_ext,
-	    	$key.'_ref_customer'=>$object->ref_client,
-	    	$key.'_date'=>dol_print_date($object->date,'day'),
-	    	$key.'_date_end'=>dol_print_date($object->fin_validite,'day'),
-	    	$key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
-	    	$key.'_date_modification'=>dol_print_date($object->date_modification,'day'),
-	    	$key.'_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
-	    	$key.'_payment_mode_code'=>$object->mode_reglement_code,
-	    	$key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-	    	$key.'_payment_term_code'=>$object->cond_reglement_code,
-	    	$key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-	    	$key.'_total_ht'=>price($object->total_ht,0,$outputlangs),
-	    	$key.'_total_vat'=>price($object->total_tva,0,$outputlangs),
-	    	$key.'_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-	    	$key.'_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
-	    	$key.'_vatrate'=>vatrate($object->tva),
-	    	$key.'_note_private'=>$object->note,
-	    	$key.'_note'=>$object->note_public,
+	    	$array_key.'_id'=>$object->id,
+	    	$array_key.'_ref'=>$object->ref,
+	    	$array_key.'_ref_ext'=>$object->ref_ext,
+	    	$array_key.'_ref_customer'=>$object->ref_client,
+	    	$array_key.'_date'=>dol_print_date($object->date,'day'),
+	    	$array_key.'_date_end'=>dol_print_date($object->fin_validite,'day'),
+	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
+	    	$array_key.'_date_modification'=>dol_print_date($object->date_modification,'day'),
+	    	$array_key.'_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
+	    	$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
+	    	$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
+	    	$array_key.'_payment_term_code'=>$object->cond_reglement_code,
+	    	$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
+	    	$array_key.'_total_ht'=>price($object->total_ht,0,$outputlangs),
+	    	$array_key.'_total_vat'=>price($object->total_tva,0,$outputlangs),
+	    	$array_key.'_total_ttc'=>price($object->total_ttc,0,$outputlangs),
+	    	$array_key.'_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
+	    	$array_key.'_vatrate'=>vatrate($object->tva),
+	    	$array_key.'_note_private'=>$object->note,
+	    	$array_key.'_note'=>$object->note_public,
     	);
     
     	// Add vat by rates
     	foreach ($object->lines as $line)
     	{
-    		if (empty($array_propal[$key.'_total_vat_'.$line->tva_tx])) $array_propal[$key.'_total_vat_'.$line->tva_tx]=0;
-    		$array_propal[$key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+    		if (empty($array_propal[$array_key.'_total_vat_'.$line->tva_tx])) $array_propal[$array_key.'_total_vat_'.$line->tva_tx]=0;
+    		$array_propal[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
     	}
     	
     	// Retrieve extrafields
@@ -251,7 +251,7 @@ abstract class CommonDocGenerator
     			{
     				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
     			}
-    			$array_propal=array_merge($array_propal,array($key.'_options_'.$key => $object->array_options['options_'.$key]));
+    			$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
     		}
     	}
     	return $array_propal;
