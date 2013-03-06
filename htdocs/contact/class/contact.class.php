@@ -37,10 +37,8 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 
 	var $id;
-	var $civilite_id;  // In fact we stor civility_code
+	var $civilite_id;  // In fact we store civility_code
     var $lastname;
-	var $name;         // TODO deprecated
-	var $nom;          // TODO deprecated
 	var $firstname;
 	var $address;
 	var $zip;
