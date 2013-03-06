@@ -31,10 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
- * @param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array	&$menu			Object Menu to return back list of menu entries
  * @return	void
  */
-function print_eldy_menu($db,$atarget,$type_user,&$tabMenu)
+function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -72,6 +73,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("ThirdParties"), $showmode, DOL_URL_ROOT.'/societe/index.php?mainmenu=companies&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/societe/index.php?mainmenu=companies&amp;leftmenu=', $langs->trans("ThirdParties"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Products-Services
@@ -312,7 +314,7 @@ function print_start_menu_entry($idsel,$classname)
  * Output menu entry
  *
  * @param	string	$text		Text
- * @param	int		$showmode	1 or 2
+ * @param	int		$showmode	1 = allowed or 2 = not allowed
  * @param	string	$url		Url
  * @param	string	$id			Id
  * @param	string	$idsel		Id sel
@@ -340,6 +342,10 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 	{
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
 	}
 }
 
@@ -375,13 +381,14 @@ function print_end_menu_array()
  * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
  * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
  * @param	array		&$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array		&$menu				Object Menu to return back list of menu entries
  * @return	void
  */
-function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu)
+function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
-	$newmenu = new Menu();
+	$newmenu = $menu;
 
 	$mainmenu=$_SESSION["mainmenu"];
 	$leftmenu=$_SESSION["leftmenu"];
@@ -653,7 +660,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("contracts");
 				$newmenu->add("/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0, $user->rights->contrat->lire, '', $mainmenu, 'contracts');
-				$newmenu->add("/societe/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
+				$newmenu->add("/contrat/fiche.php?&action=create&amp;leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
 				$newmenu->add("/contrat/liste.php?leftmenu=contracts", $langs->trans("List"), 1, $user->rights->contrat->lire);
 				$newmenu->add("/contrat/services.php?leftmenu=contracts", $langs->trans("MenuServices"), 1, $user->rights->contrat->lire);
 				if ($leftmenu=="contracts") $newmenu->add("/contrat/services.php?leftmenu=contracts&amp;mode=0", $langs->trans("MenuInactiveServices"), 2, $user->rights->contrat->lire);
@@ -1241,15 +1248,14 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
  * @param  array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @return	void
  */
-function print_jmobile_eldy_menu($db,$atarget,$type_user,&$tabMenu)
+function print_jmobile_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 {
-	print '<ul data-role="listview" data-inset="true">
-	<li><a href="#">Acura</a></li>
-	<li><a href="#">Audi</a></li>
-	<li><a href="#">BMW</a></li>
-	<li><a href="#">Cadillac</a></li>
-	<li><a href="#">Ferrari</a></li>
-	</ul>';
+	print '<ul data-role="listview" data-inset="true">';
+	foreach ($tabMenu as $key => $val)
+	{
+		print '<li><a href="#">'.$key.'</a></li>';
+	}
+	print '</ul>';
 }
 
 /**

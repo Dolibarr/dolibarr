@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2012	Nicolas Péré		<nicolas@amarok2.net>
- * Copyright (C) 2012	Xavier Peyronnet	<xavier.peyronnet@free.fr>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012	Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2012	Nicolas Péré			<nicolas@amarok2.net>
+ * Copyright (C) 2012	Xavier Peyronnet		<xavier.peyronnet@free.fr>
+ * Copyright (C) 2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,14 +59,16 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->browser->phone)?'12':'12';
 $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
-$path='';    // This value may be used in future for external module to overwrite theme
+$path='';    		// This value may be used in future for external module to overwrite theme
+$theme='amarok';	// Value of theme
+if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 // Define image path files
 $fontlist='helvetica,arial,tahoma,verdana';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 //'/theme/auguria/img/menus/trtitle.png';
-$img_liste_titre=dol_buildpath($path.'/theme/amarok/img/menus/trtitle.png',1);
-$img_head=dol_buildpath($path.'/theme/amarok/img/headbg2.jpg',1);
-$img_button=dol_buildpath($path.'/theme/amarok/img/button_bg.png',1);
+$img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
+$img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
+$img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 
 ?>
 
@@ -84,12 +87,12 @@ body {
 	background-color:#f5f5f5;
 	<?php if ($_SESSION['dol_login'] != '') {?>
 	<?php if (GETPOST("optioncss") != 'print') {?>
-	background-image:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/vmenu.png' ?>);
+	background-image:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/vmenu.png',1); ?>);
 	background-repeat:repeat-y;
 	margin:0px;
 	<?php } ?>
 	<?php } else {?>
-	background-image:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/background_login.png' ?>);
+	background-image:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/background_login.png',1); ?>);
 	margin:100px;
 	<?php } ?>
 	color:#232323;
@@ -144,6 +147,9 @@ input.flat {
 }
 
 input:disabled {background:#b6b6b6;}
+
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 
 textarea.flat {
 	font-size:<?php print $fontsize ?>px;
@@ -344,7 +350,7 @@ div.tmenu {
 	right:0;
     white-space:nowrap;
 	height:36px;
-	line-height:36px;
+	<?php if ($conf->browser->name != 'ie') echo "line-height:36px; /* disabled for ie9 */ \n"; ?>
 	background:#333333;
     background-image:linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image:-o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -1131,21 +1137,21 @@ tr.fiche {
 
 .ok {
 	color:#159e26;
-	background:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/ok.png' ?>) left center no-repeat;
+	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) left center no-repeat;
 	padding-left:20px;
 	font-weight:bold;
 }
 
 .warning {
 	color:#bca936;
-	background:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/warning.png' ?>) left center no-repeat;
+	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) left center no-repeat;
 	padding-left:20px;
 	font-weight:bold;
 }
 
 .error {
 	color:#a61111;
-	background:url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/error.png' ?>) left center no-repeat;
+	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) left center no-repeat;
 	padding-left:20px;
 	font-weight:bold;
 }
@@ -1153,7 +1159,7 @@ tr.fiche {
 td.highlights {background:#f9c5c6;}
 
 div.ok {
-	background:#61e372 url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/ok.png' ?>) 3px center no-repeat;
+	background:#61e372 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) 3px center no-repeat;
 	color:#ffffff;
 	padding:2px 4px 2px 24px;
 	margin:0.5em 0em;
@@ -1162,7 +1168,7 @@ div.ok {
 }
 
 div.warning, div.info {
-	background:#fcf5b8 url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/warning.png' ?>) 3px center no-repeat;
+	background:#fcf5b8 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) 3px center no-repeat;
 	color:#232323;
 	padding:2px 4px 2px 24px;
 	margin:0.5em 0em;
@@ -1171,7 +1177,7 @@ div.warning, div.info {
 }
 
 div.error {
-	background:#f58080 url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/error.png' ?>) 3px center no-repeat;
+	background:#f58080 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) 3px center no-repeat;
 	color:#ffffff;
 	padding:2px 4px 2px 24px;
 	margin:0.5em 0em;
@@ -1560,7 +1566,7 @@ li.cal_event       { border: none; list-style-type: none; }
 /* ============================================================================== */
 
 .ui-widget {font-family:Verdana,Arial,sans-serif; font-size:0.9em;}
-.ui-autocomplete-loading {background:#ffffff url(<?php echo DOL_URL_ROOT.'/theme/amarok/img/working.gif' ?>) right center no-repeat;}
+.ui-autocomplete-loading {background:#ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat;}
 
 
 /* ============================================================================== */

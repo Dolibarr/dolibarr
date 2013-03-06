@@ -367,7 +367,7 @@ class Holiday extends CommonObject
         $sql.= " uu.lastname as user_lastname,";
         $sql.= " uu.firstname as user_firstname,";
 
-        $sql.= " ua.name as validator_lastname,";
+        $sql.= " ua.lastname as validator_lastname,";
         $sql.= " ua.firstname as validator_firstname";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";

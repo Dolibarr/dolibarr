@@ -700,6 +700,7 @@ class DoliDBPgsql
 	function plimit($limit=0,$offset=0)
 	{
 		global $conf;
+        if (empty($limit)) return "";
 		if ($limit < 0) $limit=$conf->liste_limit;
 		if ($offset > 0) return " LIMIT ".$limit." OFFSET ".$offset." ";
 		else return " LIMIT $limit ";

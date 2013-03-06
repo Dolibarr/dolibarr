@@ -33,7 +33,7 @@
  * @param  	array		&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @return	void
  */
-function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto,&$tabMenu)
+function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto,&$tabMenu,&$menu)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 

@@ -200,8 +200,8 @@ class Export
 	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
 	 *
 	 *      @param      int		$indice				Indice of export
-	 *      @param      array	$array_selected     Filter on array of fields to export
-	 *      @param      array	$array_filterValue  Filter on array of fields to export
+	 *      @param      array	$array_selected     Filter fields on array of fields to export
+	 *      @param      array	$array_filterValue  Filter records on array of value for fields
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
 	function build_sql($indice, $array_selected, $array_filterValue)
@@ -230,7 +230,7 @@ class Export
 			// pour ne pas a gerer le nombre de condition
 			foreach ($array_filterValue as $key => $value)
 			{
-				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
+				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
@@ -464,7 +464,7 @@ class Export
 	 *      @param      string		$datatoexport       Name of dataset to export
 	 *      @param      array		$array_selected     Filter on array of fields to export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
-	 *      @param		string		$sqlquery			If set, transmit a sql query instead of building it from arrays
+	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
 	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
@@ -547,8 +547,7 @@ class Export
 						}
 					}
 					// end of special operation processing
-
-					$objmodel->write_record($array_selected,$objp,$outputlangs);
+					$objmodel->write_record($array_selected,$objp,$outputlangs,$this->array_export_TypeFields[$indice]);
 				}
 
 				// Genere en-tete

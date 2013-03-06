@@ -14,10 +14,13 @@ For users:
 - New: Can expand/collapse menus, categories and users list.
 - New: extra parameters are supported into ODT templates.
 - New: total per vat rate are available as tags for ODT templates.
-- New: Add more types for extra parameters (lists, phone, emails, checkbox, prices)
+- New: Add more types for extra parameters (lists, phone, emails, checkbox, prices).
 - New: Some part of interface use more CSS3 (ie: agenda)
-- New: [ task #707 ] Create option ProfIdx are mandatory to validate a invoice
-  
+- New: [ task #707 ] Create option ProfIdx are mandatory to validate a invoice.
+- New: Can define of we want to use VAT or not for subscriptions (foundation module).
+- New: Can define a default choice for choice "More action when recording
+  a subscription" (foundation module).
+
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
 - An external module can force its theme.
@@ -35,6 +38,36 @@ For developers:
 
 For translators:
 - Update language files.
+
+
+
+***** ChangeLog for 3.3.1 compared to 3.3 *****
+
+- Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
+- Fix: Package for launchpad
+- Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
+- Fix: Localtax2 for Spain must be based into buyer
+
+
+
+
+***** ChangeLog for 3.3.1 compared to 3.3 *****
+
+- Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
+- Fix: Package for launchpad
+- Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
+- Fix: Localtax2 for Spain must be based into buyer
+
+
+
+
+***** ChangeLog for 3.3.1 compared to 3.3 *****
+
+- Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
+- Fix: Package for launchpad
+- Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
+- Fix: Localtax2 for Spain must be based into buyer
+
 
 
 ***** ChangeLog for 3.3 compared to 3.2.3 *****

@@ -739,7 +739,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
             		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
             		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
             		$tmptxt.=')';
-            		$desc.= dol_concatdesc($desc, $tmptxt);
+            		$desc= dol_concatdesc($desc, $tmptxt);
             	}
 			}
 
@@ -1180,37 +1180,6 @@ if ($action == 'create')
 
 	$object = new Propal($db);
 
-	$numpr='';
-	$obj = $conf->global->PROPALE_ADDON;
-	if ($obj)
-	{
-		if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
-		{
-			require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
-			$modPropale = new $obj;
-			$numpr = $modPropale->getNextValue($soc,$object);
-		}
-	}
-
-	// Fix pour modele numerotation qui deconne
-	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
-	$sql = "SELECT count(*) as nb";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-	$sql.= " WHERE ref LIKE '".$numpr."%'";
-	$sql.= " AND entity = ".$conf->entity;
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj=$db->fetch_object($resql);
-		$num = $obj->nb;
-		$db->free($resql);
-		if ($num > 0)
-		{
-			$numpr .= "." . ($num + 1);
-		}
-	}
-
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -1222,12 +1191,9 @@ if ($action == 'create')
 	}
 
 	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">'.$numpr.'</td>';
-	print '<input type="hidden" name="ref" value="'.$numpr.'">';
-	print '</tr>';
+	
+	// Reference
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
@@ -1990,10 +1956,10 @@ else
 		if ($action != 'statut' && $action <> 'editline')
 		{
 			// Validate
-			if ($object->statut == 0 && $user->rights->propal->valider)
+			if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 && $user->rights->propal->valider)
 			{
 			    if (count($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
-			    else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
+			    //else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
 
 			// Edit

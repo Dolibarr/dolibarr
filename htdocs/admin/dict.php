@@ -71,6 +71,7 @@ $hookmanager->initHooks(array('admin'));
 
 // Sort order to show dictionnary (0 is space). All other dictionnaries (added by modules) will be at end of this.
 $taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23);
+if (! empty($conf->global->MAIN_USE_REVENUESTAMP)) $taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,25,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23);
 
 // Name of SQL tables of dictionnaries
 $tabname=array();
@@ -98,6 +99,7 @@ $tabname[21]= MAIN_DB_PREFIX."c_availability";
 $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
 $tabname[23]= MAIN_DB_PREFIX."accountingaccount";
 $tabname[24]= MAIN_DB_PREFIX."accounting_system";
+$tabname[25]= MAIN_DB_PREFIX."c_revenuestamp";
 
 // Dictionary labels
 $tablib=array();
@@ -125,6 +127,7 @@ $tablib[21]= "DictionnaryAvailability";
 $tablib[22]= "DictionnarySource";
 $tablib[23]= "DictionnaryAccountancyplan";
 $tablib[24]= "DictionnaryAccountancysystem";
+$tablib[25]= "DictionnaryRevenueStamp";
 
 // Requete pour extraction des donnees des dictionnaires
 $tabsql=array();
@@ -152,6 +155,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT rowid   as rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number as accountancy_code, account_parent, label, active FROM ".MAIN_DB_PREFIX."accountingaccount";
 $tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, p.code as country_code, p.libelle as pays, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_pays as p WHERE s.fk_pays=p.rowid and p.active=1";
+$tabsql[25]= "SELECT t.rowid, t.taux, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
 
 // Critere de tri du dictionnaire
 $tabsqlsort=array();
@@ -179,6 +183,7 @@ $tabsqlsort[21]="code ASC, label ASC";
 $tabsqlsort[22]="code ASC, label ASC";
 $tabsqlsort[23]="fk_pcg_version ASC, accountancy_code ASC";
 $tabsqlsort[24]="pcg_version ASC";
+$tabsqlsort[25]="country ASC, taux ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -206,6 +211,7 @@ $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
 $tabfield[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
 $tabfield[24]= "pcg_version,country_id,country,label";
+$tabfield[25]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -233,6 +239,7 @@ $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
 $tabfieldvalue[24]= "pcg_version,country,label";
+$tabfieldvalue[25]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -260,6 +267,7 @@ $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[23]= "fk_pcg_version,account_number,account_parent,pcg_type,pcg_subtype,label";
 $tabfieldinsert[24]= "pcg_version,fk_pays,label";
+$tabfieldinsert[25]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -289,6 +297,7 @@ $tabrowid[21]= "rowid";
 $tabrowid[22]= "rowid";
 $tabrowid[23]= "";
 $tabrowid[24]= "";
+$tabrowid[25]= "";
 
 // Condition to show dictionnary in setup page
 $tabcond=array();
@@ -316,6 +325,7 @@ $tabcond[21]= ! empty($conf->propal->enabled);
 $tabcond[22]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled));
 $tabcond[23]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy plan should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
 $tabcond[24]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
+$tabcond[25]= (! empty($conf->global->MAIN_USE_REVENUESTAMP));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
 
 // List of help for fields
 $tabhelp=array();
@@ -343,6 +353,7 @@ $tabhelp[21] = array();
 $tabhelp[22] = array();
 $tabhelp[23] = array();
 $tabhelp[24] = array();
+$tabhelp[25] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp);
@@ -717,7 +728,11 @@ if ($id)
             $align="left";
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-            if ($fieldlist[$field]=='taux')            { $valuetoshow=$langs->trans("Rate"); }
+            if ($fieldlist[$field]=='taux')            {
+				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
+				else $valuetoshow=$langs->trans("Amount");
+				$align='right';
+            }
             if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 2",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
             if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2";}
             if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 3",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
@@ -834,7 +849,11 @@ if ($id)
                 $valuetoshow=$langs->trans($valuetoshow);   // try to translate
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
                 if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-                if ($fieldlist[$field]=='taux')            { $valuetoshow=$langs->trans("Rate"); }
+                if ($fieldlist[$field]=='taux')            {
+					if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
+					else $valuetoshow=$langs->trans("Amount");
+					$align='right';
+	            }
                 if ($fieldlist[$field]=='localtax1_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 2",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }
                 if ($fieldlist[$field]=='localtax1')       { $valuetoshow=$langs->trans("Rate")." 2"; $sortable=0; }
                 if ($fieldlist[$field]=='localtax2_type')  { $valuetoshow=$form->textwithtooltip($langs->trans("UseLocalTax")." 3",$langs->trans("LocalTaxDesc"),2,1,img_help(1,'')); $align="center"; $sortable=0; }

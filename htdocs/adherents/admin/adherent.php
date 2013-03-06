@@ -171,29 +171,52 @@ print '<input type="submit" class="button" value="'.$langs->trans("Update").'" n
 print "</td></tr>\n";
 print '</form>';
 
-// Insertion cotisations dans compte financier
+// Insert subscription into bank account
 $var=!$var;
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
-print '<tr '.$bc[$var].'><td>'.$langs->trans("AddSubscriptionIntoAccount").'</td>';
-if (! empty($conf->banque->enabled))
-{
-    print '<td>';
-    print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);
-    print '</td><td align="center" width="80">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-    print '</td>';
-}
-else
-{
-    print '<td align="right" colspan="2">';
-    print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
-    print '</td>';
-}
+print '<tr '.$bc[$var].'><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
+$arraychoices=array('0'=>$langs->trans("None"));
+if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("MoreActionBankDirect");
+if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
+if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
+print '<td>';
+print $form->selectarray('constvalue',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
+print '</td><td align="center" width="80">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '</td>';
 print "</tr>\n";
 print '</form>';
+
+// Use vat for invoice creation
+if ($conf->facture->enabled)
+{
+	$var=!$var;
+	print '<form action="adherent.php" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="constname" value="ADHERENT_VAT_FOR_SUBSCRIPTIONS">';
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
+	if (! empty($conf->banque->enabled))
+	{
+		print '<td>';
+		print $form->selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+		print '</td><td align="center" width="80">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+		print '</td>';
+	}
+	else
+	{
+		print '<td align="right" colspan="2">';
+		print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name"));
+		print '</td>';
+	}
+	print "</tr>\n";
+	print '</form>';
+}
+
 print '</table>';
 print '<br>';
 

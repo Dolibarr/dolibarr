@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Herve Prot           <herve.prot@symeos.com>
@@ -60,6 +60,9 @@ $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 $fontlist='arial,tahoma,verdana,helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 
+$path='';    		// This value may be used in future for external module to overwrite theme
+$theme='cameleo';	// Value of theme
+if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 ?>
 
@@ -71,7 +74,7 @@ body {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
-	/*background: #ffffff url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/headbg2.jpg' ?>) 0 0 no-repeat;*/
+	/*background: #ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1); ?>) 0 0 no-repeat;*/
 <?php } ?>
 	color: #101010;
 	font-size: <?php print $fontsize ?>px;
@@ -108,7 +111,8 @@ input:disabled {
 textarea:disabled {
 	background:#ddd;
 }
-
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
 	background: #A51B00;
 	-moz-border-radius:8px;
@@ -135,7 +139,7 @@ input.button[type=submit] {
 
 .button {
     font-family: <?php print $fontlist ?>;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/button_bg.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
     padding: 0px 2px 0px 2px;
@@ -144,7 +148,7 @@ input.button[type=submit] {
 .button:focus  {
     font-family: <?php print $fontlist ?>;
 	color: #222244;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/button_bg.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
 	background-position: bottom;
     border: 1px solid #ACBCBB;
     padding: 0px 2px 0px 2px;
@@ -153,7 +157,7 @@ input.button[type=submit] {
 .buttonajax {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/button_bg.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
 	background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -280,7 +284,7 @@ div.tmenu {
     font-weight: normal;
     height: 47px;
     background: #FFF;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_tmenu.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_tmenu.jpg',1); ?>);
     background-position: center bottom;
     border-bottom: 2px solid #A51B00;
     color: #000;
@@ -403,43 +407,43 @@ div.mainmenu {
 <?php if (empty($conf->browser->phone)) { ?>
 
 div.mainmenu.agenda {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/agenda.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
 }
 
 div.mainmenu.cashdesk {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/pointofsale.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
 }
 
 div.mainmenu.accountancy {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/money.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
 }
 
 div.mainmenu.bank {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/bank.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1); ?>);
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/company.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
 }
 
 div.mainmenu.commercial {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/commercial.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
 }
 
 div.mainmenu.externalsite {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1) ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/externalsite.png',1); ?>);
 }
 
 div.mainmenu.ftp {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
 }
 
 div.mainmenu.ecm {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/ecm.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
 }
 
 div.mainmenu.home{
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/home.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
 }
 
 div.mainmenu.gravatar {
@@ -449,28 +453,28 @@ div.mainmenu.geopipmaxmind {
 }
 
 div.mainmenu.members {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/members.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
 }
 
 div.mainmenu.products {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/products.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
 	margin-left: 10px;
 }
 
 div.mainmenu.project {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/project.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
 }
 
 div.mainmenu.tools {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/tools.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
 }
 
 div.mainmenu.shop {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/shop.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
 }
 
 div.mainmenu.google {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/menus/globe.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/globe.png',1); ?>);
 }
 
 <?php
@@ -511,7 +515,7 @@ foreach($mainmenuusedarray as $val)
 	// Img file not found
 	if (! $url && $generic <= 4)
 	{
-		$url=DOL_URL_ROOT."/theme/cameleo/img/menus/generic".$generic.".png";
+		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.'.png',1);
 		$generic++;
 	}
 	if ($url)
@@ -667,7 +671,7 @@ div.blockvmenupair
 	border-spacing: 0px;
 	padding: 0px;
 	width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_leftCategorie2.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie2.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 
@@ -679,7 +683,7 @@ div.blockvmenuimpair
 	border-spacing: 0px;
 	padding: 0px;
 	width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_leftCategorie2.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie2.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 
@@ -732,7 +736,7 @@ div.blockvmenusearch
     margin: 3px 0px 15px 0px;
     padding: 25px 0px 2px 2px;
     width: 200px;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_leftMenu.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 }
@@ -768,7 +772,7 @@ div.blockvmenubookmarks
 	border-spacing: 0px;
 	padding: 0px;
 	width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_leftCategorie.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top left;
     background-repeat: no-repeat;
     margin-bottom: 15px;
@@ -874,7 +878,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1); ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -1077,7 +1081,7 @@ div.tabs {
     text-align: left;
     vertical-align: bottom;
     width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_tmenu.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_tmenu.jpg',1); ?>);
     height: 24px;
     border-bottom: 2px solid #A51B00;
     background-repeat: repeat-x;
@@ -1172,7 +1176,7 @@ div.tabBar {
     border-bottom: 1px solid #555555;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-    /*background: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/tab_background.png' ?>) repeat-x;*/
+    /*background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;*/
     background: #FEF4AE; /* old browsers */
 }
 
@@ -1213,7 +1217,7 @@ span.tabspan {
 .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
-	/*background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;*/
+	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
         background: #A81E00;
         -moz-border-radius:8px;
         border-radius:8px;
@@ -1277,7 +1281,7 @@ span.butAction, span.butActionDelete {
 
 /*
 #undertopmenu {
-background-image: url("<?php echo DOL_URL_ROOT.'/theme/cameleo/img/gradient.gif' ?>");
+background-image: url("<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/gradient.gif',1); ?>");
 background-repeat: repeat-x;
 }
 */
@@ -1331,7 +1335,7 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
-    background: #FFF url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_liste_titremenu.jpg' ?>);
+    background: #FFF url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_liste_titremenu.jpg',1); ?>);
     background-repeat: repeat-x;
     background-position: top right;
     vertical-align: text-top;
@@ -1374,7 +1378,7 @@ padding: 0px 0px !important;
 /* For lists */
 
 table.liste {
-background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_liste_titremenu.jpg' ?>);
+background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_liste_titremenu.jpg',1); ?>);
 background-repeat: repeat-x;
 background-position: top right;
     vertical-align: text-top;
@@ -1424,7 +1428,7 @@ th.liste_titre_sel, td.liste_titre_sel
 
 input.liste_titre {
 background: #FFF;
-/*background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/bg_centerBlock-title.jpg' ?>);
+/*background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title.jpg',1); ?>);
 background-repeat: no-repeat;
 background-position: top right;*/
 border: 0px;
@@ -1433,7 +1437,7 @@ border: 0px;
 tr.liste_total td {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
-/* background-image: url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>); */
+/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
@@ -1823,7 +1827,7 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/working.gif' ?>) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
 .ui-autocomplete {
 	       position:absolute;
 	       width:auto;
@@ -1853,12 +1857,12 @@ li.cal_event       { border: none; list-style-type: none; }
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
-	background: url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right top no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
 
 .editkey_datepicker {
-	background: url(<?php echo dol_buildpath($path.'/theme/cameleo/img/calendar.png',1) ?>) right center no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
 	cursor: pointer;
 }
 
@@ -2052,7 +2056,7 @@ span.cke_skin_kama { padding: 0 !important; }
 a.cke_dialog_ui_button
 {
     font-family: <?php print $fontlist ?> !important;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/cameleo/img/button_bg.png' ?>) !important;
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
 	padding: 0.1em 0.7em !important;
@@ -2204,7 +2208,7 @@ div.ecmjqft {
 /* Core Styles */
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
 .ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
-.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/cameleo/img/working.gif',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif',1); ?>) left top no-repeat; }
 
 
 

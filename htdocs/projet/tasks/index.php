@@ -33,7 +33,7 @@ $langs->load('projects');
 $langs->load('users');
 
 $id=GETPOST('id','int');
-$search_product=GETPOST('search_product');
+$search_project=GETPOST('search_project');
 
 
 // Security check
@@ -85,7 +85,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_product);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
@@ -106,7 +106,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
-print '<input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8">';
+print '<input type="text" class="flat" name="search_project" value="'.$search_project.'" size="8">';
 print '</td>';
 print '<td class="liste_titre" colspan="5">';
 print '&nbsp;';

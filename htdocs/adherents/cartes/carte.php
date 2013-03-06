@@ -107,13 +107,8 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             '%MONTH%'=>$month,
             '%DAY%'=>$day,
             '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-            '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/",	// deprecated
-            // For backward compatibility
-            '%SOCIETE%'=>$objp->company,
-            '%ZIP%'=>$objp->zip,
-            '%COUNTRY%'=>$objp->country,
-            '%ANNEE%'=>$year,
-            '%SERVEUR%'=>"http://".$_SERVER["SERVER_NAME"]."/"	// deprecated
+            '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/",	
+            '%SOCIETE%'=>$objp->company
             );
             complete_substitutions_array($substitutionarray, $langs);
 

@@ -491,7 +491,7 @@ function dol_strtoupper($utf8_string)
  *											On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *											On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident				1=Increase ident of 1, -1=Decrease ident of 1
- *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename. 	
+ *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename.
  *  @return	void
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='')
@@ -706,7 +706,7 @@ function dol_format_address($object)
 			$ret.="\n".$object->state;
 		}
 	}
-	
+
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->zip;
@@ -1646,32 +1646,33 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 	global $conf;
 
 	// Define fullpathpicto to use into src
-	if ($pictoisfullpath) {
+	if ($pictoisfullpath)
+	{
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto))
-			$picto .= '.png';
+		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
 		$fullpathpicto = $picto;
 	}
 	else
 	{
-		// By default, we search into theme directory
+		// By default, we search $url/theme/$theme/img/$picto
 		$url = DOL_URL_ROOT;
-		$path = 'theme/'.$conf->theme;
-		if (! empty($conf->global->MAIN_FORCETHEMEDIR))
-			$path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
-		// If we ask an image into module/img (not into a theme path)
+		$theme = $conf->theme;
+
+		$path = 'theme/'.$theme;
+		if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;
+		if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;	// TODO What if there is both FORCETHEMDIR and OVERWRITE_THEM_RES
+		// If we ask an image into $url/$mymodule/img (instead of default path)
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 		{
 			$picto = $regs[1];
-			$path = $regs[2];
+			$path = $regs[2];	// $path is $mymodule
 		}
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto))
-			$picto .= '.png';
-		// If img file not into standard path, we use alternate path
-		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto))
-			$url = DOL_URL_ROOT_ALT;
+		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		// If img file is not into standard path, we use alternate path (Avoid using DOL_URL_ROOT_ALT for performane)
+		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
 
+		// $url is '' or '/custom', $path is current theme or
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
@@ -2719,10 +2720,10 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller id=".$thirdparty_seller->id);
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain and localtaxes 1, tax is qualified if buyer use local taxe
+	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
 		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
-		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
 	{
@@ -4179,7 +4180,7 @@ function printCommonFooter($zone='private')
 	{
 		$micro_end_time=dol_microtime_float(true);
 		print "\n".'<script type="text/javascript">'."\n";
-		print 'console.log("';
+		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';

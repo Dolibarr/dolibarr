@@ -48,7 +48,16 @@ class MenuManager
     {
     	$this->type_user=$type_user;
         $this->db=$db;
-
+    }
+    
+    
+    /**
+     * Load this->tabMenu
+     * 
+     * @return	void
+     */
+    function loadMenu()
+    {
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
@@ -89,8 +98,8 @@ class MenuManager
 
         require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
         $tabMenu=array();
-        $menuArbo = new Menubase($db,'eldy');
-        $menuArbo->menuLoad($mainmenu, $leftmenu, $type_user, 'eldy', $tabMenu);
+        $menuArbo = new Menubase($this->db,'eldy');
+        $menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
         $this->tabMenu=$tabMenu;
     }
 
@@ -114,10 +123,17 @@ class MenuManager
         }
 
         $res='ErrorBadParameterForMode';
-        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu);
-        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
-        if ($mode == 'jmobile') $res=print_jmobile_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
+        
+        $this->menu=new Menu();
+        
+        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
+        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
+        if ($mode == 'jmobile') $res=print_jmobile_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
 
+        unset($this->menu);
+        
+        //print 'xx'.$mode;
+        //var_dump($this->menu);
         return $res;
     }
 
