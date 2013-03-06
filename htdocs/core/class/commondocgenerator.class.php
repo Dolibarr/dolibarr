@@ -189,6 +189,104 @@ abstract class CommonDocGenerator
         return $array_thirdparty;
     }
 
+    
+    /**
+     * Define array with couple substitution key => substitution value
+     *
+     * @param   Object			$object             Main object to use as data source
+     * @param   Translate		$outputlangs        Lang object to use for output
+     * @param   array_key		$array_key	        Name of the key for return array
+     * @return	array								Array of substitution
+     */
+    function get_substitutionarray_propal($object,$outputlangs,$array_key='object')
+    {
+    	global $conf;
+    
+    	$array_propal=array(
+	    	$array_key.'_id'=>$object->id,
+	    	$array_key.'_ref'=>$object->ref,
+	    	$array_key.'_ref_ext'=>$object->ref_ext,
+	    	$array_key.'_ref_customer'=>$object->ref_client,
+	    	$array_key.'_date'=>dol_print_date($object->date,'day'),
+	    	$array_key.'_date_end'=>dol_print_date($object->fin_validite,'day'),
+	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
+	    	$array_key.'_date_modification'=>dol_print_date($object->date_modification,'day'),
+	    	$array_key.'_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
+	    	$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
+	    	$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
+	    	$array_key.'_payment_term_code'=>$object->cond_reglement_code,
+	    	$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
+	    	$array_key.'_total_ht'=>price($object->total_ht,0,$outputlangs),
+	    	$array_key.'_total_vat'=>price($object->total_tva,0,$outputlangs),
+	    	$array_key.'_total_ttc'=>price($object->total_ttc,0,$outputlangs),
+	    	$array_key.'_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
+	    	$array_key.'_vatrate'=>vatrate($object->tva),
+	    	$array_key.'_note_private'=>$object->note,
+	    	$array_key.'_note'=>$object->note_public,
+    	);
+    
+    	// Add vat by rates
+    	foreach ($object->lines as $line)
+    	{
+    		if (empty($array_propal[$array_key.'_total_vat_'.$line->tva_tx])) $array_propal[$array_key.'_total_vat_'.$line->tva_tx]=0;
+    		$array_propal[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+    	}
+    	
+    	// Retrieve extrafields
+    	if(is_array($object->array_options) && count($object->array_options))
+    	{
+    		if(!class_exists('Extrafields'))
+    			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    		$extrafields = new ExtraFields($this->db);
+    		$extralabels = $extrafields->fetch_name_optionals_label('propal',true);
+    		$object->fetch_optionals($object->id,$extralabels);
+    	
+    		foreach($extrafields->attribute_label as $key=>$label)
+    		{
+    			if($extrafields->attribute_type[$key] == 'price')
+    			{
+    				$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
+    			}
+    			else if($extrafields->attribute_type[$key] == 'select')
+    			{
+    				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+    			}
+    			$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+    		}
+    	}
+    	return $array_propal;
+    }
+    
+
+    /**
+     *	Define array with couple substitution key => substitution value
+     *
+     *	@param  array			$line				Array of lines
+     *	@param  Translate		$outputlangs        Lang object to use for output
+     *	@return	array								Substitution array
+     */
+    function get_substitutionarray_propal_lines($line,$outputlangs)
+    {
+    	global $conf;
+    
+    	return array(
+    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
+    	'line_product_ref'=>$line->product_ref,
+    	'line_product_label'=>$line->product_label,
+    	'line_desc'=>$line->desc,
+    	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+    	'line_up'=>price($line->subprice, 0, $outputlangs),
+    	'line_qty'=>$line->qty,
+    	'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
+    	'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
+    	'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
+    	'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
+    	'line_date_start'=>$line->date_start,
+    	'line_date_end'=>$line->date_end
+    	);
+    }
+    
+    
 	/**
 	 * Rect pdf
 	 *
