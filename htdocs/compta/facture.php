@@ -7,6 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ require DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 if (! empty($conf->commande->enabled)) {
 	require DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
@@ -87,6 +89,7 @@ $NBLINES=4;
 $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 $object=new Facture($db);
+$extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -613,6 +616,15 @@ else if ($action == 'add' && $user->rights->facture->creer)
     $db->begin();
 
     $error=0;
+    
+    // Get extra fields
+    foreach($_POST as $key => $value)
+    {
+    	if (preg_match("/^options_/",$key))
+    	{
+    		$object->array_options[$key]=GETPOST($key);
+    	}
+    }
 
     // Replacement invoice
     if ($_POST['type'] == 1)
@@ -1743,6 +1755,7 @@ $now=dol_now();
 if ($action == 'create')
 {
     $facturestatic=new Facture($db);
+    $extralabels=$extrafields->fetch_name_optionals_label('facture');
 
     print_fiche_titre($langs->trans('NewBill'));
 
