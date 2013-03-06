@@ -140,6 +140,28 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
 		}
 		
+		// Retrieve extrafields
+		if(is_array($object->array_options) && count($object->array_options))
+		{
+			if(!class_exists('Extrafields'))
+				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
+			$object->fetch_optionals($object->id,$extralabels);
+		
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				if($extrafields->attribute_type[$key] == 'price')
+				{
+					$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
+				}
+				else if($extrafields->attribute_type[$key] == 'select')
+				{
+					$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+				}
+				$resarray=array_merge($resarray,array('object_options_'.$key => $object->array_options['options_'.$key]));
+			}
+		}
         return $resarray;
     }
 
