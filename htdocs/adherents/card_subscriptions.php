@@ -362,7 +362,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                 // Add line to draft invoice
                 $idprodsubscription=0;
-                $vattouse=get_default_tva($mysoc, $customer, $idprodsubscription);
+                $vattouse=0;
+                if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
+                {
+                	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
+                }
                 //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
                 $result=$invoice->addline($invoice->id,$label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
                 if ($result <= 0)
@@ -756,9 +760,9 @@ if ($rowid)
         }
         else
        {
-        	if (! empty($conf->global->ADHERENT_BANK_USE) && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
-       		else if (! empty($conf->global->ADHERENT_BANK_USE) && ! empty($conf->banque->enabled)) $bankdirect=1;
-        	else if (empty($conf->global->ADHERENT_BANK_USE) && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $invoiceonly=1;
+        	if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
+       		else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $bankdirect=1;
+        	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $invoiceonly=1;
        }
 
         print "\n\n<!-- Form add subscription -->\n";
