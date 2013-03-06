@@ -84,3 +84,16 @@ ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREM
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
 
 ALTER TABLE llx_facture ADD COLUMN revenuestamp double(24,8) DEFAULT 0 AFTER localtax2;
+
+CREATE TABLE llx_c_revenuestamp
+(
+  rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fk_pays           integer NOT NULL,
+  taux              double  NOT NULL,
+  note              varchar(128),
+  active            tinyint DEFAULT 1 NOT NULL,
+  accountancy_code_sell	varchar(15) DEFAULT NULL,
+  accountancy_code_buy	varchar(15) DEFAULT NULL
+) ENGINE=innodb;
+
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, '0.4', 'Timbre fiscal', 1);

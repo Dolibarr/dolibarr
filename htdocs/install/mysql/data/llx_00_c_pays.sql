@@ -37,14 +37,14 @@ insert into llx_c_pays (rowid,code,libelle) values (2,  'BE', 'Belgium'        )
 insert into llx_c_pays (rowid,code,libelle) values (3,  'IT', 'Italy'          );
 insert into llx_c_pays (rowid,code,libelle) values (4,  'ES', 'Spain'          );
 insert into llx_c_pays (rowid,code,libelle) values (5,  'DE', 'Germany'        );
-insert into llx_c_pays (rowid,code,libelle) values (6,  'CH', 'Suisse'         );
+insert into llx_c_pays (rowid,code,libelle) values (6,  'CH', 'Switzerland'    );
 insert into llx_c_pays (rowid,code,libelle) values (7,  'GB', 'United Kingdom' );
 insert into llx_c_pays (rowid,code,libelle) values (8,  'IE', 'Irland'         );
 insert into llx_c_pays (rowid,code,libelle) values (9,  'CN', 'China'          );
-insert into llx_c_pays (rowid,code,libelle) values (10, 'TN', 'Tunisie'        );
+insert into llx_c_pays (rowid,code,libelle) values (10, 'TN', 'Tunisia'        );
 insert into llx_c_pays (rowid,code,libelle) values (11, 'US', 'United States'  );
 insert into llx_c_pays (rowid,code,libelle) values (12, 'MA', 'Maroc'          );
-insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'Algérie'        );
+insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'Algeria'        );
 insert into llx_c_pays (rowid,code,libelle) values (14, 'CA', 'Canada'         );
 insert into llx_c_pays (rowid,code,libelle) values (15, 'TG', 'Togo'           );
 insert into llx_c_pays (rowid,code,libelle) values (16, 'GA', 'Gabon'          );
