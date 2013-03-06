@@ -331,7 +331,7 @@ if ($result)
 		$var=!$var;
 
 		print '<tr '.$bc[$var].'>';
-		print '<td width="100" nowrap="nowrap">';
+		print '<td width="110" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
 		print $staticcontrat->getNomUrl(1,16);
@@ -397,7 +397,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td width="100" nowrap="nowrap">';
+		print '<td width="110" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
@@ -478,7 +478,7 @@ if ($resql)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 
-		print '<td width="100" nowrap="nowrap">';
+		print '<td width="110" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
@@ -558,7 +558,7 @@ if ($resql)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 
-		print '<td width="100" nowrap="nowrap">';
+		print '<td width="110" nowrap="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
