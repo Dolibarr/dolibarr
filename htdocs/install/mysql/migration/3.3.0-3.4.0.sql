@@ -82,3 +82,12 @@ ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER 
 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
+
+create table llx_facture_extrafields
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_facture_extrafields ADD INDEX idx_facture_extrafields (fk_object);
