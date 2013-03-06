@@ -350,8 +350,8 @@ class ExportExcel2007 extends ExportExcel
     		    	//$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
     		    	if ($typefield == 'Text') 
     		    	{
-						var_dump($code.' '.$alias.' '.$newvalue.' '.$typefield);
-						$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
+						//var_dump($code.' '.$alias.' '.$newvalue.' '.$typefield);
+						//$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, (string) $newvalue);
     		    		$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
     		    	}
     		    	else

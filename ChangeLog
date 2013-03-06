@@ -35,6 +35,7 @@ For developers:
   into conf->liste_limit).
 - New: Add option dol_hide_topmenu and dol_hide_leftmenu onto login page.
 - New: dol_syslog method accept a suffix to use different log files for log. 
+- New: Type of fields are received by export format handlers
 
 For translators:
 - Update language files.

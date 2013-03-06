@@ -260,9 +260,10 @@ class ExportExcel extends ModeleExports
      *  @param      array		$array_selected_sorted      Array with list of field to export
      *  @param      resource	$objp                       A record from a fetch with all fields from select
      *  @param      Translate	$outputlangs                Object lang to translate values
+     *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-	function write_record($array_selected_sorted,$objp,$outputlangs)
+	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -281,7 +282,8 @@ class ExportExcel extends ModeleExports
             $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
-
+			$typefield=isset($array_types[$code])?$array_types[$code]:'';
+				
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
