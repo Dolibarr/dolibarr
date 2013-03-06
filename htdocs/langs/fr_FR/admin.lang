@@ -703,6 +703,7 @@ DictionnaryCivility= Titres de civilité
 DictionnaryActions= Liste des types d'événements de l'agenda
 DictionnarySocialContributions= Types de charges sociales
 DictionnaryVAT= Taux de TVA ou de Taxes de Ventes
+DictionnaryRevenueStamp=Montants des timbres fiscaux
 DictionnaryPaymentConditions= Conditions de règlement
 DictionnaryPaymentModes= Modes de paiements
 DictionnaryTypeContact= Types de contacts/adresses
