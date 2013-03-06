@@ -160,7 +160,6 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	@set_time_limit(120);
 	error_reporting($err);
 
-	//$dir = "/core/modules/expedition/";
 	$srctemplatepath='';
 
 	// Positionne le modele sur le nom du modele a utiliser
@@ -192,14 +191,14 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	{
 		foreach(array('doc','pdf') as $prefix)
 		{
-			$file = $prefix."_expedition_".$modele.".modules.php";
+    	    $file = $prefix."_expedition_".$modele.".modules.php";
 	
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/expedition/doc/".$file,0);
 			if (file_exists($file))
 			{
 				$filefound=1;
-				$classname=$prefix."_expedition_".$modele;
+				$classname=$prefix.'_expedition_'.$modele;
 				break;
 			}
 		}
