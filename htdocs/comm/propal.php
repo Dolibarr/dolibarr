@@ -1115,7 +1115,6 @@ else if ($action == 'update_extras')
 			$object->array_options[$key]=$_POST[$key];
 		}
 	}
-	
 	// Actions on extra fields (by external module or standard code)
 	// FIXME le hook fait double emploi avec le trigger !!
 	$hookmanager->initHooks(array('propaldao'));
@@ -1858,7 +1857,7 @@ else
 	   		print '<tr><td';
 	   		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	   		print '>'.$label.'</td><td colspan="3">';
-	   		if ($action == 'edit_extras')
+	   		if ($action == 'edit_extras' &&  $user->rights->propal->creer)
 	   		{
 	        	print $extrafields->showInputField($key,$value);
 	   		}
@@ -1872,7 +1871,7 @@ else
 	    
 	    if(count($extrafields->attribute_label) > 0) {
 	    	
-	    	if ($action == 'edit_extras')
+	    	if ($action == 'edit_extras' && $user->rights->propal->creer)
 	    	{
 	    		print '<tr><td></td><td>';
 	    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -1880,8 +1879,11 @@ else
 	    		print '</td></tr>';
 	    		
 	    	}
-	    	else {	    		
-	    		print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' Modifier les valeurs</a></td></tr>';
+	    	else {
+	    		if ($object->statut == 0 && $user->rights->propal->creer)	    		
+	    		{
+	    			print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
+	    		}
 	    	}
 	    }
 	}
