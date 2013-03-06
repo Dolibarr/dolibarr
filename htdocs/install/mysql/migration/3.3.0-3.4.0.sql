@@ -82,3 +82,5 @@ ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER 
 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
+
+ALTER TABLE llx_facture ADD COLUMN revenuestamp double(24,8) DEFAULT 0 AFTER localtax2;
