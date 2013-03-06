@@ -77,6 +77,7 @@ alter table llx_bank_account CHANGE COLUMN fk_departement state_id varchar(50);
 alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
+alter table llx_societe CHANGE COLUMN tel phone varchar(20);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL AFTER description;
 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN rowid INT(11) NOT NULL AUTO_INCREMENT;
