@@ -3538,7 +3538,7 @@ function make_substitutions($chaine,$substitutionarray)
  *  @param  array		&$substitutionarray		Array substitution old value => new value value
  *  @param  Translate	$outputlangs            If we want substitution from special constants, we provide a language
  *  @param  Object		$object                 If we want substitution from special constants, we provide data in a source object
- *  @param  Object/array  $parameters       Add more parameters (useful to pass product lines)
+ *  @param  Object/array  $parameters       Add more parameters (useful to pass product lines or odfHandler)
  *  @param  string              $callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
  *  @return	void
  *  @see 	make_substitutions
@@ -3567,7 +3567,9 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				$module=$reg[1];
 
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+                                // Include the user's functions file
 				require_once $dir.$substitfile['name'];
+                                // Call the user's function only if it is defined
 				$function_name=$module."_".$callfunc;
 				if (function_exists($function_name)) $function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}

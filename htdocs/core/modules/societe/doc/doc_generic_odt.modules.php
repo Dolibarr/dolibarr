@@ -275,7 +275,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
                 // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
-                complete_substitutions_array($tmparray, $outputlangs, $object);
+                                $parameters = array('odfHandler'=>$odfHandler);
+                                complete_substitutions_array($tmparray, $outputlangs, $object, $parameters);
                 //var_dump($object->id); exit;
 				foreach($tmparray as $key=>$value)
 				{
