@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,9 +220,10 @@ class ExportCsv extends ModeleExports
      *  @param     	array		$array_selected_sorted      Array with list of field to export
      *  @param     	resource	$objp                       A record from a fetch with all fields from select
      *  @param     	Translate	$outputlangs    			Object lang to translate values
+     *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-	function write_record($array_selected_sorted,$objp,$outputlangs)
+	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
 		global $conf;
 
@@ -241,8 +242,10 @@ class ExportCsv extends ModeleExports
 			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
 			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
+			
 			$newvalue=$outputlangs->convToOutputCharset($objp->$alias);
-
+			$typefield=isset($array_types[$code])?$array_types[$code]:'';
+				
 			// Translation newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{

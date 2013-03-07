@@ -50,6 +50,7 @@ function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 	top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
 
+	require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 	$menu = new Menu();
 
 	// Entry for each bank account

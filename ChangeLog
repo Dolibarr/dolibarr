@@ -20,6 +20,7 @@ For users:
 - New: Can define of we want to use VAT or not for subscriptions (foundation module).
 - New: Can define a default choice for choice "More action when recording
   a subscription" (foundation module).
+- New: Add link to check professional id for india.
 
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
@@ -35,6 +36,7 @@ For developers:
   into conf->liste_limit).
 - New: Add option dol_hide_topmenu and dol_hide_leftmenu onto login page.
 - New: dol_syslog method accept a suffix to use different log files for log. 
+- New: Type of fields are received by export format handlers
 
 For translators:
 - Update language files.
