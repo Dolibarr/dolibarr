@@ -124,6 +124,7 @@ class MenuManager
 
         $res='ErrorBadParameterForMode';
         
+		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
         
         if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
