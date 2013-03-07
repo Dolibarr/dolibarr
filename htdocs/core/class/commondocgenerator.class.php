@@ -245,13 +245,20 @@ abstract class CommonDocGenerator
     		{
     			if($extrafields->attribute_type[$key] == 'price')
     			{
-    				$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
+    				$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]);
+    				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
+	    			// Add value to store price without currency
+    				$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
     			}
     			else if($extrafields->attribute_type[$key] == 'select')
     			{
     				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
     			}
-    			$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+    			else if($extrafields->attribute_type[$key] == 'date')
+    			{
+    				
+    			}
+    			$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));    			
     		}
     	}
     	return $array_propal;
