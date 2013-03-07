@@ -246,8 +246,8 @@ abstract class CommonDocGenerator
     			if($extrafields->attribute_type[$key] == 'price')
     			{
     				$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]);
-    				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
-	    			// Add value to store price without currency
+    				$object->array_options['options_'.$key.'_currency'] = $object->array_options['options_'.$key].' '.$outputlangs->getCurrencySymbol($conf->currency);
+	    			// Add value to store price with currency
     				$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
     			}
     			else if($extrafields->attribute_type[$key] == 'select')
@@ -256,7 +256,11 @@ abstract class CommonDocGenerator
     			}
     			else if($extrafields->attribute_type[$key] == 'date')
     			{
-    				
+    				$object->array_options['options_'.$key] = (strlen($object->array_options['options_'.$key])>0?dol_print_date($object->array_options['options_'.$key],'day'):'');
+    			}
+    			else if($extrafields->attribute_type[$key] == 'datetime')
+    			{
+    				$object->array_options['options_'.$key] = ($object->array_options['options_'.$key]!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhour'):'');
     			}
     			$array_propal=array_merge($array_propal,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));    			
     		}
