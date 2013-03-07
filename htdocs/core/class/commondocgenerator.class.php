@@ -216,10 +216,10 @@ abstract class CommonDocGenerator
 	    	$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
 	    	$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 	    	$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-	    	$array_key.'_total_ht'=>price($object->total_ht,0,$outputlangs),
-	    	$array_key.'_total_vat'=>price($object->total_tva,0,$outputlangs),
-	    	$array_key.'_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-	    	$array_key.'_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
+	    	$array_key.'_total_ht'=>price2num($object->total_ht2,2),
+	    	$array_key.'_total_vat'=>price2num($object->total_tva,2),
+	    	$array_key.'_total_ttc'=>price2num($object->total_ttc,2),
+	    	$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount(),2),
 	    	$array_key.'_vatrate'=>vatrate($object->tva),
 	    	$array_key.'_note_private'=>$object->note,
 	    	$array_key.'_note'=>$object->note_public,
@@ -264,12 +264,12 @@ abstract class CommonDocGenerator
     	'line_product_label'=>$line->product_label,
     	'line_desc'=>$line->desc,
     	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-    	'line_up'=>price($line->subprice, 0, $outputlangs),
+    	'line_up'=>price2num($line->subprice, 2),
     	'line_qty'=>$line->qty,
     	'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-    	'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
-    	'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
-    	'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
+    	'line_price_ht'=>price2num($line->total_ht,2),
+    	'line_price_ttc'=>price2num($line->total_ttc,2),
+    	'line_price_vat'=>price2num($line->total_tva,2),
     	'line_date_start'=>$line->date_start,
     	'line_date_end'=>$line->date_end
     	);
@@ -292,7 +292,7 @@ abstract class CommonDocGenerator
 		{
 			if($extrafields->attribute_type[$key] == 'price')
 			{
-				$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]);
+				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key],2);
 				$object->array_options['options_'.$key.'_currency'] = $object->array_options['options_'.$key].' '.$outputlangs->getCurrencySymbol($conf->currency);
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
