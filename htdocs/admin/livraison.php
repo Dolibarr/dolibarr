@@ -69,25 +69,35 @@ if ($action == 'specimen')
 	$sending->initAsSpecimen();
 	//$sending->fetch_commande();
 
-	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/livraison/pdf/";
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
+	    $file=dol_buildpath($reldir."core/modules/livraison/pdf/pdf_".$modele.".modules.php",0);
+		if (file_exists($file))
+	{
+			$filefound=1;
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+			break;
+		}
+	}
 
-		$obj = new $classname($db);
+	if ($filefound)
+	{
+		require_once $file;
 
-		if ($obj->write_file($sending,$langs) > 0)
+		$module = new $classname($db);
+
+		if ($module->write_file($sending,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=livraison&file=SPECIMEN.pdf");
 			return;
 		}
 		else
 		{
-			$mesg='<font class="error">'.$obj->error.'</font>';
-			dol_syslog($obj->error, LOG_ERR);
+			$mesg='<font class="error">'.$module->error.'</font>';
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
@@ -190,9 +200,11 @@ if ($action == 'setmod')
  * View
  */
 
-$form=new Form($db);
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader("","");
+
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SendingsSetup"),$linkback,'setup');
@@ -205,7 +217,7 @@ $head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 $head[$h][1] = $langs->trans("Setup");
 $h++;
 
-if ($conf->global->MAIN_SUBMODULE_EXPEDITION)
+if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 	$head[$h][1] = $langs->trans("Sending");
@@ -236,9 +248,9 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-	$dir = $dirroot . "/core/modules/livraison/";
+	$dir = dol_buildpath($reldir."core/modules/livraison/");
 
 	if (is_dir($dir))
 	{
@@ -366,9 +378,10 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+$var=true;
+foreach ($dirmodels as $reldir)
 {
-	$dir = $dirroot . "/core/modules/livraison/pdf/";
+	$dir = dol_buildpath($reldir."core/modules/livraison/pdf/");
 
 	if (is_dir($dir))
 	{
@@ -383,10 +396,11 @@ foreach ($conf->file->dol_document_root as $dirroot)
 	    			$classname = substr($file, 0, dol_strlen($file) - 12);
 
 	    			$var=!$var;
-	    			print "<tr $bc[$var]><td>";
+
+	    			print '<tr '.$bc[$var].'><td>';
 	    			print $name;
 	    			print "</td><td>\n";
-	    			require_once($dir.$file);
+	    			require_once $dir.$file;
 	    			$module = new $classname($db);
 
 	    			print $module->description;
