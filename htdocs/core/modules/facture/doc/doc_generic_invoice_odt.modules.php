@@ -149,18 +149,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
 			$object->fetch_optionals($object->id,$extralabels);
 		
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				if($extrafields->attribute_type[$key] == 'price')
-				{
-					$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
-				}
-				else if($extrafields->attribute_type[$key] == 'select')
-				{
-					$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
-				}
-				$resarray=array_merge($resarray,array('object_options_'.$key => $object->array_options['options_'.$key]));
-			}
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key='object',$outputlangs);
 		}
         return $resarray;
     }
