@@ -135,7 +135,7 @@ class Facture extends CommonInvoice
      */
     function create($user,$notrigger=0,$forceduedate=0)
     {
-        global $langs,$conf,$mysoc;
+        global $langs,$conf,$mysoc,$hookmanager;
         $error=0;
 
         // Clean parameters
@@ -437,6 +437,24 @@ class Facture extends CommonInvoice
                 $result=$this->update_price(1);
                 if ($result > 0)
                 {
+                	// Actions on extra fields (by external module or standard code)
+                	// FIXME le hook fait double emploi avec le trigger !!
+                	$hookmanager->initHooks(array('invoicedao'));
+                	$parameters=array('invoiceid'=>$this->id);
+                	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action); // Note that $action and $object may have been modified by some hooks
+                	if (empty($reshook))
+                	{
+                		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                		{
+                			$result=$this->insertExtraFields();
+                			if ($result < 0)
+                			{
+                				$error++;
+                			}
+                		}
+                	}
+                	else if ($reshook < 0) $error++;
+                	
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
@@ -847,6 +865,20 @@ class Facture extends CommonInvoice
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 if ($this->statut == 0)	$this->brouillon = 1;
+                
+                // Retreive all extrafield for invoice
+                // fetch optionals attributes and labels
+                if(!class_exists('Extrafields'))
+                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label('facture',true);
+                if (count($extralabels)>0) {
+                	$this->array_options = array();
+                }
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                	$this->array_options['options_'.$key]=$label;
+                }
 
                 /*
                  * Lines

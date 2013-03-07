@@ -92,3 +92,11 @@ create table llx_propal_extrafields
 ) ENGINE=innodb;
 ALTER TABLE llx_propal_extrafields ADD INDEX idx_propal_extrafields (fk_object);
 
+create table llx_facture_extrafields
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_facture_extrafields ADD INDEX idx_facture_extrafields (fk_object);
