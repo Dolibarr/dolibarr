@@ -152,35 +152,63 @@ abstract class ModeleNumRefDeliveryOrder
  *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @return int         				0 if KO, 1 if OK
  */
-function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
+function delivery_order_pdf_create($db, $object, $modele='', $outputlangs='')
 {
 	global $conf,$user,$langs;
 
 	$langs->load("deliveries");
 
-	$dir = "/core/modules/livraison/pdf/";
+	$error=0;
+
+	$srctemplatepath='';
 
 	// Positionne modele sur le nom du modele de bon de livraison a utiliser
-	if (! dol_strlen($model))
+	if (! dol_strlen($modele))
 	{
-		if ($conf->global->LIVRAISON_ADDON_PDF)
+		if (! empty($conf->global->LIVRAISON_ADDON_PDF))
 		{
-			$model = $conf->global->LIVRAISON_ADDON_PDF;
+			$modele = $conf->global->LIVRAISON_ADDON_PDF;
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_LIVRAISON_ADDON_PDF_NotDefined");
-			return 0;
+			$modele = 'typhon';
 		}
 	}
-	// Charge le modele
-	$file = "pdf_".$model.".modules.php";
+
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+    if (! empty($tmp[1]))
+    {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    }
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+    	foreach(array('doc','pdf') as $prefix)
+    	{
+    	    $file = $prefix."_".$modele.".modules.php";
+
 	// On verifie l'emplacement du modele
-	$file = dol_buildpath($dir.$file);
+	        $file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
 	if (file_exists($file))
 	{
-		$classname = "pdf_".$model;
-		require_once($file);
+    			$filefound=1;
+    			$classname=$prefix.'_'.$modele;
+    			break;
+    		}
+    	}
+    	if ($filefound) break;
+    }
+
+	// Charge le modele
+	if ($filefound)
+	{
+		require_once $file;
 
 		$obj = new $classname($db);
 
@@ -192,11 +220,11 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('DELIVERY_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) {
