@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010	   Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,8 @@ $id=GETPOST('account', 'int');
 // Conciliation
 if ($action == 'rappro' && $user->rights->banque->consolidate)
 {
+	$error=0;
+
 	// Definition, nettoyage parametres
     $num_releve=trim($_POST["num_releve"]);
 
@@ -54,24 +56,36 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
         $bankline=new AccountLine($db);
 
-		if (isset($_POST["rowid"]) && is_array($_POST["rowid"]))
+		if (isset($_POST['rowid']) && is_array($_POST['rowid']))
 		{
-			foreach($_POST["rowid"] as $row)
+			foreach($_POST['rowid'] as $row)
 			{
 				if($row > 0)
 				{
 					$result=$bankline->fetch($row);
 					$bankline->num_releve=$num_releve; //$_POST["num_releve"];
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
-					if ($result < 0) $mesg.=$bankline->error;
+					if ($result < 0)
+					{
+						$mesg.=$bankline->error;
+						$error++;
+						break;
+					}
 				}
 			}
         }
     }
     else
     {
+    	$error++;
     	$langs->load("errors");
         $mesg='<div class="error">'.$langs->trans("ErrorPleaseTypeBankTransactionReportName").'</div>';
+    }
+
+    if (! $error)
+    {
+		header('Location: '.DOL_URL_ROOT.'/compta/bank/rappro?account='.$id);	// To avoid to submit twice and allow back
+    	exit;
     }
 }
 
@@ -80,12 +94,12 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
  */
 if ($action == 'del')
 {
-	$accline=new AccountLine($db);
-	$accline->fetch($_GET["rowid"]);
-	$result=$accline->delete();
+	$bankline=new AccountLine($db);
+	$bankline->fetch($_GET["rowid"]);
+	$result=$bankline->delete($user);
     if ($result < 0)
 	{
-        dol_print_error($db,$accline->error);
+        dol_print_error($db,$bankline->error);
     }
 }
 
@@ -200,7 +214,7 @@ if ($resql)
     }
 
 
-	print '<form method="post" action="rappro.php?account='.$acct->id.'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?account='.$acct->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
 	print "<input type=\"hidden\" name=\"account\" value=\"".$acct->id."\">";
@@ -212,8 +226,7 @@ if ($resql)
     {
         print $langs->trans("EventualyAddCategory").': <select class="flat" name="cat">'.$options.'</select><br>';
     }
-    print $langs->trans("ThenCheckLinesAndConciliate").' ';
-    print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\"><br>";
+    print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' "'.$langs->trans("Conciliate").'"<br>';
 
     print '<br>';
 
@@ -228,7 +241,6 @@ if ($resql)
     print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print '<td align="center" width="60" nowrap="nowrap">'.$langs->trans("ToConciliate").'</td>';
     print "</tr>\n";
-
 
 
     $i = 0;
@@ -265,7 +277,7 @@ if ($resql)
 			print '</td>';
 		}
 
-		// Number
+		// Type + Number
 		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
 		if ($label=='SOLD') $label='';
 		print '<td nowrap="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
@@ -400,12 +412,12 @@ if ($resql)
         }
 
 
-        // Affiche zone saisie releve + bouton "Rapprocher"
+        // Show checkbox for conciliation
         if ($db->jdate($objp->do) <= $now)
         {
 
             print '<td align="center" nowrap="nowrap">';
-            print '<input class="flat" name="rowid[]" type="checkbox" value="'.$objp->rowid.'" size="1">';
+            print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked="checked"':'').'>';
 //             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
 //             print ' &nbsp; ';
 //             print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";
@@ -429,13 +441,12 @@ if ($resql)
     }
     $db->free($resql);
 
+    print "</table><br>\n";
 
-	print "</form>\n";
+    print '<div align="right"><input class="button" type="submit" value="'.$langs->trans("Conciliate").'"></div><br>';
 
-	if ($num != 0)
-	{
-        print "</table><br>\n";
-	}
+    print "</form>\n";
+
 }
 else
 {
