@@ -949,6 +949,8 @@ class pdf_crabe extends ModelePDFFactures
 					foreach( $this->localtax1 as $localtax_type => $localtax_rate )
 					{
 						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+						
+						if (in_array((string) $localtax_type, array('3')) && $mysoc->country_code == 'ES') continue;
 
 						foreach( $localtax_rate as $tvakey => $tvaval )
 						{
