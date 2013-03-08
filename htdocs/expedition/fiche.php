@@ -303,7 +303,7 @@ else if ($action == 'builddoc')	// En get ou en post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=expedition_pdf_create($db,$shipment,GETPOST('model','alpha'),$outputlangs);
+    $result=expedition_pdf_create($db,$shipment,$shipment->modelpdf,$outputlangs);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
