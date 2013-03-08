@@ -1848,6 +1848,20 @@ function img_delete($alt = 'default', $other = '')
 }
 
 /**
+ *  Show printer logo
+ *
+ *  @param  string  $alt        Text on alt image
+ *  @param  string  $other      Add more attributes on img
+ *  @return string              Retourne tag img
+ */
+function img_printer($alt = "default", $other='')
+{
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Print");
+    return img_picto($alt,'printer.png',$other);
+}
+
+/**
  *	Show help logo with cursor "?"
  *
  * 	@param	string	$usehelpcursor		Use help cursor
