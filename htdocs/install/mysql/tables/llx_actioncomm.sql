@@ -24,15 +24,16 @@ create table llx_actioncomm
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
   ref_ext			varchar(128),
-  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   datep				datetime,						-- date debut planifiee
   datep2			datetime,						-- deprecated
   datea				datetime,						-- date debut realisation
   datea2			datetime,						-- deprecated
 
-  fk_action			integer,						-- type de l'action
+  fk_action			integer,						-- type of action (optionnal link with llx_c_actioncomm or null)
+  code				varchar(32) NULL,				-- code of action for automatic action
   label				varchar(128) NOT NULL,			-- libelle de l'action
-
+  
   datec				datetime,						-- date creation
   tms				timestamp,						-- date modif
   fk_user_author	integer,						-- id user qui a cree l'action

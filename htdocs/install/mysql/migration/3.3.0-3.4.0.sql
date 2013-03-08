@@ -11,8 +11,8 @@
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
--- To make a primary key (mysql):   VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid INTEGER AUTO_INCREMENT PRIMARY_KEY;
--- To make a primary key (postgres) VPGSQL8.2 ALTER TABLE llx_table CHANGE COLUMN rowid INTEGER SERIAL PRIMARY KEY;
+-- To make pk to be auto increment (mysql):   VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres) VPGSQL8.2 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid INTEGER SERIAL PRIMARY KEY;
 
 
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
@@ -82,8 +82,9 @@ alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
 alter table llx_societe CHANGE COLUMN tel phone varchar(20);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
-ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid INTEGER NOT NULL;
--- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid INTEGER AUTO_INCREMENT PRIMARY_KEY;
+
+ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid INTEGER SERIAL PRIMARY KEY;
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
@@ -102,3 +103,5 @@ CREATE TABLE llx_c_revenuestamp
 ) ENGINE=innodb;
 
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, '0.4', 'Timbre fiscal', 1);
+
+ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
