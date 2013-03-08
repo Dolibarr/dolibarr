@@ -646,7 +646,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		$error++;
 	}
 
-	if (! $error && (GETPOST('qty') != 0) && (! empty($product_desc) || ! empty($idprod)))	 // Price can be negative for proposal.
+	if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
 	{
 		$pu_ht=0;
 		$pu_ttc=0;
