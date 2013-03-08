@@ -140,7 +140,7 @@ if (empty($reshook))
         $object->zip			= $_POST["zipcode"];
         $object->town			= $_POST["town"];
         $object->country_id		= $_POST["country_id"];
-        $object->state_id       = $_POST["departement_id"];
+        $object->state_id       = $_POST["state_id"];
         $object->email			= $_POST["email"];
         $object->phone_pro		= $_POST["phone_pro"];
         $object->phone_perso	= $_POST["phone_perso"];
@@ -239,7 +239,7 @@ if (empty($reshook))
             $object->address		= $_POST["address"];
             $object->zip			= $_POST["zipcode"];
             $object->town			= $_POST["town"];
-            $object->state_id   	= $_POST["departement_id"];
+            $object->state_id   	= $_POST["state_id"];
             $object->country_id		= $_POST["country_id"];
 
             $object->email			= $_POST["email"];
@@ -889,7 +889,7 @@ else
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
         $img=picto_from_langcode($object->country_code);
         if ($img) print $img.' ';
-        print $object->country_id;
+        print $object->country;
         print '</td></tr>';
 
         // State
