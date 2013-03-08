@@ -621,7 +621,7 @@ class Translate
 		    $newdir=dol_osencode($dir);
 
 		    // Check if directory exists
-		    if (! dol_is_dir($dir)) continue;
+		    if (! is_dir($newdir)) continue;	// We must not use dol_is_dir here, function may not be loaded
 
 			$fonc='numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php'))
