@@ -210,7 +210,7 @@ $h++;
 if ($mode == 'customer') $type='invoice_stats';
 if ($mode == 'supplier') $type='supplier_invoice_stats';
 
-complete_head_from_modules($conf,$langs,$object,$head,$h,$type);
+complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 

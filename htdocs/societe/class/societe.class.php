@@ -691,7 +691,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.tel as phone, s.fax, s.email, s.url, s.zip, s.town, s.note, s.client, s.fournisseur';
+        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -730,7 +730,7 @@ class Societe extends CommonObject
             $num=$this->db->num_rows($resql);
             if ($num > 1)
             {
-                $this->error='Societe::Fetch several records found for ref='.$ref;
+                $this->error='Fetch several records found for ref='.$ref;
                 dol_syslog($this->error, LOG_ERR);
                 $result = -1;
             }
@@ -852,7 +852,7 @@ class Societe extends CommonObject
             }
             else
             {
-                $this->error='Societe::Fetch no third party found for id='.$rowid;
+                $this->error='Fetch no third party found for id='.$rowid;
                 dol_syslog($this->error, LOG_ERR);
                 $result = -2;
             }
@@ -861,7 +861,7 @@ class Societe extends CommonObject
         }
         else
         {
-            dol_syslog('Erreur Societe::Fetch '.$this->db->error(), LOG_ERR);
+            dol_syslog($this->db->error(), LOG_ERR);
             $this->error=$this->db->error();
             $result = -3;
         }
