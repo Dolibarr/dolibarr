@@ -399,7 +399,7 @@ class Translate
                 	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
                 }
             }
-            
+
             if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 
 			if ($maxsize) $str=dol_trunc($str,$maxsize);
@@ -460,7 +460,7 @@ class Translate
 	function transnoentitiesnoconv($key, $param1='', $param2='', $param3='', $param4='')
 	{
 		global $conf;
-		
+
 		if (! empty($this->tab_translate[$key]))	// Translation is available
 		{
 		    $str=$this->tab_translate[$key];
@@ -476,7 +476,7 @@ class Translate
                 	if ($tmparray2[0]==$key) { $str=$tmparray2[1]; break; }
                 }
             }
-            
+
             if (! preg_match('/^Format/',$key)) $str=sprintf($str,$param1,$param2,$param3,$param4);	// Replace %s and %d except for FormatXXX strings.
 		}
 		else
@@ -616,7 +616,7 @@ class Translate
 		    $newdir=dol_osencode($dir);
 
 		    // Check if directory exists
-		    if (! dol_is_dir($dir)) continue;
+		    if (! is_dir($newdir)) continue;	// We must not use dol_is_dir here, function may not be loaded
 
 			$fonc='numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php'))
