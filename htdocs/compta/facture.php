@@ -372,7 +372,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
     {
     	 
     	$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_INVOICE_MANDATORY';
-    	if (! $object->thirdparty->idprof.$i && ! empty($conf->global->$idprof_mandatory))
+    	$idprof='idprof'.$i;
+    	if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
         {
         	if (! $error) $langs->load("errors");
     		$error++;

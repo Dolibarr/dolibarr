@@ -871,7 +871,7 @@ class pdf_crabe extends ModelePDFFactures
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								
+
 								$totalvat = $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code).' ';
 								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);

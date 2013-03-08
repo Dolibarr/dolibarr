@@ -87,7 +87,7 @@ class box_contacts extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$contactstatic->name=$objp->name;
+					$contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civilite_id=$objp->civilite;
 
