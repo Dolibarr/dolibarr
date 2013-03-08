@@ -327,7 +327,7 @@ div.tmenu {
 	right:0;
     white-space:nowrap;
 	height:36px;
-	line-height:36px;
+	<?php if ($conf->browser->name != 'ie') echo "line-height:36px; /* disabled for ie9 */ \n"; ?>
 	background:#333333;
     background-image:linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image:-o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);

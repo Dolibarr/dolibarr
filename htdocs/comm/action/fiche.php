@@ -311,6 +311,7 @@ if ($action == 'update')
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
+		$actioncomm->fk_action   = dol_getIdFromCode($db, $_POST["actioncode"], 'c_actioncomm');
 		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
 		$actioncomm->datef       = $datef;
@@ -467,16 +468,7 @@ if ($action == 'create')
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		if (GETPOST("actioncode"))
-		{
-			print '<input type="hidden" name="actioncode" value="'.GETPOST("actioncode").'">'."\n";
-			$cactioncomm->fetch(GETPOST("actioncode"));
-			print $cactioncomm->getNomUrl();
-		}
-		else
-		{
-			$htmlactions->select_type_actions($actioncomm->type_code, "actioncode","systemauto");
-		}
+		$htmlactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$actioncomm->type_code, "actioncode","systemauto");
 		print '</td></tr>';
 	}
 	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
@@ -739,7 +731,9 @@ if ($id > 0)
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
+			$htmlactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$act->type_code, "actioncode","systemauto");
+			print '</td></tr>';
 		}
 
 		// Title

@@ -660,7 +660,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
             		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
             		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
             		$tmptxt.=')';
-            		$desc.= dol_concatdesc($desc, $tmptxt);
+            		$desc= dol_concatdesc($desc, $tmptxt);
             	}
 			}
 
@@ -725,6 +725,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 			if ($result > 0)
 			{
+				$ret=$object->fetch($object->id);    // Reload to get new records
+
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -737,7 +739,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$ret=$object->fetch($object->id);    // Reload to get new records
 					commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 				}
 

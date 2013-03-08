@@ -2687,10 +2687,10 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller id=".$thirdparty_seller->id);
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain and localtaxes 1, tax is qualified if buyer use local taxe
+	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
 		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
-		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
 	{
@@ -4147,7 +4147,7 @@ function printCommonFooter($zone='private')
 	{
 		$micro_end_time=dol_microtime_float(true);
 		print "\n".'<script type="text/javascript">'."\n";
-		print 'console.log("';
+		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';

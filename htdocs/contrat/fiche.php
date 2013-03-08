@@ -299,7 +299,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         {
             $pu_ht=GETPOST('price_ht');
             $price_base_type = 'HT';
-            $tva_tx=str_replace('*','',GETPOST('tva_tx'));
+            $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0 
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
             $desc=GETPOST('dp_desc');
         }
@@ -396,7 +396,7 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         $objectline->subprice=GETPOST('elprice');
         $objectline->qty=GETPOST('elqty');
         $objectline->remise_percent=GETPOST('elremise_percent');
-        $objectline->tva_tx=GETPOST('eltva_tx');
+        $objectline->tva_tx=GETPOST('eltva_tx')?GETPOST('eltva_tx'):0;	// Field may be disabled, so we use vat rate 0
         $objectline->localtax1_tx=$localtax1_tx;
         $objectline->localtax2_tx=$localtax2_tx;
         $objectline->date_ouverture_prevue=$date_start_update;
