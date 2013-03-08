@@ -38,9 +38,11 @@ class ActionComm extends CommonObject
     protected $ismultientitymanaged = 2;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
-    var $type_id;
-    var $type_code;
-    var $type;
+    
+    var $type_id;		// id into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
+    var $type_code;		// code into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
+    var $type;			// label into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
+    var $code;
     var $label;
 
     var $date;
@@ -165,11 +167,9 @@ class ActionComm extends CommonObject
         $sql.= "(datec,";
         $sql.= "datep,";
         $sql.= "datep2,";
-        //$sql.= "datea,";
-        //$sql.= "datea2,";
         $sql.= "durationp,";
-        //$sql.= "durationa,";
         $sql.= "fk_action,";
+        $sql.= "code,";
         $sql.= "fk_soc,";
         $sql.= "fk_project,";
         $sql.= "note,";
@@ -185,11 +185,9 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->idate($now)."',";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
-        //$sql.= (strval($this->date)!=''?"'".$this->db->idate($this->date)."'":"null").",";
-        //$sql.= (strval($this->dateend)!=''?"'".$this->db->idate($this->dateend)."'":"null").",";
         $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";
-        //$sql.= ($this->durationa >= 0 && $this->durationa != ''?"'".$this->durationa."'":"null").",";
         $sql.= " '".$this->type_id."',";
+        $sql.= " '".$this->code."',";
         $sql.= (isset($this->societe->id) && $this->societe->id > 0?" '".$this->societe->id."'":"null").",";
         $sql.= (isset($this->fk_project) && $this->fk_project > 0?" '".$this->fk_project."'":"null").",";
         $sql.= " '".$this->db->escape($this->note)."',";
@@ -277,7 +275,7 @@ class ActionComm extends CommonObject
         $sql.= " a.datec,";
         $sql.= " a.durationp,";
         $sql.= " a.tms as datem,";
-        $sql.= " a.note, a.label,";
+        $sql.= " a.code, a.label, a.note,";
         $sql.= " a.fk_soc,";
         $sql.= " a.fk_project,";
         $sql.= " a.fk_user_author, a.fk_user_mod,";
@@ -305,12 +303,14 @@ class ActionComm extends CommonObject
                 $this->ref       = $obj->ref;
                 $this->ref_ext   = $obj->ref_ext;
 
+                // Properties of parent table llx_c_actioncomm (will be deprecated in future)
                 $this->type_id   = $obj->type_id;
                 $this->type_code = $obj->type_code;
                 $transcode=$langs->trans("Action".$obj->type_code);
                 $type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
                 $this->type      = $type_libelle;
-
+                
+				$this->code					= $obj->code;
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
@@ -868,7 +868,7 @@ class ActionComm extends CommonObject
             $sql.= " a.datep2,";	// End
             $sql.= " a.durationp,";
             $sql.= " a.datec, a.tms as datem,";
-            $sql.= " a.note, a.label, a.fk_action as type_id,";
+            $sql.= " a.label, a.code, a.note, a.fk_action as type_id,";
             $sql.= " a.fk_soc,";
             $sql.= " a.fk_user_author, a.fk_user_mod,";
             $sql.= " a.fk_user_action, a.fk_user_done,";
@@ -940,11 +940,7 @@ class ActionComm extends CommonObject
                     $event=array();
                     $event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
                     $event['type']=$type;
-                    //$datestart=$obj->datea?$obj->datea:$obj->datep;
-                    //$dateend=$obj->datea2?$obj->datea2:$obj->datep2;
-                    //$duration=$obj->durationa?$obj->durationa:$obj->durationp;
                     $datestart=$this->db->jdate($obj->datep);
-                    //print $datestart.'x'; exit;
                     $dateend=$this->db->jdate($obj->datep2);
                     $duration=$obj->durationp;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
@@ -1050,6 +1046,7 @@ class ActionComm extends CommonObject
         $this->specimen=1;
 
         $this->type_code='AC_OTH';
+        $this->code='AC_SPECIMEN_CODE';
         $this->label='Label of event Specimen';
         $this->datec=$now;
         $this->datem=$now;

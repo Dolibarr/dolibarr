@@ -563,7 +563,8 @@ class InterfaceActionsAuto
 			// Insertion action
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 			$actioncomm = new ActionComm($this->db);
-			$actioncomm->type_code   = $object->actiontypecode;
+			$actioncomm->type_code   = $object->actiontypecode;		// code of parent table llx_c_actioncomm (will be deprecated)
+			$actioncomm->code='AC_'.$action;
 			$actioncomm->label       = $object->actionmsg2;
 			$actioncomm->note        = $object->actionmsg;
 			$actioncomm->datep       = $now;

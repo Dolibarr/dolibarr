@@ -31,15 +31,18 @@
 --
 
 delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,10,30,31,40,50);
+-- Code used from 3.3+ when type of event is used
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 1,'AC_TEL','system','Phone call',NULL, 1, 2);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 2,'AC_FAX','system','Send Fax',NULL, 1, 3);
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 3,'AC_PROP','systemauto', 'Send commercial proposal by email','propal',0,10);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 4,'AC_EMAIL','system','Send Email',NULL, 1, 4);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 5,'AC_RDV','system','Rendez-vous',NULL, 1, 1);
+-- Code kept for backward compatibility < 3.3 
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 3,'AC_PROP','systemauto', 'Send commercial proposal by email','propal',0,10);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 8,'AC_COM','systemauto','Send customer order by email','order', 0,8);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 9,'AC_FAC','systemauto', 'Send customer invoice by email','invoice',0,6);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 10,'AC_SHIP','systemauto', 'Send shipping by email','shipping',0,11);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 30,'AC_SUP_ORD','systemauto','Send supplier order by email','order_supplier',0,9);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 31,'AC_SUP_INV','systemauto','Send supplier invoice by email','invoice_supplier',0,7);
+-- Code used from 3.3+ when type of event is not used
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 40,'AC_OTH_AUTO','systemauto','Other (automatically inserted events)',NULL, 1, 20);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 50,'AC_OTH','system','Other (manually inserted events)',NULL, 1, 5);
