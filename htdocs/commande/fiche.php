@@ -730,6 +730,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 			if ($result > 0)
 			{
+				$ret=$object->fetch($object->id);    // Reload to get new records
+
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -742,7 +744,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$ret=$object->fetch($object->id);    // Reload to get new records
 					commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
