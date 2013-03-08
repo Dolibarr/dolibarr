@@ -2991,19 +2991,19 @@ class Form
         //print "name=$name, selectedrate=$selectedrate, seller=".$societe_vendeuse->country_code." buyer=".$societe_acheteuse->country_code." buyer is company=".$societe_acheteuse->isACompany()." idprod=$idprod, info_bits=$info_bits type=$type";
         //exit;
 
-        // Get list of all VAT rates to show
+        // Define list of countries to use to search VAT rates to show
         // First we defined code_pays to use to find list
         if (is_object($societe_vendeuse))
         {
             $code_pays="'".$societe_vendeuse->country_code."'";
         }
         else
-        {
+       {
             $code_pays="'".$mysoc->country_code."'";   // Pour compatibilite ascendente
         }
         if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
         {
-            if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
+            if (! $societe_vendeuse->isInEEC() && (! is_object($societe_acheteuse) || ($societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())))
             {
                 // We also add the buyer
                 if (is_numeric($type))

@@ -2108,9 +2108,10 @@ class Commande extends CommonObject
      * 	@param		int				$type				Type of line (0=product, 1=service)
      *  @param		int				$fk_parent_line		Parent line id
      *  @param		int				$skip_update_total	Skip update of total
+     *  @param		int				$special_code		Special code
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $special_code=0)
     {
         global $conf;
 
@@ -2129,6 +2130,7 @@ class Commande extends CommonObject
             if (empty($txlocaltax2)) $txlocaltax2=0;
             if (empty($remise)) $remise=0;
             if (empty($remise_percent)) $remise_percent=0;
+            if (empty($special_code) || $special_code == 3) $special_code=0;
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
             $pu = price2num($pu);
@@ -2181,7 +2183,7 @@ class Commande extends CommonObject
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$subprice;
             $this->line->info_bits=$info_bits;
-            $this->line->special_code=0;	// To remove special_code=3 coming from proposals copy
+            $this->line->special_code=$special_code;
             $this->line->total_ht=$total_ht;
             $this->line->total_tva=$total_tva;
             $this->line->total_localtax1=$total_localtax1;

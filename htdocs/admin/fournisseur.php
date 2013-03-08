@@ -355,7 +355,6 @@ foreach ($dirmodels as $reldir)
                         // Info
                         $htmltooltip='';
                         $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-                        $facture->type=0;
                         $nextval=$module->getNextValue($mysoc,$commande);
                         if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
                         {
