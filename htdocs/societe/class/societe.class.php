@@ -2479,12 +2479,12 @@ class Societe extends CommonObject
     }
 
     /**
-     * 	Build and get $mysoc object
+     * 	Set properties with value into $conf
      *
      * 	@param	Conf	$conf		Conf object (possibility to use another entity)
      * 	@return	void
      */
-    function getMysoc($conf)
+    function setMysoc($conf)
     {
     	global $langs;
 

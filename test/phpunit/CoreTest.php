@@ -123,7 +123,19 @@ class CoreTest extends PHPUnit_Framework_TestCase
      */
     public function testDetectURLROOT()
     {
-    	// Test for subdir dolibarr (that point to htdocs) in root directory /var/www
+    	global $dolibarr_main_prod;
+
+		global $dolibarr_main_url_root;
+		global $dolibarr_main_data_root;
+		global $dolibarr_main_document_root;
+		global $dolibarr_main_data_root_alt;
+		global $dolibarr_main_document_root_alt;
+		global $dolibarr_main_db_host;
+		global $dolibarr_main_db_port;
+		global $dolibarr_main_db_type;
+		global $dolibarr_main_db_prefix;
+
+		// Test for subdir dolibarr (that point to htdocs) in root directory /var/www
 		// URL: http://localhost/dolibarrnew/admin/system/phpinfo.php
     	$_SERVER["HTTPS"]='';
         $_SERVER["SERVER_NAME"]='localhost';
@@ -185,6 +197,8 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		//$dolibarr_main_url_root='http://localhost/dolibarralias';
 		//$dolibarr_main_url_root_alt='http://localhost/dolibarralias/custom2';
 
+
+		// Force to rerun filefunc.inc.php
 		include dirname(__FILE__).'/../../htdocs/filefunc.inc.php';
 
 		print __METHOD__." DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT."\n";

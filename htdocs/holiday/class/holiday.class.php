@@ -177,7 +177,6 @@ class Holiday extends CommonObject
 
         $sql = "SELECT";
         $sql.= " cp.rowid,";
-
         $sql.= " cp.fk_user,";
         $sql.= " cp.date_create,";
         $sql.= " cp.description,";
@@ -192,8 +191,9 @@ class Holiday extends CommonObject
         $sql.= " cp.fk_user_refuse,";
         $sql.= " cp.date_cancel,";
         $sql.= " cp.fk_user_cancel,";
-        $sql.= " cp.detail_refuse";
-
+        $sql.= " cp.detail_refuse,";
+        $sql.= " cp.note,";
+        $sql.= " cp.note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
 
@@ -223,6 +223,8 @@ class Holiday extends CommonObject
                 $this->date_cancel = $this->db->jdate($obj->date_cancel);
                 $this->fk_user_cancel = $obj->fk_user_cancel;
                 $this->detail_refuse = $obj->detail_refuse;
+                $this->note = $obj->note;
+                $this->note_public = $obj->note_public;
             }
             $this->db->free($resql);
 

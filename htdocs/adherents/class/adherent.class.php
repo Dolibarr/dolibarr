@@ -220,8 +220,11 @@ class Adherent extends CommonObject
 				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-				'%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-				'%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
 
 		complete_substitutions_array($substitutionarray, $langs);

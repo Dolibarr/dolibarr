@@ -123,3 +123,5 @@ ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEF
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
 
+ALTER TABLE llx_holiday ADD COLUMN note text; 
+ALTER TABLE llx_holiday ADD COLUMN note_public text;
