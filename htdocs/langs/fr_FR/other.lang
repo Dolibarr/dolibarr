@@ -12,6 +12,7 @@ BirthdayAlertOn= alerte anniversaire active
 BirthdayAlertOff= alerte anniversaire inactive
 Notify_FICHINTER_VALIDATE=Validation fiche intervention
 Notify_BILL_VALIDATE=Validation facture client
+Notify_BILL_UNVALIDATE=Dévalidation facture client
 Notify_ORDER_SUPPLIER_APPROVE=Approbation commande fournisseur
 Notify_ORDER_SUPPLIER_REFUSE=Refus commande fournisseur
 Notify_ORDER_VALIDATE=Validation commande client
