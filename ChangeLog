@@ -17,7 +17,7 @@ For users:
 - New: Add more types for extra parameters (lists, phone, emails, checkbox, prices).
 - New: Some part of interface use more CSS3 (ie: agenda)
 - New: [ task #707 ] Create option ProfIdx are mandatory to validate a invoice.
-- New: Can define of we want to use VAT or not for subscriptions (foundation module).
+- New: Can define if we want to use VAT or not for subscriptions (foundation module).
 - New: Can define a default choice for choice "More action when recording
   a subscription" (foundation module).
 - New: Add link to check professional id for india.
