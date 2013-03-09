@@ -135,12 +135,12 @@ class Societe extends CommonObject
     var $logo;
     var $logo_small;
     var $logo_mini;
-    
+
     var $array_options;
 
     var $oldcopy;
-    
-    
+
+
     /**
      *    Constructor
      *
@@ -757,7 +757,6 @@ class Societe extends CommonObject
 
                 $this->country_id   = $obj->country_id;
                 $this->country_code = $obj->country_id?$obj->country_code:'';
-                $this->pays 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):''; // TODO obsolete
                 $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
 
                 $this->state_id     = $obj->fk_departement;
@@ -836,7 +835,7 @@ class Societe extends CommonObject
                 $this->import_key = $obj->import_key;
 
                 $result = 1;
-                
+
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -846,7 +845,7 @@ class Societe extends CommonObject
                 	$this->array_options = array();
                 }
                 foreach($extrafields->attribute_label as $key=>$label)
-                {                	
+                {
                 	$this->array_options['options_'.$key]=$label;
                 }
             }
@@ -2268,7 +2267,7 @@ class Societe extends CommonObject
         if ($idprof == 1 && $soc->country_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
         if ($idprof == 1 && $soc->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
         if ($idprof == 1 && $soc->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$soc->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
-        
+
         if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
         return '';
     }
@@ -2496,9 +2495,9 @@ class Societe extends CommonObject
     	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
     	$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)?'':$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
     	$this->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
-    	
+
     	$this->nom=$this->name; 									// deprecated
-    	   
+
     	// We define country_id, country_code and country
     	$country_id=$country_code=$country_label='';
     	if (! empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY))
@@ -2635,9 +2634,9 @@ class Societe extends CommonObject
 		    return false;
 
 	}
-	
+
 	/**
-	 *	Return prostect level 
+	 *	Return prostect level
 	 *
 	 *  @return     string        Libelle
 	 */
@@ -2645,7 +2644,7 @@ class Societe extends CommonObject
 	{
 		return $this->LibProspLevel($this->fk_prospectlevel);
 	}
-	
+
 	/**
 	 *  Return label of prospect level
 	 *
@@ -2655,7 +2654,7 @@ class Societe extends CommonObject
 	function LibProspLevel($fk_prospectlevel)
 	{
 		global $langs;
-	
+
 		$lib=$langs->trans("ProspectLevel".$fk_prospectlevel);
 		// If lib not found in language file, we get label from cache/databse
 		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel))
@@ -2664,8 +2663,8 @@ class Societe extends CommonObject
 		}
 		return $lib;
 	}
-	
-	
+
+
 	/**
 	 *  Set prospect level
 	 *
@@ -2673,13 +2672,13 @@ class Societe extends CommonObject
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function set_prospect_level($user)
-	{	
+	{
 		if ($this->id)
 		{
 			$this->db->begin();
-	
+
 			$now=dol_now();
-	
+
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
 			$sql.= " fk_prospectlevel='".$this->fk_prospectlevel."'";
@@ -2693,12 +2692,12 @@ class Societe extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			}
-	
+
 			$this->db->commit();
 			return 1;
 		}
 	}
-	
+
 	/**
 	 *  Return status of prospect
 	 *
@@ -2709,7 +2708,7 @@ class Societe extends CommonObject
 	{
 		return $this->LibProspCommStatut($this->stcomm_id,$mode);
 	}
-	
+
 	/**
 	 *  Return label of a given status
 	 *
@@ -2721,7 +2720,7 @@ class Societe extends CommonObject
 	{
 		global $langs;
 		$langs->load('customers');
-	
+
 		if ($mode == 2)
 		{
 			if ($statut == -1) return img_action($langs->trans("StatusProspect-1"),-1).' '.$langs->trans("StatusProspect-1");
@@ -2746,10 +2745,10 @@ class Societe extends CommonObject
 			if ($statut ==  2) return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
 			if ($statut ==  3) return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
 		}
-	
+
 		return "Error, mode/status not found";
 	}
-	
+
 	/**
 	 *  Set commnunication level
 	 *
@@ -2757,19 +2756,19 @@ class Societe extends CommonObject
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function set_commnucation_level($user)
-	{	
+	{
 		if ($this->id)
 		{
 			$this->db->begin();
-	
+
 			$now=dol_now();
-	
+
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
 			$sql.= " fk_stcomm='".$this->stcomm_id."'";
 			$sql.= ",fk_user_modif='".$user->id."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			
+
 			dol_syslog(get_class($this)."::set_commnucation_level sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql)
@@ -2778,12 +2777,12 @@ class Societe extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			}
-	
+
 			$this->db->commit();
 			return 1;
 		}
 	}
-	
+
 	/**
 	 *    Return label of status customer is prospect/customer
 	 *
@@ -2793,7 +2792,7 @@ class Societe extends CommonObject
 	{
 		return $this->LibCustProspStatut($this->client,$mode);
 	}
-	
+
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -2803,13 +2802,13 @@ class Societe extends CommonObject
 	function LibCustProspStatut($statut)
 	{
 		global $langs;
-		$langs->load('companies');		
-	
+		$langs->load('companies');
+
 		if ($statut==0) return $langs->trans("NorProspectNorCustomer");
 		if ($statut==1) return $langs->trans("Customer");
 		if ($statut==2) return $langs->trans("Prospect");
 		if ($statut==3) return $langs->trans("ProspectCustomer");
-		
+
 	}
-	
+
 }

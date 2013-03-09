@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-$villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
-$prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
+$listoftown = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
+$listoflastname = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
 
 
 /*
@@ -90,7 +90,7 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     print "Company $s\n";
     $soc = new Societe($db);
     $soc->nom = "Company num ".time()."$s";
-    $soc->ville = $villes[rand(0, count($villes)-1)];
+    $soc->town = $listoftown[rand(0, count($listoftown)-1)];
     $soc->client = rand(1,2);		// Une societe sur 2 est prospect, l'autre client
     $soc->fournisseur = rand(0,1);	// Une societe sur 2 est fournisseur
     $soc->code_client='CU'.time()."$s";
@@ -112,8 +112,8 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
         {
             $contact = new Contact($db);
             $contact->socid = $soc->id;
-            $contact->name = "Lastname".$c;
-            $contact->firstname = $prenoms[rand(0, count($prenoms)-1)];
+            $contact->lastname = "Lastname".$c;
+            $contact->firstname = $listoflastname[rand(0, count($listoflastname)-1)];
             if ( $contact->create($user) )
             {
 

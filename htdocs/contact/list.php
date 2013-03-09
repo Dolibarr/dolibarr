@@ -142,11 +142,11 @@ else
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_lastname)        // filtre sur le nom
+if ($search_lastname)        // filter on lastname
 {
     $sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
 }
-if ($search_firstname)     // filtre sur le prenom
+if ($search_firstname)     // filter on firstname
 {
     $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }

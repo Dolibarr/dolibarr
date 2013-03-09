@@ -34,7 +34,7 @@ create table llx_societe_rib
   iban_prefix    varchar(34),	-- 34 according to ISO 13616
   domiciliation  varchar(255),
   proprio        varchar(60),
-  adresse_proprio varchar(255),
+  owner_address  varchar(255),
   import_key     varchar(14)    -- import key
 
 
