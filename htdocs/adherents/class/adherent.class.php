@@ -49,6 +49,7 @@ class Adherent extends CommonObject
     var $login;
     var $pass;
     var $societe;
+    var $company;
     var $address;
     var $zip;
     var $town;
@@ -1005,7 +1006,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1047,7 +1048,8 @@ class Adherent extends CommonObject
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
                 $this->pass				= $obj->pass;
-                $this->societe			= $obj->societe;
+                $this->societe			= $obj->company;
+                $this->company			= $obj->company;
                 $this->fk_soc			= $obj->fk_soc;
                 $this->address			= $obj->address;
                 $this->zip				= $obj->zip;

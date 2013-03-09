@@ -276,7 +276,7 @@ if ($resql)
         print "<tr $bc[$var]>";
         print '<td>';
         $userstatic->id=$obj->rowid;
-        $userstatic->lastname=$obj->name;
+        $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
         print $userstatic->getNomUrl(1);
         print '</td>';

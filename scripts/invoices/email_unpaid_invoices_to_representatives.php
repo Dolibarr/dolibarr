@@ -85,7 +85,7 @@ if ($resql)
                 $total = 0;
             }
 
-            $message .= "Facture ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->name."\n";
+            $message .= $langs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->name."\n";
             $total += $obj->total_ttc;
 
             dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);

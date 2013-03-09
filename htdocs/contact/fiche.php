@@ -198,7 +198,7 @@ if (empty($reshook))
     {
         $result=$object->fetch($_GET["id"]);
 
-        $object->old_name      = $_POST["old_name"];
+        $object->old_lastname      = $_POST["old_lastname"];
         $object->old_firstname = $_POST["old_firstname"];
 
         $result = $object->delete();
@@ -227,7 +227,7 @@ if (empty($reshook))
 
             $object->oldcopy=dol_clone($object);
 
-            $object->old_name		= $_POST["old_name"];
+            $object->old_lastname	= $_POST["old_lastname"];
             $object->old_firstname	= $_POST["old_firstname"];
 
             $object->socid			= $_POST["socid"];
@@ -265,7 +265,7 @@ if (empty($reshook))
 
             if ($result > 0)
             {
-                $object->old_name='';
+                $object->old_lastname='';
                 $object->old_firstname='';
                 $action = 'view';
             }
@@ -620,7 +620,7 @@ else
             print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
-            print '<input type="hidden" name="old_name" value="'.$object->name.'">';
+            print '<input type="hidden" name="old_lastname" value="'.$object->lastname.'">';
             print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
             if (! empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 

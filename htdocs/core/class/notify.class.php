@@ -135,7 +135,7 @@ class Notify
 
 		dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
 
-		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.name, c.firstname,";
+		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
@@ -157,7 +157,7 @@ class Notify
             {
                 $obj = $this->db->fetch_object($result);
 
-                $sendto = $obj->firstname . " " . $obj->name . " <".$obj->email.">";
+                $sendto = $obj->firstname . " " . $obj->lastname . " <".$obj->email.">";
 				$actiondefid = $obj->adid;
 
                 if (dol_strlen($sendto))

@@ -63,7 +63,7 @@ abstract class CommonObject
 
         $lastname=$this->lastname;
         $firstname=$this->firstname;
-        if (empty($lastname))  $lastname=($this->name?$this->name:$this->nom);
+        if (empty($lastname))  $lastname=($this->lastname?$this->lastname:($this->name?$this->name:$this->nom));
         if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';

@@ -38,7 +38,7 @@ class ActionComm extends CommonObject
     protected $ismultientitymanaged = 2;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
-    
+
     var $type_id;		// id into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
     var $type_code;		// code into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
     var $type;			// label into parent table llx_c_actioncomm (will be deprecated into future, link should not be required)
@@ -109,7 +109,7 @@ class ActionComm extends CommonObject
     function add($user,$notrigger=0)
     {
         global $langs,$conf,$hookmanager;
-        
+
         $error=0;
         $now=dol_now();
 
@@ -309,7 +309,7 @@ class ActionComm extends CommonObject
                 $transcode=$langs->trans("Action".$obj->type_code);
                 $type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
                 $this->type      = $type_libelle;
-                
+
 				$this->code					= $obj->code;
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
@@ -948,7 +948,7 @@ class ActionComm extends CommonObject
                     $event['startdate']=$datestart;
                     $event['duration']=$duration;	// Not required with type 'journal'
                     $event['enddate']=$dateend;		// Not required with type 'journal'
-                    $event['author']=$obj->firstname.($obj->name?" ".$obj->name:"");
+                    $event['author']=$obj->firstname.($obj->lastname?" ".$obj->lastname:"");
                     $event['priority']=$obj->priority;
                     $event['fulldayevent']=$obj->fulldayevent;
                     $event['location']=$obj->location;

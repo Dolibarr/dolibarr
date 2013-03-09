@@ -394,7 +394,7 @@ abstract class ActionsAdherentCardCommon
         $this->object->old_firstname 		= 	$_POST["old_firstname"];
 
         $this->object->fk_soc				=	$_POST["fk_soc"];
-        $this->object->name					=	$_POST["name"];
+        $this->object->lastname				=	$_POST["lastname"];
         $this->object->firstname			= 	$_POST["firstname"];
         $this->object->civilite_id			= 	$_POST["civilite_id"];
         $this->object->address				=	$_POST["address"];

@@ -301,7 +301,7 @@ if ($result > 0)
             $obj = $db->fetch_object($resql);
 
             $contactstatic->id=$obj->contactid;
-            $contactstatic->name=$obj->name;
+            $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
             print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
             if ($obj->type == 'email')
@@ -378,7 +378,7 @@ if ($result > 0)
             $obj = $db->fetch_object($resql);
 
             $contactstatic->id=$obj->id;
-            $contactstatic->name=$obj->name;
+            $contactstatic->lastname=$obj->lastname;
             $contactstatic->firstname=$obj->firstname;
             print '<tr '.$bc[$var].'><td>'.$contactstatic->getNomUrl(1);
             print $obj->email?' &lt;'.$obj->email.'&gt;':$langs->trans("NoMail");
