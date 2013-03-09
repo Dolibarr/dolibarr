@@ -105,3 +105,21 @@ CREATE TABLE llx_c_revenuestamp
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, '0.4', 'Timbre fiscal', 1);
 
 ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
+
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_contratdet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_contratdet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_facturedet_rec MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+
