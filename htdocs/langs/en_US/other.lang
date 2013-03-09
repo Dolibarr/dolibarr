@@ -12,6 +12,7 @@ BirthdayAlertOn= birthday alert active
 BirthdayAlertOff= birthday alert inactive
 Notify_FICHINTER_VALIDATE=Intervention validated
 Notify_BILL_VALIDATE=Customer invoice validated
+Notify_BILL_UNVALIDATE=Customer invoice unvalidated
 Notify_ORDER_SUPPLIER_APPROVE=Supplier order approved
 Notify_ORDER_SUPPLIER_REFUSE=Supplier order refused
 Notify_ORDER_VALIDATE=Customer order validated
