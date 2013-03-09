@@ -283,7 +283,7 @@ class ExportExcel extends ModeleExports
 
 			$newvalue=$this->excel_clean($newvalue);
 			$typefield=isset($array_types[$code])?$array_types[$code]:'';
-				
+
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
 			{
@@ -342,7 +342,19 @@ class ExportExcel extends ModeleExports
     		    }
     		    else
     		    {
-        		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
+    		    	if ($typefield == 'Text')
+    		    	{
+    		    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
+						$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, (string) $newvalue);
+    		    		$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
+    		    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
+    		    	}
+    		    	else
+    		    	{
+    		    		//$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
+    		    		//if ($typefield == 'Text') $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
+    		    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
+    		    	}
     		    }
 			}
 			$this->col++;
