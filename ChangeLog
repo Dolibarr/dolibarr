@@ -22,6 +22,9 @@ For users:
   a subscription" (foundation module).
 - New: Add link to check professional id for india.
 
+For translators:
+- Update language files.
+
 For developers:
 - System of menu managers has been rewritten to reduce code to do same things. 
 - An external module can force its theme.
@@ -39,10 +42,13 @@ For developers:
 - New: Type of fields are received by export format handlers
 - New: when adding an action, we can define a free code to tag it for a specific need.
 
-For translators:
-- Update language files.
+WARNING: If you used external modules, some of them may need to be upgraded due to:
+- fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse were
+  renamed into lastname, firstname, zip, town, address).
+- if module use hook pdf_writelinedesc, module may have to add return 1 at end of 
+  function to keep same behaviour.
 
-
+  
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
 

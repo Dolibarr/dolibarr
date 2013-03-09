@@ -498,7 +498,7 @@ class Societe extends CommonObject
             $sql .= ",fk_departement = '" . (! empty($this->state_id)?$this->state_id:'0') ."'";
             $sql .= ",fk_pays = '" . (! empty($this->country_id)?$this->country_id:'0') ."'";
 
-            $sql .= ",tel = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
+            $sql .= ",phone = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
             $sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
             $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
             $sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
