@@ -117,7 +117,6 @@ class Import
 				// Init load class
 				$file = $dir."/".$modulename.".class.php";
 				$classname = $modulename;
-				dol_syslog(get_class($this)."::load_arrays file=".$file);
 				
 				require_once($file);
 				$module = new $classname($this->db);
