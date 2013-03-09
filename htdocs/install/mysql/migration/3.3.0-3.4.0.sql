@@ -123,3 +123,7 @@ ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEF
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
 
+--Add new trigger on Invoice BILL_UNVALIDATE + Index 
+UPDATE `llx_c_action_trigger` SET rang=rang+1 WHERE rang>=10;
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (28,'BILL_UNVALIDATE','Customer invoice unvalidated','Executed when a customer invoice status set back to draft','facture',10);
+ALTER TABLE llx_c_action_trigger ADD INDEX action_trigger_rang (rang) 
