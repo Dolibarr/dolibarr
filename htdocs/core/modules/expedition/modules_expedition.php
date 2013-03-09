@@ -1,49 +1,49 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
- */
+* Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+* Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+* Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* or see http://www.gnu.org/
+*/
 
 /**
  *  \file       htdocs/core/modules/expedition/modules_expedition.php
- *  \ingroup    expedition
- *  \brief      File of class to manage expedition numbering
- */
- require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+*  \ingroup    expedition
+*  \brief      File of class to manage expedition numbering
+*/
+require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
- /**
+/**
  *  \class      ModelePdfExpedition
  *  \brief      Parent class of sending receipts models
- */
+*/
 abstract class ModelePdfExpedition extends CommonDocGenerator
 {
-    var $error='';
+	var $error='';
 
 
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  string	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
@@ -165,50 +165,50 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
-	    if (! empty($conf->global->EXPEDITION_ADDON_PDF))
-	    {
-	        $modele = $conf->global->EXPEDITION_ADDON_PDF;
-	    }
-	    else
-	    {
-	        $modele = 'rouget';
-	    }
+		if (! empty($conf->global->EXPEDITION_ADDON_PDF))
+		{
+			$modele = $conf->global->EXPEDITION_ADDON_PDF;
+		}
+		else
+		{
+			$modele = 'rouget';
+		}
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
 	if (! empty($tmp[1]))
 	{
-	    $modele=$tmp[0];
-	    $srctemplatepath=$tmp[1];
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
 	}
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
 	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-	foreach(array('doc','pdf') as $prefix)
-	{
-	    $file = $prefix."_expedition_".$modele.".modules.php";
+	foreach($dirmodels as $reldir) {
 
-	    // On verifie l'emplacement du modele
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_expedition_".$modele.".modules.php";
+
+			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/expedition/doc/".$file,0);
-	    if (file_exists($file))
-	    {
-	        $filefound=1;
-	        $classname=$prefix.'_expedition_'.$modele;
-	        break;
-	    }
-	}
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_expedition_'.$modele;
+				break;
+			}
+		}
 		if ($filefound) break;
 	}
 
 	// Charge le modele
 	if ($filefound)
 	{
-	    require_once($file);
+		require_once($file);
 
 		$obj = new $classname($db);
 
@@ -222,7 +222,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	//require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			//require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			//dol_delete_preview($object);
 
 			// Appel des triggers
@@ -248,6 +248,6 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	{
 		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
 		return -1;
-    }
+	}
 }
 ?>

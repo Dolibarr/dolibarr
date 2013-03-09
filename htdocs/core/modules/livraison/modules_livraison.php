@@ -1,30 +1,30 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
- */
+* Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+* Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* or see http://www.gnu.org/
+*/
 
 /**
  *	\file       htdocs/core/modules/livraison/modules_livraison.php
- *	\ingroup    expedition
- *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
- *				et la classe mere de numerotation des bons de livraisons
- */
+*	\ingroup    expedition
+*	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
+*				et la classe mere de numerotation des bons de livraisons
+*/
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 /**
  *	\class      ModelePDFDeliveryOrder
  *	\brief      Classe mere des modeles de bon de livraison
- */
+*/
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
 	var $error='';
@@ -40,9 +40,9 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  string	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
@@ -173,14 +173,14 @@ function delivery_order_pdf_create($db, $object, $modele='', $outputlangs='')
 		{
 			$modele = 'typhon';
 		}
-		}
+	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
-    if (! empty($tmp[1]))
-    {
-        $modele=$tmp[0];
-        $srctemplatepath=$tmp[1];
+	if (! empty($tmp[1]))
+	{
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
 	}
 
 	// Search template files
@@ -189,21 +189,21 @@ function delivery_order_pdf_create($db, $object, $modele='', $outputlangs='')
 	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-    	foreach(array('doc','pdf') as $prefix)
-    	{
-    	    $file = $prefix."_".$modele.".modules.php";
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".modules.php";
 
-	// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
-	if (file_exists($file))
-	{
-    			$filefound=1;
-    			$classname=$prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
-    }
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/livraison/pdf/".$file,0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
+	}
 
 	// Charge le modele
 	if ($filefound)
@@ -220,7 +220,7 @@ function delivery_order_pdf_create($db, $object, $modele='', $outputlangs='')
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Appel des triggers

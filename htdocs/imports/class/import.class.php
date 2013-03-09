@@ -66,16 +66,40 @@ class Import
 
         $var=true;
         $i=0;
+        
+        // Define list of modules directories into modulesdir
+        foreach ($conf->file->dol_document_root as $type => $dirroot)
+        {
+        	$modulesdir[] = $dirroot . "/core/modules/";
+        
+        	if ($type == 'alt')
+        	{
+        		$handle=@opendir($dirroot);
+        		if (is_resource($handle))
+        		{
+        			while (($file = readdir($handle))!==false)
+        			{
+        				if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+        				{
+        					if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+        					{
+        						$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
+        					}
+        				}
+        			}
+        			closedir($handle);
+        		}
+        	}
+        }
 
-		//$dir=DOL_DOCUMENT_ROOT."/core/modules";
-		foreach($conf->file->dol_document_root as $dirroot)
+        foreach($modulesdir as $dir)
 		{
-			$dir = $dirroot.'/core/modules';
 
 			// Search available exports
 			$handle=@opendir(dol_osencode($dir));
 			if (! is_resource($handle)) continue;
-
+			
+			
 			// Search module files
 			while (($file = readdir($handle))!==false)
 			{
@@ -93,6 +117,7 @@ class Import
 				// Init load class
 				$file = $dir."/".$modulename.".class.php";
 				$classname = $modulename;
+				
 				require_once($file);
 				$module = new $classname($this->db);
 
