@@ -1564,6 +1564,10 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    }
 	    print "\n";
 
+	    //Dolibarr version
+	    $doliurl='http://www.dolibarr.org';
+	    print '<div id="blockvmenuhelp" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$doliurl.'">'."Dolibarr ".DOL_VERSION.'</a></div>';
+	    
 	    print "</div>\n";
 	    print "<!-- End left menu -->\n";
 
