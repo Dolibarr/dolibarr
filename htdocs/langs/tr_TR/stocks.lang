@@ -27,6 +27,7 @@ ErrorWarehouseRefRequired=Depo referans adı gereklidir
 ErrorWarehouseLabelRequired=Depo etiketi gereklidir
 CorrectStock=Doğru stok
 ListOfWarehouses=Depo listesi
+Warehouses=Depolar
 ListOfStockMovements=Stok hareketleri listesi
 StocksArea=Stok alanı
 Location=Konum
