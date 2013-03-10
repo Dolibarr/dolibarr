@@ -12,6 +12,7 @@ BirthdayAlertOn=alerta aniversari activada
 BirthdayAlertOff=alerta aniversari desactivada
 Notify_FICHINTER_VALIDATE=Validació fitxa intervenció
 Notify_BILL_VALIDATE=Validació factura
+Notify_BILL_UNVALIDATE=Devalidació factura a client
 Notify_ORDER_SUPPLIER_APPROVE=Aprovació comanda a proveïdor
 Notify_ORDER_SUPPLIER_REFUSE=Rebuig comanda a proveïdor
 Notify_ORDER_VALIDATE=Validació comanda client
@@ -110,6 +111,8 @@ VolumeUnitm3=m3
 VolumeUnitdm3=dm3 (l)
 VolumeUnitcm3=cm3 (ml)
 VolumeUnitmm3=mm3 (µl)
+VolumeUnitfoot3=peu3
+VolumeUnitinch3=Polzada3
 VolumeUnitounce=unça
 VolumeUnitlitre=litre
 VolumeUnitgallon=galó
@@ -120,6 +123,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=polzada
 SizeUnitfoot=peu
+SizeUnitpoint=punt
 BugTracker=Incidències
 SendNewPasswordDesc=Aquest formulari permet enviar una nova contrasenya. S'enviarà al e-mail de l'usuari<br>La modificació de la contrasenya no serà efectiva fins que el usuaris feu clic en el link de confirmació inclòs en aquest e-mail.<br>Supervisant el seu correu.
 BackToLoginPage=Tornar a la pàgina de connexió
@@ -167,11 +171,6 @@ StartUpload=Transferir
 CancelUpload=Cancel·lar transferència
 FileIsTooBig=L'arxiu és massa gran
 PleaseBePatient=Preguem esperi uns instants...
-##### Webcal #####
-LoginWebcal=Login Webcalendar
-ErrorWebcalLoginNotDefined=El login webcalendar associat al seu usuari Dolibarr <b>%s</b> no està definit
-##### Phenix #####
-ErrorPhenixLoginNotDefined=El login Phenix associat al seu compte Dolibarrr <b>%s</b> no està definit
 ##### Calendar common #####
 AddCalendarEntry=Afegir entrada al calendari
 NewCompanyToDolibarr=Empresa %s inserida en Dolibarr

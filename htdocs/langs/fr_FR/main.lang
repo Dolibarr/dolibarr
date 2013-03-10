@@ -137,6 +137,7 @@ ToClone=Cloner
 ConfirmClone=Veuillez choisir votre option de clonage :
 NoCloneOptionsSpecified=Aucun option de clonage n'a été spécifiée.
 Of=du
+Go=Aller
 CopyOf=Copie de
 Show=Voir
 ShowCardHere=Voir la fiche ici
@@ -640,6 +641,8 @@ ConfirmDeleteAFile=Confirmez-vous la suppression du fichier
 NoResults=Aucun résultat
 ModulesSystemTools=Outils Modules
 View=Voir
+Test=Test
+Element=Élément
 
 # Week day
 Monday=Lundi
