@@ -113,3 +113,5 @@ YourRole=Els seus rols
 YourQuotaOfUsersIsReached=Ha arribat a la seva quota d'usuaris actius!
 NbOfUsers=Nº d'usuaris
 DontDowngradeSuperAdmin=Només un superadmin pot degradar un superadmin
+HierarchicalResponsible=Responsable jeràrquic
+HierarchicView=Vista jeràrquica

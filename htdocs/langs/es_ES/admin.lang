@@ -49,6 +49,7 @@ DisableJavascript=Desactivar las funciones Javascript
 ConfirmAjax=Utilizar los popups de confirmación Ajax
 UseSearchToSelectCompany=Utilizar un formulario de búsqueda para buscar terceros (en vez de lista desplegable)<br><br>Tenga en cuenta que si tiene un gran número de productos o servicios (>100 000), puede mejorar el rendimiento mediante la constante SOCIETE_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda se limitará entonces al inicio de la cadena.
 ActivityStateToSelectCompany=Agregar un filtro en la búsqueda para mostrar/ocultar los terceros en activo o que hayan dejado de ejercer
+UseSearchToSelectContact=Utilizar un formulario de búsqueda (en vez de una lista desplegable).<br>Tenga en cuenta que si tiene un gran número de contactos (>100 000), puede mejorar el rendimiento mediante la constante CONTACT_DONOTSEARCH_ANYWHERE a 1 en Configuración->Varios. La búsqueda se limitará entonces al inicio de la cadena.
 SearchFilter=Opciones filtros de búsqueda
 NumberOfKeyToSearch=Nº de caracteres para desencadenar la búsqueda: %s
 ViewFullDateActions=Ver las fechas de las acciones en su totalidad en la ficha de tercero
@@ -328,7 +329,6 @@ HideAnyVATInformationOnPDF=Ocultar toda la información relacionada con el IVA e
 HideDescOnPDF=Ocultar descripción de los productos en la generación de los PDF
 HideRefOnPDF=Ocultar referencia de los productos en la generación de los PDF
 HideDetailsOnPDF=Ocultar detalles de las líneas de productos en la generación de los PDF
-Library=Librería
 UrlGenerationParameters=Seguridad de las URLs
 SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
 EnterRefToBuildUrl=Introduzca la referencia del objeto %s
@@ -347,11 +347,16 @@ TextLong=Texto largo
 Int=Numérico entero
 Float=Decimal
 DateAndTime=Fecha y hora
-Unique=Único
+Boolean=Boleano (Checkbox)
+ExtrafieldPhone=Teléfono
+ExtrafieldPrice=Precio
+ExtrafieldMail=Correo
+ExtrafieldSelect=Lista de selección
 LibraryToBuildPDF=Librería usada para la creación de archivos PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>   
 LocalTaxDesc=Algunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
-# Modules
+SuhosinSessionEncrypt=Almacenamiento de sesiones cifradas por Suhosin
+# Modules= =
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -454,6 +459,8 @@ Module2500Name=Gestión Electrónica de Documentos
 Module2500Desc=Permite administrar una base de documentos
 Module2600Name=WebServices
 Module2600Desc=Activa los servicios de servidor web services de Dolibarr
+Module2650Name=Ultimatepdf
+Module2650Desc=Gestión de la presentación de las plantillas pdf (presupuestos, facturas, pedidos, etc.)
 Module2700Name=Gravatar
 Module2700Desc=Utiliza el servicio en línea de Gravatar (www.gravatar.com) para mostrar fotos de los usuarios/miembros (que se encuentran en sus mensajes de correo electrónico). Necesita un acceso a Internet
 Module2900Name=GeoIPMaxmind
@@ -695,6 +702,7 @@ DictionnaryCivility=Títulos de cortesía
 DictionnaryActions=Tipos de eventos de la agenda
 DictionnarySocialContributions=Tipos de cargas sociales
 DictionnaryVAT=Tasa de IVA (Impuesto sobre ventas en EEUU)
+DictionnaryRevenueStamp=Importes de sellos fiscales
 DictionnaryPaymentConditions=Condiciones de pago
 DictionnaryPaymentModes=Modos de pago
 DictionnaryTypeContact=Tipos de contactos/direcciones
@@ -926,6 +934,8 @@ DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales
 ExtraFields=Atributos adicionales
 ExtraFieldsThirdParties=Atributos adicionales (terceros)
 ExtraFieldsContacts=Atributos adicionales (contactos/direcciones)
+ExtraFieldsMember=Atributos complementarios (miembros)
+ExtraFieldsMemberType=Atributos complementarios  (tipos de miembros)
 ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
 AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
 SendingMailSetup=Configuración del envío por mail
@@ -938,7 +948,7 @@ TranslationDesc=La elección del idioma mostrado en pantalla se modifica:<br>* A
 ClassNotFoundIntoPathWarning=No se ha encontrado la clase %s en su path PHP 
 YesInSummer=Sí en verano
 OnlyFollowingModulesAreOpenedToExternalUsers=Tenga en cuenta que sólo los módulos siguientes están abiertos a usuarios externos (sean cuales sean los permisos de los usuarios):
-##### Module password generation
+##### Module password generation= =
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
@@ -1386,3 +1396,6 @@ Chartofaccounts=Plan contable
 Definechartofaccounts=Definir un plan contable
 Selectchartofaccounts=Selección de un plan contable
 DoNotSuggestChart=No sugerir un plan contable
+##### ECM (GED) #####
+ECMSetup=Configuración del módulo GED
+ECMAutoTree=El árbol automático está disponible

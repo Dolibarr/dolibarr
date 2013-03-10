@@ -49,6 +49,7 @@ DisableJavascript=Desactivar les funcions Javascript
 ConfirmAjax=Utilitzar els popups de confirmació Ajax
 UseSearchToSelectCompany=Utilitzar un formulari de cerca per buscar tercers (en comptes de llista desplegable)<br><br>Tingueu en compte que si té un gran nombre de productes o serveis (> 100 000), pot millorar el rendiment mitjançant la constant SOCIETE_DONOTSEARCH_ANYWHERE a 1 a Configuració-> Varis. La recerca es limitarà llavors a l'inici de la cadena.
 ActivityStateToSelectCompany=Afegir un filtre en la recerca per mostrar/ocultar els tercers en actiu o que hagin deixat d'exercir
+UseSearchToSelectContact=Utilitzar un formulari de cerca (en lloc d'una llista desplegable). <br> Tingueu en compte que si té un gran nombre de contactes (> 100 000), pot millorar el rendiment mitjançant la constant CONTACT_DONOTSEARCH_ANYWHERE a 1 a Configuració-> Diversos. La recerca es limitarà llavors a l'inici de la cadena.
 SearchFilter=Opcions filtres de cerca
 NumberOfKeyToSearch=Nombre de caràcters per a desencadenar la cerca: %s
 ViewFullDateActions=Veure les dades de les accions en la seva totalitat en la fitxa de tercer
@@ -346,10 +347,16 @@ TextLong=Text llarg
 Int=numèric enter
 Float=Decimal
 DateAndTime=Data i hora
+Boolean=Boleano (Checkbox)
+ExtrafieldPhone=Telèfon
+ExtrafieldPrice=Preu
+ExtrafieldMail=Correu
+ExtrafieldSelect=Llista de selecció
 LibraryToBuildPDF=Llibreria usada per a la creació d'arxius PDF
 WarningUsingFPDF=Atenció: El seu arxiu <b>conf.php</b> conté la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Això fa que s'usi la llibreria FPDF per generar els seus arxius PDF. Aquesta llibreria és antiga i no cobreix algunes funcionalitats (Unicode, transparència d'imatges, idiomes ciríl · lics, àrabs o asiàtics, etc.), Pel que pot tenir problemes en la generació dels PDF.<br> Per resoldre-ho, i disposar d'un suport complet de PDF, pot descarregar la <a href="http://www.tcpdf.org/" target="_blank"> llibreria TCPDF </a>, i a continuació comentar o eliminar la línia <b>$dolibarr_pdf_force_fpdf=1</b>, i afegir al seu lloc <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
 LocalTaxDesc=Alguns països apliquen 2 o 3 taxes a cada línia de factura. Si és el cas, escolliu el tipus de la segona i tercera taxa i el seu valor. Els possibles tipus són: <br> 1: taxa local aplicable a productes i serveis sense IVA (IVA no s'aplica a la taxa local) <br> 2: taxa local s'aplica a productes i serveis abans de l'IVA (IVA es calcula sobre import + taxa local) <br> 3: taxa local s'aplica a productes sense IVA (IVA no s'aplica a la taxa local) <br> 4: taxa local s'aplica a productes abans de l'IVA (IVA es calcula sobre l'import + taxa local) <br> 5: taxa local s'aplica a serveis sense IVA (IVA no s'aplica a la taxa local) <br> 6: taxa local s'aplica a serveis abans de l'IVA (IVA es calcula sobre import + taxa local)
-# Modules
+SuhosinSessionEncrypt=Emmagatzematge de sessions xifrades per Suhosin
+# Modules= =
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -452,6 +459,8 @@ Module2500Name=Gestió Electrònica de Documents
 Module2500Desc=Permet administrar una base de documents
 Module2600Name=WebServices
 Module2600Desc=Activa els serveis de servidor web services de Dolibarr
+Module2650Name=Ultimatepdf
+Module2650Desc=Gestió de la presentació de les plantilles pdf (pressupostos, factures, comandes, etc.)
 Module2700Name=Gravatar
 Module2700Desc=Utilitza el servei en línia de Gravatar (www.gravatar.com) per mostrar fotos dels usuaris/membres (que es troben en els seus missatges de correu electrònic). Necessita un accés a Internet
 Module2900Name=GeoIPMaxmind
@@ -693,6 +702,7 @@ DictionnaryCivility=Títol cortesia
 DictionnaryActions=Tipus d'esdeveniments de l'agenda
 DictionnarySocialContributions=Tipus de càrregues socials
 DictionnaryVAT=Taxa d'IVA (Impost sobre vendes als EEUU)
+DictionnaryRevenueStamp=Imports de segells fiscals
 DictionnaryPaymentConditions=Condicions de pagament
 DictionnaryPaymentModes=Modes de pagament
 DictionnaryTypeContact=Tipus de contactes/adreces
@@ -924,6 +934,8 @@ DefineHereComplementaryAttributes=Definiu aquí la llista d'atributs addicionals
 ExtraFields=Atributs addicionals
 ExtraFieldsThirdParties=Atributs adicionals (tercers)
 ExtraFieldsContacts=Atributs adicionals (contactes/adreçes)
+ExtraFieldsMember=Atributs complementaris (membres)
+ExtraFieldsMemberType=Atributs complementaris (tipus de membres)
 ExtraFieldHasWrongValue=L'atribut %s te un valor incorrecte.
 AlphaNumOnlyCharsAndNoSpace=només carateres alfanumèrics sense espais
 SendingMailSetup=Configuració de l'enviament per mail
@@ -936,7 +948,7 @@ TranslationDesc=L'elecció de l'idioma mostrat en pantalla es modifica:<br>* A n
 ClassNotFoundIntoPathWarning=No s'ha trobat la classe %s en el seu path PHP
 YesInSummer=Sí a l'estiu
 OnlyFollowingModulesAreOpenedToExternalUsers=Recordeu que només els mòduls següents estan oberts a usuaris externs (siguin quins siguin els permisos dels usuaris):
-##### Module password generation
+##### Module password generation= =
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
 ##### Users setup #####
@@ -1384,3 +1396,6 @@ Chartofaccounts=Pla comptable
 Definechartofaccounts=Definir un pla comptable
 Selectchartofaccounts=Selecció d'un pla comptable
 DoNotSuggestChart=No suggerir un pla comptable
+##### ECM (GED) #####
+ECMSetup=Configuració del mòdul GED
+ECMAutoTree=L'arbre automàtic està disponible

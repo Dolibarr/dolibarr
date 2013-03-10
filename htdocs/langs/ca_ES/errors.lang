@@ -1,8 +1,13 @@
-# Dolibarr language file - ca_ES - errors 
+# Dolibarr language file - ca_ES - errors
 CHARSET=UTF-8
-# Errors=
+
+# No errors
+NoErrorCommitIsDone=Sense errors, és vàlid
+
+# Errors
 Error=Error
 Errors=Errors
+ErrorButCommitIsDone=Errors trobats, però és vàlid malgrat tot
 ErrorBadEMail=e-mail %s incorrecte
 ErrorBadUrl=Url %s invàlida
 ErrorLoginAlreadyExists=El login %s ja existeix.
@@ -54,6 +59,7 @@ ErrorUploadBlockedByAddon=Pujada bloquejada per un plugin PHP/Apache.
 ErrorFileSizeTooLarge=La mida del fitxer és massa gran.
 ErrorSizeTooLongForIntType=Longitud del camp massa llarg per al tipus int (màxim %s xifres)
 ErrorSizeTooLongForVarcharType=Longitud del camp massa llarg per al tipus cadena (màxim %s xifres)
+ErrorNoValueForSelectType=Els valors de la llista han de ser indicats
 ErrorFieldCanNotContainSpecialCharacters=El camp <b>%s</b> no ha de contenir caràcters especials
 ErrorNoAccountancyModuleLoaded=Mòdul de comptabilitat no activat
 ErrorExportDuplicateProfil=El nom del perfil ja existeix per a aquest lot d'exportació
@@ -102,8 +108,8 @@ ErrorLoginDoesNotExists=El compte d'usuari de <b>%s</b> no s'ha trobat.
 ErrorLoginHasNoEmail=Aquest usuari no té e-mail. Impossible continuar.
 ErrorBadValueForCode=Valor no vàlid per al codi. Torneu a intentar-ho amb un nou valor ...
 ErrorBothFieldCantBeNegative=Els camps %s i %s no poden ser negatius
-ErrorNoActivatedBarcode=No hi ha activat cap tipus de codi de barres
 ErrorWebServerUserHasNotPermission=El compte d'execució del servidor web <b>%s</b> no disposa dels permisos per això
+ErrorNoActivatedBarcode=No hi ha activat cap tipus de codi de barres
 ErrUnzipFails=No s'ha pogut descomprimir el fitxer %s amb ZipArchive
 ErrNoZipEngine=En aquest PHP no hi ha motor per descomprimir l'arxiu %s
 ErrorFileMustBeADolibarrPackage=El fitxer %s ha de ser un paquet Dolibarr en format zip
@@ -114,6 +120,7 @@ ErrorNewVaueCantMatchOldValue=El Nou valor no pot ser igual al antic
 ErrorFailedToValidatePasswordReset=No s'ha pogut restablir la contrasenya. És possible que aquest enllaç ja s'hagi utilitzat (aquest enllaç només es pot utilitzar una vegada). Si no és el cas prova de reiniciar el procés de restabliment de contrasenya des del principi.
 
 # Warnings
+WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=El paràmetre <b>allow_url_fopen</b> ha de ser especificat a <b>on</b> a l'arxiu <b>php.ini</b> per disposar d'aquest mòdul completament actiu. Ha de modificar aquest arxiu manualment
 WarningBuildScriptNotRunned=L'script <b>%s</b> encara no ha executat la construcció de gràfics.
@@ -125,3 +132,4 @@ WarningNoDocumentModelActivated=No hi ha cap model per a la generació del docum
 WarningLockFileDoesNotExists=Atenció: Un cop acabada l'instal·lació, han de desactivar les eines d'instal·lació/actualització afegint l'arxiu <b>install.lock</b> al directori <b>%s</b>. L'absència d'aquest imatge mostra una fallada de seguretat.
 WarningUntilDirRemoved=Aquesta alerta seguirà activa mentre la carpeta existeixi (alerta visible per als usuaris admin solament).
 WarningCloseAlways=Avís, el tancament és realitzat encara que la quantitat total difereixi entre els elements d'origen i destí. Activi aquesta funcionalitat amb precaució.
+WarningUsingThisBoxSlowDown=Atenció, l'ús d'aquest panell provoca serioses alentiments en les pàgines que mostren aquest panell.
