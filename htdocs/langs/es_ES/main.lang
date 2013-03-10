@@ -137,6 +137,7 @@ ToClone=Copiar
 ConfirmClone=Seleccione los datos que desea copiar:
 NoCloneOptionsSpecified=No hay datos definidos para copiar
 Of=de
+Go=Ir
 CopyOf=Copia de
 Show=Ver
 ShowCardHere=Ver la ficha aquí
@@ -640,6 +641,8 @@ ConfirmDeleteAFile=Confirme la eliminación del archivo
 NoResults=Ningún resultado
 ModulesSystemTools=Módulos utilidades
 View=Ver
+Test=Prueba
+Element=Elemento
 
 # Week day
 Monday=Lunes

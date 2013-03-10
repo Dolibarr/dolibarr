@@ -329,6 +329,7 @@ HideAnyVATInformationOnPDF=Amagar tota la informació relacionada amb l'IVA en l
 HideDescOnPDF=Amagar descripció dels productes en la generació dels PDF
 HideRefOnPDF=Amagar referència dels productes en la generació dels PDF
 HideDetailsOnPDF=Amagar detalls de les línies de productes en la generació dels PDF
+Library=Llibreria
 UrlGenerationParameters=Seguretat de les URL
 SecurityTokenIsUnique=Fer servir un paràmetre securekey únic per a cada URL?
 EnterRefToBuildUrl=Introduïu la referència de l'objecte %s
