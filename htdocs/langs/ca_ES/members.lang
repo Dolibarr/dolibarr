@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - members 
+# Dolibarr language file - ca_ES - members
 CHARSET=UTF-8
 MembersArea=Àrea membres
 PublicMembersArea=Àrea pública dels membres
@@ -152,6 +152,7 @@ DescADHERENT_CARD_HEADER_TEXT=Text a imprimir en la part superior del carnet de 
 DescADHERENT_CARD_TEXT=Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_TEXT_RIGHT=Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_FOOTER_TEXT=Text a imprimir a la part inferior del carnet de membre
+DescADHERENT_MAILMAN_LISTS=Llista (s) a la (les) que hi ha d'inscriure els nous membres (separats per coma)
 GlobalConfigUsedIfNotDefined=S'utilitzarà el text definit en la configuració del mòdul Membres si no es defineix aquí
 MayBeOverwrited=Aquest valor pot ser sobreescrit pel text definit en el tipus de membre
 ShowTypeCard=Veure tipus '%s'
@@ -160,6 +161,7 @@ NoThirdPartyAssociatedToMember=Cap tercer associat a aquest membre
 ThirdPartyDolibarr=Tercers Dolibarr
 MembersAndSubscriptions=Membres y afiliacions
 MoreActions=Acció complementària al registre
+MoreActionsOnSubscription=Accions complementàries proposades per defecte en l'afiliació d'un membre
 MoreActionBankDirect=Creació transacció en el compte bancari o caixa directament
 MoreActionBankViaInvoice=Creació factura amb el pagament en compte bancari o caixa
 MoreActionInvoiceOnly=Creació factura sense pagament
@@ -202,3 +204,5 @@ DOLIBARRFOUNDATION_PAYMENT_FORM=Per realitzar el pagament de la seva cotització
 ByProperties=Per característiques
 MembersStatisticsByProperties=Estadístiques dels membres per característiques
 MembersByNature=Membres per naturalesa
+VATToUseForSubscriptions=Taxa d'IVA per les afiliacions
+NoVatOnSubscription=Sense IVA per a les afiliacions

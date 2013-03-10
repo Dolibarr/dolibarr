@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,16 @@ class Fichinter extends CommonObject
 		if ($result)
 		{
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-
+			
+			if ($this->id)
+			{
+				$this->ref='(PROV'.$this->id.')';
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->ref."' WHERE rowid=".$this->id;
+			
+				dol_syslog(get_class($this)."::create sql=".$sql);
+				$resql=$this->db->query($sql);
+				if (! $resql) $error++;
+			}
             // Add linked object
             if (! $error && $this->origin && $this->origin_id)
             {
@@ -357,9 +366,20 @@ class Fichinter extends CommonObject
 			$this->db->begin();
 
 			$now=dol_now();
+			
+			// Define new ref
+			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+			{
+				$num = $this->getNextNumRef($soc);
+			}
+			else
+			{
+				$num = $this->ref;
+			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";
+			$sql.= ", ref = '".$num."'";
 			$sql.= ", date_valid = ".$this->db->idate($now);
 			$sql.= ", fk_user_valid = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
