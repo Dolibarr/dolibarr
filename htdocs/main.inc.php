@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
- * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1566,7 +1566,13 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    //Dolibarr version
 	    $doliurl='http://www.dolibarr.org';
-	    print '<div id="blockvmenuhelp" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$doliurl.'">'."Dolibarr ".DOL_VERSION.'</a></div>';
+	    
+	    $appli='Dolibarr';
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+	    
+	    $appli.=" ".DOL_VERSION;
+	    
+	    print '<div id="blockvmenuhelp" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$doliurl.'">'.$appli.'</a></div>';
 	    
 	    print "</div>\n";
 	    print "<!-- End left menu -->\n";
