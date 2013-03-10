@@ -16,10 +16,10 @@
  */
 
 /**
-\file       htdocs/printipp/index.php
-\ingroup    printipp
-\brief      Printipp
-*/
+ *	\file       htdocs/printipp/index.php
+ *	\ingroup    printipp
+ *	\brief      Printipp
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
@@ -33,4 +33,5 @@ $printer->list_jobs('commande');
 
 llxFooter();
 
+$db->close();
 ?>

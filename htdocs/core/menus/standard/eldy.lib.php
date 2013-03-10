@@ -1160,9 +1160,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	for ($i = 0; $i < $num; $i++)
 	{
 		$showmenu=true;
-		if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) {
-			$showmenu=false;
-		}
+		if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu=false;
 
 		$alt++;
 		if (empty($menu_array[$i]['level']) && $showmenu)
@@ -1268,6 +1266,8 @@ function print_jmobile_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
  */
 function dol_eldy_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
 {
+	global $conf;
+
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
 	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
