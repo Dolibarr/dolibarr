@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -3637,6 +3637,21 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 	return $out;
 }
+
+/**
+ * Return firstname and lastname in correct order
+ *
+ * @param	string	$firstname		Firstname
+ * @param	string	$lastname		Lastname
+ * @return	string					Firstname + lastname or Lastname + firstname
+ */
+function dolGetFirstLastname($firstname,$lastname)
+{
+	global $conf;
+	if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) return $firstname.' '.$lastname;
+	else return $lastname.' '.$firstname;
+}
+
 
 /**
  *	Set event message in dol_events session

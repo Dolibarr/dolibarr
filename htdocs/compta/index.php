@@ -372,7 +372,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td nowrap="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
@@ -767,7 +767,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
@@ -864,7 +864,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td nowrap="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
