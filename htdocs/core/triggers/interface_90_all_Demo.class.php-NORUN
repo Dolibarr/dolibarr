@@ -25,7 +25,6 @@
  *				                           ou: interface_99_all_Mytrigger.class.php
  *              - Le fichier doit rester stocke dans core/triggers
  *              - Le nom de la classe doit etre InterfaceMytrigger
- *              - Le nom de la methode constructeur doit etre InterfaceMytrigger
  *              - Le nom de la propriete name doit etre Mytrigger
  */
 
@@ -353,6 +352,10 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'BILL_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'BILL_UNVALIDATE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

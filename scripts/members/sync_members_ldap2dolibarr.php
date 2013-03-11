@@ -185,8 +185,6 @@ if ($result >= 0)
 			$member = new Adherent($db);
 
 			// Propriete membre
-			$member->prenom=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];    // deprecated
-			$member->nom=$ldapuser[$conf->global->LDAP_FIELD_NAME];            // deprecated
 			$member->firstname=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
 			$member->lastname=$ldapuser[$conf->global->LDAP_FIELD_NAME];
 			$member->login=$ldapuser[$conf->global->LDAP_FIELD_LOGIN];

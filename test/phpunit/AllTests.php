@@ -137,18 +137,20 @@ class AllTests
         $suite->addTestSuite('CompanyBankAccountTest');
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';
         $suite->addTestSuite('ChargeSocialesTest');
+        require_once dirname(__FILE__).'/HolidayTest.php';
+        $suite->addTestSuite('HolidayTest');
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
-        require_once dirname(__FILE__).'/WebservicesInvoices.php';
-        $suite->addTestSuite('WebservicesInvoices');
-        require_once dirname(__FILE__).'/WebservicesOrders.php';
-        $suite->addTestSuite('WebservicesOrders');
-        require_once dirname(__FILE__).'/WebservicesOther.php';
-        $suite->addTestSuite('WebservicesOther');
-        require_once dirname(__FILE__).'/WebservicesThirparty.php';
-        $suite->addTestSuite('WebservicesThirdparty');
+        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+        $suite->addTestSuite('WebservicesInvoicesTest');
+        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+        $suite->addTestSuite('WebservicesOrdersTest');
+        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+        $suite->addTestSuite('WebservicesOtherTest');
+        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+        $suite->addTestSuite('WebservicesThirdpartyTest');
         require_once dirname(__FILE__).'/WebservicesUserTest.php';
         $suite->addTestSuite('WebservicesUserTest');
 

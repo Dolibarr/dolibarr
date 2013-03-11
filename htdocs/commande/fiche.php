@@ -730,6 +730,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 			if ($result > 0)
 			{
+				$ret=$object->fetch($object->id);    // Reload to get new records
+
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -742,7 +744,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$ret=$object->fetch($object->id);    // Reload to get new records
 					commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
@@ -1099,6 +1100,14 @@ else if ($action == 'remove_file')
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 		$action='';
 	}
+}
+
+// Print file
+else if ($action == 'print_file' AND $user->rights->printipp->use)
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
+    $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
+    $printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
 }
 
 /*
@@ -2353,8 +2362,9 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 				$genallowed=$user->rights->commande->creer;
 				$delallowed=$user->rights->commande->supprimer;
-
-				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+				$printer = false;
+				if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
+				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
 
 				/*
 				 * Linked object block

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -917,8 +917,8 @@ if ($action == 'create')
     $obj = $conf->global->FICHEINTER_ADDON;
     $obj = "mod_".$obj;
 
-    $modFicheinter = new $obj;
-    $numpr = $modFicheinter->getNextValue($soc, $object);
+    //$modFicheinter = new $obj;
+    //$numpr = $modFicheinter->getNextValue($soc, $object);
 
     if ($socid > 0)
     {
@@ -935,8 +935,7 @@ if ($action == 'create')
         print '<input type="hidden" name="action" value="add">';
 
         // Ref
-        print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
-        print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
+		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
         // Description (must be a textarea and not html must be allowed (used in list view)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
@@ -1053,7 +1052,24 @@ else if ($id > 0 || ! empty($ref))
     // Confirmation validation
     if ($action == 'validate')
     {
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
+    	// on verifie si l'objet est en numerotation provisoire
+    	$ref = substr($object->ref, 1, 4);
+    	if ($ref == 'PROV')
+    	{
+    		$numref = $object->getNextNumRef($soc);
+    		if (empty($numref))
+    		{
+    			$error++;
+    			dol_htmloutput_errors($object->error);
+    		}
+    	}
+    	else
+    	{
+    		$numref = $object->ref;
+    	}
+    	$text=$langs->trans('ConfirmValidateIntervention',$numref);
+    	
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
 

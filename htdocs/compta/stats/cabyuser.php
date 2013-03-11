@@ -171,7 +171,7 @@ if ($result)
     {
          $obj = $db->fetch_object($result);
          $amount[$obj->rowid] = $obj->amount_ttc;
-         $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
+         $name[$obj->rowid] = $obj->lastname.' '.$obj->firstname;
          $catotal+=$obj->amount_ttc;
          $i++;
     }
@@ -183,7 +183,7 @@ else {
 // On ajoute les paiements ancienne version, non lies par paiement_facture donc sans user
 if ($modecompta != 'CREANCES-DETTES')
 {
-    $sql = "SELECT -1 as rowidx, '' as name, '' as firstname, sum(p.amount) as amount_ttc";
+    $sql = "SELECT -1 as rowidx, '' as lastname, '' as firstname, sum(p.amount) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
     $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
     $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -205,7 +205,7 @@ if ($modecompta != 'CREANCES-DETTES')
         {
             $obj = $db->fetch_object($result);
             $amount[$obj->rowidx] = $obj->amount_ttc;
-            $name[$obj->rowidx] = $obj->name.' '.$obj->firstname;
+            $name[$obj->rowidx] = $obj->lastname.' '.$obj->firstname;
             $catotal+=$obj->amount_ttc;
             $i++;
         }

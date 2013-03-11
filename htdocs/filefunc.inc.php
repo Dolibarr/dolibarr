@@ -68,7 +68,8 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 
 // Include configuration
-$result=@include_once $conffile;
+$result=include_once $conffile;
+
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
 	header("Location: install/index.php");
@@ -233,6 +234,7 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit;
 }
+
 
 // Included by default
 include_once DOL_DOCUMENT_ROOT .'/core/lib/functions.lib.php';

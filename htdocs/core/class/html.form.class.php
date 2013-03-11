@@ -898,8 +898,7 @@ class Form
                     $obj = $this->db->fetch_object($resql);
 
                     $contactstatic->id=$obj->rowid;
-                    $contactstatic->name=$obj->name;
-                    $contactstatic->lastname=$obj->name;
+                    $contactstatic->lastname=$obj->lastname;
                     $contactstatic->firstname=$obj->firstname;
 
                     if ($htmlname != 'none')

@@ -56,6 +56,7 @@ CompanyHasNoCategory=Aquesta empresa no es troba en cap categoria en particular
 MemberHasNoCategory=Aquest membre no es troba en cap categoria en particular
 ClassifyInCategory=Classificar en la categoria
 NoneCategory=Cap
+NotCategorized=Sense categoria
 CategoryExistsAtSameLevel=Aquesta categoria ja existeix per aquesta referència
 ReturnInProduct=Tornar a la fitxa producte/servei
 ReturnInSupplier=Tornar a la fitxa proveïdor
@@ -91,7 +92,9 @@ CatSupList=Llista de categories de proveïdors
 CatCusList=Llista de categories de clients/potencials
 CatProdList=Llista de categories de productes
 CatMemberList=Llista de categories de membres
+
 # Imports
-CatProdLinks=Productes
-CatCusLinks=Clients/Clients potencials
 CatSupLinks=Proveïdors
+CatCusLinks=Clients/Clients potencials
+CatProdLinks=Productes
+CatMemberLinks=Membres

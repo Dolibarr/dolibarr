@@ -646,7 +646,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht != 0) || $price_ht == ''))	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -1234,7 +1234,7 @@ if ($action == 'create')
 	}
 
 	print '<table class="border" width="100%">';
-	
+
 	// Reference
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 

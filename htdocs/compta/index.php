@@ -613,7 +613,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$deplacementstatic->ref=$objp->rowid;
 				$deplacementstatic->id=$objp->rowid;
 				$userstatic->id=$objp->uid;
-				$userstatic->lastname=$objp->name;
+				$userstatic->lastname=$objp->lastname;
 				$userstatic->firstname=$objp->firstname;
 				print '<tr '.$bc[$var].'>';
                 print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';

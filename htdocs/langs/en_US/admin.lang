@@ -700,6 +700,7 @@ DictionnaryCivility=Civility title
 DictionnaryActions=Type of agenda events
 DictionnarySocialContributions=Social contributions types
 DictionnaryVAT=VAT Rates or Sales Tax Rates
+DictionnaryRevenueStamp=Amount of revenue stamps
 DictionnaryPaymentConditions=Payment terms
 DictionnaryPaymentModes=Payment modes
 DictionnaryTypeContact=Contact/Address types

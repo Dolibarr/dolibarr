@@ -215,39 +215,9 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0, 'Holiday::fetch error');
 
     	print __METHOD__." old=".$localobject->note." new=".$newobject->note."\n";
-    	$this->assertEquals($localobject->note, $newobject->note);
+    	$this->assertEquals($localobject->note, $newobject->note,'Holiday::update_note error compare note');
     	//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
-    	print __METHOD__." old=".$localobject->lastname." new=".$newobject->lastname."\n";
-    	$this->assertEquals($localobject->lastname, $newobject->lastname);
-    	print __METHOD__." old=".$localobject->firstname." new=".$newobject->firstname."\n";
-    	$this->assertEquals($localobject->firstname, $newobject->firstname);
-    	print __METHOD__." old=".$localobject->address." new=".$newobject->address."\n";
-    	$this->assertEquals($localobject->address, $newobject->address);
-    	print __METHOD__." old=".$localobject->zip." new=".$newobject->zip."\n";
-    	$this->assertEquals($localobject->zip, $newobject->zip);
-    	print __METHOD__." old=".$localobject->town." new=".$newobject->town."\n";
-    	$this->assertEquals($localobject->town, $newobject->town);
-    	print __METHOD__." old=".$localobject->country_id." new=".$newobject->country_id."\n";
-    	$this->assertEquals($localobject->country_id, $newobject->country_id);
-    	print __METHOD__." old=BE new=".$newobject->country_code."\n";
-    	$this->assertEquals('BE', $newobject->country_code);
-    	//print __METHOD__." old=".$localobject->status." new=".$newobject->status."\n";
-    	//$this->assertEquals($localobject->status, $newobject->status);
-    	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
-    	$this->assertEquals($localobject->phone_pro, $newobject->phone_pro);
-    	print __METHOD__." old=".$localobject->phone_pro." new=".$newobject->phone_pro."\n";
-    	$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
-    	print __METHOD__." old=".$localobject->phone_mobile." new=".$newobject->phone_mobile."\n";
-    	$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
-    	print __METHOD__." old=".$localobject->fax." new=".$newobject->fax."\n";
-    	$this->assertEquals($localobject->fax, $newobject->fax);
-    	print __METHOD__." old=".$localobject->email." new=".$newobject->email."\n";
-    	$this->assertEquals($localobject->email, $newobject->email);
-    	print __METHOD__." old=".$localobject->jabberid." new=".$newobject->jabberid."\n";
-    	$this->assertEquals($localobject->jabberid, $newobject->jabberid);
-    	print __METHOD__." old=".$localobject->default_lang." new=".$newobject->default_lang."\n";
-    	$this->assertEquals($localobject->default_lang, $newobject->default_lang);
 
     	return $localobject;
     }
@@ -270,7 +240,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		//$localobject->fetch($localobject->id);
-		
+
 		/*
         $result=$localobject->getNomUrl(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -284,7 +254,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
 		*/
-		
+
         return $localobject->id;
     }
 

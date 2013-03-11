@@ -46,7 +46,7 @@ $hookmanager->initHooks(array('salesrepresentativescard'));
 if($_GET["socid"] && $_GET["commid"])
 {
 	$action = 'add';
-	
+
 	if ($user->rights->societe->creer)
 	{
 
@@ -54,10 +54,10 @@ if($_GET["socid"] && $_GET["commid"])
 		$soc->id = $_GET["socid"];
 		$soc->fetch($_GET["socid"]);
 
-	
+
 		$parameters=array('id'=>$_GET["commid"]);
 		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
-		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);		
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
 
 		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
@@ -74,19 +74,19 @@ if($_GET["socid"] && $_GET["commid"])
 
 if($_GET["socid"] && $_GET["delcommid"])
 {
-	$action = 'delete';	
-	
+	$action = 'delete';
+
 	if ($user->rights->societe->creer)
 	{
 		$soc = new Societe($db);
 		$soc->id = $_GET["socid"];
 		$soc->fetch($_GET["socid"]);
-		
+
 		$parameters=array('id'=>$_GET["delcommid"]);
 		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
-		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);		
-		
-		
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+
+
 		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
@@ -116,7 +116,7 @@ if ($_GET["socid"])
 	$result=$soc->fetch($_GET["socid"]);
 
 	$action='view';
-	
+
 	$head=societe_prepare_head2($soc);
 
 	dol_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"),0,'company');
@@ -182,13 +182,13 @@ if ($_GET["socid"])
  			$parameters=array('socid'=>$soc->id);
         	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
       		if (empty($reshook)) {
-      			
+
 				null; // actions in normal case
       		}
 
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
-			print $obj->firstname." " .$obj->name."\n";
+			print $obj->firstname." " .$obj->lastname."\n";
 			print '</a>&nbsp;';
 			if ($user->rights->societe->creer)
 			{
@@ -254,7 +254,7 @@ if ($_GET["socid"])
 				print "<tr $bc[$var]><td>";
 				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),"user").' ';
-				print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+				print $obj->firstname." " .$obj->lastname."\n";
 				print '</a>';
 				print '</td><td>'.$obj->login.'</td>';
 				print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';

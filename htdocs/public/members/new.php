@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2001-2002	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		J. Fernando Lagrange 		<fernando@demo-tic.org>
+ * Copyright (C) 2012		J. Fernando Lagrange    <fernando@demo-tic.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ if ($action == 'add')
         $error+=1;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Nature'))."<br>\n";
     }
-    if (empty($_POST["nom"]))
+    if (empty($_POST["lastname"]))
     {
         $error+=1;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Lastname"))."<br>\n";

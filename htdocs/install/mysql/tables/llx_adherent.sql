@@ -31,8 +31,8 @@ create table llx_adherent
   ref_ext          varchar(30),                 -- reference into an external system (not used by dolibarr)
 
   civilite         varchar(6),
-  nom              varchar(50),
-  prenom           varchar(50),
+  lastname         varchar(50),
+  firstname        varchar(50),
   login            varchar(50),          -- login
   pass             varchar(50),          -- password
   fk_adherent_type integer NOT NULL,
@@ -40,10 +40,10 @@ create table llx_adherent
   societe          varchar(50),
   fk_soc           integer NULL,		-- Link to third party linked to member
   address          text,
-  cp               varchar(30),
-  ville            varchar(50),
-  fk_departement   integer,
-  pays             integer,
+  zip              varchar(30),
+  town             varchar(50),
+  state_id         integer,
+  country          integer,
   email            varchar(255),
   phone            varchar(30),
   phone_perso      varchar(30),

@@ -122,7 +122,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
                 {
                     $cibles[$j] = array(
 					'email' => $obj->email,
-					'name' => $obj->name,
+					'lastname' => $obj->lastname,
 					'other' =>
                     ('StartDate='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
                     ('EndDate='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.

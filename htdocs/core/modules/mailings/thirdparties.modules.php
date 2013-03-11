@@ -105,7 +105,7 @@ class mailing_thirdparties extends MailingTargets
 					$cibles[$j] = array(
                     			'email' => $obj->email,
                     			'fk_contact' => $obj->fk_contact,
-                    			'name' => $obj->name,
+                    			'lastname' => $obj->lastname,
                     			'firstname' => $obj->firstname,
                     			'other' => ($obj->label?$langs->transnoentities("Category").'='.$obj->label:''),
                                 'source_url' => $this->url($obj->id),

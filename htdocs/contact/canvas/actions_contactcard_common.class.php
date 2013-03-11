@@ -425,7 +425,7 @@ abstract class ActionsContactCardCommon
         $this->object->old_firstname 		= 	$_POST["old_firstname"];
 
         $this->object->socid				=	$_POST["socid"];
-        $this->object->name					=	$_POST["name"];
+        $this->object->lastname				=	$_POST["name"];
         $this->object->firstname			= 	$_POST["firstname"];
         $this->object->civilite_id			= 	$_POST["civilite_id"];
         $this->object->poste				= 	$_POST["poste"];

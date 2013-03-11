@@ -233,8 +233,7 @@ $h++;
 if ($mode == 'customer') $type='order_stats';
 if ($mode == 'supplier') $type='supplier_order_stats';
 
-$object=new stdClass(); // TODO $object not defined ?
-complete_head_from_modules($conf,$langs,$object,$head,$h,$type);
+complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 

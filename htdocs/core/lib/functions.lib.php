@@ -562,29 +562,31 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 /**
  *	Show tab header of a card
  *
- *	@param	array	$links		Array of tabs
- *	@param	string	$active     Active tab name (document', 'info', 'ldap', ....)
- *	@param  string	$title      Title
- *	@param  int		$notab		0=Add tab header, 1=no tab header
- * 	@param	string	$picto		Add a picto on tab title
+ *	@param	array	$links				Array of tabs
+ *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
+ *	@param  string	$title      		Title
+ *	@param  int		$notab				0=Add tab header, 1=no tab header
+ * 	@param	string	$picto				Add a picto on tab title
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_build_path('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
  */
-function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath);
 }
 
 /**
  *  Show tab header of a card
  *
- *	@param	array	$links		Array of tabs
- *	@param	int		$active     Active tab name
- *	@param  string	$title      Title
- *	@param  int		$notab		0=Add tab header, 1=no tab header
- * 	@param	string	$picto		Add a picto on tab title
+ *	@param	array	$links				Array of tabs
+ *	@param	int		$active     		Active tab name
+ *	@param  string	$title      		Title
+ *	@param  int		$notab				0=Add tab header, 1=no tab header
+ * 	@param	string	$picto				Add a picto on tab title
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_build_path('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
  */
-function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
+function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
 	$out="\n".'<div class="tabs">'."\n";
 
@@ -593,7 +595,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';
-		if ($picto) $out.=img_object('',$picto).' ';
+		if ($picto) $out.=img_picto('',($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
 		$out.=dol_trunc($title,$limittitle);
 		$out.='</a>';
 	}
@@ -1845,6 +1847,20 @@ function img_delete($alt = 'default', $other = '')
 	if ($alt == 'default') $alt = $langs->trans('Delete');
 
 	return img_picto($alt, 'delete.png', $other);
+}
+
+/**
+ *  Show printer logo
+ *
+ *  @param  string  $alt        Text on alt image
+ *  @param  string  $other      Add more attributes on img
+ *  @return string              Retourne tag img
+ */
+function img_printer($alt = "default", $other='')
+{
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Print");
+    return img_picto($alt,'printer.png',$other);
 }
 
 /**
@@ -4095,7 +4111,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
-						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[5]), 1);
+						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[5]), 1);
 						$head[$h][1] = $langs->trans($values[2]);
 						$head[$h][2] = str_replace('+','',$values[1]);
 						$h++;
@@ -4105,7 +4121,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				{
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[4]), 1);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[4]), 1);
 					$head[$h][1] = $langs->trans($values[2]);
 					$head[$h][2] = str_replace('+','',$values[1]);
 					$h++;
@@ -4114,7 +4130,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				{
 					if ($values[0] != $type) continue;
 					if ($values[2]) $langs->load($values[2]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[3]), 1);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[3]), 1);
 					$head[$h][1] = $langs->trans($values[1]);
 					$head[$h][2] = 'tab'.$values[1];
 					$h++;

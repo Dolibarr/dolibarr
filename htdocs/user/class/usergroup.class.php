@@ -96,7 +96,6 @@ class UserGroup extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
-				$this->nom  = $obj->name;        // depecated
 				$this->name = $obj->name;
 				$this->note = $obj->note;
 				$this->datec = $obj->datec;

@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
- * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,7 +242,6 @@ if (! empty($conf->file->main_force_https))
 
 
 // Chargement des includes complementaires de presentation
-if (! defined('NOREQUIREMENU')) require_once DOL_DOCUMENT_ROOT .'/core/class/menu.class.php';			// Need 10ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';	    // Need 660ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';	// Need 22ko memory
 
@@ -1565,6 +1564,16 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    }
 	    print "\n";
 
+	    //Dolibarr version
+	    $doliurl='http://www.dolibarr.org';
+	    
+	    $appli='Dolibarr';
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+	    
+	    $appli.=" ".DOL_VERSION;
+	    
+	    print '<div id="blockvmenuhelp" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$doliurl.'">'.$appli.'</a></div>';
+	    
 	    print "</div>\n";
 	    print "<!-- End left menu -->\n";
 

@@ -69,6 +69,7 @@ class MenuManager
 
 		$id='mainmenu';
 
+		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu=new Menu();
 		
 		if ($mode == 'top')

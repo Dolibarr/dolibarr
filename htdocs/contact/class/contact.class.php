@@ -37,10 +37,8 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 
 	var $id;
-	var $civilite_id;  // In fact we stor civility_code
+	var $civilite_id;  // In fact we store civility_code
     var $lastname;
-	var $name;         // TODO deprecated
-	var $nom;          // TODO deprecated
 	var $firstname;
 	var $address;
 	var $zip;
@@ -247,7 +245,7 @@ class Contact extends CommonObject
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
-		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"null");
+		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
 		$sql .= " WHERE rowid=".$id;
 
 		dol_syslog(get_class($this)."::update sql=".$sql,LOG_DEBUG);

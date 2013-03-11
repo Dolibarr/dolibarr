@@ -10,6 +10,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1859,11 +1860,30 @@ class Facture extends CommonInvoice
                     }
                 }
             }
-
-            if ($error == 0)
+			
+			if ($error == 0)
             {
+				$old_statut=$this->statut;
             	$this->brouillon = 1;
             	$this->statut = 0;
+				// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_UNVALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { 
+					$error++; 
+					$this->errors=$interface->errors;
+					$this->statut=$old_statut;
+					$this->brouillon=0;
+				}
+				// Fin appel triggers
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+			
+            if ($error == 0)
+            {
                 $this->db->commit();
                 return 1;
             }

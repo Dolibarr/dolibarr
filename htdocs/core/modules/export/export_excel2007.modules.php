@@ -261,9 +261,10 @@ class ExportExcel2007 extends ExportExcel
      *  @param      array		$array_selected_sorted      Array with list of field to export
      *  @param      resource	$objp                       A record from a fetch with all fields from select
      *  @param      Translate	$outputlangs                Object lang to translate values
+     *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-	function write_record($array_selected_sorted,$objp,$outputlangs)
+	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -282,6 +283,7 @@ class ExportExcel2007 extends ExportExcel
             $newvalue=$objp->$alias;
 
 			$newvalue=$this->excel_clean($newvalue);
+			$typefield=isset($array_types[$code])?$array_types[$code]:'';
 
 			// Traduction newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
@@ -292,6 +294,8 @@ class ExportExcel2007 extends ExportExcel
 			{
 				$newvalue=$outputlangs->convToOutputCharset($newvalue);
 			}
+
+			//var_dump($code.' '.$alias.' '.$newvalue.' '.$typefield);
 
 			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i',$newvalue))
 			{
@@ -341,7 +345,17 @@ class ExportExcel2007 extends ExportExcel
     		    }
     		    else
     		    {
-        		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
+    		    	if ($typefield == 'Text')
+    		    	{
+    		    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
+						$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, (string) $newvalue);
+    		    		$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
+    		    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
+    		    	}
+    		    	else
+    		    	{
+    		    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
+    		    	}
     		    }
 			}
 			$this->col++;

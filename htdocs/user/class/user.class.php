@@ -188,7 +188,7 @@ class User extends CommonObject
 				$this->ref_ext 		= $obj->ref_ext;
 
 				$this->ldap_sid 	= $obj->ldap_sid;
-				$this->lastname		= $obj->name;
+				$this->lastname		= $obj->lastname;
 				$this->firstname 	= $obj->firstname;
 
 				$this->login		= $obj->login;
@@ -2194,7 +2194,7 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['id'] = $obj->rowid;
 				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
 				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
-				$this->users[$obj->rowid]['name'] = $obj->name;
+				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
 				$this->users[$obj->rowid]['login'] = $obj->login;
 				$this->users[$obj->rowid]['statut'] = $obj->statut;
 				$i++;

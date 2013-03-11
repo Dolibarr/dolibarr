@@ -74,9 +74,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		if (! is_object($mysoc))	// mysoc may be not defined (during migration process)
 		{
 			$mysoc=new Societe($db);
-			$mysoc->getMysoc($conf);
+			$mysoc->setMysoc($conf);
 		}
-		$seller=$mysoc;	// If seller is a customer, $seller is not provided, we use $mysoc
+		$seller=$mysoc;	// If sell is done to a customer, $seller is not provided, we use $mysoc
 		//var_dump($seller->country_id);exit;
 	}
 

@@ -212,26 +212,6 @@ $list=array('COMPTA_PRODUCT_BUY_ACCOUNT','COMPTA_PRODUCT_SOLD_ACCOUNT','COMPTA_S
 'COMPTA_VAT_ACCOUNT','COMPTA_ACCOUNT_CUSTOMER','COMPTA_ACCOUNT_SUPPLIER'
 );
 
-/*$sql = "SELECT rowid, name, value, type, note";
-$sql.= " FROM ".MAIN_DB_PREFIX."const";
-$sql.= " WHERE name LIKE 'COMPTA_%'";
-$sql.= " AND name NOT IN ('COMPTA_MODE')";
-$sql.= " AND entity = ".$conf->entity;
-$result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$var=!$var;
-		$list[$obj->name]=$obj->value;
-		$i++;
-	}
-}*/
-
 $num=count($list);
 if ($num)
 {

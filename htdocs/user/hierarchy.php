@@ -96,13 +96,13 @@ $nbofentries=(count($data) - 1);
 
 if ($nbofentries > 0)
 {
-	print '<tr><td colspan="3">';
+	print '<tr '.$bc[true].'><td colspan="3">';
 	tree_recur($data,$data[0],0);
 	print '</td></tr>';
 }
 else
 {
-	print '<tr>';
+	print '<tr '.$bc[true].'>';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
