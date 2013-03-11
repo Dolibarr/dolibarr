@@ -27,7 +27,7 @@
             foreach($listsalesrepresentatives as $val)
             {
                 $userstatic->id=$val['id'];
-                $userstatic->lastname=$val['name'];
+                $userstatic->lastname=$val['lastname'];
                 $userstatic->firstname=$val['firstname'];
                 print $userstatic->getNomUrl(1);
                 $i++;
