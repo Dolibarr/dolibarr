@@ -138,10 +138,33 @@ class dolprintIPP
                 $ipp->setPrinterURI("ipp://localhost:631/printers/");
             }
         }
-        echo 'Jobs for    : '.$this->userid.' module : '.$module.' Printer : '.$obj->printer_name.'<br />';
-        echo "Getting Jobs: ".$ipp->getJobs(true,3,"completed",true)."<br />";
-
-        echo "<pre>";print_r($ipp->jobs_attributes); echo "</pre>";
+        // Getting Jobs
+        $ipp->getJobs(false,0,'completed',false);
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre">';
+        print "<td>Id</td>";
+        print "<td>Owner</td>";
+        print "<td>Printer</td>";
+        print "<td>File</td>";
+        print "<td>Status</td>";
+        print "<td>Cancel</td>";
+        print "</tr>\n";
+        $jobs = $ipp->jobs_attributes;
+        $var = True;
+        //print '<pre>'.print_r($jobs,true).'</pre>';
+        foreach ($jobs as $value )
+        {
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td>'.$value->job_id->_value0.'</td>';
+            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
+            print '<td>'.$value->printer_uri->_value0.'</td>';
+            print '<td>'.$value->job_name->_value0.'</td>';
+            print '<td>'.$value->job_state->_value0.'</td>';
+            print '<td>'.$value->job_uri->_value0.'</td>';
+            print '</tr>';
+        }
+        print "</table>";
     }
 }
 ?>

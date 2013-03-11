@@ -1673,6 +1673,14 @@ else if ($action == 'remove_file')
 	}
 }
 
+// Print file
+else if ($action == 'print_file' AND $user->rights->printipp->use)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
+	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
+	$printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
+}
+
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
 {
 	if ($action == 'addcontact')
@@ -3421,9 +3429,11 @@ else if ($id > 0 || ! empty($ref))
             $urlsource=$_SERVER['PHP_SELF'].'?facid='.$object->id;
             $genallowed=$user->rights->facture->creer;
             $delallowed=$user->rights->facture->supprimer;
+            $printer = false;
+            if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
 
             print '<br>';
-            print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+            print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
             $somethingshown=$formfile->numoffiles;
 
             /*
