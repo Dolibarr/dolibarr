@@ -25,12 +25,11 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("admin");
-$langs->load("members");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -42,7 +41,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='company';
+$elementtype='propal';
 
 if (!$user->admin) accessforbidden();
 
@@ -59,19 +58,19 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("ThirdParty");
+$textobject=$langs->transnoentitiesnoconv("Propales");
 
-$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-llxHeader('',$langs->trans("CompanySetup"),$help_url);
+
+llxHeader('',$langs->trans("PropalSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 
-$head = societe_admin_prepare_head(null);
+$head = propal_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $langs->trans("ThirdParties"), 0, 'company');
+dol_fiche_head($head, 'attributes', $langs->trans("Propal"), 0, 'propal');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

@@ -486,7 +486,7 @@ if ($showbirthday)
             $event->datep=dol_mktime(0,0,0,$datearray['mon'],$datearray['mday'],$year,true);    // For full day events, date are also GMT but they wont but converted during output
             $event->datef=$event->datep;
             $event->type_code='BIRTHDAY';
-            $event->libelle=$langs->trans("Birthday").' '.$obj->firstname.' '.$obj->lastname;
+            $event->libelle=$langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname,$obj->lastname);
             $event->percentage=100;
             $event->fulldayevent=true;
 

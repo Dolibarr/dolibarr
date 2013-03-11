@@ -1076,7 +1076,7 @@ else
 
             // Lastname
             print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td>'.$object->nom.'</td>';
+            print '<td>'.$object->lastname.'</td>';
 
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';

@@ -93,9 +93,9 @@ if ($result)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
-		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">$obj->nom</A></td>\n";
-		print "<td>".$obj->firstname." ".$obj->lastname."</td>\n";
+		print "<tr ".$bc[$var].">";
+		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
 		print "<td>".$obj->titre."</td>\n";
 		print "</tr>\n";
 		$i++;
@@ -108,7 +108,7 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

@@ -21,7 +21,11 @@ For users:
 - New: Can define a default choice for choice "More action when recording
   a subscription" (foundation module).
 - New: Add link to check professional id for india.
-
+- New: [ task #731 ] Uniformize ref generation
+- New: [ task #748 ] Add a link "Dolibarr" into left menu
+- New: Script email_unpaid_invoices_to_representative accepts now a parameter test
+  and a delay.
+  
 For translators:
 - Update language files.
 

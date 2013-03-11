@@ -73,21 +73,8 @@ abstract class CommonObject
             else $ret.=$this->civilite_id.' ';
         }
 
-        // If order not defined, we use the setup
-        if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION));
+        $ret.=dolGetFirstLastname($firstname, $lastname, $nameorder);
 
-        if ($nameorder)
-        {
-            $ret.=$firstname;
-            if ($firstname && $lastname) $ret.=' ';
-            $ret.=$lastname;
-        }
-        else
-        {
-            $ret.=$lastname;
-            if ($firstname && $lastname) $ret.=' ';
-            $ret.=$firstname;
-        }
         return dol_trunc($ret,$maxlen);
     }
 

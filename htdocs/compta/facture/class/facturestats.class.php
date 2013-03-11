@@ -56,7 +56,7 @@ class FactureStats extends Stats
 		global $conf;
 
 		$this->db = $db;
-        $this->socid = $socid;
+        $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
 
 		if ($mode == 'customer')

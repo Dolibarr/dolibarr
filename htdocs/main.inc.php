@@ -1566,13 +1566,15 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    //Dolibarr version
 	    $doliurl='http://www.dolibarr.org';
-	    
 	    $appli='Dolibarr';
-	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
-	    
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) { $appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl=''; }
 	    $appli.=" ".DOL_VERSION;
 	    
-	    print '<div id="blockvmenuhelp" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$doliurl.'">'.$appli.'</a></div>';
+	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
+	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+	    print $appli;
+	    if ($doliurlx) print '</a>';
+	    print '</div>';
 	    
 	    print "</div>\n";
 	    print "<!-- End left menu -->\n";
