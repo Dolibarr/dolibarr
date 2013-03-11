@@ -21,6 +21,8 @@ For users:
 - New: Can define a default choice for choice "More action when recording
   a subscription" (foundation module).
 - New: Add link to check professional id for india.
+- New: [ task #731 ] Uniformize ref generation
+- New: [ task #748 ] Add a link "Dolibarr" into left menu
 
 For translators:
 - Update language files.
