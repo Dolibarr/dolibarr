@@ -622,7 +622,7 @@ class Propal extends CommonObject
      */
     function create($user='', $notrigger=0)
     {
-        global $langs,$conf,$mysoc;
+        global $langs,$conf,$mysoc,$hookmanager;
         $error=0;
 
         $now=dol_now();
@@ -802,6 +802,24 @@ class Propal extends CommonObject
                     $resql=$this->update_price(1);
                     if ($resql)
                     {
+                    	// Actions on extra fields (by external module or standard code)
+                    	// FIXME le hook fait double emploi avec le trigger !!
+                    	$hookmanager->initHooks(array('propaldao'));
+                    	$parameters=array('socid'=>$this->id);
+                    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                    	if (empty($reshook))
+                    	{
+                    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    		{
+                    			$result=$this->insertExtraFields();
+                    			if ($result < 0)
+                    			{
+                    				$error++;
+                    			}
+                    		}
+                    	}
+                    	else if ($reshook < 0) $error++;
+                    	
                         if (! $notrigger)
                         {
                             // Appel des triggers
@@ -1149,6 +1167,20 @@ class Propal extends CommonObject
                     return -1;
                 }
 
+                // Retreive all extrafield for propal
+                // fetch optionals attributes and labels
+                if(!class_exists('Extrafields'))
+                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label('propal',true);
+                //$this->fetch_optionals($this->id,$extralabels);
+                if (count($extralabels)>0) {
+                	$this->array_options = array();
+                }
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                	$this->array_options['options_'.$key]=$label;
+                }   
                 return 1;
             }
 
@@ -1161,6 +1193,44 @@ class Propal extends CommonObject
             dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
             return -1;
         }
+    }
+    
+    /**
+     *	Update value of extrafields on the proposal
+     *
+     *	@param      User	$user       Object user that modify
+     *	@param      double	$remise      Amount discount
+     *	@return     int         		<0 if ko, >0 if ok
+     */
+    function update_extrafields($user)
+    {
+    	// Actions on extra fields (by external module or standard code)
+    	// FIXME le hook fait double emploi avec le trigger !!
+    	$hookmanager->initHooks(array('propaldao'));
+    	$parameters=array('id'=>$this->id);
+    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    	if (empty($reshook))
+    	{
+    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		{
+    			$result=$this->insertExtraFields();
+    			if ($result < 0)
+    			{
+    				$error++;
+    			}
+    		}
+    	}
+    	else if ($reshook < 0) $error++;
+    	
+		if (!$error)
+	    {
+	    	return 1;
+	    }
+	    else
+	    {
+	    	return -1;
+	    }
+    	
     }
 
     /**
