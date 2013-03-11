@@ -908,7 +908,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			GETPOST('fk_parent_line'),
 			0,
 			$fournprice,
-			$buying_price,
+			$buyingprice,
 			$label,
 			$type
 		);
