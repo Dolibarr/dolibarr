@@ -89,6 +89,23 @@ ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL;
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
 
+create table llx_propal_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_propal_extrafields ADD INDEX idx_propal_extrafields (fk_object);
+
+create table llx_facture_extrafields
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_facture_extrafields ADD INDEX idx_facture_extrafields (fk_object);
 ALTER TABLE llx_facture ADD COLUMN revenuestamp double(24,8) DEFAULT 0 AFTER localtax2;
 
 CREATE TABLE llx_c_revenuestamp

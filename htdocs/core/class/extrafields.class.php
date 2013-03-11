@@ -651,9 +651,11 @@ class ExtraFields
         elseif ($type == 'select')
         {
         	$out='<select name="options_'.$key.'">';
-        	foreach ($param['options'] as $key=>$value )
+        	foreach ($param['options'] as $key=>$val )
         	{
-        		$out.='<option value="'.$key.'">'.$value.'</option>';
+        		$out.='<option value="'.$key.'"';
+        		$out.= ($value==$key?'selected="selected"':'');
+        		$out.='>'.$val.'</option>';
         	}
         	$out.='</select>';
         }
