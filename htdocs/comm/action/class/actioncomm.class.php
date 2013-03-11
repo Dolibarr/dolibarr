@@ -948,7 +948,7 @@ class ActionComm extends CommonObject
                     $event['startdate']=$datestart;
                     $event['duration']=$duration;	// Not required with type 'journal'
                     $event['enddate']=$dateend;		// Not required with type 'journal'
-                    $event['author']=$obj->firstname.($obj->lastname?" ".$obj->lastname:"");
+                    $event['author']=dolGetFirstLastname($obj->firstname, $obj->lastname);
                     $event['priority']=$obj->priority;
                     $event['fulldayevent']=$obj->fulldayevent;
                     $event['location']=$obj->location;

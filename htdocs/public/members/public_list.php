@@ -140,7 +140,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.$objp->firstname.' '.$objp->lastname.($objp->societe?' / '.$objp->societe:'').'</a></td>'."\n";
+		print '<td><a href="public_card.php?id='.$objp->rowid.'">'.dolGetFirstLastname($obj->firstname, $obj->lastname).($objp->societe?' / '.$objp->societe:'').'</a></td>'."\n";
 		//print "<td>$objp->naiss</td>\n"; // est-ce nécessaire ??
 		print '<td>'.$objp->email.'</td>'."\n";
 		print '<td>'.$objp->zip.'</td>'."\n";

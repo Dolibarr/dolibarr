@@ -209,7 +209,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 					$obj = $db->fetch_object($resql);
 
 					// sendto en RFC2822
-					$sendto = str_replace(',',' ',$obj->firstname." ".$obj->lastname)." <".$obj->email.">";
+					$sendto = str_replace(',',' ',dolGetFirstLastname($obj->firstname, $obj->lastname))." <".$obj->email.">";
 
 					// Make substitutions on topic and body. From (AA=YY;BB=CC;...) we keep YY, CC, ...
 					$other=explode(';',$obj->other);

@@ -127,7 +127,7 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			// sendto en RFC2822
-			$sendto = str_replace(',',' ',$obj->firstname." ".$obj->lastname) ." <".$obj->email.">";
+			$sendto = str_replace(',',' ',dolGetFirstLastname($obj->firstname, $obj->lastname) ." <".$obj->email.">";
 
 			// Make subtsitutions on topic and body
 			$other=explode(';',$obj->other);

@@ -181,7 +181,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
             $var=!$var;
             if (!$obj->fk_societe)
             {
-                $username= $obj->firstname.' '.$obj->lastname;
+                $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
                 $internalusers[$obj->rowid] = $username;
             }
 
@@ -254,7 +254,7 @@ if ($resql)
         $var=!$var;
 
         print "<tr ".$bc[$var].">";
-        print '<td>'.$obj->firstname." ".$obj->lastname.'</td>';
+        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
         $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
         print '<td>'.$label.'</td>';
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';

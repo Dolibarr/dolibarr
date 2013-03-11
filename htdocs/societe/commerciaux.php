@@ -188,7 +188,7 @@ if ($_GET["socid"])
 
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
-			print $obj->firstname." " .$obj->lastname."\n";
+			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 			print '</a>&nbsp;';
 			if ($user->rights->societe->creer)
 			{
@@ -254,7 +254,7 @@ if ($_GET["socid"])
 				print "<tr $bc[$var]><td>";
 				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),"user").' ';
-				print $obj->firstname." " .$obj->lastname."\n";
+				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 				print '</a>';
 				print '</td><td>'.$obj->login.'</td>';
 				print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';

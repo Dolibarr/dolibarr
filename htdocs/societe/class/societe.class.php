@@ -1616,7 +1616,7 @@ class Societe extends CommonObject
                     $obj = $this->db->fetch_object($resql);
                     if ($mode == 'email') $property=$obj->email;
                     else if ($mode == 'mobile') $property=$obj->phone_mobile;
-                    $contact_property[$obj->rowid] = trim($obj->firstname." ".$obj->lastname)." &lt;".$property."&gt;";
+                    $contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))." &lt;".$property."&gt;";
                     $i++;
                 }
             }
@@ -1649,7 +1649,7 @@ class Societe extends CommonObject
                 while ($i < $nump)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    $contacts[$obj->rowid] = $obj->firstname." ".$obj->lastname;
+                    $contacts[$obj->rowid] = dolGetFirstLastname($obj->firstname,$obj->lastname);
                     $i++;
                 }
             }
@@ -1685,7 +1685,7 @@ class Societe extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                if ($mode == 'email') $contact_property = "$obj->firstname $obj->lastname <$obj->email>";
+                if ($mode == 'email') $contact_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
                 else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
             }
             return $contact_property;
