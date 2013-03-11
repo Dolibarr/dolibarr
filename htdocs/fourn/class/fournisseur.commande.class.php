@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2012	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
@@ -926,6 +926,9 @@ class CommandeFournisseur extends CommonOrder
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
         $sql.= "ref";
+        $sql.= ", ref_supplier";
+        $sql.= ", note";
+        $sql.= ", note_public";
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
@@ -938,6 +941,9 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
+        $sql.= ", '".$this->ref_supplier."'";
+        $sql.= ", '".$this->note."'";
+        $sql.= ", '".$this->note_public."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", ".$this->db->idate($now);
