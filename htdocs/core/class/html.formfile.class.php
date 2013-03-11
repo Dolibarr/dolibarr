@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2008-2011 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (c) 2010-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ class FormFile
      *      @param      boolean             $printer            Printer Icon
      * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
-    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$printer)
+    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$printer=0)
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
