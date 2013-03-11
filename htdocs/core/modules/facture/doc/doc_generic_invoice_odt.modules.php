@@ -121,16 +121,16 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
         	'object_payment_term_code'=>$object->cond_reglement_code,
         	'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-        	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
-            'object_total_vat'=>price($object->total_tva,0,$outputlangs),
-            'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-            'object_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
+        	'object_total_ht'=>price2num($object->total_ht,2),
+            'object_total_vat'=>price2num($object->total_tva,2),
+            'object_total_ttc'=>price2num($object->total_ttc,2),
+            'object_total_discount_ht' => price2num($object->getTotalDiscount(), 0, $outputlangs),
             'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,
         	// Payments
             'object_already_payed'=>$alreadypayed,
-            'object_remain_to_pay'=>price($object->total_ttc - $sumpayed,0,$outputlangs)
+            'object_remain_to_pay'=>price2num($object->total_ttc - $sumpayed,2)
         );
 
         // Add vat by rates
@@ -140,6 +140,17 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
 		}
 		
+		// Retrieve extrafields
+		if(is_array($object->array_options) && count($object->array_options))
+		{
+			if(!class_exists('Extrafields'))
+				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
+			$object->fetch_optionals($object->id,$extralabels);
+		
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key='object',$outputlangs);
+		}
         return $resarray;
     }
 
@@ -163,9 +174,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'line_up'=>price($line->subprice, 0, $outputlangs),
             'line_qty'=>$line->qty,
             'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-            'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
-            'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
-            'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
+            'line_price_ht'=>price2num($line->total_ht, 2),
+            'line_price_ttc'=>price2num($line->total_ttc, 2),
+            'line_price_vat'=>price2num($line->total_tva, 2),
             'line_date_start'=>dol_print_date($line->date_start, 'day', false, $outputlangs),
             'line_date_end'=>dol_print_date($line->date_end, 'day', false, $outputlangs),
         );
@@ -347,7 +358,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 {
                     $socobject=$object->client;
                 }
+                
+                // Fetch info for linked propal
+                $linked_propal = $object->fetchObjectLinked('','','','');
+                print '<pre>';
+                //print_r($object->linkedObjects['propal']); exit;
 
+                $propal_object = $object->linkedObjects['propal'][0];
+                
                 // Make substitution
                 $substitutionarray=array(
                     '__FROM_NAME__' => $this->emetteur->nom,
@@ -397,8 +415,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
+				$array_propal=$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
                 //var_dump($tmparray); exit;
