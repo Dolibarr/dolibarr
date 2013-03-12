@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
@@ -82,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) dol_print_error($db,$object->error);
 }
-else if (! empty($socid))
+else if (! empty($socid) && $socid > 0)
 {
 	$fourn = new Fournisseur($db);
 	$ret=$fourn->fetch($socid);
@@ -657,33 +657,47 @@ else if ($action == 'remove_file' && $object->id > 0 && $user->rights->fournisse
 /*
  * Create an order
  */
-else if ($action == 'create' && ! empty($object->socid) && $user->rights->fournisseur->commande->creer)
+else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 {
-    $error=0;
+ 	$error=0;
 
-    $db->begin();
-
-    $id=$object->create($user);
-    if (! $id > 0)
+    if ($socid <1)
     {
-        $error++;
-        setEventMessage($object->error, 'errors');
+    	$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')).'</div>';
+    	$action='create';
+    	$error++;
     }
 
     if (! $error)
     {
-        if ($comclientid !=	'')
+        $db->begin();
+
+        // Creation commande
+        $object->ref_supplier  	= GETPOST('refsupplier');
+        $object->socid         	= $socid;
+        $object->note			= GETPOST('note');
+        $object->note_public   	= GETPOST('note_public');
+
+        $id = $object->create($user);
+		if ($id < 0)
+		{
+			$error++;
+		}
+         
+        if ($error)
         {
-    		$object->updateFromCommandeClient($user, $id, $comclientid);
+            $langs->load("errors");
+            $db->rollback();
+            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+            $action='create';
+            $_GET['socid']=$_POST['socid'];
         }
-
-		$ret=$object->fetch($id);    // Reload to get new records
-
-        $db->commit();
-    }
-    else
-    {
-        $db->rollback();
+        else
+		{
+            $db->commit();
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+            exit;
+        }
     }
 }
 
@@ -942,8 +956,68 @@ $productstatic = new Product($db);
 /* *************************************************************************** */
 
 $now=dol_now();
-
-if (! empty($object->id))
+if ($action=="create")
+{
+	print_fiche_titre($langs->trans('NewOrder'));
+	
+	dol_htmloutput_mesg($mesg);
+	
+	$societe='';
+	if ($socid>0)
+	{
+		$societe=new Societe($db);
+		$societe->fetch($socid);
+	}
+	
+	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<table class="border" width="100%">';
+	
+	// Ref
+	print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
+	
+	// Third party
+	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
+	print '<td>';
+	
+	if ($socid > 0)
+	{
+		print $societe->getNomUrl(1);
+		print '<input type="hidden" name="socid" value="'.$socid.'">';
+	}
+	else
+	{
+		print $form->select_company((empty($socid)?'':$socid),'socid','s.fournisseur = 1',1);
+	}
+	print '</td>';
+	
+	// Ref supplier
+	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
+	print '</tr>';
+	
+	print '</td></tr>';
+	
+	print '<tr><td>'.$langs->trans('Note').'</td>';
+	print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+	print '</tr>';
+	
+	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
+	print '<td><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+	print '</tr>';
+	
+	// Other options
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+	
+	// Bouton "Create Draft"
+    print "</table>\n";
+	
+	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
+	
+	print "</form>\n";
+}
+elseif (! empty($object->id))
 {
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
