@@ -104,6 +104,7 @@ class dolprintIPP
                 $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
             }
         }
+        // Set number of copy
         $ipp->setCopies($obj->copy);
         $ipp->setData(DOL_DATA_ROOT.'/'.$module.'/'.$file);
         $ipp->printJob();
@@ -165,6 +166,25 @@ class dolprintIPP
             print '</tr>';
         }
         print "</table>";
+    }
+
+    /**
+     *  Get printer detail
+     *
+     */
+    function get_printer_detail($uri)
+    {
+        global $conf,$db;
+
+        include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
+        $ipp = new CupsPrintIPP();
+        $ipp->setLog(DOL_DATA_ROOT.'/printipp.log','file',3); // logging very verbose
+        $ipp->setHost($this->host);
+        $ipp->setPort($this->port);
+        $ipp->setUserName($this->userid);
+        $ipp->setPrinterURI($uri);
+        $ipp->getPrinterAttributes();
+        return $ipp->printer_attributes;
     }
 }
 ?>
