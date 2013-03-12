@@ -57,10 +57,10 @@ insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'Sénégal'       
 insert into llx_c_pays (rowid,code,libelle) values (23, 'AR', 'Argentine'      );
 insert into llx_c_pays (rowid,code,libelle) values (24, 'CM', 'Cameroun'       );
 insert into llx_c_pays (rowid,code,libelle) values (25, 'PT', 'Portugal'       );
-insert into llx_c_pays (rowid,code,libelle) values (26, 'SA', 'Arabie Saoudite');
+insert into llx_c_pays (rowid,code,libelle) values (26, 'SA', 'Saudi Arabia'   );
 insert into llx_c_pays (rowid,code,libelle) values (27, 'MC', 'Monaco'         );
 insert into llx_c_pays (rowid,code,libelle) values (28, 'AU', 'Australia'      );
-insert into llx_c_pays (rowid,code,libelle) values (29, 'SG', 'Singapour'     );
+insert into llx_c_pays (rowid,code,libelle) values (29, 'SG', 'Singapour'      );
 insert into llx_c_pays (rowid,code,libelle) values (30, 'AF', 'Afghanistan'    );
 insert into llx_c_pays (rowid,code,libelle) values (31, 'AX', 'Iles Aland'     );
 insert into llx_c_pays (rowid,code,libelle) values (32, 'AL', 'Albanie'        );
