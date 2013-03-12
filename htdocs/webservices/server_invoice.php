@@ -110,7 +110,7 @@ $server->wsdl->addComplexType(
     )
 );
 
-$server->wsdl->addComplexType(
+/*$server->wsdl->addComplexType(
     'LinesArray',
     'complexType',
     'array',
@@ -121,7 +121,7 @@ $server->wsdl->addComplexType(
         array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:line[]')
     ),
     'tns:line'
-);
+);*/
 $server->wsdl->addComplexType(
     'LinesArray2',
     'complexType',
@@ -170,7 +170,7 @@ $server->wsdl->addComplexType(
         'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
     )
 );
-
+/*
 $server->wsdl->addComplexType(
     'InvoicesArray',
     'complexType',
@@ -182,7 +182,7 @@ $server->wsdl->addComplexType(
         array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:invoice[]')
     ),
     'tns:invoice'
-);
+);*/
 $server->wsdl->addComplexType(
     'InvoicesArray2',
     'complexType',
