@@ -105,7 +105,7 @@ See ChangeLog file found into package.
 
 ### Miscellanous:
 
-- Mutli-user, with several permissions levels for each feature.
+- Multi-user, with several permissions levels for each feature.
 - Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).
 - Very user friendly and easy to use.
 - Optional WYSIWYG forms, optional Ajax forms.
