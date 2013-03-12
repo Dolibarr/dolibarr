@@ -92,7 +92,7 @@ $server->wsdl->addComplexType(
 				'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
 				'product_type' => array('name'=>'product_type','type'=>'xsd:int'),
 				'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
-				'total_tva' => array('name'=>'totaltva','type'=>'xsd:double'),
+				'total_tva' => array('name'=>'total_tva','type'=>'xsd:double'),
 				'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
 
 				'date_start' => array('name'=>'date_start','type'=>'xsd:string'),
@@ -653,17 +653,17 @@ function createOrder($authentication,$order)
 		foreach($arrayoflines as $key => $line)
 		{
 			// $key can be 'line' or '0','1',...
-			$newline=new OrderLigne($db);
+			$newline=new OrderLine($db);
 
 			$newline->type=$line['type'];
 			$newline->desc=$line['desc'];
 			$newline->fk_product=$line['fk_product'];
-			$newline->tva_tx=$line['vat_rate'];
+			$newline->tva_tx=$line['tva_tx'];
 			$newline->qty=$line['qty'];
-			$newline->subprice=$line['unitprice'];
-			$newline->total_ht=$line['total_net'];
-			$newline->total_tva=$line['total_vat'];
-			$newline->total_ttc=$line['total'];
+			$newline->subprice=$line['subprice'];
+			$newline->total_ht=$line['total_ht'];
+			$newline->total_tva=$line['total_tva'];
+			$newline->total_ttc=$line['total_ttc'];
 			$newline->fk_product=$line['fk_product'];
 			$newobject->lines[]=$newline;
 		}
