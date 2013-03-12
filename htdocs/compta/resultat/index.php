@@ -555,7 +555,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
 		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);
-		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee],' MT'):0);
+		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee],'MT'):0);
 		print price($in-$out).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}
