@@ -49,6 +49,7 @@ For developers:
 WARNING: If you used external modules, some of them may need to be upgraded due to:
 - fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse were
   renamed into lastname, firstname, zip, town, address).
+  This may also be true for some fields into web services.
 - if module use hook pdf_writelinedesc, module may have to add return 1 at end of 
   function to keep same behaviour.
 
@@ -80,6 +81,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: Package for launchpad
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
+- Fix: [ bug #762 ] Bad profit calculation in Reporting
 
 
 
