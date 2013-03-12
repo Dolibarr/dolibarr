@@ -925,3 +925,5 @@ UPDATE llx_c_action_trigger SET code='FICHINTER_VALIDATE' WHERE code='FICHEINTER
 UPDATE llx_c_departements SET ncc='ALAVA', nom='Álava' WHERE code_departement='01' AND fk_region=419;
 
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
+
+UPDATE llx_const set name='PRODUIT_MULTI_PRICES' where name='PRODUIT_MUTLI_PRICES';
