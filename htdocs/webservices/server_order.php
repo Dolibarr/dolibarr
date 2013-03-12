@@ -35,6 +35,8 @@ require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
+$langs->load("main");
+
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
@@ -54,7 +56,7 @@ $server->configureWSDL('WebServicesDolibarrOrder',$ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
-// Define WSDL content
+// Define WSDL Authentication object
 $server->wsdl->addComplexType(
 		'authentication',
 		'complexType',
@@ -69,7 +71,20 @@ $server->wsdl->addComplexType(
 				'entity' => array('name'=>'entity','type'=>'xsd:string')
 		)
 );
+// Define WSDL Return object
+$server->wsdl->addComplexType(
+		'result',
+		'complexType',
+		'struct',
+		'all',
+		'',
+		array(
+				'result_code' => array('name'=>'result_code','type'=>'xsd:string'),
+				'result_label' => array('name'=>'result_label','type'=>'xsd:string'),
+		)
+);
 
+// Define other specific objects
 $server->wsdl->addComplexType(
 		'line',
 		'complexType',
@@ -78,34 +93,34 @@ $server->wsdl->addComplexType(
 		'',
 		array(
 				'id' => array('name'=>'id','type'=>'xsd:string'),
+		        'type' => array('name'=>'type','type'=>'xsd:int'),
 				'fk_commande' => array('name'=>'fk_commande','type'=>'xsd:int'),
 				'fk_parent_line' => array('name'=>'fk_parent_line','type'=>'xsd:int'),
 				'desc' => array('name'=>'desc','type'=>'xsd:string'),
-				'qty' => array('name'=>'qty','type'=>'xsd:int'),
+				'qty' => array('name'=>'qty','type'=>'xsd:double'),
 				'price' => array('name'=>'price','type'=>'xsd:double'),
-				'subprice' => array('name'=>'subprice','type'=>'xsd:double'),
-				'tva_tx' => array('name'=>'tva_tx','type'=>'xsd:double'),
+				'unitprice' => array('name'=>'unitprice','type'=>'xsd:double'),
+				'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
 
 				'remise' => array('name'=>'remise','type'=>'xsd:double'),
 				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:double'),
 
-				'fk_product' => array('name'=>'fk_product','type'=>'xsd:int'),
-				'product_type' => array('name'=>'product_type','type'=>'xsd:int'),
-				'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
-				'total_tva' => array('name'=>'totaltva','type'=>'xsd:double'),
-				'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
+				'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+				'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
+				'total' => array('name'=>'total','type'=>'xsd:double'),
 
-				'date_start' => array('name'=>'date_start','type'=>'xsd:string'),
-				'date_end' => array('name'=>'date_end','type'=>'xsd:string'),
+				'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
+				'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
 
 				// From product
+		        'product_id' => array('name'=>'product_id','type'=>'xsd:int'),
 				'product_ref' => array('name'=>'product_ref','type'=>'xsd:string'),
 				'product_label' => array('name'=>'product_label','type'=>'xsd:string'),
 				'product_desc' => array('name'=>'product_desc','type'=>'xsd:string')
 		)
 );
 
-$server->wsdl->addComplexType(
+/*$server->wsdl->addComplexType(
 		'LinesArray',
 		'complexType',
 		'array',
@@ -119,8 +134,7 @@ $server->wsdl->addComplexType(
 				)
 		),
 		'tns:line'
-);
-
+);*/
 $server->wsdl->addComplexType(
 		'LinesArray2',
 		'complexType',
@@ -149,23 +163,25 @@ $server->wsdl->addComplexType(
 				'ref_client' => array('name'=>'ref_client','type'=>'xsd:string'),
 				'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
 				'ref_int' => array('name'=>'ref_int','type'=>'xsd:string'),
-				'socid' => array('name'=>'socid','type'=>'xsd:int'),
-				'statut' => array('name'=>'statut','type'=>'xsd:int'),
+				'thirdparty_id' => array('name'=>'thirdparty_id','type'=>'xsd:int'),
+				'status' => array('name'=>'status','type'=>'xsd:int'),
 				'facturee' => array('name'=>'facturee','type'=>'xsd:string'),
-				'total_ht' => array('name'=>'total_ht','type'=>'xsd:double'),
-				'total_tva' => array('name'=>'total_tva','type'=>'xsd:double'),
+				'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
+				'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
 				'total_localtax1' => array('name'=>'total_localtax1','type'=>'xsd:double'),
 				'total_localtax2' => array('name'=>'total_localtax2','type'=>'xsd:double'),
-				'total_ttc' => array('name'=>'total_ttc','type'=>'xsd:double'),
+				'total' => array('name'=>'total','type'=>'xsd:double'),
 				'date' => array('name'=>'date','type'=>'xsd:date'),
-				'date_commande' => array('name'=>'date_commande','type'=>'xsd:date'),
+		        'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
+		        'date_validation' => array('name'=>'date_validation','type'=>'xsd:dateTime'),
+	    	    'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
 				'remise' => array('name'=>'remise','type'=>'xsd:string'),
 				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
 				'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
 				'source' => array('name'=>'source','type'=>'xsd:string'),
 				'note' => array('name'=>'note','type'=>'xsd:string'),
 				'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
-				'fk_project' => array('name'=>'fk_project','type'=>'xsd:string'),
+				'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
 
 				'mode_reglement_id' => array('name'=>'mode_reglement_id','type'=>'xsd:string'),
 				'mode_reglement_code' => array('name'=>'mode_reglement_code','type'=>'xsd:string'),
@@ -179,10 +195,10 @@ $server->wsdl->addComplexType(
 				'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
 				'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
 
-				'lines' => array('name'=>'lines','type'=>'tns:LinesArray')
+				'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
 		)
 );
-
+/*
 $server->wsdl->addComplexType(
 		'OrdersArray',
 		'complexType',
@@ -197,8 +213,7 @@ $server->wsdl->addComplexType(
 				)
 		),
 		'tns:order'
-);
-
+);*/
 $server->wsdl->addComplexType(
 		'OrdersArray2',
 		'complexType',
@@ -207,29 +222,11 @@ $server->wsdl->addComplexType(
 		'',
 		array(
 				'order' => array(
-						'name' => 'invoice',
-						'type' => 'tns:invoice',
+						'name' => 'order',
+						'type' => 'tns:order',
 						'minOccurs' => '0',
 						'maxOccurs' => 'unbounded'
 				)
-		)
-);
-
-$server->wsdl->addComplexType(
-		'result',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
-				'result_code' => array(
-						'name'=>'result_code',
-						'type'=>'xsd:string'
-				),
-				'result_label' => array(
-						'name'=>'result_label',
-						'type'=>'xsd:string'
-				),
 		)
 );
 
@@ -268,7 +265,7 @@ $server->register(
 $server->register(
 		'createOrder',
 		array('authentication'=>'tns:authentication','order'=>'tns:order'),	// Entry values
-		array('result'=>'tns:result','id'=>'xsd:string'),	// Exit values
+		array('result'=>'tns:result','id'=>'xsd:string','ref'=>'xsd:string'),	// Exit values
 		$ns,
 		$ns.'#createOrder',
 		$styledoc,
@@ -355,14 +352,14 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 						'qty'=>$line->qty,
 						'price'=>$line->price,
 						'subprice'=>$line->subprice,
-						'tva_tx'=>$line->tva_tx,
+						'vat_rate'=>$line->tva_tx,
 						'remise'=>$line->remise,
 						'remise_percent'=>$line->remise_percent,
 						'fk_product'=>$line->fk_product,
 						'product_type'=>$line->product_type,
-						'total_ht'=>$line->total_ht,
-						'total_tva'=>$line->total_tva,
-						'total_ttc'=>$line->total_ttc,
+						'total_net'=>$line->total_ht,
+						'total_vat'=>$line->total_tva,
+						'total'=>$line->total_ttc,
 						'date_start'=>$line->date_start,
 						'date_end'=>$line->date_end,
 						'product_ref'=>$line->product_ref,
@@ -381,19 +378,21 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 					'ref_client' => $order->ref_client,
 					'ref_ext' => $order->ref_ext,
 					'ref_int' => $order->ref_int,
-					'socid' => $order->socid,
-					'statut' => $order->statut,
+					'thirdparty_id' => $order->socid,
+					'status' => $order->statut,
 
-					'total_ht' => $order->total_ht,
-					'total_tva' => $order->total_tva,
+					'total_net' => $order->total_ht,
+					'total_vat' => $order->total_tva,
 					'total_localtax1' => $order->total_localtax1,
 					'total_localtax2' => $order->total_localtax2,
-					'total_ttc' => $order->total_ttc,
-					'fk_project' => $order->fk_project,
+					'total' => $order->total_ttc,
+					'project_id' => $order->fk_project,
 
-					'date' => $order->date?dol_print_date($order->date,'dayrfc'):'',
-					'date_commande' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
-
+					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
+					'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+					'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
+					'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+								
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
 					'remise_absolue' => $order->remise_absolue,
@@ -403,13 +402,12 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 					'note' => $order->note,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
-					'cond_reglement' => $order->cond_reglement,
-					'cond_reglement_doc' => $order->cond_reglement_doc,
 					'cond_reglement_code' => $order->cond_reglement_code,
+					'cond_reglement' => $order->cond_reglement,
 					'mode_reglement_id' => $order->mode_reglement_id,
-					'mode_reglement' => $order->mode_reglement,
 					'mode_reglement_code' => $order->mode_reglement_code,
-
+					'mode_reglement' => $order->mode_reglement,
+								
 					'date_livraison' => $order->date_livraison,
 					'fk_delivery_address' => $order->fk_delivery_address,
 
@@ -466,7 +464,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
 
 	// Check parameters
-	if (! $error && !$idthirdparty)
+	if (! $error && empty($idthirdparty))
 	{
 		$error++;
 		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
@@ -499,7 +497,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 				if( $socid && ( $socid != $order->socid) )
 				{
 					$error++;
-					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.'User does not have permission for this request';
+					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
 				}
 
 				if(!$error)
@@ -511,6 +509,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					{
 						$linesresp[]=array(
 						'id'=>$line->rowid,
+						'type'=>$line->product_type,
 						'fk_commande'=>$line->fk_commande,
 						'fk_parent_line'=>$line->fk_parent_line,
 						'desc'=>$line->desc,
@@ -520,13 +519,12 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 						'tva_tx'=>$line->tva_tx,
 						'remise'=>$line->remise,
 						'remise_percent'=>$line->remise_percent,
-						'fk_product'=>$line->fk_product,
-						'product_type'=>$line->product_type,
-						'total_ht'=>$line->total_ht,
-						'total_tva'=>$line->total_tva,
-						'total_ttc'=>$line->total_ttc,
+						'total_net'=>$line->total_ht,
+						'total_vat'=>$line->total_tva,
+						'total'=>$line->total_ttc,
 						'date_start'=>$line->date_start,
 						'date_end'=>$line->date_end,
+						'product_id'=>$line->fk_product,
 						'product_ref'=>$line->product_ref,
 						'product_label'=>$line->product_label,
 						'product_desc'=>$line->product_desc
@@ -541,17 +539,16 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					'ref_ext' => $order->ref_ext,
 					'ref_int' => $order->ref_int,
 					'socid' => $order->socid,
-					'statut' => $order->statut,
+					'status' => $order->statut,
 
-					'total_ht' => $order->total_ht,
-					'total_tva' => $order->total_tva,
+					'total_net' => $order->total_ht,
+					'total_vat' => $order->total_tva,
 					'total_localtax1' => $order->total_localtax1,
 					'total_localtax2' => $order->total_localtax2,
-					'total_ttc' => $order->total_ttc,
-					'fk_project' => $order->fk_project,
+					'total' => $order->total_ttc,
+					'project_id' => $order->fk_project,
 
-					'date' => $order->date?dol_print_date($order->date,'dayrfc'):'',
-					'date_commande' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
+					'date' => $order->date_commande?dol_print_date($order->date_commande,'dayrfc'):'',
 
 					'remise' => $order->remise,
 					'remise_percent' => $order->remise_percent,
@@ -570,7 +567,6 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 					'mode_reglement_code' => $order->mode_reglement_code,
 
 					'date_livraison' => $order->date_livraison,
-					'fk_delivery_address' => $order->fk_delivery_address,
 
 					'demand_reason_id' => $order->demand_reason_id,
 					'demand_reason_code' => $order->demand_reason_code,
@@ -618,11 +614,12 @@ function createOrder($authentication,$order)
 
 	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
 
+	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	
 	// Init and check authentication
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
 	// Check parameters
@@ -631,19 +628,19 @@ function createOrder($authentication,$order)
 	if (! $error)
 	{
 		$newobject=new Commande($db);
-		$newobject->socid=$order['socid'];
+		$newobject->socid=$order['thirdparty_id'];
 		$newobject->type=$order['type'];
 		$newobject->ref_ext=$order['ref_ext'];
-		$newobject->date=$order['date'];
-		$newobject->date_lim_reglement=$order['date_due'];
+		$newobject->date=dol_stringtotime($order['date'],'dayrfc');
+		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
 		$newobject->note=$order['note'];
 		$newobject->note_public=$order['note_public'];
-		$newobject->statut=$order['statut'];
+		$newobject->statut=$order['status'];
 		$newobject->facturee=$order['facturee'];
 		$newobject->fk_project=$order['project_id'];
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
-		$newobject->date_commande=$now;
+		$newobject->date_creation=$now;
 
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines=array();
@@ -670,17 +667,26 @@ function createOrder($authentication,$order)
 
 		$db->begin();
 
-		$object_id=$newobject->create($fuser,0,0);
-		if ($object_id < 0)
+        $result=$newobject->create($fuser,0,0);
+		if ($result < 0)
 		{
 			$error++;
 
 		}
 
+		if ($newobject->statut == 1)   // We want order validated
+		{
+			$result=$newobject->validate($fuser);
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+				
 		if (! $error)
 		{
 			$db->commit();
-			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$object_id);
+			$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
 		}
 		else
 		{
@@ -689,6 +695,7 @@ function createOrder($authentication,$order)
 			$errorcode='KO';
 			$errorlabel=$newobject->error;
 		}
+		
 	}
 
 	if ($error)
@@ -784,6 +791,6 @@ function validOrder($authentication,$id='')
 
 
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
+$server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
 
 ?>
