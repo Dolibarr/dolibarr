@@ -53,7 +53,7 @@ insert into llx_c_pays (rowid,code,libelle) values (18, 'HU', 'Hongrie'        )
 insert into llx_c_pays (rowid,code,libelle) values (19, 'RU', 'Russia'         );
 insert into llx_c_pays (rowid,code,libelle) values (20, 'SE', 'Sweden'         );
 insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'Côte d''Ivoire' );
-insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'Sénégal'        );
+insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'Senegal'        );
 insert into llx_c_pays (rowid,code,libelle) values (23, 'AR', 'Argentine'      );
 insert into llx_c_pays (rowid,code,libelle) values (24, 'CM', 'Cameroun'       );
 insert into llx_c_pays (rowid,code,libelle) values (25, 'PT', 'Portugal'       );
