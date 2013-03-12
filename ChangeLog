@@ -61,7 +61,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: Package for launchpad
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
-
+- Fix: [ bug #762 ] Bad profit calculation in Reporting
 
 
 
