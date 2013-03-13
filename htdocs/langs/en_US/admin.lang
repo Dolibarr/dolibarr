@@ -288,7 +288,7 @@ GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany done 
 GenericMaskCodes4b=<u>Example on third party created on 2007-03-01:</u><br>
 GenericMaskCodes4c=<u>Example on product created on 2007-03-01:</u><br>
 GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b>
-GenericNumRefModelDesc=Return a customizable number according to a defined mask. 
+GenericNumRefModelDesc=Returns a customizable number according to a defined mask. 
 ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s</b>
 ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on port <b>%s</b>
 DoTestServerAvailability=Test server connectivity
@@ -910,7 +910,7 @@ RunningUpdateProcessMayBeRequired=Running the upgrade process seems to be requir
 YouMustRunCommandFromCommandLineAfterLoginToUser=You must run this command from command line after login to a shell with user <b>%s</b> or you must add -W option at end of command line to provide <b>%s</b> password.
 YourPHPDoesNotHaveSSLSupport=SSL functions not available in your PHP
 DownloadMoreSkins=More skins to download
-SimpleNumRefModelDesc=Return the reference number with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence without hole and with no reset
+SimpleNumRefModelDesc=Returns the reference number with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence without hole and with no reset
 ShowProfIdInAddress=Show professionnal id with addresses on documents
 TranslationUncomplete=Partial translation
 SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix <b>.lang</b> text files into directory <b>htdocs/langs</b> and submit them on the forum at <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a>. 
@@ -1016,7 +1016,7 @@ WatermarkOnDraftInvoices=Watermark on draft invoices (any if empty)
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
 NumberOfProductLines=Number of product lines
-ProposalsNumberingModules=Commercial proposal numbering modules
+ProposalsNumberingModules=Commercial proposal numbering models
 ProposalsPDFModules=Commercial proposal documents models
 ClassifiedInvoiced=Classified invoiced
 HideTreadedPropal=Hide the treated commercial proposals in the list
@@ -1027,7 +1027,7 @@ FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (any if empty)
 ##### Orders #####
 OrdersSetup=Order management setup
-OrdersNumberingModules=Orders numbering modules
+OrdersNumberingModules=Orders numbering models
 OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
@@ -1041,7 +1041,7 @@ Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
 InterventionsSetup=Interventions module setup
 FreeLegalTextOnInterventions=Free text on intervention documents
-FicheinterNumberingModules=Intervention numbering modules
+FicheinterNumberingModules=Intervention numbering models
 TemplatePDFInterventions=Intervention card documents models
 WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
 ##### Contracts #####
