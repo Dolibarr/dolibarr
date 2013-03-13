@@ -188,10 +188,15 @@ class FormActions
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
         		print '<td>'.dol_print_date($action->datep,'day').'</td>';
-        		$userstatic->id = $action->author->id;
-        		$userstatic->firstname = $action->author->firstname;
-        		$userstatic->lastname = $action->author->lastname;
-        		print '<td>'.$userstatic->getNomUrl(1).'</td>';
+        		print '<td>';
+        		if (! empty($action->author->id))
+        		{
+        			$userstatic->id = $action->author->id;
+        			$userstatic->firstname = $action->author->firstname;
+        			$userstatic->lastname = $action->author->lastname;
+        			print $userstatic->getNomUrl(1);
+        		}
+        		print '</td>';
         		print '</tr>';
         	}
         	print '</table>';
