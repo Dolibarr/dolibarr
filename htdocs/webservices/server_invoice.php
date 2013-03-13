@@ -67,7 +67,7 @@ $server->wsdl->addComplexType(
     	'sourceapplication' => array('name'=>'sourceapplication','type'=>'xsd:string'),
     	'login' => array('name'=>'login','type'=>'xsd:string'),
         'password' => array('name'=>'password','type'=>'xsd:string'),
-        'entity' => array('name'=>'entity','type'=>'xsd:string'),
+        'entity' => array('name'=>'entity','type'=>'xsd:string')
     )
 );
 // Define WSDL Return object
@@ -377,7 +377,10 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
     $errorcode='';$errorlabel='';
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-    // Check parameters
+
+	if ($fuser->societe_id) $socid=$fuser->societe_id;
+    
+	// Check parameters
 	if (! $error && empty($idthirdparty))
 	{
 		$error++;
@@ -394,9 +397,9 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
 		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
 		//$sql.=" WHERE f.fk_soc = s.rowid AND nom = '".$db->escape($idthirdparty)."'";
-		$sql.=" WHERE f.fk_soc = ".$db->escape($idthirdparty);
-		$sql.=" AND f.entity = ".$conf->entity;
-
+		$sql.=" WHERE f.entity = ".$conf->entity;
+		if ($idthirdparty != 'all' ) $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
+		
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -410,6 +413,13 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			    $invoice=new Facture($db);
 			    $invoice->fetch($obj->facid);
 
+			    // Sécurité pour utilisateur externe
+			    if( $socid && ( $socid != $order->socid) )
+			    {
+			    	$error++;
+			    	$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.' User does not have permission for this request';
+			    }
+			    			    
 				// Define lines of invoice
 				$linesresp=array();
 				foreach($invoice->lines as $line)

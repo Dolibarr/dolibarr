@@ -937,6 +937,7 @@ ExtraFieldsThirdParties=Atributs adicionals (tercers)
 ExtraFieldsContacts=Atributs adicionals (contactes/adreçes)
 ExtraFieldsMember=Atributs complementaris (membres)
 ExtraFieldsMemberType=Atributs complementaris (tipus de membres)
+ExtraFieldsCustomerInvoices=Atributs complementaris (factures a clients)
 ExtraFieldHasWrongValue=L'atribut %s te un valor incorrecte.
 AlphaNumOnlyCharsAndNoSpace=només carateres alfanumèrics sense espais
 SendingMailSetup=Configuració de l'enviament per mail
