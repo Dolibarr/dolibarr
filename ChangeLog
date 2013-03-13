@@ -25,6 +25,7 @@ For users:
 - New: [ task #748 ] Add a link "Dolibarr" into left menu
 - New: Script email_unpaid_invoices_to_representative accepts now a parameter test
   and a delay.
+- First change to prepare feature click to print for PDF.
   
 For translators:
 - Update language files.
@@ -43,7 +44,7 @@ For developers:
   into conf->liste_limit).
 - New: Add option dol_hide_topmenu and dol_hide_leftmenu onto login page.
 - New: dol_syslog method accept a suffix to use different log files for log. 
-- New: Type of fields are received by export format handlers
+- New: Type of fields are received by export format handlers.
 - New: when adding an action, we can define a free code to tag it for a specific need.
 - New: Enhance Dolibarr migration process to include migration script of external 
   modules.
@@ -64,16 +65,6 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
-
-
-
-***** ChangeLog for 3.3.1 compared to 3.3 *****
-
-- Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
-- Fix: Package for launchpad
-- Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
-- Fix: Localtax2 for Spain must be based into buyer
-
 
 
 
