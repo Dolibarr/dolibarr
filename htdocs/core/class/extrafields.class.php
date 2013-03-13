@@ -646,7 +646,7 @@ class ExtraFields
         }
         elseif ($type == 'price')
         {
-        	$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
+        	$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price2num($value).'"> '.$langs->getCurrencySymbol($conf->currency);
         }
         elseif ($type == 'select')
         {
