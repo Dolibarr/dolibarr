@@ -1027,7 +1027,7 @@ FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (any if empty)
 ##### Orders #####
 OrdersSetup=Order management setup
-OrdersNumberingModules=Orders numbering modules
+OrdersNumberingModules=Orders numbering models
 OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
