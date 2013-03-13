@@ -1041,7 +1041,7 @@ Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####
 InterventionsSetup=Interventions module setup
 FreeLegalTextOnInterventions=Free text on intervention documents
-FicheinterNumberingModules=Intervention numbering modules
+FicheinterNumberingModules=Intervention numbering models
 TemplatePDFInterventions=Intervention card documents models
 WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
 ##### Contracts #####
