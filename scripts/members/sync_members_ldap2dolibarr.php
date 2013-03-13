@@ -207,7 +207,7 @@ if ($result >= 0)
 			$member->morphy='phy';
 			$member->photo='';
 			$member->public=1;
-			$member->naiss=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
+			$member->birth=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
 
 			$member->statut=-1;
 			if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))
