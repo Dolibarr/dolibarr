@@ -1,0 +1,6 @@
+# Dolibarr language file - en_US - cron
+CHARSET=UTF-8
+CronSetup=Cron scheduler setup
+CronDesc=This page can be used to setup options of the scheduler manager
+URLToLaunchCronJobs=URL to launch cron jobs
+KeyForCronAccess=Security key for URL to launch cron jobs
