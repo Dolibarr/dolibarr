@@ -353,12 +353,13 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 /**
  * 	On/off button for constant
  *
- * 	@param	string	$code		Name of constant
- * 	@param	array	$input		Input element (enable/disable or show/hide another element, set/del another constant)
- * 	@param	int		$entity		Entity to set
+ * 	@param	string	$code			Name of constant
+ * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param	int		$entity			Entity to set
+ *  @param	int		$revertonoff	Revert on/off
  * 	@return	void
  */
-function ajax_constantonoff($code, $input=array(), $entity=false)
+function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 {
 	global $conf, $langs;
 
@@ -399,8 +400,8 @@ function ajax_constantonoff($code, $input=array(), $entity=false)
 	</script>'."\n";
 
 	$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
-	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
+	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
 	$out.="\n";
 
 	return $out;
