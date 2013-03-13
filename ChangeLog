@@ -45,6 +45,8 @@ For developers:
 - New: dol_syslog method accept a suffix to use different log files for log. 
 - New: Type of fields are received by export format handlers
 - New: when adding an action, we can define a free code to tag it for a specific need.
+- New: Enhance Dolibarr migration process to include migration script of external 
+  modules.
 
 WARNING: If you used external modules, some of them may need to be upgraded due to:
 - fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse were

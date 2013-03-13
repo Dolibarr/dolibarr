@@ -326,7 +326,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $dir = "mysql/migration/";		// We use mysql migration scripts whatever is database driver
 		if (! empty($versionmodule)) $dir=dol_buildpath('/'.$versionmodule.'/sql/',0);
 
-		// For minor version
+		// Clean last part to exclude minor version x.y.z -> x.y
         $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.0',$versionfrom);
         $newversionto=preg_replace('/(\.[0-9]+)$/i','.0',$versionto);
 
@@ -368,13 +368,43 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         // Loop on each migrate files
         foreach($filelist as $file)
         {
-            print '<tr><td nowrap>';
-            print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
-
-            $name = substr($file, 0, dol_strlen($file) - 4);
+        	print '<tr><td colspan="2"><hr></td></tr>';
+            print '<tr><td nowrap>'.$langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
 
             // Run sql script
             $ok=run_sql($dir.$file, 0, '', 1);
+
+            // Scan if there is migration scripts for modules htdocs/module/sql or htdocs/custom/module/sql
+            $modulesfile = array();
+            foreach ($conf->file->dol_document_root as $type => $dirroot)
+            {
+            	$handlemodule=@opendir($dirroot);
+            	if (is_resource($handlemodule))
+            	{
+            		while (($filemodule = readdir($handlemodule))!==false)
+            		{
+            			if (is_dir($dirroot.'/'.$filemodule.'/sql'))
+            			{
+            				//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
+            				if (is_file($dirroot . '/' . $filemodule . '/sql/'.$file))
+            				{
+            					$modulesfile[$dirroot . '/' . $filemodule . '/sql/'.$file] = '/' . $filemodule . '/sql/'.$file;
+            				}
+            			}
+            		}
+            		closedir($handlemodule);
+            	}
+            }
+
+            foreach ($modulesfile as $modulefilelong => $modulefileshort)
+            {
+            	print '<tr><td colspan="2"><hr></td></tr>';
+            	print '<tr><td nowrap>'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td align="right">'.$modulefileshort.'</td></tr>'."\n";
+
+	            // Run sql script
+            	$okmodule=run_sql($modulefilelong, 0, '', 1);	// Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+            }
+
         }
     }
 
