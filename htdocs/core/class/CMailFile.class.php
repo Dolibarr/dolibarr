@@ -106,9 +106,9 @@ class CMailFile
 
 		// We define end of line (RFC 821).
 		$this->eol="\r\n";
-		// We define end of line for header fields (RFC 822bis section 2.3 says header must contains \r\n). 
+		// We define end of line for header fields (RFC 822bis section 2.3 says header must contains \r\n).
 		$this->eol2="\r\n";
-		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)) 
+		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
 		{
 			$this->eol="\n";
 			$this->eol2="\n";
@@ -551,7 +551,7 @@ class CMailFile
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
 	 *  Used for debugging.
-	 *  Note that to see full SMTP protocol, you can use tcpdump -w /tmp/smtp -s 2000 port 25" 
+	 *  Note that to see full SMTP protocol, you can use tcpdump -w /tmp/smtp -s 2000 port 25"
 	 *
 	 *  @return	void
 	 */
@@ -572,7 +572,7 @@ class CMailFile
 			}
 			elseif ($conf->global->MAIN_MAIL_SENDMODE == 'smtps')
 			{
-				fputs($fp, $this->smtps->log);
+				fputs($fp, $this->smtps->log);	// this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
 			}
 
 			fclose($fp);
@@ -751,7 +751,7 @@ class CMailFile
 		{
 			$strContent = preg_replace("/\r\n/si", "\n", $strContent);
 		}
-		
+
         //$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems bugged
         $strContent = rtrim(wordwrap($strContent));
 

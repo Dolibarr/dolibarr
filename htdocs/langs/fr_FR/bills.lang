@@ -386,6 +386,7 @@ ClosePaidCreditNotesAutomatically=Classer automatiquement à "Payé" les facture
 AllCompletelyPayedInvoiceWillBeClosed=Toutes les factures avec un reste à payer nul seront automatiquement fermées au statut "Payé".
 ToMakePayment=Payer
 ToMakePaymentBack=Rembourser
+ListOfYourUnpaidInvoices=Liste des factures impayées
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable suivi facture client
 TypeContact_facture_external_BILLING=Contact client facturation

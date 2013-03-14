@@ -1,0 +1,6 @@
+# Dolibarr language file - fr_FR - cron
+CHARSET=UTF-8
+CronSetup=Configuration du séquenceur de taches
+CronDesc=Cette page permet de configurer certaines options du séquenceur de taches
+URLToLaunchCronJobs=URL pour lancer les taches automatiques
+KeyForCronAccess=Clé de sécurité pour l'URL de lancement des taches automatiques

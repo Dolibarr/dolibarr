@@ -80,8 +80,8 @@ else if ($type == "o")
 	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche="";
 }
-if ($view == 'phone')  { $text=" (Vue Telephones)"; }
-if ($view == 'mail')   { $text=" (Vue EMail)"; }
+if ($view == 'phone')  { $text=" <b>(Vue Telephones)</b> <a href='".$_SERVER["PHP_SELF"]."?view=mail".($type?'&type='.$type:"")."'>(Vue EMail)</a>"; }
+if ($view == '' || $view == 'mail')   { $text=" <a href='".$_SERVER["PHP_SELF"]."?view=phone".($type?'&type='.$type:"")."'>(Vue Telephones)</a> <b>(Vue EMail)</b>"; }
 if ($view == 'recent') { $text=" (Recents)"; }
 if (! empty($text)) $titre.= " $text";
 

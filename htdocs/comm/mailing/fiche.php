@@ -676,7 +676,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value="'.$_POST['sujet'].'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-	$htmlother->select_color($_POST['bgcolor'],'bgcolor','new_mailing',0);
+	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
 	print '<tr><td width="25%" class="fieldrequired" valign="top">'.$langs->trans("MailMessage").'<br>';
 	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
@@ -1001,7 +1001,7 @@ else
 
             // Background color
             /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-            $htmlother->select_color($object->bgcolor,'bgcolor','edit_mailing',0);
+            print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
             print '</td></tr>';*/
 
 		    // Message
@@ -1124,7 +1124,7 @@ else
 
 		    // Background color
 			print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-			$htmlother->select_color($object->bgcolor,'bgcolor','edit_mailing',0);
+			print $htmlother->selectColor($object->bgcolor,'bgcolor','edit_mailing',0);
 			print '</td></tr>';
 
 			// Message

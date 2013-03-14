@@ -500,7 +500,7 @@ dol_fiche_end();
 
 
 // Show warning about external users
-print showModulesExludedForExternal($modules).'<br>'."\n";
+if ($mode != 'marketplace') print showModulesExludedForExternal($modules).'<br>'."\n";
 
 
 llxFooter();

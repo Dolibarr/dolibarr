@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm'))) 
+if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')))
 {
 	print "Usage: $script_file [test|confirm] [delay]\n";
 	print "\n";
@@ -49,6 +49,7 @@ $mode=$argv[1];
 
 require($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+
 
 
 /*
@@ -84,7 +85,7 @@ if ($resql)
 	print "We found ".$num." couples (unpayed validated invoice/sale representative) qualified\n";
     dol_syslog("We found ".$num." couples (unpayed validated invoice/sale representative) qualified");
 	$message='';
-	
+
     if ($num)
     {
         while ($i < $num)
@@ -141,20 +142,23 @@ else
 /**
  * 	Send email
  *
- * 	@param	string	$oldemail	Old email
+ * 	@param	string	$mode		Mode (test | confirm)
+ *  @param	string	$oldemail	Old email
  * 	@param	string	$message	Message to send
  * 	@param	string	$total		Total amount of unpayed invoices
+ *  @param	string	$userlang	Code lang to use for email output.
  * 	@return	int					<0 if KO, >0 if OK
  */
 function envoi_mail($mode,$oldemail,$message,$total,$userlang)
 {
     global $conf,$langs;
-    global $db;
 
-    $newlangs=new Translate($db,$conf);
+    $newlangs=new Translate('',$conf);
     $newlangs->setDefaultLang($userlang);
-    
-    $subject = "[".($conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->trans("ListOfYourUnpaidInvoices");
+    $newlangs->load("main");
+    $newlangs->load("bills");
+
+    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->trans("ListOfYourUnpaidInvoices");
     $sendto = $oldemail;
     $from = $conf->global->MAIN_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -163,12 +167,28 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang)
     print "Send email for ".$oldemail.", total: ".$total."\n";
     dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to ".$oldemail);
 
-    $allmessage = "List of unpaid invoices\n";
-    $allmessage.= "This list contains only invoices for third parties you are linked to as a sales representative.\n";
-    $allmessage.= "\n";
-    $allmessage.= $message;
-    $allmessage.= "\n";
-    $allmessage.= $langs->trans("Total")." = ".price($total)."\n";
+    $usehtml=0;
+    if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_FOOTER)) $usehtml+=1;
+    if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER)) $usehtml+=1;
+
+    $allmessage='';
+    if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER))
+    {
+    	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER;
+    }
+    else
+    {
+    	$allmessage.= "List of unpaid invoices\n\n";
+    	$allmessage.= "This list contains only invoices for third parties you are linked to as a sales representative.\n";
+    	$allmessage.= "\n";
+    }
+    $allmessage.= $message.($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
+    if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_FOOTER))
+    {
+    	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_FOOTER;
+    	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_FOOTER)) $usehtml+=1;
+    }
 
     $mail = new CMailFile(
         $subject,
@@ -186,12 +206,17 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang)
 
     $mail->errors_to = $errorsto;
 
+    // Send or not email
     if ($mode == 'confirm')
     {
     	$result=$mail->sendfile();
     }
-    else $result=1;
-    
+    else
+    {
+    	$mail->dump_mail();
+    	$result=1;
+    }
+
     if ($result)
     {
         return 1;
