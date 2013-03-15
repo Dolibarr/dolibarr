@@ -24,6 +24,7 @@
  *      \brief      File that contains parent class for supplier invoices models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
 
 
 /**
