@@ -243,7 +243,7 @@ if ($action == 'add')
         $adh->typeid      = $_POST["type"];
         $adh->note        = $_POST["comment"];
         $adh->morphy      = $_POST["morphy"];
-        $adh->naiss       = $birthday;
+        $adh->birth       = $birthday;
 
         foreach($_POST as $key => $value){
             if (preg_match("/^options_/",$key)){
