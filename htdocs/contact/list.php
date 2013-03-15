@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,7 +197,11 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= " AND (p.lastname LIKE '%".$db->escape($sall)."%' OR p.firstname LIKE '%".$db->escape($sall)."%' OR p.email LIKE '%".$db->escape($sall)."%')";
+    // For natural search
+    $scrit = explode(' ', $sall);
+    foreach ($scrit as $crit) {
+        $sql .= " AND (p.lastname LIKE '%".$db->escape($crit)."%' OR p.firstname LIKE '%".$db->escape($crit)."%' OR p.email LIKE '%".$db->escape($crit)."%')";
+    }
 }
 if (! empty($socid))
 {
