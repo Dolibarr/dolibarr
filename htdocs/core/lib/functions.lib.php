@@ -2785,7 +2785,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *
  *  @param		real	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 / 2)
+ *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
  *  @param		int		$thirdparty         company object
  *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
  *  @deprecated	TODO We should remove this function by storing rate and type into detail lines.
@@ -2808,6 +2808,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 		$obj = $db->fetch_object($resql);
 		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1);
 		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2);
+		else return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2);
 	}
 
 	return 0;
