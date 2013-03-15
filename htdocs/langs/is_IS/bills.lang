@@ -410,6 +410,6 @@ EditGlobalDiscounts=Breyta hreinum afslætti
 AddCreditNote=Búa inneignarnótuna
 InvoiceNotChecked=Engin reikningur valinn
 ShowUnpaidAll=Sýna alla ógreiddra reikninga
-ClosePaidInvoicesAutomatically=Flokka &quot;borgað&quot; allt staðall eða skipti reikningar entierely borgað.
+ClosePaidInvoicesAutomatically=Flokka &quot;borgað&quot; allt staðall eða skipti reikningar entirely borgað.
 AllCompletelyPayedInvoiceWillBeClosed=Allt Reikningar með ekki áfram að borga verður sjálfkrafa lokað til stöðu &quot;borgað&quot;.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:05).

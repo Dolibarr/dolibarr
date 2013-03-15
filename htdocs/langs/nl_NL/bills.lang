@@ -400,7 +400,7 @@ EditGlobalDiscounts=Edit absolute kortingen
 AddCreditNote=Maak een credit nota
 AllCompletelyPayedInvoiceWillBeClosed=Alle factuur zonder te blijven om te betalen zal automatisch worden gesloten om status &quot;Betaald&quot;.
 TerreNumRefModelError=Een wetsvoorstel te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of hernoemen naar deze module te activeren.
-ClosePaidInvoicesAutomatically=Classificeren &quot;Betaalde&quot; alle standaard of vervanging facturen entierely betaald.
+ClosePaidInvoicesAutomatically=Classificeren &quot;Betaalde&quot; alle standaard of vervanging facturen entirely betaald.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:25:52).
 
 
