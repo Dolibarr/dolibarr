@@ -2554,20 +2554,21 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 
 
 /**
- *		Fonction qui formate un montant pour visualisation
- *		Fonction utilisee dans les pdf et les pages html
+ *		Function to format a value into an amount for visual output
+ *		Function used into PDF and HTML pages
  *
- *		@param	float		$amount			Montant a formater
- *		@param	string		$form			Type de formatage, html ou pas (par defaut)
- *		@param	Translate	$outlangs		Objet langs pour formatage text
- *		@param	int			$trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		@param	int			$rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	float		$amount			Amount to format
+ *		@param	string		$form			Type of format, HTML or not (not by default)
+ *		@param	Translate	$outlangs		Object langs for output
+ *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
+ *		@param	int			$rounding		Minimum number of decimal to show. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal
+ *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency) 
  *		@return	string						Chaine avec montant formate
  *
  *		@see	price2num					Revert function of price
  */
-function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
+function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1, $currency_code='')
 {
 	global $langs,$conf;
 
@@ -2623,8 +2624,16 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		$output=number_format($amount, $nbdecimal, $dec, $thousand);
 	}
-	$output.=$end;
-
+	// Add symbol of currency if requested
+	$cursymbolbefore=$cursymbolafter='';
+	if ($currency_code)
+	{
+		$listofcurrenciesbefore=array('USD');
+		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
+	}
+	$output.=$cursymbolbefore.$end.$cursymbolafter;
+	
 	return $output;
 }
 
