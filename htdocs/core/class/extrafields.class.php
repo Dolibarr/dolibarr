@@ -63,7 +63,8 @@ class ExtraFields
 		'price'=>'ExtrafieldPrice',
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
-		'select' => 'ExtrafieldSelect'
+		'select' => 'ExtrafieldSelect',
+		'separator' => 'ExtrafieldSeparator'
 	);
 
 	/**
@@ -103,10 +104,13 @@ class ExtraFields
         if (empty($label)) return -1;
 
         
-        // Create field into database
-        $result=$this->create($attrname,$type,$size,$elementtype, $unique, $required, $default_value,$param);
+        // Create field into database except for separator type
+        if ($elementtype != 'separator')
+        {
+        	$result=$this->create($attrname,$type,$size,$elementtype, $unique, $required, $default_value,$param);
+        }
         $err1=$this->errno;
-        if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
+        if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $elementtype == 'separator')
         {
         	// Add declaration of field into table
             $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param);
