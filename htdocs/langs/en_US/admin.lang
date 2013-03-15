@@ -998,7 +998,7 @@ WebCalCheckWebcalSetup=Maybe the Webcal module setup is not correct.
 ##### Invoices #####
 BillsSetup=Invoices module setup
 BillsDate=Invoices date
-BillsNumberingModule=Invoices and credit notes numbering module
+BillsNumberingModule=Invoices and credit notes numbering model
 BillsPDFModules=Invoice documents models
 CreditNoteSetup=Credit note module setup
 CreditNotePDFModules=Credit note document models
