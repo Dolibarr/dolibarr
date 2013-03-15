@@ -77,7 +77,7 @@ class Adherent extends CommonObject
     var $datem;
     var $datefin;
     var $datevalid;
-    var $naiss;
+    var $birth;
 
     var $typeid;			// Id type adherent
     var $type;				// Libelle type adherent
@@ -175,7 +175,7 @@ class Adherent extends CommonObject
 	{
 		global $conf,$langs;
 
-		$birthday = dol_print_date($this->naiss,'day');
+		$birthday = dol_print_date($this->birth,'day');
 
 		$msgishtml = 0;
 		if (dol_textishtml($text,1)) $msgishtml = 1;
@@ -214,7 +214,7 @@ class Adherent extends CommonObject
 				'%TOWN%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 				'%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-				'%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+				'%BIRTH%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
 				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
 				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
 				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
@@ -433,7 +433,7 @@ class Adherent extends CommonObject
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;
         $sql.= ", morphy='".$this->morphy."'";
-        $sql.= ", naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
+        $sql.= ", birth="   .($this->birth?"'".$this->db->idate($this->birth)."'":"null");
         if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
         if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
         $sql.= ", fk_user_mod=".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
@@ -1012,7 +1012,7 @@ class Adherent extends CommonObject
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
         $sql.= " d.datefin as datefin,";
-        $sql.= " d.naiss as datenaiss,";
+        $sql.= " d.birth as birthday,";
         $sql.= " d.datevalid as datev,";
         $sql.= " d.country,";
         $sql.= " d.state_id,";
@@ -1079,7 +1079,7 @@ class Adherent extends CommonObject
                 $this->datem			= $this->db->jdate($obj->datem);
                 $this->datefin			= $this->db->jdate($obj->datefin);
                 $this->datevalid		= $this->db->jdate($obj->datev);
-                $this->naiss			= $this->db->jdate($obj->datenaiss);
+                $this->birth			= $this->db->jdate($obj->birthday);
 
                 $this->note				= $obj->note;
                 $this->morphy			= $obj->morphy;
@@ -1739,7 +1739,7 @@ class Adherent extends CommonObject
         $this->phone_perso  = '0999999998';
         $this->phone_mobile = '0999999997';
         $this->note='No comment';
-        $this->naiss=time();
+        $this->birth=time();
         $this->photo='';
         $this->public=1;
         $this->statut=0;
@@ -1811,7 +1811,7 @@ class Adherent extends CommonObject
         if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
         if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))	      $info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
         if ($this->note && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note;
-        if ($this->naiss && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->naiss,'dayhourldap');
+        if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
         if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
         if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 
