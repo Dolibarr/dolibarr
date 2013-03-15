@@ -130,13 +130,13 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 
     /**
-     *  Renvoie la reference de commande suivante non utilisee
+     *  Renvoie la reference de facture suivante non utilisee
      *
 	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
-    function commande_get_num($objsoc=0,$object='')
+    function invoice_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
