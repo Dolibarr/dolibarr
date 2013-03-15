@@ -236,12 +236,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	$datenaiss='';
-	if (isset($_POST["naissday"]) && $_POST["naissday"]
-			&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
-			&& isset($_POST["naissyear"]) && $_POST["naissyear"])
+	$birthdate='';
+	if (isset($_POST["birthday"]) && $_POST["birthday"]
+			&& isset($_POST["birthmonth"]) && $_POST["birthmonth"]
+			&& isset($_POST["birthyear"]) && $_POST["birthyear"])
 	{
-		$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 	}
 
 	// Create new object
@@ -267,7 +267,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->phone_perso = trim($_POST["phone_perso"]);
 		$object->phone_mobile= trim($_POST["phone_mobile"]);
 		$object->email       = trim($_POST["email"]);
-		$object->naiss       = $datenaiss;
+		$object->birth       = $birthdate;
 
 		$object->typeid      = $_POST["typeid"];
 		//$object->note        = trim($_POST["comment"]);
@@ -388,12 +388,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 if ($action == 'add' && $user->rights->adherent->creer)
 {
 	if ($canvas) $object->canvas=$canvas;
-	$datenaiss='';
-	if (isset($_POST["naissday"]) && $_POST["naissday"]
-			&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
-			&& isset($_POST["naissyear"]) && $_POST["naissyear"])
+	$birthdate='';
+	if (isset($_POST["birthday"]) && $_POST["birthday"]
+			&& isset($_POST["birthmonth"]) && $_POST["birthmonth"]
+			&& isset($_POST["birthyear"]) && $_POST["birthyear"])
 	{
-		$datenaiss=dol_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 	}
 	$datecotisation='';
 	if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
@@ -442,7 +442,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->email       = $email;
 	$object->login       = $login;
 	$object->pass        = $pass;
-	$object->naiss       = $datenaiss;
+	$object->naiss       = $birthdate;
 	$object->photo       = $photo;
 	$object->typeid      = $typeid;
 	//$object->note        = $comment;
@@ -1113,9 +1113,9 @@ else
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
 
-		// Date naissance
+		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		$form->select_date(($object->naiss ? $object->naiss : -1),'naiss','','',1,'formsoc');
+		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Profil public
@@ -1444,8 +1444,8 @@ else
 		// EMail
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
 
-		// Date naissance
-		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->naiss,'day').'</td></tr>';
+		// Birthday
+		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';

@@ -48,7 +48,7 @@ create table llx_adherent
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
-  naiss            date,             -- date de naissance
+  birth            date,             -- birthday
   photo            varchar(255),     -- filename or url of photo
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
