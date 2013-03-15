@@ -378,10 +378,8 @@ class pdf_einstein extends ModelePDFCommandes
 					// TODO : store local taxes types into object lines and remove this
 					$localtax1_array=getLocalTaxesFromRate($vatrate,1,$mysoc);
 					$localtax2_array=getLocalTaxesFromRate($vatrate,2,$mysoc);
-					if (empty($localtax1_type))
-						$localtax1_type = $localtax1_array[0];
-					if (empty($localtax2_type))
-						$localtax2_type = $localtax2_array[0];
+					if (! isset($localtax1_type)) $localtax1_type = $localtax1_array[0];
+					if (! isset($localtax2_type)) $localtax2_type = $localtax2_array[0];
 					//end TODO
 
 				    // retrieve global local tax
@@ -390,9 +388,9 @@ class pdf_einstein extends ModelePDFCommandes
 					if ($localtax2_type == '7')
 						$localtax2_rate = $localtax2_array[1];
 
-					if ($localtax1ligne != 0 || $localtax1_type == '7')
+					if ($localtax1_type && ($localtax1ligne != 0 || $localtax1_type == '7'))
 						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
-					if ($localtax2ligne != 0 || $localtax2_type == '7')
+					if ($localtax2_type && ($localtax2ligne != 0 || $localtax2_type == '7'))
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
