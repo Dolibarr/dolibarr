@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
 	\class      mod_facture_fournisseur_tulip
 	\brief      Tulip Class of numbering models of suppliers invoices references
 */
-class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersOrders
+class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
@@ -56,7 +56,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersOrders
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
+		$texte.= '<input type="hidden" name="action" value="updateMaskInvoice">';
 		$texte.= '<input type="hidden" name="maskconstinvoice" value="SUPPLIER_INVOICE_TULIP_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
@@ -123,7 +123,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$object->date_commande);
+		$numFinal=get_next_value($db,$mask,'facture_fournisseur','ref','',$objsoc->code_fournisseur,$object->date_commande);
 
 		return  $numFinal;
 	}

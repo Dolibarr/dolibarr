@@ -116,6 +116,25 @@ if ($action == 'specimen')  // For orders
     }
 }
 
+if ($action == 'updateMaskInvoice')
+{
+    $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
+    $maskinvoice=GETPOST('maskinvoice','alpha');
+
+    if ($maskconstinvoice)  $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
+
+    if (! $res > 0) $error++;
+
+    if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
 if ($action == 'specimenfacture')   // For invoices
 {
     $modele=GETPOST('module','alpha');
@@ -520,6 +539,109 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table><br/>';
+
+// Supplier invoice numbering model
+
+print_titre($langs->trans("InvoicesNumberingModels"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir)
+{
+	$dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
+
+    if (is_dir($dir))
+    {
+        $handle = opendir($dir);
+        if (is_resource($handle))
+        {
+            $var=true;
+
+            while (($file = readdir($handle))!==false)
+            {
+                if (substr($file, 0, 25) == 'mod_facture_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+                {
+                    $file = substr($file, 0, dol_strlen($file)-4);
+
+                    require_once $dir.$file.'.php';
+
+                    $module = new $file;
+
+                    if ($module->isEnabled())
+                    {
+                        // Show modules according to features level
+                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+                        $var=!$var;
+                        print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+                        print $module->info();
+                        print '</td>';
+
+                        // Show example of numbering model
+                        print '<td nowrap="nowrap">';
+                        $tmp=$module->getExample();
+                        if (preg_match('/^Error/',$tmp)) {
+                            $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
+                        }
+                        elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+                        else print $tmp;
+                        print '</td>'."\n";
+
+                        print '<td align="center">';
+                        if ($conf->global->INVOICE_SUPPLIER_ADDON == "$file")
+                        {
+                            print img_picto($langs->trans("Activated"),'switch_on');
+                        }
+                        else
+                        {
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                        }
+                        print '</td>';
+
+                        $invoice=new FactureFournisseur($db);
+                        $invoice->initAsSpecimen();
+
+                        // Info
+                        $htmltooltip='';
+                        $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+                        $nextval=$module->getNextValue($mysoc,$invoice);
+                        if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+                        {
+                            $htmltooltip.=''.$langs->trans("NextValue").': ';
+                            if ($nextval)
+                            {
+                                $htmltooltip.=$nextval.'<br>';
+                            }
+                            else
+                            {
+                                $htmltooltip.=$langs->trans($module->error).'<br>';
+                            }
+                        }
+
+                        print '<td align="center">';
+                        print $form->textwithpicto('',$htmltooltip,1,0);
+                        print '</td>';
+
+                        print '</tr>';
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
+}
+
+print '</table><br>';
 
 /*
  * Modeles documents for supplier invoices
