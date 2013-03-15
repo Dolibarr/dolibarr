@@ -357,7 +357,6 @@ class ExtraFields
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos,$param='')
 	{
         $table=$elementtype.'_extrafields';
-
         // Special case for not normalized table names
         if ($elementtype == 'member')  $table='adherent_extrafields';
         elseif ($elementtype == 'company') $table='societe_extrafields';
@@ -385,8 +384,12 @@ class ExtraFields
 				$lengthdb=$length;
 			}
 			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required?'NOT NULL':'NULL'));
-			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
-			if ($result > 0)
+			
+			if ($type != 'separate') // No table update when separate type
+			{
+				$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+			}
+			if ($result > 0 || $type == 'separate')
 			{
 				if ($label)
 				{
