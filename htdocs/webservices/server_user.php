@@ -574,7 +574,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
-						
+
 						//Retreive all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields=new ExtraFields($db);
@@ -666,31 +666,31 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
  * @return	mixed
  */
 function setUserPassword($authentication,$shortuser) {
-	
+
 	global $db,$conf,$langs;
-	
+
 	dol_syslog("Function: setUserPassword login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
-	
+
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
-	
+
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	
+
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-	
+
 	if ($fuser->societe_id) $socid=$fuser->societe_id;
-	
+
 	if (! $error && ! $shortuser)
 	{
 		$error++;
 		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter shortuser must be provided.";
 	}
-	
+
 	if (! $error)
 	{
 		$fuser->getrights();
-	
+
 		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password)
 		{
 			$userstat=new User($db);
@@ -698,7 +698,7 @@ function setUserPassword($authentication,$shortuser) {
 			if($res)
 			{
 				$res = $userstat->setPassword($userstat,$shortuser['password']);
-				if($res) 
+				if($res)
 				{
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
@@ -716,7 +716,7 @@ function setUserPassword($authentication,$shortuser) {
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='User not found';
 			}
-			
+
 		}
 		else
 		{
@@ -724,15 +724,15 @@ function setUserPassword($authentication,$shortuser) {
 			$errorcode='PERMISSION_DENIED'; $errorlabel='User does not have permission for this request';
 		}
 	}
-		
-			
+
+
 	if ($error)
 	{
 		$objectresp = array(
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
 		);
 	}
-	
+
 	return $objectresp;
 }
 
