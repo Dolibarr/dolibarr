@@ -222,7 +222,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
 		$localobject->email='newemail@newemail.com';
-        $localobject->naiss=$timestamp;
+        $localobject->birth=$timestamp;
 		$result=$localobject->update($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
@@ -256,7 +256,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
 		$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
 		$this->assertEquals($localobject->email, $newobject->email);
-        $this->assertEquals($localobject->naiss, $timestamp);
+        $this->assertEquals($localobject->birth, $timestamp);
         $this->assertEquals($localobject->morphy, $newobject->morphy);
 
         //We return newobject because of new values
@@ -281,11 +281,11 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $template = '%DOL_MAIN_URL_ROOT%,%ID%,%CIVILITE%,%FIRSTNAME%,%LASTNAME%,%FULLNAME%,%COMPANY%,'.
-                    '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%NAISS%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
+                    '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%BIRTH%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
                     '%NOM%,%SOCIETE%,%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%';
 
         $expected = DOL_MAIN_URL_ROOT.','.$localobject->id.',0,New firstname,New name,New firstname New name,'.
-                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->naiss,'day').',,'.
+                    'New company,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth,'day').',,'.
                     'newlogin,dolibspec,New firstname,New name,New company,New address,New zip,New town,Belgium';
 
         $result = $localobject->makeSubstitution($template);

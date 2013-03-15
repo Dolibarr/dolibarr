@@ -63,6 +63,7 @@ alter table llx_adherent CHANGE COLUMN prenom firstname varchar(50);
 alter table llx_adherent CHANGE COLUMN ville town text;
 alter table llx_adherent CHANGE COLUMN cp zip varchar(10);
 alter table llx_adherent CHANGE COLUMN pays country varchar(50);
+alter table llx_adherent CHANGE COLUMN naiss birth date;
 alter table llx_adherent CHANGE COLUMN fk_departement state_id varchar(50);
 alter table llx_bank_account CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_bank_account CHANGE COLUMN fk_departement state_id varchar(50);

@@ -303,7 +303,7 @@ print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
-// Date naissance
+// Birthday
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldBirthdate").'</td><td>';
 print '<input size="25" type="text" name="fieldbirthdate" value="'.$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE.'">';
