@@ -2380,7 +2380,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return.= '</td>';
 	if (dol_strlen($mesg))
 	{
-		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
+		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$mesg.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 

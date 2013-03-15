@@ -71,8 +71,6 @@ $_SESSION["mode"]=$mode;
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url);
 
-print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
-
 
 // Search modules dirs
 $modulesdir = array();
@@ -194,6 +192,11 @@ asort($orders);
 //var_dump($categ);
 //var_dump($modules);
 
+$nbofactivatedmodules=count($conf->modules);
+$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
+
+print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'setup');
+
 // Start to show page
 if (empty($mode)) $mode='common';
 if ($mode==='common')      print $langs->trans("ModulesDesc")."<br>\n";
@@ -203,10 +206,8 @@ if ($mode==='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
 if ($mode==='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
 if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
 
-$nbofactivatedmodules=count($conf->modules);
-print $langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
 if ($nbofactivatedmodules <= 1) print ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-print '<br>'."\n";
+//print '<br>'."\n";
 
 
 $h = 0;
