@@ -64,7 +64,7 @@ class ExtraFields
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
 		'select' => 'ExtrafieldSelect',
-		'separator' => 'ExtrafieldSeparator'
+		'separate' => 'ExtrafieldSeparator'
 	);
 
 	/**
@@ -103,14 +103,13 @@ class ExtraFields
         if (empty($attrname)) return -1;
         if (empty($label)) return -1;
 
-        
-        // Create field into database except for separator type
-        if ($elementtype != 'separator')
+        // Create field into database except for separator type which is not stored in database
+        if ($type != 'separate')
         {
         	$result=$this->create($attrname,$type,$size,$elementtype, $unique, $required, $default_value,$param);
         }
         $err1=$this->errno;
-        if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $elementtype == 'separator')
+        if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
         {
         	// Add declaration of field into table
             $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique, $required, $param);
@@ -550,8 +549,13 @@ class ExtraFields
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
+					
 					// we can add this attribute to adherent object
-					$array_name_label[$tab->name]=$tab->label;
+					if ($tab->type != 'separate')
+					{
+						$array_name_label[$tab->name]=$tab->label;
+					}
+
 					$this->attribute_type[$tab->name]=$tab->type;
 					$this->attribute_label[$tab->name]=$tab->label;
 					$this->attribute_size[$tab->name]=$tab->size;
@@ -734,5 +738,16 @@ class ExtraFields
         return $out;
     }
 
+    /**
+     * Return HTML string to print separator extrafield
+     * 
+     * @param   string	$key            Key of attribute
+     * @return string
+     */
+    function showSeparator($key) 
+    {
+    	$out = '<tr class="liste_titre"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+    	return $out;
+    }
 }
 ?>
