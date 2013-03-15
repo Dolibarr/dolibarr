@@ -3107,7 +3107,7 @@ else if ($id > 0 || ! empty($ref))
 	        		print '<tr><td';
 	        		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	        		print '>'.$label.'</td><td colspan="5">';
-	        		if ($action == 'edit_extras' && $user->rights->propal->creer)
+	        		if ($action == 'edit_extras' && $user->rights->facture->creer)
 	        		{
 	        			print $extrafields->showInputField($key,$value);
 	        		}
@@ -3121,7 +3121,7 @@ else if ($id > 0 || ! empty($ref))
         
         	if(count($extrafields->attribute_label) > 0) {
         
-        		if ($action == 'edit_extras' && $user->rights->propal->creer)
+        		if ($action == 'edit_extras' && $user->rights->facture->creer)
         		{
         			print '<tr><td></td><td colspan="5">';
         			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -3130,7 +3130,7 @@ else if ($id > 0 || ! empty($ref))
         
         		}
         		else {
-        			if ($object->statut == 0 && $user->rights->propal->creer)
+        			if ($object->statut == 0 && $user->rights->facture->creer)
         			{
         				print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
         			}
