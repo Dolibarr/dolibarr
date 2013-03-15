@@ -261,6 +261,14 @@ if ($action == 'setmod')
     dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
+if ($action == 'invoicesetmod')
+{
+    // TODO Verifier si module numerotation choisi peut etre active
+    // par appel methode canBeActivated
+
+    dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON",$value,'chaine',0,'',$conf->entity);
+}
+
 if ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
@@ -604,7 +612,7 @@ foreach ($dirmodels as $reldir)
                         }
                         else
                         {
-                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=invoicesetmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                         }
                         print '</td>';
 
