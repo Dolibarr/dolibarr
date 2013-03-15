@@ -55,16 +55,16 @@
 <input type="hidden" name="action" value="add">
 
 <table summary="listofattributes" class="border centpercent">
+<!-- Type -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
+<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
+</td></tr>
 <!-- Position -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOST('pos'); ?>"></td></tr>
 <!-- Label -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?> (<?php echo $langs->trans("AlphaNumOnlyCharsAndNoSpace"); ?>)</td><td class="valeur"><input type="text" name="attrname" size="10" value="<?php echo GETPOST('attrname'); ?>"></td></tr>
-<!-- Type -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
-</td></tr>
 <!--  Value (for select list / radio) -->
 <tr id="value_choice">
 <td>
