@@ -201,11 +201,7 @@ class User extends CommonObject
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
 				$this->job			= $obj->job;
-				if (!empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) && dol_textishtml(dol_html_entity_decode($obj->signature, ENT_COMPAT | ENT_HTML401))) {
-					$this->signature				= dol_html_entity_decode($obj->signature, ENT_COMPAT | ENT_HTML401);
-				}else {
-					$this->signature				= $obj->signature;
-				}
+				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
 				$this->note			= $obj->note;
 				$this->statut		= $obj->statut;
