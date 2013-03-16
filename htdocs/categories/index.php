@@ -60,9 +60,9 @@ llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
 print_fiche_titre($title);
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 /*
@@ -89,7 +89,9 @@ print '<td><input type="submit" class="button" value="'.$langs->trans ("Search")
 
 print '</table></form>';
 
-print '</td><td valign="top" width="70%">';
+
+//print '</td><td valign="top" width="70%">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -121,7 +123,8 @@ if ($catname || $id > 0)
 }
 
 
-print '</td></tr></table>';
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 print '<br>';
 

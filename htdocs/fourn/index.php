@@ -50,8 +50,11 @@ llxHeader("",$langs->trans("SuppliersArea"));
 
 print_fiche_titre($langs->trans("SuppliersArea"));
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 // Orders
 $commande = new CommandeFournisseur($db);
@@ -221,8 +224,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	}
 }
 
-print "</td>\n";
-print '<td valign="top" width="70%" class="notopnoleftnoright">';
+
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 /*
  * List last modified supliers
@@ -314,10 +319,11 @@ if (count($companystatic->SupplierCategories))
 	print "<br>\n";
 }
 
-print "</td></tr>\n";
-print "</table>\n";
 
-$db->close();
+//print "</td></tr></table>\n";
+print '<div></div></div>';
 
 llxFooter();
+
+$db->close();
 ?>

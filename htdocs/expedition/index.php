@@ -43,8 +43,11 @@ llxHeader('',$langs->trans("Sendings"),$helpurl);
 
 print_fiche_titre($langs->trans("SendingsArea"));
 
-print '<table class="notopnoleftnoright" width="100%">';
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
+//print '<table class="notopnoleftnoright" width="100%">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 $var=false;
 print '<table class="noborder nohover" width="100%">';
@@ -159,10 +162,8 @@ if ($resql)
 }
 
 
-/*
- *
- */
-print '</td><td valign="top" width="70%">';
+//print '</td><td valign="top" width="70%">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -272,7 +273,9 @@ if ($resql)
 }
 else dol_print_error($db);
 
-print '</td></tr></table>';
+
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 
 llxFooter();
