@@ -76,9 +76,7 @@ class FormMail
      *  @param	DoliDB	$db      Database handler
      */
     function __construct($db)
-    {
-    	global $conf;
-    	
+    {    	
         $this->db = $db;
 
         $this->withform=1;
