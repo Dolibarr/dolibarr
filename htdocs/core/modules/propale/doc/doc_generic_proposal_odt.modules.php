@@ -106,6 +106,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte.= '<input type="hidden" name="param1" value="PROPALE_ADDON_PDF_ODT_PATH">';
+		$texte.= '<input type="hidden" name="param2" value="PROPALE_ADDON_PDF_ODT_DEFAULT">';
+		$texte.= '<input type="hidden" name="param3" value="PROPALE_ADDON_PDF_ODT_TOBILL">';
+		$texte.= '<input type="hidden" name="param4" value="PROPALE_ADDON_PDF_ODT_CLOSED">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
@@ -143,8 +146,35 @@ class doc_generic_proposal_odt extends ModelePDFPropales
         $texte.= '</table>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		if (count($listofdir)) 
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+			
+			// Model for creation
+			$liste=ModelePDFPropales::liste_modeles($this->db);
+			$texte.= '<table width="50%;">';
+			$texte.= '<tr>';
+			$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
+			$texte.= '<td colspan="">';
+			$texte.= $form->selectarray('value2',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT);
+			$texte.= "</td></tr>";
+			
+			$texte.= '<tr>';
+			$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
+			$texte.= '<td colspan="">';
+			$texte.= $form->selectarray('value3',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL);
+			$texte.= "</td></tr>";
+			$texte.= '<tr>';
+			
+			$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
+			$texte.= '<td colspan="">';
+			$texte.= $form->selectarray('value4',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED);
+			$texte.= "</td></tr>";
+			$texte.= '</table>';
+		}
+		
 
+		
 		$texte.= '</td>';
 
 

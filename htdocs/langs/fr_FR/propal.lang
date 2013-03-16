@@ -97,4 +97,7 @@ TypeContact_propal_external_CUSTOMER=Contact client suivi propale
 DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
 DocModelJauneDescription=Modèle de proposition Jaune
 Numbershort=N°
+DefaultModelPropalCreate=Modèle par défaut à la création
+DefaultModelPropalToBill=Modèle lors de la cloture d'une proposition commerciale (à facturer)
+DefaultModelPropalClosed=Modèle lors de la cloture d'une proposition commerciale (non facturée)
 
