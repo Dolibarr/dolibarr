@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,7 +111,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
  *	View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Audit"));
 
 $form=new Form($db);
 
@@ -124,11 +124,11 @@ $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$search_code."%'"; }
-if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$search_ip."%'"; }
-if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$search_user."%'"; }
-if ($search_desc) { $usefilter++; $sql.=" AND e.description LIKE '%".$search_desc."%'"; }
-if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent LIKE '%".$search_ua."%'"; }
+if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$db->escape($search_code)."%'"; }
+if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$db->escape($search_ip)."%'"; }
+if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$db->escape($search_user)."%'"; }
+if ($search_desc) { $usefilter++; $sql.=" AND e.description LIKE '%".$db->escape($search_desc)."%'"; }
+if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent LIKE '%".$db->escape($search_ua)."%'"; }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
@@ -138,7 +138,14 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
+	$param='';
+	if ($search_code) $param.='&search_code='.$search_code;
+	if ($search_ip) $param.='&search_ip='.$search_ip;
+	if ($search_user) $param.='&search_user='.$search_user;
+	if ($search_desc) $param.='&search_desc='.$search_desc;
+	if ($search_ua) $param.='&search_ua='.$search_ua;
+
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, 'setup');
 
 	if ($action == 'purge')
 	{
@@ -178,7 +185,7 @@ if ($result)
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
+	//print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
