@@ -95,7 +95,7 @@ class modFournisseur extends DolibarrModules
 			
 			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
             $this->const[$r][1] = "chaine";
-            $this->const[$r][2] = "tulip";
+            $this->const[$r][2] = "mod_facture_fournisseur_tulip";
 			$r++;
 
             // Boxes
