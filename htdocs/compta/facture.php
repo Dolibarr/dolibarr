@@ -3018,29 +3018,23 @@ else if ($id > 0 || ! empty($ref))
 
         // Amount
         print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-        print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
-
+        print '<td align="right" colspan="3" nowrap>'.price($object->total_ht,1,'',1,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="3" nowrap>'.price($object->total_tva,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 		print '</tr>';
 
         // Amount Local Taxes
         if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
         {
             print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-            print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax1,1,'',1,-1,-1,$conf->currency).'</td></tr>';
         }
         if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
         {
             print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-            print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax2,1,'',1,-1,-1,$conf->currency).'</td></tr>';
         }
 
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="3" nowrap>'.price($object->total_ttc,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans('Status').'</td>';

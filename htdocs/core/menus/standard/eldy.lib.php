@@ -56,7 +56,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 	print_start_menu_entry($idsel,$classname);
 	print_text_menu_entry($langs->trans("Home"), 1, DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 	print_end_menu_entry();
-
+	$menu->add(DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu=', $langs->trans("Home"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
+	
 	// Third parties
 	$tmpentry=array('enabled'=>(! empty($conf->societe->enabled) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
@@ -102,6 +103,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($chaine, $showmode, DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu=', $chaine, 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Commercial
@@ -125,6 +127,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("Commercial"), $showmode, DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu=', $langs->trans("Commercial"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Financial
@@ -144,6 +147,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("MenuFinancial"), $showmode, DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("MenuFinancial"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Bank
@@ -164,6 +168,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("MenuBankCash"), $showmode, DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu=', $langs->trans("MenuBankCash"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Projects
@@ -183,6 +188,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("Projects"), $showmode, DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu=', $langs->trans("Projects"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Tools
@@ -202,6 +208,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("Tools"), $showmode, DOL_URL_ROOT.'/core/tools.php?mainmenu=tools&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/core/tools.php?mainmenu=tools&amp;leftmenu=', $langs->trans("Tools"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// OSCommerce 1
@@ -221,6 +228,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("OSCommerce"), $showmode, DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu=', $langs->trans("OSCommerce"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 	// Members
@@ -238,6 +246,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		print_start_menu_entry($idsel,$classname);
 		print_text_menu_entry($langs->trans("MenuMembers"), $showmode, DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		print_end_menu_entry();
+		$menu->add(DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu=', $langs->trans("MenuMembers"), 0, $showmode, $atarget, $mainmenu, $leftmenu);
 	}
 
 
@@ -278,8 +287,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		else if ($showmode == 2) $classname='class="tmenu"';
 
 		print_start_menu_entry($idsel,$classname);
-		print_text_menu_entry($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, $atarget, $newTabMenu[$i]['target']);
+		print_text_menu_entry($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget));
 		print_end_menu_entry();
+		$menu->add($url, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), $mainmenu, $leftmenu);
 	}
 
 	print_end_menu_array();
@@ -320,19 +330,18 @@ function print_start_menu_entry($idsel,$classname)
  * @param	string	$idsel		Id sel
  * @param	string	$classname	Class name
  * @param	string	$atarget	Target
- * @param	string	$menutarget	Menu target (may be empty)
  * @return	void
  */
-function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menutarget='')
+function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
 	global $langs;
 
 	if ($showmode == 1)
 	{
-		print '<a class="tmenuimage" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<span class="mainmenuaspan">';
 		print $text;
 		print '</span>';

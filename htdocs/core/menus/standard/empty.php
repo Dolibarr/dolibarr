@@ -208,19 +208,18 @@ function print_start_menu_entry_empty($idsel,$classname)
  * @param	string	$idsel		Id sel
  * @param	string	$classname	Class name
  * @param	string	$atarget	Target
- * @param	string	$menutarget	Menu target (may be empty)
  * @return	void
  */
-function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menutarget='')
+function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
 	global $conf;
 
 	if ($showmode == 1)
 	{
-		print '<a class="tmenuimage" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<span class="mainmenuaspan">';
 		print $text;
 		print '</span>';
