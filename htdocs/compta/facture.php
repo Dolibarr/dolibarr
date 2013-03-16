@@ -2101,11 +2101,19 @@ if ($action == 'create')
         foreach($extrafields->attribute_label as $key=>$label)
         {
             $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-       		print '<tr><td';
-       		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-       		print '>'.$label.'</td><td colspan="3">';
-            print $extrafields->showInputField($key,$value);
-            print '</td></tr>'."\n";
+            // Show separator only
+            if ($extrafields->attribute_type[$key] == 'separate')
+            {
+            	print $extrafields->showSeparator($key);
+            }
+            else
+            {
+	       		print '<tr><td';
+	       		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	       		print '>'.$label.'</td><td colspan="3">';
+	            print $extrafields->showInputField($key,$value);
+	            print '</td></tr>'."\n";
+            }
         }
     }
 
@@ -3090,24 +3098,30 @@ else if ($id > 0 || ! empty($ref))
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
         		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-        		print '<tr><td';
-        		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-        		print '>'.$label.'</td><td colspan="5">';
-        		if ($action == 'edit_extras' && $user->rights->propal->creer)
+        		if ($extrafields->attribute_type[$key] == 'separate')
         		{
-        			print $extrafields->showInputField($key,$value);
+        			print $extrafields->showSeparator($key);
         		}
         		else
         		{
-        			print $extrafields->showOutputField($key,$value);
+	        		print '<tr><td';
+	        		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	        		print '>'.$label.'</td><td colspan="5">';
+	        		if ($action == 'edit_extras' && $user->rights->facture->creer)
+	        		{
+	        			print $extrafields->showInputField($key,$value);
+	        		}
+	        		else
+	        		{
+	        			print $extrafields->showOutputField($key,$value);
+	        		}
+	        		print '</td></tr>'."\n";
         		}
-        
-        		print '</td></tr>'."\n";
         	}
         
         	if(count($extrafields->attribute_label) > 0) {
         
-        		if ($action == 'edit_extras' && $user->rights->propal->creer)
+        		if ($action == 'edit_extras' && $user->rights->facture->creer)
         		{
         			print '<tr><td></td><td colspan="5">';
         			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
@@ -3116,7 +3130,7 @@ else if ($id > 0 || ! empty($ref))
         
         		}
         		else {
-        			if ($object->statut == 0 && $user->rights->propal->creer)
+        			if ($object->statut == 0 && $user->rights->facture->creer)
         			{
         				print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
         			}

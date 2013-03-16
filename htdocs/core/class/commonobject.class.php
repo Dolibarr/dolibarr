@@ -2138,21 +2138,27 @@ abstract class CommonObject
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
             {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
-                $sql.=",".substr($key,8);   // Remove 'options_' prefix
+            	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+                	$sql.=",".$attributeKey;  
             }
             $sql .= ") VALUES (".$this->id;
             foreach($this->array_options as $key => $value)
             {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field o fattribut
-                if ($this->array_options[$key] != '')
-                {
-                    $sql.=",'".$this->array_options[$key]."'";
-                }
-                else
-                {
-                    $sql.=",null";
-                }
+            	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+            	{
+	                if ($this->array_options[$key] != '')
+	                {
+	                    $sql.=",'".$this->array_options[$key]."'";
+	                }
+	                else
+	                {
+	                    $sql.=",null";
+	                }
+            	}
             }
             $sql.=")";
 

@@ -985,20 +985,27 @@ else
             {
             	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-                if (($e % 2) == 0)
+                if ($extrafields->attribute_type[$key] == 'separate')
                 {
-                	print '<tr>';
-                	$colspan='0';
-                }           		
-           		print '<td';
-           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td>';
-           		print '<td colspan="'.$colspan.'">';
-                print $extrafields->showInputField($key,$value);
-                print '</td>';
-                
-                if (($e % 2) == 1) print '</tr>'."\n";
-                $e++;
+                	print $extrafields->showSeparator($key);
+                }
+                else
+                {
+	                if (($e % 2) == 0)
+	                {
+	                	print '<tr>';
+	                	$colspan='0';
+	                }           		
+	           		print '<td';
+	           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	           		print '>'.$label.'</td>';
+	           		print '<td colspan="'.$colspan.'">';
+	                print $extrafields->showInputField($key,$value);
+	                print '</td>';
+	                
+	                if (($e % 2) == 1) print '</tr>'."\n";
+	                $e++;
+                }
             }
         }
 
@@ -1414,25 +1421,30 @@ else
                 {
 	                $colspan = '3';
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-                    
-                    if (($e % 2) == 0)
+                    if ($extrafields->attribute_type[$key] == 'separate')
                     {
-                    	print '<tr>'."\n";
-                    	$colspan = '0';
+                    	print $extrafields->showSeparator($key);
                     }
-            		print '<td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td>'."\n";
-            		print '<td colspan="'.$colspan.'">';
-                    print $extrafields->showInputField($key,$value);
-                    print "</td>"."\n";
-                    
-                    if (($e % 2) == 1 )
+                    else
                     {
-                    	print "</tr>\n";
+	                    if (($e % 2) == 0)
+	                    {
+	                    	print '<tr>'."\n";
+	                    	$colspan = '0';
+	                    }
+	            		print '<td';
+	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	            		print '>'.$label.'</td>'."\n";
+	            		print '<td colspan="'.$colspan.'">';
+	                    print $extrafields->showInputField($key,$value);
+	                    print "</td>"."\n";
+	                    
+	                    if (($e % 2) == 1 )
+	                    {
+	                    	print "</tr>\n";
+	                    }
+	                    $e++;
                     }
-                    $old_pos = $extrafields->attribute_pos[$key];
-                    $e++;
                 }
             }
             // Logo
@@ -1753,18 +1765,25 @@ else
             {
             	$colspan='3';
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                if (($e % 2) == 0) 
+                if ($extrafields->attribute_type[$key] == 'separate')
                 {
-                	print '<tr>';
-                	$colspan='0';
+                	print $extrafields->showSeparator($key);
                 }
-                print '<td>'.$label.'</td>';
-                print '<td colspan="'.$colspan.'">';
-                print $extrafields->showOutputField($key,$value);
-                print "</td>";
-                
-                if (($e % 2) == 1) print '</tr>';
-                $e++;
+                else
+                {
+	                if (($e % 2) == 0) 
+	                {
+	                	print '<tr>';
+	                	$colspan='0';
+	                }
+	                print '<td>'.$label.'</td>';
+	                print '<td colspan="'.$colspan.'">';
+	                print $extrafields->showOutputField($key,$value);
+	                print "</td>";
+	                
+	                if (($e % 2) == 1) print '</tr>';
+	                $e++;
+                }
             }
         }
 
