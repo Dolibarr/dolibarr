@@ -72,7 +72,7 @@ class modFournisseur extends DolibarrModules
             $this->langfiles = array('bills', 'companies', 'suppliers', 'orders');
 
             // Config pages
-            $this->config_page_url = array("fournisseur.php");
+            $this->config_page_url = array("supplier_order.php");
 
             // Constantes
             $this->const = array();
@@ -91,6 +91,11 @@ class modFournisseur extends DolibarrModules
 			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "canelle";
+			$r++;
+			
+			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
+            $this->const[$r][1] = "chaine";
+            $this->const[$r][2] = "tulip";
 			$r++;
 
             // Boxes
