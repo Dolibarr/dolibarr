@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,12 +134,16 @@ else
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
     if ($sall)
     {
-        $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%'";
-        if (! empty($conf->barcode->enabled))
-        {
-            $sql.= " OR p.barcode LIKE '%".$db->escape($sall)."%'";
+        // For natural search
+        $scrit = explode(' ', $sall);
+        foreach ($scrit as $crit) {
+            $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
+            if (! empty($conf->barcode->enabled))
+            {
+                $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
+            }
+            $sql.= ')';
         }
-        $sql.= ')';
     }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
