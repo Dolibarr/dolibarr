@@ -129,7 +129,8 @@ if ($viewstatut <> '')
 {
 	if ($viewstatut < 4 && $viewstatut > -3)
 	{
-		$sql.= ' AND c.fk_statut ='.$viewstatut; // brouillon, validee, en cours, annulee
+		if ($viewstatut == 1 && empty($conf->expedition->enabled)) $sql.= ' AND c.fk_statut IN (1,2)';	// If module expedition disabled, we include order with status 'sending in process' into 'validated'
+		else $sql.= ' AND c.fk_statut = '.$viewstatut; // brouillon, validee, en cours, annulee
 		if ($viewstatut == 3)
 		{
 			$sql.= ' AND c.facture = 0'; // need to create invoice
@@ -222,7 +223,7 @@ if ($resql)
 	if ($viewstatut == -2)
 	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
 	if ($viewstatut == -3)
-	$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
+	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
 	if ($ordermonth)      $param.='&ordermonth='.$ordermonth;
