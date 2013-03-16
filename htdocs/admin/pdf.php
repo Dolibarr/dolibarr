@@ -68,6 +68,20 @@ if ($action == 'update')
 	exit;
 }
 
+if ($action == 'activate_pdfsecurity')
+{
+	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1",'chaine',0,'',$conf->entity);
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
+	exit;
+}
+else if ($action == 'disable_pdfsecurity')
+{
+	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION",$conf->entity);
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
+	exit;
+}
+
+
 
 /*
  * View
@@ -366,31 +380,61 @@ else	// Show
     print_fiche_titre($langs->trans("Other"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px" colspan="2">'.$langs->trans("Value").'</td></tr>';
 
+    
     // Hide any PDF informations
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td colspan="2">';
     print yn($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT,1);
     print '</td></tr>';
 
+    
+	// Encrypt and protect PDF
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td>';
+	$text = $langs->trans("ProtectAndEncryptPdfFiles");
+	$desc = $form->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+	print $desc;
+	print '</td>';
+	print '<td width="60">';
+	if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
+	{
+		print img_picto($langs->trans("Active"),'tick');
+	}
+	print '</td>';
+	print '<td align="center" width="140">';
+	if ($conf->global->PDF_SECURITY_ENCRYPTION == 0)
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_pdfsecurity">'.$langs->trans("Activate").'</a>';
+	}
+	if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
+	{
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_pdfsecurity">'.$langs->trans("Disable").'</a>';
+	}
+	print "</td>";
+	
+	print "</td>";
+	print '</tr>';
+	
     if ($conf->global->MAIN_FEATURES_LEVEL > 1)
     {
     	//Desc
     	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
+    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
     	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
     	print '</td></tr>';
 
     	//Ref
     	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
+    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td colspan="2">';
     	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
     	print '</td></tr>';
 
     	//Details
     	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
+    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
     	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
     	print '</td></tr>';
     }

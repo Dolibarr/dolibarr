@@ -154,19 +154,6 @@ else if ($action == 'disable_encryptdbpassconf')
 	}
 }
 
-if ($action == 'activate_pdfsecurity')
-{
-	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1",'chaine',0,'',$conf->entity);
-	header("Location: security.php");
-	exit;
-}
-else if ($action == 'disable_pdfsecurity')
-{
-	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION",$conf->entity);
-	header("Location: security.php");
-	exit;
-}
-
 if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1','chaine',0,'',$conf->entity);
@@ -363,37 +350,6 @@ print "</td>";
 
 print "</td>";
 print '</tr>';
-
-// Encryption et protection des PDF
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="3">';
-$text = $langs->trans("ProtectAndEncryptPdfFiles");
-$desc = $form->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
-print $desc;
-print '</td>';
-print '<td align="center" width="60">';
-if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
-{
-	print img_picto($langs->trans("Active"),'tick');
-}
-
-print '</td>';
-
-print '<td align="center" width="100">';
-if ($conf->global->PDF_SECURITY_ENCRYPTION == 0)
-{
-	print '<a href="security.php?action=activate_pdfsecurity">'.$langs->trans("Activate").'</a>';
-}
-if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
-{
-	print '<a href="security.php?action=disable_pdfsecurity">'.$langs->trans("Disable").'</a>';
-}
-print "</td>";
-
-print "</td>";
-print '</tr>';
-
 
 
 // Disable link "Forget password" on logon
