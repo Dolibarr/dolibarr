@@ -65,9 +65,9 @@ if ($action == 'updateMask')
 	if (isset($res))
 	{
 		if ($res < 0)
-			setEventMessage($langs->trans("SetupSaved"));
-		else
 			setEventMessage($langs->trans("Error"), 'errors');
+		else
+			setEventMessage($langs->trans("SetupSaved"));
 	}
 }
 
@@ -77,9 +77,9 @@ else if ($action == 'set_SHIPPING_FREE_TEXT')
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if ($res < 0)
-		setEventMessage($langs->trans("SetupSaved"));
-	else
 		setEventMessage($langs->trans("Error"), 'errors');
+	else
+		setEventMessage($langs->trans("SetupSaved"));
 }
 
 else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
@@ -88,9 +88,9 @@ else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
 	if ($res < 0)
-		setEventMessage($langs->trans("SetupSaved"));
-	else
 		setEventMessage($langs->trans("Error"), 'errors');
+	else
+		setEventMessage($langs->trans("SetupSaved"));
 }
 
 else if ($action == 'specimen')
@@ -173,7 +173,12 @@ else if ($action == 'setdoc')
 
 else if ($action == 'setmodel')
 {
-	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
+	
+	if ($res < 0)
+		setEventMessage($langs->trans("Error"), 'errors');
+	else
+		setEventMessage($langs->trans("SetupSaved"));
 }
 
 

@@ -371,7 +371,7 @@ class pdf_azur extends ModelePDFPropales
 					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
-					
+
 					// TODO : store local taxes types into object lines and remove this
 					$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
 					if ((! isset($localtax1_type)) || $localtax1_type=='') $localtax1_type = $localtaxtmp_array[0];

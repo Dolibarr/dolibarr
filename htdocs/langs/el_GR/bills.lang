@@ -419,7 +419,7 @@ AddGlobalDiscount=Προσθήκη έκπτωσης
 AddCreditNote=Δημιουργία πιστωτικό σημείωμα
 InvoiceNotChecked=Δεν έχει επιλεγεί τιμολόγιο
 ShowUnpaidAll=Εμφάνιση όλων των απλήρωτων τιμολογίων
-ClosePaidInvoicesAutomatically=Ταξινομήστε &quot;Πληρωμένες» όλα τα τιμολόγια entierely payed.
+ClosePaidInvoicesAutomatically=Ταξινομήστε &quot;Πληρωμένες» όλα τα τιμολόγια entirely payed.
 AllCompletelyPayedInvoiceWillBeClosed=Όλα τιμολόγιο χωρίς παραμένουν να πληρώσουν θα κλείσει αυτόματα σε κατάσταση &quot;Πληρωμένες».
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:46).
 
