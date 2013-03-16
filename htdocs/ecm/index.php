@@ -393,9 +393,11 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 }
 print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
+print '<div class="hideonsmartphone">';
 print $langs->trans("ECMAreaDesc")."<br>";
 print $langs->trans("ECMAreaDesc2")."<br>";
 print "<br>\n";
+print '</div>';
 
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
