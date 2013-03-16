@@ -85,7 +85,7 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 		else if ($showmode == 2) $classname='class="tmenu"';
 
 		print_start_menu_entry_auguria($idsel,$classname);
-		print_text_menu_entry_auguria($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, $atarget, $newTabMenu[$i]['target']);
+		print_text_menu_entry_auguria($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget));
 		print_end_menu_entry_auguria();
 	}
 
@@ -129,19 +129,18 @@ function print_start_menu_entry_auguria($idsel,$classname)
  * @param	string	$idsel		Id sel
  * @param	string	$classname	Class name
  * @param	string	$atarget	Target
- * @param	string	$menutarget	Menu target (may be empty)
  * @return	void
  */
-function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menutarget='')
+function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
 	global $langs;
 
 	if ($showmode == 1)
 	{
-		print '<a class="tmenuimage" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<div class="'.$id.' '.$idsel.'"><span class="mainmenu_'.$idsel.' '.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($menutarget?" target='".$menutarget."'":($atarget?' target="'.$atarget.'"':'')).'>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<span class="mainmenuaspan">';
 		print $text;
 		print '</span>';
