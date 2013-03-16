@@ -886,7 +886,17 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Signature
     print '<tr><td valign="top">'.$langs->trans("Signature").'</td>';
     print '<td>';
-    print '<textarea rows="'.ROWS_5.'" cols="90" name="signature">'.GETPOST('signature').'</textarea>';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    if (!empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)) {
+    	$withfckeditor=1;
+    	//Mailing is mandatory to have dolHTMLencode done by ckeditor
+    	$ckeditortoolbar='dolibarr_mailings';
+    } else {
+    	$withfckeditor=0;
+    	$ckeditortoolbar='';
+    }
+    $doleditor=new DolEditor('signature',GETPOST('signature'),'',280,$ckeditortoolbar,'In',true,true,$withfckeditor,8,72);
+    print $doleditor->Create(1);
     print '</td></tr>';
 
     // Multicompany
@@ -1794,7 +1804,17 @@ else
             // Signature
             print "<tr>".'<td valign="top">'.$langs->trans("Signature").'</td>';
             print '<td>';
-            print '<textarea name="signature" rows="5" cols="90">'.dol_htmlentitiesbr_decode($object->signature).'</textarea>';
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+            if (!empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)) {
+            	$withfckeditor=1;
+            	//Mailing is mandatory to have dolHTMLencode done by ckeditor
+            	$ckeditortoolbar='dolibarr_mailings';
+            } else {
+            	$withfckeditor=0;
+            	$ckeditortoolbar='';
+            }
+            $doleditor=new DolEditor('signature',$object->signature,'',280,$ckeditortoolbar,'In',true,true,$withfckeditor,8,72);
+            print $doleditor->Create(1);
             print '</td></tr>';
 
             // openid
