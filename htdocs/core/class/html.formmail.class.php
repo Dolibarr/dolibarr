@@ -77,6 +77,8 @@ class FormMail
      */
     function __construct($db)
     {
+    	global $conf;
+    	
         $this->db = $db;
 
         $this->withform=1;
@@ -593,6 +595,9 @@ class FormMail
 
         			// Editor wysiwyg
         			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+        			if (!empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
+        				$this->withfckeditor=1;
+        			}
         			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
         			$out.= $doleditor->Create(1);
         		}
