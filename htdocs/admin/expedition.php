@@ -65,9 +65,9 @@ if ($action == 'updateMask')
 	if (isset($res))
 	{
 		if ($res < 0)
-			setEventMessage($langs->trans("Error"), 'errors');
-		else
 			setEventMessage($langs->trans("SetupSaved"));
+		else
+			setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -77,9 +77,9 @@ else if ($action == 'set_SHIPPING_FREE_TEXT')
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if ($res < 0)
-		setEventMessage($langs->trans("Error"), 'errors');
-	else
 		setEventMessage($langs->trans("SetupSaved"));
+	else
+		setEventMessage($langs->trans("Error"), 'errors');
 }
 
 else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
@@ -88,9 +88,9 @@ else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
 	if ($res < 0)
-		setEventMessage($langs->trans("Error"), 'errors');
-	else
 		setEventMessage($langs->trans("SetupSaved"));
+	else
+		setEventMessage($langs->trans("Error"), 'errors');
 }
 
 else if ($action == 'specimen')
@@ -173,12 +173,7 @@ else if ($action == 'setdoc')
 
 else if ($action == 'setmodel')
 {
-	$res = dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
-	
-	if ($res < 0)
-		setEventMessage($langs->trans("Error"), 'errors');
-	else
-		setEventMessage($langs->trans("SetupSaved"));
+	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
 }
 
 
@@ -259,16 +254,16 @@ foreach ($dirmodels as $reldir)
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once DOL_DOCUMENT_ROOT ."/core/modules/expedition/".$file.'.php';
+					require_once $dir.$file.'.php';
 
 					$module = new $file;
-
-					// Show modules according to features level
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
+					
 					if ($module->isEnabled())
 					{
+						// Show modules according to features level
+						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+					
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
 						print '<td>';
@@ -278,7 +273,9 @@ foreach ($dirmodels as $reldir)
                         // Show example of numbering module
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                        if (preg_match('/^Error/',$tmp)) { 
+							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; 
+						}
                         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
@@ -333,7 +330,7 @@ print '</table><br>';
 
 
 /*
- *  Modeles de documents
+ *  Documents models for Sendings Receipt
  */
 print_titre($langs->trans("SendingsReceiptModel"));
 

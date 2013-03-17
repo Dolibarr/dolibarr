@@ -54,9 +54,9 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask')
 {
     $maskconstorder=GETPOST('maskconstorder','alpha');
-    $maskorder=GETPOST('maskorder','alpha');
+    $maskvalue=GETPOST('maskvalue','alpha');
 
-    if ($maskconstorder)  $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
+    if ($maskconstorder)  $res = dolibarr_set_const($db,$maskconstorder,$maskvalue,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -70,7 +70,7 @@ if ($action == 'updateMask')
     }
 }
 
-if ($action == 'specimen')  // For orders
+else if ($action == 'specimen')  // For orders
 {
     $modele=GETPOST('module','alpha');
 
@@ -116,74 +116,40 @@ if ($action == 'specimen')  // For orders
     }
 }
 
-if ($action == 'set')
+// Activate a model
+else if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-    $res=$db->query($sql);
-    if ($res)
-    {
-
-    }
-    //	else dol_print_error($db);
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE nom = '".$value."'";
-    $sql.= " AND type = '".$type."'";
-    $sql.= " AND entity = ".$conf->entity;
-    $db->query($sql);
-    if ($res)
-    {
-
-    }
-    //    else dol_print_error($db);
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_SUPPLIER_ADDON_PDF',$conf->entity);
+	}
 }
 
-if ($action == 'setdoc')
+// Set default model
+else if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
+	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
+	}
 
-    $db->begin();
-
-    if ($type == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-    {
-        $conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
-    }
-
-    // On active le modele
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$db->escape($value)."'";
-    $sql_del.= " AND type = '".$type."'";
-    $sql_del.= " AND entity = ".$conf->entity;
-    $result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-    $result2=$db->query($sql);
-    if ($result1 && $result2)
-    {
-        $db->commit();
-    }
-    else
-    {
-        $db->rollback();
-    }
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
@@ -191,13 +157,13 @@ if ($action == 'setmod')
     dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
 }
 
-if ($action == 'addcat')
+else if ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
     $fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
+else if ($action == 'set_SUPPLIER_ORDER_FREE_TEXT')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
 
@@ -352,10 +318,8 @@ foreach ($dirmodels as $reldir)
 print '</table><br>';
 
 
-
-
 /*
- * Modeles documents for supplier orders
+ *  Documents models for supplier orders
  */
 
 print_titre($langs->trans("OrdersModelModule"));
@@ -396,17 +360,14 @@ print '</tr>'."\n";
 
 clearstatcache();
 
+$var=true;
 foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
 
     if (is_dir($dir))
     {
-        $var=true;
-
         $handle=opendir($dir);
-
-
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
@@ -448,7 +409,7 @@ foreach ($dirmodels as $reldir)
                         print "</td>";
                     }
 
-                    // Defaut
+                    // Default
                     print '<td align="center">';
                     if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
                     {
@@ -485,6 +446,12 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table><br/>';
+print '<br>';
+
+/*
+ * Other options
+ *
+ */
 
 print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
