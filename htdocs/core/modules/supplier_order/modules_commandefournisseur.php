@@ -24,7 +24,7 @@
 /**
  *		\file       htdocs/core/modules/supplier_order/modules_commandefournisseur.php
  *      \ingroup    commande fournisseur
- *      \brief      File that contain parent class for supplier orders models
+ *      \brief      File that contains parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -44,13 +44,13 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  string	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
+     *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
-		$type='order_supplier';
+		$type='supplier_order';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -79,7 +79,7 @@ abstract class ModeleNumRefSuppliersOrders
 		return true;
 	}
 
-	/**  Returns the default description of the model numbering
+	/**  Returns default description of numbering model
 	 *
 	 *   @return    string      Description Text
 	 */
@@ -101,7 +101,7 @@ abstract class ModeleNumRefSuppliersOrders
 		return $langs->trans("NoExample");
 	}
 
-	/**  Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
+	/**  Tests if existing numbers make problems with numbering
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
@@ -120,7 +120,7 @@ abstract class ModeleNumRefSuppliersOrders
 		return $langs->trans("NotAvailable");
 	}
 
-	/**   Returns version of the model numbering
+	/**   Returns version of the numbering model 
 	 *
 	 *    @return     string      Value
 	 */
@@ -138,7 +138,7 @@ abstract class ModeleNumRefSuppliersOrders
 
 
 /**
- *  Create a document onto disk according to template module.
+ *  Create a document onto disk according to template model.
  *
  *  @param	    DoliDB		$db  			Database handler
  *  @param	    Object		$object			Object supplier order
@@ -164,7 +164,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 
 	$srctemplatepath='';
 
-	// Set the model on the model name to use
+	// Sets the model on the model name to use
 	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
@@ -195,7 +195,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 		{
 			$file = $prefix."_".$modele.".modules.php";
 
-			// We checked the location of the model
+			// We check the model location 
 			$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/".$file,0);
 			if (file_exists($file))
 			{
@@ -229,7 +229,9 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('ORDER_SUPPLIER_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			if ($result < 0) { 
+				$error++; $this->errors=$interface->errors; 
+			}
 			// End calls triggers
 
 			return 1;
