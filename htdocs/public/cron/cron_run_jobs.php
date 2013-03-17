@@ -16,9 +16,9 @@
  */
 
 /**
- *   	\file       dev/Cronjobss/Cronjobs_page.php
- *		\ingroup    mymodule othermodule1 othermodule2
- *		\brief      This file is an example of a php page
+ *   	\file       cron/cron_run_jobs.php
+ *		\ingroup    cron
+ *		\brief      This file is the page to call to run jobs
  *					Initialy built by build_class_from_table on 2013-03-17 18:50
  */
 
@@ -43,22 +43,57 @@ if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@inc
 if (! $res && file_exists("../../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
-dol_include_once('/module/class/cronjob.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php');
+
+
+// C'est un wrapper, donc header vierge
+/**
+ * Header function
+ *
+ * @return	void
+ */
+function llxHeaderVierge() {
+	print '<html><title>Export agenda cal</title><body>';
+}
+/**
+ * Footer function
+ *
+ * @return	void
+ */
+function llxFooterVierge() {
+	print '</body></html>';
+}
+
+
 
 // Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
-$langs->load("cron");
+$langs->load("cron@cron");
 
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$myparam	= GETPOST('myparam','alpha');
-$action='list';
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
-if (! $user->admin) accessforbidden();
+if ($user->societe_id > 0)
+{
+	//accessforbidden();
+}
+
+// Security check
+if (empty($conf->cron->enabled)) accessforbidden('',1,1,1);
+
+// Check also security key
+if (empty($_GET["securitykey"]) || $conf->global->CRON_KEY != $_GET["securitykey"])
+{
+	$user->getrights();
+
+	llxHeaderVierge();
+	print '<div class="error">Bad value for key.</div>';
+	llxFooterVierge();
+	exit;
+}
 
 
 /*******************************************************************
@@ -93,23 +128,12 @@ if ($action == 'add')
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','MyPageName','');
+llxHeader('',$langs->trans('CronList'),'');
 
 $form=new Form($db);
 
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
-print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
-
-
-
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-
+// Put here content of your page
 
 // Example 1 : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -127,93 +151,23 @@ jQuery(document).ready(function() {
 </script>';
 
 
-// Example 2 : Adding links to objects
-// The class must extends CommonObject class to have this method available
-//$somethingshown=$object->showLinkedObjectBlock();
+$cronjob=new CronJob($db);
+$result=$cronjob->fetch($id);
 
-
-// Example 3 : List of data
-if ($action == 'list')
+if ($result > 0)
 {
-    $sql = "SELECT";
-    $sql.= " t.rowid,";
-
-		$sql.= " t.tms,";
-		$sql.= " t.datec,";
-		$sql.= " t.command,";
-		$sql.= " t.params,";
-		$sql.= " t.datelastrun,";
-		$sql.= " t.lastresult,";
-		$sql.= " t.lastoutput,";
-		$sql.= " t.fk_user,";
-		$sql.= " t.note";
 
 
-    $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-    //$sql.= " WHERE field3 = 'xxx'";
-    //$sql.= " ORDER BY field1 ASC";
-
-
-    print_fiche_titre($langs->trans("ListOfCronJobs"),'','').'<br>';
-
-
-    print '<table class="noborder">'."\n";
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Id'),$_SERVER['PHP_SELF'],'t.rowid','',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('Command'),$_SERVER['PHP_SELF'],'t.command','',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('DateCreation'),$_SERVER['PHP_SELF'],'t.datec','align="center"',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('LastOutput'),$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('DateLastRun'),$_SERVER['PHP_SELF'],'t.datelastrun','align="center"',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('LastResult'),$_SERVER['PHP_SELF'],'t.lastresult','align="right"',$param,'',$sortfield,$sortorder);
-    print '</tr>';
-
-    dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                if ($obj)
-                {
-                    // You can use here results
-                    print '<tr><td>';
-                    print $obj->rowid;
-                    print '</td><td>';
-                    print $obj->command;
-                    print '</td><td align="center">';
-                    print $db->jdate($obj->datec);
-                    print '</td><td>';
-                    print '';
-                    print '</td><td align="center">';
-                    print $db->jdate($obj->datelastrun);
-                    print '</td><td align="right">';
-                    print $obj->lastresult;
-                    print '</td></tr>';
-                }
-                $i++;
-            }
-        }
-    }
-    else
-    {
-        $error++;
-        dol_print_error($db);
-    }
-
-    print '</table>'."\n";
 }
-
-
-//print '</td></tr></table>';
-print '<div></div></div>';
+else
+{
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
+}
 
 
 // End of page
 llxFooter();
+
 $db->close();
 ?>
