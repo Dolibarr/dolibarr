@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2012 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@
 /**
  *  \file       htdocs/core/modules/expedition/modules_expedition.php
  *  \ingroup    expedition
- *  \brief      File of class to manage expedition numbering
+ *  \brief      File that contains parent class for sending receipts models
+ *              and parent class for sending receipts numbering models
  */
  require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
@@ -60,15 +61,15 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 
 
 /**
- *  Classe mere des modeles de numerotation des references d expedition
+ *  Parent Class of numbering models of sending receipts references
  */
 abstract class ModelNumRefExpedition
 {
 	var $error='';
 
-	/** Return if a module can be used or not
+	/** Return if a model can be used or not
 	 *
-	 *  @return		boolean     true if module can be used
+	 *  @return		boolean     true if model can be used
 	 */
 	function isEnabled()
 	{
@@ -88,7 +89,7 @@ abstract class ModelNumRefExpedition
 	}
 
 	/**
-	 *	Return numbering example
+	 *	Returns numbering example
 	 *
 	 *	@return     string      Example
 	 */
@@ -110,7 +111,7 @@ abstract class ModelNumRefExpedition
 	}
 
 	/**
-	 *	Return next value
+	 *	Returns next value assigned
 	 *
 	 *	@param	Societe		$objsoc     Third party object
 	 *	@param	Object		$shipment	Shipment object
@@ -123,7 +124,7 @@ abstract class ModelNumRefExpedition
 	}
 
 	/**
-	 *	Return numbering version module
+	 *	Returns version of the numbering model
 	 *
 	 *	@return     string      Value
 	 */
@@ -158,7 +159,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 
 	$srctemplatepath='';
 
-	// Positionne le modele sur le nom du modele a utiliser
+	// Sets the model on the model name to use
 	if (! dol_strlen($modele))
 	{
 	    if (! empty($conf->global->EXPEDITION_ADDON_PDF))
@@ -171,7 +172,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	    }
 	}
 
-	// If selected modele is a filename template (then $modele="modelname:filename")
+	// If selected model is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
     if (! empty($tmp[1]))
     {
@@ -189,7 +190,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
     	{
     	    $file = $prefix."_expedition_".$modele.".modules.php";
 
-    		// On verifie l'emplacement du modele
+    		// We check the model location 
 	        $file=dol_buildpath($reldir."core/modules/expedition/doc/".$file,0);
     		if (file_exists($file))
     		{
@@ -201,7 +202,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
     	if ($filefound) break;
     }
 
-	// Charge le modele
+	// Load the model
 	if ($filefound)
 	{
 	    require_once $file;
@@ -221,14 +222,14 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
         	//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			//dol_delete_preview($object);
 
-			// Appel des triggers
+			// Calls triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('SHIPPING_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
-			// Fin appel triggers
+			// End calls triggers
 
 			return 1;
 		}
@@ -242,8 +243,15 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	}
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
-		return -1;
+		if (! $conf->global->EXPEDITION_ADDON_PDF)
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_EXPEDITION_ADDON_PDF_NotDefined");
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+		}
+		return 0;
     }
 }
 ?>
