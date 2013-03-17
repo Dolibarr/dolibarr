@@ -1208,7 +1208,7 @@ else
             if (!empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) && dol_textishtml(dol_html_entity_decode($object->signature, ENT_COMPAT | ENT_HTML401))) {
             	print dol_html_entity_decode($object->signature, ENT_COMPAT | ENT_HTML401);
             }else {
-            	print dol_nl2br($object->signature,1,false);
+            	print dol_textishtml($object->signature)?$object->signature:dol_nl2br($object->signature,1,false);
             }
             print "</td></tr>\n";
 
