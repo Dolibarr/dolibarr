@@ -188,7 +188,7 @@ if ($action == 'setmod')
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-    dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$value,'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
 }
 
 if ($action == 'addcat')
@@ -306,7 +306,7 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
                         print '<td align="center">';
-                        if ($conf->global->COMMANDE_SUPPLIER_ADDON == "$file")
+                        if ($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"),'switch_on');
                         }
