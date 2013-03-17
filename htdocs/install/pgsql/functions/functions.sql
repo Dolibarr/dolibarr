@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION dol_util_rebuild_sequences() RETURNS integer as $body
 CREATE OR REPLACE FUNCTION dol_util_triggerall(DoEnable boolean) RETURNS integer AS $BODY$ DECLARE mytables RECORD; BEGIN FOR mytables IN SELECT relname FROM pg_class WHERE relhastriggers IS TRUE AND relkind = 'r' AND NOT relname LIKE 'pg_%' LOOP IF DoEnable THEN EXECUTE 'ALTER TABLE ' || mytables.relname || ' ENABLE TRIGGER ALL'; ELSE  EXECUTE 'ALTER TABLE ' || mytables.relname || ' DISABLE TRIGGER ALL'; END IF; END LOOP; RETURN 1; END; $BODY$ LANGUAGE 'PLPGSQL';
 
 
--- Add triggers
+-- Add triggers for timestamp fields
 CREATE OR REPLACE FUNCTION update_modified_column_tms()	RETURNS TRIGGER AS $$ BEGIN NEW.tms = now(); RETURN NEW; END; $$ LANGUAGE 'PLPGSQL';
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accountingtransaction FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_actioncomm FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

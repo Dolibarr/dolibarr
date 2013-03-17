@@ -12,8 +12,7 @@
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):   VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- To make pk to be auto increment (postgres) VPGSQL8.2 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid INTEGER SERIAL PRIMARY KEY;
-
+-- To make pk to be auto increment (postgres) VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
@@ -38,6 +37,7 @@ UPDATE llx_const set name='MAIN_INFO_SOCIETE_TOWN' where name='MAIN_INFO_SOCIETE
 UPDATE llx_const set name='MAIN_INFO_SOCIETE_ZIP' where name='MAIN_INFO_SOCIETE_CP';
 UPDATE llx_const set name='MAIN_INFO_SOCIETE_COUNTRY' where name='MAIN_INFO_SOCIETE_PAYS';
 UPDATE llx_const set name='MAIN_INFO_SOCIETE_STATE' where name='MAIN_INFO_SOCIETE_DEPARTEMENT';
+UPDATE llx_const set name='LIVRAISON_ADDON_NUMBER' where name='LIVRAISON_ADDON';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
@@ -84,9 +84,16 @@ alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
 
-ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL;
+--ALTER TABLE llx_c_shipment_mode DROP COLUMN CASCADE;
+--ALTER TABLE llx_c_shipment_mode ADD COLUMN rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+--ALTER TABLE llc_c_shipment_mode ADD COLUMN rowid SERIAL PRIMARY KEY;
+--ALTER TABLE llx_c_shipment_mode ADD COLUMN rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+
 -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid INTEGER SERIAL PRIMARY KEY;
+-- VPGSQL8.2 DROP table llx_c_shipment_mode;
+-- VPGSQL8.2 CREATE TABLE llx_c_shipment_mode (rowid SERIAL PRIMARY KEY, tms timestamp, code varchar(30) NOT NULL, libelle varchar(50) NOT NULL, description text, tracking varchar(256) NOT NULL, active integer DEFAULT 0, module varchar(32) NULL);
+
+
 
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
 

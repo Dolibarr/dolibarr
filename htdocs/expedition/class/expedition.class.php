@@ -81,7 +81,9 @@ class Expedition extends CommonObject
 	var $total_localtax1;   // Total Local tax 1
 	var $total_localtax2;   // Total Local tax 2
 
-
+	var $listmeths;			// List of carriers
+	
+	
 	/**
 	 *	Constructor
 	 *
@@ -1175,12 +1177,14 @@ class Expedition extends CommonObject
 
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
+     *  
      *  @param  id      $id     only this carrier, all if none
      *  @return void
      */
     function list_delivery_methods($id='')
     {
         global $langs;
+        
         $listmeths = array();
         $i=0;
 
@@ -1220,6 +1224,7 @@ class Expedition extends CommonObject
                 $i++;
             }
         }
+        else dol_print_error($this->db,'');
     }
 
     /**
@@ -1231,8 +1236,8 @@ class Expedition extends CommonObject
     {
         if ($id=='')
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (rowid, code, libelle, description, tracking)";
-            $sql.=" VALUES ('','".$this->update[code]."','".$this->update[libelle]."','".$this->update[description]."','".$this->update[tracking]."')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
+            $sql.=" VALUES ('".$this->update[code]."','".$this->update[libelle]."','".$this->update[description]."','".$this->update[tracking]."')";
             $resql = $this->db->query($sql);
         }
         else
@@ -1245,7 +1250,7 @@ class Expedition extends CommonObject
             $sql.= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }
-
+        if ($resql < 0) dol_print_error($this->db,'');
     }
 
     /**
