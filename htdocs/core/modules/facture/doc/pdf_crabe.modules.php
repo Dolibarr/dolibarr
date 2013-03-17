@@ -381,7 +381,7 @@ class pdf_crabe extends ModelePDFFactures
 					if ((! isset($localtax1_type)) || $localtax1_type=='') $localtax1_type = $localtaxtmp_array[0];
 					if ((! isset($localtax2_type)) || $localtax2_type=='') $localtax2_type = $localtaxtmp_array[2];
 					//end TODO
-						
+
 				    // retrieve global local tax
 					if ($localtax1_type == '7') $localtax1_rate = $localtaxtmp_array[1];
 					if ($localtax2_type == '7') $localtax2_rate = $localtaxtmp_array[3];

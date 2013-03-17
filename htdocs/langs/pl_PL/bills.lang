@@ -432,6 +432,6 @@ EditGlobalDiscounts=Edytuj bezwzględne zniżki
 AddCreditNote=Tworzenie noty kredytowej
 InvoiceNotChecked=Nie wybrano faktura
 ShowUnpaidAll=Pokaż wszystkie niezapłacone faktury
-ClosePaidInvoicesAutomatically=Klasyfikowanie &quot;Opłacone&quot; wszystkie standardy lub fakturach zastępczych entierely zapłaci.
+ClosePaidInvoicesAutomatically=Klasyfikowanie &quot;Opłacone&quot; wszystkie standardy lub fakturach zastępczych entirely zapłaci.
 AllCompletelyPayedInvoiceWillBeClosed=Wszystko faktura bez pozostawać do zapłaty zostanie automatycznie zamknięta do statusu &quot;płatny&quot;.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:17).
