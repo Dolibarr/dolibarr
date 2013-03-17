@@ -1305,6 +1305,59 @@ class FactureFournisseur extends CommonInvoice
         $result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
         return $result;
     }
+	
+	 /**
+     *  Renvoie la reference de facture suivante non utilisee en fonction du modele
+     *                  de numerotation actif defini dans INVOICE_SUPPLIER_ADDON_NUMBER
+     *
+     *  @param	    Societe		$soc  		objet societe
+     *  @return     string                  reference libre pour la facture
+     */
+    function getNextNumRef($soc)
+    {
+        global $db, $langs, $conf;
+        $langs->load("orders");
+
+        $dir = DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/';
+
+        if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER))
+        {
+            $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.'.php';
+
+            if (is_readable($dir.'/'.$file))
+            {
+                // Definition du nom de modele de numerotation de commande fournisseur
+                $modName=$conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+                require_once $dir.'/'.$file;
+
+                // Recuperation de la nouvelle reference
+                $objMod = new $modName($this->db);
+
+                $numref = "";
+                $numref = $objMod->invoice_get_num($soc,$this);
+
+                if ( $numref != "")
+                {
+                    return $numref;
+                }
+                else
+                {
+                    dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
+                    return -1;
+                }
+            }
+            else
+            {
+                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_INVOICE_SUPPLIER_ADDON_NUMBER_File",$conf->global->INVOICE_SUPPLIER_ADDON_NUMBER);
+                return -2;
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_NUMBER_NotDefined");
+            return -3;
+        }
+    }
 
 
     /**

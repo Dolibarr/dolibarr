@@ -20,11 +20,11 @@
 
 /**
  *    	\file       htdocs/core/modules/supplier_order/mod_facture_fournisseur_cactus.php
- *		\ingroup    commande
+ *		\ingroup    supplier invoice
  *		\brief      File containing the Cactus Class of numbering models of suppliers invoices references
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_facturefournisseur.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturefournisseur.php';
 
 
 /**
@@ -123,7 +123,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
 		//$date=time();
         $date=$object->datec;   // Not always defined
-        if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
+        if (empty($date)) $date=$object->date;  // Creation date is invoice date for suppliers invoices
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
 
