@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+/* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,20 @@ $mesg = '';
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="p.ref";
+if (! $sortfield)
+{
+	if ($id > 0)
+	{
+		$sortfield="f.datef";
+		$sortorder="DESC";
+	}
+	else
+	{
+	    $sortfield="p.ref";
+	    $sortorder="ASC";
+	}
+}
+
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
@@ -83,7 +96,7 @@ $titre=$langs->trans("Margins");
 $picto='margin';
 dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
-print '<form method="post" name="sel">';
+print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 print '<table class="border" width="100%">';
 
 if ($id > 0) {
@@ -144,8 +157,9 @@ print '</form>';
 
 $sql = "SELECT DISTINCT d.fk_product, p.label, p.rowid, p.fk_product_type, p.ref,";
 $sql.= " f.facnumber, f.total as total_ht,";
-$sql.= " sum(d.subprice * d.qty * (1 - d.remise_percent / 100)) as selling_price,";
-$sql.= " sum(d.buy_price_ht * d.qty) as buying_price, sum(((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) as marge," ;
+$sql.= " sum(d.total_ht) as selling_price,";
+$sql.= $db->ifsql('f.type =2','sum(d.buy_price_ht * d.qty *-1)','sum(d.buy_price_ht * d.qty)')." as buying_price, ";
+$sql.= $db->ifsql('f.type =2','sum((d.price + d.buy_price_ht) * d.qty)','sum((d.price - d.buy_price_ht) * d.qty)')." as marge," ;
 $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
@@ -170,7 +184,8 @@ if ($id > 0)
 else
   $sql.= " GROUP BY d.fk_product";
 $sql.= " ORDER BY $sortfield $sortorder ";
-$sql.= $db->plimit($conf->liste_limit +1, $offset);
+// TODO: calculate total to display then restore pagination
+//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -178,7 +193,7 @@ if ($result)
 	$num = $db->num_rows($result);
 
 	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',$num,0,'');
+	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=".$id,$sortfield,$sortorder,'',0,0,'');
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -207,7 +222,7 @@ if ($result)
 	if ($num > 0)
 	{
 		$var=True;
-		while ($i < $num && $i < $conf->liste_limit)
+		while ($i < $num /*&& $i < $conf->liste_limit*/)
 		{
 			$objp = $db->fetch_object($result);
 
