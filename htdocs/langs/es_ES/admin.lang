@@ -1270,7 +1270,9 @@ ActivateFCKeditor=Activar editor avanzado para :
 FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los terceros
 FCKeditorForProduct=Creación/edición WYSIWIG de la descripción y notas de los productos/servicios
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
-FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails
+FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails (Utilidades->E-Mailings)
+FCKeditorForUserSignature=Creación/edición WYSIWIG de los usuario firma
+FCKeditorForMail=Creación/edición WYSIWIG de todos los E-Mails (excepto Utilidades->E-Mailings)
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
 OSCommerceTestOk=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
