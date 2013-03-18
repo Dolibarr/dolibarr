@@ -81,6 +81,7 @@ alter table llx_socpeople  CHANGE COLUMN cp zip varchar(10);
 alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
+alter table llx_expedition   CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
 

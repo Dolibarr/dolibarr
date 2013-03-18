@@ -51,7 +51,6 @@ class Expedition extends CommonObject
 	var $origin;
 	var $origin_id;
 	var $lines=array();
-	var $expedition_method_id; // deprecated
 	var $shipping_method_id;
 	var $tracking_number;
 	var $tracking_url;
@@ -203,7 +202,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".$this->socid;
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
-		$sql.= ", ".($this->expedition_method_id>0?$this->expedition_method_id:"null");
+		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
 		$sql.= ", ".$this->weight;
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
@@ -373,7 +372,6 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->expedition_method_id = $obj->fk_expedition_methode; // TODO deprecated
 				$this->shipping_method_id	= $obj->fk_expedition_methode;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
@@ -683,7 +681,7 @@ class Expedition extends CommonObject
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
 		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
 		if (isset($this->fk_delivery_address)) $this->fk_delivery_address=trim($this->fk_delivery_address);
-		if (isset($this->expedition_method_id)) $this->expedition_method_id=trim($this->expedition_method_id);
+		if (isset($this->shipping_method_id)) $this->shipping_method_id=trim($this->shipping_method_id);
 		if (isset($this->tracking_number)) $this->tracking_number=trim($this->tracking_number);
 		if (isset($this->statut)) $this->statut=trim($this->statut);
 		if (isset($this->trueDepth)) $this->trueDepth=trim($this->trueDepth);
@@ -714,7 +712,7 @@ class Expedition extends CommonObject
 		$sql.= " date_expedition=".(dol_strlen($this->date_expedition)!=0 ? "'".$this->db->idate($this->date_expedition)."'" : 'null').",";
 		$sql.= " date_delivery=".(dol_strlen($this->date_delivery)!=0 ? "'".$this->db->idate($this->date_delivery)."'" : 'null').",";
 		$sql.= " fk_address=".(isset($this->fk_delivery_address)?$this->fk_delivery_address:"null").",";
-		$sql.= " fk_expedition_methode=".((isset($this->expedition_method_id) && $this->expedition_method_id > 0)?$this->expedition_method_id:"null").",";
+		$sql.= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0)?$this->shipping_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
 		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
@@ -1291,11 +1289,11 @@ class Expedition extends CommonObject
 	{
 		$code='';
 
-		if (! empty($this->expedition_method_id))
+		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-			$sql.= " WHERE em.rowid = ".$this->expedition_method_id;
+			$sql.= " WHERE em.rowid = ".$this->shipping_method_id;
 
 			$resql = $this->db->query($sql);
 			if ($resql)
