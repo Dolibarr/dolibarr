@@ -1137,21 +1137,21 @@ tr.fiche {
 
 .ok {
 	color:#159e26;
-	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) left center no-repeat;
+	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) left center no-repeat !important;
 	padding-left:20px;
 	font-weight:bold;
 }
 
 .warning {
 	color:#bca936;
-	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) left center no-repeat;
+	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) left center no-repeat !important;
 	padding-left:20px;
 	font-weight:bold;
 }
 
 .error {
 	color:#a61111;
-	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) left center no-repeat;
+	background:#f58080 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) left center no-repeat !important;
 	padding-left:20px;
 	font-weight:bold;
 }
@@ -1159,17 +1159,16 @@ tr.fiche {
 td.highlights {background:#f9c5c6;}
 
 div.ok {
-	background:#61e372 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) 3px center no-repeat;
-	color:#ffffff;
+	background:#61e372; /* url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) 3px center no-repeat; */
+	/*color:#ffffff;*/
 	padding:2px 4px 2px 24px;
 	margin:0.5em 0em;
-	border:1px solid #159e26;
 	font-weight:normal;
 }
 
 div.warning, div.info {
-	background:#fcf5b8 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) 3px center no-repeat;
-	color:#232323;
+	background:#fcf5b8; /* url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) 3px center no-repeat; */
+	/*color:#232323; */
 	padding:2px 4px 2px 24px;
 	margin:0.5em 0em;
 	border:1px solid #bca936;
@@ -1177,8 +1176,8 @@ div.warning, div.info {
 }
 
 div.error {
-	background:#f58080 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) 3px center no-repeat;
-	color:#ffffff;
+	background:#f58080; /* url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) 3px center no-repeat; */
+	/* color:#ffffff; */
 	padding:2px 4px 2px 24px;
 	margin:0.5em 0em;
 	border:1px solid #a61111;
