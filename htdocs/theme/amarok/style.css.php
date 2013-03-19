@@ -494,6 +494,8 @@ div.vmenu {
 	text-align:center;
 }
 
+a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
+
 
 /* ============================================================================== */
 /* Panes for Main                                                   			  */
