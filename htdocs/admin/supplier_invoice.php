@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
@@ -24,7 +24,7 @@
 /**
  *  \file       htdocs/admin/supplier_invoice.php
  *  \ingroup    fournisseur
- *  \brief      Page d'administration-configuration du module Fournisseur
+ *  \brief      Setup to admin supplier invoices
  */
 
 require '../main.inc.php';
@@ -241,7 +241,7 @@ foreach ($dirmodels as $reldir)
 
             while (($file = readdir($handle))!==false)
             {
-                if (substr($file, 0, 25) == 'mod_facture_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+                if (substr($file, 0, 24) == 'mod_facture_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
                 {
                     $file = substr($file, 0, dol_strlen($file)-4);
 
