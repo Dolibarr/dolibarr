@@ -575,7 +575,7 @@ if ($action == 'create')
 		$numproject=select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
 		{
-			print ' &nbsp; <a href="'.DOL_DOCUMENT_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		}
 		print '</td></tr>';
 	}
