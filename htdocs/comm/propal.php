@@ -2089,6 +2089,17 @@ else
 	            }
 	        }
 
+            // Create contract
+            if ($conf->contrat->enabled && $object->statut == 2 && $user->societe_id == 0)
+            {
+            	$langs->load("contracts");
+
+				if ($user->rights->contrat->creer)
+				{
+				  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
+				}
+            }
+
 	        // Create an invoice and classify billed
 			if ($object->statut == 2 && $user->societe_id == 0)
 			{
