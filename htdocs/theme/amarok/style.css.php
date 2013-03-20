@@ -120,6 +120,9 @@ a:hover, a:active {
 	color:rgba(0,0,0,.6);
 }
 
+input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
+	padding: 1px;
+}
 input, textarea {
     font-size:<?php print $fontsize ?>px;
     font-family:<?php print $fontlist ?>;
@@ -810,7 +813,7 @@ td.vmenu {
 }
 
 div.fiche {
-	padding:8px 12px 10px;
+	padding:8px 6px 10px;
 	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'16':'24'; ?>px;
 	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'12':'6'; ?>px;
 }
@@ -1138,21 +1141,21 @@ tr.fiche {
 .ok {
 	color:#159e26;
 	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) left center no-repeat !important;
-	padding-left:20px;
+	padding-left:20px !important;
 	font-weight:bold;
 }
 
 .warning {
 	color:#bca936;
 	background:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) left center no-repeat !important;
-	padding-left:20px;
+	padding-left:20px !important;
 	font-weight:bold;
 }
 
 .error {
 	color:#a61111;
 	background:#f58080 url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) left center no-repeat !important;
-	padding-left:20px;
+	padding-left:20px !important;
 	font-weight:bold;
 }
 
@@ -1161,7 +1164,7 @@ td.highlights {background:#f9c5c6;}
 div.ok {
 	background:#61e372; /* url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/ok.png',1); ?>) 3px center no-repeat; */
 	/*color:#ffffff;*/
-	padding:2px 4px 2px 24px;
+	padding:2px 4px 2px 6px;
 	margin:0.5em 0em;
 	font-weight:normal;
 }
@@ -1169,7 +1172,7 @@ div.ok {
 div.warning, div.info {
 	background:#fcf5b8; /* url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/warning.png',1); ?>) 3px center no-repeat; */
 	/*color:#232323; */
-	padding:2px 4px 2px 24px;
+	padding:2px 4px 2px 6px;
 	margin:0.5em 0em;
 	border:1px solid #bca936;
 	font-weight:normal;
@@ -1178,7 +1181,7 @@ div.warning, div.info {
 div.error {
 	background:#f58080; /* url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/error.png',1); ?>) 3px center no-repeat; */
 	/* color:#ffffff; */
-	padding:2px 4px 2px 24px;
+	padding:2px 4px 2px 6px;
 	margin:0.5em 0em;
 	border:1px solid #a61111;
 	font-weight:normal;
