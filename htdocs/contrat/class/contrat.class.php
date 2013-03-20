@@ -649,14 +649,16 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref, entity)";
+		$sql.= " ref, entity, note, note_public)";
 		$sql.= " VALUES (".$this->db->idate($now).",".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
-		$sql.= ",".($this->fk_projet>0?$this->fk_projet:"NULL");
+		$sql.= ",".($this->fk_project>0?$this->fk_project:"NULL");
 		$sql.= ", ".(dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
 		$sql.= ", ".$conf->entity;
+		$sql.= ", ".(!empty($this->note)?("'".$this->db->escape($this->note)."'"):"NULL");
+		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -694,6 +696,12 @@ class Contrat extends CommonObject
 
 				if (! $error)
 				{
+		            // Add linked object
+		            if (! $error && $this->origin && $this->origin_id)
+		            {
+		                $ret = $this->add_object_linked();
+		                if (! $ret)	dol_print_error($this->db);
+		            }
 					$this->db->commit();
 					return $this->id;
 				}
