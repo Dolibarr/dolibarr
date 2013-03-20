@@ -104,7 +104,7 @@ if ($action == 'add')
     $object->ref_customer			= $objectsrc->ref_client;
     $object->date_delivery			= $date_delivery;	// Date delivery planed
     $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
-    $object->expedition_method_id	= GETPOST('expedition_method_id','int');
+    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
     $object->tracking_number		= GETPOST('tracking_number','alpha');
     $object->ref_int				= GETPOST('ref_int','alpha');
 
@@ -260,7 +260,7 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 || $action == 'settrueWidth'
 || $action == 'settrueHeight'
 || $action == 'settrueDepth'
-|| $action == 'setexpedition_method_id')
+|| $action == 'setshipping_method_id')
 {
     $error=0;
 
@@ -274,7 +274,7 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
     if ($action == 'settrueWidth')				$shipping->trueWidth = trim(GETPOST('trueWidth','int'));
     if ($action == 'settrueHeight')				$shipping->trueHeight = trim(GETPOST('trueHeight','int'));
     if ($action == 'settrueDepth')				$shipping->trueDepth = trim(GETPOST('trueDepth','int'));
-    if ($action == 'setexpedition_method_id')	$shipping->expedition_method_id = trim(GETPOST('expedition_method_id','int'));
+    if ($action == 'setshipping_method_id')	$shipping->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
     if (! $error)
     {
@@ -658,7 +658,7 @@ if ($action == 'create')
             print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
-            print $form->selectarray("expedition_method_id",$expe->meths,GETPOST('expedition_method_id','int'),1,0,0,"",1);
+            print $form->selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print "</td></tr>\n";
 
@@ -1105,26 +1105,26 @@ else
             print $langs->trans('SendingMethod');
             print '</td>';
 
-            if ($action != 'editexpedition_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editexpedition_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
+            if ($action != 'editshipping_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($action == 'editexpedition_method_id')
+            if ($action == 'editshipping_method_id')
             {
-                print '<form name="setexpedition_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+                print '<form name="setshipping_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                print '<input type="hidden" name="action" value="setexpedition_method_id">';
+                print '<input type="hidden" name="action" value="setshipping_method_id">';
                 $object->fetch_delivery_methods();
-                print $form->selectarray("expedition_method_id",$object->meths,$object->expedition_method_id,1,0,0,"",1);
+                print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
                 if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print '</form>';
             }
             else
             {
-                if ($object->expedition_method_id > 0)
+                if ($object->shipping_method_id > 0)
                 {
                     // Get code using getLabelFromKey
-                    $code=$langs->getLabelFromKey($db,$object->expedition_method_id,'c_shipment_mode','rowid','code');
+                    $code=$langs->getLabelFromKey($db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
                     print $langs->trans("SendingMethod".strtoupper($code));
                 }
             }
