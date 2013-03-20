@@ -799,17 +799,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// Compta simple
-			if (! empty($conf->comptabilite->enabled) && ! empty($conf->global->FACTURE_VENTILATION))
+			if (! empty($conf->comptabilite->enabled) && ($conf->global->MAIN_FEATURES_LEVEL >= 2))
 			{
 				$newmenu->add("/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Dispatch"),0,$user->rights->compta->ventilation->lire, '', $mainmenu, 'ventil');
 				if ($leftmenu=="ventil") $newmenu->add("/compta/ventilation/liste.php",$langs->trans("ToDispatch"),1,$user->rights->compta->ventilation->lire);
 				if ($leftmenu=="ventil") $newmenu->add("/compta/ventilation/lignes.php",$langs->trans("Dispatched"),1,$user->rights->compta->ventilation->lire);
-				if ($leftmenu=="ventil") $newmenu->add("/compta/param/",$langs->trans("Setup"),1,$user->rights->compta->ventilation->parametrer);
-				if ($leftmenu=="ventil") $newmenu->add("/compta/param/comptes/fiche.php?action=create",$langs->trans("New"),2,$user->rights->compta->ventilation->parametrer);
-				if ($leftmenu=="ventil") $newmenu->add("/compta/param/comptes/liste.php",$langs->trans("List"),2,$user->rights->compta->ventilation->parametrer);
-				if ($leftmenu=="ventil") $newmenu->add("/compta/export/",$langs->trans("Export"),1,$user->rights->compta->ventilation->lire);
-				if ($leftmenu=="ventil") $newmenu->add("/compta/export/index.php?action=export",$langs->trans("New"),2,$user->rights->compta->ventilation->lire);
-				if ($leftmenu=="ventil") $newmenu->add("/compta/export/liste.php",$langs->trans("List"),2,$user->rights->compta->ventilation->lire);
 			}
 
 			// Compta expert

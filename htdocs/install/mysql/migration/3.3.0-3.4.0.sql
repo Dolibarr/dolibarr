@@ -158,4 +158,4 @@ ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang)
 
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_code_ventilation integer DEFAULT 0 NOT NULL;
-ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_export_compta    integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_facturedet DROP COLUMN fk_export_compta;
