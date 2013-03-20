@@ -902,16 +902,18 @@ if ($rowid)
                 // Title payments
                 //print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
 
-                // Define a way to write payment
+                // No more action
                 print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('MoreActions');
                 print '</td>';
                 print '<td>';
                 print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice)?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
+                // Add entry into bank accoun
                 if (! empty($conf->banque->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(! empty($bankdirect)?' checked="checked"':'');
                     print '> '.$langs->trans("MoreActionBankDirect").'<br>';
                 }
+                // Add invoice with no payments
                 if (! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(! empty($invoiceonly)?' checked="checked"':'');
@@ -919,14 +921,16 @@ if ($rowid)
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
-                    {
+					{
                     	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
                     	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">';
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
                     }
+                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0).'.';
                     print '<br>';
                 }
+                // Add invoice with payments
                 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(! empty($bankviainvoice)?' checked="checked"':'');
@@ -934,12 +938,13 @@ if ($rowid)
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
-                    {
+					{
                     	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
                     	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">';
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
                     }
+                    if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0).'.';
                     print '<br>';
                 }
                 print '</td></tr>';
