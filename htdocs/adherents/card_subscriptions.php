@@ -660,6 +660,7 @@ if ($rowid)
     {
         $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
         $sql.= " c.rowid as crowid, c.cotisation,";
+        $sql.= " c.datec,";
         $sql.= " c.dateadh,";
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
@@ -683,7 +684,8 @@ if ($rowid)
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Ref").'</td>';
-            print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
+            print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+            print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
             print '<td align="right">'.$langs->trans("Amount").'</td>';
             if (! empty($conf->banque->enabled))
@@ -701,6 +703,7 @@ if ($rowid)
                 $cotisationstatic->ref=$objp->crowid;
                 $cotisationstatic->id=$objp->crowid;
                 print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
+                print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->cotisation).'</td>';
