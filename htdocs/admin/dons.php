@@ -79,11 +79,11 @@ if ($action == 'specimen')
 // Set default model
 else if ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_ADDON_PDF = $value;
+		$conf->global->DON_ADDON_MODEL = $value;
 	}
 
 	// On active le modele
@@ -105,7 +105,7 @@ else if ($action == 'del')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->COMMANDE_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_ADDON_PDF',$conf->entity);
+        if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL',$conf->entity);
 	}
 }
 
