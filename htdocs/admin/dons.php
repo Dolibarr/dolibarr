@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if ($action == 'specimen')
     $don = new Don($db);
     $don->initAsSpecimen();
 
-    // Charge le modele
+    // Search template files
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
     $file = $modele.".modules.php";
     if (file_exists($dir.$file))
@@ -75,66 +76,38 @@ if ($action == 'specimen')
     }
 }
 
-if ($action == 'setdoc')
+// Set default model
+else if ($action == 'setdoc')
 {
-	$value = GETPOST('value','alpha');
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-	
-    $db->begin();
+	if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->DON_ADDON_MODEL = $value;
+	}
 
-    if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
-    {
-        $conf->global->DON_ADDON_MODEL = $value;
-    }
-
-    // On active le modele
-    $type='donation';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$db->escape($value)."' AND type = '".$type."'";
-    $result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-    $result2=$db->query($sql);
-    if ($result1 && $result2)
-    {
-        $db->commit();
-    }
-    else
-    {
-        $db->rollback();
-    }
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 }
 
-if ($action == 'set')
+// Activate a model
+else if ($action == 'set')
 {
-	$value = GETPOST('value','alpha');
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-	
-    $type='donation';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-    $resql=$db->query($sql);
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
-	$value = GETPOST('value','alpha');
-	
-    $type='donation';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$value."' AND type = '".$type."'";
-    $resql=$db->query($sql);
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->DON_ADDON_MODEL == "$value") dolibarr_del_const($db, 'DON_ADDON_MODEL',$conf->entity);
+	}
 }
-
 
 /*
  * View
@@ -147,6 +120,17 @@ llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
+print '<br>';
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/dons.php";
+$head[$h][1] = $langs->trans("Donations");
+$head[$h][2] = 'Donation';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 
 // Document templates
