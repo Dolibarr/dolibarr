@@ -2,7 +2,7 @@
 /* Copyright (C) 2010 		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011 		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012 	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2011-2012  Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2013  Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ if ($action == 'updateMask')
     }
 }
 
-if ($action == 'specimen')
+else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
@@ -111,12 +111,13 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set')
+// Activate a model
+else if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -125,7 +126,8 @@ if ($action == 'del')
 	}
 }
 
-if ($action == 'setdoc')
+// Set default model
+else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
@@ -142,7 +144,7 @@ if ($action == 'setdoc')
 	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -156,7 +158,7 @@ if ($action == 'setmod')
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader("",$langs->trans("ProjectsSetup"));
 
 $form=new Form($db);
 
@@ -165,8 +167,20 @@ print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
 print "<br>";
 
+$h = 0;
 
-// Project numbering module
+$head[$h][0] = DOL_URL_ROOT."/admin/project.php";
+$head[$h][1] = $langs->trans("Projects");
+$head[$h][2] = 'Project';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+
+/*
+ * Projects Numbering model
+ */
+ 
 print_titre($langs->trans("ProjectsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
@@ -198,7 +212,7 @@ foreach ($dirmodels as $reldir)
 					$file = $reg[1];
 					$classname = substr($file,4);
 
-					require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$file.'.php';
+					require_once $dir.$file.'.php';
 
 					$module = new $file;
 
@@ -213,7 +227,7 @@ foreach ($dirmodels as $reldir)
 						print $module->info();
 						print '</td>';
 
-						// Show example of numbering module
+						// Show example of numbering model
 						print '<td nowrap="nowrap">';
 						$tmp=$module->getExample();
 						if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
@@ -269,7 +283,7 @@ print '</table><br>';
 
 
 /*
- * Modeles documents for projects
+ * Document templates generators
  */
 
 print_titre($langs->trans("ProjectsModelModule"));
@@ -352,7 +366,7 @@ foreach ($dirmodels as $reldir)
 						print "</td>";
 					}
 
-					// Defaut
+					// Default
 					print "<td align=\"center\">";
 					if ($conf->global->PROJECT_ADDON_PDF == "$name")
 					{
