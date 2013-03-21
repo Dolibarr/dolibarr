@@ -2,7 +2,8 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Juanjo Menent	      <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2013      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,10 @@ if (!$user->admin)
 accessforbidden();
 
 $action = GETPOST('action','alpha');
+
+/*
+ * Actions
+ */
 
 $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 
@@ -87,7 +92,7 @@ if ($action == 'update' || $action == 'add')
 }*/
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader();
@@ -97,8 +102,17 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans('ComptaSetup'),$linkback,'setup');
 
-
 print '<br>';
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/compta.php";
+$head[$h][1] = $langs->trans("Compta");
+$head[$h][2] = 'Compta';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 print '<table class="noborder" width="100%">';
 
