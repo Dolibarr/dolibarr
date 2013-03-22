@@ -193,9 +193,9 @@ if ($type_element == 'supplier_invoice')
 }
 
 $sql = $sql_select;
-$sql.= ' d.fk_product as product_id, d.description as prod_descr, ';
-$sql.= ' d.qty as prod_qty, p.rowid as prod_id, p.fk_product_type as prod_type,';
-$sql.= " s.rowid as socid, p.ref as prod_ref, p.label as prod_label";
+$sql.= ' d.fk_product as product_id, d.fk_product as fk_product, d.label, d.description as description, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
+$sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type,';
+$sql.= " s.rowid as socid, p.ref as prod_ref, p.label as product_label";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 $sql.= $where;
@@ -272,23 +272,144 @@ if ($sql_select)
 		print $documentstatic->getNomUrl(1);
 		print '</td>';
 		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->datePrint),'day').'</td>';
+
+		print '<td>';
+
+		// Define text, description and type
+		$text=''; $description=''; $type=0;
+
+		// Code to show product duplicated from commonobject->printObjectLine
+		if ($objp->fk_product > 0)
+		{
+			$product_static = new Product($db);
+
+			$product_static->type=$objp->fk_product_type;
+			$product_static->id=$objp->fk_product;
+			$product_static->ref=$objp->ref;
+			$text=$product_static->getNomUrl(1);
+		}
+
+		// Product
+		if ($objp->fk_product > 0)
+		{
+			// Define output language
+			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+			{
+				$this->fetch_thirdparty();
+				$prod = new Product($db);
+				$prod->fetch($objp->fk_product);
+
+				$outputlangs = $langs;
+				$newlang='';
+				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if (empty($newlang)) $newlang=$this->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
+			}
+			else
+			{
+				$label = $objp->product_label;
+			}
+
+			$text.= ' - '.(! empty($objp->label)?$objp->label:$label);
+			$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
+		}
+
+		if (($objp->info_bits & 2) == 2) { ?>
+			<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$object->id; ?>">
+			<?php
+			$txt='';
+			print img_object($langs->trans("ShowReduc"),'reduc').' ';
+			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+			//else $txt=$langs->trans("Discount");
+			print $txt;
+			?>
+			</a>
+			<?php
+			if ($objp->description)
+			{
+				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
+				{
+					$discount=new DiscountAbsolute($db);
+					$discount->fetch($objp->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				}
+				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+				{
+					$discount=new DiscountAbsolute($db);
+					$discount->fetch($objp->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+					// Add date of deposit
+					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+				}
+				else
+				{
+					echo ($txt?' - ':'').dol_htmlentitiesbr($objp->description);
+				}
+			}
+		}
+		else
+		{
+			if ($objp->fk_product > 0) {
+
+				echo $form->textwithtooltip($text,$description,3,'','',$i,0,'');
+
+				// Show range
+				echo get_date_range($objp->date_start, $objp->date_end);
+
+				// Add description in form
+				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+				{
+					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+				}
+
+			} else {
+
+				//if (! empty($objp->fk_parent_line)) echo img_picto('', 'rightarrow');
+				if ($type==1) $text = img_object($langs->trans('Service'),'service');
+				else $text = img_object($langs->trans('Product'),'product');
+
+				if (! empty($objp->label)) {
+					$text.= ' <strong>'.$objp->label.'</strong>';
+					echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
+				} else {
+					echo $text.' '.dol_htmlentitiesbr($objp->description);
+				}
+
+				// Show range
+				echo get_date_range($objp->date_start,$objp->date_end);
+			}
+		}
+
+		/*
 		$prodreftxt='';
-		if(!empty($objp->prod_id)) {
+		if ($objp->prod_id > 0)
+		{
 			$productstatic->id = $objp->prod_id;
 			$productstatic->ref = $objp->prod_ref;
 			$productstatic->status = $objp->prod_type;
 			$prodreftxt = $productstatic->getNomUrl(0);
-			if(!empty($objp->prod_label)) $prodreftxt .= ' - '.$objp->prod_label;
+			if(!empty($objp->product_label)) $prodreftxt .= ' - '.$objp->product_label;
 		}
-		if(!empty($objp->prod_descr)) {
-			if(!empty($prodreftxt)) {
-				$prodreftxt .= '<br/>'.$objp->prod_descr;
-			} else {
-				$prodreftxt .= $objp->prod_descr;
-			}
+		// Show range
+		$prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
+		// Add description in form
+		if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		{
+			$prodreftxt .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 		}
-		print '<td align="left">'.$prodreftxt.'</td>';
+		*/
+		print '</td>';
+
+		//print '<td align="left">'.$prodreftxt.'</td>';
+
 		print '<td align="right">'.$objp->prod_qty.'</td>';
+
 		print "</tr>\n";
 		$i++;
 	}
