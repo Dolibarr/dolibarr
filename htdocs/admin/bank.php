@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009 		Laurent Destailleur            <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012  Juanjo Menent			       <jmenent@2byte.es>
+ * Copyright (C) 2013       Philippe Grand                 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +19,12 @@
 
 
 /**
- *      \file       htdocs/compta/bank/admin/bank.php
+ *      \file       htdocs/admin/bank.php
  *		\ingroup    bank
  *		\brief      Page to setup the bank module
  */
 
-require '../../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -86,6 +87,16 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("BankSetupModule"),$linkback,'setup');
 print '<br>';
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/bank.php";
+$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][2] = 'general';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
