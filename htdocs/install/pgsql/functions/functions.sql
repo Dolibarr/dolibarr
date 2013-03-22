@@ -116,3 +116,4 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_tva FOR EACH ROW EXE
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_usergroup FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_cronjob FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
