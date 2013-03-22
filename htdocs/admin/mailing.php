@@ -103,6 +103,16 @@ llxHeader('',$langs->trans("MailingSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("MailingSetup"),$linkback,'setup');
 
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/mailing.php";
+$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][2] = 'general';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+
 dol_htmloutput_mesg($mesg);
 
 
