@@ -354,11 +354,12 @@ ExtrafieldPhone=Teléfono
 ExtrafieldPrice=Precio
 ExtrafieldMail=Correo
 ExtrafieldSelect=Lista de selección
+ExtrafieldSeparator=
 LibraryToBuildPDF=Librería usada para la creación de archivos PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>   
 LocalTaxDesc=Algunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
 SuhosinSessionEncrypt=Almacenamiento de sesiones cifradas por Suhosin
-# Modules= =
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -366,7 +367,7 @@ Module1Desc=Gestión de terceros (empresas, particulares) y contactos
 Module2Name=Comercial
 Module2Desc=Gestión comercial
 Module10Name=Contabilidad
-Module10Desc=Gestión simple de la contabilidad (desglose de facturas y pagos)
+Module10Desc=Activación de informes simples de contabilidad (diarios, ventas) basados en el contenido de la base de datos. Sin desgloses.
 Module20Name=Presupuestos
 Module20Desc=Gestión de presupuestos/propuestas comerciales
 Module22Name=E-Mailings
@@ -451,6 +452,8 @@ Module1780Name=Categorías
 Module1780Desc=Gestión de categorías (productos, proveedores y clientes)
 Module2000Name=Editor WYSIWYG
 Module2000Desc=Permite la edición de ciertas zonas de texto mediante un editor avanzado
+Module2300Name=Cron
+Module2300Desc=Gestor de tareas programadas
 Module2400Name=Agenda
 Module2400Desc=Gestión de la agenda y de las acciones
 Module2500Name=Gestión Electrónica de Documentos
@@ -674,6 +677,10 @@ Permission1411=Leer los movimientos contables
 Permission1412=Crear/modificar/anular movimientos contables
 Permission1415=Leer Balances, informes, diarios, libros maestros
 Permission1421=Exportar pedidos de clientes y atributos
+Permission23001=Ver las tareas programadas
+Permission23002=Crear/Modificar las tareas programadas
+Permission23003=Eliminar las tareas programadas
+Permission23004=Ejecutar las tareas programadas
 Permission2401=Leer acciones (eventos o tareas) vinculadas a su cuenta
 Permission2402=Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
 Permission2403=Modificar acciones (eventos o tareas) vinculadas a su cuenta
@@ -947,7 +954,7 @@ TranslationDesc=La elección del idioma mostrado en pantalla se modifica:<br>* A
 ClassNotFoundIntoPathWarning=No se ha encontrado la clase %s en su path PHP 
 YesInSummer=Sí en verano
 OnlyFollowingModulesAreOpenedToExternalUsers=Tenga en cuenta que sólo los módulos siguientes están abiertos a usuarios externos (sean cuales sean los permisos de los usuarios):
-##### Module password generation= =
+##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
@@ -1271,7 +1278,7 @@ FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los
 FCKeditorForProduct=Creación/edición WYSIWIG de la descripción y notas de los productos/servicios
 FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de los productos (en pedidos, presupuestos, facturas, etc.)
 FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails (Utilidades->E-Mailings)
-FCKeditorForUserSignature=Creación/edición WYSIWIG de los usuario firma
+FCKeditorForUserSignature=Creación/edición WYSIWIG de la firma de usuarios
 FCKeditorForMail=Creación/edición WYSIWIG de todos los E-Mails (excepto Utilidades->E-Mailings)
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
@@ -1381,6 +1388,7 @@ MultiCompanySetup=Configuración del módulo Multi-empresa
 SuppliersSetup=Configuración del módulo Proveedores
 SuppliersCommandModel=Modelo de pedidos a proveedores completo (logo...)
 SuppliersInvoiceModel=Modelo de facturas de proveedores completo (logo...)
+SuppliersInvoiceNumberingModel=Modelos de numeración de facturas de proveedor
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=Configuración del módulo GeoIP Maxmind
 PathToGeoIPMaxmindCountryDataFile=Ruta del archivo Maxmind que contiene las conversiones IP->País.<br>Ejemplo: /usr/local/share/GeoIP/GeoIP.dat

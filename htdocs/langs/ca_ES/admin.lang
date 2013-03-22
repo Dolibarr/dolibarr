@@ -348,16 +348,18 @@ TextLong=Text llarg
 Int=numèric enter
 Float=Decimal
 DateAndTime=Data i hora
+Unique=Unic
 Boolean=Boleano (Checkbox)
 ExtrafieldPhone=Telèfon
 ExtrafieldPrice=Preu
 ExtrafieldMail=Correu
 ExtrafieldSelect=Llista de selecció
+ExtrafieldSeparator=
 LibraryToBuildPDF=Llibreria usada per a la creació d'arxius PDF
 WarningUsingFPDF=Atenció: El seu arxiu <b>conf.php</b> conté la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Això fa que s'usi la llibreria FPDF per generar els seus arxius PDF. Aquesta llibreria és antiga i no cobreix algunes funcionalitats (Unicode, transparència d'imatges, idiomes ciríl · lics, àrabs o asiàtics, etc.), Pel que pot tenir problemes en la generació dels PDF.<br> Per resoldre-ho, i disposar d'un suport complet de PDF, pot descarregar la <a href="http://www.tcpdf.org/" target="_blank"> llibreria TCPDF </a>, i a continuació comentar o eliminar la línia <b>$dolibarr_pdf_force_fpdf=1</b>, i afegir al seu lloc <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
 LocalTaxDesc=Alguns països apliquen 2 o 3 taxes a cada línia de factura. Si és el cas, escolliu el tipus de la segona i tercera taxa i el seu valor. Els possibles tipus són: <br> 1: taxa local aplicable a productes i serveis sense IVA (IVA no s'aplica a la taxa local) <br> 2: taxa local s'aplica a productes i serveis abans de l'IVA (IVA es calcula sobre import + taxa local) <br> 3: taxa local s'aplica a productes sense IVA (IVA no s'aplica a la taxa local) <br> 4: taxa local s'aplica a productes abans de l'IVA (IVA es calcula sobre l'import + taxa local) <br> 5: taxa local s'aplica a serveis sense IVA (IVA no s'aplica a la taxa local) <br> 6: taxa local s'aplica a serveis abans de l'IVA (IVA es calcula sobre import + taxa local)
 SuhosinSessionEncrypt=Emmagatzematge de sessions xifrades per Suhosin
-# Modules= =
+# Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -365,7 +367,7 @@ Module1Desc=Gestió de tercers (empreses, particulars) i contactes
 Module2Name=Comercial
 Module2Desc=Gestió comercial
 Module10Name=Comptabilitat
-Module10Desc=Gestió simple de la comptabilitat (desglossament de factures i pagaments)
+Module10Desc=Activació d'informes simples de comptabilitat (diaris, vendes) basats en el contingut de la base de dades. Sense desglossaments.
 Module20Name=Pressupostos
 Module20Desc=Gestió de pressupostos/propostes comercials
 Module22Name=E-Mailings
@@ -450,6 +452,8 @@ Module1780Name=Categories
 Module1780Desc=Gestió de categories (productes, proveïdors i clients)
 Module2000Name=Editor WYSIWYG
 Module2000Desc=Permet l'edició de certes zones de text mitjançant un editor avançat
+Module2300Name=Cron
+Module2300Desc=Gestor de tasques programades
 Module2400Name=Agenda
 Module2400Desc=Gestió de l'agenda i de les accions
 Module2500Name=Gestió Electrònica de Documents
@@ -673,6 +677,10 @@ Permission1411=Llegir els moviments comptables
 Permission1412=Crear/modificar/anular moviments comptables
 Permission1415=Llegir Balanços, informes, diaris, llibres mestres
 Permission1421=Exporta comandes de clients i atributs
+Permission23001=Veure les tasques programades
+Permission23002=Crear/Modificar les tasques programades
+Permission23003=Eliminar les tasques programades
+Permission23004=Executar les tasques programades
 Permission2401=Llegir accions (esdeveniments o tasques) vinculades al seu compte
 Permission2402=Crear/modificar accions (esdeveniments o tasques) vinculades al seu compte
 Permission2403=Modificar accions (esdeveniments o tasques) vinculades al seu compte
@@ -946,7 +954,7 @@ TranslationDesc=L'elecció de l'idioma mostrat en pantalla es modifica:<br>* A n
 ClassNotFoundIntoPathWarning=No s'ha trobat la classe %s en el seu path PHP
 YesInSummer=Sí a l'estiu
 OnlyFollowingModulesAreOpenedToExternalUsers=Recordeu que només els mòduls següents estan oberts a usuaris externs (siguin quins siguin els permisos dels usuaris):
-##### Module password generation= =
+##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
 ##### Users setup #####
@@ -1270,6 +1278,8 @@ FCKeditorForCompany=Creació/edició WYSIWIG de la descripció i notes dels terc
 FCKeditorForProduct=Creació/edició WYSIWIG de la descripció i notes dels productes/serveis
 FCKeditorForProductDetails=Creació/edició WYSIWIG de les línies de detall dels productes (en comandes, pressupostos, factures, etc.)
 FCKeditorForMailing=Creació/edició WYSIWIG dels E-Mails
+FCKeditorForUserSignature=Creació/edició WYSIWIG dela firma dels usuaris
+FCKeditorForMail=Creació/edició WYSIWIG de tots els E-mails (excepte Utilitats->E-Mailings)
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=La connexió s'ha establert, però la base de dades no sembla de OSCommerce.
 OSCommerceTestOk=La connexió al servidor '%s' sobre la base '%s' per l'usuari '%s' és correcta.
@@ -1378,6 +1388,7 @@ MultiCompanySetup=Configuració del mòdul Multi-empresa
 SuppliersSetup=Configuració del mòdul Proveïdors
 SuppliersCommandModel=Model de comandes a proveïdors complet (logo...)
 SuppliersInvoiceModel=Model de factures de proveïdors complet (logo...)
+SuppliersInvoiceNumberingModel=Models de numeració de factures de proveïdor
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=Configuració del mòdul GeoIP  Maxmind
 PathToGeoIPMaxmindCountryDataFile=Ruta de l'arxiu Maxmind que conté les conversions IP-> País.<br>Exemple: /usr/local/share/GeoIP/GeoIP.dat
