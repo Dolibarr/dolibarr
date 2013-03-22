@@ -59,6 +59,7 @@ LinkToTrackYourPackage=Enlace para el seguimento de su paquete
 ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedición se realiza desde la ficha de pedido.
 RelatedShippings=Expedición(es) asociada(s)
 ShipmentLine=Línea de expedición
+CarrierList=Listado de transportistas
 
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente
