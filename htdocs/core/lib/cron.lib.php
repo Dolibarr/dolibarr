@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *	\file       htdocs/jobs/lib/jobs.lib.php
+ *	\file       cron/lib/cron.lib.php
  *	\brief      Ensemble de fonctions de base pour le module jobs
  *	\ingroup    jobs
  */
@@ -52,12 +53,12 @@ function cron_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath('/cron/cron/card.php', 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath('/cron/card.php', 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("CronTask");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath('/cron/cron/info.php', 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath('/cron/info.php', 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("CronInfoPage");
 	$head[$h][2] = 'info';
 	$h++;

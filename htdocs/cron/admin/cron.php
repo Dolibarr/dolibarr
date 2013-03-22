@@ -106,10 +106,10 @@ print '<br><br>';
 
 // Cron launch
 print '<u>'.$langs->trans("URLToLaunchCronJobs").':</u><br>';
-$url=dol_buildpath('/cron/public/cron/cron_run_jobs.php',1).(empty($conf->global->MAIN_CRON_KEY)?'':'?securitykey='.$conf->global->MAIN_CRON_KEY.'&').'userlogin='.$user->login;
+$url=dol_buildpath('/public/cron/cron_run_jobs.php',1).(empty($conf->global->MAIN_CRON_KEY)?'':'?securitykey='.$conf->global->MAIN_CRON_KEY.'&').'userlogin='.$user->login;
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
-$url=dol_buildpath('/cron/public/cron/cron_run_jobs.php',1).(empty($conf->global->MAIN_CRON_KEY)?'':'?securitykey='.$conf->global->MAIN_CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
+$url=dol_buildpath('/public/cron/cron_run_jobs.php',1).(empty($conf->global->MAIN_CRON_KEY)?'':'?securitykey='.$conf->global->MAIN_CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 print '<br>';
 print '<br>';
@@ -126,11 +126,11 @@ if ($linuxlike) {
 }
 print '<br>';
 print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
-$file=dol_buildpath('/cron/script/cron/cron_run_jobs.php').' '.(empty($conf->global->MAIN_CRON_KEY)?'securitykey':''.$conf->global->MAIN_CRON_KEY.'').' '.$user->login.' cronjobid(optionnal)';
+$file='/scripts/cron/cron_run_jobs.php'.' '.(empty($conf->global->MAIN_CRON_KEY)?'securitykey':''.$conf->global->MAIN_CRON_KEY.'').' '.$user->login.' cronjobid(optionnal)';
 if ($linuxlike) {
-	print 'user@host:'.DOL_DOCUMENT_ROOT.'$ php '.$file."<br>\n";
+	print 'user@host:'.DOL_DOCUMENT_ROOT.'$ php ..'.$file."<br>\n";
 } else {
-	print DOL_DOCUMENT_ROOT.'> php '.$file."<br>\n";
+	print DOL_DOCUMENT_ROOT.'> php ..'.$file."<br>\n";
 }
 print '<br>';
 

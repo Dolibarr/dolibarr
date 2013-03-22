@@ -283,7 +283,13 @@ if (count($object->lines)>0) {
 	print $langs->trans('CronNoJobs');
 }
 
-print '<div style="clear:both"></div>';
+print "\n\n<div class=\"tabsAction\">\n";
+if (! $user->rights->cron->create) {
+	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("New").'</a>';
+} else {
+	print '<a class="butAction" href="'.dol_buildpath('/cron/card.php',1).'?action=create">'.$langs->trans("New").'</a>';
+}
+print '<br><br></div>';
 
 llxFooter();
 $db->close();

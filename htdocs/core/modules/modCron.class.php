@@ -60,13 +60,13 @@ class modCron extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array("cron");
+        $this->config_page_url = array("cron.php@cron");
 
         // Dependancies
         //-------------
         $this->depends = array();
         $this->requiredby = array();
-        $this->langfiles = array("cron");
+        $this->langfiles = array("cron@cron");
 
         // Constantes
         //-----------
@@ -122,52 +122,27 @@ class modCron extends DolibarrModules
         $r=0;
         $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'left',			                // This is a Left menu entry
-						        'titre'=>'CronJobs',
-						        'url'=>'/cron/index.php',
-						        'langs'=>'cron@cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-						        'position'=>100,
-        						'leftmenu'=>'cron',
+						        'titre'=>'CronListActive',
+						        'url'=>'/cron/list.php?status=1',
+						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						        'position'=>200,
 						        'enabled'=>'$leftmenu==\'modulesadmintools\'',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-						        'perms'=>'$user->admin',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'perms'=>'$user->rights->cron->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
-		
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',
-		'type'=>'left',
-		'titre'=>'CronListActive',
-		'url'=>'/cron/cron/list.php?status=1',
-		'langs'=>'cron@cron',
-		'position'=>201,
-		'enabled'=>'$user->rights->cron->read',
-		'perms'=>'$user->rights->cron->read',
-		'target'=>'',
-		'user'=>2);
-		$r++;
-		
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',
-		'type'=>'left',
-		'titre'=>'CronListInactive',
-		'url'=>'/cron/cron/list.php?status=0',
-		'langs'=>'cron@cron',
-		'position'=>201,
-		'enabled'=>'$user->rights->cron->read',
-		'perms'=>'$user->rights->cron->read',
-		'target'=>'',
-		'user'=>2);
-		$r++;
-		
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',
-		'type'=>'left',
-		'titre'=>'CronAdd',
-		'url'=>'/cron/cron/card.php?action=create',
-		'langs'=>'cron@cron',
-		'position'=>202,
-		'enabled'=>'$user->rights->cron->create',
-		'perms'=>'$user->rights->cron->create',
-		'target'=>'',
-		'user'=>2);
-		$r++;
+        
+        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+						        'type'=>'left',			                // This is a Left menu entry
+						        'titre'=>'CronListInactive',
+						        'url'=>'/cron/list.php?status=0',
+						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						        'position'=>201,
+						        'enabled'=>'$leftmenu==\'modulesadmintools\'',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+						        'perms'=>'$user->rights->cron->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'target'=>'',
+						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
     }
 
 
