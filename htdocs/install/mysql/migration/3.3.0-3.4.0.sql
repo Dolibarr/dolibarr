@@ -194,10 +194,8 @@ CREATE TABLE llx_cronjob
 
 ALTER TABLE llx_societe MODIFY COLUMN zip varchar(25);
 
-
 ALTER TABLE llx_user ADD COLUMN   address           varchar(255);
 ALTER TABLE llx_user ADD COLUMN   zip               varchar(25);
 ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
 ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;            		--
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
-
