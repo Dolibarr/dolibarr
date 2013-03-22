@@ -455,7 +455,7 @@ class Facture extends CommonInvoice
                 		}
                 	}
                 	else if ($reshook < 0) $error++;
-                	
+
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
@@ -866,7 +866,7 @@ class Facture extends CommonInvoice
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 if ($this->statut == 0)	$this->brouillon = 1;
-                
+
                 // Retreive all extrafield for invoice
                 // fetch optionals attributes and labels
                 if(!class_exists('Extrafields'))
@@ -925,7 +925,7 @@ class Facture extends CommonInvoice
         $sql.= ' l.localtax1_tx, l.localtax2_tx, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
         $sql.= ' l.rang, l.special_code,';
         $sql.= ' l.date_start as date_start, l.date_end as date_end,';
-        $sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_export_compta, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
+        $sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
         $sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
@@ -970,7 +970,6 @@ class Facture extends CommonInvoice
                 $line->total_localtax1  = $objp->total_localtax1;
                 $line->total_localtax2  = $objp->total_localtax2;
                 $line->total_ttc        = $objp->total_ttc;
-                $line->export_compta    = $objp->fk_export_compta;
                 $line->code_ventilation = $objp->fk_code_ventilation;
 				$line->fk_fournprice 	= $objp->fk_fournprice;
 		      	$marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
@@ -1860,7 +1859,7 @@ class Facture extends CommonInvoice
                     }
                 }
             }
-			
+
 			if ($error == 0)
             {
 				$old_statut=$this->statut;
@@ -1870,8 +1869,8 @@ class Facture extends CommonInvoice
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_UNVALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { 
-					$error++; 
+				if ($result < 0) {
+					$error++;
 					$this->errors=$interface->errors;
 					$this->statut=$old_statut;
 					$this->brouillon=0;
@@ -1881,7 +1880,7 @@ class Facture extends CommonInvoice
 				$this->db->rollback();
 				return -1;
 			}
-			
+
             if ($error == 0)
             {
                 $this->db->commit();
@@ -3196,7 +3195,6 @@ class FactureLigne
     var $total_ttc;
 
     var $fk_code_ventilation = 0;
-    var $fk_export_compta = 0;
 
     var $date_start;
     var $date_end;
@@ -3237,7 +3235,7 @@ class FactureLigne
         $sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
         $sql.= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
         $sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
-        $sql.= ' fd.fk_code_ventilation, fd.fk_export_compta,';
+        $sql.= ' fd.fk_code_ventilation,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
@@ -3271,7 +3269,6 @@ class FactureLigne
             $this->total_localtax2		= $objp->total_localtax2;
             $this->total_ttc			= $objp->total_ttc;
             $this->fk_code_ventilation	= $objp->fk_code_ventilation;
-            $this->fk_export_compta		= $objp->fk_export_compta;
             $this->rang					= $objp->rang;
 			$this->fk_fournprice		= $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
@@ -3338,7 +3335,7 @@ class FactureLigne
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
         $sql.= ' (fk_facture, fk_parent_line, label, description, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
-        $sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
+        $sql.= ' date_start, date_end, fk_code_ventilation, ';
         $sql.= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
         $sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2)';
         $sql.= " VALUES (".$this->fk_facture.",";
@@ -3357,7 +3354,6 @@ class FactureLigne
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").",";
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").",";
         $sql.= ' '.$this->fk_code_ventilation.',';
-        $sql.= ' '.$this->fk_export_compta.',';
         $sql.= ' '.$this->rang.',';
         $sql.= ' '.$this->special_code.',';
         $sql.= ' '.(! empty($this->fk_fournprice)?$this->fk_fournprice:"null").',';

@@ -81,6 +81,7 @@ alter table llx_socpeople  CHANGE COLUMN cp zip varchar(10);
 alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
+alter table llx_expedition   CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
 
@@ -153,7 +154,43 @@ ALTER TABLE llx_holiday ADD COLUMN note_public text;
 
 -- Add new trigger on Invoice BILL_UNVALIDATE + Index 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (28,'BILL_UNVALIDATE','Customer invoice unvalidated','Executed when a customer invoice status set back to draft','facture',10);
-ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang)
+ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang); 
+
+
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_code_ventilation integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_facturedet DROP COLUMN fk_export_compta;
+
+CREATE TABLE llx_cronjob 
+(
+	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+	tms 			timestamp,
+	datec 			datetime,
+	jobtype			varchar(10) NOT NULL,
+  	label 			text NOT NULL,
+	command			varchar(255),
+  	classesname 		varchar(255),
+  	objectname		varchar(255),
+  	methodename		varchar(255),
+  	params 			text NOT NULL,
+	md5params 		varchar(32),
+  	module_name 		varchar(255),
+  	priority 		integer DEFAULT 0,
+  	datelastrun 		datetime,
+  	datenextrun 		datetime,
+  	datestart		datetime,
+  	dateend			datetime,
+  	datelastresult      	datetime,
+  	lastresult      	text,
+  	lastoutput      	text,
+  	unitfrequency	 	integer NOT NULL DEFAULT 0,
+  	frequency 		integer NOT NULL DEFAULT 0,
+	nbrun			integer,
+  	status 			integer NOT NULL DEFAULT 1,
+  	fk_user_author 		integer DEFAULT NULL,
+  	fk_user_mod 		integer DEFAULT NULL,
+	note text
+)ENGINE=innodb;
+
 
 ALTER TABLE llx_societe MODIFY COLUMN zip varchar(25);
 

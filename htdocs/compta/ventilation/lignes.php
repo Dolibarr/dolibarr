@@ -48,7 +48,7 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.fk_code_ventilation, c.intitule, c.numero,";
+$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, f.total_ttc as price, l.qty, l.rowid, l.tva_tx, l.fk_code_ventilation, c.intitule, c.numero,";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql.= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
@@ -72,7 +72,7 @@ if ($result)
 	$num_lignes = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste("Lignes de facture ventil�es",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
+	print_barre_liste($langs->trans("InvoiceDispatched"),$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
 
 	print '<form method="GET" action="lignes.php">';
 	print '<table class="noborder" width="100%">';
@@ -136,7 +136,7 @@ else
 
 print "</table></form>";
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

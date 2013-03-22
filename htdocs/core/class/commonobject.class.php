@@ -2141,7 +2141,7 @@ abstract class CommonObject
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
             	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
-                	$sql.=",".$attributeKey;  
+                	$sql.=",".$attributeKey;
             }
             $sql .= ") VALUES (".$this->id;
             foreach($this->array_options as $key => $value)
@@ -2695,7 +2695,8 @@ abstract class CommonObject
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;
-		$text='';
+
+		$text=''; $description=''; $type=0;
 
 		// Show product and description
 		$type=(! empty($line->product_type)?$line->product_type:$line->fk_product_type);
@@ -2703,27 +2704,25 @@ abstract class CommonObject
 		if (! empty($line->date_start)) $type=1; // deprecated
 		if (! empty($line->date_end)) $type=1; // deprecated
 
-		if ($line->fk_product > 0)
-		{
-			$product_static = new Product($this->db);
-
-			$product_static->type=$line->fk_product_type;
-			$product_static->id=$line->fk_product;
-			$product_static->ref=$line->ref;
-			$text=$product_static->getNomUrl(1);
-		}
-
 		// Ligne en mode visu
 		if ($action != 'editline' || $selected != $line->id)
 		{
-			// Produit
+			// Product
 			if ($line->fk_product > 0)
 			{
-				// Define output language
+				$product_static = new Product($this->db);
+
+				$product_static->type=$line->fk_product_type;
+				$product_static->id=$line->fk_product;
+				$product_static->ref=$line->ref;
+				$text=$product_static->getNomUrl(1);
+
+				// Define output language (TODO Does this works ?)
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
 					$this->fetch_thirdparty();
 					$prod = new Product($this->db);
+					$prod->fetch($line->fk_product);
 
 					$outputlangs = $langs;
 					$newlang='';

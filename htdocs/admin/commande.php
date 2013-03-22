@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011 	   Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ if ($action == 'updateMask')
     }
 }
 
-if ($action == 'specimen')
+else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
@@ -111,74 +111,36 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set')
+// Activate a model
+else if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$type='order';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	if ($db->query($sql))
-	{
-
-	}
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
-	$type='order';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->COMMANDE_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_ADDON_PDF',$conf->entity);
 	}
 }
 
-if ($action == 'setdoc')
+// Set default model
+else if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$db->begin();
-
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->COMMANDE_ADDON_PDF = $value;
 	}
 
 	// On active le modele
-	$type='order';
-
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-    dol_syslog("Delete from model table ".$sql_del);
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$value."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$scandir."'":"null");
-    $sql.= ")";
-    dol_syslog("Insert into model table ".$sql);
-    $result2=$db->query($sql);
-	if ($result1 && $result2)
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
-		$db->commit();
-	}
-	else
-	{
-        dol_syslog("Error ".$db->lasterror(), LOG_ERR);
-		$db->rollback();
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
@@ -240,10 +202,18 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 print '<br>';
 
+$h = 0;
 
+$head[$h][0] = DOL_URL_ROOT."/admin/commande.php";
+$head[$h][1] = $langs->trans("Orders");
+$head[$h][2] = 'Order';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
- * Numbering module
+ * Orders Numbering model
  */
 
 print_titre($langs->trans("OrdersNumberingModules"));
@@ -276,22 +246,22 @@ foreach ($dirmodels as $reldir)
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once DOL_DOCUMENT_ROOT ."/core/modules/commande/".$file.'.php';
+					require_once $dir.$file.'.php';
 
 					$module = new $file;
 
-					// Show modules according to features level
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
 					if ($module->isEnabled())
 					{
+						// Show modules according to features level
+						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+					
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
 
-                        // Show example of numbering module
+                        // Show example of numbering model
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
                         if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
@@ -508,11 +478,14 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
-
-//Autres Options
 print "<br>";
-print_titre($langs->trans("OtherOptions"));
 
+/*
+ * Other options
+ *
+ */
+
+print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';

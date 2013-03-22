@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013      Florian Henry <forian.henry@open-cocnept.pro
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,158 +17,126 @@
  */
 
 /**
- *   	\file       cron/cron_run_jobs.php
- *		\ingroup    cron
- *		\brief      This file is the page to call to run jobs
- *					Initialy built by build_class_from_table on 2013-03-17 18:50
+ *  \file       cron/public/cron/cron_run_jobs.php
+ *  \ingroup    cron
+ *  \brief      Execute pendings jobs
  */
-
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOLOGIN'))   define('NOLOGIN','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-//if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no menu to show
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');	// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');		// If this page is public (can be called outside logged session)
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-if (! $res && file_exists("../main.inc.php")) $res=@include '../main.inc.php';
-if (! $res && file_exists("../../main.inc.php")) $res=@include '../../main.inc.php';
-if (! $res && file_exists("../../../main.inc.php")) $res=@include '../../../main.inc.php';
-if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../dolibarr/htdocs/main.inc.php';     // Used on dev env only
-if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res && file_exists("../../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
-if (! $res) die("Include of main fails");
-// Change this following line to use the correct relative path from htdocs
-include_once(DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php');
-
-
-// C'est un wrapper, donc header vierge
-/**
- * Header function
- *
- * @return	void
- */
-function llxHeaderVierge() {
-	print '<html><title>Export agenda cal</title><body>';
+// librarie core
+// Dolibarr environment
+$res = @include("../../main.inc.php"); // From htdocs directory
+if (! $res) {
+	$res = @include("../../../main.inc.php"); // From "custom" directory
 }
-/**
- * Footer function
- *
- * @return	void
- */
-function llxFooterVierge() {
-	print '</body></html>';
+if (! $res) die("Include of master.inc.php fails");
+
+// librarie jobs
+dol_include_once("/cron/class/cronjob.class.php");
+
+
+global $langs, $conf;
+
+// Check the key, avoid that a stranger starts cron
+$key = $_GET['securitykey'];
+if (empty($key)) {
+	echo 'securitykey is require';
+	exit;
 }
+if($key != $conf->global->MAIN_CRON_KEY)
+{
+	echo 'securitykey is wrong';
+	exit;
+}
+// Check the key, avoid that a stranger starts cron
+$userlogin = $_GET['userlogin'];
+if (empty($userlogin)) {
+	echo 'userlogin is require';
+	exit;
+}
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+$user=new User($db);
+$result=$user->fetch('',$userlogin);
+if ($result<0) {
+	echo "User Error:".$user->error;
+	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+	exit;
+}else {
+	if (empty($user->id)) {
+		echo " User user login:".$userlogin." do not exists";
+		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
+		exit;
+	}
+}
+$id = $_GET['id'];
 
-
-
-// Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
+// Language Management
+$langs->load("admin");
 $langs->load("cron@cron");
 
-// Get parameters
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
+// create a jobs object
+$object = new Cronjob($db);
 
-// Protection if external user
-if ($user->societe_id > 0)
-{
-	//accessforbidden();
+$filter=array();
+if (empty($id)) {
+	$filter=array();
+	$filter['t.rowid']=$id;
 }
 
-// Security check
-if (empty($conf->cron->enabled)) accessforbidden('',1,1,1);
-
-// Check also security key
-if (empty($_GET["securitykey"]) || $conf->global->CRON_KEY != $_GET["securitykey"])
-{
-	$user->getrights();
-
-	llxHeaderVierge();
-	print '<div class="error">Bad value for key.</div>';
-	llxFooterVierge();
+$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
+if ($result<0) {
+	echo "Error:".$cronjob->error;
+	dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
 	exit;
 }
 
+// current date
+$now=dol_now();
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+if(is_array($object->lines) && (count($object->lines)>0)){
+	// Loop over job
+	foreach($object->lines as $line){
 
-if ($action == 'add')
-{
-	$object=new Cronjobs($db);
-	$object->prop1=$_POST["field1"];
-	$object->prop2=$_POST["field2"];
-	$result=$object->create($user);
-	if ($result > 0)
-	{
-		// Creation OK
+		dol_syslog("cron_run_jobs.php:: fetch cronjobid:".$line->id, LOG_ERR);
+		
+		//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
+		if ((($line->datenextrun <= $now) && $line->dateend < $now)
+				|| ((empty($line->datenextrun)) && (empty($line->dateend)))){
+			
+			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'), LOG_ERR);
+			
+			$cronjob=new Cronjob($db);
+			$result=$cronjob->fetch($line->id);
+			if ($result<0) {
+				echo "Error:".$cronjob->error;
+				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+				exit;
+			}
+			// execute methode
+			$result=$cronjob->run_jobs($userlogin);
+			if ($result<0) {
+				echo "Error:".$cronjob->error;
+				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
+				exit;
+			}
+			
+				// we re-program the next execution and stores the last execution time for this job
+			$result=$cronjob->reprogram_jobs($userlogin);
+			if ($result<0) {
+				echo "Error:".$cronjob->error;
+				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
+				exit;
+			}
+			
+		}
 	}
-	{
-		// Creation KO
-		$mesg=$object->error;
-	}
+	echo "OK";
+} else {
+	echo "No Jobs to run";
 }
-
-
-
-
-
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
-
-llxHeader('',$langs->trans('CronList'),'');
-
-$form=new Form($db);
-
-
-// Put here content of your page
-
-// Example 1 : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_needroot();
-	});
-});
-</script>';
-
-
-$cronjob=new CronJob($db);
-$result=$cronjob->fetch($id);
-
-if ($result > 0)
-{
-
-
-}
-else
-{
-	$langs->load("errors");
-	print $langs->trans("ErrorRecordNotFound");
-}
-
-
-// End of page
-llxFooter();
-
-$db->close();
-?>

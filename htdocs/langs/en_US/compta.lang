@@ -150,3 +150,5 @@ DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than o
 Pcg_version=Pcg version
 Pcg_type=Pcg type
 Pcg_subtype=Pcg subtype
+InvoiceLinesToDispatch=Invoice lines to dispatch
+InvoiceDispatched=Dispatched invoices
