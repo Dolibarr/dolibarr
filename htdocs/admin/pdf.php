@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2103 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,12 +57,12 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT",    $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'',$conf->entity);
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-	{
+//	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+//	{
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
-	}
+//	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -224,8 +224,8 @@ if ($action == 'edit')	// Edit
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
 
-    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-    {
+//    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+//    {
     	//Desc
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
@@ -243,7 +243,7 @@ if ($action == 'edit')	// Edit
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
     	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
     	print '</td></tr>';
-    }
+//    }
 
 	print '</table>';
 
@@ -418,8 +418,8 @@ else	// Show
 	print "</td>";
 	print '</tr>';
 	
-    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-    {
+//    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+//    {
     	//Desc
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
@@ -437,7 +437,7 @@ else	// Show
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
     	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
     	print '</td></tr>';
-    }
+//    }
 
 	print '</table>';
 
