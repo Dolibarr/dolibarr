@@ -153,4 +153,14 @@ ALTER TABLE llx_holiday ADD COLUMN note_public text;
 
 -- Add new trigger on Invoice BILL_UNVALIDATE + Index 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (28,'BILL_UNVALIDATE','Customer invoice unvalidated','Executed when a customer invoice status set back to draft','facture',10);
-ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang) 
+ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang)
+
+ALTER TABLE llx_societe MODIFY COLUMN zip varchar(25);
+
+
+ALTER TABLE llx_user ADD COLUMN   address           varchar(255);
+ALTER TABLE llx_user ADD COLUMN   zip               varchar(25);
+ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
+ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;            		--
+ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
+

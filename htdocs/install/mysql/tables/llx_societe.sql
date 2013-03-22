@@ -41,7 +41,7 @@ create table llx_societe
   code_compta              varchar(24),                         		-- code compta client
   code_compta_fournisseur  varchar(24),                         		-- code compta founisseur
   address                  varchar(255),                        		-- company address
-  zip                      varchar(10),                         		-- zipcode
+  zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
   fk_departement           integer        DEFAULT 0,            		--
   fk_pays                  integer        DEFAULT 0,            		--
