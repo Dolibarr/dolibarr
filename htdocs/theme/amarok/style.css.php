@@ -388,7 +388,7 @@ div.tmenu ul li a.tmenusel {/* texte du menu principal sélectionné */
 	font-weight:bold;
 }
 
-.tmenudisabled {color:#d0d0d0 !important;}
+.tmenudisabled { color:#808080 !important; cursor: not-allowed; }
 
 /* --- end nav --- */
 
