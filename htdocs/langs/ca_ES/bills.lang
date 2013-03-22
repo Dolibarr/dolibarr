@@ -385,6 +385,7 @@ ClosePaidCreditNotesAutomatically=Classificar automàticament com "Pagats" els a
 AllCompletelyPayedInvoiceWillBeClosed=Totes les factures amb una resta a pagar 0 seran automàticament tancades a l'estat "Pagada".
 ToMakePayment=Pagar
 ToMakePaymentBack=Reemborsar
+ListOfYourUnpaidInvoices=Llistat de factures impagades
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Responsable seguiment factura a client
 TypeContact_facture_external_BILLING=Contacte client facturació
