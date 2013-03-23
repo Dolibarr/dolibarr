@@ -746,24 +746,24 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 //        if (is_readable($file))
 //        {
-            if ($_POST['sendto'])
+            if (GETPOST('sendto','alpha'))
             {
                 // Le destinataire a ete fourni via le champ libre
-                $sendto = $_POST['sendto'];
+                $sendto = GETPOST('sendto','alpha');
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'] != '-1')
+            elseif (GETPOST('receiver','alpha') != '-1')
             {
                 // Recipient was provided from combo list
-                if ($_POST['receiver'] == 'thirdparty') // Id of third party
+                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
                 }
                 else	// Id du contact
                 {
-                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
-                    $sendtoid = $_POST['receiver'];
+                    $sendto = $object->client->contact_get_property(GETPOST('receiver','alpha'),'email');
+                    $sendtoid = GETPOST('receiver','alpha');
                 }
             }
 
@@ -771,15 +771,15 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
             {
                 $langs->load("commercial");
 
-                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-                $message = $_POST['message'];
-                $sendtocc = $_POST['sendtocc'];
-                $deliveryreceipt = $_POST['deliveryreceipt'];
+                $from = GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
+                $replyto = GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
+                $message = GETPOST('message');
+                $sendtocc = GETPOST('sendtocc','alpha');
+                $deliveryreceipt = GETPOST('deliveryreceipt','alpha');
 
                 if ($action == 'send')
                 {
-                    if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
+                    if (dol_strlen(GETPOST('subject'))) $subject=GETPOST('subject');
                     else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
                     $actiontypecode='AC_SUP_ORD';
                     $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
@@ -803,7 +803,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
                 // Send mail
                 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
                 	setEventMessage($mailfile->error, 'errors');
@@ -840,8 +840,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
                         else
                         {
                             // Redirect here
-                            // This avoid sending mail twice if going out and then back to page
-                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
+                            // This avoid sending mail twice if going out and then back to page                 	
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }
                     }
@@ -1908,6 +1908,28 @@ elseif (! empty($object->id))
 		$formmail->substit['__ORDERREF__']=$object->ref;
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
+		$formmail->substit['__CONTACTCIVNAME__']='';
+		
+		//Find the good contact adress
+		$custcontact='';
+		$contactarr=array();
+		$contactarr=$object->liste_contact(-1,'external');
+			
+		if (is_array($contactarr) && count($contactarr)>0) {
+			foreach($contactarr as $contact) {
+				if ($contact['libelle']==$langs->trans('TypeContact_order_supplier_external_BILLING')) {
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+					$contactstatic=new Contact($db);
+					$contactstatic->fetch($contact['id']);
+					$custcontact=$contactstatic->getFullName($langs,1);
+				}
+			}
+		
+			if (!empty($custcontact)) {
+				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+			}
+		}
+		
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='order_supplier_send';

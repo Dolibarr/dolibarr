@@ -434,7 +434,7 @@ if ($action == 'edit')
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . $mainsmtppw . '">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . $mainsmtppw . '">';
 		}
 		else
 		{

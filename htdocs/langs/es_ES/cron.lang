@@ -4,89 +4,87 @@ CHARSET=UTF-8
 #
 # Admin
 #
-CronSetup=Página de configuración del módulo - Gestión de tareas planificadas
-URLToLaunchCronJobs=URL para lanzar las tareas automáticas
-OrToLaunchASpecificJob=O para lanzar una tarea específica
-KeyForCronAccess=Código de seguridad para la URL de lanzamiento de tareas automáticas
-FileToLaunchCronJobs=Comando para lanzar las tareas automáticas
-CronExplainHowToRunUnix=En un entorno Unix puede parametrizar CronTab para ejecutar este comando cada minuto
-CronExplainHowToRunWin=En un entorno Microsoft(tm) Windows puede usar el planificador de tareas para lanzar este comando cada minuto
-#
-# Menu
-#
-CronListActive=Listado de tareas planificadas activas
-CronListInactive= Listado de tareas planificadas inactivas
-
+CronSetup= Configuracion
+URLToLaunchCronJobs=URL para ejecutar tareas Cron
+OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
+KeyForCronAccess=clave para la URL para ejecutar tareas Cron
+FileToLaunchCronJobs=Comando para ejecutar tareas Cron
+CronExplainHowToRunUnix=En entorno Unix debes usar crontab para ejecutar el comando cada varios minutos
+CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el programador de tareas para ejecutar el comando cada varios minutos
 
 #
 # Page list
 #
-CronDateLastRun=Último lanzamiento
-CronLastOutput=Última salida
-CronLastResult=Último código devuelto
+CronDateLastRun=Ultima ejecucion
+CronLastOutput=Resultado de la ultima ejecucion
+CronLastResult=Ultimo codigo de resultado
+CronListOfCronJobs=Lista de tareas programadas
 CronCommand=Comando
-CronList=Listado de tareas planificadas
-CronDelete=Eliminar la tarea planificada
-CronConfirmDelete=¿Está seguro de querer eliminar esta tarea planificada?
-CronExecute=Ejecutar esta tarea
-CronConfirmExecute=¿Está seguro de querer ejecutar ahora esta tarea?
-CronInfo=Los trabajos permiten ejecutar las tareas a intervalos regulares
-CronWaitingJobs=Sus trabajos en espera:
+CronList=Lista de tareas Cron
+CronDelete=Borrar tareas Cron
+CronConfirmDelete=Estas seguro de querer eliminar estas tareas ?
+CronExecute=Ejecutar Tarea
+CronConfirmExecute=Estas seguro de querer ejecutar esta tarea ahora ?
+CronInfo= Cron te permite ejecutar tareas que han sido programadas
+CronWaitingJobs=Trabajos en espera
 CronTask=Tarea
-CronNone=Ninguno
+CronNone=Ninguna
 CronDtStart=Fecha inicio
 CronDtEnd=Fecha fin
-CronDtNextLaunch=Próxima ejecución
-CronDtLastLaunch=Última ejecución
+CronDtNextLaunch=Siguiente ejecucion
+CronDtLastLaunch=ultima ejecucion
 CronFrequency=Frecuencia
-CronClass=Clase
-CronMethod=Método
-CronModule=Módulo
-CronAction=Acción
-CronStatus=Estado
-CronStatusActive=Activa
-CronStatusInactive=Inactiva
-CronEach=Cada
-CronNoJobs=Sin trabajos actualmente
+CronClass=Class
+CronMethod=Metodo
+CronModule=Modulo
+CronAction=Accion
+CronStatus=Status
+CronStatusActive=Activo
+CronStatusInactive=Inactivo
+CronNoJobs=Sin trabajos registrados
 CronPriority=Prioridad
-CronLabel=Descripción
-CronNbRun=Nº ejec.
-CronDtLastResult=Fecha del último resultado de la última ejecución
+CronLabel=Descripcion
+CronNbRun=Nb. ejecutar
 
 #
 #Page card
 #
-CronAdd=Añadir una tarea
-CronHourStart=Dia y hora de inicio de la tarea
-CronEvery=Ejecutar cada
+
+CronListActive=Tareas Activas
+CronListInactive=Tareas Inactivas
+CronAdd=Tarea Nueva
+CronHourStart=Fecha y hora de inicio de la tarea
+CronEvery=Y ejecutar la tarea cada
 CronObject=Instancia/Objeto a crear
-CronArgs=Argumento
-CronSaveSucess=Registro guardado
-CronNote=Nota
-CronFieldMandatory=El campo %s es obligatorio
-CronErrEndDateStartDt=La fecha de fin no puede ser anterior a la de inicio
-CronStatusActiveBtn=Activar
-CronStatusInactiveBtn=Desactivar
-CronTaskInactive=Esta tarea se encuentra desactivada
+CronArgs=Parametros
+CronSaveSucess=Guardado con exito
+CronNote=Comentario
+CronFieldMandatory=campos %s son obligatorios
+CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
+CronStatusActiveBtn=Activo
+CronStatusInactiveBtn=Inactivo
+CronTaskInactive=Esta tarea esta inactiva
+CronDtLastResult=Fecha del ultimo resultado
 CronId=Id
-CronClassFile=Clase (archivo)
-CronModuleHelp=Nombre del directorio del módulo Dolibarr (funciona automáticamente con los módulos externos Dolibarr). <BR> Por ejemplo para llamar al método fetch del objeto Product de Dolibarr /htdocs/<u>product</u>/class/product.class.php, el valor del módulo es <i>product</i>
-CronClassFileHelp=El archivo archivo que contiene el objeto. <BR> Por ejemplo para llamar el método fetch del objeto Product de Dolibarr /htdocs/product/class/<u>product.class.php</u>, el valor de la clase es <i>product.class.php</i>
-CronObjectHelp=El nombre del objeto a crear. <BR> Por ejemplo para llamar el método fetch del objeto Product de Dolibarr /htdocs/product/class/product.class.php, el valor del objeto es <i>Product</i>
-CronMethodHelp=El método a lanzar. <BR> Por ejemplo para llamar el método fetch del objeto Product de Dolibarr  /htdocs/product/class/product.class.php, el valor del método es <i>fecth</i>
-CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para usar el método fetch del objeto Product deDolibarr /htdocs/product/class/product.class.php, el valor del parámetro podría ser <i>0, RefProduit</i>
-CronCommandHelp=El comando del sistema a ejecutar
+CronClassFile=Classes (file name)
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
+CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
+CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
+CronCommandHelp=The system command line to execute.
 
 #
 # Info
 #
-CronInfoPage=Información
+CronInfoPage=Informacion
+
 
 #
 # Common
 #
-CronType=Tipo de acción a ejecutar
-CronType_method=Método de una clase de un módulo Dolibarr
+CronType=Tipo de tarea
+CronType_method=Llamar a un metodo de clase Dolibarr
 CronType_command=Comando Shell
-CronMenu=Cron
-CronCannotLoadClass=imposible cargar la clase %s o el objeto %s
+CronMenu=Programador
+CronCannotLoadClass=No se puede cargar la clase %s u objeto %s

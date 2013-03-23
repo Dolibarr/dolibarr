@@ -412,7 +412,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
 
                 $from = GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
                 $replyto = GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-                $message = GETPOST('message','alpha');
+                $message = GETPOST('message');
                 $sendtocc = GETPOST('sendtocc','alpha');
                 $deliveryreceipt = GETPOST('deliveryreceipt','alpha');
 
@@ -442,7 +442,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
 
                 // Send mail
                 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
                     $mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -1293,7 +1293,7 @@ else
          *    Boutons actions
         */
 
-        if ($user->societe_id == 0)
+        if (($user->societe_id == 0) && ($action!='presend'))
         {
             print '<div class="tabsAction">';
 
@@ -1457,6 +1457,40 @@ else
             $formmail->substit['__SHIPPINGREF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
+            $formmail->substit['__CONTACTCIVNAME__']='';
+            
+            //Find the good contact adress
+            //Find the good contact adress
+            if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{
+            	$objectsrc=new Commande($db);
+            	$objectsrc->fetch($object->$typeobject->id);
+            }
+            if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))	{
+            	$objectsrc=new Propal($db);
+            	$objectsrc->fetch($object->$typeobject->id);
+            }
+            $custcontact='';
+            $contactarr=array();
+            $contactarr=$objectsrc->liste_contact(-1,'external');
+
+            if (is_array($contactarr) && count($contactarr)>0) {
+            	foreach($contactarr as $contact) {
+            		
+            		if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
+            			 
+            			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+            			 
+            			$contactstatic=new Contact($db);
+            			$contactstatic->fetch($contact['id']);
+            			$custcontact=$contactstatic->getFullName($langs,1);
+            		}
+            	}
+            
+            	if (!empty($custcontact)) {
+            		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+            	}
+            }
+            
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='shipping_send';
