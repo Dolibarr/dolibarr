@@ -1212,7 +1212,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				$mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -2442,6 +2442,26 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$formmail->substit['__ORDERREF__']=$object->ref;
 				$formmail->substit['__SIGNATURE__']=$user->signature;
 				$formmail->substit['__PERSONALIZED__']='';
+				$formmail->substit['__CONTACTCIVNAME__']='';
+				
+				$custcontact='';
+				$contactarr=array();
+				$contactarr=$object->liste_contact(-1,'external');
+				 
+				if (is_array($contactarr) && count($contactarr)>0) {
+					foreach($contactarr as $contact) {
+						if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
+							$contactstatic=new Contact($db);
+							$contactstatic->fetch($contact['id']);
+							$custcontact=$contactstatic->getFullName($langs,1);
+						}
+					}
+					 
+					if (!empty($custcontact)) {
+						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+					}
+				}
+				
 				// Tableau des parametres complementaires
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';
