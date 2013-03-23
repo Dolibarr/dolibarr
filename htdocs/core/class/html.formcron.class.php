@@ -41,7 +41,7 @@ class FormCron extends Form
 		return 1;
 	}
 
-	
+
 	/**
 	 * Display On Off selector
 	 *
@@ -53,7 +53,7 @@ class FormCron extends Form
 	function select_typejob($htmlname,$selected=0,$readonly=0)
 	{
 		global $langs;
-		
+
 		$langs->load('cron@cron');
 		if (!empty($readonly)) {
 			if ($selected=='command') {
@@ -68,26 +68,26 @@ class FormCron extends Form
 				$out.='</SELECT>';
 			}
 		}else {
-		
-		$out='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" />';
-		
+
+		$out='<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
+
 		if ($selected=='command') {
 			$selected_attr=' selected=\"selected\" ';
 		} else {
 			$selected_attr='';
 		}
 		$out.= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
-		
+
 		if ($selected=='method') {
 			$selected_attr=' selected=\"selected\" ';
 		} else {
 			$selected_attr='';
 		}
 		$out.= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
-		
+
 		$out.='</SELECT>';
 		}
-		
+
 		return $out;
 	}
 }

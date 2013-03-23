@@ -43,7 +43,7 @@ class modCron extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
-        $this->family = "technic";
+        $this->family = "base";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable the Dolibarr cron service";
@@ -70,9 +70,9 @@ class modCron extends DolibarrModules
 
         // Constantes
         //-----------
-        	$this->const = array(	
+        	$this->const = array(
 				0=>array(
-					'MAIN_CRON_KEY',
+					'CRON_KEY',
 					'chaine',
 					'',
 					'CRON KEY',
@@ -93,25 +93,25 @@ class modCron extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$this->rights_class = 'cron';
 		$r=0;
-		
+
 		$this->rights[$r][0] = 23001;
 		$this->rights[$r][1] = 'Read cron jobs';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
 		$r++;
-		
+
 		$this->rights[$r][0] = 23002;
 		$this->rights[$r][1] = 'Create cron Jobs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'create';
 		$r++;
-		
+
 		$this->rights[$r][0] = 23003;
 		$this->rights[$r][1] = 'Delete cron Jobs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$r++;
-		
+
 		$this->rights[$r][0] = 23004;
 		$this->rights[$r][1] = 'Execute cron Jobs';
 		$this->rights[$r][3] = 0;
@@ -131,7 +131,7 @@ class modCron extends DolibarrModules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
-        
+
         $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'left',			                // This is a Left menu entry
 						        'titre'=>'CronListInactive',
