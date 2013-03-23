@@ -130,8 +130,6 @@ CREATE TABLE llx_c_revenuestamp
 
 insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, '0.4', 'Timbre fiscal', 1);
 
-ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
-
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
 ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
@@ -148,6 +146,13 @@ ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEF
 ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(10)	NOT NULL DEFAULT '0';
 ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFAULT '0';
+-- No more use type 7, use revenuse stamp instead
+UPDATE llx_c_tva set localtax1=0, localtax1_type='0' where localtax1_type = '7';
+UPDATE llx_c_tva set localtax2=0, localtax2_type='0' where localtax2_type = '7';
+
+
+ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
+
 
 ALTER TABLE llx_holiday ADD COLUMN note text; 
 ALTER TABLE llx_holiday ADD COLUMN note_public text;
@@ -197,5 +202,9 @@ ALTER TABLE llx_societe MODIFY COLUMN zip varchar(25);
 ALTER TABLE llx_user ADD COLUMN   address           varchar(255);
 ALTER TABLE llx_user ADD COLUMN   zip               varchar(25);
 ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
-ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;            		--
+ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
+
+
+
+

@@ -827,7 +827,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','s.client = 1',1);
+		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
 		print '</td>';
 	}
 	print '</tr>'."\n";

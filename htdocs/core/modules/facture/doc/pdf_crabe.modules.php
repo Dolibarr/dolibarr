@@ -1020,6 +1020,17 @@ class pdf_crabe extends ModelePDFFactures
 					//}
 				}
 
+				// Revenue stamp
+				if (price2num($object->revenuestamp) != 0)
+				{
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RevenueStamp"), $useborder, 'L', 1);
+
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->revenuestamp), $useborder, 'R', 1);
+				}
+
 				// Total TTC
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);

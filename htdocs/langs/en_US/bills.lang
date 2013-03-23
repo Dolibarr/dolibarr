@@ -390,6 +390,7 @@ AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be 
 ToMakePayment=Pay
 ToMakePaymentBack=Pay back
 ListOfYourUnpaidInvoices=List of unpaid invoices
+RevenueStamp=Revenue stamp
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
 TypeContact_facture_external_BILLING=Customer invoice contact

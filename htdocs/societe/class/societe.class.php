@@ -83,6 +83,8 @@ class Societe extends CommonObject
     var $idprof2;	// IdProf2 (Ex: Siret in France)
     var $idprof3;	// IdProf3 (Ex: Ape in France)
     var $idprof4;	// IdProf4 (Ex: RCS in France)
+    var $idprof5;	// IdProf5
+    var $idprof6;	// IdProf6
 
     var $prefix_comm;
 
@@ -2599,40 +2601,53 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if localtax define for company
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
+     *  Check if thirdparty may using localtax or not
      *
-     *  @param	localTaxNum	$localTaxNum        1 or 2
-     *  @return boolean             			true / false
+     *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
+     *  @return		array					array(0=>boolean, 1=>boolean)
      */
-    function hasLocalTax($localTaxNum) {
-        global $user,$langs,$conf;
+    function useLocalTax($localTaxNum=0)
+    {
+    	$sql  = "SELECT t.localtax1, t.localtax2";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+    	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->country_code."'";
+    	$sql .= " AND t.active = 1";
+    	if (empty($localTaxNum))   $sql .= " AND (t.localtax1_type <> '0' OR t.localtax2_type <> '0')";
+    	elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
+    	elseif ($localTaxNum == 2) $sql .= " AND t.localtax2_type <> '0'";
 
-        // check parameter
-        if ($localTaxNum != 1 && $localTaxNum != 2)
-            return false;
+    	dol_syslog("useLocalTax sql=".$sql);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+   			return ($this->db->num_rows($resql) > 0);
+    	}
+    	else return false;
+    }
 
-		// Search local taxes
-		$sql  = "SELECT t.localtax1, t.localtax2";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$this->country_code."'";
-		$sql .= " AND t.active = 1";
-        if ($localTaxNum == 1)
-            $sql .= " AND t.localtax1 <> 0";
-        elseif ($localTaxNum == 2)
-            $sql .= " AND t.localtax2 <> 0";
+    /**
+     *  Check if thirdparty is from a country using revenue stamps
+     *
+     *  @return		boolean			Yes or no
+     */
+    function useRevenueStamp()
+    {
+		$sql  = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."c_revenuestamp as r, ".MAIN_DB_PREFIX."c_pays as p";
+		$sql .= " WHERE r.fk_pays = p.rowid AND p.code = '".$this->country_code."'";
+		$sql .= " AND r.active = 1";
 
-		dol_syslog("get_localtax sql=".$sql);
+		dol_syslog("useRevenueStamp sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-   			return ($this->db->num_rows($resql) > 0);
-
+			$obj=$this->db->fetch_object($resql);
+   			return (($obj->nb > 0)?true:false);
 		}
 		else
-		    return false;
-
+		{
+			$this->error=$this->db->lasterror();
+			return false;
+		}
 	}
 
 	/**
@@ -2752,7 +2767,7 @@ class Societe extends CommonObject
 	/**
 	 *  Set commnunication level
 	 *
-	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function set_commnucation_level($user)

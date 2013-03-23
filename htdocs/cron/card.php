@@ -56,13 +56,13 @@ if(!empty($cancel)) {
 	}else {
 		Header ( "Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
 	}
-	
+
 }
 
 // Delete jobs
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
 
-	
+
 	$result = $object->delete($user);
 
 	if ($result < 0) {
@@ -105,7 +105,7 @@ if ($action=='add') {
 	$object->dateend=dol_mktime(GETPOST('dateendhour','int'), GETPOST('dateendmin','int'), 0, GETPOST('dateendmonth','int'), GETPOST('dateendday','int'), GETPOST('dateendyear','int'));
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
-	
+
 	//Ajout de la tache cron
 	$result = $object->create($user);
 
@@ -138,7 +138,7 @@ if ($action=='update') {
 	$object->dateend=dol_mktime(GETPOST('dateendhour','int'), GETPOST('dateendmin','int'), 0, GETPOST('dateendmonth','int'), GETPOST('dateendday','int'), GETPOST('dateendyear','int'));
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
-	
+
 	//Ajout de la tache cron
 	$result = $object->update($user);
 
@@ -187,9 +187,10 @@ if ($action=='inactive') {
 }
 
 
+
 /*
- * View 
-*/
+ * View
+ */
 
 llxHeader('',$langs->trans("CronAdd"));
 
@@ -243,14 +244,15 @@ if ($action == 'execute'){
 
 /*
  * Create Template
-*/
+ */
 
-if (empty($object->status)) {
+if (empty($object->status) && $action != 'create')
+{
 	dol_htmloutput_mesg($langs->trans("CronTaskInactive"),'','warning',1);
 }
 
 if (($action=="create") || ($action=="edit")) {
-	
+
 	print '<form name="cronform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 	if (!empty($object->id)) {
@@ -259,7 +261,7 @@ if (($action=="create") || ($action=="edit")) {
 	} else {
 		print '<input type="hidden" name="action" value="add">'."\n";
 	}
-	
+
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="30%">';
@@ -269,7 +271,7 @@ if (($action=="create") || ($action=="edit")) {
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronType')."</td><td>";
 	print $formCron->select_typejob('jobtype',$object->jobtype);
@@ -290,7 +292,7 @@ if (($action=="create") || ($action=="edit")) {
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if(!empty($object->dateend)){
@@ -303,7 +305,7 @@ if (($action=="create") || ($action=="edit")) {
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronPriority')."</td>";
 	$priority=0;
@@ -315,7 +317,7 @@ if (($action=="create") || ($action=="edit")) {
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronEvery')."</td>";
 	print "<td><select name=\"nbfrequency\">";
@@ -370,8 +372,7 @@ if (($action=="create") || ($action=="edit")) {
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
-	
-		
+
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
 	print "<input type=\"text\" size=\"20\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
@@ -416,7 +417,7 @@ if (($action=="create") || ($action=="edit")) {
 	print $form->textwithpicto('',$langs->trans("CronArgsHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
 	print "<input type=\"text\" size=\"50\" name=\"command\" value=\"".$object->command."\" /> ";
@@ -425,7 +426,7 @@ if (($action=="create") || ($action=="edit")) {
 	print $form->textwithpicto('',$langs->trans("CronCommandHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
 	$doleditor = new DolEditor('note', $object->note, '', 160, 'dolibarr_notes', 'In', true, false, 0, 4, 90);
@@ -435,7 +436,7 @@ if (($action=="create") || ($action=="edit")) {
 	print "</td>";
 	print "</tr>\n";
 
-	
+
 	print '<tr><td colspan="2" align="center">';
 	print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
 	print "<input type=\"submit\" name=\"cancel\" class=\"button\" value=\"".$langs->trans("Cancel")."\">";
@@ -443,20 +444,20 @@ if (($action=="create") || ($action=="edit")) {
 	print "<td>";
 	print "</td>";
 	print "</tr>\n";
-	
+
 	print '</table>';
-	
+
 	print "</form>\n";
-	
+
 }else {
-	
+
 	/*
 	 * view Template
-	*/
-	
+	 */
+
 	// box add_jobs_box
 	print '<table class="border" width="100%">';
-	
+
 	print '<tr><td width="30%">';
 	print $langs->trans('CronId')."</td>";
 	print "<td>".$form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'id');
@@ -466,7 +467,7 @@ if (($action=="create") || ($action=="edit")) {
 	print $langs->trans('CronLabel')."</td>";
 	print "<td>".$object->label;
 	print "</td></tr>";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronType')."</td><td>";
 	print $formCron->select_typejob('jobtype',$object->jobtype,1);
@@ -476,32 +477,32 @@ if (($action=="create") || ($action=="edit")) {
 	print $langs->trans('CronHourStart')."</td><td>";
 	if(!empty($object->datestart)) {print dol_print_date($object->datestart,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if(!empty($object->dateend)) {print dol_print_date($object->dateend,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronPriority')."</td>";
 	print "<td>".$object->priority;
 	print "</td></tr>";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronNbRun')."</td>";
 	print "<td>".$object->nbrun;
 	print "</td></tr>";
-	
+
 	print "<tr><td>";
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
 	if($object->unitfrequency == "60") print $langs->trans('CronEach')." ".($object->frequency/$object->unitfrequency)." ".$langs->trans('Minutes');
 	if($object->unitfrequency == "3600") print $langs->trans('CronEach')." ".($object->frequency/$object->unitfrequency)." ".$langs->trans('Hours');
 	if($object->unitfrequency == "86400") print $langs->trans('CronEach')." ".($object->frequency/$object->unitfrequency)." ".$langs->trans('Days');
-	if($object->unitfrequency == "604800") print $langs->trans('CronEach')." ".($object->frequency/$object->unitfrequency)." ".$langs->trans('Weeks');	
+	if($object->unitfrequency == "604800") print $langs->trans('CronEach')." ".($object->frequency/$object->unitfrequency)." ".$langs->trans('Weeks');
 	print "</td></tr>";
-	
-		
+
+
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
 	print $object->module_name;
@@ -526,44 +527,44 @@ if (($action=="create") || ($action=="edit")) {
 	print $langs->trans('CronArgs')."</td><td>";
 	print $object->params;
 	print "</td></tr>";
-	
+
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
 	print $object->command;
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
 	print $object->note;
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronDtLastLaunch')."</td><td>";
 	if(!empty($object->datelastrun)) {print dol_print_date($object->datelastrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronDtNextLaunch')."</td><td>";
 	if(!empty($object->datenextrun)) {print dol_print_date($object->datenextrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronDtLastResult')."</td><td>";
 	if(!empty($object->datelastresult)) {print dol_print_date($object->datelastresult,'dayhourtext');} else {print $langs->trans('CronNone');}
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronLastResult')."</td><td>";
 	print $object->lastresult;
 	print "</td></tr>";
-	
+
 	print '<tr><td>';
 	print $langs->trans('CronLastOutput')."</td><td>";
 	print nl2br($object->lastoutput);
 	print "</td></tr>";
 
 	print '</table>';
-	
+
 	print "\n\n<div class=\"tabsAction\">\n";
 	if (! $user->rights->cron->create) {
 		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';

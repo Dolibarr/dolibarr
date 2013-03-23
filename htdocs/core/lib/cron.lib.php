@@ -15,19 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 /**
  *	\file       cron/lib/cron.lib.php
- *	\brief      Ensemble de fonctions de base pour le module jobs
- *	\ingroup    jobs
+ *	\brief      Function for module cron
+ *	\ingroup    cron
  */
 
 /**
- * Return array of tabs to used on pages for third parties cards.
+ * Return array of tabs to used on pages to setup cron module.
  *
- * @param 	Object	$object		Object company shown
  * @return 	array				Array of tabs
  */
-
 function cronadmin_prepare_head()
 {
     global $langs, $conf, $user;
@@ -35,18 +34,24 @@ function cronadmin_prepare_head()
     $head = array();
 
     $head[$h][0] = dol_buildpath('/cron/admin/cron.php', 1);
-    $head[$h][1] = $langs->trans("CronSetup");
+    $head[$h][1] = $langs->trans("Miscellanous");
     $head[$h][2] = 'setup';
     $h++;
-    
+
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'cronadmin');
-    
+
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'cronadmin', 'remove');
-    
+
 
     return $head;
 }
 
+/**
+ * Return array of tabs to used on a cron job
+ *
+ * @param 	Object	$object		Object cron
+ * @return 	array				Array of tabs
+ */
 function cron_prepare_head($object)
 {
 	global $langs, $conf, $user;
@@ -59,7 +64,7 @@ function cron_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = dol_buildpath('/cron/info.php', 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("CronInfoPage");
+	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
