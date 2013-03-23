@@ -30,31 +30,25 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-require DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
-require DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-require DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-
-if (! empty($conf->commande->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-}
-if (! empty($conf->projet->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-	require DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
-}
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
-if (! empty($conf->margin->enabled))
-  $langs->load('margins');
+if (! empty($conf->margin->enabled)) $langs->load('margins');
 
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
@@ -1777,13 +1771,14 @@ if ($action == 'update_extras')
  * View
  */
 
-llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
-
 $form = new Form($db);
-$htmlother = new FormOther($db);
+$formother=new FormOther($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $now=dol_now();
+
+llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+
 
 
 /*********************************************************************
@@ -3065,7 +3060,8 @@ else if ($id > 0 || ! empty($ref))
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setrevenuestamp">';
-	        	print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
+				print $formother->select_revenue_stamp(GETPOST('revenuestamp'), 'revenuestamp', $mysoc->country_code);
+				//print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
 				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 	        }
