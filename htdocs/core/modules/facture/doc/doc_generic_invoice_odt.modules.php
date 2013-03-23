@@ -139,7 +139,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
 			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
 		}
-		
+
 		// Retrieve extrafields
 		if(is_array($object->array_options) && count($object->array_options))
 		{
@@ -148,7 +148,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
 			$object->fetch_optionals($object->id,$extralabels);
-		
+
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key='object',$outputlangs);
 		}
         return $resarray;
@@ -358,14 +358,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                 {
                     $socobject=$object->client;
                 }
-                
+
                 // Fetch info for linked propal
                 $linked_propal = $object->fetchObjectLinked('','','','');
                 print '<pre>';
                 //print_r($object->linkedObjects['propal']); exit;
 
                 $propal_object = $object->linkedObjects['propal'][0];
-                
+
                 // Make substitution
                 $substitutionarray=array(
                     '__FROM_NAME__' => $this->emetteur->nom,
@@ -415,7 +415,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
-				$array_propal=$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal');
+				$array_propal=is_object($propal_object)?$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal'):array();
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
