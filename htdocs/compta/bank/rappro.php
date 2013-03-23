@@ -84,7 +84,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 
     if (! $error)
     {
-		header('Location: '.DOL_URL_ROOT.'/compta/bank/rappro?account='.$id);	// To avoid to submit twice and allow back
+		header('Location: '.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$id);	// To avoid to submit twice and allow back
     	exit;
     }
 }
