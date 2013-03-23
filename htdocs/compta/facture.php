@@ -377,22 +377,22 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
     $object->fetch_thirdparty();
 
     // Check parameters
-    
+
     // Check for  mandatory prof id
     for ($i = 1; $i < 5; $i++)
     {
-    	 
+
     	$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_INVOICE_MANDATORY';
     	$idprof='idprof'.$i;
     	if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
         {
         	if (! $error) $langs->load("errors");
     		$error++;
-    	
+
     		setEventMessage($langs->trans('ErrorProdIdIsMandatory',$langs->transcountry('ProfId'.$i, $object->thirdparty->country_code)),'errors');
     	}
-    } 
-    
+    }
+
     //Check for warehouse
     if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
     {
@@ -403,7 +403,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
             $action='';
         }
     }
-    
+
     if (! $error)
     {
         $result = $object->validate($user,'',$idwarehouse);
@@ -625,7 +625,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
     $db->begin();
 
     $error=0;
-    
+
     // Get extra fields
     foreach($_POST as $key => $value)
     {
@@ -1638,7 +1638,7 @@ else if ($action == 'builddoc')	// En get ou en post
 
     if (GETPOST('model'))   $object->setDocModel($user, GETPOST('model'));
 	if (GETPOST('fk_bank')) $object->fk_bank=GETPOST('fk_bank');
-	
+
     // Define output language
     $outputlangs = $langs;
     $newlang='';
@@ -2280,10 +2280,10 @@ else if ($id > 0 || ! empty($ref))
      */
 
     $result=$object->fetch($id,$ref);
-    
+
     // fetch optionals attributes and labels
  	$extralabels=$extrafields->fetch_name_optionals_label('facture');
- 	
+
     if ($result > 0)
     {
         if ($user->societe_id>0 && $user->societe_id!=$object->socid)  accessforbidden('',0);
@@ -2292,11 +2292,12 @@ else if ($id > 0 || ! empty($ref))
 
         $soc = new Societe($db);
         $soc->fetch($object->socid);
+        $selleruserevenustamp=$mysoc->useRevenueStamp();
 
         $totalpaye  = $object->getSommePaiement();
         $totalcreditnotes = $object->getSumCreditNotesUsed();
         $totaldeposits = $object->getSumDepositsUsed();
-        //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+        //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits." selleruserrevenuestamp=".$selleruserevenustamp;
 
         // We can also use bcadd to avoid pb with floating points
         // For example print 239.2 - 229.3 - 9.9; does not return 0.
@@ -2753,7 +2754,6 @@ else if ($id > 0 || ! empty($ref))
         /*
          * List of payments
          */
-		$selleruserevenustamp=empty($conf->global->MAIN_USE_REVENUE_STAMP)?0:1;	// TODO Add method societe->useRevenueStamp() to look into table llx_c_revenue_stamp if there is one line for country
 
         $sign=1;
         if ($object->type == 2) $sign=-1;
@@ -2764,7 +2764,7 @@ else if ($id > 0 || ! empty($ref))
         if($mysoc->localtax1_assuj=="1") $nbrows++;
         if($mysoc->localtax2_assuj=="1") $nbrows++;
         if ($selleruserevenustamp) $nbrows++;
-        
+
         print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
         print '<table class="nobordernopadding" width="100%">';
@@ -3039,12 +3039,12 @@ else if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
         // Amount Local Taxes
-        if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+        if ($mysoc->localtax1_assuj=="1" && $mysoc->useLocalTax(1)) //Localtax1 (example RE)
         {
             print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
             print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax1,1,'',1,-1,-1,$conf->currency).'</td></tr>';
         }
-        if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+        if ($mysoc->localtax2_assuj=="1" && $mysoc->useLocalTax(2)) //Localtax2 (example IRPF)
         {
             print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
             print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax2,1,'',1,-1,-1,$conf->currency).'</td></tr>';
@@ -3075,7 +3075,7 @@ else if ($id > 0 || ! empty($ref))
 	        }
 	        print '</td></tr>';
         }
-                
+
         // Total with tax
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="3" nowrap>'.price($object->total_ttc,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 
@@ -3113,14 +3113,14 @@ else if ($id > 0 || ! empty($ref))
             print '</td>';
             print '</tr>';
         }
-        
+
         // Other attributes
         $res=$object->fetch_optionals($object->id,$extralabels);
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        
+
         	if ($action == 'edit_extras')
         	{
         		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
@@ -3128,8 +3128,8 @@ else if ($id > 0 || ! empty($ref))
         		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         		print '<input type="hidden" name="id" value="'.$object->id.'">';
         	}
-        
-        
+
+
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
         		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
@@ -3153,16 +3153,16 @@ else if ($id > 0 || ! empty($ref))
 	        		print '</td></tr>'."\n";
         		}
         	}
-        
+
         	if(count($extrafields->attribute_label) > 0) {
-        
+
         		if ($action == 'edit_extras' && $user->rights->facture->creer)
         		{
         			print '<tr><td></td><td colspan="5">';
         			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         			print '</form>';
         			print '</td></tr>';
-        
+
         		}
         		else {
         			if ($object->statut == 0 && $user->rights->facture->creer)
