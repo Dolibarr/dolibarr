@@ -75,6 +75,7 @@ class Facture extends CommonInvoice
     var $total_ht=0;
     var $total_tva=0;
     var $total_ttc=0;
+    var $revenuestamp;
     var $note;			// deprecated
     var $note_private;
     var $note_public;
@@ -795,7 +796,8 @@ class Facture extends CommonInvoice
 
         if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+        $sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
+        $sql.= ', f.remise_percent, f.remise_absolue, f.remise';
         $sql.= ', f.datef as df';
         $sql.= ', f.date_lim_reglement as dlr';
         $sql.= ', f.datec as datec';
@@ -841,6 +843,7 @@ class Facture extends CommonInvoice
                 $this->total_localtax1		= $obj->localtax1;
                 $this->total_localtax2		= $obj->localtax2;
                 $this->total_ttc			= $obj->total_ttc;
+                $this->revenuestamp         = $obj->revenuestamp;
                 $this->paye					= $obj->paye;
                 $this->close_code			= $obj->close_code;
                 $this->close_note			= $obj->close_note;
@@ -1050,6 +1053,7 @@ class Facture extends CommonInvoice
         $sql.= " localtax2=".(isset($this->total_localtax2)?$this->total_localtax2:"null").",";
         $sql.= " total=".(isset($this->total_ht)?$this->total_ht:"null").",";
         $sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
+        $sql.= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '')?$this->revenuestamp:"null").",";
         $sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
         $sql.= " fk_user_author=".(isset($this->user_author)?$this->user_author:"null").",";
         $sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";

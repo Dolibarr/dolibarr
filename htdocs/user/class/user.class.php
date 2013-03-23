@@ -912,6 +912,11 @@ class User extends CommonObject
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
+		$this->address      = $contact->address;
+		$this->zip          = $contact->zip;
+		$this->town         = $contact->town;
+		$this->state_id     = $contact->state_id;
+		$this->country_id   = $contact->country_id;
 
 		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
@@ -974,11 +979,16 @@ class User extends CommonObject
 
 		// Positionne parametres
 		$this->admin = 0;
-		$this->lastname = $member->lastname;
-		$this->firstname = $member->firstname;
-		$this->email = $member->email;
-		$this->fk_member = $member->id;
-		$this->pass = $member->pass;
+		$this->lastname     = $member->lastname;
+		$this->firstname    = $member->firstname;
+		$this->email        = $member->email;
+		$this->fk_member    = $member->id;
+		$this->pass         = $member->pass;
+		$this->address      = $member->address;
+		$this->zip          = $member->zip;
+		$this->town         = $member->town;
+		$this->state_id     = $member->state_id;
+		$this->country_id   = $member->country_id;
 
 		if (empty($login)) $login=strtolower(substr($member->firstname, 0, 4)) . strtolower(substr($member->lastname, 0, 4));
 		$this->login = $login;
@@ -1120,6 +1130,11 @@ class User extends CommonObject
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", admin = ".$this->admin;
+		$sql.= ", address = '".$this->db->escape($this->address)."'";
+		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
+		$sql.= ", town = '".$this->db->escape($this->town)."'";
+		$sql.= ", fk_state = '".$this->db->escape($this->state_id)."'";
+		$sql.= ", fk_country = '".$this->db->escape($this->country_id)."'";
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";

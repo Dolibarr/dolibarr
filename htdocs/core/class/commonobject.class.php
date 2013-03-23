@@ -1556,6 +1556,9 @@ abstract class CommonObject
                 $i++;
             }
 
+            // Add revenue stamp to total
+            $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
+            
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva

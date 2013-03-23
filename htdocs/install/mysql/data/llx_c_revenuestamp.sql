@@ -1,13 +1,4 @@
--- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
 -- Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
--- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012	   Ricardo Schluter		<info@ripasch.nl>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -35,5 +26,5 @@
 
 delete from llx_c_revenuestamp;
 
--- TUNISIA --
-insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, '0.4', 'Timbre fiscal', 1);
+-- TUNISIA (id country=10) --
+insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, 0.4, 'Revenue stamp tunisia', 1);
