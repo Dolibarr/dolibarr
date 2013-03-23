@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry <forian.henry@open-cocnept.pro
@@ -17,7 +18,7 @@
  */
 
 /**
- *  \file       cron/public/cron/cron_run_jobs.php
+ *  \file       cron/script/cron/cron_run_jobs.php
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
@@ -29,37 +30,47 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOLOGIN'))   define('NOLOGIN','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-// librarie core
-// Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-	$res = @include("../../../main.inc.php"); // From "custom" directory
-}
-if (! $res) die("Include of master.inc.php fails");
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
 
-// librarie jobs
-dol_include_once("/cron/class/cronjob.class.php");
-
-
-global $langs, $conf;
-
-// Check the key, avoid that a stranger starts cron
-$key = $_GET['securitykey'];
-if (empty($key)) {
-	echo 'securitykey is require';
+// Test if batch mode
+if (substr($sapi_type, 0, 3) == 'cgi') {
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit;
 }
+
+if (! isset($argv[1]) || ! $argv[1]) {
+	print "Usage: ".$script_file." securitykey userlogin cronjobid(optional)\n";
+	exit;
+}
+$key=$argv[1];
+
+if (! isset($argv[2]) || ! $argv[2]) {
+	print "Usage: ".$script_file." securitykey userlogin cronjobid(optional)\n";
+	exit;
+} else {
+	$userlogin=$argv[2];
+}
+
+
+$res=@include("../../master.inc.php");				// For root directory
+if (! $res) $res=@include("../../../master.inc.php");	// For "custom" directory
+if (! $res) die("Include of master.inc.php fails");
+
+
+// librarie jobs
+require_once (DOL_DOCUMENT_ROOT_ALT."/cron/class/cronjob.class.php");
+
+
+//Check security key
 if($key != $conf->global->MAIN_CRON_KEY)
 {
 	echo 'securitykey is wrong';
 	exit;
 }
-// Check the key, avoid that a stranger starts cron
-$userlogin = $_GET['userlogin'];
-if (empty($userlogin)) {
-	echo 'userlogin is require';
-	exit;
-}
+
+//Check user login
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user=new User($db);
 $result=$user->fetch('',$userlogin);
@@ -74,11 +85,13 @@ if ($result<0) {
 		exit;
 	}
 }
-$id = $_GET['id'];
 
-// Language Management
-$langs->load("admin");
-$langs->load("cron@cron");
+if (isset($argv[3]) || $argv[3]) {
+	$id = $argv[3];
+}
+
+// librarie jobs
+require_once (DOL_DOCUMENT_ROOT_ALT."/cron/class/cronjob.class.php");
 
 // create a jobs object
 $object = new Cronjob($db);
@@ -100,43 +113,34 @@ if ($result<0) {
 $now=dol_now();
 
 if(is_array($object->lines) && (count($object->lines)>0)){
-	// Loop over job
-	foreach($object->lines as $line){
+		// Loop over job
+		foreach($object->lines as $line){
 
-		dol_syslog("cron_run_jobs.php:: fetch cronjobid:".$line->id, LOG_ERR);
-		
-		//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
-		if ((($line->datenextrun <= $now) && $line->dateend < $now)
-				|| ((empty($line->datenextrun)) && (empty($line->dateend)))){
-			
-			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'), LOG_ERR);
-			
-			$cronjob=new Cronjob($db);
-			$result=$cronjob->fetch($line->id);
-			if ($result<0) {
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
-				exit;
+			//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
+			if (($line->datenextrun < $now) && $line->dateend < $now){
+				$cronjob=new Cronjob($db);
+				$result=$cronjob->fetch($line->id);
+				if ($result<0) {
+					echo "Error:".$cronjob->error;
+					dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+					exit;
+				}
+				// execute methode
+				$result=$cronjob->run_jobs($userlogin);
+				if ($result<0) {
+					echo "Error:".$cronjob->error;
+					dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
+					exit;
+				}
+				
+					// we re-program the next execution and stores the last execution time for this job
+				$result=$cronjob->reprogram_jobs($userlogin);
+				if ($result<0) {
+					echo "Error:".$cronjob->error;
+					dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
+					exit;
+				}
+				
 			}
-			// execute methode
-			$result=$cronjob->run_jobs($userlogin);
-			if ($result<0) {
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
-			}
-			
-				// we re-program the next execution and stores the last execution time for this job
-			$result=$cronjob->reprogram_jobs($userlogin);
-			if ($result<0) {
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
-			}
-			
 		}
-	}
-	echo "OK";
-} else {
-	echo "No Jobs to run";
 }

@@ -391,7 +391,7 @@ div.tmenu ul li a.tmenusel {/* texte du menu principal sélectionné */
 	font-weight:bold;
 }
 
-.tmenudisabled {color:#d0d0d0 !important;}
+.tmenudisabled { color:#808080 !important; cursor: not-allowed; }
 
 /* --- end nav --- */
 
@@ -496,6 +496,8 @@ div.vmenu {
 	padding:12px;
 	text-align:center;
 }
+
+a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
 
 
 /* ============================================================================== */

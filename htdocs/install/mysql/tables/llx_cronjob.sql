@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2013 Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2013 Florian Henry	<florian.henry@open-concept.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,17 +17,36 @@
 --
 -- ===================================================================
 
-create table llx_cronjob
+
+CREATE TABLE llx_cronjob 
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  datec           datetime,
-  command		  varchar(256),
-  params		  text,
-  frequency		  varchar(24),
-  datelastrun     datetime,
-  lastresult      date,
-  lastoutput      text,
-  fk_user         integer DEFAULT NULL,
-  note            text
+	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+	tms 			timestamp,
+	datec 			datetime,
+	jobtype			varchar(10) NOT NULL,
+  	label 			text NOT NULL,
+	command			varchar(255),
+  	classesname 		varchar(255),
+  	objectname		varchar(255),
+  	methodename		varchar(255),
+  	params 			text NOT NULL,
+	md5params 		varchar(32),
+  	module_name 		varchar(255),
+  	priority 		integer DEFAULT 0,
+  	datelastrun 		datetime,
+  	datenextrun 		datetime,
+  	datestart		datetime,
+  	dateend			datetime,
+  	datelastresult      	datetime,
+  	lastresult      	text,
+  	lastoutput      	text,
+  	unitfrequency	 	integer NOT NULL DEFAULT 0,
+  	frequency 		integer NOT NULL DEFAULT 0,
+	nbrun			integer,
+  	status 			integer NOT NULL DEFAULT 1,
+  	fk_user_author 		integer DEFAULT NULL,
+  	fk_user_mod 		integer DEFAULT NULL,
+	note text
 )ENGINE=innodb;
+
+

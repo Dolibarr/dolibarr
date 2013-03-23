@@ -1012,13 +1012,13 @@ abstract class CommonObject
     /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
-     *  Call this function only for table that contains a field fk_parent_line.
      *
-     * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
-     * 	@param		string		$rowidorder		ASC or DESC
+     * 	@param		boolean		$renum				true to renum all already ordered lines, false to renum only not already ordered lines.
+     * 	@param		string		$rowidorder			ASC or DESC
+     * 	@param		boolean		$fk_parent_line		Table with fk_parent_line field or not
      * 	@return		void
      */
-    function line_order($renum=false, $rowidorder='ASC')
+    function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
     {
         if (! $this->table_element_line)
         {
@@ -1055,7 +1055,8 @@ abstract class CommonObject
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql.= ' AND fk_parent_line IS NULL';
+			if ($fk_parent_line)
+				$sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
@@ -1130,12 +1131,13 @@ abstract class CommonObject
     /**
      * 	Update a line to have a lower rank
      *
-     * 	@param 	int		$rowid		Id of line
+     * 	@param 	int			$rowid				Id of line
+     * 	@param	boolean		$fk_parent_line		Table with fk_parent_line field or not
      * 	@return	void
      */
-    function line_up($rowid)
+    function line_up($rowid, $fk_parent_line=true)
     {
-        $this->line_order();
+        $this->line_order(false, 'ASC', $fk_parent_line);
 
         // Get rang of line
         $rang = $this->getRangOfLine($rowid);
@@ -1147,12 +1149,13 @@ abstract class CommonObject
     /**
      * 	Update a line to have a higher rank
      *
-     * 	@param	int		$rowid		Id of line
+     * 	@param	int			$rowid				Id of line
+     * 	@param	boolean		$fk_parent_line		Table with fk_parent_line field or not
      * 	@return	void
      */
-    function line_down($rowid)
+    function line_down($rowid, $fk_parent_line=true)
     {
-        $this->line_order();
+        $this->line_order(false, 'ASC', $fk_parent_line);
 
         // Get rang of line
         $rang = $this->getRangOfLine($rowid);
