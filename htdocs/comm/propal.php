@@ -526,7 +526,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			// Envoi de la propal
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');
@@ -2238,12 +2238,34 @@ else
 		$formmail->substit['__PROPREF__']=$object->ref;
 	    $formmail->substit['__SIGNATURE__']=$user->signature;
 	    $formmail->substit['__PERSONALIZED__']='';
+	    $formmail->substit['__CONTACTCIVNAME__']='';
+	    
+	    //Find the good contact adress
+	    $custcontact='';
+	    $contactarr=array();
+	    $contactarr=$object->liste_contact(-1,'external');
+	    
+	    if (is_array($contactarr) && count($contactarr)>0) {
+	    	foreach($contactarr as $contact) {
+	    		if ($contact['libelle']==$langs->trans('TypeContact_propal_external_CUSTOMER')) {
+	    			$contactstatic=new Contact($db);
+	    			$contactstatic->fetch($contact['id']);
+	    			$custcontact=$contactstatic->getFullName($langs,1);
+	    		}
+	    	}
+	    		
+	    	if (!empty($custcontact)) {
+	    		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+	    	}
+	    }
+	    
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
+		
+	
 		// Init list of files
 	    if (GETPOST("mode")=='init')
 		{
