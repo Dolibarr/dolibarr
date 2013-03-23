@@ -1509,9 +1509,6 @@ abstract class CommonObject
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
 
-                // Add revenue stamp to total
-                $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
-                
                 // Check if there is a global invoice tax for this vat rate
                 // FIXME: We should have no database access into this function. Also localtax 7 seems to have problem so i add condition to avoid it into standard usage without loosing it.
                 if (! empty($conf->global->MAIN_USE_LOCALTAX_TYPE_7))
@@ -1559,6 +1556,9 @@ abstract class CommonObject
                 $i++;
             }
 
+            // Add revenue stamp to total
+            $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
+            
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva

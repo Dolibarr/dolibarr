@@ -302,6 +302,14 @@ else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
+else if ($action == 'setrevenuestamp' && $user->rights->facture->creer)
+{
+    $object->fetch($id);
+    $object->revenuestamp=GETPOST('revenuestamp');
+    $result=$object->update($user);
+    $object->update_price(1);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
 else if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -2745,6 +2753,7 @@ else if ($id > 0 || ! empty($ref))
         /*
          * List of payments
          */
+		$selleruserevenustamp=empty($conf->global->MAIN_USE_REVENUE_STAMP)?0:1;	// TODO Add method societe->useRevenueStamp() to look into table llx_c_revenue_stamp if there is one line for country
 
         $sign=1;
         if ($object->type == 2) $sign=-1;
@@ -2752,11 +2761,10 @@ else if ($id > 0 || ! empty($ref))
         $nbrows=8; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) $nbcols++;
-
-        //Local taxes
         if($mysoc->localtax1_assuj=="1") $nbrows++;
         if($mysoc->localtax2_assuj=="1") $nbrows++;
-
+        if ($selleruserevenustamp) $nbrows++;
+        
         print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
         print '<table class="nobordernopadding" width="100%">';
@@ -3042,6 +3050,33 @@ else if ($id > 0 || ! empty($ref))
             print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax2,1,'',1,-1,-1,$conf->currency).'</td></tr>';
         }
 
+        // Revenue stamp
+        if ($selleruserevenustamp)		// Test company use revenue stamp
+        {
+	        print '<tr><td>';
+	        print '<table class="nobordernopadding" width="100%"><tr><td>';
+	        print $langs->trans('RevenueStamp');
+	        print '</td>';
+	        if ($action != 'editrevenuestamp' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'),1).'</a></td>';
+	        print '</tr></table>';
+	        print '</td><td colspan="3" align="right">';
+	        if ($action == 'editrevenuestamp')
+	        {
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="setrevenuestamp">';
+	        	print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+	        }
+	        else
+	        {
+	        	print price($object->revenuestamp,1,'',1,-1,-1,$conf->currency);
+	        }
+	        print '</td></tr>';
+        }
+                
+        // Total with tax
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="3" nowrap>'.price($object->total_ttc,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 
         // Statut
