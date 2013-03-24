@@ -291,7 +291,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if ($usecontact)
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
-			
+
 			if (!empty($targetcontact->address)) {
 				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
 			}else {
@@ -303,9 +303,9 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			}
 			else if (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
 				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
-			} 
-			
-			
+			}
+
+
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
     		{
         		// Tel
@@ -453,7 +453,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
 	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
-	
+
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber))
@@ -556,6 +556,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
+
+		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
 	// Use correct name of bank id according to country
@@ -571,16 +573,25 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 		$pdf->SetXY($curx, $cury);
 		$val=$outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
-		$nboflines=dol_nboflines_bis($val,120);
-		//print $nboflines;exit;
-		$cury+=($nboflines*2)+2;
+		//$nboflines=dol_nboflines_bis($val,120);
+		//$cury+=($nboflines*3)+2;
+		$tmpy=$pdf->getStringHeight	(100, $val);
+		$cury+=$tmpy;
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
-	$pdf->SetXY($curx, $cury);
-	$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-	$pdf->SetXY($curx, $cury+3);
-	$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	if (! empty($account->iban))
+	{
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
+		$cury+=3;
+	}
+
+	if (! empty($account->bic))
+	{
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	}
 
 	return $pdf->getY();
 }
