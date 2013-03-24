@@ -77,6 +77,17 @@ llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ExternalSiteSetup"),$linkback,'setup');
+print '<br>';
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/externalsite.php";
+$head[$h][1] = $langs->trans("Miscellaneous");
+$head[$h][2] = 'externalsite';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("Module100Name"));
 
 print $langs->trans("Module100Desc")."<br>\n";
 print '<br>';
