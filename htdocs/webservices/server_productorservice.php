@@ -113,15 +113,13 @@ $server->wsdl->addComplexType(
 
     	'price_net' => array('name'=>'price_net','type'=>'xsd:string'),
     	'price' => array('name'=>'price','type'=>'xsd:string'),
-    	'price_ttc' => array('name'=>'price_ttc','type'=>'xsd:string'),
+    	'price_min_net' => array('name'=>'price_min_net','type'=>'xsd:string'),
     	'price_min' => array('name'=>'price_min','type'=>'xsd:string'),
-    	'price_min_ttc' => array('name'=>'price_min_ttc','type'=>'xsd:string'),
 
     	'price_base_type' => array('name'=>'price_base_type','type'=>'xsd:string'),
 
     	'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:string'),
-    	'tva_tx' => array('name'=>'tva_tx','type'=>'xsd:string'),
-    	'tva_npr' => array('name'=>'tva_npr','type'=>'xsd:string'),
+    	'vat_npr' => array('name'=>'vat_npr','type'=>'xsd:string'),
     	'localtax1_tx' => array('name'=>'localtax1_tx','type'=>'xsd:string'),
     	'localtax2_tx' => array('name'=>'localtax2_tx','type'=>'xsd:string'),
 
@@ -132,41 +130,44 @@ $server->wsdl->addComplexType(
 		'import_key' => array('name'=>'import_key','type'=>'xsd:string'),
 
 		'dir' => array('name'=>'dir','type'=>'xsd:string'),
-		'photos' => array('name'=>'photos','type'=>'tns:PhotosArray')
+		'images' => array('name'=>'images','type'=>'tns:ImagesArray')
     )
 );
 
 
 /*
  * Image of product
-*/
+ */
 $server->wsdl->addComplexType(
-	'PhotosArray',
+	'ImagesArray',
 	'complexType',
 	'array',
+	'sequence',
 	'',
-	'SOAP-ENC:Array',
-	array(),
 	array(
-	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:image[]')
+		'image' => array(
+		'name' => 'image',
+		'type' => 'tns:image',
+		'minOccurs' => '0',
+		'maxOccurs' => 'unbounded'
+		)
 	)
 );
 
 /*
  * An image
-*/
+ */
 $server->wsdl->addComplexType(
 	'image',
 	'complexType',
-	'array',
+	'struct',
+	'all',
 	'',
-	'SOAP-ENC:Array',
-	array(),
 	array(
-	'photo' => array('name'=>'photo','type'=>'xsd:string'),
-	'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
-	'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
-	'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
+		'photo' => array('name'=>'photo','type'=>'xsd:string'),
+		'photo_vignette' => array('name'=>'photo_vignette','type'=>'xsd:string'),
+		'imgWidth' => array('name'=>'imgWidth','type'=>'xsd:string'),
+		'imgHeight' => array('name'=>'imgHeight','type'=>'xsd:string')
 	)
 );
 
@@ -186,7 +187,7 @@ $server->wsdl->addComplexType(
     )
 );
 
-$server->wsdl->addComplexType(
+/*$server->wsdl->addComplexType(
     'ProductsArray',
     'complexType',
     'array',
@@ -197,7 +198,7 @@ $server->wsdl->addComplexType(
         array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:product[]')
     ),
     'tns:product'
-);
+);*/
 $server->wsdl->addComplexType(
     'ProductsArray2',
     'complexType',
@@ -272,7 +273,7 @@ $server->register(
 	// Entry values
 	array('authentication'=>'tns:authentication','id'=>'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result','products'=>'ProductsArray'),
+	array('result'=>'tns:result','products'=>'tns:ProductsArray2'),
 	$ns,
 	$ns.'#getProductsForCategory',
 	$styledoc,
@@ -345,22 +346,18 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'country_code' => $product->country_code,
 				        'custom_code' => $product->customcode,
 
-				        'price_net' => $product->price, // todo : DEPRECATED ?
-                		//'price' => ($product->price_ttc-$product->price),
-			        	'price' => $product->price,
-			        	'price_ttc' => $product->price_ttc,
-			        	'price_min' => $product->price_min,
-			        	'price_min_ttc' => $product->price_min_ttc,
+			        	'price_net' => $product->price,
+			        	'price' => $product->price_ttc,
+			        	'price_min_net' => $product->price_min,
+			        	'price_min' => $product->price_min_ttc,
 			        	'price_base_type' => $product->price_base_type,
-				        'vat_rate' => $product->tva_tx, // todo : DEPRECATED ?
-				        'tva_tx' => $product->tva_tx,
+				        'vat_rate' => $product->tva_tx,
 				        //! French VAT NPR
-				        'tva_npr' => $product->tva_npr,
+				        'vat_npr' => $product->tva_npr,
 				        //! Spanish local taxes
 				        'localtax1_tx' => $product->localtax1_tx,
 				        'localtax2_tx' => $product->localtax2_tx,
 
-				        'price_ttc' => $product->price_ttc,
                 		'price_base_type' => $product->price_base_type,
 
 				        'stock_real' => $product->stock_reel,
@@ -368,7 +365,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        'pmp' => $product->pmp,
                 		'import_key' => $product->import_key,
                 		'dir' => $pdir,
-                		'photos' => $product->liste_photos($dir,$nbmax=10)
+                		'images' => $product->liste_photos($dir,$nbmax=10)
                 ));
             }
             else
@@ -651,17 +648,17 @@ function getProductsForCategory($authentication,$id)
 						        'custom_code' => $obj->customcode,
 
 						        'price_net' => $obj->price,
-		                		'price' => ($obj->price_ttc-$obj->price),
+						        'price' => $obj->price_ttc,
 						        'vat_rate' => $obj->tva_tx,
-						        'price_ttc' => $obj->price_ttc,
-		                		'price_base_type' => $obj->price_base_type,
+
+								'price_base_type' => $obj->price_base_type,
 
 						        'stock_real' => $obj->stock_reel,
 		                		'stock_alert' => $obj->seuil_stock_alerte,
 						        'pmp' => $obj->pmp,
 		                		'import_key' => $obj->import_key,
 		                		'dir' => $pdir,
-		                		'photos' => $obj->liste_photos($dir,$nbmax=10)
+		                		'images' => $obj->liste_photos($dir,$nbmax=10)
 							);
 						}
 

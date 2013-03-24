@@ -431,6 +431,6 @@ EditGlobalDiscounts=Muokkaa absoluuttinen alennukset
 AddCreditNote=Luo hyvityslasku
 InvoiceNotChecked=Ei laskun valittu
 ShowUnpaidAll=Näytä kaikki maksamattomat laskut
-ClosePaidInvoicesAutomatically=Luokittele &quot;maksanut&quot; kaikki vakio-tai korvaavan laskuja entierely maksanut.
+ClosePaidInvoicesAutomatically=Luokittele &quot;maksanut&quot; kaikki vakio-tai korvaavan laskuja entirely maksanut.
 AllCompletelyPayedInvoiceWillBeClosed=Kaikki lasku ilman jää maksaa automaattisesti suljettu tila &quot;maksanut&quot;.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:08).

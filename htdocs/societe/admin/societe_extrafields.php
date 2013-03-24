@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("admin");
+$langs->load("members");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

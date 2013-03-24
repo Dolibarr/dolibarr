@@ -63,8 +63,8 @@ $object->substitutionarray=array(
     '__OTHER3__' => 'Other3',
     '__OTHER4__' => 'Other4',
     '__OTHER5__' => 'Other5',
-    '__SIGNATURE__' => 'TagSignature',
-    //'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
+    '__SIGNATURE__' => 'TagSignature'
+    //,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
 if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
@@ -88,8 +88,8 @@ $object->substitutionarrayfortest=array(
     '__OTHER3__' => 'TESTOther3',
     '__OTHER4__' => 'TESTOther4',
     '__OTHER5__' => 'TESTOther5',
-	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
-    //'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
+	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'')
+    //,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
 if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {

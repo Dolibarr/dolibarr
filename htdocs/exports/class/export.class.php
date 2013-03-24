@@ -34,7 +34,9 @@ class Export
 	var $array_export_code=array();             // Tableau de "idmodule_numlot"
 	var $array_export_module=array();           // Tableau de "nom de modules"
 	var $array_export_label=array();            // Tableau de "libelle de lots"
-	var $array_export_sql=array();              // Tableau des "requetes sql"
+	var $array_export_sql_start=array();        // Tableau des "requetes sql"
+	var $array_export_sql_end=array();          // Tableau des "requetes sql"
+	var $array_export_sql_order=array();        // Tableau des "requetes sql"
 	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
 	var $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
 	var $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
@@ -177,6 +179,7 @@ class Export
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
+									$this->array_export_sql_order[$i]=$module->export_sql_order[$r];
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
 									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(! empty($module->export_fields_code[$r])?count($module->export_fields_code[$r]):''));
@@ -224,16 +227,17 @@ class Export
 		$sql.=$this->array_export_sql_end[$indice];
 
 		//construction du filtrage si le parametrage existe
-		if (is_array($array_filterValue))
+		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
 			// pour ne pas a gerer le nombre de condition
 			foreach ($array_filterValue as $key => $value)
 			{
-				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
+				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
+		$sql.=$this->array_export_sql_order[$indice];
 
 		return $sql;
 	}
@@ -243,7 +247,7 @@ class Export
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
-	 *      @param		string	$ValueField		Initial value of the field to filter
+	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
 	function build_filterQuery($TypeField, $NameField, $ValueField)
