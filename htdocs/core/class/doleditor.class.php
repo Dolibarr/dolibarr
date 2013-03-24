@@ -51,7 +51,7 @@ class DolEditor
      *      @param 	string	$content		        Content of WYSIWIG field
      *      @param	int		$width					Width in pixel of edit area (auto by default)
      *      @param 	int		$height			        Height in pixel of edit area (200px by default)
-     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_mailings')
+     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]', 'dolibarr_mailings[_encoded]', ')
      *      @param  string	$toolbarlocation       	Where bar is stored :
      *                       		             	'In' each window has its own toolbar
      *                              		      	'Out:name' share toolbar into the div called 'name'
@@ -69,6 +69,7 @@ class DolEditor
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
+		$shorttoolbarname=preg_replace('/_encoded$/','',$toolbarname);
 
         // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
         $defaulteditor='ckeditor';
@@ -97,7 +98,7 @@ class DolEditor
         	$this->editor->Value	= $content;
         	$this->editor->Height   = $height;
         	if (! empty($width)) $this->editor->Width = $width;
-        	$this->editor->ToolbarSet = $toolbarname;
+        	$this->editor->ToolbarSet = $shorttoolbarname;
         	$this->editor->Config['AutoDetectLanguage'] = 'true';
         	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
         	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
@@ -124,7 +125,7 @@ class DolEditor
         {
     	    $this->content				= $content;
     	    $this->htmlname 			= $htmlname;
-    	    $this->toolbarname			= $toolbarname;
+    	    $this->toolbarname			= $shorttoolbarname;
     	    $this->toolbarstartexpanded = $toolbarstartexpanded;
             $this->rows					= max(ROWS_3,$rows);
             $this->cols					= max(40,$cols);
@@ -169,9 +170,8 @@ class DolEditor
             	//$skin='office2003';
             	//$skin='v2';
             	$skin='kama';
-            	
-            	if ($this->toolbarname=='dolibarr_mailings') {$htmlencode_force='true';}
-            	else {$htmlencode_force='false';}
+
+            	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {

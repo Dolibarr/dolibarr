@@ -23,6 +23,8 @@
  *       \brief      Fiche mailing, onglet general
  */
 
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -768,7 +770,7 @@ else
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
 
-			print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
@@ -789,10 +791,10 @@ else
 			print '</td></tr>';
 
 			// Status
-			print '<tr><td width="15%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			// Nb of distinct emails
-			print '<tr><td width="15%">';
+			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
@@ -979,7 +981,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Subject
-			print '<tr><td width="15%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
 
 			// Joined files
 			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
@@ -1007,7 +1009,14 @@ else
 		    // Message
 			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
 			print '<td colspan="3" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
-			print dol_htmlentitiesbr($object->body);
+			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
+			{
+				// Editeur wysiwyg
+				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_readonly','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,70);
+				$doleditor->Create();
+			}
+			else print dol_htmlentitiesbr($object->body);
 			print '</td>';
 			print '</tr>';
 
@@ -1040,7 +1049,7 @@ else
 			print '<tr><td width="25%">';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
-			$nbemail = ($object->nbemail?$object->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>');
+			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
 			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
@@ -1142,13 +1151,13 @@ else
 			$doleditor->Create();
 			print '</td></tr>';
 
-			print '<tr><td colspan="4" align="center">';
+			print '</table>';
+
+			print '<br><center>';
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="save">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
-			print '</td></tr>';
-
-			print '</table>';
+			print '</center>';
 
 			print '</form>';
 			print '<br>';
