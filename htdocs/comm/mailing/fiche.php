@@ -1007,7 +1007,13 @@ else
             print '</td></tr>';*/
 
 		    // Message
-			print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
+			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
+			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
+			foreach($object->substitutionarray as $key => $val)
+			{
+				print $key.' = '.$langs->trans($val).'<br>';
+			}
+			print '</i></td>';
 			print '<td colspan="3" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
 			{
