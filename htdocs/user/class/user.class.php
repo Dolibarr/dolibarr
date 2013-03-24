@@ -1133,8 +1133,8 @@ class User extends CommonObject
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
-		$sql.= ", fk_state = '".$this->db->escape($this->state_id)."'";
-		$sql.= ", fk_country = '".$this->db->escape($this->country_id)."'";
+		$sql.= ", fk_state = ".($this->state_id > 0?"'".$this->db->escape($this->state_id)."'":"null");
+		$sql.= ", fk_country = ".($this->country_id > 0?"'".$this->db->escape($this->country_id)."'":"null");
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
