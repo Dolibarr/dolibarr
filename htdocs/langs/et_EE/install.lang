@@ -9,7 +9,7 @@
 // Reference language: en_US -> et_EE
 CHARSET=UTF-8
 InstallEasy=Lihtsalt järgige samm-sammult.
-MiscellanousChecks=Eeldused kontrollida
+MiscellaneousChecks=Eeldused kontrollida
 DolibarrWelcome=Tere tulemast Dolibarr
 ConfFileExists=Konfiguratsioonifaili <b>%s</b> olemas.
 ConfFileDoesNotExists=Konfiguratsioonifaili <b>%s</b> ei eksisteeri!

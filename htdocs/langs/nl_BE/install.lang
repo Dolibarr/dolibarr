@@ -1,7 +1,7 @@
 # Dolibarr language file - nl_BE - install
 CHARSET=UTF-8
 InstallEasy=We hebben geprobeerd om de Dolibarr installatie zo eenvoudig mogelijk te maken. Volg de instructies stap voor stap.
-MiscellanousChecks=Vereisten controleren
+MiscellaneousChecks=Vereisten controleren
 DolibarrWelcome=Welkom bij Dolibarr
 ConfFileExists=Configuratiebestand <b>%s</b> bestaat.
 ConfFileDoesNotExists=Configuratiebestand <b>%s</b> bestaat niet!

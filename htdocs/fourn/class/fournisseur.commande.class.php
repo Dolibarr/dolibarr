@@ -1702,7 +1702,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	double	$txlocaltax1	    Localtax1 tax
      *  @param     	double	$txlocaltax2   		Localtax2 tax
      *  @param     	double	$price_base_type 	Type of price base
-     *	@param		int		$info_bits			Miscellanous informations
+     *	@param		int		$info_bits			Miscellaneous informations
      *	@param		int		$type				Type of line (0=product, 1=service)
      *  @param		int		$notrigger			Disable triggers
      *	@return    	int             			< 0 if error, > 0 if ok

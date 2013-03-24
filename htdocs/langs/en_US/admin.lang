@@ -888,7 +888,7 @@ GeneratedPasswordDesc=Define here which rule you want to use to generate new pas
 DictionnaryDesc=Define here all reference datas. You can complete predefined value with yours.
 ConstDesc=This page allows you to edit all other parameters not available in previous pages. They are reserved parameters for advanced developers or for troubleshouting.
 OnceSetupFinishedCreateUsers=Warning, you are a Dolibarr administrator user. Administrator users are used to setup Dolibarr. For a usual usage of Dolibarr, it is recommended to use a non administrator user created from Users & Groups menu.
-MiscellanousDesc=Define here all other parameters related to security.
+MiscellaneousDesc=Define here all other parameters related to security.
 LimitsSetup=Limits/Precision setup
 LimitsDesc=You can define limits, precisions and optimisations used by Dolibarr here
 MAIN_MAX_DECIMALS_UNIT=Max decimals for unit prices
@@ -983,7 +983,7 @@ CompanyIdProfChecker=Rules on Professional Ids
 MustBeUnique=Must be unique ?
 MustBeMandatory=Must be mandatory to create thirds?
 MustBeInvoiceMandatory=Must be mandatory to validate invoices?
-Miscellanous=Miscellaneous
+Miscellaneous=Miscellaneous
 ##### Webcal setup #####
 WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr events to WebCalendar

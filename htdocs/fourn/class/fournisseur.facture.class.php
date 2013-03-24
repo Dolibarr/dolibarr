@@ -1065,7 +1065,7 @@ class FactureFournisseur extends CommonInvoice
      * @param     	double	$qty           		Quantity
      * @param     	int		$idproduct			Id produit
      * @param	  	double	$price_base_type	HT or TTC
-     * @param	  	int		$info_bits			Miscellanous informations of line
+     * @param	  	int		$info_bits			Miscellaneous informations of line
      * @param		int		$type				Type of line (0=product, 1=service)
      * @param     	double	$remise_percent  	Pourcentage de remise de la ligne
      *  @param		int		$notrigger			Disable triggers

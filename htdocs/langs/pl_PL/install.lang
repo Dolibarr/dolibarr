@@ -1,7 +1,7 @@
 # Dolibarr language file - pl_PL - install
 CHARSET=UTF-8
 InstallEasy=Staraliśmy się by instalacja Dolibarra była tak prosta jak to możliwe. Postępuj wg instrukcji krok po kroku.
-MiscellanousChecks=Sprawdzenie wymagań
+MiscellaneousChecks=Sprawdzenie wymagań
 DolibarrWelcome=Witaj w Dolibarrze
 ConfFileExists=Plik konfiguracyjny <b>%s</b> istnieje.
 ConfFileDoesNotExists=Plik konfiguracyjny <b>%s</b> nie istnieje!
@@ -213,7 +213,7 @@ MigrationDeliveryAddress=Aktualizacja adresu dostarczenia przesyłki
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=Bare følg instruksjonene trinn for trinn.
-MiscellanousChecks=Forutsetninger sjekk
+MiscellaneousChecks=Forutsetninger sjekk
 DolibarrWelcome=Velkommen til Dolibarr
 ConfFileExists=Konfigurasjonsfil <b>%s</b> eksisterer.
 ConfFileDoesNotExists=Konfigurasjonsfil <b>%s</b> finnes ikke!

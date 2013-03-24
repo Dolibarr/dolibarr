@@ -890,7 +890,7 @@ GeneratedPasswordDesc=Indiqui aquí que norma vol utilitzar per generar les cont
 DictionnaryDesc=Indiqui aquí les dades de referència. Pot completar/modificar les dades predefinides amb les seves
 ConstDesc=Qualsevol altre paràmetre no editable en les pàgines anteriors
 OnceSetupFinishedCreateUsers=Atenció, està sota un compte d'administrador de Dolibarr. Els administradors s'utilitzen per configurar Dolibarr. Per a un ús corrent de Dolibarr, es recomana utilitzar un compte no administrador creada des del menú "Usuaris i grups"
-MiscellanousDesc=Definiu aquí els altres paràmetres relacionats amb la seguretat.
+MiscellaneousDesc=Definiu aquí els altres paràmetres relacionats amb la seguretat.
 LimitsSetup=Configuració de límits i precisions
 LimitsDesc=Podeu definir aquí els límits i precisions utilitzats per Dolibarr
 MAIN_MAX_DECIMALS_UNIT=Decimals màxims per als preus unitaris
@@ -982,7 +982,7 @@ CompanyIdProfChecker=Règles sobre els ID professionals
 MustBeUnique=Ha de ser únic?
 MustBeMandatory=Ha de ser obligatori per a crear tercers?
 MustBeInvoiceMandatory=Ha de ser obligatori per a validar factures?
-Miscellanous=Miscel·lània
+Miscellaneous=Miscel·lània
 ##### Webcal setup #####
 WebCalSetup=Configuració d'enllaç amb el calendari webcalendar
 WebCalSyncro=Integrar els esdeveniments Dolibarr a webcalendar
