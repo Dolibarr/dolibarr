@@ -150,10 +150,6 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
         {
             if (! $user->rights->prelevement->bons->lire) $readok=0;
         }
-        else if ($feature == 'commande_fournisseur')
-        {
-            if (! $user->rights->fournisseur->commande->lire) $readok=0;
-        }
         else if ($feature == 'cheque')
         {
             if (! $user->rights->banque->cheque) $readok=0;

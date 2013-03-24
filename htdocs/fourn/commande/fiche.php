@@ -67,7 +67,7 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $id,'');
+$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ordersuppliercard'));
@@ -683,7 +683,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 		{
 			$error++;
 		}
-         
+
         if ($error)
         {
             $langs->load("errors");
@@ -840,7 +840,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
                         else
                         {
                             // Redirect here
-                            // This avoid sending mail twice if going out and then back to page                 	
+                            // This avoid sending mail twice if going out and then back to page
                             header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }
@@ -959,28 +959,28 @@ $now=dol_now();
 if ($action=="create")
 {
 	print_fiche_titre($langs->trans('NewOrder'));
-	
+
 	dol_htmloutput_mesg($mesg);
-	
+
 	$societe='';
 	if ($socid>0)
 	{
 		$societe=new Societe($db);
 		$societe->fetch($socid);
 	}
-	
+
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<table class="border" width="100%">';
-	
+
 	// Ref
 	print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
-	
+
 	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
-	
+
 	if ($socid > 0)
 	{
 		print $societe->getNomUrl(1);
@@ -991,30 +991,30 @@ if ($action=="create")
 		print $form->select_company((empty($socid)?'':$socid),'socid','s.fournisseur = 1',1);
 	}
 	print '</td>';
-	
+
 	// Ref supplier
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
 	print '</tr>';
-	
+
 	print '</td></tr>';
-	
+
 	print '<tr><td>'.$langs->trans('Note').'</td>';
 	print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
-	
+
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
-	
+
 	// Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-	
+
 	// Bouton "Create Draft"
     print "</table>\n";
-	
+
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
-	
+
 	print "</form>\n";
 }
 elseif (! empty($object->id))
@@ -1909,12 +1909,12 @@ elseif (! empty($object->id))
 		$formmail->substit['__SIGNATURE__']=$user->signature;
 		$formmail->substit['__PERSONALIZED__']='';
 		$formmail->substit['__CONTACTCIVNAME__']='';
-		
+
 		//Find the good contact adress
 		$custcontact='';
 		$contactarr=array();
 		$contactarr=$object->liste_contact(-1,'external');
-			
+
 		if (is_array($contactarr) && count($contactarr)>0) {
 			foreach($contactarr as $contact) {
 				if ($contact['libelle']==$langs->trans('TypeContact_order_supplier_external_BILLING')) {
@@ -1924,12 +1924,12 @@ elseif (! empty($object->id))
 					$custcontact=$contactstatic->getFullName($langs,1);
 				}
 			}
-		
+
 			if (!empty($custcontact)) {
 				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
 			}
 		}
-		
+
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='order_supplier_send';

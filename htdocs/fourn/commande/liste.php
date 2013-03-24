@@ -43,7 +43,7 @@ $sortfield = GETPOST('sortfield','alpha');
 // Security check
 $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
+$result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 
 /*
