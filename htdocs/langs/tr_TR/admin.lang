@@ -883,7 +883,7 @@ GeneratedPasswordDesc=Eğer otomatik olarak yeni bir parola oluşturmak istersen
 DictionnaryDesc= Burada bütün referans verilerini tanımlayın. Önceden tanımlanmış bilgilere sizinkileri de ekleyebilirsiniz.
 ConstDesc=Bu sayfa, önceki sayfalarda mevcut olmayan diğer tüm parametreleri düzenleme olanağı sağlar. İleri geliştiriciler veya sorunbulma için ayrılmış parametrelerdir.
 OnceSetupFinishedCreateUsers=Uyarı, siz bir Dolibarr yönetici kullanıcısınız. Yönetici kullanıcılar Dolibarr kurulumu yapabilir. Dolibarr’ın olağan kullanımı için, Kullanıcılar ve Gruplar menüsünden oluşturulan yönetici kullanıcı olmayan bir kullanıcının kullanılması önerilir.
-MiscellanousDesc=Burada güvenlik ile ilgili diğer tüm parametreleri tanımlayın.
+MiscellaneousDesc=Burada güvenlik ile ilgili diğer tüm parametreleri tanımlayın.
 LimitsSetup=Sınırlar/Hassasiyet ayarı
 LimitsDesc=Burada Dolibarr’ın kullanımı için sınırlar, hassasiyet ve optimizasyon tanımlayabilirsiniz
 MAIN_MAX_DECIMALS_UNIT=Birim fiyatlar ençok ondalık
@@ -974,7 +974,7 @@ WatermarkOnDraft=Taslak belge üzerinde filigran
 CompanyIdProfChecker=Benzersiz uzman Kimliği
 MustBeUnique=Eşsiz olmalıdır?
 MustBeMandatory=Zorunlu olmalı mı ?
-Miscellanous=Çeşitli
+Miscellaneous=Çeşitli
 ##### Webcal setup #####
 WebCalSetup=WebTakvim bağlantısı kurulumu
 WebCalSyncro=WebTakvimi için Dolibarr etkinlikleri

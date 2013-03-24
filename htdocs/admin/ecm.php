@@ -75,7 +75,7 @@ print '<br>';
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/ecm.php";
-$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'general';
 $hselected=$h;
 $h++;

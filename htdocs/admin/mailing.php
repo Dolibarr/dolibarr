@@ -106,7 +106,7 @@ print_fiche_titre($langs->trans("MailingSetup"),$linkback,'setup');
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/mailing.php";
-$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'general';
 $hselected=$h;
 $h++;

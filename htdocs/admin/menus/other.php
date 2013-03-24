@@ -87,7 +87,7 @@ $head[$h][2] = 'editor';
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/menus/other.php";
-$head[$h][1] = $langs->trans("Miscellanous");
+$head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 

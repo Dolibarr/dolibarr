@@ -1,7 +1,7 @@
 # Dolibarr language file - ca_ES - install 
 CHARSET=UTF-8
 InstallEasy=Hem procurat que la instal·lació sigui el més simple possible, vostè només ha de seguir els passos un a un.
-MiscellanousChecks=Comprovació dels Prerequisits
+MiscellaneousChecks=Comprovació dels Prerequisits
 DolibarrWelcome=Benvingut a Dolibarr
 ConfFileExists=L'arxiu de configuració <b>%s</b> existeix.
 ConfFileDoesNotExists=El fitxer de configuració <b>%s</b> no existeix!

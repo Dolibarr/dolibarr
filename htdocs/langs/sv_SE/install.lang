@@ -9,7 +9,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=Följ bara instruktionerna steg för steg.
-MiscellanousChecks=Förutsättningarna läs
+MiscellaneousChecks=Förutsättningarna läs
 DolibarrWelcome=Välkommen till Dolibarr
 ConfFileExists=Konfigurationsfilen <b>%s</b> finns.
 ConfFileDoesNotExists=Konfigurationsfilen <b>%s</b> finns inte!

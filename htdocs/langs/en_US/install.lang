@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - install
 CHARSET=UTF-8
 InstallEasy=Just follow the instructions step by step.
-MiscellanousChecks=Prerequisites check
+MiscellaneousChecks=Prerequisites check
 DolibarrWelcome=Welcome to Dolibarr
 ConfFileExists=Configuration file <b>%s</b> exists.
 ConfFileDoesNotExists=Configuration file <b>%s</b> does not exist !

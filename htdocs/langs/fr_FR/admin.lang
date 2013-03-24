@@ -891,7 +891,7 @@ GeneratedPasswordDesc= Definissez ici quelle règle vous voulez utiliser pour g�
 DictionnaryDesc= Définissez ici les données de référence. Vous pouvez compléter/modifier les données prédéfinies avec les vôtres.
 ConstDesc= Cet écran permet d'éditer tout autre paramètre non éditable dans les pages précédentes. Ce sont en général des paramètres réservés aux développeurs avancés ou utilisés pour du dépannage.
 OnceSetupFinishedCreateUsers= Attention, vous êtes sous un compte administrateur de Dolibarr. Les administrateurs sont utilisés pour configurer Dolibarr. Pour une utilisation courante de Dolibarr, il est recommandé d'utiliser un compte non administrateur créé depuis le menu "Utilisateurs & Groupes".
-MiscellanousDesc= Définissez ici les autres paramètres en rapport avec la sécurité.
+MiscellaneousDesc= Définissez ici les autres paramètres en rapport avec la sécurité.
 LimitsSetup= Configuration des limites et précisions
 LimitsDesc= Vous pouvez définir ici les limites, précisions et optimisations utilisées par Dolibarr
 MAIN_MAX_DECIMALS_UNIT= Nombre de décimales maximum pour les prix unitaires
@@ -984,7 +984,7 @@ CompanyIdProfChecker=Règles sur les Ids professionnels
 MustBeUnique=Doit être unique ?
 MustBeMandatory=Doit être obligatoire pour creer tiers ?
 MustBeInvoiceMandatory=Doit être obligatoire pour valider factures ?
-Miscellanous=Divers
+Miscellaneous=Divers
 ##### Webcal setup #####
 WebCalSetup= Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro= Intégrer les événements Dolibarr dans WebCalendar
