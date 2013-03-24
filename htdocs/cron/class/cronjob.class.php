@@ -862,8 +862,6 @@ class Cronjob extends CommonObject
 		$error=0;
 		$now=dol_now();
 
-		$this->db->begin();
-
 		if ($this->jobtype=='method') {
 			// load classes
 			$ret=dol_include_once("/".$this->module_name."/class/".$this->classesname,$this->objectname);
@@ -885,6 +883,17 @@ class Cronjob extends CommonObject
 			// Create Object for the call module
 			$object = new $this->objectname($this->db);
 
+			
+			//Update launch start date
+			$this->datelastrun=$now;
+			$this->nbrun=$this->nbrun+1;
+			$result = $this->update($user);
+			if ($result<0) {
+				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+				return -1;
+			}
+			
+
 			$params_arr = array();
 			$params_arr=explode(", ",$this->params);
 			if (!is_array($params_arr)) {
@@ -904,6 +913,15 @@ class Cronjob extends CommonObject
 		} elseif ($this->jobtype=='command') {
 			dol_syslog(get_class($this)."::run_jobs system:".$this->command, LOG_DEBUG);
 			$output_arr=array();
+			
+			//Update launch start date
+			$this->datelastrun=$now;
+			$this->nbrun=$this->nbrun+1;
+			$result = $this->update($user);
+			if ($result<0) {
+				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+				return -1;
+			}
 
 			exec($this->command, $output_arr,$retval);
 
@@ -917,20 +935,16 @@ class Cronjob extends CommonObject
 			}
 			$this->lastresult=$retval;
 		}
-
+		
+		//Update result date
 		$this->datelastresult=$now;
-		$this->datelastrun=$now;
-		$this->nbrun=$this->nbrun+1;
 		$result = $this->update($user);
 		if ($result<0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-			$this->db->rollback();
 			return -1;
 		}else {
-			$this->db->commit();
 			return 1;
 		}
-
 
 	}
 
