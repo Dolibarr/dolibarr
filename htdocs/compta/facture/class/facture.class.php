@@ -2086,7 +2086,7 @@ class Facture extends CommonInvoice
      * 	@param		double		$txlocaltax1		Local tax 1 rate
      *  @param		double		$txlocaltax2		Local tax 2 rate
      * 	@param     	string		$price_base_type 	HT or TTC
-     * 	@param     	int			$info_bits 		    Miscellanous informations
+     * 	@param     	int			$info_bits 		    Miscellaneous informations
      * 	@param		int			$type				Type of line (0=product, 1=service)
      * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)

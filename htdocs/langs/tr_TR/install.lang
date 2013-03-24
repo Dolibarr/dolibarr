@@ -9,7 +9,7 @@
 
 CHARSET=UTF-8
 InstallEasy=Sadece adım adım talimatları izleyin.
-MiscellanousChecks=Önkoşulların onayı
+MiscellaneousChecks=Önkoşulların onayı
 DolibarrWelcome=Dolibarr'a hoşgeldiniz
 ConfFileExists=Yapılandırma dosyası <b>%s</b> var.
 ConfFileDoesNotExists=Yapılandırma dosyası <b>%s</b> yok

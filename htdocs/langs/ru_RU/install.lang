@@ -10,7 +10,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=Мы постарались сделать Dolibarr настройки настолько прост, насколько это возможно. Просто следуйте инструкциям, шаг за шагом.
-MiscellanousChecks=Условия проверки
+MiscellaneousChecks=Условия проверки
 DolibarrWelcome=Добро пожаловать на Dolibarr
 ConfFileExists=Файл <b>конфигурации %s</b> существует.
 ConfFileDoesNotExists=Файл <b>конфигурации %s</b> не существует!
@@ -197,7 +197,7 @@ MigrationUpdateFailed=Сбой процесса обновления
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=Bare følg instruksjonene trinn for trinn.
-MiscellanousChecks=Forutsetninger sjekk
+MiscellaneousChecks=Forutsetninger sjekk
 DolibarrWelcome=Velkommen til Dolibarr
 ConfFileExists=Konfigurasjonsfil <b>%s</b> eksisterer.
 ConfFileDoesNotExists=Konfigurasjonsfil <b>%s</b> finnes ikke!

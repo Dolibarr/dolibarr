@@ -34,7 +34,7 @@ function cronadmin_prepare_head()
     $head = array();
 
     $head[$h][0] = dol_buildpath('/cron/admin/cron.php', 1);
-    $head[$h][1] = $langs->trans("Miscellanous");
+    $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'setup';
     $h++;
 
