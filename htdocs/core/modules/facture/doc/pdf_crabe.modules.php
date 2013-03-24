@@ -735,20 +735,22 @@ class pdf_crabe extends ModelePDFFactures
 				// Si mode reglement non force ou si force a CHQ
 				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
+					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
+
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
 						$account = new Account($this->db);
 						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','B', $default_font_size - 3);
+						$pdf->SetFont('','B', $default_font_size - $diffsizetitle);
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio),0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 			            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
 			            {
 							$pdf->SetXY($this->marge_gauche, $posy);
-							$pdf->SetFont('','', $default_font_size - 3);
+							$pdf->SetFont('','', $default_font_size - $diffsizetitle);
 							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 							$posy=$pdf->GetY()+2;
 			            }
@@ -756,14 +758,14 @@ class pdf_crabe extends ModelePDFFactures
 					if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','B', $default_font_size - 3);
+						$pdf->SetFont('','B', $default_font_size - $diffsizetitle);
 						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$this->emetteur->name),0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 			            if (empty($conf->global->MAIN_PDF_HIDE_CHQ_ADDRESS))
 			            {
 							$pdf->SetXY($this->marge_gauche, $posy);
-							$pdf->SetFont('','', $default_font_size - 3);
+							$pdf->SetFont('','', $default_font_size - $diffsizetitle);
 							$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 							$posy=$pdf->GetY()+2;
 			            }

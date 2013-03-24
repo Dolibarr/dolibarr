@@ -439,11 +439,14 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 {
 	global $mysoc, $conf;
 
+	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
+	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
+	
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber))
 	{
-		$pdf->SetFont('','B',$default_font_size - 3);
+		$pdf->SetFont('','B',$default_font_size - $diffsizetitle);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 		$cury+=4;
 	}
@@ -460,7 +463,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 		if (empty($onlynumber))
 		{
-			$pdf->SetFont('','',$default_font_size - 4);
+			$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 			$pdf->SetXY($curx, $cury);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 			$cury+=3;
@@ -532,12 +535,12 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else
 	{
-		$pdf->SetFont('','B',6);
+		$pdf->SetFont('','B',$default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 		$cury+=3;
 
-		$pdf->SetFont('','B',6);
+		$pdf->SetFont('','B',$default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
@@ -549,7 +552,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
-	$pdf->SetFont('','',6);
+	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 
 	if (empty($onlynumber) && ! empty($account->domiciliation))
 	{
