@@ -9,7 +9,7 @@
 // Reference language: en_US -> bg_BG
 CHARSET=UTF-8
 InstallEasy=Просто следвайте инструкциите стъпка по стъпка.
-MiscellanousChecks=Предпоставки проверка
+MiscellaneousChecks=Предпоставки проверка
 DolibarrWelcome=Добре дошли в Dolibarr
 ConfFileExists=<b>%s</b> конфигурационен файл съществува.
 ConfFileDoesNotExists=<b>%s</b> конфигурационен файл не съществува!

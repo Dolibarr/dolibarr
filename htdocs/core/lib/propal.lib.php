@@ -117,7 +117,7 @@ function propal_admin_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/propal.php';
-	$head[$h][1] = $langs->trans("Miscellanous");
+	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
 

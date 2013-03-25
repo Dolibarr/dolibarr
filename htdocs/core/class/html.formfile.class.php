@@ -795,6 +795,11 @@ class FormFile
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance=new ChargeSociales($this->db);
         }
+        else if ($modulepart == 'project')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+        	$object_instance=new Project($this->db);
+        }
 
         $var=true;
         foreach($filearray as $key => $file)
@@ -821,6 +826,7 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'product')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'project')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
 

@@ -9,7 +9,7 @@
 // Reference language: en_US -> ru_UA
 CHARSET=UTF-8
 InstallEasy=Просто следуйте инструкциям шаг за шагом.
-MiscellanousChecks=Проверка предварительных условий
+MiscellaneousChecks=Проверка предварительных условий
 DolibarrWelcome=Добро пожаловать в Dolibarr
 ConfFileExists=<b>%s</b> конфигурационный файл существует.
 ConfFileDoesNotExists=<b>%s</b> конфигурационного файла не существует!

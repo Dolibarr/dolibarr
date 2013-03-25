@@ -754,7 +754,7 @@ GeneratedPasswordDesc=Określ tutaj reguły, które chcesz użyć do wygenerowan
 DictionnaryDesc=Określ tutaj wszystkie odniesienia danych. Możesz zakończyć predefiniowane wartości Ciebie.
 ConstDesc=Ta strona pozwala edytować wszystkie inne parametry nie są dostępne w poprzedniej strony. Są one zastrzeżone dla zaawansowanych parametrów deweloperzy lub troubleshouting.
 OnceSetupFinishedCreateUsers=Ostrzeżenie, jesteś Dolibarr administratora użytkownika. Administrator użytkowników wykorzystywane są do konfiguracji Dolibarr. Dla Zazwyczaj korzystanie z Dolibarr, zaleca się używać nieujemnych administratora użytkownika tworzone Użytkownicy i grupy menu.
-MiscellanousDesc=Określ tutaj wszystkie inne parametry związane z bezpieczeństwem.
+MiscellaneousDesc=Określ tutaj wszystkie inne parametry związane z bezpieczeństwem.
 LimitsSetup=Ograniczenia / Precision konfiguracji
 LimitsDesc=Można określić limity, doprecyzowanie i optymalizacje stosowane przez Dolibarr tutaj
 MAIN_MAX_DECIMALS_UNIT=Max dziesiętnych na ceny jednostkowe
@@ -804,7 +804,7 @@ WebCalAddE
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
 // Reference language: en_US -> ro_RO
 InstallEasy=Doar urmaţi instrucţiunile pas cu pas.
-MiscellanousChecks=Cerinţe preliminare a verifica
+MiscellaneousChecks=Cerinţe preliminare a verifica
 DolibarrWelcome=Bine ati venit la Dolibarr
 ConfFileExists=<b>%s</b> fişierul de configurare există.
 ConfFileDoesNotExists=<b>%s</b> fişier de configurare nu exista!

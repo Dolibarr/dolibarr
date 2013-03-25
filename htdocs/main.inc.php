@@ -93,7 +93,7 @@ function test_sql_and_script_inject($val, $type)
     // When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
     $sql_inj += preg_match('/<script/i', $val);
-    $sql_inj += preg_match('/<style/i', $val);
+    if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
     $sql_inj += preg_match('/base[\s]+href/i', $val);
     if ($type == 1)
     {
@@ -101,8 +101,8 @@ function test_sql_and_script_inject($val, $type)
         $sql_inj += preg_match('/vbscript:/i', $val);
     }
     // For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-    if ($type == 1) $sql_inj += preg_match('/"/i', $val);      // We refused " in GET parameters value
-    if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);    // PHP_SELF is an url and must match url syntax
+    if ($type == 1) $sql_inj += preg_match('/"/i', $val);		// We refused " in GET parameters value
+    if ($type == 2) $sql_inj += preg_match('/[\s;"]/', $val);	// PHP_SELF is an url and must match url syntax
     return $sql_inj;
 }
 
@@ -1569,13 +1569,13 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    $appli='Dolibarr';
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) { $appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl=''; }
 	    $appli.=" ".DOL_VERSION;
-	    
+
 	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
 	    print $appli;
 	    if ($doliurlx) print '</a>';
 	    print '</div>';
-	    
+
 	    print "</div>\n";
 	    print "<!-- End left menu -->\n";
 

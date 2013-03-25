@@ -106,7 +106,7 @@ Autres modules:
 - Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 - De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
 
-Miscellanous:
+Divers:
 - Application multi-utilisateurs avec différents niveaux de permissions par module.
 - Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs).
 - Application simple à utiliser.

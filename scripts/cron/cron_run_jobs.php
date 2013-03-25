@@ -27,8 +27,9 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOLOGIN'))   define('NOLOGIN','1');
+if (! defined('NOLOGIN'))        define('NOLOGIN','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -53,45 +54,46 @@ if (! isset($argv[2]) || ! $argv[2]) {
 	$userlogin=$argv[2];
 }
 
-
-$res=@include("../../master.inc.php");				// For root directory
-if (! $res) $res=@include("../../../master.inc.php");	// For "custom" directory
-if (! $res) die("Include of master.inc.php fails");
-
-
-// librarie jobs
-require_once (DOL_DOCUMENT_ROOT_ALT."/cron/class/cronjob.class.php");
+require_once ($path."../../htdocs/master.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
+require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
 
 
-//Check security key
-if($key != $conf->global->MAIN_CRON_KEY)
+/*
+ * Main
+ */
+
+// Check security key
+if ($key != $conf->global->CRON_KEY)
 {
-	echo 'securitykey is wrong';
+	print "Error: securitykey is wrong\n";
 	exit;
 }
 
-//Check user login
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+// Check user login
 $user=new User($db);
 $result=$user->fetch('',$userlogin);
-if ($result<0) {
-	echo "User Error:".$user->error;
+if ($result < 0)
+{
+	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
 	exit;
-}else {
-	if (empty($user->id)) {
-		echo " User user login:".$userlogin." do not exists";
+}
+else
+{
+	if (empty($user->id))
+	{
+		echo " User user login: ".$userlogin." do not exists";
 		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
 		exit;
 	}
 }
 
-if (isset($argv[3]) || $argv[3]) {
+if (isset($argv[3]) || $argv[3])
+{
 	$id = $argv[3];
 }
-
-// librarie jobs
-require_once (DOL_DOCUMENT_ROOT_ALT."/cron/class/cronjob.class.php");
 
 // create a jobs object
 $object = new Cronjob($db);
@@ -103,18 +105,21 @@ if (empty($id)) {
 }
 
 $result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
-if ($result<0) {
-	echo "Error:".$cronjob->error;
-	dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+if ($result<0)
+{
+	echo "Error: ".$object->error;
+	dol_syslog("cron_run_jobs.php:: fetch Error ".$object->error, LOG_ERR);
 	exit;
 }
 
 // current date
 $now=dol_now();
 
-if(is_array($object->lines) && (count($object->lines)>0)){
+if(is_array($object->lines) && (count($object->lines)>0))
+{
 		// Loop over job
-		foreach($object->lines as $line){
+		foreach($object->lines as $line)
+		{
 
 			//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
 			if (($line->datenextrun < $now) && $line->dateend < $now){
@@ -132,7 +137,7 @@ if(is_array($object->lines) && (count($object->lines)>0)){
 					dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
 					exit;
 				}
-				
+
 					// we re-program the next execution and stores the last execution time for this job
 				$result=$cronjob->reprogram_jobs($userlogin);
 				if ($result<0) {
@@ -140,7 +145,10 @@ if(is_array($object->lines) && (count($object->lines)>0)){
 					dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
 					exit;
 				}
-				
+
 			}
 		}
 }
+
+$db->close();
+?>

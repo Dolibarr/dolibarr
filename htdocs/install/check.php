@@ -55,7 +55,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
+print '<b>'.$langs->trans("MiscellaneousChecks")."</b>:<br>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];

@@ -49,7 +49,7 @@ if (empty($key)) {
 	echo 'securitykey is require';
 	exit;
 }
-if($key != $conf->global->MAIN_CRON_KEY)
+if($key != $conf->global->CRON_KEY)
 {
 	echo 'securitykey is wrong';
 	exit;
@@ -104,13 +104,13 @@ if(is_array($object->lines) && (count($object->lines)>0)){
 	foreach($object->lines as $line){
 
 		dol_syslog("cron_run_jobs.php:: fetch cronjobid:".$line->id, LOG_ERR);
-		
+
 		//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
 		if ((($line->datenextrun <= $now) && $line->dateend < $now)
 				|| ((empty($line->datenextrun)) && (empty($line->dateend)))){
-			
+
 			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'), LOG_ERR);
-			
+
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
 			if ($result<0) {
@@ -125,7 +125,7 @@ if(is_array($object->lines) && (count($object->lines)>0)){
 				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-			
+
 				// we re-program the next execution and stores the last execution time for this job
 			$result=$cronjob->reprogram_jobs($userlogin);
 			if ($result<0) {
@@ -133,7 +133,7 @@ if(is_array($object->lines) && (count($object->lines)>0)){
 				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-			
+
 		}
 	}
 	echo "OK";

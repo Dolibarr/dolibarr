@@ -113,7 +113,7 @@ ServerVersion=Gagnasafn framreiðslumaður útgáfa
 // START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
 // Reference language: en_US
 InstallEasy=Fylgdu leiðbeiningunum skref fyrir skref.
-MiscellanousChecks=Undanfarar stöðva
+MiscellaneousChecks=Undanfarar stöðva
 DolibarrWelcome=Velkomin á Dolibarr
 ConfFileExists=Stillingar <b>skrá %s </b> til.
 ConfFileDoesNotExists=<b>Stillingar %s  er</b> ekki til!

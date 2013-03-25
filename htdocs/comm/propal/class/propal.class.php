@@ -456,7 +456,7 @@ class Propal extends CommonObject
      *  @param	  	double		$txlocaltax2		Local tax 2 rate
      *  @param      string		$desc            	Description
      *	@param	  	double		$price_base_type	HT ou TTC
-     *	@param      int			$info_bits        	Miscellanous informations
+     *	@param      int			$info_bits        	Miscellaneous informations
      *	@param		int			$special_code		Special code (also used by externals modules!)
      * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
      * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
