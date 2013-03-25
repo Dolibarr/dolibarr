@@ -197,7 +197,7 @@ if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2";
+$sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
@@ -370,7 +370,8 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_tva);
 			$tx1=price2num($objp->localtax1);
 			$tx2=price2num($objp->localtax2);
-			if (! empty($tx1) || ! empty($tx2)) print '+'.price($tx1 + $objp->tx2);
+			$revenuestamp=price2num($objp->revenuestamp);
+			if (! empty($tx1) || ! empty($tx2) || ! empty($revenuestamp)) print '+'.price($tx1 + $tx2 + $revenuestamp);
 			print '</td>';
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 			print '<td align="right">';
@@ -398,7 +399,7 @@ if ($resql)
 
 			print "</tr>\n";
 			$total_ht+=$objp->total_ht;
-			$total_tva+=($objp->total_tva + $tx1 + $tx2);
+			$total_tva+=($objp->total_tva + $tx1 + $tx2 + $revenuestamp);
 			$total_ttc+=$objp->total_ttc;
 			$total_paid+=$objp->am + $cn;
 
