@@ -197,9 +197,9 @@ if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc";
+$sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
-$sql.= ", f.paye as paye, f.rowid as facid, f.fk_statut, f.type";
+$sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -226,7 +226,7 @@ if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$search_ref."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$search_societe."%'";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$search_montant_ht."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
-if (GETPOST('sf_ref')) $sql .= " AND f.facnumber LIKE '%".GETPOST('sf_ref') . "%'";
+if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
 $sql.= " GROUP BY f.facnumber,f.increment,f.total,f.total_ttc,f.datef, f.date_lim_reglement,f.paye, f.rowid, f.fk_statut, f.type,s.nom, s.rowid";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
@@ -280,10 +280,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AmountVAT"),$_SERVER["PHP_SELF"],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Taxes"),$_SERVER["PHP_SELF"],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Rest"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("Remain"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Merge"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -296,11 +296,11 @@ if ($resql)
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'"></td>';
-	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
+	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.$search_societe.'"></td>';
+	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
-	print '<td class="liste_titre" colspan="3" align="right">';
+	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
+	print '<td class="liste_titre" colspan="2" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
@@ -341,7 +341,7 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
 			// Ref
-			print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+			print '<td class="nobordernopadding" nowrap="nowrap">';
 			print $facturestatic->getNomUrl(1);
 			print '</td>';
 
@@ -366,13 +366,24 @@ if ($resql)
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
-			print '<td align="right">'.price($objp->total_ht).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.price($objp->total_tva).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.price($objp->total_ttc).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.(! empty($objp->am)?price($objp->am).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
-			print '<td align="right">'.(! empty($objp->am)?price($objp->total_ttc-$objp->am).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
+			print '<td align="right">'.price($objp->total_ht).'</td>';
+			print '<td align="right">'.price($objp->total_tva);
+			$tx1=price2num($objp->localtax1);
+			$tx2=price2num($objp->localtax2);
+			if (! empty($tx1) || ! empty($tx2)) print '+'.price($tx1 + $objp->tx2);
+			print '</td>';
+			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			print '<td align="right">';
+			$cn=$facturestatic->getSumCreditNotesUsed();
+			if (! empty($objp->am)) print price($objp->am);
+			if (! empty($objp->am) && ! empty($cn)) print '+';
+			if (! empty($cn)) print price($cn);
+			print '</td>';
+			
+			// Remain to receive
+			//print '<td align="right">'.((! empty($objp->am) || ! empty($cn))?price($objp->total_ttc-$objp->am-$cn):'&nbsp;').'</td>';
 
-			// Affiche statut de la facture
+			// Status of invoice
 			print '<td align="right" nowrap="nowrap">';
 			print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 			print '</td>';
@@ -387,19 +398,19 @@ if ($resql)
 
 			print "</tr>\n";
 			$total_ht+=$objp->total_ht;
-			$total_tva+=$objp->total_tva;
+			$total_tva+=($objp->total_tva + $tx1 + $tx2);
 			$total_ttc+=$objp->total_ttc;
-			$total_paid+=$objp->am;
+			$total_paid+=$objp->am + $cn;
 
 			$i++;
 		}
 
 		print '<tr class="liste_total">';
 		print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
-		print '<td align="right"><b>'.price($total_ht).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
-		print '<td align="right"><b>'.price($total_tva).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
-		print '<td align="right"><b>'.price($total_ttc).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
-		print '<td align="right"><b>'.price($total_paid).' '.$langs->getCurrencySymbol($conf->currency).'</b></td>';
+		print '<td align="right"><b>'.price($total_ht).'</b></td>';
+		print '<td align="right"><b>'.price($total_tva).'</b></td>';
+		print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+		print '<td align="right"><b>'.price($total_paid).'</b></td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
