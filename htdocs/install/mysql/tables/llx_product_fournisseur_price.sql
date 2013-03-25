@@ -37,6 +37,7 @@ create table llx_product_fournisseur_price
 	charges					double(24,8) DEFAULT 0,
   unitcharges			double(24,8) DEFAULT 0,
   tva_tx					double(6,3) NOT NULL,
+  recuperableonly				integer NOT NULL DEFAULT 0,
   fk_user					integer,
   import_key      varchar(14)                  -- Import key
 )ENGINE=innodb;
