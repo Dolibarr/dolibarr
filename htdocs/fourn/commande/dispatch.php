@@ -90,12 +90,12 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 		global $conf, $langs, $user;
 		// Appel des triggers
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		$interface=new Interfaces($this->db);
-		$result_trigger=$interface->run_triggers('ORDER_SUPPLIER_DISPATCH',$this,$user,$langs,$conf);
-		if ($result_trigger < 0) { $error++; $this->errors=$interface->errors; }
+		$interface=new Interfaces($db);
+		$result_trigger=$interface->run_triggers('ORDER_SUPPLIER_DISPATCH',$commande,$user,$langs,$conf);
+		if ($result_trigger < 0) { $error++; $commande->errors=$interface->errors; }
 		// Fin appel triggers
 
-		$this->db->commit();
+		$db->commit();
 	}
 
 	if ($result > 0)
