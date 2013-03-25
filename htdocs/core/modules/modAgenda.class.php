@@ -159,6 +159,12 @@ class modAgenda extends DolibarrModules
 		$this->rights[$r][5] = 'delete';
 		$r++;
 
+		$this->rights[$r][0] = 2414;
+		$this->rights[$r][1] = 'Export actions/tasks of others';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
+		
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
@@ -355,12 +361,30 @@ class modAgenda extends DolibarrModules
 		//--------
 		$r=0;
 
-		// $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
-		// $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
-		// $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
-		// $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
-		// $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
-		// $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]="Liste des action commerciales de l'agenda";
+		$this->export_permission[$r]=array(array("agenda","export"));
+		$this->export_fields_array[$r]=array('a.id'=>'IdAgenda','a.label'=>'Actions','a.datep'=>'DateActionStart',
+		'a.datea'=>'DateActionEnd','a.percent'=>'PercentDone','a.fk_user_author'=>'ActionAskedBy','a.fk_user_action'=>'ActionAffectedTo',
+		'a.fk_user_done'=>"ActionDoneBy","a.priority"=>"Priority","a.fulldayevent"=>"EventOnFullDay","a.location"=>"Location",
+		"a.fk_soc"=>"Company","a.fk_contact"=>"contact","a.fk_action"=>"Action");
+
+		$this->export_TypeFields_array[$r]=array('a.id'=>'Numeric','a.label'=>'Text','a.datep'=>'Date','a.datep2'=>'Date',
+		'a.datea'=>'Date','a.datea2'=>'Date','a.percent'=>'Numeric','a.fk_user_author'=>'List:user:name','a.fk_user_action'=>'List:user:name',
+		'a.fk_user_done'=>"List:user:name","a.priority"=>"Numeric","a.fulldayevent"=>"Boolean","a.location"=>"Text",
+		"a.fk_soc"=>"List:Societe:nom","a.fk_contact"=>"List:socpeople:name","a.fk_action"=>"List:c_actioncomm:libelle:code");
+		
+		$this->export_entities_array[$r]=array('a.id'=>'action','a.label'=>'action','a.datep'=>'action','a.datep2'=>'action',
+		'a.datea'=>'action','a.datea2'=>'action','a.percent'=>'action','a.fk_user_author'=>'action','a.fk_user_action'=>'action',
+		'a.fk_user_done'=>"action","a.priority"=>"action","a.fulldayevent"=>"action","a.location"=>"action",
+		"a.fk_soc"=>"action","a.fk_contact"=>"action","a.fk_action"=>"action");
+
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM  '.MAIN_DB_PREFIX.'actioncomm as a';
+		$this->export_sql_end[$r] .=' Where a.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=' ORDER BY datep';
+
 	}
 
 
