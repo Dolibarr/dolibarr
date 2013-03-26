@@ -1103,11 +1103,13 @@ else if ($action == 'remove_file')
 }
 
 // Print file
-else if ($action == 'print_file' AND $user->rights->printipp->use)
+else if ($action == 'print_file' AND $user->rights->printipp->read)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
     $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
     $printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
+    setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
+    $action='';
 }
 
 /*
@@ -2363,7 +2365,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$genallowed=$user->rights->commande->creer;
 				$delallowed=$user->rights->commande->supprimer;
 				$printer = false;
-				if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
+				if ($user->rights->printipp->read AND $conf->printipp->enabled) $printer = true;
 				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
 
 				/*

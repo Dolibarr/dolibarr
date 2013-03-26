@@ -95,7 +95,7 @@ class modPrintIPP extends DolibarrModules
         $this->rights[$r][1] = 'Printer';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
-        $this->rights[$r][4] = 'use';
+        $this->rights[$r][4] = 'read';
 
         // Main menu entries
         $this->menus = array();         // List of menus to add
@@ -110,7 +110,7 @@ class modPrintIPP extends DolibarrModules
                                 'langs'=>'printipp',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                                 'position'=>100,
                                 'enabled'=>'$conf->printipp->enabled',
-                                'perms'=>'$user->rights->printipp->use',    // Use 'perms'=>'1' if you want your menu with no permission rules
+                                'perms'=>'$user->rights->printipp->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
                                 'target'=>'',
                                 'user'=>0);                 // 0=Menu for internal users, 1=external users, 2=both
 

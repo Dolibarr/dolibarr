@@ -44,6 +44,12 @@ if (!$mode) $mode='config';
 if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
+    if (GETPOST('PRINTIPP_ENABLED','alpha') == '1') $result=dolibarr_set_const($db, "PRINTIPP_ENABLED",1,'yesno',0,'',$conf->entity);
+    else
+    {
+        $result=dolibarr_del_const($db, "PRINTIPP_ENABLED",$conf->entity);
+    }
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PRINTIPP_HOST",GETPOST('PRINTIPP_HOST','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PRINTIPP_PORT",GETPOST('PRINTIPP_PORT','alpha'),'chaine',0,'',$conf->entity);
@@ -100,6 +106,27 @@ if ($mode=='config'&& $user->admin)
     print '<td>'.$langs->trans("AccountParameter").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';
     print "</tr>\n";
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td class="fieldrequired">';
+    print $langs->trans("PRINTIPP_ENABLED").'</td><td colspan="2" align="left">';
+
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('PRINTIPP_ENABLED');
+    }
+    else
+    {
+        if (empty($conf->global->PRINTIPP_ENABLED))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PRINTIPP_ENABLED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+         }
+         else
+         {
+             print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_PRINTIPP_ENABLED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+         }
+    }
+    print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
