@@ -146,9 +146,9 @@ print $langs->trans('CronWaitingJobs');
 print "</h2></p>";
 
 if (count($object->lines)>0) {
-	
+
 	print '<table width="100%" cellspacing="0" cellpadding="4" class="border">';
-	print '<tr class="liste_titre">';	
+	print '<tr class="liste_titre">';
 	$arg_url='&page='.$page.'&status='.$status.'&search_label='.$search_label;
 	print_liste_field_titre($langs->trans("CronLabel"),$_SERVEUR['PHP_SELF'],"t.label","",$arg_url,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CronTask"),'','',"",$arg_url,'',$sortfield,$sortorder);
@@ -161,15 +161,15 @@ if (count($object->lines)>0) {
 	print_liste_field_titre($langs->trans("CronLastResult"),$_SERVEUR['PHP_SELF'],"t.lastresult","",$arg_url,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVEUR['PHP_SELF'],"t.lastoutput","",$arg_url,'',$sortfield,$sortorder);
 	print '<td></td>';
-	
+
 	print '</tr>';
-	
+
 	print '<form method="get" action="'.$url_form.'" name="search_form">'."\n";
 	print '<input type="hidden" name="status" value="'.$status.'" >';
 	print '<tr class="liste_titre">';
-	
-	
-	
+
+
+
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_label" value="'.$search_label.'" size="10">';
 	print '</td>';
@@ -186,30 +186,30 @@ if (count($object->lines)>0) {
 	print '&nbsp; ';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
-	
+
 	print '</tr>';
 	print '</from>';
-	
-	
-	
+
+
+
 	// Boucler sur chaque job
 	$style='impair';
 	foreach($object->lines as $line){
 		// title profil
 		if ($style=='pair') {$style='impair';}
 		else {$style='pair';}
-		
+
 		print '<tr class="'.$style.'">';
-		
+
 		print '<td>';
 		if(!empty($line->label)) {
 			print '<a href="'.dol_buildpath('/cron/cron/card.php',1).'?id='.$line->id.'">'.$line->label.'</a>';
-		} 
+		}
 		else {
 			print $langs->trans('CronNone');
 		}
 		print '</td>';
-		
+
 		print '<td>';
 		if ($line->jobtype=='method') {
 			print $langs->trans('CronModule').':'.$line->module_name.'<BR>';
@@ -219,7 +219,7 @@ if (count($object->lines)>0) {
 			if(!empty($line->params)) {
 				print '<BR/>'.$langs->trans('CronArgs').':'. $line->params;
 			}
-			
+
 		}elseif ($line->jobtype=='command') {
 			print $langs->trans('CronCommand').':'. dol_trunc($line->command);
 			if(!empty($line->params)) {
@@ -227,55 +227,55 @@ if (count($object->lines)>0) {
 			}
 		}
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->datestart)) {print dol_print_date($line->datestart,'dayhourtext');} else {print $langs->trans('CronNone');}
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->dateend)) {print dol_print_date($line->dateend,'dayhourtext');} else {print $langs->trans('CronNone');}
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->datelastrun)) {print dol_print_date($line->datelastrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->datenextrun)) {print dol_print_date($line->datenextrun,'dayhourtext');} else {print $langs->trans('CronNone');}
 		print '</td>';
-		
+
 		print '<td>';
 		if($line->unitfrequency == "60") print $langs->trans('CronEach')." ".($line->frequency/$line->unitfrequency)." ".$langs->trans('Minutes');
 		if($line->unitfrequency == "3600") print $langs->trans('CronEach')." ".($line->frequency/$line->unitfrequency)." ".$langs->trans('Hours');
 		if($line->unitfrequency == "86400") print $langs->trans('CronEach')." ".($line->frequency/$line->unitfrequency)." ".$langs->trans('Days');
 		if($line->unitfrequency == "604800") print $langs->trans('CronEach')." ".($line->frequency/$line->unitfrequency)." ".$langs->trans('Weeks');
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->nbrun)) {print $line->nbrun;} else {print '0';}
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->lastresult)) {print dol_trunc($line->lastresult);} else {print $langs->trans('CronNone');}
 		print '</td>';
-		
+
 		print '<td>';
 		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),100);} else {print $langs->trans('CronNone');}
 		print '</td>';
-				
-		print '<td>';
+
+		print '<td align="center">';
 		if ($user->rights->cron->delete) {
-			print "<a href=\"".dol_buildpath('/cron/cron/list.php',1)."?id=".$line->id."&status=".$status."&action=delete\" title=\"".$langs->trans('CronDelete')."\"><img src=\"".dol_buildpath('/cron/img/delete.png',1)."\" alt=\"".$langs->trans('CronDelete')."\" /></a>";
+			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=delete\" title=\"".$langs->trans('CronDelete')."\">".img_delete()."</a> &nbsp;";
 		} else {
-			print "<a href=\"#\" title=\"".$langs->trans('NotEnoughPermissions')."\"><img src=\"".dol_buildpath('/cron/img/delete.png',1)."\" alt=\"".$langs->trans('NotEnoughPermissions')."\" /></a>";
+			print "<a href=\"#\" title=\"".$langs->trans('NotEnoughPermissions')."\">".img_delete()."</a> &nbsp; ";
 		}
 		if ($user->rights->cron->execute) {
-			print "<a href=\"".dol_buildpath('/cron/cron/list.php',1)."?id=".$line->id."&status=".$status."&action=execute\" title=\"".$langs->trans('CronExecute')."\"><img src=\"".dol_buildpath('/cron/img/execute.png',1)."\" alt=\"".$langs->trans('CronExecute')."\" /></a>";
+			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=execute\" title=\"".$langs->trans('CronExecute')."\">".img_picto('',"play")."</a>";
 		} else {
-			print "<a href=\"#\" title=\"".$langs->trans('NotEnoughPermissions')."\"><img src=\"".dol_buildpath('/cron/img/execute.png',1)."\" alt=\"".$langs->trans('NotEnoughPermissions')."\" /></a>";
+			print "<a href=\"#\" title=\"".$langs->trans('NotEnoughPermissions')."\">".img_picto('',"execute")."</a>";
 		}
 		print '</td>';
-		
+
 		print '</tr>';
 	}
 	print '</table>';
