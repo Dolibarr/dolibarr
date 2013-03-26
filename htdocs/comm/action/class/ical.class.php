@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006	Roman Ozana			<ozana@omdesign.cz>
  * Copyright (C) 2011	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,9 +55,15 @@ class ICal
     function read_file($file)
     {
         $this->file = $file;
-        $file_text = join("", file($file)); //load file
-        $file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
-
+        $file_text='';
+        
+        $tmparray=file($file);
+        if (is_array($tmparray))
+        {
+        	$file_text = join("", $tmparray); //load file
+        	$file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
+        }
+        
         return $file_text; // return all text
     }
 

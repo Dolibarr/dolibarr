@@ -75,24 +75,24 @@ class BoutiqueCommande
             $array = $this->db->fetch_array($result);
 
             $this->id          = $array["orders_id"];
-            $this->client_id   = stripslashes($array["customers_id"]);
-            $this->client_name = stripslashes($array["customers_name"]);
+            $this->client_id   = $array["customers_id"];
+            $this->client_name = $array["customers_name"];
 
-            $this->payment_method = stripslashes($array["payment_method"]);
+            $this->payment_method = $array["payment_method"];
 
             $this->date = $this->db->jdate($array["date_purchased"]);
 
-            $this->delivery_adr->name = stripslashes($array["delivery_name"]);
-            $this->delivery_adr->street = stripslashes($array["delivery_street_address"]);
-            $this->delivery_adr->zip = stripslashes($array["delivery_zipcode"]);
-            $this->delivery_adr->city = stripslashes($array["delivery_city"]);
-            $this->delivery_adr->country = stripslashes($array["delivery_country"]);
+            $this->delivery_adr->name = $array["delivery_name"];
+            $this->delivery_adr->street = $array["delivery_street_address"];
+            $this->delivery_adr->zip = $array["delivery_zipcode"];
+            $this->delivery_adr->city = $array["delivery_city"];
+            $this->delivery_adr->country = $array["delivery_country"];
 
-            $this->billing_adr->name = stripslashes($array["billing_name"]);
-            $this->billing_adr->street = stripslashes($array["billing_street_address"]);
-            $this->billing_adr->zip = stripslashes($array["billing_zipcode"]);
-            $this->billing_adr->city = stripslashes($array["billing_city"]);
-            $this->billing_adr->country = stripslashes($array["billing_country"]);
+            $this->billing_adr->name = $array["billing_name"];
+            $this->billing_adr->street = $array["billing_street_address"];
+            $this->billing_adr->zip = $array["billing_zipcode"];
+            $this->billing_adr->city = $array["billing_city"];
+            $this->billing_adr->country = $array["billing_country"];
 
             $this->db->free();
 
@@ -106,7 +106,7 @@ class BoutiqueCommande
             if ( $result )
             {
                 $num = $this->db->num_rows($result);
-				
+
 				$i=0;
                 while ($i < $num)
                 {

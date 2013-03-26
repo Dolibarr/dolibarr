@@ -65,7 +65,7 @@ class modBanque extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array("bank.php@compta/bank");
+        $this->config_page_url = array("bank.php");
 
 		// Dependancies
 		$this->depends = array();
@@ -159,7 +159,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON bu.url_id = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' AND ba.entity = '.$conf->entity;
-		$this->export_sql_end[$r] .=' ORDER BY b.datev, b.num_releve';
+		$this->export_sql_order[$r] .=' ORDER BY b.datev, b.num_releve';
 	}
 
 

@@ -30,15 +30,15 @@ class MenuManager
 {
 	var $db;
 	var $type_user;								// Put 0 for internal users, 1 for external users
-	var $atarget="";                            // Valeur du target a utiliser dans les liens
+	var $atarget="";                            // To store default target to use onto links
 	var $name="auguria";
-	
+
 	var $menu_array;
 	var $menu_array_after;
 
 	var $tabMenu;
-	
-	
+
+
     /**
      *  Constructor
      *
@@ -47,15 +47,24 @@ class MenuManager
      */
     function __construct($db, $type_user)
     {
-    	global $conf, $user, $langs;
-    	
     	$this->type_user=$type_user;
     	$this->db=$db;
-    	
-    	// On sauve en session le menu principal choisi
+    }
+
+    
+   	/**
+   	 * Load this->tabMenu
+   	 *
+   	 * @return	void
+   	 */
+   	function loadMenu()
+   	{
+    	global $conf, $user, $langs;
+
+   		// On sauve en session le menu principal choisi
     	if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
     	if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
-    	
+
     	// Read mainmenu and leftmenu that define which menu to show
     	if (isset($_GET["mainmenu"]))
     	{
@@ -69,13 +78,13 @@ class MenuManager
     		// On va le chercher en session si non defini par le lien
     		$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
     	}
-    	
+
     	if (isset($_GET["leftmenu"]))
     	{
     		// On sauve en session le menu principal choisi
     		$leftmenu=$_GET["leftmenu"];
     		$_SESSION["leftmenu"]=$leftmenu;
-    	
+
     		if ($_SESSION["leftmenuopened"]==$leftmenu)	// To collapse
     		{
     			//$leftmenu="";
@@ -89,12 +98,12 @@ class MenuManager
     		// On va le chercher en session si non defini par le lien
     		$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
     	}
-    	
+
     	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
     	$tabMenu=array();
-    	$menuArbo = new Menubase($db,'auguria');
-    	$menuArbo->menuLoad($mainmenu, $leftmenu, $type_user, 'auguria', $tabMenu);
-    	
+    	$menuArbo = new Menubase($this->db,'auguria');
+    	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
+
     	// Modules system tools
     	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
     	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
@@ -134,10 +143,10 @@ class MenuManager
 				));
     		}
     	}
-    	
+
     	$this->tabMenu=$tabMenu;
     }
-	
+
 
     /**
      *  Show menu
@@ -148,7 +157,7 @@ class MenuManager
 	function showmenu($mode)
 	{
     	global $conf;
-    	
+
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
         if ($this->type_user == 1)
@@ -156,11 +165,17 @@ class MenuManager
         	$conf->global->MAIN_SEARCHFORM_SOCIETE=0;
 	        $conf->global->MAIN_SEARCHFORM_CONTACT=0;
         }
-            
-        $res='ErrorBadParameterForMode';
-        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu);
-        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu);
 
+        $res='ErrorBadParameterForMode';
+        
+		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
+        $this->menu=new Menu();
+        
+        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
+        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
+
+        unset($this->menu);
+        
         return $res;
     }
 }

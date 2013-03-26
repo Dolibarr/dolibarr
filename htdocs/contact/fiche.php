@@ -140,7 +140,7 @@ if (empty($reshook))
         $object->zip			= $_POST["zipcode"];
         $object->town			= $_POST["town"];
         $object->country_id		= $_POST["country_id"];
-        $object->state_id       = $_POST["departement_id"];
+        $object->state_id       = $_POST["state_id"];
         $object->email			= $_POST["email"];
         $object->phone_pro		= $_POST["phone_pro"];
         $object->phone_perso	= $_POST["phone_perso"];
@@ -198,7 +198,7 @@ if (empty($reshook))
     {
         $result=$object->fetch($_GET["id"]);
 
-        $object->old_name      = $_POST["old_name"];
+        $object->old_lastname      = $_POST["old_lastname"];
         $object->old_firstname = $_POST["old_firstname"];
 
         $result = $object->delete();
@@ -227,7 +227,7 @@ if (empty($reshook))
 
             $object->oldcopy=dol_clone($object);
 
-            $object->old_name		= $_POST["old_name"];
+            $object->old_lastname	= $_POST["old_lastname"];
             $object->old_firstname	= $_POST["old_firstname"];
 
             $object->socid			= $_POST["socid"];
@@ -239,7 +239,7 @@ if (empty($reshook))
             $object->address		= $_POST["address"];
             $object->zip			= $_POST["zipcode"];
             $object->town			= $_POST["town"];
-            $object->state_id   	= $_POST["departement_id"];
+            $object->state_id   	= $_POST["state_id"];
             $object->country_id		= $_POST["country_id"];
 
             $object->email			= $_POST["email"];
@@ -265,7 +265,7 @@ if (empty($reshook))
 
             if ($result > 0)
             {
-                $object->old_name='';
+                $object->old_lastname='';
                 $object->old_firstname='';
                 $action = 'view';
             }
@@ -521,11 +521,18 @@ else
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
             		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-            		print $extrafields->showInputField($key,$value);
-            		print '</td></tr>'."\n";
+            		if ($extrafields->attribute_type[$key] == 'separate')
+            		{
+            			print $extrafields->showSeparator($key);
+            		}
+            		else
+            		{
+	            		print '<tr><td';
+	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	            		print '>'.$label.'</td><td colspan="3">';
+	            		print $extrafields->showInputField($key,$value);
+	            		print '</td></tr>'."\n";
+            		}
             	}
             }
 
@@ -585,7 +592,6 @@ else
             if (isset($_POST["country_id"]) || $object->country_id)
             {
 	            $tmparray=getCountry($object->country_id,'all');
-	            $object->pays         =	$tmparray['label'];
 	            $object->country_code =	$tmparray['code'];
 	            $object->country      =	$tmparray['label'];
             }
@@ -606,11 +612,11 @@ else
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').text("'.addslashes($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.addslashes($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.addslashes($objsoc->town).'");
-								$(\'select[name="country_id"]\').val("'.addslashes($objsoc->country_id).'");
-								$(\'select[name="state_id"]\').val("'.addslashes($objsoc->state_id).'");
+								$(\'textarea[name="address"]\').text("'.dol_escape_js($objsoc->address).'");
+								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
+								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
+								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'");
+								$(\'select[name="state_id"]\').val("'.dol_escape_js($objsoc->state_id).'");
             				});
 						})'."\n";
 				print '</script>'."\n";
@@ -621,7 +627,7 @@ else
             print '<input type="hidden" name="id" value="'.$id.'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="contactid" value="'.$object->id.'">';
-            print '<input type="hidden" name="old_name" value="'.$object->name.'">';
+            print '<input type="hidden" name="old_lastname" value="'.$object->lastname.'">';
             print '<input type="hidden" name="old_firstname" value="'.$object->firstname.'">';
             if (! empty($backtopage)) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
@@ -737,11 +743,18 @@ else
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
             		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-            		print $extrafields->showInputField($key,$value);
-            		print "</td></tr>\n";
+            		if ($extrafields->attribute_type[$key] == 'separate')
+            		{
+            			print $extrafields->showSeparator($key);
+            		}
+            		else
+            		{
+	            		print '<tr><td';
+	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	            		print '>'.$label.'</td><td colspan="3">';
+	            		print $extrafields->showInputField($key,$value);
+	            		print "</td></tr>\n";
+            		}
             	}
             }
 
@@ -890,7 +903,7 @@ else
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
         $img=picto_from_langcode($object->country_code);
         if ($img) print $img.' ';
-        print $object->pays;
+        print $object->country;
         print '</td></tr>';
 
         // State
@@ -949,9 +962,16 @@ else
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
         		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-        		print '<tr><td>'.$label.'</td><td colspan="3">';
-        		print $extrafields->showOutputField($key,$value);
-        		print "</td></tr>\n";
+        		if ($extrafields->attribute_type[$key] == 'separate')
+        		{
+        			print $extrafields->showSeparator($key);
+        		}
+        		else
+        		{
+	        		print '<tr><td>'.$label.'</td><td colspan="3">';
+	        		print $extrafields->showOutputField($key,$value);
+	        		print "</td></tr>\n";
+        		}
         	}
         }
 

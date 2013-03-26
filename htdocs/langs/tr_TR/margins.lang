@@ -1,0 +1,53 @@
+# Dolibarr language file - en_US - marges
+CHARSET=UTF-8
+
+Module59000Name=Oranlar
+Module59000Desc=Kar oranı yönetimi
+Margin=Oran
+Margins=Oranlar
+TotalMargin=Toplam Oran
+MarginOnProducts=Oran / Ürünler
+MarginOnServices=Oran / Hizmetler
+MarginRate=Oran değeri
+MarkRate=Yayınlanmış fiyat
+DisplayMarginRates=Oran değerlerini göster
+DisplayMarkRates=Yayınlanmış fiyatları göster
+InputPrice=Giriş fiyatı
+
+margin=Kar oranı yönetimi
+margesSetup=Kar oranı yönetimi ayarı
+
+MarginDetails=Oran ayrıntıları
+
+ProductMargins=Ürün oranları
+CustomerMargins=Müşteri oranları
+AgentMargins=Temsilci oranları
+
+ProductService=Ürün veya Hizmet
+AllProducts=Bütün ürün ve hizmetler
+ChooseProduct/Service=Ürün veya hizmet seç
+CommercialAgent=Ticari temsilci
+
+StartDate=İlk tarih
+EndDate=Son tarih
+Launch=Başlat
+
+ForceBuyingPriceIfNull=Boşsa alış fiyatına zorla
+ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Genel indirimle için oran yöntemi
+UseDiscountAsProduct=Ürün olarak
+UseDiscountAsService=Hizmet olarak
+UseDiscountOnTotal=Ara toplamla
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
+
+MARGIN_TYPE=Oran türü
+MargeBrute=Ham oran
+MargeNette=Net oran
+MARGIN_TYPE_DETAILS=Ham oran : Satış fiyatı - Alış fiyatı<br/>Net oran : Satış fiyatı - Maliyet fiyatı
+
+BuyingCost=Maliyet fiyatı
+UnitCharges=Birim masrafları
+Charges=Masraflar
+
+AgentContactType=Komisyonlandırmada kullanılan kişi tipi
+AgentContactTypeDetails=Ticari temsilci ile ilişkilendirilecek kişi türünü (faturalarla bağlantılı) tanımlayın

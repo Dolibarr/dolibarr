@@ -30,6 +30,12 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 $langs->load("dict");
 
+if ($langs->defaultlang != 'en_US')
+{
+	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
+	exit;
+}
+
 if (empty($user->id))
 {
 	print "Load permissions for admin user nb 1\n";

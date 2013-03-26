@@ -86,78 +86,6 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	}
 
 
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   Object			$object             Main object to use as data source
-     * @param   Translate		$outputlangs        Lang object to use for output
-     * @return	array								Array of substitution
-     */
-    function get_substitutionarray_object($object,$outputlangs)
-    {
-        global $conf;
-
-        $resarray=array(
-            'object_id'=>$object->id,
-            'object_ref'=>$object->ref,
-            'object_ref_ext'=>$object->ref_ext,
-        	'object_ref_customer'=>$object->ref_client,
-        	'object_date'=>dol_print_date($object->date,'day'),
-        	'object_date_end'=>dol_print_date($object->fin_validite,'day'),
-        	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
-            'object_date_modification'=>dol_print_date($object->date_modification,'day'),
-            'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
-            'object_payment_mode_code'=>$object->mode_reglement_code,
-        	'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-        	'object_payment_term_code'=>$object->cond_reglement_code,
-        	'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-        	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
-            'object_total_vat'=>price($object->total_tva,0,$outputlangs),
-            'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-            'object_total_discount_ht' => price($object->getTotalDiscount(), 0, $outputlangs),
-            'object_vatrate'=>vatrate($object->tva),
-            'object_note_private'=>$object->note,
-            'object_note'=>$object->note_public,
-        );
-        
-        // Add vat by rates
-        foreach ($object->lines as $line)
-        {
-        	if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
-        	$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
-        }
-        
-        return $resarray;
-    }
-
-    /**
-     *	Define array with couple substitution key => substitution value
-     *
-     *	@param  array			$line				Array of lines
-     *	@param  Translate		$outputlangs        Lang object to use for output
-     *	@return	array								Substitution array
-     */
-    function get_substitutionarray_lines($line,$outputlangs)
-    {
-        global $conf;
-
-        return array(
-            'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
-            'line_product_ref'=>$line->product_ref,
-            'line_product_label'=>$line->product_label,
-            'line_desc'=>$line->desc,
-            'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-            'line_up'=>price($line->subprice, 0, $outputlangs),
-            'line_qty'=>$line->qty,
-            'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-            'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
-            'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
-            'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
-            'line_date_start'=>$line->date_start,
-            'line_date_end'=>$line->date_end
-        );
-    }
-
 	/**
 	 *	Return description of a module
 	 *
@@ -441,7 +369,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					}
 				}
 				// Replace tags of object + external modules
-			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
+			    $tmparray=$this->get_substitutionarray_propal($object,$outputlangs);
+			    //print_r($tmparray); exit;
 			    complete_substitutions_array($tmparray, $outputlangs, $object);
                 foreach($tmparray as $key=>$value)
                 {
@@ -466,7 +395,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                     $listlines = $odfHandler->setSegment('lines');
                     foreach ($object->lines as $line)
                     {
-                        $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
+                        $tmparray=$this->get_substitutionarray_propal_lines($line,$outputlangs);
                         complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
                         foreach($tmparray as $key => $val)
                         {

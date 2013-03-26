@@ -43,6 +43,8 @@ if ($user->societe_id > 0)
  *	View
  */
 
+$userstatic=new User($db);
+
 llxHeader();
 
 if ($socid > 0)
@@ -135,7 +137,7 @@ if ($socid > 0)
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 
-				print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
+				print "<td align=\"center\">".dol_print_date($fac->date,'day')."</td>\n";
 				print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id.'">'.img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
 
 				print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
@@ -146,8 +148,12 @@ if ($socid > 0)
 				print '<td align="right">&nbsp;</td>';
 				print '<td align="right">'.price($solde)."</td>\n";
 
-				// Auteur
-				print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
+				// Author
+				$userstatic->id=$objf->userid;
+				$userstatic->login=$objf->login;
+				print '<td nowrap="nowrap" align="right">';
+				print $userstatic->getLoginUrl(1);
+				print '</td>';
 
 				print "</tr>\n";
 
@@ -172,7 +178,7 @@ if ($socid > 0)
 						$objp = $db->fetch_object($resqlp);
 						//$var=!$var;
 						print "<tr $bc[$var]>";
-						print '<td align="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
+						print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 						print '<td>';
 						print '&nbsp; &nbsp; &nbsp; '; // Decalage
 						print '<a href="paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$langs->trans("Payment").' '.$objp->rowid.'</td>';
@@ -182,8 +188,12 @@ if ($socid > 0)
 						$solde = $solde - $objp->amount;
 						print '<td align="right">'.price($solde)."</td>\n";
 
-						// Auteur
-						print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
+						// Author
+						$userstatic->id=$objp->userid;
+						$userstatic->login=$objp->login;
+						print '<td nowrap="nowrap" align="right">';
+						print $userstatic->getLoginUrl(1);
+						print '</td>';
 
 						print '</tr>';
 
@@ -214,5 +224,4 @@ else
 llxFooter();
 
 $db->close();
-
 ?>

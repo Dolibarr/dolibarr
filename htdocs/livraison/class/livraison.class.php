@@ -334,10 +334,10 @@ class Livraison extends CommonObject
 
 		if ($user->rights->expedition->livraison->valider)
 		{
-			if (! empty($conf->global->LIVRAISON_ADDON))
+			if (! empty($conf->global->LIVRAISON_ADDON_NUMBER))
 			{
 				// Definition du nom de module de numerotation de commande
-				$modName = $conf->global->LIVRAISON_ADDON;
+				$modName = $conf->global->LIVRAISON_ADDON_NUMBER;
 
 				if (is_readable(DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php'))
 				{

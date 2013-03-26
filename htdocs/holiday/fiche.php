@@ -319,7 +319,7 @@ if ($action == 'confirm_send')
             }
 
             $message.= "\n";
-            $message.= "- ".$langs->transnoentitiesnoconv("Name")." : ".$expediteur->firstname." ".$expediteur->lastname."\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("Name")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Period")." : ".dol_print_date($cp->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($cp->date_fin,'day')."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
@@ -400,7 +400,7 @@ if($action == 'confirm_valid')
             $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
             $message.= "Votre demande de congés payés du ".dol_print_date($cp->date_debut,'day')." au ".dol_print_date($cp->date_fin,'day')." vient d'être validée!\n";
-            $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".$expediteur->firstname." ".$expediteur->lastname."\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
 
@@ -469,7 +469,7 @@ if ($action == 'confirm_refuse')
 	            $message.= "\n";
                 $message.= "Votre demande de congés payés ".dol_print_date($cp->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($cp->date_fin,'day')." vient d'être refusée pour le motif suivant :\n";
                 $message.= $_POST['detail_refuse']."\n\n";
-	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".$expediteur->firstname." ".$expediteur->lastname."\n";
+	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
     	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
                 $message.= "\n";
 
@@ -539,7 +539,7 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
            	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
             $message.= "Votre demande de congés ".dol_print_date($cp->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($cp->date_fin,'day')." va été annulée.\n";
-            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".$expediteur->firstname." ".$expediteur->lastname."\n";
+            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
    	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
 

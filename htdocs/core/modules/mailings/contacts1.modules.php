@@ -200,7 +200,7 @@ class mailing_contacts1 extends MailingTargets
 
 		// La requete doit retourner: id, email, fk_contact, name, firstname, other
 		$sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact,";
-		$sql.= " c.name as name, c.firstname as firstname, c.civilite,";
+		$sql.= " c.lastname, c.firstname, c.civilite,";
 		$sql.= " s.nom as companyname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -238,7 +238,7 @@ class mailing_contacts1 extends MailingTargets
 					$cibles[$j] = array(
                     		'email' => $obj->email,
                     		'fk_contact' => $obj->fk_contact,
-                    		'name' => $obj->name,
+                    		'lastname' => $obj->lastname,
                     		'firstname' => $obj->firstname,
                     		'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.

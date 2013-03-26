@@ -15,9 +15,7 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ============================================================================
--- Association de personnes/societes avec un element de la base (contrat, projet, propal).
--- Permet de definir plusieur type d'intervenant sur un element.
--- i.e. commercial, adresse de facturation, prestataire...
+-- Associate addresses with elements (contract, project, proposal, ...).
 -- ============================================================================
 
 create table llx_element_contact

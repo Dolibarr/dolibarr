@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
 
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="p.name";
+if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
@@ -80,10 +81,6 @@ else if ($type == "o")
 	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche="";
 }
-if ($view == 'phone')  { $text=" (Vue Telephones)"; }
-if ($view == 'mail')   { $text=" (Vue EMail)"; }
-if ($view == 'recent') { $text=" (Recents)"; }
-if (! empty($text)) $titre.= " $text";
 
 if (GETPOST('button_removefilter'))
 {
@@ -114,7 +111,7 @@ llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Em
 $form=new Form($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql.= " p.rowid as cidp, p.name as lastname, p.firstname, p.poste, p.email,";
+$sql.= " p.rowid as cidp, p.lastname as lastname, p.firstname, p.poste, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv, p.tms,";
 $sql.= " cp.code as country_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -142,11 +139,11 @@ else
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
 
-if ($search_lastname)        // filtre sur le nom
+if ($search_lastname)        // filter on lastname
 {
-    $sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+    $sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
 }
-if ($search_firstname)     // filtre sur le prenom
+if ($search_firstname)     // filter on firstname
 {
     $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
@@ -200,7 +197,11 @@ else if ($type == "p")        // filtre sur type
 }
 if ($sall)
 {
-    $sql .= " AND (p.name LIKE '%".$db->escape($sall)."%' OR p.firstname LIKE '%".$db->escape($sall)."%' OR p.email LIKE '%".$db->escape($sall)."%')";
+    // For natural search
+    $scrit = explode(' ', $sall);
+    foreach ($scrit as $crit) {
+        $sql .= " AND (p.lastname LIKE '%".$db->escape($crit)."%' OR p.firstname LIKE '%".$db->escape($crit)."%' OR p.email LIKE '%".$db->escape($crit)."%')";
+    }
 }
 if (! empty($socid))
 {
@@ -256,21 +257,14 @@ if ($result)
 
     // Ligne des titres
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("PostOrFunction"),$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
-    if ($view == 'phone')
-    {
-        print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Mobile"),$_SERVER["PHP_SELF"],"p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
-    }
-    else
-    {
-        print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
-    }
+    print_liste_field_titre($langs->trans("Phone"),$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Mobile"),$_SERVER["PHP_SELF"],"p.phone_mob", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Fax"),$_SERVER["PHP_SELF"],"p.fax", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"p.email", $begin, $param, '', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ContactVisibility"),$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print '<td class="liste_titre">&nbsp;</td>';
@@ -293,27 +287,18 @@ if ($result)
         print '<input class="flat" type="text" name="search_societe" size="9" value="'.$search_societe.'">';
         print '</td>';
     }
-    if ($view == 'phone')
-    {
-        print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_phonepro" size="9" value="'.$search_phonepro.'">';
-        print '</td>';
-        print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_phonemob" size="9" value="'.$search_phonemob.'">';
-        print '</td>';
-        print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_fax" size="9" value="'.$search_fax.'">';
-        print '</td>';
-    }
-    else
-    {
-        print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_phone" size="9" value="'.$search_phone.'">';
-        print '</td>';
-        print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_email" size="9" value="'.$search_email.'">';
-        print '</td>';
-    }
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_phonepro" size="8" value="'.$search_phonepro.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_phonemob" size="8" value="'.$search_phonemob.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_fax" size="8" value="'.$search_fax.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_email" size="8" value="'.$search_email.'">';
+    print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="center">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
@@ -365,22 +350,14 @@ if ($result)
             print '</td>';
         }
 
-        if ($view == 'phone')
-        {
-            // Phone
-            print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
-            // Phone mobile
-            print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
-            // Fax
-            print '<td>'.dol_print_phone($obj->fax,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
-        }
-        else
-        {
-            // Phone
-            print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
-            // EMail
-            print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
-        }
+        // Phone
+        print '<td>'.dol_print_phone($obj->phone,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+        // Phone mobile
+        print '<td>'.dol_print_phone($obj->phone_mobile,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+        // Fax
+        print '<td>'.dol_print_phone($obj->fax,$obj->country_code,$obj->cidp,$obj->socid,'AC_TEL').'</td>';
+        // EMail
+        print '<td>'.dol_print_email($obj->email,$obj->cidp,$obj->socid,'AC_EMAIL',18).'</td>';
 
 		// Date
 		print '<td align="center">'.dol_print_date($db->jdate($obj->tms),"day").'</td>';

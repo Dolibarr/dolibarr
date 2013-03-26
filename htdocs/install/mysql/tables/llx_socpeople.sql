@@ -26,11 +26,11 @@ create table llx_socpeople
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   civilite			varchar(6),
-  name				varchar(50),
+  lastname			varchar(50),
   firstname			varchar(50),
   address			varchar(255),
-  cp				varchar(25),
-  ville				varchar(255),
+  zip				varchar(25),
+  town				varchar(255),
   fk_departement	integer,
   fk_pays			integer        DEFAULT 0,
   birthday			date,

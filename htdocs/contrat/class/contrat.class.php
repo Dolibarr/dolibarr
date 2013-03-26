@@ -283,8 +283,25 @@ class Contrat extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
+		
+		// Definition du nom de module de numerotation de commande
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socid);
+		
+		// Class of company linked to order
+		$result=$soc->set_as_client();
+		
+		// Define new ref
+		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+		{
+			$num = $this->getNextNumRef($soc);
+		}
+		else
+		{
+			$num = $this->ref;
+		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$num."', statut = 1";
 		$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
 		$resql = $this->db->query($sql);
@@ -632,14 +649,16 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref, entity)";
+		$sql.= " ref, entity, note, note_public)";
 		$sql.= " VALUES (".$this->db->idate($now).",".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
-		$sql.= ",".($this->fk_projet>0?$this->fk_projet:"NULL");
+		$sql.= ",".($this->fk_project>0?$this->fk_project:"NULL");
 		$sql.= ", ".(dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
 		$sql.= ", ".$conf->entity;
+		$sql.= ", ".(!empty($this->note)?("'".$this->db->escape($this->note)."'"):"NULL");
+		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -647,6 +666,16 @@ class Contrat extends CommonObject
 			$error=0;
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
+			
+			// Mise a jour ref
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+			if ($this->db->query($sql))
+			{
+				if ($this->id)
+				{
+					$this->ref="(PROV".$this->id.")";
+				}
+			}
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
 			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
@@ -667,6 +696,12 @@ class Contrat extends CommonObject
 
 				if (! $error)
 				{
+		            // Add linked object
+		            if (! $error && $this->origin && $this->origin_id)
+		            {
+		                $ret = $this->add_object_linked();
+		                if (! $ret)	dol_print_error($this->db);
+		            }
 					$this->db->commit();
 					return $this->id;
 				}

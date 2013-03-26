@@ -118,7 +118,7 @@ class Facturation
         }
 
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',$product->type);
+        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',$product->type,0);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];

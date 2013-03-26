@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +57,8 @@ $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 
 //$objPHPExcel = new writeexcel_workbook($fname);
 $objPHPExcel = new PHPExcel();
-$objPHPExcel->getProperties()->setCreator("Maarten Balliauw");
-$objPHPExcel->getProperties()->setLastModifiedBy("Maarten Balliauw");
+$objPHPExcel->getProperties()->setCreator("Dolibarr script");
+$objPHPExcel->getProperties()->setLastModifiedBy("Dolibarr script");
 $objPHPExcel->getProperties()->setTitle("Test Document");
 $objPHPExcel->getProperties()->setSubject("Test Document");
 $objPHPExcel->getProperties()->setDescription("Test document, generated using PHP classes.");
@@ -70,7 +70,7 @@ $objPHPExcel->getActiveSheet()->setTitle('Contacts');
 
 //$page->set_column(0,4,18); // A
 
-$sql = "SELECT distinct c.name as lastname, c.firstname, c.email, s.nom as name";
+$sql = "SELECT distinct c.lastname, c.firstname, c.email, s.nom as name";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = c.fk_soc";
 

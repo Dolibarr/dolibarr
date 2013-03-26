@@ -306,7 +306,7 @@ if ($resql)
 		print '<td>';
 		if ($obj->fk_contact > 0)
 		{
-			$contactstatic->name=$obj->name;
+			$contactstatic->lastname=$obj->lastname;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
 			print $contactstatic->getNomUrl(1,'',10);

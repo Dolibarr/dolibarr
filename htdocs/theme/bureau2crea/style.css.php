@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2013	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2010	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand       <philippe.grand@atoo-net.com>
@@ -59,6 +59,10 @@ $fontsizesmaller=empty($conf->browser->phone)?'11':'11';
 
 $fontlist='arial,tahoma,verdana,helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+
+$path='';    			// This value may be used in future for external module to overwrite theme
+$theme='bureau2crea';	// Value of theme
+if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
 ?>
 
@@ -139,8 +143,11 @@ textarea:disabled {
 	background:#ddd;
 }
 
+
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
+input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnGreen.jpg' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnGreen.jpg',1); ?>);
     display: block;
     height: 18px;
     line-height: 16px;
@@ -157,7 +164,7 @@ input.button[type=submit] {
 .button {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/button_bg.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
 	background-position: bottom;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
@@ -166,7 +173,7 @@ input.button[type=submit] {
     font-family: <?php print $fontlist ?>;
 	color: #222244;
 	border: 0px;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/button_bg.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
 	background-position: bottom;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px;
@@ -174,7 +181,7 @@ input.button[type=submit] {
 .buttonajax {
     font-family: <?php print $fontlist ?>;
 	border: 0px;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/button_bg.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>);
 	background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -313,7 +320,7 @@ div.tmenu {
     padding: 0px;
     margin: 5px 0px 10px 0px;
     font-size: 13px;
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>);
+    background-image : url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_mainNav.jpg',1); ?>);
     background-repeat: no-repeat;
     background-color: #996644;
     height: 22px;
@@ -338,56 +345,56 @@ div.mainmenu {
 
 /*
 div.mainmenu.home{
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/home.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/company.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
 }
 
 div.mainmenu.products {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/products.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
 	margin-left: 10px;
 }
 
 div.mainmenu.commercial {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/commercial.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
 }
 
 div.mainmenu.accountancy {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/money.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
 }
 
 div.mainmenu.bank {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/bank.png' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1); ?>);
 }
 
 div.mainmenu.project {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/project.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
 }
 
 div.mainmenu.tools {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/tools.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
 }
 
 div.mainmenu.members {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/members.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
 }
 
 div.mainmenu.shop {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/shop.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
 }
 
 div.mainmenu.agenda {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/agenda.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
 }
 
 div.mainmenu.ecm {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/ecm.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
 }
 
 div.mainmenu.cashdesk {
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/pointofsale.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
 }
 */
 <?php
@@ -423,7 +430,7 @@ foreach($mainmenuusedarray as $val)
 	{
 		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 		{
-			$url=DOL_URL_ROOT.'/'.$val.'/img/'.$val.'.png';
+			$url=dol_buildpath($path.'/'.$val.'/img/'.$val.'.png',1);
 			$found=1;
 			break;
 		}
@@ -431,7 +438,7 @@ foreach($mainmenuusedarray as $val)
 	// Img file not found
 	if (! $found && $generic <= 4)
 	{
-		$url=DOL_URL_ROOT."/theme/bureau2crea/img/menus/generic".$generic.".png";
+		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.'.png',1);
 		$found=1;
 		$generic++;
 	}
@@ -506,7 +513,7 @@ li.tmenu .tmenusel, li.tmenusel .tmenusel {
 }
 
 li.tmenusel {
-    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnD.jpg' ?>);
+    background-image : url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_tmenusel_btnD.jpg',1); ?>);
     background-position: right;
 }
 
@@ -652,7 +659,7 @@ div.blockvmenupair
 	border-spacing: 0px;
 	padding: 0px;
 	width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 
@@ -663,7 +670,7 @@ div.blockvmenuimpair
 	border-spacing: 0px;
 	padding: 0px;
 	width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 
@@ -708,7 +715,7 @@ div.blockvmenusearch
 	margin: 3px 0px 15px 0px;
 	padding: 25px 0px 2px 2px;
 	width: 180px;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftMenu.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
 }
@@ -743,7 +750,7 @@ div.blockvmenubookmarks
 	border-spacing: 0px;
 	padding: 0px;
 	width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_leftCategorie.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftCategorie.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
     margin-bottom: 15px;
@@ -841,7 +848,7 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tmenu2.png' ?>) !important;
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1); ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
@@ -1044,7 +1051,7 @@ div.tabs {
     margin: 0px 0px 10px 0px;
     text-align: left;
     width: 100%;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_navHorizontal.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_navHorizontal.jpg',1); ?>);
     height: 25px;
     background-repeat: repeat-x;
     background-position: left;
@@ -1093,7 +1100,7 @@ div.tabs a.tab#active {
 
 div.tabs a.tab span {
 	padding: 0px 10px 0px 10px;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_ssmenu_btnG.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_ssmenu_btnG.jpg',1); ?>);
     background-position: left;
     background-repeat: no-repeat;
     display: block;
@@ -1102,7 +1109,7 @@ div.tabs a.tab span {
 }
 
 div.tabs a.tab#active span {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_ssmenusel_btnG.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_ssmenusel_btnG.jpg',1); ?>);
 }
 
 div.tabs a.tab:hover {
@@ -1120,7 +1127,7 @@ div.tabs a.tab:hover {
 div.tabBar {
     color: #234046;
     margin: 0px 0px 10px 0px;
-    background: #dee7ec url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/tab_background.png' ?>) repeat-x;
+    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
 }
 
 div.tabsAction {
@@ -1241,7 +1248,7 @@ span.tabspan {
 .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnBlue.jpg',1); ?>) repeat-x;
 	color: #FFF !important;
 	padding: 0px 10px 0px 10px;
 	margin: 0px 10px 0px 10px;
@@ -1259,7 +1266,7 @@ span.tabspan {
 }
 
 .butActionDelete    {
-	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnRed.jpg' ?>) repeat-x !important;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnRed.jpg',1); ?>) repeat-x !important;
     color: #FFF;
 }
 
@@ -1272,7 +1279,7 @@ span.tabspan {
 .butActionRefused {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
 	font-weight: bold;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_btnBlue.jpg' ?>) repeat-x;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_btnBlue.jpg',1); ?>) repeat-x;
 	color: #AAA !important;
 	padding: 0px 10px 0px 10px;
 	margin: 0px 10px 0px 10px;
@@ -1307,7 +1314,7 @@ span.butAction, span.butActionDelete {
 
 /*
 #undertopmenu {
-background-image: url("<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/gradient.gif' ?>");
+background-image: url("<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/gradient.gif',1); ?>");
 background-repeat: repeat-x;
 }
 */
@@ -1414,7 +1421,7 @@ table.nobordernopadding td {
 /* For lists */
 
 table.liste {
-    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
+    /*background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title.jpg',1); ?>);*/
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
@@ -1425,7 +1432,7 @@ padding: 0px 5px;
 }
 
 table.noborder {
-    /*background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);*/
+    /*background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title.jpg',1); ?>);*/
     background-repeat: no-repeat;
     background-position: top right;
     vertical-align: text-top;
@@ -1444,7 +1451,7 @@ tr.liste_titre {
 }
 
 tr.liste_titre {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title.jpg',1); ?>);
     background-position: top right;
 }
 
@@ -1453,7 +1460,7 @@ th.liste_titre_sel, td.liste_titre_sel, th.liste_titre {
 }
 
 tr.liste_titre {
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_centerBlock-title2.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title2.jpg',1); ?>);
 }
 
 tr.liste_total {
@@ -1517,7 +1524,7 @@ input.liste_titre {
 tr.liste_total td {
 border-top: 1px solid #DDDDDD;
 background: #F0F0F0;
-/* background-image: url(<?php echo DOL_URL_ROOT.'/theme/login_background.png' ?>); */
+/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
@@ -1580,7 +1587,7 @@ tr.pair td.nohover {
 tr.box_titre {
 	height: 24px;
 	background: #7699A9;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/menus/trtitle.png' ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1); ?>);
 	background-repeat: repeat-x;
 	color: #FFFFFF;
 	font-family: <?php print $fontlist ?>, sans-serif;
@@ -1892,7 +1899,7 @@ li.cal_event       { border: none; list-style-type: none; }
 /* ============================================================================== */
 
 .ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em; }
-.ui-autocomplete-loading { background: white url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/working.gif' ?>) right center no-repeat; }
+.ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1); ?>) right center no-repeat; }
 
 
 /* ============================================================================== */
@@ -1900,12 +1907,12 @@ li.cal_event       { border: none; list-style-type: none; }
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
-	background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/edit.png',1) ?>) right top no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
 
 .editkey_datepicker {
-	background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/calendar.png',1) ?>) right center no-repeat;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
 	cursor: pointer;
 }
 
@@ -2101,7 +2108,7 @@ span.cke_skin_kama { padding: 0 !important; }
 a.cke_dialog_ui_button
 {
     font-family: <?php print $fontlist ?> !important;
-	background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/button_bg.png' ?>) !important;
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
 	padding: 0.1em 0.7em !important;
@@ -2189,7 +2196,7 @@ div#parameterBox {
     height: auto;
     border: 1px solid #666;
     border-top: 2px solid #842F00;
-    background-image: url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_connectionBox.jpg' ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_connectionBox.jpg',1); ?>);
     background-repeat: no-repeat;
     background-position: top center;
     }

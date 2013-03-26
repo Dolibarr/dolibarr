@@ -75,13 +75,13 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
 print '<br>';
 
-print $langs->trans("AgendaSetupOtherDesc")."<br>\n";
-print "<br>\n";
 
 $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'xcal', $langs->trans("Agenda"));
 
+print $langs->trans("AgendaSetupOtherDesc")."<br>\n";
+print "<br>\n";
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

@@ -336,7 +336,6 @@ class FactureRec extends Facture
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_ttc        = $objp->total_ttc;
-				$line->export_compta    = $objp->fk_export_compta;
 				$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->rang 			= $objp->rang;
 				$line->special_code 	= $objp->special_code;

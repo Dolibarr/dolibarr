@@ -200,7 +200,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf,$langs,$object,$head,$h,'trip_stats');
+complete_head_from_modules($conf,$langs,null,$head,$h,'trip_stats');
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 

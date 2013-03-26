@@ -37,10 +37,8 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 
 	var $id;
-	var $civilite_id;  // In fact we stor civility_code
+	var $civilite_id;  // In fact we store civility_code
     var $lastname;
-	var $name;         // TODO deprecated
-	var $nom;          // TODO deprecated
 	var $firstname;
 	var $address;
 	var $zip;
@@ -53,8 +51,6 @@ class Contact extends CommonObject
 	var $state_code;		    // Code of department
 	var $state;			        // Label of department
 
-	var $fk_pays;				// deprecated
-	var $pays;					// deprecated
 	var $country_id;			// Id of country
 	var $country_code;			// Code of country
 	var $country;				// Label of country
@@ -222,7 +218,7 @@ class Contact extends CommonObject
 		$this->fax=trim($this->fax);
 		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
+		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 
 		$this->db->begin();
@@ -249,7 +245,7 @@ class Contact extends CommonObject
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
-		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"null");
+		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
 		$sql .= " WHERE rowid=".$id;
 
 		dol_syslog(get_class($this)."::update sql=".$sql,LOG_DEBUG);
@@ -490,7 +486,7 @@ class Contact extends CommonObject
 		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
-		$sql.= " s.nom as socname, s.address as socaddress, s.cp as soccp, s.town as soccity, s.default_lang as socdefault_lang";
+		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
@@ -522,10 +518,8 @@ class Contact extends CommonObject
 				$this->departement		= $obj->state;	           // deprecated
 				$this->state			= $obj->state;
 
-				$this->fk_pays			= $obj->country_id;
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
-				$this->pays				= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 				$this->country			= ($obj->country_id > 0)?$langs->transnoentitiesnoconv("Country".$obj->country_code):'';
 
 				$this->socid			= $obj->fk_soc;

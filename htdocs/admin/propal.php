@@ -31,7 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 $langs->load("admin");
 $langs->load("errors");
 $langs->load('other');
@@ -214,6 +214,7 @@ else if ($action == 'setmod')
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
+
 llxHeader('',$langs->trans("PropalSetup"));
 
 $form=new Form($db);
@@ -222,6 +223,10 @@ $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
+
+$head = propal_admin_prepare_head(null);
+
+dol_fiche_head($head, 'general', $langs->trans("Propales"), 0, 'propal');
 
 /*
  *  Module numerotation

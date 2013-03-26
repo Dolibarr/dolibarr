@@ -54,7 +54,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 $limit = $conf->liste_limit;
 
-$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.rowid, l.fk_code_ventilation,";
+$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, f.total as price, l.rowid, l.fk_code_ventilation,";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql.= " , ".MAIN_DB_PREFIX."facturedet as l";

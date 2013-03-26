@@ -25,9 +25,16 @@
     		var size = jQuery("#size");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
+    		var default_value = jQuery("#default_value");
     		<?php
-    		if(!GETPOST('type') == "select") 
+    		if(GETPOST('type') != "select") 
     		{
+    			print 'jQuery("#value_choice").hide();';
+    		}
+    		
+    		if (GETPOST('type') == "separate")
+    		{
+    			print "jQuery('#size, #unique, #required, #default_value').val('').attr('disabled','disabled');";
     			print 'jQuery("#value_choice").hide();';
     		}
     		?>
@@ -41,6 +48,7 @@
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
+    		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields('');
@@ -55,16 +63,16 @@
 <input type="hidden" name="action" value="add">
 
 <table summary="listofattributes" class="border centpercent">
+<!-- Type -->
+<tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
+<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
+</td></tr>
 <!-- Position -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOST('pos'); ?>"></td></tr>
 <!-- Label -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
 <!-- Code -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?> (<?php echo $langs->trans("AlphaNumOnlyCharsAndNoSpace"); ?>)</td><td class="valeur"><input type="text" name="attrname" size="10" value="<?php echo GETPOST('attrname'); ?>"></td></tr>
-<!-- Type -->
-<tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
-</td></tr>
+<tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?> (<?php echo $langs->trans("AlphaNumOnlyCharsAndNoSpace"); ?>)</td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"></td></tr>
 <!--  Value (for select list / radio) -->
 <tr id="value_choice">
 <td>
@@ -75,7 +83,7 @@
 </td>
 </tr>
 <!-- Default Value -->
-<tr><td><?php echo $langs->trans("DefaultValue"); ?></td><td class="valeur"><input id="default_value" type="text" name=""default_value"" size="5" value="<?php echo (GETPOST('"default_value"')?GETPOST('"default_value"'):''); ?>"></td></tr>
+<tr><td><?php echo $langs->trans("DefaultValue"); ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo (GETPOST('"default_value"')?GETPOST('"default_value"'):''); ?>"></td></tr>
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size')?GETPOST('size'):''); ?>"></td></tr>
 <!-- Unique -->

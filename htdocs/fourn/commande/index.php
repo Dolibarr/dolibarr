@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Security check
 $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
+$result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -276,7 +276,7 @@ if ($resql)
         print "<tr $bc[$var]>";
         print '<td>';
         $userstatic->id=$obj->rowid;
-        $userstatic->lastname=$obj->name;
+        $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
         print $userstatic->getNomUrl(1);
         print '</td>';

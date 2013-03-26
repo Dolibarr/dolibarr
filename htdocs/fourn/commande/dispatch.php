@@ -44,7 +44,7 @@ $langs->load('stocks');
 // Security check
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $id,'');
+$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 if (empty($conf->stock->enabled))
 {
@@ -83,6 +83,19 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 				dol_syslog('No dispatch for line '.$key.' as no warehouse choosed');
 			}
 		}
+	}
+
+	if (! $notrigger)
+	{
+		global $conf, $langs, $user;
+		// Appel des triggers
+		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+		$interface=new Interfaces($db);
+		$result_trigger=$interface->run_triggers('ORDER_SUPPLIER_DISPATCH',$commande,$user,$langs,$conf);
+		if ($result_trigger < 0) { $error++; $commande->errors=$interface->errors; }
+		// Fin appel triggers
+
+		$db->commit();
 	}
 
 	if ($result > 0)
@@ -269,7 +282,7 @@ if ($id > 0 || ! empty($ref))
 						print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 						print ' - '.$objp->label;
 						// To show detail cref and description value, we must make calculation by cref
-						//print ($objp->cref?' ('.$objp->cref.')':'');  
+						//print ($objp->cref?' ('.$objp->cref.')':'');
 						//if ($objp->description) print '<br>'.nl2br($objp->description);
 						print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
 						print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->subprice.'">';

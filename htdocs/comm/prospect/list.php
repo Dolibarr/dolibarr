@@ -41,8 +41,8 @@ $socname            = GETPOST("socname",'alpha');
 $stcomm             = GETPOST("stcomm",'int');
 $search_nom         = GETPOST("search_nom");
 $search_zipcode     = GETPOST("search_zipcode");
-$search_town       = GETPOST("search_town");
-$search_departement = GETPOST("search_departement");
+$search_town        = GETPOST("search_town");
+$search_state       = GETPOST("search_state");
 $search_datec       = GETPOST("search_datec");
 $search_categ       = GETPOST("search_categ",'int');
 $catid              = GETPOST("catid",'int');
@@ -195,7 +195,7 @@ if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
 if ($search_zipcode) $sql .= " AND s.zip LIKE '".$db->escape(strtolower($search_zipcode))."%'";
 if ($search_town) $sql .= " AND s.town LIKE '%".$db->escape(strtolower($search_town))."%'";
-if ($search_departement) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_departement))."%'";
+if ($search_state) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_state))."%'";
 if ($search_datec) $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
 // Insert levels filters
 if ($search_levels)
@@ -318,7 +318,7 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_town" size="10" value="'.$search_town.'">';
 	print '</td>';
  	print '<td class="liste_titre" align="center">';
-    print '<input type="text" class="flat" name="search_departement" size="10" value="'.$search_departement.'">';
+    print '<input type="text" class="flat" name="search_state" size="10" value="'.$search_state.'">';
     print '</td>';
     print '<td align="center" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_datec" value="'.$search_datec.'">';

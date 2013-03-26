@@ -425,14 +425,13 @@ abstract class ActionsContactCardCommon
         $this->object->old_firstname 		= 	$_POST["old_firstname"];
 
         $this->object->socid				=	$_POST["socid"];
-        $this->object->name					=	$_POST["name"];
+        $this->object->lastname				=	$_POST["name"];
         $this->object->firstname			= 	$_POST["firstname"];
         $this->object->civilite_id			= 	$_POST["civilite_id"];
         $this->object->poste				= 	$_POST["poste"];
         $this->object->address				=	$_POST["address"];
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];
-        $this->object->fk_pays				=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->fk_departement		=	$_POST["departement_id"];
         $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->state_id        		=	$_POST["departement_id"];
@@ -459,7 +458,7 @@ abstract class ActionsContactCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->pays			=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
             $this->object->country_code	=	$obj->code;
             $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
         }

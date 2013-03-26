@@ -37,6 +37,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
+$hookmanager->initHooks(array('salesrepresentativescard'));
 
 /*
  *	Actions
@@ -44,12 +45,22 @@ $result = restrictedArea($user, 'societe','','');
 
 if($_GET["socid"] && $_GET["commid"])
 {
+	$action = 'add';
+
 	if ($user->rights->societe->creer)
 	{
+
 		$soc = new Societe($db);
 		$soc->id = $_GET["socid"];
 		$soc->fetch($_GET["socid"]);
-		$soc->add_commercial($user, $_GET["commid"]);
+
+
+		$parameters=array('id'=>$_GET["commid"]);
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+
+
+		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
 		exit;
@@ -63,12 +74,20 @@ if($_GET["socid"] && $_GET["commid"])
 
 if($_GET["socid"] && $_GET["delcommid"])
 {
+	$action = 'delete';
+
 	if ($user->rights->societe->creer)
 	{
 		$soc = new Societe($db);
 		$soc->id = $_GET["socid"];
 		$soc->fetch($_GET["socid"]);
-		$soc->del_commercial($user, $_GET["delcommid"]);
+
+		$parameters=array('id'=>$_GET["delcommid"]);
+		$reshook=$hookmanager->executeHooks('doActions',$parameters,$soc,$action);    // Note that $action and $object may have been modified by some hooks
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+
+
+		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
 
 		header("Location: commerciaux.php?socid=".$soc->id);
 		exit;
@@ -95,6 +114,8 @@ if ($_GET["socid"])
 	$soc = new Societe($db);
 	$soc->id = $_GET["socid"];
 	$result=$soc->fetch($_GET["socid"]);
+
+	$action='view';
 
 	$head=societe_prepare_head2($soc);
 
@@ -128,7 +149,7 @@ if ($_GET["socid"])
 	print '<tr><td>'.$langs->trans('Zip').'</td><td width="20%">'.$soc->zip."</td>";
 	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->town."</td></tr>";
 
-	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
+	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->country.'</td>';
 
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
@@ -158,9 +179,16 @@ if ($_GET["socid"])
 		{
 			$obj = $db->fetch_object($resql);
 
+ 			$parameters=array('socid'=>$soc->id);
+        	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$obj,$action);    // Note that $action and $object may have been modified by hook
+      		if (empty($reshook)) {
+
+				null; // actions in normal case
+      		}
+
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
-			print $obj->firstname." " .$obj->name."\n";
+			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 			print '</a>&nbsp;';
 			if ($user->rights->societe->creer)
 			{
@@ -226,7 +254,7 @@ if ($_GET["socid"])
 				print "<tr $bc[$var]><td>";
 				print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),"user").' ';
-				print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 				print '</a>';
 				print '</td><td>'.$obj->login.'</td>';
 				print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';

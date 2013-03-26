@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - pt_PT - errors
+# Dolibarr language file - pt_PT - errors
 CHARSET=UTF-8
 ErrorLoginAlreadyExists=O login %s já existe.
 ErrorGroupAlreadyExists=O grupo %s já existe.

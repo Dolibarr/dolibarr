@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
@@ -60,9 +60,9 @@ llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
 
 print_fiche_titre($title);
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 /*
@@ -89,7 +89,9 @@ print '<td><input type="submit" class="button" value="'.$langs->trans ("Search")
 
 print '</table></form>';
 
-print '</td><td valign="top" width="70%">';
+
+//print '</td><td valign="top" width="70%">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -121,7 +123,8 @@ if ($catname || $id > 0)
 }
 
 
-print '</td></tr></table>';
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 print '<br>';
 
@@ -155,8 +158,12 @@ foreach($fulltree as $key => $val)
 
 
 print '<table class="liste" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td>'.$langs->trans("Description").'</td><td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td>'.$langs->trans("Description").'</td><td align="right">';
+if (! empty($conf->use_javascript_ajax))
+{
+	print '<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+}
+print '</td></tr>';
 
 $nbofentries=(count($data) - 1);
 

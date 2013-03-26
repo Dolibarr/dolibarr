@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
 
 
 /**
- *	    \class      ExportTsv
- *		\brief      Class to build export files with format TSV
+ *	Class to build export files with format TSV
  */
 class ExportTsv extends ModeleExports
 {
@@ -190,7 +189,7 @@ class ExportTsv extends ModeleExports
         foreach($array_selected_sorted as $code => $value)
         {
             $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
-			$newvalue=$this->tsv_clean($newvalue);
+			$newvalue=$this->tsv_clean($newvalue,$outputlangs->charset_output);
 
 			fwrite($this->handle,$newvalue.$this->separator);
         }
@@ -205,16 +204,22 @@ class ExportTsv extends ModeleExports
 	 *  @param      array		$array_selected_sorted      Array with list of field to export
 	 *  @param      resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
+     *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-    function write_record($array_selected_sorted,$objp,$outputlangs)
+    function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
     {
+    	global $conf;
+
 		$this->col=0;
  		foreach($array_selected_sorted as $code => $value)
         {
-            $alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
-            $newvalue=$objp->$alias;
+
+            $newvalue=$outputlangs->convToOutputCharset($objp->$alias);
+            $typefield=isset($array_types[$code])?$array_types[$code]:'';
 
             // Translation newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
@@ -222,7 +227,7 @@ class ExportTsv extends ModeleExports
 				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
 
-			$newvalue=$this->tsv_clean($newvalue);
+			$newvalue=$this->tsv_clean($newvalue,$outputlangs->charset_output);
 
 			fwrite($this->handle,$newvalue.$this->separator);
             $this->col++;
@@ -257,12 +262,13 @@ class ExportTsv extends ModeleExports
      * Clean a cell to respect rules of TSV file cells
      *
      * @param 	string	$newvalue	String to clean
+	 * @param	string	$charset	Output character set
      * @return 	string				Value cleaned
      */
-    function tsv_clean($newvalue)
+    function tsv_clean($newvalue, $charset)
     {
 		// Rule Dolibarr: No HTML
-		$newvalue=dol_string_nohtmltag($newvalue);
+		$newvalue=dol_string_nohtmltag($newvalue, 1, $charset);
 
 		// Rule 1 TSV: No CR, LF in cells
     	$newvalue=str_replace("\r",'',$newvalue);

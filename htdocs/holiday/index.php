@@ -101,9 +101,11 @@ if(!empty($search_ref))
 // DATE START
 if($year_start > 0) {
     if($month_start > 0) {
-        $filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$year_start-$month_start'";
+    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,1))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,1))."')";
+    	//$filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$year_start-$month_start'";
     } else {
-        $filter.= " AND date_format(cp.date_debut, '%Y') = '$year_start'";
+    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,1))."' AND '".$db->idate(dol_get_last_day($year_start,12,1))."')";
+    	//$filter.= " AND date_format(cp.date_debut, '%Y') = '$year_start'";
     }
 } else {
     if($month_start > 0) {
@@ -114,9 +116,11 @@ if($year_start > 0) {
 // DATE FIN
 if($year_end > 0) {
     if($month_end > 0) {
-        $filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$year_end-$month_end'";
+    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,1))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,1))."')";
+    	//$filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$year_end-$month_end'";
     } else {
-        $filter.= " AND date_format(cp.date_fin, '%Y') = '$year_end'";
+    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,1))."' AND '".$db->idate(dol_get_last_day($year_end,12,1))."')";
+    	//$filter.= " AND date_format(cp.date_fin, '%Y') = '$year_end'";
     }
 } else {
     if($month_end > 0) {
@@ -127,9 +131,11 @@ if($year_end > 0) {
 // DATE CREATE
 if($year_create > 0) {
     if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%Y-%m') = '$year_create-$month_create'";
+    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,$month_create,1))."' AND '".$db->idate(dol_get_last_day($year_create,$month_create,1))."')";
+    	//$filter.= " AND date_format(cp.date_create, '%Y-%m') = '$year_create-$month_create'";
     } else {
-        $filter.= " AND date_format(cp.date_create, '%Y') = '$year_create'";
+    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,1,1))."' AND '".$db->idate(dol_get_last_day($year_create,12,1))."')";
+    	//$filter.= " AND date_format(cp.date_create, '%Y') = '$year_create'";
     }
 } else {
     if($month_create > 0) {

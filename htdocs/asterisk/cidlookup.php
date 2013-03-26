@@ -40,10 +40,10 @@ if (empty($phone))
 	exit;
 }
 
-$sql = "SELECT nom as name FROM ".MAIN_DB_PREFIX."societe as s";
+$sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
 $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-$sql.= " AND (s.tel='".$db->escape($phone)."'";
+$sql.= " AND (s.phone='".$db->escape($phone)."'";
 $sql.= " OR sp.phone='".$db->escape($phone)."'";
 $sql.= " OR sp.phone_perso='".$db->escape($phone)."'";
 $sql.= " OR sp.phone_mobile='".$db->escape($phone)."')";

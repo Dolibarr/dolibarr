@@ -90,6 +90,11 @@ function societe_prepare_head($object)
         $head[$h][2] = 'note';
         $h++;
 
+        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Referers");
+        $head[$h][2] = 'consumption';
+        $h++;
+
         // Attached files
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
@@ -175,7 +180,7 @@ function societe_admin_prepare_head($object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe.php';
-    $head[$h][1] = $langs->trans("Miscellanous");
+    $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'general';
     $h++;
 

@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
+$langs->load("users");
 
 // Everybody should be able to go on this page
 //if (! $user->admin)

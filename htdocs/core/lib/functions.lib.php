@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -485,15 +485,16 @@ function dol_strtoupper($utf8_string)
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
- * 	@param  string		$message	Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *  @param  int			$level		Log level
- *                                  0=Show nothing
- *									On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident		1=Increase ident of 1, -1=Decrease ident of 1
+ * 	@param  string		$message			Line to log. Ne doit pas etre traduit si level = LOG_ERR
+ *  @param  int			$level				Log level
+ *                                  		0=Show nothing
+ *											On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
+ *											On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *  @param	int			$ident				1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename.
  *  @return	void
  */
-function dol_syslog($message, $level = LOG_INFO, $ident = 0)
+function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='')
 {
 	global $conf, $user;
 
@@ -543,7 +544,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0)
 		// Loop on each log handler and send output
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
-			$loghandlerinstance->export($data);
+			$loghandlerinstance->export($data,$suffixinfilename);
 		}
 		unset($data);
 	}
@@ -561,29 +562,31 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0)
 /**
  *	Show tab header of a card
  *
- *	@param	array	$links		Array of tabs
- *	@param	string	$active     Active tab name (document', 'info', 'ldap', ....)
- *	@param  string	$title      Title
- *	@param  int		$notab		0=Add tab header, 1=no tab header
- * 	@param	string	$picto		Add a picto on tab title
+ *	@param	array	$links				Array of tabs
+ *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
+ *	@param  string	$title      		Title
+ *	@param  int		$notab				0=Add tab header, 1=no tab header
+ * 	@param	string	$picto				Add a picto on tab title
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_build_path('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
  */
-function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath);
 }
 
 /**
  *  Show tab header of a card
  *
- *	@param	array	$links		Array of tabs
- *	@param	int		$active     Active tab name
- *	@param  string	$title      Title
- *	@param  int		$notab		0=Add tab header, 1=no tab header
- * 	@param	string	$picto		Add a picto on tab title
+ *	@param	array	$links				Array of tabs
+ *	@param	int		$active     		Active tab name
+ *	@param  string	$title      		Title
+ *	@param  int		$notab				0=Add tab header, 1=no tab header
+ * 	@param	string	$picto				Add a picto on tab title
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_build_path('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
  */
-function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='')
+function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
 	$out="\n".'<div class="tabs">'."\n";
 
@@ -592,7 +595,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';
-		if ($picto) $out.=img_object('',$picto).' ';
+		if ($picto) $out.=img_picto('',($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
 		$out.=dol_trunc($title,$limittitle);
 		$out.='</a>';
 	}
@@ -705,7 +708,7 @@ function dol_format_address($object)
 			$ret.="\n".$object->state;
 		}
 	}
-	
+
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->zip;
@@ -1645,32 +1648,33 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 	global $conf;
 
 	// Define fullpathpicto to use into src
-	if ($pictoisfullpath) {
+	if ($pictoisfullpath)
+	{
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto))
-			$picto .= '.png';
+		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
 		$fullpathpicto = $picto;
 	}
 	else
 	{
-		// By default, we search into theme directory
+		// By default, we search $url/theme/$theme/img/$picto
 		$url = DOL_URL_ROOT;
-		$path = 'theme/'.$conf->theme;
-		if (! empty($conf->global->MAIN_FORCETHEMEDIR))
-			$path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
-		// If we ask an image into module/img (not into a theme path)
+		$theme = $conf->theme;
+
+		$path = 'theme/'.$theme;
+		if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;
+		if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;	// TODO What if there is both FORCETHEMDIR and OVERWRITE_THEM_RES
+		// If we ask an image into $url/$mymodule/img (instead of default path)
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 		{
 			$picto = $regs[1];
-			$path = $regs[2];
+			$path = $regs[2];	// $path is $mymodule
 		}
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif)$/i',$picto))
-			$picto .= '.png';
-		// If img file not into standard path, we use alternate path
-		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto))
-			$url = DOL_URL_ROOT_ALT;
+		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		// If img file is not into standard path, we use alternate path (Avoid using DOL_URL_ROOT_ALT for performane)
+		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
 
+		// $url is '' or '/custom', $path is current theme or
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
@@ -1843,6 +1847,20 @@ function img_delete($alt = 'default', $other = '')
 	if ($alt == 'default') $alt = $langs->trans('Delete');
 
 	return img_picto($alt, 'delete.png', $other);
+}
+
+/**
+ *  Show printer logo
+ *
+ *  @param  string  $alt        Text on alt image
+ *  @param  string  $other      Add more attributes on img
+ *  @return string              Retourne tag img
+ */
+function img_printer($alt = "default", $other='')
+{
+    global $conf,$langs;
+    if ($alt=="default") $alt=$langs->trans("Print");
+    return img_picto($alt,'printer.png',$other);
 }
 
 /**
@@ -2362,7 +2380,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return.= '</td>';
 	if (dol_strlen($mesg))
 	{
-		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
+		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$mesg.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -2511,7 +2529,7 @@ function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarr
  *
  *	@param	float	$rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *  @param	boolean	$addpercent		Add a percent % sign in output
- *	@param	int		$info_bits		Miscellanous information on vat (0=Default, 1=French NPR vat)
+ *	@param	int		$info_bits		Miscellaneous information on vat (0=Default, 1=French NPR vat)
  *	@param	int		$usestarfornpr	1=Use '*' for NPR vat rate intead of MAIN_LABEL_MENTION_NPR
  *  @return	string					String with formated amounts (19,6 or 19,6% or 8.5% NPR or 8.5% *)
  */
@@ -2536,20 +2554,21 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 
 
 /**
- *		Fonction qui formate un montant pour visualisation
- *		Fonction utilisee dans les pdf et les pages html
+ *		Function to format a value into an amount for visual output
+ *		Function used into PDF and HTML pages
  *
- *		@param	float		$amount			Montant a formater
- *		@param	string		$form			Type de formatage, html ou pas (par defaut)
- *		@param	Translate	$outlangs		Objet langs pour formatage text
- *		@param	int			$trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		@param	int			$rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	float		$amount			Amount to format
+ *		@param	string		$form			Type of format, HTML or not (not by default)
+ *		@param	Translate	$outlangs		Object langs for output
+ *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
+ *		@param	int			$rounding		Minimum number of decimal to show. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal
+ *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
  *		@see	price2num					Revert function of price
  */
-function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
+function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1, $currency_code='')
 {
 	global $langs,$conf;
 
@@ -2566,8 +2585,8 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	// If $outlangs not forced, we use use language
 	if (! is_object($outlangs)) $outlangs=$langs;
 
-	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
-	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
+	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($outlangs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
@@ -2597,15 +2616,21 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	if ($forcerounding >= 0) $nbdecimal = $forcerounding;
 
 	// Format number
+	$output=number_format($amount, $nbdecimal, $dec, $thousand);
 	if ($form)
 	{
-		$output=preg_replace('/\s/','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
+		$output=preg_replace('/\s/','&nbsp;',$output);
+		$output=preg_replace('/\'/','&#039;',$output);
 	}
-	else
+	// Add symbol of currency if requested
+	$cursymbolbefore=$cursymbolafter='';
+	if ($currency_code)
 	{
-		$output=number_format($amount, $nbdecimal, $dec, $thousand);
+		$listofcurrenciesbefore=array('USD');
+		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
 	}
-	$output.=$end;
+	$output.=$cursymbolbefore.$end.$cursymbolafter;
 
 	return $output;
 }
@@ -2633,15 +2658,15 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
 	$dec=','; $thousand=' ';
-	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
-	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
-		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.'<br>';
+		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
@@ -2718,10 +2743,10 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller id=".$thirdparty_seller->id);
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain and localtaxes 1, tax is qualified if buyer use local taxe
+	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
 		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
-		if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
 	{
@@ -2758,7 +2783,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *
  *  @param		real	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 / 2)
+ *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
  *  @param		int		$thirdparty         company object
  *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
  *  @deprecated	TODO We should remove this function by storing rate and type into detail lines.
@@ -2781,6 +2806,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 		$obj = $db->fetch_object($resql);
 		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1);
 		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2);
+		else return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2);
 	}
 
 	return 0;
@@ -3621,6 +3647,37 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 }
 
 /**
+ * Return firstname and lastname in correct order
+ *
+ * @param	string	$firstname		Firstname
+ * @param	string	$lastname		Lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+ * @return	string					Firstname + lastname or Lastname + firstname
+ */
+function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
+{
+	global $conf;
+
+	$ret='';
+	// If order not defined, we use the setup
+	if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION));
+	if ($nameorder)
+	{
+		$ret.=$firstname;
+		if ($firstname && $lastname) $ret.=' ';
+		$ret.=$lastname;
+	}
+	else
+	{
+		$ret.=$lastname;
+		if ($firstname && $lastname) $ret.=' ';
+		$ret.=$firstname;
+	}
+	return $ret;
+}
+
+
+/**
  *	Set event message in dol_events session
  *
  *	@param	mixed	$mesgs			Message string or array
@@ -4093,7 +4150,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
-						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[5]), 1);
+						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[5]), 1);
 						$head[$h][1] = $langs->trans($values[2]);
 						$head[$h][2] = str_replace('+','',$values[1]);
 						$h++;
@@ -4103,7 +4160,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				{
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[4]), 1);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[4]), 1);
 					$head[$h][1] = $langs->trans($values[2]);
 					$head[$h][2] = str_replace('+','',$values[1]);
 					$h++;
@@ -4112,7 +4169,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				{
 					if ($values[0] != $type) continue;
 					if ($values[2]) $langs->load($values[2]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[3]), 1);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && ! empty($object->id))?$object->id:''), $values[3]), 1);
 					$head[$h][1] = $langs->trans($values[1]);
 					$head[$h][2] = 'tab'.$values[1];
 					$h++;
@@ -4178,7 +4235,7 @@ function printCommonFooter($zone='private')
 	{
 		$micro_end_time=dol_microtime_float(true);
 		print "\n".'<script type="text/javascript">'."\n";
-		print 'console.log("';
+		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
 		print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';

@@ -533,10 +533,8 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				'state_code' => $contact->state_code?$contact->state_code:'',
 				'state' => $contact->state?$contact->state:'',
 				
-				'fk_pays' => $contact->fk_pays?$contact->fk_pays:'',
 				'country_id' => $contact->country_id?$contact->country_id:'',
 				'country_code' => $contact->country_code?$contact->country_code:'',
-				'pays' => $contact->pays?$contact->pays:'',
 				'country' => $contact->country?$contact->country:'',
 				
 				'socid' => $contact->socid?$contact->socid:'',

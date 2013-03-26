@@ -205,7 +205,7 @@ if ($action == 'create')
             $object->note		=	$_POST["note"];
         }
 
-        // On positionne country_id, country_code et libelle du pays choisi
+        // On positionne country_id, country_code and label of the chosen country
         $object->country_id = (GETPOST('country_id','int') ? GETPOST('country_id','int') : $mysoc->country_id);
         if ($object->country_id)
         {
@@ -333,7 +333,7 @@ elseif ($action == 'edit')
             $object->fax		=	$_POST["fax"];
             $object->note		=	$_POST["note"];
 
-            // On positionne country_id, country_code et libelle du pays choisi
+            // On positionne country_id, country_code and label of the chosen country
             if ($object->country_id)
             {
 	        	$tmparray=getCountry($object->country_id,'all');

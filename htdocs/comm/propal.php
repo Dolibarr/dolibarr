@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -78,6 +79,7 @@ if (! empty($user->societe_id))	$socid=$user->societe_id;
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
+$extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -336,6 +338,15 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     		}
 
+    		// Get extra fields
+    		foreach($_POST as $key => $value)
+    		{
+    			if (preg_match("/^options_/",$key))
+    			{
+    				$object->array_options[$key]=GETPOST($key);
+    			}
+    		}
+    		
     		$id = $object->create($user);
     	}
 
@@ -515,7 +526,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			// Envoi de la propal
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');
@@ -635,7 +646,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht != 0) || $price_ht == ''))	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -739,7 +750,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
             		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
             		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
             		$tmptxt.=')';
-            		$desc.= dol_concatdesc($desc, $tmptxt);
+            		$desc= dol_concatdesc($desc, $tmptxt);
             	}
 			}
 
@@ -913,7 +924,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			GETPOST('fk_parent_line'),
 			0,
 			$fournprice,
-			$buying_price,
+			$buyingprice,
 			$label,
 			$type
 		);
@@ -1094,6 +1105,35 @@ else if ($action == 'down' && $user->rights->propal->creer)
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
+else if ($action == 'update_extras')
+{
+	// Get extra fields
+	foreach($_POST as $key => $value)
+	{
+		if (preg_match("/^options_/",$key))
+		{
+			$object->array_options[$key]=$_POST[$key];
+		}
+	}
+	// Actions on extra fields (by external module or standard code)
+	// FIXME le hook fait double emploi avec le trigger !!
+	$hookmanager->initHooks(array('propaldao'));
+	$parameters=array('id'=>$object->id);
+	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	if (empty($reshook))
+	{
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$object->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+	}
+	else if ($reshook < 0) $error++;
+	 
+}
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
 {
@@ -1168,6 +1208,9 @@ $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('propal');
+
 $now=dol_now();
 
 // Add new proposal
@@ -1179,37 +1222,6 @@ if ($action == 'create')
 	if ($socid>0) $res=$soc->fetch($socid);
 
 	$object = new Propal($db);
-
-	$numpr='';
-	$obj = $conf->global->PROPALE_ADDON;
-	if ($obj)
-	{
-		if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
-		{
-			require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
-			$modPropale = new $obj;
-			$numpr = $modPropale->getNextValue($soc,$object);
-		}
-	}
-
-	// Fix pour modele numerotation qui deconne
-	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
-	$sql = "SELECT count(*) as nb";
-	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-	$sql.= " WHERE ref LIKE '".$numpr."%'";
-	$sql.= " AND entity = ".$conf->entity;
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj=$db->fetch_object($resql);
-		$num = $obj->nb;
-		$db->free($resql);
-		if ($num > 0)
-		{
-			$numpr .= "." . ($num + 1);
-		}
-	}
 
 	print '<form name="addprop" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1223,11 +1235,8 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	// Ref
-	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="2">'.$numpr.'</td>';
-	print '<input type="hidden" name="ref" value="'.$numpr.'">';
-	print '</tr>';
+	// Reference
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
@@ -1351,11 +1360,20 @@ if ($action == 'create')
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-			print '<tr><td';
-			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-			print '>'.$label.'</td><td colspan="3">';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
+			
+			// Show separator only
+			if ($extrafields->attribute_type[$key] == 'separate')
+			{
+				print $extrafields->showSeparator($key);
+			}
+			else 
+			{
+				print '<tr><td';
+				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+				print '>'.$label.'</td><td colspan="3">';
+				print $extrafields->showInputField($key,$value);
+				print '</td></tr>'."\n";
+			}
 		}
 	}
 
@@ -1827,18 +1845,61 @@ else
 	}
 
 	// Other attributes
+	$res=$object->fetch_optionals($object->id,$extralabels);
 	$parameters=array('colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
+		
+		if ($action == 'edit_extras')
+		{
+			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+			print '<input type="hidden" name="action" value="update_extras">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+		}
+		
+		
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
 	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-	   		print '<tr><td';
-	   		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	   		print '>'.$label.'</td><td colspan="3">';
-	        print $extrafields->showInputField($key,$value);
-	        print '</td></tr>'."\n";
+	        if ($extrafields->attribute_type[$key] == 'separate')
+	        {
+	        	print $extrafields->showSeparator($key);
+	        }
+	        else
+	        {
+	        	print '<tr><td';
+	        	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	        	print '>'.$label.'</td><td colspan="3">';
+	        	if ($action == 'edit_extras' &&  $user->rights->propal->creer)
+	        	{
+	        		print $extrafields->showInputField($key,$value);
+	        	}
+	        	else
+	        	{
+	        		print $extrafields->showOutputField($key,$value);
+	        	}
+	        	print '</td></tr>'."\n";
+	        }
+	    }
+	    
+	    if(count($extrafields->attribute_label) > 0) {
+	    	
+	    	if ($action == 'edit_extras' && $user->rights->propal->creer)
+	    	{
+	    		print '<tr><td></td><td>';
+	    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+	    		print '</form>';
+	    		print '</td></tr>';
+	    		
+	    	}
+	    	else {
+	    		if ($object->statut == 0 && $user->rights->propal->creer)	    		
+	    		{
+	    			print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
+	    		}
+	    	}
 	    }
 	}
 
@@ -1990,10 +2051,10 @@ else
 		if ($action != 'statut' && $action <> 'editline')
 		{
 			// Validate
-			if ($object->statut == 0 && $user->rights->propal->valider)
+			if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 && $user->rights->propal->valider)
 			{
 			    if (count($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
-			    else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
+			    //else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
 
 			// Edit
@@ -2027,6 +2088,17 @@ else
 	                print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 	            }
 	        }
+
+            // Create contract
+            if ($conf->contrat->enabled && $object->statut == 2 && $user->societe_id == 0)
+            {
+            	$langs->load("contracts");
+
+				if ($user->rights->contrat->creer)
+				{
+				  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
+				}
+            }
 
 	        // Create an invoice and classify billed
 			if ($object->statut == 2 && $user->societe_id == 0)
@@ -2166,12 +2238,34 @@ else
 		$formmail->substit['__PROPREF__']=$object->ref;
 	    $formmail->substit['__SIGNATURE__']=$user->signature;
 	    $formmail->substit['__PERSONALIZED__']='';
+	    $formmail->substit['__CONTACTCIVNAME__']='';
+	    
+	    //Find the good contact adress
+	    $custcontact='';
+	    $contactarr=array();
+	    $contactarr=$object->liste_contact(-1,'external');
+	    
+	    if (is_array($contactarr) && count($contactarr)>0) {
+	    	foreach($contactarr as $contact) {
+	    		if ($contact['libelle']==$langs->trans('TypeContact_propal_external_CUSTOMER')) {
+	    			$contactstatic=new Contact($db);
+	    			$contactstatic->fetch($contact['id']);
+	    			$custcontact=$contactstatic->getFullName($langs,1);
+	    		}
+	    	}
+	    		
+	    	if (!empty($custcontact)) {
+	    		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+	    	}
+	    }
+	    
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
+		
+	
 		// Init list of files
 	    if (GETPOST("mode")=='init')
 		{

@@ -32,9 +32,9 @@ create table llx_facture_fourn_det
   remise_percent	real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   tva_tx            double(6,3),  -- TVA taux product/service
   localtax1_tx      double(6,3)  DEFAULT 0,    -- localtax1 rate
-  localtax1_type	varchar(1)	  NULL, 		-- localtax1 type
+  localtax1_type	varchar(10)	  NULL, 		-- localtax1 type
   localtax2_tx      double(6,3)  DEFAULT 0,    -- localtax2 rate
-  localtax2_type	varchar(1)	  NULL, 		-- localtax2 type
+  localtax2_type	varchar(10)	  NULL, 		-- localtax2 type
   total_ht          double(24,8), -- Total line price of product excluding tax
   tva               double(24,8), -- Total TVA of line
   total_localtax1   double(24,8) DEFAULT 0,	-- Total LocalTax1 for total quantity of line
@@ -43,5 +43,6 @@ create table llx_facture_fourn_det
   product_type	    integer      DEFAULT 0,
   date_start        datetime   DEFAULT NULL,       -- date debut si service
   date_end          datetime   DEFAULT NULL,       -- date fin si service
+  fk_code_ventilation integer DEFAULT 0 NOT NULL,
   import_key        varchar(14)
 )ENGINE=innodb;

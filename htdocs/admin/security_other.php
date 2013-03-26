@@ -123,11 +123,11 @@ else if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Miscellanous"));
+llxHeader('',$langs->trans("Miscellaneous"));
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
-print $langs->trans("MiscellanousDesc")."<br>\n";
+print $langs->trans("MiscellaneousDesc")."<br>\n";
 print "<br>\n";
 
 $head=security_prepare_head();
@@ -146,7 +146,8 @@ print '<td width="100">&nbsp;</td>';
 print "</tr>\n";
 
 $var=!$var;
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=ini_get("session.gc_maxlifetime");
+$sessiontimeout=ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_SESSION_TIMEOUT" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'>';

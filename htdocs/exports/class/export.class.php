@@ -34,7 +34,9 @@ class Export
 	var $array_export_code=array();             // Tableau de "idmodule_numlot"
 	var $array_export_module=array();           // Tableau de "nom de modules"
 	var $array_export_label=array();            // Tableau de "libelle de lots"
-	var $array_export_sql=array();              // Tableau des "requetes sql"
+	var $array_export_sql_start=array();        // Tableau des "requetes sql"
+	var $array_export_sql_end=array();          // Tableau des "requetes sql"
+	var $array_export_sql_order=array();        // Tableau des "requetes sql"
 	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
 	var $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
 	var $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
@@ -177,6 +179,7 @@ class Export
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
+									$this->array_export_sql_order[$i]=$module->export_sql_order[$r];
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
 									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(! empty($module->export_fields_code[$r])?count($module->export_fields_code[$r]):''));
@@ -200,8 +203,8 @@ class Export
 	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
 	 *
 	 *      @param      int		$indice				Indice of export
-	 *      @param      array	$array_selected     Filter on array of fields to export
-	 *      @param      array	$array_filterValue  Filter on array of fields to export
+	 *      @param      array	$array_selected     Filter fields on array of fields to export
+	 *      @param      array	$array_filterValue  Filter records on array of value for fields
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
 	function build_sql($indice, $array_selected, $array_filterValue)
@@ -224,16 +227,17 @@ class Export
 		$sql.=$this->array_export_sql_end[$indice];
 
 		//construction du filtrage si le parametrage existe
-		if (is_array($array_filterValue))
+		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
 			// pour ne pas a gerer le nombre de condition
 			foreach ($array_filterValue as $key => $value)
 			{
-				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[0][$key], $key, $array_filterValue[$key]);
+				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
+		$sql.=$this->array_export_sql_order[$indice];
 
 		return $sql;
 	}
@@ -243,7 +247,7 @@ class Export
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
-	 *      @param		string	$ValueField		Initial value of the field to filter
+	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
 	function build_filterQuery($TypeField, $NameField, $ValueField)
@@ -464,7 +468,7 @@ class Export
 	 *      @param      string		$datatoexport       Name of dataset to export
 	 *      @param      array		$array_selected     Filter on array of fields to export
 	 *      @param      array		$array_filterValue  Filter on array of fields with a filter
-	 *      @param		string		$sqlquery			If set, transmit a sql query instead of building it from arrays
+	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
 	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
@@ -547,8 +551,7 @@ class Export
 						}
 					}
 					// end of special operation processing
-
-					$objmodel->write_record($array_selected,$objp,$outputlangs);
+					$objmodel->write_record($array_selected,$objp,$outputlangs,$this->array_export_TypeFields[$indice]);
 				}
 
 				// Genere en-tete

@@ -32,14 +32,14 @@ llxHeader('','Compta - Ventilation');
 
 print_fiche_titre("Ventilation Comptable");
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql.= " , ".MAIN_DB_PREFIX."facture as f";
 $sql.= " WHERE fd.fk_code_ventilation = 0";
-$sql.= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
+$sql.= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1";
 
 $result = $db->query($sql);
 if ($result)
@@ -56,14 +56,17 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Lines").'</tr>';
 print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td><td align="right">'.$langs->trans("Nb").'</td></tr>';
 $var=!$var;
-print "<tr $bc[$var]>".'<td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
+print "<tr ".$bc[$var].">".'<td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
 $var=!$var;
 print "</table>\n";
 
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Type</td><td align="center">'.$langs->trans("NbOfLines").'</td><td align="center">'.$langs->trans("AccountNumber").'</td><td align="center">'.$langs->trans("TransID").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td><td align="center">'.$langs->trans("NbOfLines").'</td><td align="center">'.$langs->trans("AccountNumber").'</td><td align="center">'.$langs->trans("TransID").'</td></tr>';
 
 $sql = "SELECT count(*), ccg.intitule, ccg.rowid,ccg.numero FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql.= " ,".MAIN_DB_PREFIX."compta_compte_generaux as ccg";
@@ -90,8 +93,11 @@ if ($resql)
 }
 print "</table>\n";
 
-print '</td></tr></table>';
+//print '</td></tr></table>';
+print '<div></div></div>';
+
 
 llxFooter();
 
+$db->close();
 ?>

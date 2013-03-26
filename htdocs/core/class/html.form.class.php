@@ -13,6 +13,7 @@
  * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -677,7 +678,7 @@ class Form
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
-        if ($filter) $sql.= " AND ".$filter;
+        if ($filter) $sql.= " AND (".$filter.")";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         $sql.= " ORDER BY nom ASC";
 
@@ -898,8 +899,7 @@ class Form
                     $obj = $this->db->fetch_object($resql);
 
                     $contactstatic->id=$obj->rowid;
-                    $contactstatic->name=$obj->name;
-                    $contactstatic->lastname=$obj->name;
+                    $contactstatic->lastname=$obj->lastname;
                     $contactstatic->firstname=$obj->firstname;
 
                     if ($htmlname != 'none')
@@ -1224,9 +1224,13 @@ class Form
             }
             else
             {
-                $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
-                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
-                $sql.=")";
+                // For natural search
+                $scrit = explode(' ', $filterkey);
+                foreach ($scrit as $crit) {
+                    $sql.=" AND (p.ref LIKE '%".$crit."%' OR p.label LIKE '%".$crit."%'";
+                    if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$crit."%'";
+                    $sql.=")";
+                }
             }
 
             if (! empty($conf->barcode->enabled))

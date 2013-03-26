@@ -104,7 +104,7 @@ class mailing_contacts3 extends MailingTargets
     			$target[] = array(
                             'email' => $obj->email,
                             'fk_contact' => $obj->fk_contact,
-                            'name' => $obj->name,
+                            'lastname' => $obj->lastname,
                             'firstname' => $obj->firstname,
                             'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.

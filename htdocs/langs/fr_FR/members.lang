@@ -162,6 +162,7 @@ NoThirdPartyAssociatedToMember=Pas de tiers associé à cet adhérent
 ThirdPartyDolibarr=Tiers Dolibarr
 MembersAndSubscriptions= Adhérents et Adhésions
 MoreActions=Action complémentaire à l'enregistrement
+MoreActionsOnSubscription=Action complémentaire proposée par défaut à l'enregistrement de l'adhésion
 MoreActionBankDirect=Création transaction sur compte bancaire ou caisse directement
 MoreActionBankViaInvoice=Création facture avec paiement sur compte bancaire ou caisse
 MoreActionInvoiceOnly=Création facture sans paiement
@@ -204,3 +205,6 @@ DOLIBARRFOUNDATION_PAYMENT_FORM=Pour réaliser le paiement de votre cotisation p
 ByProperties=Par caractéristiques
 MembersStatisticsByProperties=Statistiques des adhérents par caractéristiques
 MembersByNature=Adhérents par nature
+VATToUseForSubscriptions=Taux de TVA pour les adhésions
+NoVatOnSubscription=Pas de TVA sur les adhésions
+

@@ -117,6 +117,17 @@ llxHeader('',$langs->trans("WithdrawalsSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
 print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
+print '<br>';
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/prelevement.php";
+$head[$h][1] = $langs->trans("Withdrawals");
+$head[$h][2] = 'Withdrawal';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -165,8 +176,8 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     $langs->load("mails");
     print_titre($langs->trans("Notifications"));
 
-    $sql = "SELECT rowid, name, firstname, fk_societe, email";
-    $sql.= " FROM ".MAIN_DB_PREFIX."user";
+    $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_societe, u.email";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE entity IN (0,".$conf->entity.")";
 
     $resql=$db->query($sql);
@@ -181,7 +192,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
             $var=!$var;
             if (!$obj->fk_societe)
             {
-                $username= $obj->firstname.' '.$obj->name;
+                $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
                 $internalusers[$obj->rowid] = $username;
             }
 
@@ -233,11 +244,11 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 }
 // List of current notifications for objet_type='withdraw'
-$sql = "SELECT u.lastname, u.firstname";
-$sql.= ", nd.rowid, ad.code, ad.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= ", ".MAIN_DB_PREFIX."notify_def as nd";
-$sql.= ", ".MAIN_DB_PREFIX."c_action_trigger as ad";
+$sql = "SELECT u.lastname, u.firstname,";
+$sql.= " nd.rowid, ad.code, ad.label";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
 $sql.= " WHERE u.rowid = nd.fk_user";
 $sql.= " AND nd.fk_action = ad.rowid";
 $sql.= " AND u.entity IN (0,".$conf->entity.")";
@@ -253,8 +264,8 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
 
-        print "<tr $bc[$var]>";
-        print '<td>'.$obj->firstname." ".$obj->name.'</td>';
+        print "<tr ".$bc[$var].">";
+        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
         $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
         print '<td>'.$label.'</td>';
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';

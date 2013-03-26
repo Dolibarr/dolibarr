@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+ * To use this template, the following var must be defined
+ * $type, $text, $description, $line
  */
 ?>
 
@@ -38,59 +40,59 @@
 		<?php
 		if ($line->description)
 		{
-				if ($line->description == '(CREDIT_NOTE)')
-				{
-					$discount=new DiscountAbsolute($this->db);
-					$discount->fetch($line->fk_remise_except);
-					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
-				}
-				elseif ($line->description == '(DEPOSIT)')
-				{
-					$discount=new DiscountAbsolute($this->db);
-					$discount->fetch($line->fk_remise_except);
-					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
-					// Add date of deposit
-					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
-				}
-				else
-				{
-					echo ($txt?' - ':'').dol_htmlentitiesbr($line->description);
-				}
+			if ($line->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+			}
+			elseif ($line->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+				// Add date of deposit
+				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+			}
+			else
+			{
+				echo ($txt?' - ':'').dol_htmlentitiesbr($line->description);
 			}
 		}
-		else
-		{
-			if ($line->fk_product > 0) {
+	}
+	else
+	{
+		if ($line->fk_product > 0) {
 
-				echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+			echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
 
-				// Show range
-				print_date_range($line->date_start, $line->date_end);
+			// Show range
+			echo get_date_range($line->date_start, $line->date_end);
 
-				// Add description in form
-				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-				{
-					print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-				}
+			// Add description in form
+			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+			{
+				print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
+			}
 
+		} else {
+
+			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
+			if ($type==1) $text = img_object($langs->trans('Service'),'service');
+			else $text = img_object($langs->trans('Product'),'product');
+
+			if (! empty($line->label)) {
+				$text.= ' <strong>'.$line->label.'</strong>';
+				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
 			} else {
-
-				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
-				if ($type==1) $text = img_object($langs->trans('Service'),'service');
-				else $text = img_object($langs->trans('Product'),'product');
-
-				if (! empty($line->label)) {
-					$text.= ' <strong>'.$line->label.'</strong>';
-					echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
-				} else {
-					echo $text.' '.dol_htmlentitiesbr($line->description);
-				}
-
-				// Show range
-				print_date_range($line->date_start,$line->date_end);
+				echo $text.' '.dol_htmlentitiesbr($line->description);
 			}
+
+			// Show range
+			echo get_date_range($line->date_start,$line->date_end);
 		}
-		?>
+	}
+	?>
 	</td>
 
 	<td align="right" nowrap="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>

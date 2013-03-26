@@ -76,7 +76,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 
 <tr>
 	<td><?php echo $langs->trans('State'); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['departement']; ?></td>
+	<td colspan="3"><?php echo $this->control->tpl['state']; ?></td>
 </tr>
 
 <tr>

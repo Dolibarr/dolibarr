@@ -409,6 +409,6 @@ EditGlobalDiscounts=Redigera absoluta rabatter
 AddCreditNote=Skapa kreditnota
 InvoiceNotChecked=Faktura vald
 ShowUnpaidAll=Visa alla obetalda fakturor
-ClosePaidInvoicesAutomatically=Klassificera &quot;betalade&quot; alla standard eller fakturor ersättning entierely betalt.
+ClosePaidInvoicesAutomatically=Klassificera &quot;betalade&quot; alla standard eller fakturor ersättning entirely betalt.
 AllCompletelyPayedInvoiceWillBeClosed=Alla fakturor utan återstår att betala kommer automatiskt stängd för status &quot;betald&quot;.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:49).

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Language code: tr_TR
  * Manually translated
  * Generation date 2011-07-05 16:52:49
@@ -10,4 +10,5 @@
 CHARSET=UTF-8
 ExternalSiteSetup=Dış web sitesi kurulumu
 ExternalSiteURL=Dış web sitesi URL si
+ExternalSites=Dış siteler
 

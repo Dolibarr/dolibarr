@@ -45,7 +45,7 @@ class Don extends CommonObject
     var $address;
     var $zip;
     var $town;
-    var $pays;
+    var $country;
     var $email;
     var $public;
     var $fk_project;
@@ -300,8 +300,8 @@ class Don extends CommonObject
         $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->zip);
         $this->town=($this->town>0?$this->town:$this->town);
-        $this->country_id=($this->country_id>0?$this->country_id:$this->fk_pays);
-        $this->country=($this->country?$this->country:$this->pays);
+        $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
+        $this->country=($this->country?$this->country:$this->country);
 
         $now=dol_now();
 
@@ -316,7 +316,7 @@ class Don extends CommonObject
         $sql.= ", address";
         $sql.= ", zip";
         $sql.= ", town";
-        $sql.= ", pays";
+        $sql.= ", country";
         $sql.= ", public";
         $sql.= ", fk_don_projet";
         $sql.= ", note";
@@ -385,8 +385,8 @@ class Don extends CommonObject
         $this->address=($this->address>0?$this->address:$this->address);
         $this->zip=($this->zip>0?$this->zip:$this->zip);
         $this->town=($this->town>0?$this->town:$this->town);
-        $this->country_id=($this->country_id>0?$this->country_id:$this->fk_pays);
-        $this->country=($this->country?$this->country:$this->pays);
+        $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
+        $this->country=($this->country?$this->country:$this->country);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
@@ -397,7 +397,7 @@ class Don extends CommonObject
         $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",zip='".$this->db->escape($this->zip)."'";
         $sql .= ",town='".$this->db->escape($this->town)."'";
-        $sql .= ",pays='".$this->db->escape($this->country)."'"; // TODO use country_id
+        $sql .= ",country='".$this->db->escape($this->country)."'"; // TODO use country_id
         $sql .= ",public=".$this->public;
         $sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note='".$this->db->escape($this->note)."'";
@@ -463,7 +463,7 @@ class Don extends CommonObject
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
-        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
+        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, d.country, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
@@ -491,10 +491,10 @@ class Don extends CommonObject
                 $this->town           = $obj->town;
                 $this->zip            = $obj->zip;
                 $this->town           = $obj->town;
+                $this->country        = $obj->country;
                 $this->email          = $obj->email;
                 $this->phone          = $obj->phone;
                 $this->phone_mobile   = $obj->phone_mobile;
-                $this->pays           = $obj->pays;
                 $this->projet         = $obj->project_label;
                 $this->fk_project     = $obj->fk_don_projet;
                 $this->public         = $obj->public;

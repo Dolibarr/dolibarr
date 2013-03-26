@@ -32,15 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	string	$atarget		Target
  * @param 	int		$type_user     	0=Internal,1=External,2=All
  * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array	&$menu			Object Menu to return back list of menu entries
  * @return	void
  */
-function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
+function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
 	$mainmenu=$_SESSION["mainmenu"];
 	$leftmenu=$_SESSION["leftmenu"];
 
+	$id='mainmenu';
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 
 	//$tabMenu=array();
@@ -79,23 +81,12 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
 			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
 			else $classname='class="tmenu"';
+		}
+		else if ($showmode == 2) $classname='class="tmenu"';
 
-			print_start_menu_entry_auguria($idsel,$classname);
-			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($newTabMenu[$i]['target']?' target="'.$newTabMenu[$i]['target'].'"':($atarget?' target="'.$atarget.'"':'')).'>';
-			print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
-			print '</a>';
-			print_end_menu_entry_auguria();
-		}
-		else if ($showmode == 2)
-		{
-			print_start_menu_entry_auguria($idsel,'class="tmenu"');
-			print '<div class="mainmenu '.$idsel.'"><span class="mainmenu_'.$idsel.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print_text_menu_entry_auguria($newTabMenu[$i]['titre']);
-			print '</a>';
-			print_end_menu_entry_auguria();
-		}
+		print_start_menu_entry_auguria($idsel,$classname,$showmode);
+		print_text_menu_entry_auguria($newTabMenu[$i]['titre'], $showmode, $url, $id, $idsel, $classname, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget));
+		print_end_menu_entry_auguria($showmode);
 	}
 
 	print_end_menu_array_auguria();
@@ -111,7 +102,6 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu)
  */
 function print_start_menu_array_auguria()
 {
-	global $conf;
 	print '<div class="tmenudiv">';
 	print '<ul class="tmenu">';
 }
@@ -121,37 +111,69 @@ function print_start_menu_array_auguria()
  *
  * @param	string	$idsel		Text
  * @param	string	$classname	String to add a css class
+ * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_start_menu_entry_auguria($idsel,$classname)
+function print_start_menu_entry_auguria($idsel,$classname,$showmode)
 {
-	print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-	print '<div class="tmenuleft"></div><div class="tmenucenter">';
+	if ($showmode)
+	{
+		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
+		print '<div class="tmenuleft"></div><div class="tmenucenter">';
+	}
 }
 
 /**
  * Output menu entry
  *
  * @param	string	$text		Text
+ * @param	int		$showmode	1 = allowed or 2 = not allowed
+ * @param	string	$url		Url
+ * @param	string	$id			Id
+ * @param	string	$idsel		Id sel
+ * @param	string	$classname	Class name
+ * @param	string	$atarget	Target
  * @return	void
  */
-function print_text_menu_entry_auguria($text)
+function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
-	print '<span class="mainmenuaspan">';
-	print $text;
-	print '</span>';
+	global $langs;
+
+	if ($showmode == 1)
+	{
+		print '<a class="tmenuimage" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
+		print '<div class="'.$id.' '.$idsel.'"><span class="mainmenu_'.$idsel.' '.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</a>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
+	}
+	if ($showmode == 2)
+	{
+		print '<div class="'.$id.' '.$idsel.'"><span class="mainmenu_'.$idsel.' '.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+		print '<span class="mainmenuaspan">';
+		print $text;
+		print '</span>';
+		print '</a>';
+	}
 }
 
 /**
  * Output end menu entry
  *
+ * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_end_menu_entry_auguria()
+function print_end_menu_entry_auguria($showmode)
 {
-	print '</div>';
-	print '</li>';
-	print "\n";
+	if ($showmode)
+	{
+		print '</div></li>';
+		print "\n";
+	}
 }
 
 /**
@@ -171,18 +193,19 @@ function print_end_menu_array_auguria()
 /**
  * Core function to output left menu auguria
  *
- * @param	DoliDB		$db                  Database handler
- * @param 	array		$menu_array_before   Table of menu entries to show before entries of menu handler
- * @param   array		$menu_array_after    Table of menu entries to show after entries of menu handler
- * @param  	array		&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	DoliDB		$db                 Database handler
+ * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
+ * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
+ * @param  	array		&$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array		&$menu				Object Menu to return back list of menu entries
  * @return	void
  */
-function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu)
+function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
 	$overwritemenufor = array();
-	$newmenu = new Menu();
+	$newmenu = $menu;
 
 	$mainmenu=$_SESSION["mainmenu"];
 	$leftmenu=$_SESSION["leftmenu"];
@@ -319,9 +342,10 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
  */
 function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
 {
+	global $conf;
+
 	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
 	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
-
 	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
 	if ($type_user && $menuentry['module'])
 	{

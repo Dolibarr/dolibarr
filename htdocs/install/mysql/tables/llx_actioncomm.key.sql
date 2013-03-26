@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
 -- Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -21,3 +21,4 @@
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datea (datea);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_soc (fk_soc);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_contact (fk_contact);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_code (code);

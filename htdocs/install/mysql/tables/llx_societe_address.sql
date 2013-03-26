@@ -26,8 +26,8 @@ create table llx_societe_address
   fk_soc	         integer        DEFAULT 0,            --
   name               varchar(60),                         -- company name
   address            varchar(255),                        -- company adresse
-  cp                 varchar(10),                         -- zipcode
-  ville              varchar(50),                         -- town
+  zip                varchar(10),                         -- zipcode
+  town               varchar(50),                         -- town
   fk_pays            integer        DEFAULT 0,            --
   tel                varchar(20),                         -- phone number
   fax                varchar(20),                         -- fax number

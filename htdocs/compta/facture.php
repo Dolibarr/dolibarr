@@ -7,6 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,30 +30,25 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-require DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
-require DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-require DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-
-if (! empty($conf->commande->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-}
-if (! empty($conf->projet->enabled)) {
-	require DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-	require DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
-}
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
-if (! empty($conf->margin->enabled))
-  $langs->load('margins');
+if (! empty($conf->margin->enabled)) $langs->load('margins');
 
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
@@ -87,6 +83,7 @@ $NBLINES=4;
 $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 $object=new Facture($db);
+$extrafields = new ExtraFields($db);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -299,6 +296,14 @@ else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
+else if ($action == 'setrevenuestamp' && $user->rights->facture->creer)
+{
+    $object->fetch($id);
+    $object->revenuestamp=GETPOST('revenuestamp');
+    $result=$object->update($user);
+    $object->update_price(1);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
 else if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -366,21 +371,22 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
     $object->fetch_thirdparty();
 
     // Check parameters
-    
+
     // Check for  mandatory prof id
     for ($i = 1; $i < 5; $i++)
     {
-    	 
+
     	$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_INVOICE_MANDATORY';
-    	if (! $object->thirdparty->idprof.$i && ! empty($conf->global->$idprof_mandatory))
+    	$idprof='idprof'.$i;
+    	if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
         {
         	if (! $error) $langs->load("errors");
     		$error++;
-    	
+
     		setEventMessage($langs->trans('ErrorProdIdIsMandatory',$langs->transcountry('ProfId'.$i, $object->thirdparty->country_code)),'errors');
     	}
-    } 
-    
+    }
+
     //Check for warehouse
     if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
     {
@@ -391,7 +397,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
             $action='';
         }
     }
-    
+
     if (! $error)
     {
         $result = $object->validate($user,'',$idwarehouse);
@@ -613,6 +619,15 @@ else if ($action == 'add' && $user->rights->facture->creer)
     $db->begin();
 
     $error=0;
+
+    // Get extra fields
+    foreach($_POST as $key => $value)
+    {
+    	if (preg_match("/^options_/",$key))
+    	{
+    		$object->array_options[$key]=GETPOST($key);
+    	}
+    }
 
     // Replacement invoice
     if ($_POST['type'] == 1)
@@ -1121,7 +1136,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	                if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
 	                if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
 	                $tmptxt.=')';
-	                $desc.= dol_concatdesc($desc, $tmptxt);
+	                $desc= dol_concatdesc($desc, $tmptxt);
 	            }
             }
 
@@ -1617,7 +1632,7 @@ else if ($action == 'builddoc')	// En get ou en post
 
     if (GETPOST('model'))   $object->setDocModel($user, GETPOST('model'));
 	if (GETPOST('fk_bank')) $object->fk_bank=GETPOST('fk_bank');
-	
+
     // Define output language
     $outputlangs = $langs;
     $newlang='';
@@ -1721,18 +1736,49 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 	}
 }
 
+if ($action == 'update_extras')
+{
+	// Get extra fields
+	foreach($_POST as $key => $value)
+	{
+		if (preg_match("/^options_/",$key))
+		{
+			$object->array_options[$key]=$_POST[$key];
+		}
+	}
+	// Actions on extra fields (by external module or standard code)
+	// FIXME le hook fait double emploi avec le trigger !!
+	$hookmanager->initHooks(array('invoicedao'));
+	$parameters=array('id'=>$object->id);
+	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+	if (empty($reshook))
+	{
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$object->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+	}
+	else if ($reshook < 0) $error++;
+
+}
+
 
 /*
  * View
  */
 
-llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
-
 $form = new Form($db);
-$htmlother = new FormOther($db);
+$formother=new FormOther($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $now=dol_now();
+
+llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+
 
 
 /*********************************************************************
@@ -1743,6 +1789,7 @@ $now=dol_now();
 if ($action == 'create')
 {
     $facturestatic=new Facture($db);
+    $extralabels=$extrafields->fetch_name_optionals_label('facture');
 
     print_fiche_titre($langs->trans('NewBill'));
 
@@ -1872,7 +1919,7 @@ if ($action == 'create')
     else
    {
    		print '<td colspan="2">';
-   		print $form->select_company('','socid','s.client = 1',1);
+   		print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
    		print '</td>';
     }
     print '</tr>'."\n";
@@ -2057,11 +2104,19 @@ if ($action == 'create')
         foreach($extrafields->attribute_label as $key=>$label)
         {
             $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-       		print '<tr><td';
-       		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-       		print '>'.$label.'</td><td colspan="3">';
-            print $extrafields->showInputField($key,$value);
-            print '</td></tr>'."\n";
+            // Show separator only
+            if ($extrafields->attribute_type[$key] == 'separate')
+            {
+            	print $extrafields->showSeparator($key);
+            }
+            else
+            {
+	       		print '<tr><td';
+	       		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	       		print '>'.$label.'</td><td colspan="3">';
+	            print $extrafields->showInputField($key,$value);
+	            print '</td></tr>'."\n";
+            }
         }
     }
 
@@ -2220,6 +2275,10 @@ else if ($id > 0 || ! empty($ref))
      */
 
     $result=$object->fetch($id,$ref);
+
+    // fetch optionals attributes and labels
+ 	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+
     if ($result > 0)
     {
         if ($user->societe_id>0 && $user->societe_id!=$object->socid)  accessforbidden('',0);
@@ -2228,11 +2287,12 @@ else if ($id > 0 || ! empty($ref))
 
         $soc = new Societe($db);
         $soc->fetch($object->socid);
+        $selleruserevenustamp=$mysoc->useRevenueStamp();
 
         $totalpaye  = $object->getSommePaiement();
         $totalcreditnotes = $object->getSumCreditNotesUsed();
         $totaldeposits = $object->getSumDepositsUsed();
-        //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+        //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits." selleruserrevenuestamp=".$selleruserevenustamp;
 
         // We can also use bcadd to avoid pb with floating points
         // For example print 239.2 - 229.3 - 9.9; does not return 0.
@@ -2696,10 +2756,9 @@ else if ($id > 0 || ! empty($ref))
         $nbrows=8; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) $nbcols++;
-
-        //Local taxes
         if($mysoc->localtax1_assuj=="1") $nbrows++;
         if($mysoc->localtax2_assuj=="1") $nbrows++;
+        if ($selleruserevenustamp) $nbrows++;
 
         print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
@@ -2970,29 +3029,51 @@ else if ($id > 0 || ! empty($ref))
 
         // Amount
         print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-        print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
-
+        print '<td align="right" colspan="3" nowrap>'.price($object->total_ht,1,'',1,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="3" nowrap>'.price($object->total_tva,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 		print '</tr>';
 
         // Amount Local Taxes
-        if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+        if ($mysoc->localtax1_assuj=="1" && $mysoc->useLocalTax(1)) //Localtax1 (example RE)
         {
             print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-            print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax1,1,'',1,-1,-1,$conf->currency).'</td></tr>';
         }
-        if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+        if ($mysoc->localtax2_assuj=="1" && $mysoc->useLocalTax(2)) //Localtax2 (example IRPF)
         {
             print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-            print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-            print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax2,1,'',1,-1,-1,$conf->currency).'</td></tr>';
         }
 
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        // Revenue stamp
+        if ($selleruserevenustamp)		// Test company use revenue stamp
+        {
+	        print '<tr><td>';
+	        print '<table class="nobordernopadding" width="100%"><tr><td>';
+	        print $langs->trans('RevenueStamp');
+	        print '</td>';
+	        if ($action != 'editrevenuestamp' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'),1).'</a></td>';
+	        print '</tr></table>';
+	        print '</td><td colspan="3" align="right">';
+	        if ($action == 'editrevenuestamp')
+	        {
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="setrevenuestamp">';
+				print $formother->select_revenue_stamp(GETPOST('revenuestamp'), 'revenuestamp', $mysoc->country_code);
+				//print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+	        }
+	        else
+	        {
+	        	print price($object->revenuestamp,1,'',1,-1,-1,$conf->currency);
+	        }
+	        print '</td></tr>';
+        }
+
+        // Total with tax
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="3" nowrap>'.price($object->total_ttc,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans('Status').'</td>';
@@ -3030,19 +3111,62 @@ else if ($id > 0 || ! empty($ref))
         }
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $res=$object->fetch_optionals($object->id,$extralabels);
+        $parameters=array('colspan' => ' colspan="2"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-          		print '<tr><td';
-         		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-         		print '>'.$label.'</td><td colspan="3">';
-                print $extrafields->showInputField($key,$value);
-                print '</td></tr>'."\n";
-            }
+
+        	if ($action == 'edit_extras')
+        	{
+        		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+        		print '<input type="hidden" name="action" value="update_extras">';
+        		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        		print '<input type="hidden" name="id" value="'.$object->id.'">';
+        	}
+
+
+        	foreach($extrafields->attribute_label as $key=>$label)
+        	{
+        		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+        		if ($extrafields->attribute_type[$key] == 'separate')
+        		{
+        			print $extrafields->showSeparator($key);
+        		}
+        		else
+        		{
+	        		print '<tr><td';
+	        		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	        		print '>'.$label.'</td><td colspan="5">';
+	        		if ($action == 'edit_extras' && $user->rights->facture->creer)
+	        		{
+	        			print $extrafields->showInputField($key,$value);
+	        		}
+	        		else
+	        		{
+	        			print $extrafields->showOutputField($key,$value);
+	        		}
+	        		print '</td></tr>'."\n";
+        		}
+        	}
+
+        	if(count($extrafields->attribute_label) > 0) {
+
+        		if ($action == 'edit_extras' && $user->rights->facture->creer)
+        		{
+        			print '<tr><td></td><td colspan="5">';
+        			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+        			print '</form>';
+        			print '</td></tr>';
+
+        		}
+        		else {
+        			if ($object->statut == 0 && $user->rights->facture->creer)
+        			{
+        				print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
+        			}
+        		}
+        	}
         }
 
         print '</table><br>';
@@ -3438,6 +3562,31 @@ else if ($id > 0 || ! empty($ref))
             $formmail->substit['__FACREF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
+            $formmail->substit['__CONTACTCIVNAME__']='';  
+            
+            //Find the good contact adress
+            $custcontact='';
+            $contactarr=array();
+            $contactarr=$object->liste_contact(-1,'external');
+            	
+            if (is_array($contactarr) && count($contactarr)>0) {
+            	foreach($contactarr as $contact) {
+            		if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+            			
+            			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+            			
+            			$contactstatic=new Contact($db);
+            			$contactstatic->fetch($contact['id']);
+            			$custcontact=$contactstatic->getFullName($langs,1);
+            		}
+            	}
+            
+            	if (!empty($custcontact)) {
+            		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+            	}
+            }
+            
+            
             // Tableau des parametres complementaires du post
             $formmail->param['action']=$action;
             $formmail->param['models']=$modelmail;

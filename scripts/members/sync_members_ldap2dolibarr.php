@@ -185,8 +185,6 @@ if ($result >= 0)
 			$member = new Adherent($db);
 
 			// Propriete membre
-			$member->prenom=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];    // deprecated
-			$member->nom=$ldapuser[$conf->global->LDAP_FIELD_NAME];            // deprecated
 			$member->firstname=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
 			$member->lastname=$ldapuser[$conf->global->LDAP_FIELD_NAME];
 			$member->login=$ldapuser[$conf->global->LDAP_FIELD_LOGIN];
@@ -196,7 +194,6 @@ if ($result >= 0)
 			$member->address=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
 			$member->zip=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
 			$member->town=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
-			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	     // deprecated
 			$member->country=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];
 			$member->country_id=$countries[$hashlib2rowid[strtolower($member->country)]]['rowid'];
 			$member->country_code=$countries[$hashlib2rowid[strtolower($member->country)]]['code'];
@@ -210,7 +207,7 @@ if ($result >= 0)
 			$member->morphy='phy';
 			$member->photo='';
 			$member->public=1;
-			$member->naiss=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
+			$member->birth=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
 
 			$member->statut=-1;
 			if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))

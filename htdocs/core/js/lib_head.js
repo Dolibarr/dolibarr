@@ -643,16 +643,27 @@ function setConstant(url, code, input, entity) {
 			// Enable another element
 			if (type == "disabled") {
 				$.each(data, function(key, value) {
-					$("#" + value).removeAttr("disabled");
-					if ($("#" + value).hasClass("butActionRefused") == true) {
-						$("#" + value).removeClass("butActionRefused");
-						$("#" + value).addClass("butAction");
+					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
+					$(newvalue).removeAttr("disabled");
+					if ($(newvalue).hasClass("butActionRefused") == true) {
+						$(newvalue).removeClass("butActionRefused");
+						$(newvalue).addClass("butAction");
 					}
 				});
+			} else if (type == "enabled") {
+				$.each(data, function(key, value) {
+					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
+					$(newvalue).attr("disabled", true);
+					if ($(newvalue).hasClass("butAction") == true) {
+						$(newvalue).removeClass("butAction");
+						$(newvalue).addClass("butActionRefused");
+					}
+				});				
 			// Show another element
 			} else if (type == "showhide" || type == "show") {
 				$.each(data, function(key, value) {
-					$("#" + value).show();
+					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
+					$(newvalue).show();
 				});
 			// Set another constant
 			} else if (type == "set") {
@@ -687,16 +698,27 @@ function delConstant(url, code, input, entity) {
 			// Disable another element
 			if (type == "disabled") {
 				$.each(data, function(key, value) {
-					$("#" + value).attr("disabled", true);
-					if ($("#" + value).hasClass("butAction") == true) {
-						$("#" + value).removeClass("butAction");
-						$("#" + value).addClass("butActionRefused");
+					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
+					$(newvalue).attr("disabled", true);
+					if ($(newvalue).hasClass("butAction") == true) {
+						$(newvalue).removeClass("butAction");
+						$(newvalue).addClass("butActionRefused");
 					}
 				});
+			} else if (type == "enabled") {
+				$.each(data, function(key, value) {
+					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
+					$(newvalue).removeAttr("disabled");
+					if ($(newvalue).hasClass("butActionRefused") == true) {
+						$(newvalue).removeClass("butActionRefused");
+						$(newvalue).addClass("butAction");
+					}
+				});				
 			// Hide another element
 			} else if (type == "showhide" || type == "hide") {
 				$.each(data, function(key, value) {
-					$("#" + value).hide();
+					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
+					$(newvalue).hide();
 				});
 			// Delete another constant
 			} else if (type == "del") {

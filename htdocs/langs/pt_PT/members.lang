@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - pt_PT - members
+# Dolibarr language file - pt_PT - members
 CHARSET=UTF-8
 MembersArea=Área Membros
 PublicMembersArea=Área pública dos Membros
@@ -149,7 +149,7 @@ SetLinkToThirdParty=Link para uma Dolibarr terceiro
 SubscriptionId=Assinaturas id
 MemberId=Estados-id
 PaymentSubscription=Nova contribuição pagamento
-MembersAndSubscriptions=Deputados e Suscriptions
+MembersAndSubscriptions=Deputados e Subscriptions
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
 

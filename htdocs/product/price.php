@@ -680,7 +680,7 @@ if ($result)
 
 		// Il doit au moins y avoir la ligne de prix initial.
 		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
-		$object->updatePrice($object->id, $object->price, 'HT', $user, $newprice_min);
+		$object->updatePrice($object->id, $object->price, $object->price_base_type, $user, $newprice_min);
 
 		$result = $db->query($sql);
 		$num = $db->num_rows($result);

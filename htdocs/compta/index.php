@@ -104,10 +104,9 @@ llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
 print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-
-print '<tr>';
-print '<td valign="top" width="30%" class="notopnoleft">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $max=3;
 
@@ -323,8 +322,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	}
 }
 
-print '</td>';
-print '<td valign="top" width="70%" class="notopnoleftnoright">';
+
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 // Last modified customer invoices
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
@@ -372,7 +373,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td nowrap="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
@@ -613,7 +614,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$deplacementstatic->ref=$objp->rowid;
 				$deplacementstatic->id=$objp->rowid;
 				$userstatic->id=$objp->uid;
-				$userstatic->lastname=$objp->name;
+				$userstatic->lastname=$objp->lastname;
 				$userstatic->firstname=$objp->firstname;
 				print '<tr '.$bc[$var].'>';
                 print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
@@ -767,7 +768,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
@@ -864,7 +865,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td nowrap="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
@@ -1031,12 +1032,10 @@ if ($resql)
 	print "</table><br>";
 }
 
-print '</td></tr>';
-
-print '</table>';
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 llxFooter();
 
 $db->close();
-
 ?>

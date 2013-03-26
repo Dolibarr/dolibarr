@@ -195,7 +195,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 
 			<div class="formelementrow"><input type="checkbox" name="disable_fk"
 				value="yes" id="checkbox_disable_fk" checked="checked" /> <label
-				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?></label>
+				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
 			</div>
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 

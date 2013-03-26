@@ -57,7 +57,7 @@ $pagenext = $page + 1;
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.rowid as socid, c.name, c.firstname, a.label, n.rowid";
+$sql = "SELECT s.nom, s.rowid as socid, c.lastname, c.firstname, a.label, n.rowid";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
 $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
 $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
@@ -83,7 +83,7 @@ if ($result)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Contact"),"index.php","c.name","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Contact"),"index.php","c.lastname","","",'valign="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Action"),"index.php","a.titre","","",'valign="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 	$var=True;
@@ -93,9 +93,9 @@ if ($result)
 
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
-		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">$obj->nom</A></td>\n";
-		print "<td>".$obj->firstname." ".$obj->name."</td>\n";
+		print "<tr ".$bc[$var].">";
+		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print "<td>".dolGetFirstLastname($obj->firstname, $obj->lastname)."</td>\n";
 		print "<td>".$obj->titre."</td>\n";
 		print "</tr>\n";
 		$i++;
@@ -108,7 +108,7 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

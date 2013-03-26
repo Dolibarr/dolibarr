@@ -432,6 +432,6 @@ EditGlobalDiscounts=Editare reduceri absolute
 AddCreditNote=Creaţi note de credit
 InvoiceNotChecked=Nu factură selectat
 ShowUnpaidAll=Arata toate facturile neachitate
-ClosePaidInvoicesAutomatically=Clasifica &quot;platiti&quot;, toate facturile standard sau de înlocuire entierely platite.
+ClosePaidInvoicesAutomatically=Clasifica &quot;platiti&quot;, toate facturile standard sau de înlocuire entirely platite.
 AllCompletelyPayedInvoiceWillBeClosed=Toate cu factura nu rămân la plata vor fi închise automat la statutul de &quot;platite&quot;.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:55).

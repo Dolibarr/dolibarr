@@ -87,7 +87,7 @@ class box_contacts extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-					$contactstatic->name=$objp->name;
+					$contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civilite_id=$objp->civilite;
 
@@ -99,7 +99,7 @@ class box_contacts extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/contact/fiche.php?id=".$objp->rowid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $contactstatic->getFullName($langs,1),
+                    'text' => $contactstatic->getFullName($langs,0),
                     'url' => DOL_URL_ROOT."/contact/fiche.php?id=".$objp->rowid);
 
                     $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',

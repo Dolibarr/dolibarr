@@ -132,27 +132,27 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
 $var=!$var;
-$thousand=$langs->trans("SeparatorThousand");
+$thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
 if ($thousand == 'SeparatorThousand') $thousand=' ';	// ' ' does not work on trans method
 if ($thousand == 'None') $thousand='';
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentValueSeparatorThousand").'</td><td>'.($thousand==' '?$langs->trans("Space"):$thousand).'</td></tr>'."\n";
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentValueSeparatorThousand").'</td><td>'.($thousand==' '?$langs->transnoentitiesnoconv("Space"):$thousand).'</td></tr>'."\n";
 // Decimals
 $var=!$var;
-$dec=$langs->trans("SeparatorDecimal");
+$dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentValueSeparatorDecimal").'</td><td>'.$dec.'</td></tr>'."\n";
 // Show results of functions to see if everything works
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">&nbsp; => price2num(1233.56+1)</td><td>'.price2num(1233.56+1,'2').'</td></tr>';
+print '<tr '.$bc[$var].'><td width="300">&nbsp; => price2num(1233.56+1)</td><td>'.price2num(1233.56+1,'2').'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width=\"300\">&nbsp; => price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'2')."</td>";
+print "<tr ".$bc[$var].'><td width="300">&nbsp; => price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'2')."</td></tr>\n";
 if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 {
 	$var=!$var;
-	print "<tr ".$bc[$var].'><td width=\"300\">&nbsp; => price2num('."'1 234.56')</td><td>".price2num("1 234.56",'2')."</td>";
+	print "<tr ".$bc[$var].'><td width="300">&nbsp; => price2num('."'1 234.56')</td><td>".price2num("1 234.56",'2')."</td>";
 	print "</tr>\n";
 }
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td>';
+print '<tr '.$bc[$var].'><td width="300">&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td></tr>'."\n";
 // Timezone
 $txt =$langs->trans("OSTZ").' (variable system TZ): '.(! empty($_ENV["TZ"])?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
 $txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php

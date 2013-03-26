@@ -57,7 +57,7 @@ $limit = $conf->liste_limit;
  * Mode liste
  */
 
-$sql = "SELECT s.rowid as socid, s.nom, st.libelle as stcomm, p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
+$sql = "SELECT s.rowid as socid, s.nom as name, st.libelle as stcomm, p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -85,13 +85,14 @@ if ($socid) {
     $sql .= " AND s.rowid = ".$socid;
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= $db->plimit($limit, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
-    
+
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
     print_barre_liste($title." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
 
@@ -111,11 +112,11 @@ if ($result)
 
         $var=!$var;
 
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
-        print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->name.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->lastname.'</a></td>';
         print '<td>'.$obj->firstname.'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
         print '<td>'.$obj->email.'</td>';
         print '<td>'.$obj->phone.'</td>';
 
@@ -131,7 +132,8 @@ else
     dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

@@ -49,6 +49,7 @@ class Adherent extends CommonObject
     var $login;
     var $pass;
     var $societe;
+    var $company;
     var $address;
     var $zip;
     var $town;
@@ -56,14 +57,10 @@ class Adherent extends CommonObject
     var $state_id;              // Id of department
     var $state_code;            // Code of department
     var $state;                 // Label of department
-    var $fk_departement;		// deprecated
-    var $departement_code;		// deprecated
-    var $departement;			// deprecated
 
     var $country_id;
     var $country_code;
     var $country;
-    var $pays;                 // deprecated
 
     var $email;
     var $phone;
@@ -80,7 +77,7 @@ class Adherent extends CommonObject
     var $datem;
     var $datefin;
     var $datevalid;
-    var $naiss;
+    var $birth;
 
     var $typeid;			// Id type adherent
     var $type;				// Libelle type adherent
@@ -178,7 +175,7 @@ class Adherent extends CommonObject
 	{
 		global $conf,$langs;
 
-		$birthday = dol_print_date($this->naiss,'day');
+		$birthday = dol_print_date($this->birth,'day');
 
 		$msgishtml = 0;
 		if (dol_textishtml($text,1)) $msgishtml = 1;
@@ -217,14 +214,17 @@ class Adherent extends CommonObject
 				'%TOWN%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 				'%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-				'%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+				'%BIRTH%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
 				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
 				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
 				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
 				// For backward compatibility
 				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-				'%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
 
@@ -396,8 +396,8 @@ class Adherent extends CommonObject
 		$this->address=($this->address?$this->address:$this->address);
 		$this->zip=($this->zip?$this->zip:$this->zip);
 		$this->town=($this->town?$this->town:$this->town);
-		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
+		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
+		$this->state_id=($this->state_id > 0?$this->state_id:$this->state_id);
 		if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords(trim($this->lastname));
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords(trim($this->firstname));
 
@@ -421,8 +421,8 @@ class Adherent extends CommonObject
         $sql.= ", address=" .($this->address?"'".$this->db->escape($this->address)."'":"null");
         $sql.= ", zip="      .($this->zip?"'".$this->db->escape($this->zip)."'":"null");
         $sql.= ", town="   .($this->town?"'".$this->db->escape($this->town)."'":"null");
-        $sql.= ", pays="          .($this->country_id>0?"'".$this->country_id."'":"null");
-        $sql.= ", fk_departement=".($this->state_id>0?"'".$this->state_id."'":"null");
+        $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
+        $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
@@ -433,7 +433,7 @@ class Adherent extends CommonObject
         $sql.= ", statut="  .$this->statut;
         $sql.= ", fk_adherent_type=".$this->typeid;
         $sql.= ", morphy='".$this->morphy."'";
-        $sql.= ", naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
+        $sql.= ", birth="   .($this->birth?"'".$this->db->idate($this->birth)."'":"null");
         if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
         if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
         $sql.= ", fk_user_mod=".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
@@ -1006,23 +1006,23 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
         $sql.= " d.datefin as datefin,";
-        $sql.= " d.naiss as datenaiss,";
+        $sql.= " d.birth as birthday,";
         $sql.= " d.datevalid as datev,";
-        $sql.= " d.pays,";
-        $sql.= " d.fk_departement,";
+        $sql.= " d.country,";
+        $sql.= " d.state_id,";
         $sql.= " p.rowid as country_id, p.code as country_code, p.libelle as country,";
         $sql.= " dep.nom as state, dep.code_departement as state_code,";
         $sql.= " t.libelle as type, t.cotisation as cotisation,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.fk_departement = dep.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.country = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.state_id = dep.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
         if ($rowid) $sql.= " AND d.rowid=".$rowid;
@@ -1048,18 +1048,16 @@ class Adherent extends CommonObject
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
                 $this->pass				= $obj->pass;
-                $this->societe			= $obj->societe;
+                $this->societe			= $obj->company;
+                $this->company			= $obj->company;
                 $this->fk_soc			= $obj->fk_soc;
                 $this->address			= $obj->address;
                 $this->zip				= $obj->zip;
                 $this->town				= $obj->town;
 
-                $this->state_id			= $obj->fk_departement;
-                $this->state_code		= $obj->fk_departement?$obj->state_code:'';
-                $this->state			= $obj->fk_departement?$obj->state:'';
-                $this->fk_departement	= $obj->fk_departement;                        // deprecated
-                $this->departement_code	= $obj->fk_departement?$obj->state_code:'';    // deprecated
-                $this->departement		= $obj->fk_departement?$obj->state:'';         // deprecated
+                $this->state_id			= $obj->state_id;
+                $this->state_code		= $obj->state_id?$obj->state_code:'';
+                $this->state			= $obj->state_id?$obj->state:'';
 
                 $this->country_id		= $obj->country_id;
                 $this->country_code		= $obj->country_code;
@@ -1067,7 +1065,6 @@ class Adherent extends CommonObject
                 	$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
                 else
                 	$this->country=$obj->country;
-                $this->pays				= $this->country;        // deprecated
 
                 $this->phone			= $obj->phone;
                 $this->phone_perso		= $obj->phone_perso;
@@ -1082,7 +1079,7 @@ class Adherent extends CommonObject
                 $this->datem			= $this->db->jdate($obj->datem);
                 $this->datefin			= $this->db->jdate($obj->datefin);
                 $this->datevalid		= $this->db->jdate($obj->datev);
-                $this->naiss			= $this->db->jdate($obj->datenaiss);
+                $this->birth			= $this->db->jdate($obj->birthday);
 
                 $this->note				= $obj->note;
                 $this->morphy			= $obj->morphy;
@@ -1742,7 +1739,7 @@ class Adherent extends CommonObject
         $this->phone_perso  = '0999999998';
         $this->phone_mobile = '0999999997';
         $this->note='No comment';
-        $this->naiss=time();
+        $this->birth=time();
         $this->photo='';
         $this->public=1;
         $this->statut=0;
@@ -1814,7 +1811,7 @@ class Adherent extends CommonObject
         if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
         if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))	      $info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
         if ($this->note && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note;
-        if ($this->naiss && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->naiss,'dayhourldap');
+        if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
         if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
         if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 

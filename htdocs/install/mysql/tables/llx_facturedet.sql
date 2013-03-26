@@ -30,9 +30,9 @@ create table llx_facturedet
   description					text,
   tva_tx						double(6,3),						-- Taux tva produit/service (exemple 19.6)
   localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
-  localtax1_type			 	varchar(1)	  	 NULL, 				 	-- localtax1 type
+  localtax1_type			 	varchar(10)	  	 NULL, 				 	-- localtax1 type
   localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
-  localtax2_type			 	varchar(1)	  	 NULL, 				 	-- localtax2 type
+  localtax2_type			 	varchar(10)	  	 NULL, 				 	-- localtax2 type
   qty							real,								-- Quantity (exemple 2)
   remise_percent				real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise						real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)
@@ -51,7 +51,6 @@ create table llx_facturedet
   buy_price_ht					double(24,8) DEFAULT 0,				-- prix d'achat HT
   fk_product_fournisseur_price	integer      DEFAULT NULL,			-- reference prix fournisseur
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,
-  fk_export_compta				integer    DEFAULT 0 NOT NULL,
   special_code					integer UNSIGNED DEFAULT 0,			-- code pour les lignes speciales
   rang							integer    DEFAULT 0,				-- ordre d'affichage
   import_key					varchar(14)

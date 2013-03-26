@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -662,7 +662,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 
                 $from				= GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
                 $replyto			= GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-                $message			= GETPOST('message','alpha');
+                $message			= GETPOST('message');
                 $sendtocc			= GETPOST('sendtocc','alpha');
                 $deliveryreceipt	= GETPOST('deliveryreceipt','alpha');
 
@@ -692,7 +692,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 
                 // Envoi de la propal
                 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
                     $mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -702,8 +702,8 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2)).'.</div>';
-
+                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+						setEventMessage($mesg);
                         $error=0;
 
                         // Initialisation donnees
@@ -729,7 +729,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&msg='.urlencode($mesg));
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }
                     }
@@ -917,8 +917,8 @@ if ($action == 'create')
     $obj = $conf->global->FICHEINTER_ADDON;
     $obj = "mod_".$obj;
 
-    $modFicheinter = new $obj;
-    $numpr = $modFicheinter->getNextValue($soc, $object);
+    //$modFicheinter = new $obj;
+    //$numpr = $modFicheinter->getNextValue($soc, $object);
 
     if ($socid > 0)
     {
@@ -935,8 +935,7 @@ if ($action == 'create')
         print '<input type="hidden" name="action" value="add">';
 
         // Ref
-        print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
-        print '<td><input name="ref" value="'.$numpr.'"></td></tr>'."\n";
+		print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 
         // Description (must be a textarea and not html must be allowed (used in list view)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
@@ -1053,7 +1052,24 @@ else if ($id > 0 || ! empty($ref))
     // Confirmation validation
     if ($action == 'validate')
     {
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $langs->trans('ConfirmValidateIntervention'), 'confirm_validate','',0,1);
+    	// on verifie si l'objet est en numerotation provisoire
+    	$ref = substr($object->ref, 1, 4);
+    	if ($ref == 'PROV')
+    	{
+    		$numref = $object->getNextNumRef($soc);
+    		if (empty($numref))
+    		{
+    			$error++;
+    			dol_htmloutput_errors($object->error);
+    		}
+    	}
+    	else
+    	{
+    		$numref = $object->ref;
+    	}
+    	$text=$langs->trans('ConfirmValidateIntervention',$numref);
+    	
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
 
@@ -1349,7 +1365,7 @@ else if ($id > 0 || ! empty($ref))
 
     if ($user->societe_id == 0)
     {
-        if ($action != 'editdescription')
+        if ($action != 'editdescription' && ($action != 'presend'))
         {
             // Validate
             if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
@@ -1502,6 +1518,28 @@ else if ($id > 0 || ! empty($ref))
         $formmail->substit['__FICHINTERREF__']=$object->ref;
         $formmail->substit['__SIGNATURE__']=$user->signature;
         $formmail->substit['__PERSONALIZED__']='';
+        $formmail->substit['__CONTACTCIVNAME__']='';
+        
+        //Find the good contact adress
+        $custcontact='';
+        $contactarr=array();
+        $contactarr=$object->liste_contact(-1,'external');
+        	
+        if (is_array($contactarr) && count($contactarr)>0) {
+        	foreach($contactarr as $contact) {
+        		if ($contact['libelle']==$langs->trans('TypeContact_fichinter_external_CUSTOMER')) {
+        			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+        			$contactstatic=new Contact($db);
+        			$contactstatic->fetch($contact['id']);
+        			$custcontact=$contactstatic->getFullName($langs,1);
+        		}
+        	}
+        
+        	if (!empty($custcontact)) {
+        		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+        	}
+        }
+        
         // Tableau des parametres complementaires
         $formmail->param['action']='send';
         $formmail->param['models']='fichinter_send';

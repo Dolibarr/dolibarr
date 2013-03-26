@@ -43,7 +43,7 @@
  *		@param  float	$uselocaltax2_rate          0=do not use this localtax, >0=apply, -1=autodetect according to seller
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
- *		@param	int		$info_bits					Miscellanous informations on line
+ *		@param	int		$info_bits					Miscellaneous informations on line
  *		@param	int		$type						0/1=Product/service
  *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
  *		@return result[ 0=total_ht,
@@ -74,9 +74,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		if (! is_object($mysoc))	// mysoc may be not defined (during migration process)
 		{
 			$mysoc=new Societe($db);
-			$mysoc->getMysoc($conf);
+			$mysoc->setMysoc($conf);
 		}
-		$seller=$mysoc;	// If seller is a customer, $seller is not provided, we use $mysoc
+		$seller=$mysoc;	// If sell is done to a customer, $seller is not provided, we use $mysoc
 		//var_dump($seller->country_id);exit;
 	}
 

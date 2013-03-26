@@ -665,7 +665,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
             		if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt.=' - ';
             		if (! empty($prod->country_code)) $tmptxt.=$langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code,0,$db,$langs,0);
             		$tmptxt.=')';
-            		$desc.= dol_concatdesc($desc, $tmptxt);
+            		$desc= dol_concatdesc($desc, $tmptxt);
             	}
 			}
 
@@ -730,6 +730,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 			if ($result > 0)
 			{
+				$ret=$object->fetch($object->id);    // Reload to get new records
+
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					// Define output language
@@ -742,7 +744,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$ret=$object->fetch($object->id);    // Reload to get new records
 					commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
@@ -1101,6 +1102,14 @@ else if ($action == 'remove_file')
 	}
 }
 
+// Print file
+else if ($action == 'print_file' AND $user->rights->printipp->use)
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
+    $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
+    $printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
+}
+
 /*
  * Add file in email form
 */
@@ -1203,7 +1212,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				$mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -1478,7 +1487,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		else
 		{
 			print '<td colspan="2">';
-			print $form->select_company('','socid','s.client = 1',1);
+			print $form->select_company('','socid','s.client = 1 OR s.client = 3',1);
 			print '</td>';
 		}
 		print '</tr>'."\n";
@@ -2353,8 +2362,9 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 				$genallowed=$user->rights->commande->creer;
 				$delallowed=$user->rights->commande->supprimer;
-
-				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+				$printer = false;
+				if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
+				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
 
 				/*
 				 * Linked object block
@@ -2432,6 +2442,26 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$formmail->substit['__ORDERREF__']=$object->ref;
 				$formmail->substit['__SIGNATURE__']=$user->signature;
 				$formmail->substit['__PERSONALIZED__']='';
+				$formmail->substit['__CONTACTCIVNAME__']='';
+				
+				$custcontact='';
+				$contactarr=array();
+				$contactarr=$object->liste_contact(-1,'external');
+				 
+				if (is_array($contactarr) && count($contactarr)>0) {
+					foreach($contactarr as $contact) {
+						if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
+							$contactstatic=new Contact($db);
+							$contactstatic->fetch($contact['id']);
+							$custcontact=$contactstatic->getFullName($langs,1);
+						}
+					}
+					 
+					if (!empty($custcontact)) {
+						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+					}
+				}
+				
 				// Tableau des parametres complementaires
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';

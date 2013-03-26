@@ -39,7 +39,7 @@ $action = GETPOST('action');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $id,'');
+$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);

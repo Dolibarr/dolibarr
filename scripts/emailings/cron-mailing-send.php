@@ -86,7 +86,7 @@ if ($resql)
 
 			// On choisit les mails non deja envoyes pour ce mailing (statut=0)
 			// ou envoyes en erreur (statut=-1)
-			$sql = "SELECT mc.rowid, mc.nom as lastname, mc.prenom as firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
+			$sql = "SELECT mc.rowid, mc.lastname as lastname, mc.firstname as firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
@@ -120,7 +120,7 @@ if ($resql)
 						$obj2 = $db->fetch_object($resql);
 
 						// sendto en RFC2822
-						$sendto = str_replace(',',' ',$obj2->firstname." ".$obj2->lastname) ." <".$obj2->email.">";
+						$sendto = str_replace(',',' ',dolGetFirstLastname($obj2->firstname, $obj2->lastname)) ." <".$obj2->email.">";
 
 						// Make subtsitutions on topic and body
 						$other=explode(';',$obj2->other);

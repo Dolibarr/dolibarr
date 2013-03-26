@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2012 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +164,7 @@ if ($action == 'setmod')
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-    dolibarr_set_const($db, "LIVRAISON_ADDON",$value,'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "LIVRAISON_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
 }
 
 
@@ -209,8 +209,9 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
- *  Module numerotation
+ * Livraison numbering model
  */
+ 
 print_titre($langs->trans("DeliveryOrderNumberingModules"));
 
 print '<table class="noborder" width="100%">';
@@ -240,16 +241,16 @@ foreach ($dirmodels as $reldir)
                 {
                     $file = substr($file, 0, dol_strlen($file)-4);
 
-                    require_once DOL_DOCUMENT_ROOT ."/core/modules/livraison/".$file.'.php';
+                    require_once $dir.$file.'.php';
 
                     $module = new $file;
-
-                    // Show modules according to features level
-                    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-                    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-                    if ($module->isEnabled())
+					
+					if ($module->isEnabled())
                     {
+						// Show modules according to features level
+						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+                    
                         $var=!$var;
                         print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
                         print $module->info();
@@ -258,13 +259,15 @@ foreach ($dirmodels as $reldir)
                         // Show example of numbering module
                         print '<td nowrap="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+                        if (preg_match('/^Error/',$tmp)) { 
+							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; 
+						}
                         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
                         print '<td align="center">';
-                        if ($conf->global->LIVRAISON_ADDON == "$file")
+                        if ($conf->global->LIVRAISON_ADDON_NUMBER == "$file")
                         {
                             print img_picto($langs->trans("Activated"),'switch_on');
                         }
@@ -311,12 +314,12 @@ print '</table>';
 
 
 /*
- *  Modeles de documents
+ *  Documents Models for delivery
  */
 print '<br>';
 print_titre($langs->trans("DeliveryOrderModel"));
 
-// Defini tableau def de modele invoice
+// Defini tableau def de modele 
 $type="delivery";
 $def = array();
 
@@ -397,7 +400,7 @@ foreach ($dirmodels as $reldir)
                         print "</td>";
                     }
 
-                    // Defaut
+                    // Default
                     print "<td align=\"center\">";
                     if ($conf->global->LIVRAISON_ADDON_PDF == "$name")
                     {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -157,7 +157,7 @@ jQuery(document).ready(function() {
 		jQuery("#delconst").show();
 		jQuery("#action").val('delete');
 	});
-	jQuery(".inputforupdate").keypress(function() {
+	jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
 		var field_id = jQuery(this).attr("id");
 		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();

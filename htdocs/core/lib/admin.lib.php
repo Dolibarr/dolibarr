@@ -250,7 +250,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             $newsql=preg_replace('/__ENTITY__/i',(!empty($entity)?$entity:$conf->entity),$sql);
 
             // Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
-            if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
+            if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".dol_htmlentities($newsql,ENT_NOQUOTES)."'</td></tr>\n";
             dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 
             // Replace for encrypt data
@@ -519,7 +519,7 @@ function security_prepare_head()
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
-    $head[$h][1] = $langs->trans("Miscellanous");
+    $head[$h][1] = $langs->trans("Miscellaneous");
     $head[$h][2] = 'misc';
     $h++;
 
@@ -1147,19 +1147,21 @@ function showModulesExludedForExternal($modules)
 	$text=$langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
 	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 	$i=0;
-	foreach($modules as $module)
-	{
-		$moduleconst=$module->const_name;
-		$modulename=strtolower($module->name);
-		//print 'modulename='.$modulename;
+	if (!empty($modules)) {
+		foreach($modules as $module)
+		{
+			$moduleconst=$module->const_name;
+			$modulename=strtolower($module->name);
+			//print 'modulename='.$modulename;
 
-		//if (empty($conf->global->$moduleconst)) continue;
-		if (! in_array($modulename,$listofmodules)) continue;
+			//if (empty($conf->global->$moduleconst)) continue;
+			if (! in_array($modulename,$listofmodules)) continue;
 
-		if ($i > 0) $text.=', ';
-		else $text.=' ';
-		$i++;
-		$text .= $langs->trans('Module'.$module->numero.'Name');
+			if ($i > 0) $text.=', ';
+			else $text.=' ';
+			$i++;
+			$text .= $langs->trans('Module'.$module->numero.'Name');
+		}
 	}
 	return img_picto($langs->trans('InfoAdmin'), 'star').' '.$text;
 }

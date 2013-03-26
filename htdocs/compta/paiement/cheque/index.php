@@ -46,9 +46,9 @@ llxHeader('',$langs->trans("ChequesArea"));
 
 print_fiche_titre($langs->trans("ChequesArea"));
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -86,7 +86,8 @@ else
 }
 
 
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number as ref";
@@ -143,10 +144,11 @@ else
   dol_print_error($db);
 }
 
-print "</td></tr>\n";
-print "</table>\n";
 
-$db->close();
+//print "</td></tr></table>\n";
+print '<div></div></div>';
 
 llxFooter();
+
+$db->close();
 ?>

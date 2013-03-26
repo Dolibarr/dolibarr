@@ -34,6 +34,7 @@
 require_once 'filefunc.inc.php';	// May have been already require by main.inc.php. But may not by scripts.
 
 
+
 /*
  * Create $conf object
  */
@@ -194,7 +195,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 
 	$mysoc=new Societe($db);
-	$mysoc->getMysoc($conf);
+	$mysoc->setMysoc($conf);
 
 	// For some countries, we need to invert our address with customer address
 	if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;

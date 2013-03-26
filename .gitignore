@@ -1,6 +1,7 @@
 htdocs/conf/conf.php
 htdocs/conf/conf.php.old
 documents/
+test/report/
 nbproject
 default.properties
 .settings/

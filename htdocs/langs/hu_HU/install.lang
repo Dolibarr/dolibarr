@@ -1,7 +1,7 @@
 # Dolibarr language file - hu_HU - install
 CHARSET=UTF-8
 InstallEasy=Csak kövesse az utasitásokat lépésrõl lépésre.
-MiscellanousChecks=Feltételek ellenörézse
+MiscellaneousChecks=Feltételek ellenörézse
 DolibarrWelcome=Üdvözöljük a Dolibarr rendszerében
 ConfFileExists=<b>%s</b> konfigurációs fájl már létezik.
 ConfFileDoesNotExists=<b>%s</b> konfigurációs fájl NEM létezik!

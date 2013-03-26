@@ -96,11 +96,11 @@ https://launchpad.net/dolibarr/stable
 		lp:dolibarr
 		merge packaging lp:~yourlogin/+junk/debian-dev
     	For beta:
-	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
+	    # bzr-builder format 0.3 deb-version {debupstream}-1~{revno}
 		lp:dolibarr/beta
 		merge packaging lp:~yourlogin/+junk/debian-beta
     	For stable:
-	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
+	    # bzr-builder format 0.3 deb-version {debupstream}-2~{revno}
 		lp:dolibarr/stable
 		merge packaging lp:~yourlogin/+junk/debian-stable
 - Run command
