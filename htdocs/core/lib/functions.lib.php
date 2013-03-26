@@ -3047,8 +3047,32 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *  @param  int			$idprod                 Id product
  *	@return float       			        	0 or 1
  */
-function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
+function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod+0, $idprodfournprice=0)
 {
+	global $db;
+	if($idprodfournprice>0)
+	{        
+		$sql = "SELECT pfp.recuperableonly";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
+		$sql.= " WHERE rowid = ".$idprodfournprice;
+		dol_syslog(get_class($this)."::get_default_npr sql=".$sql, LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$record = $this->db->fetch_array($resql);
+			if(isset($record['recuperableonly']))
+				return $record['recuperableonly'];
+		}
+
+	}
+	elseif( $idprod > 0 )
+	{
+		$prod = new Product($db);
+		$prod->fetch($idprod);
+		return $prod->tva_npr;
+	}
+
 	return 0;
 }
 
