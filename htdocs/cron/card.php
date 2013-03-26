@@ -123,9 +123,9 @@ if ($action=='add') {
 // Save parameters
 if ($action=='update') {
 	$object->id=$id;
-	$object->jobtype=GETPOST('jobtype','alpha');
-	$object->label=GETPOST('label','alpha');
-	$object->command=GETPOST('command','alpha');
+	$object->jobtype=GETPOST('jobtype');
+	$object->label=GETPOST('label');
+	$object->command=GETPOST('command');
 	$object->classesname=GETPOST('classesname','alpha');
 	$object->priority=GETPOST('priority','int');
 	$object->objectname=GETPOST('objectname','alpha');

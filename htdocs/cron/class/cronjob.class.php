@@ -834,9 +834,12 @@ class Cronjob extends CommonObject
 	{
 		global $langs, $conf;
 
+		$error=0;
+		$now=dol_now();
+		
 		$langs->load('cron');
 
-		if (empty($userlogin)) {
+			if (empty($userlogin)) {
 			$this->error="User login is mandatory";
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
@@ -845,27 +848,59 @@ class Cronjob extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user=new User($this->db);
 		$result=$user->fetch('',$userlogin);
-		if ($result<0) {
+		if ($result<0)
+		{
 			$this->error="User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
-		}else {
-			if (empty($user->id)) {
+		}
+		else
+		{
+			if (empty($user->id))
+			{
 				$this->error=" User user login:".$userlogin." do not exists";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
 
-		dol_syslog(get_class($this)."::run_jobs userlogin:$userlogin", LOG_DEBUG);
+		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
-		$error=0;
-		$now=dol_now();
 
-		if ($this->jobtype=='method') {
+		// Increase limit of time. Works only if we are not in safe mode
+		$ExecTimeLimit=600;
+		if (!empty($ExecTimeLimit))
+		{
+			$err=error_reporting();
+			error_reporting(0);     // Disable all errors
+			//error_reporting(E_ALL);
+			@set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
+			error_reporting($err);
+		}
+		if (!empty($MemoryLimit))
+		{
+			@ini_set('memory_limit', $MemoryLimit);
+		}
+
+
+		// Update last run date (to track launch)
+		$this->datelastrun=$now;
+		$this->lastoutput='';
+		$this->lastresult='';
+		$this->nbrun=$this->nbrun+1;
+		$result = $this->update($user);
+		if ($result<0) {
+			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		// Run a method
+		if ($this->jobtype=='method')
+		{
 			// load classes
 			$ret=dol_include_once("/".$this->module_name."/class/".$this->classesname,$this->objectname);
-			if ($ret===false) {
+			if ($ret===false)
+			{
 				$this->error=$langs->trans('CronCannotLoadClass',$file,$this->objectname);
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 				return -1;
@@ -873,7 +908,8 @@ class Cronjob extends CommonObject
 
 			// Load langs
 			$result=$langs->load($this->module_name.'@'.$this->module_name);
-			if ($result<0) {
+			if ($result<0)
+			{
 				dol_syslog(get_class($this)."::run_jobs Cannot load module langs".$langs->error, LOG_ERR);
 				return -1;
 			}
@@ -883,66 +919,89 @@ class Cronjob extends CommonObject
 			// Create Object for the call module
 			$object = new $this->objectname($this->db);
 
-			
-			//Update launch start date
-			$this->datelastrun=$now;
-			$this->nbrun=$this->nbrun+1;
-			$result = $this->update($user);
-			if ($result<0) {
-				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-				return -1;
-			}
-			
-
 			$params_arr = array();
-			$params_arr=explode(", ",$this->params);
-			if (!is_array($params_arr)) {
+			$params_arr = explode(", ",$this->params);
+			if (!is_array($params_arr))
+			{
 				$result = call_user_func(array($object, $this->methodename), $this->params);
-			}else {
+			}
+			else
+			{
 				$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 			}
 
-			if ($result===false) {
+			if ($result===false)
+			{
 				dol_syslog(get_class($this)."::run_jobs ".$object->error, LOG_ERR);
 				return -1;
-			}else {
+			}
+			else
+			{
 				$this->lastoutput=var_export($result,true);
 				$this->lastresult=var_export($result,true);
 			}
 
-		} elseif ($this->jobtype=='command') {
-			dol_syslog(get_class($this)."::run_jobs system:".$this->command, LOG_DEBUG);
-			$output_arr=array();
-			
-			//Update launch start date
-			$this->datelastrun=$now;
-			$this->nbrun=$this->nbrun+1;
-			$result = $this->update($user);
-			if ($result<0) {
-				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-				return -1;
-			}
-
-			exec($this->command, $output_arr,$retval);
-
-			dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true), LOG_DEBUG);
-
-			$this->lastoutput='';
-			if (is_array($output_arr) && count($output_arr)>0) {
-				foreach($output_arr as $val) {
-					$this->lastoutput.=$val."\n";
-				}
-			}
-			$this->lastresult=$retval;
 		}
-		
-		//Update result date
-		$this->datelastresult=$now;
+
+		// Run a command line
+		if ($this->jobtype=='command')
+		{
+			$command=escapeshellcmd($this->command);
+			$command.=" 2>&1";
+			dol_mkdir($conf->cronjob->dir_temp);
+			$outputfile=$conf->cronjob->dir_temp.'/cronjob.'.$userlogin.'.out';
+
+			dol_syslog(get_class($this)."::run_jobs system:".$command, LOG_DEBUG);
+			$output_arr=array();
+
+			$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+			if ($execmethod == 1)
+			{
+				exec($command, $output_arr, $retval);
+			}
+			if ($execmethod == 2)
+			{
+				$ok=0;
+				$handle = fopen($outputfile, 'w');
+				if ($handle)
+				{
+					dol_syslog("Run command ".$command);
+					$handlein = popen($command, 'r');
+					while (!feof($handlein))
+					{
+						$read = fgets($handlein);
+						fwrite($handle,$read);
+						$output_arr[]=$read;
+					}
+					pclose($handlein);
+					fclose($handle);
+				}
+				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			}
+		}
+
+		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true), LOG_DEBUG);
+
+
+		// Update with result
+		$this->lastoutput='';
+		if (is_array($output_arr) && count($output_arr)>0)
+		{
+			foreach($output_arr as $val)
+			{
+				$this->lastoutput.=$val."\n";
+			}
+		}
+		$this->lastresult=$retval;
+		$this->datelastresult=dol_now();
 		$result = $this->update($user);
-		if ($result<0) {
+		if ($result < 0)
+		{
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
-		}else {
+		}
+		else
+		{
 			return 1;
 		}
 
