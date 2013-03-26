@@ -227,18 +227,18 @@ class Export
 		$sql.=$this->array_export_sql_end[$indice];
 
 		//construction du filtrage si le parametrage existe
-		if (is_array($array_filterValue))
+		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
 			// pour ne pas a gerer le nombre de condition
 			foreach ($array_filterValue as $key => $value)
 			{
-				$sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
 		$sql.=$this->array_export_sql_order[$indice];
-		
+
 		return $sql;
 	}
 
@@ -247,7 +247,7 @@ class Export
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
-	 *      @param		string	$ValueField		Initial value of the field to filter
+	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
 	function build_filterQuery($TypeField, $NameField, $ValueField)

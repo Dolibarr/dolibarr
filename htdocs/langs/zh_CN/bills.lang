@@ -414,6 +414,6 @@ EditGlobalDiscounts=编辑绝对折扣
 AddCreditNote=创建信用票据
 InvoiceNotChecked=选择无发票
 ShowUnpaidAll=显示所有未付发票
-ClosePaidInvoicesAutomatically=分类“支付最高”的所有entierely支付最高标准或更换发票。
+ClosePaidInvoicesAutomatically=分类“支付最高”的所有entirely支付最高标准或更换发票。
 AllCompletelyPayedInvoiceWillBeClosed=所有发票仍然没有支付将被自动关闭状态“支付最高”。
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:07).

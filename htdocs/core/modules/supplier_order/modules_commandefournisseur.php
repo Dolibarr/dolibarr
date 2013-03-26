@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  *		\file       htdocs/core/modules/supplier_order/modules_commandefournisseur.php
  *      \ingroup    commande fournisseur
- *      \brief      File that contain parent class for supplier orders models
+ *      \brief      File that contains parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -40,17 +40,17 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 
 	/**
-	 *  Return list of active generation modules
+	 *  Return list of active generation models
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  string	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of numbers
+     *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
-		$type='order_supplier';
+		$type='supplier_order';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -64,24 +64,24 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 
 /**
- *	Classe mere des modeles de numerotation des references de commandes fournisseurs
+ *	Parent Class of numbering models of suppliers orders references
  */
 abstract class ModeleNumRefSuppliersOrders
 {
 	var $error='';
 
-	/**  Return if a module can be used or not
+	/**  Return if a model can be used or not
 	 *
-	 *   @return	boolean     true if module can be used
+	 *   @return	boolean     true if model can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**  Renvoie la description par defaut du modele de numerotation
+	/**  Returns default description of numbering model
 	 *
-	 *   @return    string      Texte descripif
+	 *   @return    string      Description Text
 	 */
 	function info()
 	{
@@ -90,7 +90,7 @@ abstract class ModeleNumRefSuppliersOrders
 		return $langs->trans("NoDescription");
 	}
 
-	/**   Renvoie un exemple de numerotation
+	/**   Returns a numbering example
 	 *
 	 *    @return   string      Example
 	 */
@@ -101,16 +101,16 @@ abstract class ModeleNumRefSuppliersOrders
 		return $langs->trans("NoExample");
 	}
 
-	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	/**  Tests if existing numbers make problems with numbering
 	 *
-	 *   @return	boolean     false si conflit, true si ok
+	 *   @return	boolean     false if conflict, true if ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**  Renvoie prochaine valeur attribuee
+	/**  Returns next value assigned
 	 *
 	 *   @return     string      Valeur
 	 */
@@ -120,9 +120,9 @@ abstract class ModeleNumRefSuppliersOrders
 		return $langs->trans("NotAvailable");
 	}
 
-	/**   Renvoie version du module numerotation
+	/**   Returns version of the numbering model 
 	 *
-	 *    @return     string      Valeur
+	 *    @return     string      Value
 	 */
 	function getVersion()
 	{
@@ -138,12 +138,12 @@ abstract class ModeleNumRefSuppliersOrders
 
 
 /**
- *  Create a document onto disk according to template module.
+ *  Create a document onto disk according to template model.
  *
  *  @param	    DoliDB		$db  			Database handler
  *  @param	    Object		$object			Object supplier order
  *  @param	    string		$modele			Force template to use ('' to not force)
- *  @param		Translate	$outputlangs	Object lang a utiliser pour traduction
+ *  @param		Translate	$outputlangs	Object lang to use for traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
@@ -164,7 +164,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 
 	$srctemplatepath='';
 
-	// Positionne le modele sur le nom du modele a utiliser
+	// Sets the model on the model name to use
 	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
@@ -177,7 +177,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 		}
 	}
 
-	// If selected modele is a filename template (then $modele="modelname:filename")
+	// If selected model is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
 	if (! empty($tmp[1]))
 	{
@@ -195,7 +195,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 		{
 			$file = $prefix."_".$modele.".modules.php";
 
-			// On verifie l'emplacement du modele
+			// We check the model location 
 			$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/".$file,0);
 			if (file_exists($file))
 			{
@@ -207,7 +207,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 		if ($filefound) break;
 	}
 
-	// Charge le modele
+	// Load the model
 	if ($filefound)
 	{
 		require_once $file;
@@ -225,12 +225,14 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
         	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
-			// Appel des triggers
+			// Calls triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('ORDER_SUPPLIER_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+			if ($result < 0) { 
+				$error++; $this->errors=$interface->errors; 
+			}
+			// End calls triggers
 
 			return 1;
 		}

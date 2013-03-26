@@ -104,7 +104,7 @@ if ($action == 'add')
     $object->ref_customer			= $objectsrc->ref_client;
     $object->date_delivery			= $date_delivery;	// Date delivery planed
     $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
-    $object->expedition_method_id	= GETPOST('expedition_method_id','int');
+    $object->shipping_method_id		= GETPOST('shipping_method_id','int');
     $object->tracking_number		= GETPOST('tracking_number','alpha');
     $object->ref_int				= GETPOST('ref_int','alpha');
 
@@ -260,7 +260,7 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 || $action == 'settrueWidth'
 || $action == 'settrueHeight'
 || $action == 'settrueDepth'
-|| $action == 'setexpedition_method_id')
+|| $action == 'setshipping_method_id')
 {
     $error=0;
 
@@ -274,7 +274,7 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
     if ($action == 'settrueWidth')				$shipping->trueWidth = trim(GETPOST('trueWidth','int'));
     if ($action == 'settrueHeight')				$shipping->trueHeight = trim(GETPOST('trueHeight','int'));
     if ($action == 'settrueDepth')				$shipping->trueDepth = trim(GETPOST('trueDepth','int'));
-    if ($action == 'setexpedition_method_id')	$shipping->expedition_method_id = trim(GETPOST('expedition_method_id','int'));
+    if ($action == 'setshipping_method_id')	$shipping->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
     if (! $error)
     {
@@ -412,7 +412,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
 
                 $from = GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
                 $replyto = GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-                $message = GETPOST('message','alpha');
+                $message = GETPOST('message');
                 $sendtocc = GETPOST('sendtocc','alpha');
                 $deliveryreceipt = GETPOST('deliveryreceipt','alpha');
 
@@ -442,7 +442,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
 
                 // Send mail
                 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
                     $mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -658,7 +658,7 @@ if ($action == 'create')
             print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
-            print $form->selectarray("expedition_method_id",$expe->meths,GETPOST('expedition_method_id','int'),1,0,0,"",1);
+            print $form->selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print "</td></tr>\n";
 
@@ -1105,26 +1105,26 @@ else
             print $langs->trans('SendingMethod');
             print '</td>';
 
-            if ($action != 'editexpedition_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editexpedition_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
+            if ($action != 'editshipping_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
-            if ($action == 'editexpedition_method_id')
+            if ($action == 'editshipping_method_id')
             {
-                print '<form name="setexpedition_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+                print '<form name="setshipping_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                print '<input type="hidden" name="action" value="setexpedition_method_id">';
+                print '<input type="hidden" name="action" value="setshipping_method_id">';
                 $object->fetch_delivery_methods();
-                print $form->selectarray("expedition_method_id",$object->meths,$object->expedition_method_id,1,0,0,"",1);
+                print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
                 if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
                 print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
                 print '</form>';
             }
             else
             {
-                if ($object->expedition_method_id > 0)
+                if ($object->shipping_method_id > 0)
                 {
                     // Get code using getLabelFromKey
-                    $code=$langs->getLabelFromKey($db,$object->expedition_method_id,'c_shipment_mode','rowid','code');
+                    $code=$langs->getLabelFromKey($db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
                     print $langs->trans("SendingMethod".strtoupper($code));
                 }
             }
@@ -1293,7 +1293,7 @@ else
          *    Boutons actions
         */
 
-        if ($user->societe_id == 0)
+        if (($user->societe_id == 0) && ($action!='presend'))
         {
             print '<div class="tabsAction">';
 
@@ -1457,6 +1457,40 @@ else
             $formmail->substit['__SHIPPINGREF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
+            $formmail->substit['__CONTACTCIVNAME__']='';
+            
+            //Find the good contact adress
+            //Find the good contact adress
+            if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{
+            	$objectsrc=new Commande($db);
+            	$objectsrc->fetch($object->$typeobject->id);
+            }
+            if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))	{
+            	$objectsrc=new Propal($db);
+            	$objectsrc->fetch($object->$typeobject->id);
+            }
+            $custcontact='';
+            $contactarr=array();
+            $contactarr=$objectsrc->liste_contact(-1,'external');
+
+            if (is_array($contactarr) && count($contactarr)>0) {
+            	foreach($contactarr as $contact) {
+            		
+            		if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
+            			 
+            			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+            			 
+            			$contactstatic=new Contact($db);
+            			$contactstatic->fetch($contact['id']);
+            			$custcontact=$contactstatic->getFullName($langs,1);
+            		}
+            	}
+            
+            	if (!empty($custcontact)) {
+            		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+            	}
+            }
+            
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='shipping_send';

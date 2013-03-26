@@ -39,7 +39,7 @@ print '<tr><td valign="top" width="30%">';
 
 
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
-$sql .= " WHERE fk_export_compta = 0";
+$sql .= " WHERE fk_code_ventilation = 0";
 $result = $db->query($sql);
 if ($result)
 {
@@ -50,7 +50,7 @@ if ($result)
 }
 
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
-$sql .= " WHERE fk_export_compta = 0";
+$sql .= " WHERE fk_code_ventilation = 0";
 
 $result = $db->query($sql);
 if ($result)
@@ -62,7 +62,7 @@ if ($result)
 }
 
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-$sql .= " WHERE fk_export_compta = 0";
+$sql .= " WHERE fk_code_ventilation = 0";
 $result = $db->query($sql);
 if ($result)
 {
@@ -73,7 +73,7 @@ if ($result)
 }
 
 /*$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiementfourn";
-$sql .= " WHERE fk_export_compta = 0";
+$sql .= " WHERE fk_code_ventilation = 0";
 
 $result = $db->query($sql);
 if ($result)

@@ -43,7 +43,7 @@
  *		@param  float	$uselocaltax2_rate          0=do not use this localtax, >0=apply, -1=autodetect according to seller
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
- *		@param	int		$info_bits					Miscellanous informations on line
+ *		@param	int		$info_bits					Miscellaneous informations on line
  *		@param	int		$type						0/1=Product/service
  *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
  *		@return result[ 0=total_ht,

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,9 +56,10 @@ llxHeader();
 print_fiche_titre($langs->trans("MenuUsersAndGroups"));
 
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 // Search User
 $var=false;
@@ -87,7 +88,9 @@ if ($canreadperms)
 	print '</form>';
 }
 
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -96,7 +99,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 $max=10;
 
 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_societe, u.datec, u.statut, u.entity, u.ldap_sid,";
-$sql.= " s.nom, s.canvas";
+$sql.= " s.nom as name, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
@@ -126,7 +129,7 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a>';
+		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($obj->firstname,$obj->lastname).'</a>';
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
@@ -141,7 +144,7 @@ if ($resql)
 		if ($obj->fk_societe)
 		{
 			$companystatic->id=$obj->fk_societe;
-            $companystatic->nom=$obj->nom;
+            $companystatic->name=$obj->name;
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
@@ -250,11 +253,10 @@ if ($canreadperms)
 	}
 }
 
-print '</td></tr>';
-print '</table>';
-
-$db->close();
-
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 llxFooter();
+
+$db->close();
 ?>

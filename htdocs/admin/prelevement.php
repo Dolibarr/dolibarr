@@ -117,6 +117,17 @@ llxHeader('',$langs->trans("WithdrawalsSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
 print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
+print '<br>';
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/prelevement.php";
+$head[$h][1] = $langs->trans("Withdrawals");
+$head[$h][2] = 'Withdrawal';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

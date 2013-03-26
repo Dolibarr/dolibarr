@@ -9,7 +9,7 @@
 // Reference language: en_US -> he_IL
 CHARSET=UTF-8
 InstallEasy=עקוב אחר ההוראות צעד אחר צעד.
-MiscellanousChecks=תנאים מוקדמים לבדוק
+MiscellaneousChecks=תנאים מוקדמים לבדוק
 DolibarrWelcome=ברוכים הבאים Dolibarr
 ConfFileExists=קובץ <b>%s</b> תצורת קיים.
 ConfFileDoesNotExists=קובץ <b>%s</b> תצורת לא קיים!

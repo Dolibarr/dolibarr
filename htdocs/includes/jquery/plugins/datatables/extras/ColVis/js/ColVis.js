@@ -1,6 +1,6 @@
 /*
  * File:        ColVis.js
- * Version:     1.0.7
+ * Version:     1.0.8
  * CVS:         $Id$
  * Description: Controls for column visiblity in DataTables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -313,6 +313,7 @@ ColVis.prototype = {
 		this._fnApplyCustomisation();
 		
 		var that = this;
+		var i, iLen;
 		this.dom.wrapper = document.createElement('div');
 		this.dom.wrapper.className = "ColVis TableTools";
 		
@@ -327,7 +328,7 @@ ColVis.prototype = {
 		this._fnAddButtons();
 		
 		/* Store the original visbility information */
-		for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
+		for ( i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
 		{
 			this.s.abOriginal.push( this.s.dt.aoColumns[i].bVisible );
 		}
@@ -338,6 +339,20 @@ ColVis.prototype = {
 				that._fnDrawCallback.call( that );
 			},
 			"sName": "ColVis"
+		} );
+
+		/* If columns are reordered, then we need to update our exclude list and
+		 * rebuild the displayed list
+		 */
+		$(this.s.dt.oInstance).bind( 'column-reorder', function ( e, oSettings, oReorder ) {
+			for ( i=0, iLen=that.s.aiExclude.length ; i<iLen ; i++ ) {
+				that.s.aiExclude[i] = oReorder.aiInvertMapping[ that.s.aiExclude[i] ];
+			}
+
+			var mStore = that.s.abOriginal.splice( oReorder.iFrom, 1 )[0];
+			that.s.abOriginal.splice( oReorder.iTo, 0, mStore );
+			
+			that.fnRebuild();
 		} );
 	},
 	
@@ -420,8 +435,8 @@ ColVis.prototype = {
 	
 	
 	/**
-	 * On each table draw, check the visiblity checkboxes as needed. This allows any process to
-	 * update the table's column visiblity and ColVis will still be accurate.
+	 * On each table draw, check the visibility checkboxes as needed. This allows any process to
+	 * update the table's column visibility and ColVis will still be accurate.
 	 *  @method  _fnDrawCallback
 	 *  @returns void
 	 *  @private 
@@ -515,6 +530,7 @@ ColVis.prototype = {
 				that.s.dt.oInstance.fnSetColumnVis( i, that.s.abOriginal[i], false );
 			}
 			that._fnAdjustOpenRows();
+			that.s.dt.oInstance.fnAdjustColumnSizing( false );
 			that.s.dt.oInstance.fnDraw( false );
 		} );
 		
@@ -549,6 +565,7 @@ ColVis.prototype = {
 				}
 			}
 			that._fnAdjustOpenRows();
+			that.s.dt.oInstance.fnAdjustColumnSizing( false );
 			that.s.dt.oInstance.fnDraw( false );
 		} );
 		
@@ -597,6 +614,7 @@ ColVis.prototype = {
 			if ( dt.oFeatures.bServerSide && (dt.oScroll.sX !== "" || dt.oScroll.sY !== "" ) )
 			{
 				that.s.dt.oInstance.fnSetColumnVis( i, showHide, false );
+				that.s.dt.oInstance.fnAdjustColumnSizing( false );
 				that.s.dt.oInstance.oApi._fnScrollDraw( that.s.dt );
 				that._fnDrawCallback();
 			}
@@ -923,7 +941,7 @@ ColVis.fnRebuild = function ( oTable )
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Static object propterties
+ * Static object properties
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
@@ -958,7 +976,7 @@ ColVis.prototype.CLASS = "ColVis";
  *  @type      String
  *  @default   See code
  */
-ColVis.VERSION = "1.0.7";
+ColVis.VERSION = "1.0.8";
 ColVis.prototype.VERSION = ColVis.VERSION;
 
 

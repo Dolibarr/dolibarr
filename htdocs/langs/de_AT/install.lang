@@ -7,7 +7,7 @@
 
 CHARSET=UTF-8
 InstallEasy=Wir haben uns bemüht, die Installation von dolibarr so einfach wie möglich zu gestalten. Folgen Sie einfach Schritt für Schritt den Anweisungen auf dem Bildschirm.
-MiscellanousChecks=Systemvoraussetzungen prüfen
+MiscellaneousChecks=Systemvoraussetzungen prüfen
 DolibarrWelcome=Willkommen bei dolibarr
 ConfFileExists=Die Konfigurationsdatei <b>%s</b> ist vorhanden.
 ConfFileDoesNotExists=Die Konfigurationsdatei <b>%s</b> existiert nicht!

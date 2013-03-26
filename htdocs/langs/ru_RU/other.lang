@@ -23,7 +23,7 @@ TotalSizeOfAttachedFiles=Общий размер присоединенных ф
 MaxSize=Максимальный размер
 AttachANewFile=Присоединить новый файл / документ
 LinkedObject=Связанные объект
-Miscellanous=Разное
+Miscellaneous=Разное
 NbOfActiveNotifications=Количество уведомлений
 ChooseYourDemoProfil=Выберите демо-профиль, которые соответствуют Вашей деятельности ...
 DemoFundation=Управление членов Фонда
@@ -304,7 +304,7 @@ ExternalSites=На внешних сайтах
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> ru_RU
-PredefinedMailContentSendSupplierOrder=Вы найдете здесь наш заказ __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Вы найдете здесь наш заказ __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=фунт
 VolumeUnitounce=унция
 VolumeUnitlitre=литр
@@ -321,9 +321,9 @@ ToolsDesc=Эта область посвящена группе разные и�
 Notify_WITHDRAW_TRANSMIT=Передача вывода
 Notify_WITHDRAW_CREDIT=Кредитный выход
 Notify_WITHDRAW_EMIT=Isue вывода
-PredefinedMailContentSendSupplierInvoice=Только здесь вы найдете счета __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n
-PredefinedMailContentSendShipping=Здесь вы найдете доставку __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n
-PredefinedMailContentSendFichInter=Вы найдете здесь вмешательство __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Только здесь вы найдете счета __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Здесь вы найдете доставку __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Вы найдете здесь вмешательство __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n
 Top=Топ
 Bottom=Дно
 Left=Левый
@@ -368,9 +368,9 @@ Notify_MEMBER_VALIDATE=Член проверки
 Notify_MEMBER_SUBSCRIPTION=Член подписки
 Notify_MEMBER_RESILIATE=Член resiliated
 Notify_MEMBER_DELETE=Член удален
-PredefinedMailContentSendInvoice=Здесь вы найдете счет __FACREF__ \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=Мы бы хотели предупредить Вас, что счет-фактура __FACREF__, кажется, не оплачиваются. Так что это счета-фактуры в приложении опять же, как напоминание. \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
-PredefinedMailContentSendProposal=Здесь вы найдете коммерческие propoal __PROPREF__ \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
-PredefinedMailContentSendOrder=Вы найдете здесь порядок __ORDERREF__ \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Здесь вы найдете счет __FACREF__ \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Мы бы хотели предупредить Вас, что счет-фактура __FACREF__, кажется, не оплачиваются. Так что это счета-фактуры в приложении опять же, как напоминание. \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Здесь вы найдете коммерческие propoal __PROPREF__ \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Вы найдете здесь порядок __ORDERREF__ \n\n__PERSONALIZED__ уважением \n\n__SIGNATURE__
 ShipmentValidatedInDolibarr=Отгрузка %s подтверждены в Dolibarr
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:06).

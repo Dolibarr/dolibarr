@@ -2380,7 +2380,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath
 	$return.= '</td>';
 	if (dol_strlen($mesg))
 	{
-		$return.= '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
+		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$mesg.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -2529,7 +2529,7 @@ function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarr
  *
  *	@param	float	$rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *  @param	boolean	$addpercent		Add a percent % sign in output
- *	@param	int		$info_bits		Miscellanous information on vat (0=Default, 1=French NPR vat)
+ *	@param	int		$info_bits		Miscellaneous information on vat (0=Default, 1=French NPR vat)
  *	@param	int		$usestarfornpr	1=Use '*' for NPR vat rate intead of MAIN_LABEL_MENTION_NPR
  *  @return	string					String with formated amounts (19,6 or 19,6% or 8.5% NPR or 8.5% *)
  */
@@ -2554,20 +2554,21 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
 
 
 /**
- *		Fonction qui formate un montant pour visualisation
- *		Fonction utilisee dans les pdf et les pages html
+ *		Function to format a value into an amount for visual output
+ *		Function used into PDF and HTML pages
  *
- *		@param	float		$amount			Montant a formater
- *		@param	string		$form			Type de formatage, html ou pas (par defaut)
- *		@param	Translate	$outlangs		Objet langs pour formatage text
- *		@param	int			$trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		@param	int			$rounding		Minimum number of decimal. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	float		$amount			Amount to format
+ *		@param	string		$form			Type of format, HTML or not (not by default)
+ *		@param	Translate	$outlangs		Object langs for output
+ *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
+ *		@param	int			$rounding		Minimum number of decimal to show. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal
+ *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
  *		@see	price2num					Revert function of price
  */
-function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1)
+function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerounding=-1, $currency_code='')
 {
 	global $langs,$conf;
 
@@ -2584,8 +2585,8 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	// If $outlangs not forced, we use use language
 	if (! is_object($outlangs)) $outlangs=$langs;
 
-	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
-	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
+	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($outlangs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
@@ -2615,15 +2616,21 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	if ($forcerounding >= 0) $nbdecimal = $forcerounding;
 
 	// Format number
+	$output=number_format($amount, $nbdecimal, $dec, $thousand);
 	if ($form)
 	{
-		$output=preg_replace('/\s/','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
+		$output=preg_replace('/\s/','&nbsp;',$output);
+		$output=preg_replace('/\'/','&#039;',$output);
 	}
-	else
+	// Add symbol of currency if requested
+	$cursymbolbefore=$cursymbolafter='';
+	if ($currency_code)
 	{
-		$output=number_format($amount, $nbdecimal, $dec, $thousand);
+		$listofcurrenciesbefore=array('USD');
+		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
+		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
 	}
-	$output.=$end;
+	$output.=$cursymbolbefore.$end.$cursymbolafter;
 
 	return $output;
 }
@@ -2651,15 +2658,15 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
 	$dec=','; $thousand=' ';
-	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
-	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
-		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.'<br>';
+		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
@@ -2776,7 +2783,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *
  *  @param		real	$vatrate			VAT Rate
- *  @param		int		$local              Number of localtax (1 / 2)
+ *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1+2)
  *  @param		int		$thirdparty         company object
  *  @return		array    	  				array(Type of local tax (1 to 7 / 0 if not found), rate or amount of localtax)
  *  @deprecated	TODO We should remove this function by storing rate and type into detail lines.
@@ -2799,6 +2806,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 		$obj = $db->fetch_object($resql);
 		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1);
 		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2);
+		else return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2);
 	}
 
 	return 0;

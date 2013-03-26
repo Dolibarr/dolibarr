@@ -291,9 +291,20 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		if ($usecontact)
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
-			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
+
+			if (!empty($targetcontact->address)) {
+				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
+			}else {
+				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
+			}
 			// Country
-			if ($targetcontact->country_code && $targetcontact->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code))."\n";
+			if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
+				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code))."\n";
+			}
+			else if (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
+			}
+
 
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
     		{
@@ -311,7 +322,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		{
 			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
 			// Country
-			if ($targetcompany->country_code && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
+			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
 
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
     		{
@@ -440,11 +451,14 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 {
 	global $mysoc, $conf;
 
+	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
+	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
+
 	$pdf->SetXY($curx, $cury);
 
 	if (empty($onlynumber))
 	{
-		$pdf->SetFont('','B',$default_font_size - 3);
+		$pdf->SetFont('','B',$default_font_size - $diffsizetitle);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 		$cury+=4;
 	}
@@ -461,7 +475,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 		if (empty($onlynumber))
 		{
-			$pdf->SetFont('','',$default_font_size - 4);
+			$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 			$pdf->SetXY($curx, $cury);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 			$cury+=3;
@@ -533,15 +547,17 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else
 	{
-		$pdf->SetFont('','B',6);
+		$pdf->SetFont('','B',$default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': ' . $outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 		$cury+=3;
 
-		$pdf->SetFont('','B',6);
+		$pdf->SetFont('','B',$default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury+=3;
+
+		if ($diffsizecontent <= 2) $cury+=1;
 	}
 
 	// Use correct name of bank id according to country
@@ -550,23 +566,32 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
-	$pdf->SetFont('','',6);
+	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
 
 	if (empty($onlynumber) && ! empty($account->domiciliation))
 	{
 		$pdf->SetXY($curx, $cury);
 		$val=$outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation);
 		$pdf->MultiCell(100, 3, $val, 0, 'L', 0);
-		$nboflines=dol_nboflines_bis($val,120);
-		//print $nboflines;exit;
-		$cury+=($nboflines*2)+2;
+		//$nboflines=dol_nboflines_bis($val,120);
+		//$cury+=($nboflines*3)+2;
+		$tmpy=$pdf->getStringHeight	(100, $val);
+		$cury+=$tmpy;
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
-	$pdf->SetXY($curx, $cury);
-	$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-	$pdf->SetXY($curx, $cury+3);
-	$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	if (! empty($account->iban))
+	{
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
+		$cury+=3;
+	}
+
+	if (! empty($account->bic))
+	{
+		$pdf->SetXY($curx, $cury);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	}
 
 	return $pdf->getY();
 }

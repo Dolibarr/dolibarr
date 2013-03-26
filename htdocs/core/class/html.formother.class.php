@@ -153,10 +153,10 @@ class FormOther
 
 
     /**
-     *    Retourne la liste des ecotaxes avec tooltip sur le libelle
+     *    Return list of ecotaxes with label
      *
-     *    @param	string	$selected    code ecotaxes pre-selectionne
-     *    @param    string	$htmlname    nom de la liste deroulante
+     *    @param	string	$selected   Preselected ecotaxes
+     *    @param    string	$htmlname	Name of combo list
      *    @return	void
      */
     function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
@@ -169,6 +169,7 @@ class FormOther
         $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
         $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
 
+    	dol_syslog(get_class($this).'::select_ecotaxes sql='.$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -205,6 +206,63 @@ class FormOther
             return 1;
         }
     }
+
+
+    /**
+     *    Return list of revenue stamp for country
+     *
+     *    @param	string	$selected   Value of preselected revenue stamp
+     *    @param    string	$htmlname   Name of combo list
+     *    @return	string				HTML select list
+     */
+    function select_revenue_stamp($selected='',$htmlname='revenuestamp',$country_code='')
+    {
+    	global $langs;
+
+    	$out='';
+
+    	$sql = "SELECT r.taux";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_pays as p";
+    	$sql.= " WHERE r.active = 1 AND r.fk_pays = p.rowid";
+    	$sql.= " AND p.code = '".$country_code."'";
+
+    	dol_syslog(get_class($this).'::select_revenue_stamp sql='.$sql);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$out.='<select class="flat" name="'.$htmlname.'">';
+    		$num = $this->db->num_rows($resql);
+    		$i = 0;
+    		$out.='<option value="0">&nbsp;</option>'."\n";
+    		if ($num)
+    		{
+    			while ($i < $num)
+    			{
+    				$obj = $this->db->fetch_object($resql);
+    				if (($selected && $selected == $obj->taux) || $num == 1)
+    				{
+    					$out.='<option value="'.$obj->taux.'" selected="selected">';
+    				}
+    				else
+    				{
+    					$out.='<option value="'.$obj->taux.'">';
+    					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+    				}
+    				$out.=$obj->taux;
+    				$out.='</option>';
+    				$i++;
+    			}
+    		}
+    		$out.='</select>';
+    		return $out;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		return '';
+    	}
+    }
+
 
     /**
      *    Return a HTML select list to select a percent
@@ -465,6 +523,7 @@ class FormOther
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@return	void
+     * 		@deprecated
      */
     function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
     {
@@ -479,9 +538,10 @@ class FormOther
      *		@param	string		$form_name		Name of form
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+     * 		@param	string		$morecss		Add css style into input field
      * 		@return	void
      */
-    function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
+    function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
         global $langs;
 
@@ -529,7 +589,7 @@ class FormOther
                   }
 		        } ); });
              </script>';
-            $out.= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat" type="text" value="'.$set_color.'" />';
+            $out.= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss?' '.$morecss:'').'" type="text" value="'.$set_color.'" />';
         }
         else  // In most cases, this is not used. We used instead function with no specific list of colors
         {
@@ -545,7 +605,7 @@ class FormOther
              });
              </script>';
 
-            $out.= '<select id="colorpicker'.$prefix.'" class="flat" name="'.$prefix.'">';
+            $out.= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$prefix.'">';
             //print '<option value="-1">&nbsp;</option>';
             foreach ($arrayofcolors as $val)
             {

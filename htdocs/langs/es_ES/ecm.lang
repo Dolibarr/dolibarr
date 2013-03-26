@@ -43,6 +43,7 @@ ECMDocsByOrders=Documentos asociados a pedidos
 ECMDocsByContracts=Documentos asociados a contratos
 ECMDocsByInvoices=Documentos asociados a facturas
 ECMDocsByProducts=Documentos enlazados a productos
+ECMDocsByProjects=Documentos enlazados a proyectos
 ECMNoDirectoryYet=No se ha creado el directorio
 ShowECMSection=Mostrar directorio
 DeleteSection=Eliminación directorio

@@ -70,8 +70,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionnaries properties
 
 // Sort order to show dictionnary (0 is space). All other dictionnaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23);
-if (! empty($conf->global->MAIN_USE_REVENUESTAMP)) $taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,25,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,25,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23);
 
 // Name of SQL tables of dictionnaries
 $tabname=array();
@@ -325,7 +324,7 @@ $tabcond[21]= ! empty($conf->propal->enabled);
 $tabcond[22]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled));
 $tabcond[23]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy plan should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
 $tabcond[24]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
-$tabcond[25]= (! empty($conf->global->MAIN_USE_REVENUESTAMP));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
+$tabcond[25]= true;
 
 // List of help for fields
 $tabhelp=array();

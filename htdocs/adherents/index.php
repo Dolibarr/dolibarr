@@ -47,7 +47,6 @@ $subscriptionstatic=new Cotisation($db);
 
 print_fiche_titre($langs->trans("MembersArea"));
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 $var=True;
 
@@ -122,7 +121,8 @@ if ($result)
 }
 
 
-print '<tr><td width="30%" class="notopnoleft" valign="top">';
+//print '<tr><td width="30%" class="notopnoleft" valign="top">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Formulaire recherche adherent
@@ -195,7 +195,9 @@ if ($conf->use_javascript_ajax)
     print '</table>';
 }
 
-print '</td><td class="notopnoleftnoright" valign="top">';
+
+//print '</td><td class="notopnoleftnoright" valign="top">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $var=true;
@@ -416,8 +418,8 @@ print "<td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td
 print "</tr>\n";
 print "</table><br>\n";
 
-print '</td></tr>';
-print '</table>';
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 
 llxFooter();

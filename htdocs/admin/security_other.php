@@ -123,11 +123,11 @@ else if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Miscellanous"));
+llxHeader('',$langs->trans("Miscellaneous"));
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
-print $langs->trans("MiscellanousDesc")."<br>\n";
+print $langs->trans("MiscellaneousDesc")."<br>\n";
 print "<br>\n";
 
 $head=security_prepare_head();

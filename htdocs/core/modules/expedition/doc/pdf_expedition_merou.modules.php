@@ -546,10 +546,10 @@ class pdf_expedition_merou extends ModelePdfExpedition
 			$object->GetUrlTrackingStatus($object->tracking_number);
 			if (! empty($object->tracking_url))
 			{
-				if ($object->expedition_method_id > 0)
+				if ($object->shipping_method_id > 0)
 				{
 					// Get code using getLabelFromKey
-					$code=$outputlangs->getLabelFromKey($this->db,$object->expedition_method_id,'c_shipment_mode','rowid','code');
+					$code=$outputlangs->getLabelFromKey($this->db,$object->shipping_method_id,'c_shipment_mode','rowid','code');
 					$label=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
 				}
 				else

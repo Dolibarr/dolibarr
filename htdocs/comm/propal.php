@@ -526,7 +526,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			// Envoi de la propal
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				setEventMessage($mailfile->error, 'errors');
@@ -1360,11 +1360,20 @@ if ($action == 'create')
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-			print '<tr><td';
-			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-			print '>'.$label.'</td><td colspan="3">';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
+			
+			// Show separator only
+			if ($extrafields->attribute_type[$key] == 'separate')
+			{
+				print $extrafields->showSeparator($key);
+			}
+			else 
+			{
+				print '<tr><td';
+				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+				print '>'.$label.'</td><td colspan="3">';
+				print $extrafields->showInputField($key,$value);
+				print '</td></tr>'."\n";
+			}
 		}
 	}
 
@@ -1854,19 +1863,25 @@ else
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
 	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-	   		print '<tr><td';
-	   		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	   		print '>'.$label.'</td><td colspan="3">';
-	   		if ($action == 'edit_extras' &&  $user->rights->propal->creer)
-	   		{
-	        	print $extrafields->showInputField($key,$value);
-	   		}
-	   		else
-	   		{ 
-	   			print $extrafields->showOutputField($key,$value);
-	   		}
-	   		
-	        print '</td></tr>'."\n";
+	        if ($extrafields->attribute_type[$key] == 'separate')
+	        {
+	        	print $extrafields->showSeparator($key);
+	        }
+	        else
+	        {
+	        	print '<tr><td';
+	        	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+	        	print '>'.$label.'</td><td colspan="3">';
+	        	if ($action == 'edit_extras' &&  $user->rights->propal->creer)
+	        	{
+	        		print $extrafields->showInputField($key,$value);
+	        	}
+	        	else
+	        	{
+	        		print $extrafields->showOutputField($key,$value);
+	        	}
+	        	print '</td></tr>'."\n";
+	        }
 	    }
 	    
 	    if(count($extrafields->attribute_label) > 0) {
@@ -2074,6 +2089,17 @@ else
 	            }
 	        }
 
+            // Create contract
+            if ($conf->contrat->enabled && $object->statut == 2 && $user->societe_id == 0)
+            {
+            	$langs->load("contracts");
+
+				if ($user->rights->contrat->creer)
+				{
+				  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
+				}
+            }
+
 	        // Create an invoice and classify billed
 			if ($object->statut == 2 && $user->societe_id == 0)
 			{
@@ -2212,12 +2238,34 @@ else
 		$formmail->substit['__PROPREF__']=$object->ref;
 	    $formmail->substit['__SIGNATURE__']=$user->signature;
 	    $formmail->substit['__PERSONALIZED__']='';
+	    $formmail->substit['__CONTACTCIVNAME__']='';
+	    
+	    //Find the good contact adress
+	    $custcontact='';
+	    $contactarr=array();
+	    $contactarr=$object->liste_contact(-1,'external');
+	    
+	    if (is_array($contactarr) && count($contactarr)>0) {
+	    	foreach($contactarr as $contact) {
+	    		if ($contact['libelle']==$langs->trans('TypeContact_propal_external_CUSTOMER')) {
+	    			$contactstatic=new Contact($db);
+	    			$contactstatic->fetch($contact['id']);
+	    			$custcontact=$contactstatic->getFullName($langs,1);
+	    		}
+	    	}
+	    		
+	    	if (!empty($custcontact)) {
+	    		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+	    	}
+	    }
+	    
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
+		
+	
 		// Init list of files
 	    if (GETPOST("mode")=='init')
 		{

@@ -134,13 +134,14 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
 print "<br>\n";
 
-print $langs->trans("AgendaAutoActionDesc")."<br>\n";
-print "<br>\n";
 
 $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"));
 
+print $langs->trans("AgendaAutoActionDesc")."<br>\n";
+print $langs->trans("OnlyActiveElementsAreShown").'<br>';
+print "<br>\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -179,8 +180,6 @@ print '</table>';
 
 print '<br><center>';
 print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
-print ' &nbsp; &nbsp; ';
-print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 print "</center>";
 
 print "</form>\n";
@@ -226,12 +225,13 @@ else
 }
 print '</td></tr>'."\n";
 
+print '</table>';
 
 print "<br>";
 
 dol_htmloutput_mesg($mesg);
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

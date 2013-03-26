@@ -10,7 +10,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=فقط اتبع التعليمات خطوة بخطوة.
-MiscellanousChecks=التحقق من الشروط الأساسية
+MiscellaneousChecks=التحقق من الشروط الأساسية
 DolibarrWelcome=مرحبا بكم في Dolibarr
 ConfFileExists=ملفات موجودة <b>٪ ق.</b>
 ConfFileDoesNotExists=ملفات <b>ل ٪</b> لا وجود له!

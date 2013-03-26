@@ -239,7 +239,7 @@ form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
 print '%YEAR%, %MONTH%, %DAY%';
 print '<br>';
 
@@ -257,7 +257,7 @@ form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
 print '%YEAR%, %MONTH%, %DAY%';
 print '<br>';
 
@@ -287,7 +287,7 @@ form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
 //print '%YEAR%, %MONTH%, %DAY%';	// Not supported
 print '<br>';
 

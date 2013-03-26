@@ -383,10 +383,6 @@ Module1780Name = Categorieën
 Module1780Desc = Categoriebeheer (producten, leveranciers en afnemers)
 Module2000Name = Fckeditor
 Module2000Desc = Een WYSIWYG editor
-Module2200Name = Uitleenrechten
-Module2200Desc = Uitleenrechtenbeheer
-Module2300Name = Menu's
-Module2300Desc = Menubeheer
 Module2400Name = Agenda
 Module2400Desc = Acties-, taken- en agendabeheer
 Module2500Name = Electronic Content Management
@@ -780,7 +776,7 @@ GeneratedPasswordDesc = Stel hier de regel in die u wilt gebruiken voor het gene
 DictionnaryDesc = Stel hier alle constanten in. U kunt vooraf ingestelde waarden aanpassen naar de uwe.
 ConstDesc = Op deze pagina vint u alle andere instellingen die niet beschikbaar zijn in de voorgaande pagina's. Ze zijn voorbehouden instellingen voor geavanceerde ontwikkelaars of voor 'troubleshouting'.
 OnceSetupFinishedCreateUsers = Waarschuwing, u bent een Dolibarr beheerder. Beheerdersaccounts worden gebruikt voor de installatie van Dolibarr. Voor een normaal gebruik van Dolibarr, wordt aangeraden gebruik te maken van een niet-beheerders account, aangemaakt onder: Gebruikers & Groepen menu.
-MiscellanousDesc = Stel hier alle andere instellingen in die betrekking hebben op veiligheid.
+MiscellaneousDesc = Stel hier alle andere instellingen in die betrekking hebben op veiligheid.
 LimitsSetup = Limieten- en precisieinstellingen
 LimitsDesc = U kunt hier limieten en preciseringen die Dolibarr gebruikt instellen
 MAIN_MAX_DECIMALS_UNIT = Maximaal aantal decimalen voor eenheidsprijzen
@@ -1286,7 +1282,7 @@ SendingMailSetup=Instellen van verzendingen via e-mail
 SendmailOptionNotComplete=Waarschuwing, op sommige Linux-systemen, e-mail verzenden vanaf uw e-mail, sendmail uitvoering setup moet conatins optie-ba (parameter mail.force_extra_parameters in uw php.ini-bestand). Als sommige ontvangers nooit e-mails ontvangen, probeer dit PHP parameter bewerken met mail.force_extra_parameters =-ba).
 CompanyIdProfChecker=Professionele Id unieke
 MustBeUnique=Moet uniek zijn?
-Miscellanous=Diversen
+Miscellaneous=Diversen
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:13:00).
 
 
