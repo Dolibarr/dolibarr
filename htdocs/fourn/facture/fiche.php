@@ -502,13 +502,14 @@ elseif ($action == 'addline')
             $label.= $_POST['np_desc'];
 
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
+            $npr = get_default_npr($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
             $localtax1tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
             $localtax2tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
             $remise_percent=GETPOST('remise_percent');
             $type = $product->type;
 
-            $result=$object->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $_POST['qty'], $idprod, $remise_percent);
+            $result=$object->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $_POST['qty'], $idprod, $remise_percent, '', '', 0, $npr);
 
         }
         if ($idprod == -1)
@@ -520,7 +521,9 @@ elseif ($action == 'addline')
     }
     else
     {
-        $tauxtva = price2num($_POST['tauxtva']);
+        $npr = preg_match('/\*/', $_POST['tauxtva']) ? 1 : 0 ;
+        $tauxtva = str_replace('*','',$_POST["tauxtva"]);
+        $tauxtva = price2num($tauxtva);
         $localtax1tx= get_localtax($tauxtva, 1, $mysoc,$object->thirdparty);
         $localtax2tx= get_localtax($tauxtva, 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
@@ -538,14 +541,14 @@ elseif ($action == 'addline')
                 $price_base_type = 'HT';
 
                 //$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
-                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
             else
             {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
         }
     }
@@ -1739,7 +1742,7 @@ else
                 print '</td>';
 
                 // VAT
-                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx).'%</td>';
+                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'%</td>';
 
                 // Unit price
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
