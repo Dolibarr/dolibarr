@@ -153,10 +153,10 @@ class FormOther
 
 
     /**
-     *    Retourne la liste des ecotaxes avec tooltip sur le libelle
+     *    Return list of ecotaxes with label
      *
-     *    @param	string	$selected    code ecotaxes pre-selectionne
-     *    @param    string	$htmlname    nom de la liste deroulante
+     *    @param	string	$selected   Preselected ecotaxes
+     *    @param    string	$htmlname	Name of combo list
      *    @return	void
      */
     function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
@@ -169,6 +169,7 @@ class FormOther
         $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
         $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
 
+    	dol_syslog(get_class($this).'::select_ecotaxes sql='.$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -205,6 +206,63 @@ class FormOther
             return 1;
         }
     }
+
+
+    /**
+     *    Return list of revenue stamp for country
+     *
+     *    @param	string	$selected   Value of preselected revenue stamp
+     *    @param    string	$htmlname   Name of combo list
+     *    @return	string				HTML select list
+     */
+    function select_revenue_stamp($selected='',$htmlname='revenuestamp',$country_code='')
+    {
+    	global $langs;
+
+    	$out='';
+
+    	$sql = "SELECT r.taux";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_pays as p";
+    	$sql.= " WHERE r.active = 1 AND r.fk_pays = p.rowid";
+    	$sql.= " AND p.code = '".$country_code."'";
+
+    	dol_syslog(get_class($this).'::select_revenue_stamp sql='.$sql);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$out.='<select class="flat" name="'.$htmlname.'">';
+    		$num = $this->db->num_rows($resql);
+    		$i = 0;
+    		$out.='<option value="0">&nbsp;</option>'."\n";
+    		if ($num)
+    		{
+    			while ($i < $num)
+    			{
+    				$obj = $this->db->fetch_object($resql);
+    				if (($selected && $selected == $obj->taux) || $num == 1)
+    				{
+    					$out.='<option value="'.$obj->taux.'" selected="selected">';
+    				}
+    				else
+    				{
+    					$out.='<option value="'.$obj->taux.'">';
+    					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+    				}
+    				$out.=$obj->taux;
+    				$out.='</option>';
+    				$i++;
+    			}
+    		}
+    		$out.='</select>';
+    		return $out;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		return '';
+    	}
+    }
+
 
     /**
      *    Return a HTML select list to select a percent

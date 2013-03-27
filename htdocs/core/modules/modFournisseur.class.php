@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ class modFournisseur extends DolibarrModules
             $this->langfiles = array('bills', 'companies', 'suppliers', 'orders');
 
             // Config pages
-            $this->config_page_url = array("fournisseur.php");
+            $this->config_page_url = array("supplier_order.php");
 
             // Constantes
             $this->const = array();
@@ -81,16 +82,29 @@ class modFournisseur extends DolibarrModules
             $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_PDF";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "muscadet";
+			$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de commande en PDF';
+			$this->const[$r][4] = 0;
 			$r++;
 
-            $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON";
+            $this->const[$r][0] = "COMMANDE_SUPPLIER_ADDON_NUMBER";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "mod_commande_fournisseur_muguet";
+			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des commandes fournisseur';
+			$this->const[$r][4] = 0;
 			$r++;
 
 			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
             $this->const[$r][1] = "chaine";
             $this->const[$r][2] = "canelle";
+			$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
+			$this->const[$r][4] = 0;
+			$r++;
+			
+			$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
+            $this->const[$r][1] = "chaine";
+            $this->const[$r][2] = "mod_facture_fournisseur_cactus";
+			$this->const[$r][3] = 'Nom du gestionnaire de numerotation des factures fournisseur';
+			$this->const[$r][4] = 0;
 			$r++;
 
             // Boxes

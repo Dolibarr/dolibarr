@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,11 +102,15 @@ if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity = ".$conf->entity;
 if ($sall)
 {
-	$sql.=" AND (";
-	if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
-	$sql.=" d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
-	$sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
-	$sql.=" OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+        // For natural search
+        $scrit = explode(' ', $sall);
+        foreach ($scrit as $crit) {
+            $sql.=" AND (";
+            if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
+            $sql.=" d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+            $sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
+            $sql.=" OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+        }
 }
 if ($type > 0)
 {

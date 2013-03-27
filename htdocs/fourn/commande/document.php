@@ -49,7 +49,7 @@ $confirm = GETPOST('confirm','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $id,'');
+$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');

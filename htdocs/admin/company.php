@@ -547,7 +547,7 @@ if ($action == 'edit' || $action == 'updateedit')
     /*
      *  Local Taxes
      */
-    if ($mysoc->hasLocalTax(1))
+    if ($mysoc->useLocalTax(1))
     {
         // Local Tax 1
         print '<br>';
@@ -579,7 +579,7 @@ if ($action == 'edit' || $action == 'updateedit')
         print "</td></tr>\n";
         print "</table>";
 	}
-    if ($mysoc->hasLocalTax(2))
+    if ($mysoc->useLocalTax(2))
     {
         // Local Tax 2
         print '<br>';
@@ -927,7 +927,7 @@ else
     /*
      *  Local Taxes
      */
-    if ($mysoc->hasLocalTax(1))
+    if ($mysoc->useLocalTax(1))
     {
         // Local Tax 1
         print '<br>';
@@ -960,7 +960,7 @@ else
 
         print "</table>";
 	}
-    if ($mysoc->hasLocalTax(2))
+    if ($mysoc->useLocalTax(2))
     {
         // Local Tax 2
         print '<br>';

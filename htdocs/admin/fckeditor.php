@@ -41,6 +41,8 @@ $modules = array(
 'PRODUCTDESC' => 'FCKeditorForProduct',
 'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
+'USERSIGN' => 'FCKeditorForUserSignature',
+'MAIL' => 'FCKeditorForMail'
 );
 // Conditions pour que l'option soit proposee
 $conditions = array(
@@ -48,6 +50,8 @@ $conditions = array(
 'PRODUCTDESC' => (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
 'MAILING' => ! empty($conf->mailing->enabled),
 'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)),
+'USERSIGN' => 1,
+'MAIL' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled))
 );
 // Picto
 $picto = array(
@@ -55,6 +59,8 @@ $picto = array(
 'PRODUCTDESC' => 'product',
 'MAILING' => 'email',
 'DETAILS' => 'generic',
+'USERSIGN' => 'user',
+'MAIL' => 'email'
 );
 
 

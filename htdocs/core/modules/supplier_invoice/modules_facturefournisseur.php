@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2012	Regis Houssin	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013   Philippe Grand  <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +21,11 @@
 /**
  *		\file       htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php
  *      \ingroup    facture fournisseur
- *      \brief      File that contain parent class for supplier invoices models
+ *      \brief      File that contains parent class for supplier invoices models
+ *					and parent class for supplier invoices numbering models
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
 
 
 /**
@@ -34,7 +37,7 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 
 
 	/**
-	 *  Return list of active generation modules
+	 *  Return list of active generation models
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  string	$maxfilenamelength  Max length of value to show
@@ -56,7 +59,80 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 }
 
 /**
- *	Create a document onto disk according to template module.
+ *	Parent Class of numbering models of suppliers invoices references
+ */
+abstract class ModeleNumRefSuppliersInvoices
+{
+	var $error='';
+
+	/**  Return if a model can be used or not
+	 *
+	 *   @return	boolean     true if model can be used
+	 */
+	function isEnabled()
+	{
+		return true;
+	}
+
+	/**  Returns the default description of the model numbering
+	 *
+	 *   @return    string      Description Text
+	 */
+	function info()
+	{
+		global $langs;
+		$langs->load("invoices");
+		return $langs->trans("NoDescription");
+	}
+
+	/**   Returns a numbering example
+	 *
+	 *    @return   string      Example
+	 */
+	function getExample()
+	{
+		global $langs;
+		$langs->load("invoices");
+		return $langs->trans("NoExample");
+	}
+
+	/**  Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
+	 *
+	 *   @return	boolean     false if conflict, true if ok
+	 */
+	function canBeActivated()
+	{
+		return true;
+	}
+
+	/**  Returns next value assigned
+	 *
+	 *   @return     string      Valeur
+	 */
+	function getNextValue()
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
+
+	/**   Returns version of the model numbering
+	 *
+	 *    @return     string      Value
+	 */
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		return $langs->trans("NotAvailable");
+	}
+}
+
+/**
+ *	Create a document onto disk according to template model.
  *
  *	@param	    DoliDB		$db  			Database handler
  *	@param	    Object		$object			Object supplier invoice
@@ -83,7 +159,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 
     $srctemplatepath='';
 
-	// Positionne le modele sur le nom du modele a utiliser
+	// Set the model on the model name to use
 	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
@@ -114,7 +190,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 		{
 			$file = $prefix."_".$modele.".modules.php";
 
-			// On verifie l'emplacement du modele
+			// We checked the location of the model
 			$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/".$file,0);
 			if (file_exists($file))
 			{
@@ -126,7 +202,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 		if ($filefound) break;
 	}
 
-	// Charge le modele
+	// Load the model
 	if ($filefound)
 	{
 		require_once $file;
@@ -144,12 +220,12 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
         	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
-			// Appel des triggers
+			// Calls triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('BILL_INVOICE_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+			// End calls triggers
 
 			return 1;
 		}
@@ -163,7 +239,14 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+		if (! $conf->global->INVOICE_SUPPLIER_ADDON_PDF)
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_PDF_NotDefined");
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+		}
 		return 0;
 	}
 }

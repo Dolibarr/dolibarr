@@ -41,19 +41,19 @@ div.DTTT_container {
 	float: left;
 }
 
-button.DTTT_button {
+.DTTT_button {
 	position: relative;
 	float: left;
-	height: 24px;
 	margin-right: 3px;
 	padding: 3px 10px;
 	border: 1px solid #d0d0d0;
 	background-color: #fff;
+	color: #333 !important;
 	cursor: pointer;
 	*cursor: hand;
 }
 
-button.DTTT_button::-moz-focus-inner { 
+.DTTT_button::-moz-focus-inner { 
 	border: none !important;
 	padding: 0;
 }
@@ -124,7 +124,9 @@ div.DTTT_collection_background {
 	z-index: 2001;
 }
 
-div.DTTT_collection button.DTTT_button {
+div.DTTT_collection button.DTTT_button,
+div.DTTT_collection div.DTTT_button,
+div.DTTT_collection a.DTTT_button {
 	float: none;
 	width: 100%;
 	margin-bottom: -0.1em;

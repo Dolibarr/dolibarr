@@ -1065,7 +1065,7 @@ class FactureFournisseur extends CommonInvoice
      * @param     	double	$qty           		Quantity
      * @param     	int		$idproduct			Id produit
      * @param	  	double	$price_base_type	HT or TTC
-     * @param	  	int		$info_bits			Miscellanous informations of line
+     * @param	  	int		$info_bits			Miscellaneous informations of line
      * @param		int		$type				Type of line (0=product, 1=service)
      * @param     	double	$remise_percent  	Pourcentage de remise de la ligne
      *  @param		int		$notrigger			Disable triggers
@@ -1166,24 +1166,66 @@ class FactureFournisseur extends CommonInvoice
     }
 
     /**
-     * Delete a detail line from database
+     * 	Delete a detail line from database
      *
-     * @param   int		$rowid      Id of line to delete
-     * @return	void
+     * 	@param  int		$rowid      	Id of line to delete
+     *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+     * 	@return	void
      */
-    function deleteline($rowid)
+    function deleteline($rowid, $notrigger=0)
     {
-        // Supprime ligne
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
-        $sql .= ' WHERE rowid = '.$rowid.';';
-        $resql = $this->db->query($sql);
-        if (! $resql)
+    	global $user, $langs, $conf;
+
+        if (! $rowid) $rowid=$this->id;
+
+        dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+
+        $error=0;
+    	$this->db->begin();
+
+        if (! $error && ! $notrigger)
         {
-            dol_print_error($this->db);
+	    	// Appel des triggers
+	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	    	$interface=new Interfaces($this->db);
+	    	$result=$interface->run_triggers('LINEBILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+	    	if ($result < 0) {
+	    		$error++; $this->errors=$interface->errors;
+	    	}
+        	// Fin appel triggers
         }
-        // Mise a jour prix facture
-        $this->update_price();
-        return 1;
+
+    	if (! $error)
+    	{
+	        // Supprime ligne
+	        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
+	        $sql.= ' WHERE rowid = '.$rowid;
+        	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+	        $resql = $this->db->query($sql);
+	        if (! $resql)
+	        {
+	        	$error++;
+	        	$this->error=$this->db->lasterror();
+	        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+	        }
+    	}
+
+    	if (! $error)
+    	{
+	        // Mise a jour prix facture
+    		$this->update_price();
+    	}
+
+    	if (! $error)
+    	{
+    		$this->db->commit();
+        	return 1;
+    	}
+    	else
+    	{
+			$this->db->rollback();
+    		return -1;
+    	}
     }
 
 
@@ -1304,6 +1346,59 @@ class FactureFournisseur extends CommonInvoice
         if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
         $result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
         return $result;
+    }
+
+	 /**
+     *  Renvoie la reference de facture suivante non utilisee en fonction du modele
+     *                  de numerotation actif defini dans INVOICE_SUPPLIER_ADDON_NUMBER
+     *
+     *  @param	    Societe		$soc  		objet societe
+     *  @return     string                  reference libre pour la facture
+     */
+    function getNextNumRef($soc)
+    {
+        global $db, $langs, $conf;
+        $langs->load("orders");
+
+        $dir = DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/';
+
+        if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER))
+        {
+            $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.'.php';
+
+            if (is_readable($dir.'/'.$file))
+            {
+                // Definition du nom de modele de numerotation de commande fournisseur
+                $modName=$conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+                require_once $dir.'/'.$file;
+
+                // Recuperation de la nouvelle reference
+                $objMod = new $modName($this->db);
+
+                $numref = "";
+                $numref = $objMod->invoice_get_num($soc,$this);
+
+                if ( $numref != "")
+                {
+                    return $numref;
+                }
+                else
+                {
+                    dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
+                    return -1;
+                }
+            }
+            else
+            {
+                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_INVOICE_SUPPLIER_ADDON_NUMBER_File",$conf->global->INVOICE_SUPPLIER_ADDON_NUMBER);
+                return -2;
+            }
+        }
+        else
+        {
+            print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_NUMBER_NotDefined");
+            return -3;
+        }
     }
 
 

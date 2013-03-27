@@ -433,6 +433,6 @@ EditGlobalDiscounts=Rediger absolutte rabatter
 AddCreditNote=Opret kreditnota
 InvoiceNotChecked=Ingen valgt faktura
 ShowUnpaidAll=Vis alle ubetalte fakturaer
-ClosePaidInvoicesAutomatically=Klassificere &quot;betales&quot; hele standarden eller udskiftning af fakturaer entierely betales.
+ClosePaidInvoicesAutomatically=Klassificere &quot;betales&quot; hele standarden eller udskiftning af fakturaer entirely betales.
 AllCompletelyPayedInvoiceWillBeClosed=Alle faktura uden mangler at betale, vil automatisk blive lukket for status &quot;betales&quot;.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:06).

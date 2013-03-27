@@ -201,7 +201,8 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 .sorting_asc_disabled { background: url('../images/sort_asc_disabled.png') no-repeat center right; }
 .sorting_desc_disabled { background: url('../images/sort_desc_disabled.png') no-repeat center right; }
  
-table.dataTable th:active {
+table.dataTable thead th:active,
+table.dataTable thead td:active {
 	outline: none;
 }
 

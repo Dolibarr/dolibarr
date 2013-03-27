@@ -35,6 +35,11 @@ create table llx_user
   civilite          varchar(6),
   name              varchar(50),
   firstname         varchar(50),
+  address           varchar(255),                        		-- user personal address
+  zip               varchar(25),                         		-- zipcode
+  town              varchar(50),                         		-- town
+  fk_state          integer        DEFAULT 0,            		--
+  fk_country        integer        DEFAULT 0,            		--
   job				varchar(128),
   office_phone      varchar(20),
   office_fax        varchar(20),

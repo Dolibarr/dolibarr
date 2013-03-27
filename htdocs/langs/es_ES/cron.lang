@@ -1,0 +1,90 @@
+# Dolibarr language file - es_ES - cron
+CHARSET=UTF-8
+
+#
+# Admin
+#
+CronSetup= Configuracion
+URLToLaunchCronJobs=URL para ejecutar tareas Cron
+OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
+KeyForCronAccess=clave para la URL para ejecutar tareas Cron
+FileToLaunchCronJobs=Comando para ejecutar tareas Cron
+CronExplainHowToRunUnix=En entorno Unix debes usar crontab para ejecutar el comando cada varios minutos
+CronExplainHowToRunWin=En un entorno de Microsoft(tm) Windows puedes usar el programador de tareas para ejecutar el comando cada varios minutos
+
+#
+# Page list
+#
+CronDateLastRun=Ultima ejecucion
+CronLastOutput=Resultado de la ultima ejecucion
+CronLastResult=Ultimo codigo de resultado
+CronListOfCronJobs=Lista de tareas programadas
+CronCommand=Comando
+CronList=Lista de tareas Cron
+CronDelete=Borrar tareas Cron
+CronConfirmDelete=Estas seguro de querer eliminar estas tareas ?
+CronExecute=Ejecutar Tarea
+CronConfirmExecute=Estas seguro de querer ejecutar esta tarea ahora ?
+CronInfo= Cron te permite ejecutar tareas que han sido programadas
+CronWaitingJobs=Trabajos en espera
+CronTask=Tarea
+CronNone=Ninguna
+CronDtStart=Fecha inicio
+CronDtEnd=Fecha fin
+CronDtNextLaunch=Siguiente ejecucion
+CronDtLastLaunch=ultima ejecucion
+CronFrequency=Frecuencia
+CronClass=Class
+CronMethod=Metodo
+CronModule=Modulo
+CronAction=Accion
+CronStatus=Status
+CronStatusActive=Activo
+CronStatusInactive=Inactivo
+CronNoJobs=Sin trabajos registrados
+CronPriority=Prioridad
+CronLabel=Descripcion
+CronNbRun=Nb. ejecutar
+
+#
+#Page card
+#
+
+CronListActive=Tareas Activas
+CronListInactive=Tareas Inactivas
+CronAdd=Tarea Nueva
+CronHourStart=Fecha y hora de inicio de la tarea
+CronEvery=Y ejecutar la tarea cada
+CronObject=Instancia/Objeto a crear
+CronArgs=Parametros
+CronSaveSucess=Guardado con exito
+CronNote=Comentario
+CronFieldMandatory=campos %s son obligatorios
+CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
+CronStatusActiveBtn=Activo
+CronStatusInactiveBtn=Inactivo
+CronTaskInactive=Esta tarea esta inactiva
+CronDtLastResult=Fecha del ultimo resultado
+CronId=Id
+CronClassFile=Classes (file name)
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
+CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
+CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
+CronCommandHelp=The system command line to execute.
+
+#
+# Info
+#
+CronInfoPage=Informacion
+
+
+#
+# Common
+#
+CronType=Tipo de tarea
+CronType_method=Llamar a un metodo de clase Dolibarr
+CronType_command=Comando Shell
+CronMenu=Programador
+CronCannotLoadClass=No se puede cargar la clase %s u objeto %s

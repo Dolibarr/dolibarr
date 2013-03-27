@@ -247,7 +247,7 @@ class Export
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
-	 *      @param		string	$ValueField		Initial value of the field to filter
+	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
 	function build_filterQuery($TypeField, $NameField, $ValueField)

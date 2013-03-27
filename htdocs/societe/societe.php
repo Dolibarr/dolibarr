@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,26 +81,32 @@ if ($mode == 'search')
     // We'll need this table joined to the select in order to filter by categ
     if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
     $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-	$sql.= " AND (";
-	$sql.= " s.nom LIKE '%".$db->escape($socname)."%'";
-	$sql.= " OR s.code_client LIKE '%".$db->escape($socname)."%'";
-	$sql.= " OR s.email LIKE '%".$db->escape($socname)."%'";
-	$sql.= " OR s.url LIKE '%".$db->escape($socname)."%'";
-	$sql.= " OR s.siren LIKE '%".$db->escape($socname)."%'";
 
-	if (!empty($conf->barcode->enabled))
-	{
-		$sql.= "OR s.barcode LIKE '".$db->escape($socname)."'";
-	}
+        // For natural search
+        $scrit = explode(' ', $socname);
+        foreach ($scrit as $crit) {
+            $sql.= " AND (";
+            $sql.= " s.nom LIKE '%".$db->escape($crit)."%'";
+            $sql.= " OR s.code_client LIKE '%".$db->escape($crit)."%'";
+            $sql.= " OR s.email LIKE '%".$db->escape($crit)."%'";
+            $sql.= " OR s.url LIKE '%".$db->escape($crit)."%'";
+            $sql.= " OR s.siren LIKE '%".$db->escape($crit)."%'";
 
-	$sql.= ")";
+            if (!empty($conf->barcode->enabled))
+            {
+                    $sql.= "OR s.barcode LIKE '".$db->escape($crit)."'";
+            }
+
+            $sql.= ")";
+        }
+
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
     if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
     if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";   // Join for the needed table to filter by categ
 	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 	{
-		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fourn != 1";
+		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
 	}
     // Insert sale filter
     if ($search_sale)

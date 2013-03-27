@@ -53,9 +53,9 @@ class MenuManager
 	 */
 	function loadMenu()
 	{
-		
-	}	
-	
+
+	}
+
 
 	/**
 	 *  Show menu
@@ -71,17 +71,19 @@ class MenuManager
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu=new Menu();
-		
+
 		if ($mode == 'top')
 		{
 			print_start_menu_array_empty();
 
+			// Home
+			$showmode=1;
 			$idsel='home';
 			$classname='class="tmenusel"';
 
-			print_start_menu_entry_empty($idsel, $classname);
+			print_start_menu_entry_empty($idsel, $classname, $showmode);
 			print_text_menu_entry_empty($langs->trans("Home"), 1, dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $this->atarget);
-			print_end_menu_entry_empty();
+			print_end_menu_entry_empty($showmode);
 
 			print_end_menu_array_empty();
 		}
@@ -190,12 +192,16 @@ function print_start_menu_array_empty()
  *
  * @param	string	$idsel		Text
  * @param	string	$classname	String to add a css class
+ * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_start_menu_entry_empty($idsel,$classname)
+function print_start_menu_entry_empty($idsel,$classname,$showmode)
 {
-	print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-	print '<div class="tmenuleft"></div><div class="tmenucenter">';
+	if ($showmode)
+	{
+		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
+		print '<div class="tmenuleft"></div><div class="tmenucenter">';
+	}
 }
 
 /**
@@ -235,12 +241,16 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 /**
  * Output end menu entry
  *
+ * @param	int		$showmode	0 = hide, 1 = allowed or 2 = not allowed
  * @return	void
  */
-function print_end_menu_entry_empty()
+function print_end_menu_entry_empty($showmode)
 {
-	print '</div></li>';
-	print "\n";
+	if ($showmode)
+	{
+		print '</div></li>';
+		print "\n";
+	}
 }
 
 /**

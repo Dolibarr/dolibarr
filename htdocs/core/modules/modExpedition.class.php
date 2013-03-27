@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "LIVRAISON_ADDON";
+		$this->const[$r][0] = "LIVRAISON_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_livraison_jade";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
