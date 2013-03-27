@@ -82,6 +82,8 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 		setEventMessage($object->error,'errors');
 		$action='';
 	}else {
+		if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
+		else setEventMessage($langs->trans("JobFinished"),'mesgs');
 		$action='';
 	}
 
@@ -194,10 +196,13 @@ if ($action=='inactive') {
 
 llxHeader('',$langs->trans("CronAdd"));
 
-if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute') {
+if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
+{
 	$head=cron_prepare_head($object);
 	dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
-} elseif ($action=='create') {
+}
+elseif ($action=='create')
+{
 	print_fiche_titre($langs->trans("CronTask"),'','setup');
 }
 
@@ -251,8 +256,8 @@ if (empty($object->status) && $action != 'create')
 	dol_htmloutput_mesg($langs->trans("CronTaskInactive"),'','warning',1);
 }
 
-if (($action=="create") || ($action=="edit")) {
-
+if (($action=="create") || ($action=="edit"))
+{
 	print '<form name="cronform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 	if (!empty($object->id)) {
@@ -565,6 +570,10 @@ if (($action=="create") || ($action=="edit")) {
 
 	print '</table>';
 
+
+	dol_fiche_end();
+
+
 	print "\n\n<div class=\"tabsAction\">\n";
 	if (! $user->rights->cron->create) {
 		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
@@ -585,9 +594,15 @@ if (($action=="create") || ($action=="edit")) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 		}
 	}
-	if ((! $user->rights->cron->execute) || (empty($object->status))) {
+	if ((empty($user->rights->cron->execute)))
+	{
 		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
-	} else {
+	}
+	else if (empty($object->status))
+	{
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("TaskDisabled")).'">'.$langs->trans("CronExecute").'</a>';
+	}
+	else {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.'">'.$langs->trans("CronExecute").'</a>';
 	}
 	print '<br><br></div>';

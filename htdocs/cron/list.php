@@ -203,7 +203,7 @@ if (count($object->lines)>0) {
 
 		print '<td>';
 		if(!empty($line->label)) {
-			print '<a href="'.dol_buildpath('/cron/cron/card.php',1).'?id='.$line->id.'">'.$line->label.'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$line->id.'">'.$line->label.'</a>';
 		}
 		else {
 			print $langs->trans('CronNone');
@@ -229,19 +229,19 @@ if (count($object->lines)>0) {
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->datestart)) {print dol_print_date($line->datestart,'dayhourtext');} else {print $langs->trans('CronNone');}
+		if(!empty($line->datestart)) {print dol_print_date($line->datestart,'dayhour');} else {print $langs->trans('CronNone');}
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->dateend)) {print dol_print_date($line->dateend,'dayhourtext');} else {print $langs->trans('CronNone');}
+		if(!empty($line->dateend)) {print dol_print_date($line->dateend,'dayhour');} else {print $langs->trans('CronNone');}
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->datelastrun)) {print dol_print_date($line->datelastrun,'dayhourtext');} else {print $langs->trans('CronNone');}
+		if(!empty($line->datelastrun)) {print dol_print_date($line->datelastrun,'dayhour');} else {print $langs->trans('CronNone');}
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->datenextrun)) {print dol_print_date($line->datenextrun,'dayhourtext');} else {print $langs->trans('CronNone');}
+		if(!empty($line->datenextrun)) {print dol_print_date($line->datenextrun,'dayhour');} else {print $langs->trans('CronNone');}
 		print '</td>';
 
 		print '<td>';
@@ -283,13 +283,22 @@ if (count($object->lines)>0) {
 	print $langs->trans('CronNoJobs');
 }
 
-print "\n\n<div class=\"tabsAction\">\n";
-if (! $user->rights->cron->create) {
+print "\n<div class=\"tabsAction\">\n";
+
+if (! $user->rights->cron->create)
+{
 	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("New").'</a>';
-} else {
-	print '<a class="butAction" href="'.dol_buildpath('/cron/card.php',1).'?action=create">'.$langs->trans("New").'</a>';
 }
-print '<br><br></div>';
+else
+{
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("New").'</a>';
+}
+
+print '</div>';
+
+print '<br>';
 
 llxFooter();
+
 $db->close();
+?>
