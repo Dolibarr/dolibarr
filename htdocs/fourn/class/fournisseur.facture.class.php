@@ -1166,24 +1166,66 @@ class FactureFournisseur extends CommonInvoice
     }
 
     /**
-     * Delete a detail line from database
+     * 	Delete a detail line from database
      *
-     * @param   int		$rowid      Id of line to delete
-     * @return	void
+     * 	@param  int		$rowid      	Id of line to delete
+     *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+     * 	@return	void
      */
-    function deleteline($rowid)
+    function deleteline($rowid, $notrigger=0)
     {
-        // Supprime ligne
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
-        $sql .= ' WHERE rowid = '.$rowid.';';
-        $resql = $this->db->query($sql);
-        if (! $resql)
+    	global $user, $langs, $conf;
+
+        if (! $rowid) $rowid=$this->id;
+
+        dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+
+        $error=0;
+    	$this->db->begin();
+
+        if (! $error && ! $notrigger)
         {
-            dol_print_error($this->db);
+	    	// Appel des triggers
+	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	    	$interface=new Interfaces($this->db);
+	    	$result=$interface->run_triggers('LINEBILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+	    	if ($result < 0) {
+	    		$error++; $this->errors=$interface->errors;
+	    	}
+        	// Fin appel triggers
         }
-        // Mise a jour prix facture
-        $this->update_price();
-        return 1;
+
+    	if (! $error)
+    	{
+	        // Supprime ligne
+	        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
+	        $sql.= ' WHERE rowid = '.$rowid;
+        	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+	        $resql = $this->db->query($sql);
+	        if (! $resql)
+	        {
+	        	$error++;
+	        	$this->error=$this->db->lasterror();
+	        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+	        }
+    	}
+
+    	if (! $error)
+    	{
+	        // Mise a jour prix facture
+    		$this->update_price();
+    	}
+
+    	if (! $error)
+    	{
+    		$this->db->commit();
+        	return 1;
+    	}
+    	else
+    	{
+			$this->db->rollback();
+    		return -1;
+    	}
     }
 
 
@@ -1305,7 +1347,7 @@ class FactureFournisseur extends CommonInvoice
         $result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
         return $result;
     }
-	
+
 	 /**
      *  Renvoie la reference de facture suivante non utilisee en fonction du modele
      *                  de numerotation actif defini dans INVOICE_SUPPLIER_ADDON_NUMBER
