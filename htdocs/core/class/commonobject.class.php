@@ -1012,13 +1012,13 @@ abstract class CommonObject
     /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
-     *  Call this function only for table that contains a field fk_parent_line.
      *
-     * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
-     * 	@param		string		$rowidorder		ASC or DESC
+     * 	@param		boolean		$renum				true to renum all already ordered lines, false to renum only not already ordered lines.
+     * 	@param		string		$rowidorder			ASC or DESC
+     * 	@param		boolean		$fk_parent_line		Table with fk_parent_line field or not
      * 	@return		void
      */
-    function line_order($renum=false, $rowidorder='ASC')
+    function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
     {
         if (! $this->table_element_line)
         {
@@ -1055,7 +1055,8 @@ abstract class CommonObject
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql.= ' AND fk_parent_line IS NULL';
+			if ($fk_parent_line)
+				$sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
@@ -1130,12 +1131,13 @@ abstract class CommonObject
     /**
      * 	Update a line to have a lower rank
      *
-     * 	@param 	int		$rowid		Id of line
+     * 	@param 	int			$rowid				Id of line
+     * 	@param	boolean		$fk_parent_line		Table with fk_parent_line field or not
      * 	@return	void
      */
-    function line_up($rowid)
+    function line_up($rowid, $fk_parent_line=true)
     {
-        $this->line_order();
+        $this->line_order(false, 'ASC', $fk_parent_line);
 
         // Get rang of line
         $rang = $this->getRangOfLine($rowid);
@@ -1147,12 +1149,13 @@ abstract class CommonObject
     /**
      * 	Update a line to have a higher rank
      *
-     * 	@param	int		$rowid		Id of line
+     * 	@param	int			$rowid				Id of line
+     * 	@param	boolean		$fk_parent_line		Table with fk_parent_line field or not
      * 	@return	void
      */
-    function line_down($rowid)
+    function line_down($rowid, $fk_parent_line=true)
     {
-        $this->line_order();
+        $this->line_order(false, 'ASC', $fk_parent_line);
 
         // Get rang of line
         $rang = $this->getRangOfLine($rowid);
@@ -1553,6 +1556,9 @@ abstract class CommonObject
                 $i++;
             }
 
+            // Add revenue stamp to total
+            $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
+            
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2138,21 +2144,27 @@ abstract class CommonObject
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
             {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
-                $sql.=",".substr($key,8);   // Remove 'options_' prefix
+            	if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+                	$sql.=",".$attributeKey;
             }
             $sql .= ") VALUES (".$this->id;
             foreach($this->array_options as $key => $value)
             {
+            	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field o fattribut
-                if ($this->array_options[$key] != '')
-                {
-                    $sql.=",'".$this->array_options[$key]."'";
-                }
-                else
-                {
-                    $sql.=",null";
-                }
+            	if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+            	{
+	                if ($this->array_options[$key] != '')
+	                {
+	                    $sql.=",'".$this->array_options[$key]."'";
+	                }
+	                else
+	                {
+	                    $sql.=",null";
+	                }
+            	}
             }
             $sql.=")";
 
@@ -2689,7 +2701,8 @@ abstract class CommonObject
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;
-		$text='';
+
+		$text=''; $description=''; $type=0;
 
 		// Show product and description
 		$type=(! empty($line->product_type)?$line->product_type:$line->fk_product_type);
@@ -2697,27 +2710,25 @@ abstract class CommonObject
 		if (! empty($line->date_start)) $type=1; // deprecated
 		if (! empty($line->date_end)) $type=1; // deprecated
 
-		if ($line->fk_product > 0)
-		{
-			$product_static = new Product($this->db);
-
-			$product_static->type=$line->fk_product_type;
-			$product_static->id=$line->fk_product;
-			$product_static->ref=$line->ref;
-			$text=$product_static->getNomUrl(1);
-		}
-
 		// Ligne en mode visu
 		if ($action != 'editline' || $selected != $line->id)
 		{
-			// Produit
+			// Product
 			if ($line->fk_product > 0)
 			{
-				// Define output language
+				$product_static = new Product($this->db);
+
+				$product_static->type=$line->fk_product_type;
+				$product_static->id=$line->fk_product;
+				$product_static->ref=$line->ref;
+				$text=$product_static->getNomUrl(1);
+
+				// Define output language (TODO Does this works ?)
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
 					$this->fetch_thirdparty();
 					$prod = new Product($this->db);
+					$prod->fetch($line->fk_product);
 
 					$outputlangs = $langs;
 					$newlang='';

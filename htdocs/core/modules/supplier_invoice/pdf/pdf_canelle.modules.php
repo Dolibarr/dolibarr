@@ -93,6 +93,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
         // Get source company
         if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
+        if (! is_object($object->thirdparty)) $object->thirdparty=$mysoc;	// If fetch_thirdparty fails, object has no socid (specimen)
         $this->emetteur=$object->thirdparty;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 

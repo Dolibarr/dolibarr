@@ -62,7 +62,7 @@ class CMailFile
 	var $css;
 	//! Defined css style for body background
 	var $styleCSS;
-	//! Defined bacckground directly in body tag
+	//! Defined background directly in body tag
 	var $bodyCSS;
 
 	// Image
@@ -256,7 +256,7 @@ class CMailFile
 				if (!empty($css))
 				{
 					$this->css = $css;
-					$this->styleCSS = $this->buildCSS();
+					$this->buildCSS();
 				}
 				$msg = $this->html;
 				$msg = $this->checkIfHTML($msg);
@@ -308,7 +308,7 @@ class CMailFile
 				if (!empty($css))
 				{
 					$this->css = $css;
-					$this->styleCSS = $this->buildCSS();
+					$this->buildCSS();
 				}
 				$msg = $this->html;
 				$msg = $this->checkIfHTML($msg);
@@ -624,7 +624,7 @@ class CMailFile
             if ($this->css['bgcolor'])
             {
                 $this->styleCSS.= '  background-color: '.$this->css['bgcolor'].';';
-                $this->bodyCSS.= ' BGCOLOR="'.$this->css['bgcolor'].'"';
+                $this->bodyCSS.= ' bgcolor="'.$this->css['bgcolor'].'"';
             }
             if ($this->css['bgimage'])
             {

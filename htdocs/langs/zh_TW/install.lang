@@ -9,7 +9,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=只需按照分步說明。
-MiscellanousChecks=先決條件檢查
+MiscellaneousChecks=先決條件檢查
 DolibarrWelcome=歡迎Dolibarr
 ConfFileExists=配置文件<b>％s</b>存在。
 ConfFileDoesNotExists=配置文件<b>％s</b>不存在！

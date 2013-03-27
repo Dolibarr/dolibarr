@@ -115,13 +115,12 @@ ZeroClipboard_TableTools.Client.prototype = {
 		this.div = document.createElement('div');
 		var style = this.div.style;
 		style.position = 'absolute';
-		style.left = (this.domElement.offsetLeft)+'px';
-		//style.left = (this.domElement.offsetLeft+2)+'px';
-		style.top = this.domElement.offsetTop+'px';
+		style.left = '0px';
+		style.top = '0px';
 		style.width = (box.width) + 'px';
-		//style.width = (box.width-4) + 'px';
 		style.height = box.height + 'px';
 		style.zIndex = zIndex;
+		
 		if ( typeof title != "undefined" && title != "" ) {
 			this.div.title = title;
 		}
@@ -130,8 +129,8 @@ ZeroClipboard_TableTools.Client.prototype = {
 		}
 		
 		// style.backgroundColor = '#f00'; // debug
-		if ( this.domElement.parentNode ) {
-			this.domElement.parentNode.appendChild(this.div);
+		if ( this.domElement ) {
+			this.domElement.appendChild(this.div);
 			this.div.innerHTML = this.getHTML( box.width, box.height );
 		}
 	},
@@ -141,8 +140,8 @@ ZeroClipboard_TableTools.Client.prototype = {
 		var style = this.div.style;
 		
 		style.position = 'absolute';
-		style.left = (this.domElement.offsetLeft)+'px';
-		style.top = this.domElement.offsetTop+'px';
+		//style.left = (this.domElement.offsetLeft)+'px';
+		//style.top = this.domElement.offsetTop+'px';
 		style.width = box.width + 'px';
 		style.height = box.height + 'px';
 		

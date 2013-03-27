@@ -77,7 +77,7 @@ if ( $retour >= 0 )
 {
 	$return=array();
 
-	$sql = "SELECT rowid, name, firstname";
+	$sql = "SELECT rowid, lastname, firstname";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user";
 	$sql.= " WHERE login = '".$username."'";
 	$sql.= " AND entity IN (0,".$conf->entity.")";

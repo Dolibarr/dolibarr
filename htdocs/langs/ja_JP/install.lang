@@ -137,7 +137,7 @@ MigrationActioncommElement=アクション上でデータを更新する
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
 // Reference language: en_US -> ja_JP
-MiscellanousChecks=前提条件チェック
+MiscellaneousChecks=前提条件チェック
 DolibarrWelcome=Dolibarrへようこそ
 ConfFileExists=コンフィギュレーションファイル<b>%sが</b>存在し<b>ています</b> 。
 ConfFileDoesNotExists=コンフィギュレーションファイル<b>%sは</b>存在しません！

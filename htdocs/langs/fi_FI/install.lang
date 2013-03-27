@@ -10,7 +10,7 @@
 // Reference language: en_US
 CHARSET=UTF-8
 InstallEasy=Me yritimme tehdä Dolibarr setup mahdollisimman helppoa. Seuraa ohjeita vaihe vaiheelta.
-MiscellanousChecks=Esitiedot tarkistaa
+MiscellaneousChecks=Esitiedot tarkistaa
 DolibarrWelcome=Tervetuloa Dolibarr
 ConfFileExists=Configuration <b>file %s</b> on olemassa.
 ConfFileDoesNotExists=Configuration <b>file %s</b> ei ole olemassa!

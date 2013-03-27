@@ -442,7 +442,7 @@ class Paiement extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if (! $error)
+                if (! $error  && $label != '(WithdrawalPayment)')
                 {
                     $linkaddedforthirdparty=array();
                     foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.

@@ -60,7 +60,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
-    // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
+    // $user est le user qui edite, $id est l'id de l'utilisateur edite
     $caneditfield=((($user->id == $id) && $user->rights->user->self->creer)
     || (($user->id != $id) && $user->rights->user->user->creer));
     $caneditpassword=((($user->id == $id) && $user->rights->user->self->password)
@@ -174,18 +174,18 @@ if ($action == 'add' && $canadduser)
 
     if (! $message)
     {
-        $object->lastname		= $_POST["lastname"];
-        $object->firstname	= $_POST["firstname"];
-        $object->login		= $_POST["login"];
-        $object->admin		= $_POST["admin"];
-        $object->office_phone	= $_POST["office_phone"];
-        $object->office_fax	= $_POST["office_fax"];
-        $object->user_mobile	= $_POST["user_mobile"];
-        $object->email		= $_POST["email"];
-        $object->job			= $_POST["job"];
-        $object->signature	= $_POST["signature"];
-        $object->note			= $_POST["note"];
-        $object->ldap_sid		= $_POST["ldap_sid"];
+        $object->lastname		= GETPOST("lastname");
+        $object->firstname	    = GETPOST("firstname");
+        $object->login		    = GETPOST("login");
+        $object->admin		    = GETPOST("admin");
+        $object->office_phone	= GETPOST("office_phone");
+        $object->office_fax	    = GETPOST("office_fax");
+        $object->user_mobile	= GETPOST("user_mobile");
+        $object->email		    = GETPOST("email");
+        $object->job			= GETPOST("job");
+        $object->signature	    = GETPOST("signature");
+        $object->note			= GETPOST("note");
+        $object->ldap_sid		= GETPOST("ldap_sid");
 
         // Get extra fields
         foreach($_POST as $key => $value)
@@ -683,7 +683,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     }
 
     print dol_set_focus('#lastname');
-    
+
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -886,7 +886,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Signature
     print '<tr><td valign="top">'.$langs->trans("Signature").'</td>';
     print '<td>';
-    print '<textarea rows="'.ROWS_5.'" cols="90" name="signature">'.GETPOST('signature').'</textarea>';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor('signature',GETPOST('signature'),'',280,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,8,72);
+    print $doleditor->Create(1);
     print '</td></tr>';
 
     // Multicompany
@@ -1195,7 +1197,7 @@ else
 
             // Signature
             print '<tr><td valign="top">'.$langs->trans('Signature').'</td><td>';
-            print dol_textishtml($object->signature)?$object->signature:dol_nl2br($object->signature,1,false);
+            print dol_htmlentitiesbr($object->signature);
             print "</td></tr>\n";
 
             // Hierarchy
@@ -1532,8 +1534,7 @@ else
         /*
          * Fiche en mode edition
          */
-
-        if ($action == 'edit' && ($canedituser || ($user->id == $object->id)))
+        if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
         {
             $rowspan=14;
 
@@ -1599,7 +1600,15 @@ else
             // Position/Job
             print '<tr><td valign="top">'.$langs->trans("PostOrFunction").'</td>';
             print '<td>';
-            print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+            if ($caneditfield)
+            {
+            	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+            }
+            else
+          {
+                print '<input type="hidden" name="job" value="'.$object->job.'">';
+          		print $object->job;
+            }
             print '</td></tr>';
 
             // Login
@@ -1794,7 +1803,16 @@ else
             // Signature
             print "<tr>".'<td valign="top">'.$langs->trans("Signature").'</td>';
             print '<td>';
-            print '<textarea name="signature" rows="5" cols="90">'.dol_htmlentitiesbr_decode($object->signature).'</textarea>';
+            if ($caneditfield)
+            {
+	            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	            $doleditor=new DolEditor('signature',$object->signature,'',280,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,8,72);
+	            print $doleditor->Create(1);
+            }
+            else
+          {
+          		print dol_htmlentitiesbr($object->signature);
+            }
             print '</td></tr>';
 
             // openid
@@ -1817,7 +1835,17 @@ else
             // Hierarchy
             print '<tr><td valign="top">'.$langs->trans("HierarchicalResponsible").'</td>';
             print '<td>';
-            print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
+            if ($caneditfield)
+            {
+            	print $form->select_dolusers($object->fk_user,'fk_user',1,array($object->id),0,'',0,$object->entity);
+            }
+            else
+          {
+          		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
+            	$huser=new User($db);
+            	$huser->fetch($object->fk_user);
+            	print $huser->getNomUrl(1);
+            }
             print '</td>';
             print "</tr>\n";
 
@@ -1826,21 +1854,6 @@ else
             print '<td>';
             print $object->getLibStatut(4);
             print '</td></tr>';
-
-            // Multicompany
-            if (! empty($conf->multicompany->enabled))
-            {
-            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-            	{
-            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
-            		print "<td>".$mc->select_entities($object->entity);
-            		print "</td></tr>\n";
-            	}
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
-            }
 
             // Company / Contact
             if (! empty($conf->societe->enabled))
@@ -1886,6 +1899,21 @@ else
                 }
                 print '</td>';
                 print "</tr>\n";
+            }
+
+            // Multicompany
+            if (! empty($conf->multicompany->enabled))
+            {
+            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	{
+            		print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
+            		print "<td>".$mc->select_entities($object->entity);
+            		print "</td></tr>\n";
+            	}
+            	else
+            	{
+            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+            	}
             }
 
             // Other attributes

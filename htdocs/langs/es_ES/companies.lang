@@ -394,6 +394,8 @@ UniqueThirdParties=Total de terceros únicos
 InActivity=Activo
 ActivityCeased=Cerrado
 ActivityStateFilter=Estado de actividad
+ProductsIntoElements=Listado de productos en %s
+
 # Monkey
 MonkeyNumRefModelDesc=Devuelve un número bajo el formato %syymm-nnnn para los códigos de clientes y %syymm-nnnn para los códigos de los proveedores, donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0.
 # Leopard

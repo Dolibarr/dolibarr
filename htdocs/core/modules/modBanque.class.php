@@ -65,7 +65,7 @@ class modBanque extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array("bank.php@compta/bank");
+        $this->config_page_url = array("bank.php");
 
 		// Dependancies
 		$this->depends = array();

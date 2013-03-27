@@ -38,7 +38,7 @@ $ref=GETPOST('ref','alpha');
 // Security check
 $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $id,'');
+$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
 
 
 /*

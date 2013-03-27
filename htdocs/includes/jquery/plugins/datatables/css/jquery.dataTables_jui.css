@@ -82,7 +82,6 @@ div.dataTables_wrapper .ui-widget-header {
 table.display thead th div.DataTables_sort_wrapper {
 	position: relative;
 	padding-right: 20px;
-	padding-right: 20px;
 }
 
 table.display thead th div.DataTables_sort_wrapper span {
@@ -145,30 +144,6 @@ table.display thead th div.DataTables_sort_wrapper span {
 .dataTables_paginate {
 	float: right;
 	text-align: right;
-}
-
-/* Pagination nested */
-.paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
-	height: 19px;
-	width: 19px;
-	margin-left: 3px;
-	float: left;
-}
-
-.paginate_disabled_previous {
-	background-image: url('../images/back_disabled.jpg');
-}
-
-.paginate_enabled_previous {
-	background-image: url('../images/back_enabled.jpg');
-}
-
-.paginate_disabled_next {
-	background-image: url('../images/forward_disabled.jpg');
-}
-
-.paginate_enabled_next {
-	background-image: url('../images/forward_enabled.jpg');
 }
 
 

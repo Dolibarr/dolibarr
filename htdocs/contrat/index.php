@@ -66,9 +66,10 @@ llxHeader();
 print_fiche_titre($langs->trans("ContractsArea"));
 
 
-print '<table class="notopnoleftnoright" width="100%">';
+//print '<table border="0" width="100%" class="notopnoleftnoright">';
+//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<tr><td width="30%" valign="top" class="notopnoleft">';
 
 // Search contract
 if (! empty($conf->contrat->enabled))
@@ -284,7 +285,9 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	}
 }
 
-print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
+
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Last modified contracts
@@ -599,9 +602,9 @@ else
 	dol_print_error($db);
 }
 
-print '</td></tr></table>';
 
-print '<br>';
+//print '</td></tr></table>';
+print '<div></div></div>';
 
 
 llxFooter();

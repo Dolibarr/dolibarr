@@ -103,7 +103,7 @@ See ChangeLog file found into package.
 - ClickToDial phone numbers
 - RSS
 
-### Miscellanous:
+### Miscellaneous:
 
 - Multi-user, with several permissions levels for each feature.
 - Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2011-2013      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 $langs->load("admin");
 $langs->load("errors");
+$langs->load("contracts");
 
 if (!$user->admin) accessforbidden();
 
@@ -88,6 +90,20 @@ print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'setup');
 
 print "<br>";
 
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/contract.php";
+$head[$h][1] = $langs->trans("Contracts");
+$head[$h][2] = 'Contract';
+$hselected=$h;
+$h++;
+
+dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+
+/*
+ * Contracts Numbering model
+ */
+
 print_titre($langs->trans("ContractsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
@@ -129,7 +145,7 @@ if (is_resource($handle))
                 print $module->info();
                 print '</td>';
 
-                // Show example of numbering module
+                // Show example of numbering model
                 print '<td nowrap="nowrap">';
                 $tmp=$module->getExample();
                 if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }

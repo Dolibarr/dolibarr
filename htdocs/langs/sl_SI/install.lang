@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - install = 
 CHARSET = UTF-8
 InstallEasy = Sledite navodilom korak za korakom.
-MiscellanousChecks = Kontrola pogojev
+MiscellaneousChecks = Kontrola pogojev
 DolibarrWelcome = Dobrodošli v Dolibarr
 ConfFileExists = Konfiguracijska datoteka <b>%s</b> že obstaja.
 ConfFileDoesNotExists = Konfiguracijska datoteka <b>%s</b> ne obstaja !

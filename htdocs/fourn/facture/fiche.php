@@ -737,10 +737,10 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
                 // Send mail
                 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
-                    $mesg='<div class="error">'.$mailfile->error.'</div>';
+                    setEventMessage($mailfile->error,'errors');
                 }
                 else
                 {
@@ -748,6 +748,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     if ($result)
                     {
                         $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
+                        setEventMessage($mesg);
 
                         $error=0;
 
@@ -776,7 +777,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }
                     }
@@ -1176,7 +1177,8 @@ if ($action == 'create')
         if (1==2 && ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
         {
             print '<tr class="liste_titre">';
-            print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
+            print '<td>&nbsp;</td>';
+            print '<td>'.$langs->trans('Label').'</td>';
             print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
             print '<td align="right">'.$langs->trans('VAT').'</td>';
             print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1200,7 +1202,7 @@ if ($action == 'create')
     }
 
     // Other options
-    $parameters=array();
+    $parameters=array('colspan' => ' colspan="6"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
     // Bouton "Create Draft"
@@ -1241,6 +1243,7 @@ else
         $productstatic = new Product($db);
 
         $object->fetch($id);
+        $object->fetch_thirdparty();
 
         $societe = new Fournisseur($db);
         $societe->fetch($object->socid);
@@ -1569,7 +1572,7 @@ else
         }
 
         // Other options
-        $parameters=array('colspan' => ' colspan="3"');
+        $parameters=array('colspan' => ' colspan="4"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
         print '</table>';
@@ -1734,6 +1737,12 @@ else
                     // Show range
                     print_date_range($date_start,$date_end);
                 }
+
+                if (is_object($hookmanager))
+                {
+                	$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
+                	$reshook=$hookmanager->executeHooks('formViewProductSupplierOptions',$parameters,$object,$action);
+                }
                 print '</td>';
 
                 // VAT
@@ -1806,7 +1815,7 @@ else
             if (is_object($hookmanager))
             {
                 $parameters=array();
-                $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+                $reshook=$hookmanager->executeHooks('formCreateSupplierProductOptions',$parameters,$object,$action);
             }
 
             // Editor wysiwyg
@@ -2089,6 +2098,28 @@ else
             $formmail->substit['__FACREF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
+            $formmail->substit['__CONTACTCIVNAME__']='';
+
+            //Find the good contact adress
+            $custcontact='';
+            $contactarr=array();
+            $contactarr=$object->liste_contact(-1,'external');
+
+            if (is_array($contactarr) && count($contactarr)>0) {
+            	foreach($contactarr as $contact) {
+            		if ($contact['libelle']==$langs->trans('TypeContact_invoice_supplier_external_BILLING')) {
+            			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+            			$contactstatic=new Contact($db);
+            			$contactstatic->fetch($contact['id']);
+            			$custcontact=$contactstatic->getFullName($langs,1);
+            		}
+            	}
+
+            	if (!empty($custcontact)) {
+            		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+            	}
+            }
+
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='invoice_supplier_send';
