@@ -92,7 +92,7 @@ if ($action == 'add')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
-                    setEventMessage($mesg,'error');
+                    setEventMessage($mesg,'errors');
     			}
     		}
     		else
@@ -100,7 +100,7 @@ if ($action == 'add')
                 $error++;
     		    $langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
-    			setEventMessage($mesg,'error');
+    			setEventMessage($mesg,'errors');
     			$action = 'create';
     		}
 	    }
