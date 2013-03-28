@@ -931,7 +931,7 @@ class DoliDBMysql
 		$sql .= ",".implode(',',$sqluq);
 		if($keys != "")
 		$sql .= ",".implode(',',$sqlk);
-		$sql .=") type=".$type;
+		$sql .=") engine=".$type;
 
 		dol_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))

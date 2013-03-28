@@ -436,7 +436,7 @@ class FileUpload
 				{
 					file_put_contents($file_path, fopen($uploaded_file, 'r'), FILE_APPEND);
 				} else {
-					dol_move_uploaded_file($uploaded_file, $file_path, 1);
+					dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
 				}
 			}
 			else

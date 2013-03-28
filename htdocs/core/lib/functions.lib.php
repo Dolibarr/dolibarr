@@ -1640,10 +1640,11 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@param		string		$options			Add more attribute on img tag (For example 'style="float: right"')
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
+function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srconly=0)
 {
 	global $conf;
 
@@ -1678,7 +1679,8 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
-	return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.(! empty($options)?' '.$options:'').'>';
+	if ($srconly) return $fullpathpicto;
+	else return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.(! empty($options)?' '.$options:'').'>';
 }
 
 /**
