@@ -752,5 +752,42 @@ class ExtraFields
     	$out = '<tr class="liste_titre"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
     	return $out;
     }
+    
+    /**
+     * Fill array_options array for object by extrafields value (using for data send by forms)
+     *
+     * @param   array	$extralabels    $array of extrafields
+     * @param   object	$object         object
+     * @return	int						1 if array_options set / 0 if no value
+     */
+    function setOptionalsFromPost($extralabels,&$object)
+    {
+    	global $_POST;
+    	
+    	if (is_array($extralabels))
+    	{
+	    	// Get extra fields
+	    	foreach ($extralabels as $key => $value)
+	    	{
+	    		$key_type = $this->attribute_type[$key];
+	    	
+	    		if (in_array($key_type,array('date','datetime')))
+	    		{
+	    			// Clean parameters
+	    			$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+	    		}
+	    		else
+	    		{
+	    			$value_key=GETPOST("options_".$key);
+	    		}
+	    		$object->array_options["options_".$key]=$value_key;
+	    	}
+    	
+    		return 1;
+    	}
+    	else {
+    		return 0;
+    	}
+    }
 }
 ?>

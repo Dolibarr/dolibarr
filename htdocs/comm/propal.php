@@ -341,23 +341,9 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     		}
 
-    		// Get extra fields
-    		foreach ($extralabels as $key => $value)
-    		{
-    			$key_type = $extrafields->attribute_type[$key];
-    		
-    			if (in_array($key_type,array('date','datetime')))
-    			{
-    				// Clean parameters
-    				$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-    			}
-    			else
-    			{
-    				$value_key=GETPOST("options_".$key);
-    			}
-    			$object->array_options["options_".$key]=$value_key;
-    		}
-    		
+    		// Fill array 'array_options' with data from add form
+    		$ret = setOptionalsFromPost($extralabels,$object);*
+
     		$id = $object->create($user);
     	}
 
