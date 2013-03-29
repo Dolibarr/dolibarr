@@ -55,6 +55,9 @@ if ($user->societe_id) $socid=$user->societe_id;
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('company');
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -167,14 +170,21 @@ if (empty($reshook))
         $object->default_lang          = GETPOST('default_lang');
 
         // Get extra fields
-        foreach($_POST as $key => $value)
+        foreach ($extralabels as $key => $value)
         {
-            if (preg_match("/^options_/",$key))
-            {
-                $object->array_options[$key]=GETPOST($key);
-            }
+        	$key_type = $extrafields->attribute_type[$key];
+        	 
+        	if (in_array($key_type,array('date','datetime')))
+        	{
+        		// Clean parameters
+        		$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+        	}
+        	else
+        	{
+        		$value_key=GETPOST("options_".$key);
+        	}
+        	$object->array_options[$key]=$value_key;
         }
-
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
@@ -507,9 +517,6 @@ if (empty($reshook))
 /*
  *  View
  */
-
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('company');
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
@@ -1000,6 +1007,13 @@ else
 	           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	           		print '>'.$label.'</td>';
 	           		print '<td colspan="'.$colspan.'">';
+	           		
+	           		// Convert date into timestamp format
+	           		if (in_array($extrafields->attribute_type[$key],array('date','datetime'))) 
+	           		{
+	           			$value = dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+	           		}
+	           		
 	                print $extrafields->showInputField($key,$value);
 	                print '</td>';
 	                
