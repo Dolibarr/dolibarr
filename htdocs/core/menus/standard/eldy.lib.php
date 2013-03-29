@@ -414,8 +414,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	$newmenu = $menu;
 
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
-	$leftmenu=($forceleftmenu?'':$_SESSION["leftmenu"]);
-
+	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
+	
 	// Show logo company
 	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO))
 	{
