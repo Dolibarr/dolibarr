@@ -342,7 +342,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
     		}
 
     		// Fill array 'array_options' with data from add form
-    		$ret = setOptionalsFromPost($extralabels,$object);
+    		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
     		$id = $object->create($user);
     	}
