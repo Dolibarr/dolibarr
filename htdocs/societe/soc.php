@@ -183,7 +183,7 @@ if (empty($reshook))
         	{
         		$value_key=GETPOST("options_".$key);
         	}
-        	$object->array_options[$key]=$value_key;
+        	$object->array_options["options_".$key]=$value_key;
         }
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
