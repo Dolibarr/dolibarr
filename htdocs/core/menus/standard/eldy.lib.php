@@ -264,10 +264,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		$showmode=dol_eldy_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			$url = $newTabMenu[$i]['url'];
+			$url = $shorturl = $newTabMenu[$i]['url'];
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				$url = $newTabMenu[$i]['url'];
 				$param='';
 				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
 				{
@@ -436,8 +435,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	}
 
 	/**
-	 * On definit newmenu en fonction de mainmenu et leftmenu
-	 * ------------------------------------------------------
+	 * We update newmenu with entries found into database
+	 * --------------------------------------------------
 	 */
 	if ($mainmenu)
 	{

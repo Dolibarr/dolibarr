@@ -140,7 +140,7 @@ class MenuManager
         		if ($val['enabled'] == 1)
         		{
 					$relurl=dol_buildpath($val['url'],1);
-					
+
         			print '<a href="#">'.$val['titre'].'</a>'."\n";
         			// Search submenu fot this entry
         			$tmpmainmenu=$val['mainmenu'];
