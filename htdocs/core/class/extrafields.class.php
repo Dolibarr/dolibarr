@@ -582,7 +582,7 @@ class ExtraFields
 	 *  Return HTML string to put an input field into a page
 	 *
 	 *  @param	string	$key             Key of attribute
-	 *  @param  string	$value           Value to show
+	 *  @param  string	$value           Value to show (for date type it must be in timestamp format)
 	 *  @param  string	$moreparam       To add more parametes on html input tag
 	 *  @return	void
 	 */
@@ -619,7 +619,13 @@ class ExtraFields
         {
         	$tmp=explode(',',$size);
         	$newsize=$tmp[0];
-        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        	if(!class_exists('Form'))
+        		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+        	$formstat = new Form($db);
+        	
+        	$showtime = in_array($type,array('datetime')) ? 1 : 0;
+        	$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 0, 0, 1);
+        	//$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
         elseif (in_array($type,array('int','double')))
         {
@@ -670,9 +676,10 @@ class ExtraFields
         	}
         	$out.='</select>';
         }
-        // Add comments
+        /* Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
         elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+        */
 	    return $out;
 	}
 
