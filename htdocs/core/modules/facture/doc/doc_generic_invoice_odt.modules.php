@@ -117,6 +117,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
             'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
+        	'object_date_delivery_planed'=>dol_print_date($object->date_livraison,'dayhour'),
             'object_payment_mode_code'=>$object->mode_reglement_code,
         	'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
         	'object_payment_term_code'=>$object->cond_reglement_code,
@@ -415,7 +416,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_propal=is_object($propal_object)?$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal'):array();
-
+				$array_other=$this->get_substitutionarray_other($user,$outputlangs);
+				
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
