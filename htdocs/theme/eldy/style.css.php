@@ -2519,6 +2519,39 @@ div.dolEventError h1, div.dolEventError h2 {
 }
 
 
+
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+.ui-body-c .ui-link {
+	color: #111 !important;
+}
+.ui-li-divider {
+	background: #eee !important;
+}
+.ui-bar-b {
+	border: 1px solid #ccc !important;
+	background: #aaa !important;
+	font-weight: bold !important;
+	color: #444 !important;
+	text-shadow: 0 1px 1px #fff !important;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#fdfdfd),to(#aaa)) !important;
+	background-image: -webkit-linear-gradient(top,#fdfdfd,#aaa) !important;
+	background-image: -moz-linear-gradient(top,#fdfdfd,#aaa) !important;
+	background-image: -ms-linear-gradient(top,#fdfdfd,#aaa) !important;
+	background-image: -o-linear-gradient(top,#fdfdfd,#aaa) !important;
+	background-image: linear-gradient(top,#fdfdfd,#aaa) !important;
+}	
+.ui-bar-b .ui-link {
+	border: none;
+	font-weight: bold !important;
+	color: #444 !important;
+	text-shadow: 0 1px 1px #fff !important;
+}
+
+
 <?php
 if (is_object($db)) $db->close();
 ?>

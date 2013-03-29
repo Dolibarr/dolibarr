@@ -136,32 +136,36 @@ class MenuManager
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
         		print '<ul data-role="listview" data-inset="true">';
-        		print '<li>';
+        		print '<li data-role="list-divider">';
         		if ($val['enabled'] == 1)
         		{
 					$relurl=dol_buildpath($val['url'],1);
 					
         			print '<a href="#">'.$val['titre'].'</a>'."\n";
-        			
+        			// Search submenu fot this entry
+        			$tmpmainmenu=$val['mainmenu'];
+        			$tmpleftmenu='all';
         			$submenu=new Menu();
-	        		$res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$val['mainmenu'],$val['leftmenu']);
+	        		$res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
         			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
+        			print '<ul>';
         			if ($canonrelurl != $canonnexturl && $val['mainmenu'] != 'home')
 					{
         				// We add sub entry
-        				print '<li><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+        				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
         			}
-        			var_dump($val['titre']);
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
        				{
        					$relurl2=dol_buildpath($val2['url'],1);
-       					print '<li><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+       					//var_dump($val2);
+       					print '<li'.($val2['level']==0?' data-role="list-divider"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
        				}
         			//var_dump($submenu);
+        			print '</ul>';
         		}        		
         		if ($val['enabled'] == 2)
         		{
@@ -169,7 +173,6 @@ class MenuManager
         		}	
         		print '</li>';
         		print '</ul>'."\n";
-        		print 'wwwwwww';
         	}
         }
 

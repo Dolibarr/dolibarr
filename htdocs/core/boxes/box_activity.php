@@ -41,18 +41,9 @@ class box_activity extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	/**
-	 *	Constructor
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-
-		$this->enabled = 1;
-		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
-		// FIXME: Removed number_format (not compatible with all languages)
-		// FIXME: Pb into some status
-	}
+	// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
+	// FIXME: Removed number_format (not compatible with all languages)
+	// FIXME: Pb into some status
 
 	/**
 	 *  Charge les donnees en memoire pour affichage ulterieur
@@ -66,6 +57,7 @@ class box_activity extends ModeleBoxes
 
 		$totalMnt = 0;
 		$totalnb = 0;
+		$i = 0;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -99,7 +91,6 @@ class box_activity extends ModeleBoxes
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$i = 0;
 				while ($i < $num)
 				{
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"', 'logo' => 'bill');
@@ -140,7 +131,7 @@ class box_activity extends ModeleBoxes
 			$result = $db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result)+$i;
+				$num = $db->num_rows($result) + $i;
 				$now=dol_now();
 
 				while ($i < $num)
@@ -195,7 +186,7 @@ class box_activity extends ModeleBoxes
 
 			if ($result)
 			{
-				$num = $db->num_rows($result)+$i;
+				$num = $db->num_rows($result) + $i;
 				while ($i < $num)
 				{
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"','logo' => 'object_order');
@@ -246,7 +237,7 @@ class box_activity extends ModeleBoxes
 
 			if ($result)
 			{
-				$num = $db->num_rows($result)+$i;
+				$num = $db->num_rows($result) + $i;
 				while ($i < $num)
 				{
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"','logo' => 'object_propal');

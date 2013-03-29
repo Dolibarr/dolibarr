@@ -77,8 +77,6 @@ dol_fiche_head($head, 'attributes', $langs->trans("ThirdParties"), 0, 'company')
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
 
-dol_htmloutput_errors($mesg);
-
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
 
