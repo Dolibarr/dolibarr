@@ -201,7 +201,7 @@ else
 
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
 
 if ($langs->file_exists("html/spam.html",0)) {

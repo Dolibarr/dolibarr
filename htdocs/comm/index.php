@@ -546,7 +546,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
 llxFooter();
 
