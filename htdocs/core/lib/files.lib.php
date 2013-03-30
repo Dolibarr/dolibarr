@@ -42,7 +42,7 @@ function dol_basename($pathfile)
  *  @param	string	$path        	Starting path from which to search
  *  @param	string	$types        	Can be "directories", "files", or "all"
  *  @param	int		$recursive		Determines whether subdirectories are searched
- *  @param	string	$filter        	Regex for include filter
+ *  @param	string	$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
  *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
@@ -65,7 +65,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
-	if (! $nohook) 
+	if (! $nohook)
 	{
 		$hookmanager->initHooks(array('fileslib'));
 
@@ -1212,11 +1212,11 @@ function dol_uncompress($inputfile,$outputdir)
 
 
 /**
- * Return most recent file
+ * Return file(s) into a directory (by default most recent)
  *
  * @param 	string	$dir			Directory to scan
- * @param	string	$regexfilter	Regexfilter
- * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
+ * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  *  @param	int		$nohook			Disable all hooks
  * @return	string					Full path to most recent file
  */
@@ -1225,4 +1225,5 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
     $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,'',$nohook);
     return $tmparray[0];
 }
+
 ?>
