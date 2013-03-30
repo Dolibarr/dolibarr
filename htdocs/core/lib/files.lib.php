@@ -42,7 +42,7 @@ function dol_basename($pathfile)
  *  @param	string	$path        	Starting path from which to search
  *  @param	string	$types        	Can be "directories", "files", or "all"
  *  @param	int		$recursive		Determines whether subdirectories are searched
- *  @param	string	$filter        	Regex for include filter
+ *  @param	string	$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
  *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
@@ -1237,8 +1237,8 @@ function dol_uncompress($inputfile,$outputdir)
  * Return most recent file
  *
  * @param 	string	$dir			Directory to scan
- * @param	string	$regexfilter	Regexfilter
- * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
+ * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @return	strnig					Full path to most recent file
  */
 function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'))

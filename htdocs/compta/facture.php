@@ -3373,7 +3373,7 @@ else if ($id > 0 || ! empty($ref))
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 
