@@ -169,22 +169,9 @@ if (empty($reshook))
         $object->commercial_id         = GETPOST('commercial_id');
         $object->default_lang          = GETPOST('default_lang');
 
-        // Get extra fields
-        foreach ($extralabels as $key => $value)
-        {
-        	$key_type = $extrafields->attribute_type[$key];
-        	 
-        	if (in_array($key_type,array('date','datetime')))
-        	{
-        		// Clean parameters
-        		$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-        	}
-        	else
-        	{
-        		$value_key=GETPOST("options_".$key);
-        	}
-        	$object->array_options["options_".$key]=$value_key;
-        }
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+        
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
