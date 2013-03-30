@@ -433,7 +433,7 @@ abstract class DolibarrModules
                 if (is_resource($handle))
                 {
                 	$dirfound++;
-                	
+
 	                // Run llx_mytable.sql files
                 	while (($file = readdir($handle))!==false)
                     {
@@ -443,7 +443,7 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
-                    
+
                     rewinddir($handle);
 
 	                // Run llx_mytable.key.sql files (Must be done after llx_mytable.sql)
@@ -457,7 +457,7 @@ abstract class DolibarrModules
                     }
 
                     rewinddir($handle);
-                    
+
                     // Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
                 	while (($file = readdir($handle))!==false)
                     {
@@ -467,9 +467,9 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
-                    
+
                     rewinddir($handle);
-                    
+
                     // Run update_xxx.sql files
                 	while (($file = readdir($handle))!==false)
                     {
@@ -479,7 +479,7 @@ abstract class DolibarrModules
                             if ($result <= 0) $error++;
                         }
                     }
-                    
+
                     closedir($handle);
                 }
 
@@ -990,7 +990,7 @@ abstract class DolibarrModules
                 //print 'xxx'.$this->menu[$key]['fk_menu'];exit;
                 $foundparent=0;
                 $fk_parent=$this->menu[$key]['fk_menu'];
-                if (preg_match('/r=/',$fk_parent))
+                if (preg_match('/^r=/',$fk_parent))	// old deprecated method
                 {
                     $fk_parent=str_replace('r=','',$fk_parent);
                     if (isset($this->menu[$fk_parent]['rowid']))
@@ -999,14 +999,14 @@ abstract class DolibarrModules
                         $foundparent=1;
                     }
                 }
-                elseif (preg_match('/fk_mainmenu=(.*),fk_leftmenu=(.*)/',$fk_parent,$reg))
+                elseif (preg_match('/^fk_mainmenu=([a-zA-Z0-9_]+),fk_leftmenu=([a-zA-Z0-9_]+)$/',$fk_parent,$reg))
                 {
                     $menu->fk_menu=-1;
                     $menu->fk_mainmenu=$reg[1];
                     $menu->fk_leftmenu=$reg[2];
                     $foundparent=1;
                 }
-                elseif (preg_match('/fk_mainmenu=(.*)/',$fk_parent,$reg))
+                elseif (preg_match('/^fk_mainmenu=([a-zA-Z0-9_]+)$/',$fk_parent,$reg))
                 {
                     $menu->fk_menu=-1;
                     $menu->fk_mainmenu=$reg[1];
