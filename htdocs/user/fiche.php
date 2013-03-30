@@ -1089,7 +1089,7 @@ else
 
             // Firstname
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td>'.$object->Firstname.'</td>';
+            print '<td>'.$object->firstname.'</td>';
             print '</tr>'."\n";
 
             // Position/Job
@@ -1588,12 +1588,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="Firstname" value="'.$object->Firstname.'">';
+                print '<input size="30" type="text" class="flat" name="firstname" value="'.$object->firstname.'">';
             }
             else
             {
-                print '<input type="hidden" name="Firstname" value="'.$object->Firstname.'">';
-                print $object->Firstname;
+                print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
+                print $object->firstname;
             }
             print '</td></tr>';
 
