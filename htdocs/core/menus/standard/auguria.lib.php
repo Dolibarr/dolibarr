@@ -76,7 +76,9 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 			}
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
 			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
-				
+			$url=preg_replace('/__USERID__/',$user->id,$url);
+			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
+
 			// Define the class (top menu selected or not)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
 			else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
@@ -256,7 +258,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	{
 		$showmenu=true;
 		if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu=false;
-		
+
 		$alt++;
 		if (empty($menu_array[$i]['level']) && $showmenu)
 		{
@@ -335,7 +337,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		}
 	}
 	}
-	
+
 	return count($menu_array);
 }
 
