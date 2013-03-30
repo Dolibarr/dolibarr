@@ -2189,6 +2189,44 @@ abstract class CommonObject
         }
         else return 0;
     }
+    
+    /**
+     * Function to show lines of extrafields with output datas
+     * 
+     * @param	object	$extrafields	extrafield Object
+     * 
+     * return string	
+     */
+    function showOptionals($extrafields)
+    {
+    	global $_POST;
+    	
+    	$out = '';
+    	
+    	if (! empty($this->array_options))
+    	{
+	    	foreach($extrafields->attribute_label as $key=>$label)
+	    	{
+	    		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+	    		if ($extrafields->attribute_type[$key] == 'separate')
+	    		{
+	    			$out = $extrafields->showSeparator($key);
+	    		}
+	    		else
+	    		{
+	    			// Convert date into timestamp format
+	    			if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+	    			{
+	    				$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->array_options['options_'.$key];
+	    			}
+	    			$out .= '<tr><td>'.$label.'</td><td colspan="3">';
+	    			$out .= $extrafields->showOutputField($key,$value);
+	    			$out .= '</td></tr>'."\n";
+	    		}
+	    	}
+    	}
+    	return $out;
+    }
 
 
     /**
