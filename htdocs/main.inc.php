@@ -1516,6 +1516,19 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print "<!-- End Bookmarks -->\n";
 	    }
 
+	    //Dolibarr version
+	    $doliurl='http://www.dolibarr.org';
+	    $appli='Dolibarr';
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	    	$appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl='';
+	    }
+	    $appli.=" ".DOL_VERSION;
+	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
+	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+	    print $appli;
+	    if ($doliurlx) print '</a>';
+	    print '</div>';
+
 	    // Link to Dolibarr wiki pages
 	    if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
 	    {
@@ -1565,18 +1578,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        print '<div id="blockvmenubugtracker" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 	    }
 	    print "\n";
-
-	    //Dolibarr version
-	    $doliurl='http://www.dolibarr.org';
-	    $appli='Dolibarr';
-	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) { $appli=$conf->global->MAIN_APPLICATION_TITLE; $doliurl=''; }
-	    $appli.=" ".DOL_VERSION;
-
-	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
-	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
-	    print $appli;
-	    if ($doliurlx) print '</a>';
-	    print '</div>';
 
 	    print "</div>\n";
 	    print "<!-- End left menu -->\n";
