@@ -151,12 +151,12 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode		'top' or 'left'
+     *	@param	string	$mode		'top', 'left', 'jmobile'
      *  @return	int     			Number of menu entries shown
 	 */
 	function showmenu($mode)
 	{
-    	global $conf;
+    	global $conf, $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
@@ -173,7 +173,53 @@ class MenuManager
         
         if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
         if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
-
+        if ($mode == 'jmobile')
+        {
+        	$res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+        
+        	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+        	{
+        		print '<ul data-role="listview" data-inset="true">';
+        		print '<li data-role="list-divider">';
+        		if ($val['enabled'] == 1)
+        		{
+        			$relurl=dol_buildpath($val['url'],1);
+        				
+        			print '<a href="#">'.$val['titre'].'</a>'."\n";
+        			// Search submenu fot this entry
+        			$tmpmainmenu=$val['mainmenu'];
+        			$tmpleftmenu='all';
+        			$submenu=new Menu();
+        			$res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
+        			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
+        			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
+        			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
+        			//var_dump($canonrelurl);
+        			//var_dump($canonnexturl);
+        			print '<ul>';
+        			if ($canonrelurl != $canonnexturl && $val['mainmenu'] != 'home')
+        			{
+        				// We add sub entry
+        				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+        			}
+        			foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+        			{
+        				$relurl2=dol_buildpath($val2['url'],1);
+        				//var_dump($val2);
+        				print '<li'.($val2['level']==0?' data-role="list-divider"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+        			}
+        			//var_dump($submenu);
+        			print '</ul>';
+        		}
+        		if ($val['enabled'] == 2)
+        		{
+        			print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+        		}
+        		print '</li>';
+        		print '</ul>'."\n";
+        	}
+        }
+        
         unset($this->menu);
         
         return $res;

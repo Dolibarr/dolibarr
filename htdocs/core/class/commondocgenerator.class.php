@@ -51,7 +51,14 @@ abstract class CommonDocGenerator
             'myuser_firstname'=>$user->firstname,
             'myuser_login'=>$user->login,
             'myuser_phone'=>$user->office_phone,
-            'myuser_fax'=>$user->office_fax,
+       		'myuser_address'=>$user->address,
+       		'myuser_zip'=>$user->zip,
+       		'myuser_town'=>$user->town,
+       		'myuser_country'=>$user->country,
+        	'myuser_country_code'=>$user->country_code,
+       		'myuser_state'=>$user->state,
+        	'myuser_state_code'=>$user->state_code,
+        	'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
             'myuser_web'=>''	// url not exist in $user object
@@ -190,6 +197,28 @@ abstract class CommonDocGenerator
     }
 
 
+    /**
+     * Define array with couple subtitution key => subtitution value
+     *
+     * @param   Translate	$outputlangs    Language object for output
+     * @return	array						Array of substitution key->code
+     */
+    function get_substitutionarray_other($outputlangs)
+    {
+    	global $conf;
+
+    	$now=dol_now('gmt');	// gmt
+    	$array_other = array(
+   			'current_date'=>dol_print_date($now,'day','tzuser'),
+   			'current_datehour'=>dol_print_date($now,'dayhour','tzuser'),
+   			'current_server_date'=>dol_print_date($now,'day','tzserver'),
+   			'current_server_datehour'=>dol_print_date($now,'dayhour','tzserver'),
+    	);
+
+    	return $array_other;
+    }
+    
+    
     /**
      * Define array with couple substitution key => substitution value
      *

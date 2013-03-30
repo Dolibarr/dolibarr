@@ -1,13 +1,14 @@
 /*
- * Language code: zh_TW
+ * Language code: zh_TW (traditionnal)
  * Generation date 2012-09-04 16:02:00
  */
 
 // Reference language: en_US
 CHARSET=UTF-8
 DIRECTION=ltr
-#FONTFORPDF=chinese
-FONTFORPDF=stsongstdlight
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader) 
+# stsongstdlight or cid0cs are for simplified chinese
+FONTFORPDF=msungstdlight
 #FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=None
