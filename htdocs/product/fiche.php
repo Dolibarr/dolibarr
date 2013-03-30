@@ -56,6 +56,9 @@ if (! empty($user->societe_id)) $socid=$user->societe_id;
 $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('product');
+
 if ($id > 0 || ! empty($ref))
 {
 	$object = new Product($db);
@@ -212,14 +215,8 @@ if (empty($reshook))
                 }
             }
 
-            // Get extra fields
-            foreach($_POST as $key => $value)
-            {
-                if (preg_match("/^options_/",$key))
-                {
-                    $object->array_options[$key]=$_POST[$key];
-                }
-            }
+            // Fill array 'array_options' with data from add form
+        	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             $id = $object->create($user);
 
@@ -272,14 +269,8 @@ if (empty($reshook))
                 $object->finished           = GETPOST('finished');
                 $object->hidden             = GETPOST('hidden')=='yes'?1:0;
 
-                // Get extra fields
-                foreach($_POST as $key => $value)
-                {
-                    if (preg_match("/^options_/",$key))
-                    {
-                        $object->array_options[$key]=$_POST[$key];
-                    }
-                }
+                // Fill array 'array_options' with data from add form
+        		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
                 if ($object->check())
                 {
@@ -632,9 +623,6 @@ if (GETPOST("cancel") == $langs->trans("Cancel"))
  * View
  */
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('product');
-
 $helpurl='';
 if (GETPOST("type") == '0') $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
@@ -792,15 +780,29 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-                $value=(GETPOST('options_'.$key)?GETPOST('options_'.$key):$object->array_options["options_".$key]);
-            	print '<tr><td';
-            	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            	print '>'.$label.'</td><td colspan="3">';
-                print $extrafields->showInputField($key,$value);
-                print '</td></tr>'."\n";
-            }
+        	foreach($extrafields->attribute_label as $key=>$label)
+        	{
+        		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+        		// Show separator only
+        		if ($extrafields->attribute_type[$key] == 'separate')
+        		{
+        			print $extrafields->showSeparator($key);
+        		}
+        		else
+        		{
+        			// Convert date into timestamp format
+        			if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+        			{
+        				$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+        			}
+        			 
+        			print '<tr><td';
+        			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+        			print '>'.$label.'</td><td colspan="3">';
+        			print $extrafields->showInputField($key,$value);
+        			print '</td></tr>'."\n";
+        		}
+        	}
         }
 
         // Note (private, no output on invoices, propales...)
@@ -1000,14 +1002,28 @@ else
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
                 foreach($extrafields->attribute_label as $key=>$label)
-                {
-                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-                    print $extrafields->showInputField($key,$value);
-                    print '</td></tr>'."\n";
-                }
+            	{
+            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            		// Show separator only
+            		if ($extrafields->attribute_type[$key] == 'separate')
+            		{
+            			print $extrafields->showSeparator($key);
+            		}
+            		else
+            		{
+            			// Convert date into timestamp format
+            			if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+            			{
+            				$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+            			}
+            			
+            			print '<tr><td';
+            			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+            			print '>'.$label.'</td><td colspan="3">';
+            			print $extrafields->showInputField($key,$value);
+            			print '</td></tr>'."\n";
+            		}
+            	}
             }
 
             // Note
@@ -1230,13 +1246,26 @@ else
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
-            {
+            {            	
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
+                	
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-                    print '<tr><td>'.$label.'</td><td colspan="3">';
-                    print $extrafields->showOutputField($key,$value);
-                    print '</td></tr>'."\n";
+                    if ($extrafields->attribute_type[$key] == 'separate')
+                    {
+                    	print $extrafields->showSeparator($key);
+                    }
+                    else
+                    {
+                    	// Convert date into timestamp format
+                    	if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+                    	{
+                    		$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+                    	}
+	                    print '<tr><td>'.$label.'</td><td colspan="3">';
+	                    print $extrafields->showOutputField($key,$value);
+	                    print '</td></tr>'."\n";
+                    }
                 }
             }
 
