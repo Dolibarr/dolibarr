@@ -2205,8 +2205,10 @@ abstract class CommonObject
     	
     	if (! empty($this->array_options))
     	{
+    		$e = 0;
 	    	foreach($extrafields->attribute_label as $key=>$label)
 	    	{
+	    		$colspan='3';
 	    		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
 	    		if ($extrafields->attribute_type[$key] == 'separate')
 	    		{
@@ -2214,14 +2216,28 @@ abstract class CommonObject
 	    		}
 	    		else
 	    		{
+	    			if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+	    			{
+	    				$out .= '<tr>';
+	    				$colspan='0';
+	    			}
+	    			else 
+	    			{
+	    				$out .= '<tr>';
+	    			}
 	    			// Convert date into timestamp format
 	    			if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 	    			{
 	    				$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->array_options['options_'.$key];
 	    			}
-	    			$out .= '<tr><td>'.$label.'</td><td colspan="3">';
+	    			$out .= '<td>'.$label.'</td>';
+	    			$out .='<td colspan="'.$colspan.'">';
 	    			$out .= $extrafields->showOutputField($key,$value);
-	    			$out .= '</td></tr>'."\n";
+	    			$out .= '</td>'."\n";
+	    			
+	    			if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+	    			else $out .= '</tr>';
+	    			$e++;
 	    		}
 	    	}
     	}
