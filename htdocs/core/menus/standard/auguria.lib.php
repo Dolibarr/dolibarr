@@ -285,6 +285,8 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 		// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
 		$url=dol_buildpath($menu_array[$i]['url'],1);
+		$url=preg_replace('/__LOGIN__/',$user->login,$url);
+		$url=preg_replace('/__USERID__/',$user->id,$url);
 
 		if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
 		{
