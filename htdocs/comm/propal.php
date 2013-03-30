@@ -81,6 +81,9 @@ $result = restrictedArea($user, 'propal', $id);
 $object = new Propal($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('propal');
+
 // Load object
 if ($id > 0 || ! empty($ref))
 {
@@ -338,15 +341,9 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     		}
 
-    		// Get extra fields
-    		foreach($_POST as $key => $value)
-    		{
-    			if (preg_match("/^options_/",$key))
-    			{
-    				$object->array_options[$key]=GETPOST($key);
-    			}
-    		}
-    		
+    		// Fill array 'array_options' with data from add form
+    		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
     		$id = $object->create($user);
     	}
 
@@ -1107,14 +1104,10 @@ else if ($action == 'down' && $user->rights->propal->creer)
 }
 else if ($action == 'update_extras')
 {
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=$_POST[$key];
-		}
-	}
+	// Fill array 'array_options' with data from update form
+	$extralabels=$extrafields->fetch_name_optionals_label('propal');
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	
 	// Actions on extra fields (by external module or standard code)
 	// FIXME le hook fait double emploi avec le trigger !!
 	$hookmanager->initHooks(array('propaldao'));
@@ -1207,9 +1200,6 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
-
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('propal');
 
 $now=dol_now();
 
@@ -1872,6 +1862,13 @@ else
 	        	print '<tr><td';
 	        	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	        	print '>'.$label.'</td><td colspan="3">';
+	        	
+	        	// Convert date into timestamp format
+	        	if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+	        	{
+	        		$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+	        	}
+	        	
 	        	if ($action == 'edit_extras' &&  $user->rights->propal->creer)
 	        	{
 	        		print $extrafields->showInputField($key,$value);

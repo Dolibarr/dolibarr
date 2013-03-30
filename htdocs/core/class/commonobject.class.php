@@ -2132,15 +2132,19 @@ abstract class CommonObject
             		case 'price':
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
+            		case 'date':
+            			$this->array_options[$key] = dol_print_date($this->array_options[$key],'dayrfc');
+            			break;
+            		case 'datetime':
+            			$this->array_options[$key] = dol_print_date($this->array_options[$key],'dayhourrfc');
+            			break;
                	}
-            }
-
+            } 
             $this->db->begin();
 
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
             dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
             $this->db->query($sql_del);
-
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
             {
