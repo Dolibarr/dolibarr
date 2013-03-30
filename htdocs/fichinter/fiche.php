@@ -1068,7 +1068,7 @@ else if ($id > 0 || ! empty($ref))
     		$numref = $object->ref;
     	}
     	$text=$langs->trans('ConfirmValidateIntervention',$numref);
-    	
+
         $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
@@ -1465,7 +1465,7 @@ else if ($id > 0 || ! empty($ref))
     {
         $ref = dol_sanitizeFileName($object->ref);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
         $file=$fileparams['fullname'];
 
         // Build document if it not exists
@@ -1488,7 +1488,7 @@ else if ($id > 0 || ! empty($ref))
                 dol_print_error($db,$result);
                 exit;
             }
-            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
         }
 
@@ -1519,12 +1519,12 @@ else if ($id > 0 || ! empty($ref))
         $formmail->substit['__SIGNATURE__']=$user->signature;
         $formmail->substit['__PERSONALIZED__']='';
         $formmail->substit['__CONTACTCIVNAME__']='';
-        
+
         //Find the good contact adress
         $custcontact='';
         $contactarr=array();
         $contactarr=$object->liste_contact(-1,'external');
-        	
+
         if (is_array($contactarr) && count($contactarr)>0) {
         	foreach($contactarr as $contact) {
         		if ($contact['libelle']==$langs->trans('TypeContact_fichinter_external_CUSTOMER')) {
@@ -1534,12 +1534,12 @@ else if ($id > 0 || ! empty($ref))
         			$custcontact=$contactstatic->getFullName($langs,1);
         		}
         	}
-        
+
         	if (!empty($custcontact)) {
         		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
         	}
         }
-        
+
         // Tableau des parametres complementaires
         $formmail->param['action']='send';
         $formmail->param['models']='fichinter_send';
