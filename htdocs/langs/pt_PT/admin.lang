@@ -1,5 +1,5 @@
 # Dolibarr language file - pt_PT - admin 
-﻿CHARSET	=	UTF-8
+CHARSET	=	UTF-8
 AccountCodeManager	=	Módulo de geração dos códigos contabilisticos (Clientes/Fornecedores)
 ActivateFCKeditor	=	Activar FCKeditor para :
 ActivateOn	=	Activar sobre
