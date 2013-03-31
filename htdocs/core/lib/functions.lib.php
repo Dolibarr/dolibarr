@@ -1199,8 +1199,11 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 		{
 			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
-			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured';
-			else $urlmask=$conf->global->CLICKTODIAL_URL;
+			// Define urlmask
+			$urlmask='ErrorClickToDialModuleNotConfigured';
+			if (! empty($conf->global->CLICKTODIAL_URL)) $urlmask=$conf->global->CLICKTODIAL_URL;
+			if (! empty($user->clicktodial_url)) $urlmask=$user->clicktodial_url;
+
 			$clicktodial_poste=(! empty($user->clicktodial_poste)?urlencode($user->clicktodial_poste):'');
 			$clicktodial_login=(! empty($user->clicktodial_login)?urlencode($user->clicktodial_login):'');
 			$clicktodial_password=(! empty($user->clicktodial_password)?urlencode($user->clicktodial_password):'');
@@ -1224,7 +1227,7 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 			$type='AC_TEL'; $link='';
 			if ($addlink == 'AC_FAX') $type='AC_FAX';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORPHONE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+			if ($link) $newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
 		}
 	}
 

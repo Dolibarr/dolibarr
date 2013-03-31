@@ -81,6 +81,7 @@ class User extends CommonObject
 	var $phenix_pass;
 	var $phenix_pass_crypted;
 
+	var $clicktodial_url;
 	var $clicktodial_login;
 	var $clicktodial_password;
 	var $clicktodial_poste;
@@ -1549,7 +1550,7 @@ class User extends CommonObject
 	 */
 	function fetch_clicktodial()
 	{
-		$sql = "SELECT login, pass, poste ";
+		$sql = "SELECT url, login, pass, poste ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
 		$sql.= " WHERE u.fk_user = ".$this->id;
 
@@ -1560,6 +1561,7 @@ class User extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
+				$this->clicktodial_url = $obj->url;
 				$this->clicktodial_login = $obj->login;
 				$this->clicktodial_password = $obj->pass;
 				$this->clicktodial_poste = $obj->poste;
@@ -1589,26 +1591,28 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " WHERE fk_user = ".$this->id;
 
+		dol_syslog(get_class($this).'::update_clicktodial sql='.$sql);
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_clicktodial";
-		$sql .= " (fk_user,login,pass,poste)";
+		$sql .= " (fk_user,url,login,pass,poste)";
 		$sql .= " VALUES (".$this->id;
-		$sql .= ", '". $this->clicktodial_login ."'";
-		$sql .= ", '". $this->clicktodial_password ."'";
-		$sql .= ", '". $this->clicktodial_poste."')";
+		$sql .= ", '". $this->db->escape($this->clicktodial_url) ."'";
+		$sql .= ", '". $this->db->escape($this->clicktodial_login) ."'";
+		$sql .= ", '". $this->db->escape($this->clicktodial_password) ."'";
+		$sql .= ", '". $this->db->escape($this->clicktodial_poste) ."')";
 
+		dol_syslog(get_class($this).'::update_clicktodial sql='.$sql);
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
 			$this->db->commit();
-			return 0;
+			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}

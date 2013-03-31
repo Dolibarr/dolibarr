@@ -208,3 +208,5 @@ ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
 ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
 
+
+ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255);
