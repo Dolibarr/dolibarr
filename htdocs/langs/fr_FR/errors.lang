@@ -134,3 +134,4 @@ WarningLockFileDoesNotExists=Attention, une fois l'installation terminée, les o
 WarningUntilDirRemoved=Les alertes de sécurité sont visibles par les administrateurs uniquement et resteront actives tant que la vulnérabilité sera avérée (ou que la constante MAIN_REMOVE_INSTALL_WARNING aura été définie dans Configuration->Divers)
 WarningCloseAlways=Attention, la fermeture se fait même lorsque le montant diffère. N'activez cette fonctionnalité qu'en connaissance de cause.
 WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de sérieux ralentissement des pages affichant cette boite.
+WarningClickToDialUserSetupNotComplete=La configuration ClickToDial pour votre compte utilisateur n'est pas complète (voir l'onglet ClickToDial sur votre fiche utilisateur)

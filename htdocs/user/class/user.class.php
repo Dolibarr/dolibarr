@@ -81,6 +81,10 @@ class User extends CommonObject
 	var $phenix_pass;
 	var $phenix_pass_crypted;
 
+	var $clicktodial_login;
+	var $clicktodial_password;
+	var $clicktodial_poste;
+
 	var $datelastlogin;
 	var $datepreviouslogin;
 	var $statut;

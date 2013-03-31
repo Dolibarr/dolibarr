@@ -69,7 +69,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="120">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -83,15 +83,34 @@ print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';
 print '</td></tr>';
 
-print '<tr><td colspan="3" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-print '</table></form>';
+print '</table>';
 
-/*if (! empty($conf->global->CLICKTODIAL_URL))
- {
- print $langs->trans("Test");
- // Add a phone number to test
- }
- */
+print '<center><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+
+print '</form>';
+
+
+if (! empty($conf->global->CLICKTODIAL_URL))
+{
+	$user->fetch_clicktodial();
+
+	print $langs->trans("LinkToTestClickToDial").' : ';
+
+	$setupcomplete=1;
+	if (preg_match('/__LOGIN__/',$conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_login)) $setupcomplete=0;
+	if (preg_match('/__PASSWORD__/',$conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_password)) $setupcomplete=0;
+	if (preg_match('/__PHONEFROM__/',$conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_poste)) $setupcomplete=0;
+
+	if ($setupcomplete)
+	{
+		print dol_print_phone($mysoc->phone, '', 0, 0, 'AC_TEL');
+	}
+	else
+	{
+		$langs->load("errors");
+		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
+	}
+}
 
 dol_htmloutput_mesg($mesg);
 
