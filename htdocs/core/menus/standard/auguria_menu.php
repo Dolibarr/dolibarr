@@ -51,13 +51,15 @@ class MenuManager
     	$this->db=$db;
     }
 
-    
+
    	/**
    	 * Load this->tabMenu
    	 *
+   	 * @param	string	$forcemainmenu		To force mainmenu to load
+   	 * @param	string	$forceleftmenu		To force leftmenu to load
    	 * @return	void
    	 */
-   	function loadMenu()
+   	function loadMenu($forcemainmenu='',$forceleftmenu='')
    	{
     	global $conf, $user, $langs;
 
@@ -78,6 +80,7 @@ class MenuManager
     		// On va le chercher en session si non defini par le lien
     		$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
     	}
+		if (! empty($forcemainmenu)) $mainmenu=$forcemainmenu;
 
     	if (isset($_GET["leftmenu"]))
     	{
@@ -98,6 +101,7 @@ class MenuManager
     		// On va le chercher en session si non defini par le lien
     		$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
     	}
+    	if (! empty($forceleftmenu)) $leftmenu=$forceleftmenu;
 
     	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
     	$tabMenu=array();
@@ -167,16 +171,16 @@ class MenuManager
         }
 
         $res='ErrorBadParameterForMode';
-        
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
-        
+
         if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
         if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
         if ($mode == 'jmobile')
         {
         	$res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
-        
+
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
         		print '<ul data-role="listview" data-inset="true">';
@@ -184,13 +188,15 @@ class MenuManager
         		if ($val['enabled'] == 1)
         		{
         			$relurl=dol_buildpath($val['url'],1);
-        				
+
         			print '<a href="#">'.$val['titre'].'</a>'."\n";
         			// Search submenu fot this entry
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
+        			//var_dump($tmpmainmenu.' - '.$tmpleftmenu);
         			$res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
+        			//var_dump($submenu->liste);
         			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
@@ -205,8 +211,14 @@ class MenuManager
         			foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         			{
         				$relurl2=dol_buildpath($val2['url'],1);
-        				//var_dump($val2);
-        				print '<li'.($val2['level']==0?' data-role="list-divider"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
+        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
+        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php'))) $relurl2='';
+        				print '<li'.($val2['level']==0?' data-role="list-divider"':'').'>';
+        				if ($relurl2) print '<a href="'.$relurl2.'">';
+        				print $val2['titre'];
+        				if ($relurl2) print '</a>';
+        				print '</li>'."\n";
         			}
         			//var_dump($submenu);
         			print '</ul>';
@@ -219,9 +231,9 @@ class MenuManager
         		print '</ul>'."\n";
         	}
         }
-        
+
         unset($this->menu);
-        
+
         return $res;
     }
 }
