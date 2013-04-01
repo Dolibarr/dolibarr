@@ -85,6 +85,7 @@ alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
 alter table llx_expedition   CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
+alter table llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(30);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
 
@@ -208,5 +209,3 @@ ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
 ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
 
-
-ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255);

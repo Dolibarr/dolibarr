@@ -163,7 +163,7 @@ if (! empty($conf->fournisseur->enabled))
 // Draft invoices
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
-	$sql = "SELECT ff.facnumber, ff.rowid, ff.total_ttc, ff.type";
+	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql.= ", s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -192,7 +192,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td nowrap="nowrap">';
-				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
@@ -321,7 +321,7 @@ if (count($companystatic->SupplierCategories))
 
 
 //print "</td></tr></table>\n";
-print '</div></div></div>';
+print '<div></div></div>';
 
 llxFooter();
 

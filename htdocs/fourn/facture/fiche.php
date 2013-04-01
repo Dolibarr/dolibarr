@@ -170,11 +170,12 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 }
 
 // Set supplier ref
-elseif ($action == 'setfacnumber' && $user->rights->fournisseur->facture->creer)
+if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 {
-    $object->fetch($id);
-    $result=$object->set_ref_supplier($user, GETPOST('facnumber'));
+    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
+    if ($result < 0) dol_print_error($db, $object->error);
 }
+
 
 // Set label
 elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
@@ -253,7 +254,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
-    if (! GETPOST('facnumber'))
+    if (! GETPOST('ref_supplier'))
     {
         $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
         $action='create';
@@ -267,7 +268,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 
         // Creation facture
         $object->ref           = $_POST['ref'];
-		$object->facnumber     = $_POST['facnumber'];
+		$object->ref_supplier  = $_POST['ref_supplier'];
         $object->socid         = $_POST['socid'];
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
@@ -1048,7 +1049,7 @@ if ($action == 'create')
     print '</td>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.(isset($_POST['facnumber'])?$_POST['facnumber']:$fac_ori->ref).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$fac_ori->ref).'" type="text"></td>';
     print '</tr>';
 
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
@@ -1352,8 +1353,8 @@ else
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
