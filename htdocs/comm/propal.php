@@ -1347,24 +1347,7 @@ if ($action == 'create')
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-
-			// Show separator only
-			if ($extrafields->attribute_type[$key] == 'separate')
-			{
-				print $extrafields->showSeparator($key);
-			}
-			else
-			{
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print '>'.$label.'</td><td colspan="3">';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
-		}
+		print $object->showOptionals($extrafields,'edit');
 	}
 
 	print "</table>";
@@ -1849,7 +1832,7 @@ else
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 		}
 
-
+		// TODO : use showOptionals($extrafields) function 
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
 	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);

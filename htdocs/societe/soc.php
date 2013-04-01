@@ -974,40 +974,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	$e=0;
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-            	$colspan='3';
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-                if ($extrafields->attribute_type[$key] == 'separate')
-                {
-                	print $extrafields->showSeparator($key);
-                }
-                else
-                {
-	                if (($e % 2) == 0)
-	                {
-	                	print '<tr>';
-	                	$colspan='0';
-	                }           		
-	           		print '<td';
-	           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	           		print '>'.$label.'</td>';
-	           		print '<td colspan="'.$colspan.'">';
-	           		
-	           		// Convert date into timestamp format
-	           		if (in_array($extrafields->attribute_type[$key],array('date','datetime'))) 
-	           		{
-	           			$value = dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-	           		}
-	           		
-	                print $extrafields->showInputField($key,$value);
-	                print '</td>';
-	                
-	                if (($e % 2) == 1) print '</tr>'."\n";
-	                $e++;
-                }
-            }
+        	print $object->showOptionals($extrafields,'edit');
         }
 
         // Ajout du logo
@@ -1416,37 +1383,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	$old_pos=0;
-            	$e=0;
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-	                $colspan = '3';
-                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-                    if ($extrafields->attribute_type[$key] == 'separate')
-                    {
-                    	print $extrafields->showSeparator($key);
-                    }
-                    else
-                    {
-	                    if (($e % 2) == 0)
-	                    {
-	                    	print '<tr>'."\n";
-	                    	$colspan = '0';
-	                    }
-	            		print '<td';
-	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	            		print '>'.$label.'</td>'."\n";
-	            		print '<td colspan="'.$colspan.'">';
-	                    print $extrafields->showInputField($key,$value);
-	                    print "</td>"."\n";
-	                    
-	                    if (($e % 2) == 1 )
-	                    {
-	                    	print "</tr>\n";
-	                    }
-	                    $e++;
-                    }
-                }
+            	print $object->showOptionals($extrafields,'edit');
             }
             // Logo
             print '<tr>';
@@ -1761,31 +1698,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	$e=0;
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-            	$colspan='3';
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                if ($extrafields->attribute_type[$key] == 'separate')
-                {
-                	print $extrafields->showSeparator($key);
-                }
-                else
-                {
-	                if (($e % 2) == 0) 
-	                {
-	                	print '<tr>';
-	                	$colspan='0';
-	                }
-	                print '<td>'.$label.'</td>';
-	                print '<td colspan="'.$colspan.'">';
-	                print $extrafields->showOutputField($key,$value);
-	                print "</td>";
-	                
-	                if (($e % 2) == 1) print '</tr>';
-	                $e++;
-                }
-            }
+        	print $object->showOptionals($extrafields);
         }
 
         // Ban
