@@ -624,7 +624,7 @@ class ExtraFields
         	$formstat = new Form($db);
         	
         	$showtime = in_array($type,array('datetime')) ? 1 : 0;
-        	$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 0, 0, 1);
+        	$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
         	//$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
         elseif (in_array($type,array('int','double')))
