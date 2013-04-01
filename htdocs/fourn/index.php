@@ -321,7 +321,7 @@ if (count($companystatic->SupplierCategories))
 
 
 //print "</td></tr></table>\n";
-print '<div></div></div>';
+print '</div></div></div>';
 
 llxFooter();
 
