@@ -1594,6 +1594,7 @@ table.liste td {
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
     height: 20px !important;
+    background: #7699A9;
     background-repeat: repeat-x;
 
 <?php if ($usecss3) { ?>
@@ -1603,7 +1604,6 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 	background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
 	background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
 <?php } else { ?>
-	background: #7699A9;
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/liste_titre2.png',1); ?>);
 <?php } ?>
     color: #<?php echo $colortextmain; ?>;
