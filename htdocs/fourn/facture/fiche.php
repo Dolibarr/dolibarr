@@ -1253,14 +1253,16 @@ else
         $productstatic = new Product($db);
 
         $object->fetch($id);
-        $object->fetch_thirdparty();
+        $result=$object->fetch_thirdparty();
+        if ($result < 0) dol_print_error($db);
 
         $societe = new Fournisseur($db);
-        $societe->fetch($object->socid);
+        $result=$societe->fetch($object->socid);
+        if ($result < 0) dol_print_error($db);
 
         /*
          *	View card
-        */
+         */
         $head = facturefourn_prepare_head($object);
         $titre=$langs->trans('SupplierInvoice');
         dol_fiche_head($head, 'card', $titre, 0, 'bill');
