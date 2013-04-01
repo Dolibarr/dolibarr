@@ -1969,6 +1969,8 @@ class User extends CommonObject
 		$this->admin=0;
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
+		//$this->pass_indatabase='dolibspec';									Set after a fetch
+		//$this->pass_indatabase_crypted='e80ca5a88c892b0aaaf7e154853bccab';	Set after a fetch
 		$this->datec=time();
 		$this->datem=time();
 		$this->webcal_login='dolibspec';
@@ -1977,7 +1979,9 @@ class User extends CommonObject
 		$this->datepreviouslogin=time();
 		$this->statut=1;
 
-		$this->societe_id = 1;
+		//$this->societe_id = 1;	For external users
+		//$this->contact_id = 1;	For external users
+		$this->entity = 1;
 	}
 
 	/**
