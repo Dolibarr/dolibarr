@@ -192,7 +192,7 @@ if ($action == 'create' || $action == 'add_paiement')
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';
-    $sql.= ' f.rowid as ref, f.facnumber, f.amount, f.total_ttc as total';
+    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -214,7 +214,7 @@ if ($action == 'create' || $action == 'add_paiement')
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add_paiement">';
             print '<input type="hidden" name="facid" value="'.$facid.'">';
-            print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
+            print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
             print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
 
@@ -257,7 +257,7 @@ if ($action == 'create' || $action == 'add_paiement')
 				/*
 	             * Autres factures impayees
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.rowid as ref, f.facnumber, f.total_ht, f.total_ttc, f.datef as df';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df';
 	            $sql.= ', SUM(pf.amount) as am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -265,7 +265,7 @@ if ($action == 'create' || $action == 'add_paiement')
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.facnumber, f.total_ht, f.total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
@@ -298,7 +298,7 @@ if ($action == 'create' || $action == 'add_paiement')
 	                        print '<tr '.$bc[$var].'>';
 	                        print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
 	                        print '</a></td>';
-	                        print '<td>'.$objp->facnumber.'</td>';
+	                        print '<td>'.$objp->ref_supplier.'</td>';
 	                        if ($objp->df > 0 )
 	                        {
 	                            print '<td align="center">';
@@ -441,7 +441,7 @@ if (empty($action))
         print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),'paiement.php','f.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','',$paramlist,'',$sortfield,$sortorder);
+        //print_liste_field_titre($langs->trans('Invoice'),'paiement.php','ref_supplier','',$paramlist,'',$sortfield,$sortorder);
         print "</tr>\n";
 
         // Lines for filters fields
@@ -492,7 +492,7 @@ if (empty($action))
             print '<td align="right">'.price($objp->pamount).'</td>';
 
             // Ref invoice
-            /*$invoicesupplierstatic->ref=$objp->facnumber;
+            /*$invoicesupplierstatic->ref=$objp->ref_supplier;
             $invoicesupplierstatic->id=$objp->facid;
             print '<td nowrap="nowrap">';
             print $invoicesupplierstatic->getNomUrl(1);

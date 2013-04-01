@@ -258,7 +258,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
-	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
+	$sql  = "SELECT f.ref_supplier, f.rowid, f.total_ttc, f.type,";
 	$sql.= " s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -287,7 +287,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td nowrap>';
-				$facturesupplierstatic->ref=$obj->facnumber;
+				$facturesupplierstatic->ref=$obj->ref;
 				$facturesupplierstatic->id=$obj->rowid;
 				$facturesupplierstatic->type=$obj->type;
 				print $facturesupplierstatic->getNomUrl(1,'',16);
@@ -432,7 +432,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$langs->load("boxes");
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref_supplier, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye";
 	$sql.= ", s.nom, s.rowid as socid";
 	$sql.= ", SUM(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
@@ -442,7 +442,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.ref_supplier, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid";
 	$sql.= " ORDER BY ff.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -467,7 +467,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td>';
-				$facstatic->ref=$obj->facnumber;
+				$facstatic->ref=$obj->ref;
 				$facstatic->id=$obj->rowid;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
@@ -930,7 +930,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.paye,";
+	$sql = "SELECT ff.rowid, ff.ref_supplier, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.paye,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
@@ -942,7 +942,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.ref_supplier, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.rowid";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -967,7 +967,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$obj = $db->fetch_object($resql);
 
 				print '<tr '.$bc[$var].'><td>';
-				$facstatic->ref=$obj->facnumber;
+				$facstatic->ref=$obj->ref;
 				$facstatic->id=$obj->rowid;
 				print $facstatic->getNomUrl(1,'');
 				print '</td>';
@@ -1033,7 +1033,7 @@ if ($resql)
 }
 
 //print '</td></tr></table>';
-print '</div></div></div>';
+print '<div></div></div>';
 
 llxFooter();
 
