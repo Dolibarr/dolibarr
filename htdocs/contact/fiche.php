@@ -50,6 +50,9 @@ if ($user->societe_id) $socid=$user->societe_id;
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('contact');
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
 $objcanvas=null;
@@ -155,14 +158,8 @@ if (empty($reshook))
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
         $object->birthday_alert = $_POST["birthday_alert"];
 
-        // Get extra fields
-        foreach($_POST as $key => $value)
-        {
-        	if (preg_match("/^options_/",$key))
-        	{
-        		$object->array_options[$key]=GETPOST($key);
-        	}
-        }
+        // Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
 
         if (! $_POST["lastname"])
         {
@@ -252,14 +249,8 @@ if (empty($reshook))
             $object->priv			= $_POST["priv"];
             $object->note			= $_POST["note"];
 
-            // Get extra fields
-            foreach($_POST as $key => $value)
-            {
-            	if (preg_match("/^options_/",$key))
-            	{
-            		$object->array_options[$key]=GETPOST($key);
-            	}
-            }
+            // Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
 
             $result = $object->update($_POST["contactid"], $user);
 
@@ -283,8 +274,6 @@ if (empty($reshook))
  *	View
  */
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('contact');
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ContactsAddresses"),$help_url);
@@ -518,22 +507,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	foreach($extrafields->attribute_label as $key=>$label)
-            	{
-            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-            		if ($extrafields->attribute_type[$key] == 'separate')
-            		{
-            			print $extrafields->showSeparator($key);
-            		}
-            		else
-            		{
-	            		print '<tr><td';
-	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	            		print '>'.$label.'</td><td colspan="3">';
-	            		print $extrafields->showInputField($key,$value);
-	            		print '</td></tr>'."\n";
-            		}
-            	}
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             print "</table><br>";
@@ -740,22 +714,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	foreach($extrafields->attribute_label as $key=>$label)
-            	{
-            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		if ($extrafields->attribute_type[$key] == 'separate')
-            		{
-            			print $extrafields->showSeparator($key);
-            		}
-            		else
-            		{
-	            		print '<tr><td';
-	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	            		print '>'.$label.'</td><td colspan="3">';
-	            		print $extrafields->showInputField($key,$value);
-	            		print "</td></tr>\n";
-            		}
-            	}
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             $object->load_ref_elements();
@@ -959,20 +918,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	foreach($extrafields->attribute_label as $key=>$label)
-        	{
-        		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-        		if ($extrafields->attribute_type[$key] == 'separate')
-        		{
-        			print $extrafields->showSeparator($key);
-        		}
-        		else
-        		{
-	        		print '<tr><td>'.$label.'</td><td colspan="3">';
-	        		print $extrafields->showOutputField($key,$value);
-	        		print "</td></tr>\n";
-        		}
-        	}
+        	print $object->showOptionals($extrafields);
         }
 
         $object->load_ref_elements();

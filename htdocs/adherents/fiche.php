@@ -64,6 +64,9 @@ if (! empty($conf->mailmanspip->enabled))
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('member');
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -282,14 +285,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->statut      = $_POST["statut"];
 		$object->public      = $_POST["public"];
 
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$object->array_options[$key]=$_POST[$key];
-			}
-		}
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
 
 		// Check if we need to also synchronize user information
 		$nosyncuser=0;
@@ -451,14 +448,8 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->fk_soc      = $socid;
 	$object->public      = $public;
 
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=$_POST[$key];
-		}
-	}
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
 
 	// Check parameters
 	if (empty($morphy) || $morphy == "-1") {
@@ -684,9 +675,6 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('member');
-
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("Member"),$help_url);
 
@@ -885,15 +873,7 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?GETPOST('options_'.$key,'alpha'):(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-           		print '<tr><td';
-           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
+			print $object->showOptionals($extrafields,'edit');
 		}
 
 		/*
@@ -1128,15 +1108,7 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-           		print '<tr><td';
-           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
+			print $object->showOptionals($extrafields,'edit');
 		}
 
 		// Third party Dolibarr
@@ -1458,13 +1430,7 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=$object->array_options["options_$key"];
-				print "<tr><td>".$label."</td><td>";
-				print $extrafields->showOutputField($key,$value);
-				print "</td></tr>\n";
-			}
+			print $object->showOptionals($extrafields);
 		}
 
 		// Third party Dolibarr
