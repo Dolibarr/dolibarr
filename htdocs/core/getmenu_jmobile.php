@@ -50,7 +50,7 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
  * View
  */
 
-// URL http://mydolibarr/core/getmenu_jmobime?mainmenu=mainmenu&leftmenu=leftmenu can be used for tests
+// URL http://mydolibarr/core/getmenu_jmobile?mainmenu=mainmenu&leftmenu=leftmenu can be used for tests
 $arrayofjs=array('/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js');
 $arrayofcss=array('/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css');
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);

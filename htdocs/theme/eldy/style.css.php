@@ -356,7 +356,7 @@ td.showDragHandle {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?((empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu')) ?'20':'4'):'24')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?((empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu'))?'20':'4'):'24')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->browser->phone)?'12':'6')); ?>px;
 }
 
