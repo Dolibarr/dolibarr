@@ -1155,17 +1155,18 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
  * 	@param 	string	$country 	Country code to use for formatting
  * 	@param 	int		$cid 		Id of contact if known
  * 	@param 	int		$socid 		Id of third party if known
- * 	@param 	int		$addlink	0=no link to create action
- * 	@param 	string	$separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	@param 	int		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  * 	@return string 				Formated phone number
  */
-function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
+function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;")
 {
-	global $conf,$user,$langs;
+	global $conf,$user,$langs,$mysoc;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
 	if (empty($phone)) { return ''; }
+	if (empty($country)) $country=$mysoc->country_code;
 
 	$newphone=$phone;
 	if (strtoupper($country) == "FR")
@@ -1198,8 +1199,11 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 		{
 			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
-			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured';
-			else $urlmask=$conf->global->CLICKTODIAL_URL;
+			// Define urlmask
+			$urlmask='ErrorClickToDialModuleNotConfigured';
+			if (! empty($conf->global->CLICKTODIAL_URL)) $urlmask=$conf->global->CLICKTODIAL_URL;
+			if (! empty($user->clicktodial_url)) $urlmask=$user->clicktodial_url;
+
 			$clicktodial_poste=(! empty($user->clicktodial_poste)?urlencode($user->clicktodial_poste):'');
 			$clicktodial_login=(! empty($user->clicktodial_login)?urlencode($user->clicktodial_login):'');
 			$clicktodial_password=(! empty($user->clicktodial_password)?urlencode($user->clicktodial_password):'');
@@ -1223,7 +1227,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$type='AC_TEL'; $link='';
 			if ($addlink == 'AC_FAX') $type='AC_FAX';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORPHONE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+			if ($link) $newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
 		}
 	}
 

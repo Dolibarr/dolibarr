@@ -5,6 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ $errors=array();
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
+$ref		= GETPOST('ref','alpha');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -64,6 +66,12 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercard'));
 
 $object=new FactureFournisseur($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 
 
@@ -258,7 +266,8 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $db->begin();
 
         // Creation facture
-        $object->ref           = $_POST['facnumber'];
+        $object->ref           = $_POST['ref'];
+		$object->facnumber     = $_POST['facnumber'];
         $object->socid         = $_POST['socid'];
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
@@ -1281,6 +1290,22 @@ else
         // Confirmation de la validation
         if ($action == 'valid')
         {
+			 // on verifie si l'objet est en numerotation provisoire
+            $objectref = substr($object->ref, 1, 4);
+            if ($objectref == 'PROV')
+            {
+                $savdate=$object->date;
+                if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
+                {
+                    $object->date=dol_now();
+                    $object->date_lim_reglement=$object->calculate_date_lim_reglement();
+                }
+                $numref = $object->getNextNumRef($soc);
+            }
+            else
+            {
+                $numref = $object->ref;
+            }
             $formquestion=array();
             if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
             {
@@ -1322,7 +1347,7 @@ else
 
         // Ref
         print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td>';
         print "</tr>\n";
 
@@ -2046,7 +2071,7 @@ else
         {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -2069,7 +2094,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

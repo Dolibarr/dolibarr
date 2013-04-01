@@ -48,6 +48,9 @@ alter table llx_contratdet add column buy_price_ht double(24,8) DEFAULT 0 after 
 -- serialised array, to store value of select list choices for example
 alter table llx_extrafields add column param text after pos;
 
+-- numbering on supplier invoice
+alter table llx_facture_fourn add column ref varchar(30) NOT NULL after rowid;
+
 
 alter table llx_propal   CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
 alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
@@ -206,5 +209,4 @@ ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
 
 
-
-
+ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255);

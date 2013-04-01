@@ -1107,7 +1107,7 @@ else if ($action == 'update_extras')
 	// Fill array 'array_options' with data from update form
 	$extralabels=$extrafields->fetch_name_optionals_label('propal');
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-	
+
 	// Actions on extra fields (by external module or standard code)
 	// FIXME le hook fait double emploi avec le trigger !!
 	$hookmanager->initHooks(array('propaldao'));
@@ -1125,7 +1125,7 @@ else if ($action == 'update_extras')
 		}
 	}
 	else if ($reshook < 0) $error++;
-	 
+
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
@@ -1823,7 +1823,7 @@ else
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		
+
 		if ($action == 'edit_extras')
 		{
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
@@ -1831,7 +1831,7 @@ else
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 		}
-		
+
 		// TODO : use showOptionals($extrafields) function 
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
@@ -1845,13 +1845,13 @@ else
 	        	print '<tr><td';
 	        	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	        	print '>'.$label.'</td><td colspan="3">';
-	        	
+
 	        	// Convert date into timestamp format
 	        	if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 	        	{
 	        		$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
 	        	}
-	        	
+
 	        	if ($action == 'edit_extras' &&  $user->rights->propal->creer)
 	        	{
 	        		print $extrafields->showInputField($key,$value);
@@ -1863,19 +1863,19 @@ else
 	        	print '</td></tr>'."\n";
 	        }
 	    }
-	    
+
 	    if(count($extrafields->attribute_label) > 0) {
-	    	
+
 	    	if ($action == 'edit_extras' && $user->rights->propal->creer)
 	    	{
 	    		print '<tr><td></td><td>';
 	    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 	    		print '</form>';
 	    		print '</td></tr>';
-	    		
+
 	    	}
 	    	else {
-	    		if ($object->statut == 0 && $user->rights->propal->creer)	    		
+	    		if ($object->statut == 0 && $user->rights->propal->creer)
 	    		{
 	    			print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
 	    		}
@@ -2165,7 +2165,7 @@ else
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	    $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+	    $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref,'/'));
 	    $file=$fileparams['fullname'];
 
 	    // Build document if it not exists
@@ -2188,7 +2188,7 @@ else
 	            dol_print_error($db,$result);
 	            exit;
 	        }
-	        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+	        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref,'/'));
 	        $file=$fileparams['fullname'];
 	    }
 
@@ -2219,12 +2219,12 @@ else
 	    $formmail->substit['__SIGNATURE__']=$user->signature;
 	    $formmail->substit['__PERSONALIZED__']='';
 	    $formmail->substit['__CONTACTCIVNAME__']='';
-	    
+
 	    //Find the good contact adress
 	    $custcontact='';
 	    $contactarr=array();
 	    $contactarr=$object->liste_contact(-1,'external');
-	    
+
 	    if (is_array($contactarr) && count($contactarr)>0) {
 	    	foreach($contactarr as $contact) {
 	    		if ($contact['libelle']==$langs->trans('TypeContact_propal_external_CUSTOMER')) {
@@ -2233,19 +2233,19 @@ else
 	    			$custcontact=$contactstatic->getFullName($langs,1);
 	    		}
 	    	}
-	    		
+
 	    	if (!empty($custcontact)) {
 	    		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
 	    	}
 	    }
-	    
+
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-		
-	
+
+
 		// Init list of files
 	    if (GETPOST("mode")=='init')
 		{

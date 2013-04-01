@@ -41,6 +41,10 @@ class Adherent extends CommonObject
     public $table_element='adherent';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    var $error;
+    var $errors;
+    var $mesgs;
+
     var $id;
     var $ref;
     var $civilite_id;
@@ -1370,10 +1374,10 @@ class Adherent extends CommonObject
      */
     function add_to_abo()
     {
-        global $conf;
+        global $conf,$langs;
 
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-        $mailmanspip=new MailmanSpip($db);
+        $mailmanspip=new MailmanSpip($this->db);
 
         $err=0;
 
@@ -1385,6 +1389,16 @@ class Adherent extends CommonObject
             {
             	$this->error=$mailmanspip->error;
                 $err+=1;
+            }
+            foreach ($mailmanspip->mladded_ko as $tmplist => $tmpemail)
+            {
+            	$langs->load("errors");
+            	$this->errors[]=$langs->trans("ErrorFailedToAddToMailmanList",$tmpemail,$tmplist);
+            }
+            foreach ($mailmanspip->mladded_ok as $tmplist => $tmpemail)
+            {
+            	$langs->load("mailmanspip");
+            	$this->mesgs[]=$langs->trans("SuccessToAddToMailmanList",$tmpemail,$tmplist);
             }
         }
 
@@ -1400,11 +1414,10 @@ class Adherent extends CommonObject
         }
         if ($err)
         {
-            // error
             return -$err;
         }
         else
-        {
+       {
             return 1;
         }
     }
@@ -1418,10 +1431,10 @@ class Adherent extends CommonObject
      */
     function del_to_abo()
     {
-        global $conf;
+        global $conf,$langs;
 
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-        $mailmanspip=new MailmanSpip($db);
+        $mailmanspip=new MailmanSpip($this->db);
 
         $err=0;
 
@@ -1431,7 +1444,19 @@ class Adherent extends CommonObject
             $result=$mailmanspip->del_to_mailman($this);
             if ($result < 0)
             {
+                $this->error=$mailmanspip->error;
                 $err+=1;
+            }
+
+            foreach ($mailmanspip->mlremoved_ko as $tmplist => $tmpemail)
+            {
+            	$langs->load("errors");
+            	$this->errors[]=$langs->trans("ErrorFailedToRemoveToMailmanList",$tmpemail,$tmplist);
+            }
+            foreach ($mailmanspip->mlremoved_ok as $tmplist => $tmpemail)
+            {
+            	$langs->load("mailmanspip");
+            	$this->mesgs[]=$langs->trans("SuccessToRemoveToMailmanList",$tmpemail,$tmplist);
             }
         }
 

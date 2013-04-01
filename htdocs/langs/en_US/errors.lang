@@ -114,8 +114,9 @@ ErrNoZipEngine=No engine to unzip %s file in this PHP
 ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
 ErrorFileRequired=It takes a package Dolibarr file
 ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
-ErrorFailedToAddToMailmanList=Failed to add record to Mailman list or SPIP base
-ErrorNewVaueCantMatchOldValue=New value can't be equal to old one
+ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+ErrorNewValueCantMatchOldValue=New value can't be equal to old one
 ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
 
 # Warnings
@@ -132,3 +133,4 @@ WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable i
 WarningUntilDirRemoved=All security warnings (visible by admin users only) will remain active as long as the vulnerability is present (or that constant MAIN_REMOVE_INSTALL_WARNING is added in Setup->Other setup).
 WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
 WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card). 

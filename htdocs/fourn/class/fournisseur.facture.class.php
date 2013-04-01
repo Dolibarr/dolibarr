@@ -5,6 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $ref;		 // TODO deprecated
+    var $ref;		 
     var $product_ref;
     var $ref_supplier;
     var $socid;
@@ -132,7 +133,8 @@ class FactureFournisseur extends CommonInvoice
         $totalht = ($amount - $remise);
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (";
-        $sql.= "facnumber";
+		$sql.= "ref";
+        $sql.= ", facnumber";
         $sql.= ", entity";
         $sql.= ", libelle";
         $sql.= ", fk_soc";
@@ -144,7 +146,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", date_lim_reglement";
         $sql.= ")";
         $sql.= " VALUES (";
-        $sql.= "'".$this->db->escape($number)."'";
+		$sql.= "'(PROV)'";
+        $sql.= ", '".$this->db->escape($number)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->libelle)."'";
         $sql.= ", ".$this->socid;
@@ -259,6 +262,7 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = "SELECT";
         $sql.= " t.rowid,";
+		$sql.= " t.ref,";
         $sql.= " t.facnumber,";
         $sql.= " t.entity,";
         $sql.= " t.type,";
@@ -294,7 +298,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' s.nom as socnom, s.rowid as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
-        if ($ref) $sql.= " WHERE t.rowid='".$this->db->escape($ref)."'";    // ref is id (facnumber is supplier ref)
+        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";    // ref is id (facnumber is supplier ref)
         $sql.= ' AND t.fk_soc = s.rowid';
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -306,7 +310,7 @@ class FactureFournisseur extends CommonInvoice
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id					= $obj->rowid;
-                $this->ref					= $obj->rowid;
+                $this->ref					= $obj->ref;
 
                 $this->ref_supplier			= $obj->facnumber;
                 $this->facnumber			= $obj->facnumber;
@@ -459,6 +463,7 @@ class FactureFournisseur extends CommonInvoice
         $error=0;
 
         // Clean parameters
+		if (isset($this->ref)) $this->ref=trim($this->ref);
         if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
         if (isset($this->entity)) $this->entity=trim($this->entity);
         if (isset($this->type)) $this->type=trim($this->type);
@@ -495,6 +500,7 @@ class FactureFournisseur extends CommonInvoice
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
+		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
         $sql.= " facnumber=".(isset($this->facnumber)?"'".$this->db->escape($this->facnumber)."'":"null").",";
         $sql.= " entity=".(isset($this->entity)?$this->entity:"null").",";
         $sql.= " type=".(isset($this->type)?$this->type:"null").",";
@@ -834,7 +840,7 @@ class FactureFournisseur extends CommonInvoice
         }
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
+        $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::validate sql=".$sql);

@@ -353,14 +353,23 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 				{
 					if ($object->oldcopy->del_to_abo() < 0)
 					{
-						// error
-						$errmsgs[]= $langs->trans("FailedToCleanMailmanList").': '.$object->error."<br>\n";
+						if (! empty($object->oldcopy->error)) setEventMessage($langs->trans("ErrorFailedToRemoveToMailmanList").': '.$object->oldcopy->error, 'errors');
+						setEventMessage($object->oldcopy->errors, 'errors');
+					}
+					else
+					{
+						setEventMessage($object->oldcopy->mesgs,'mesgs');
 					}
 				}
-				if ($object->add_to_abo() < 0)    // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+    			// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+    			if ($object->add_to_abo() < 0)
+    			{
+    				 if (! empty($object->error)) setEventMessage($langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error, 'errors');
+    				 setEventMessage($object->errors, 'errors');
+    			}
+				else
 				{
-					// error
-					$errmsgs[]= $langs->trans("FailedToAddToMailmanList").': '.$object->error."<br>\n";
+					setEventMessage($object->mesgs, 'mesgs');
 				}
 			}
 

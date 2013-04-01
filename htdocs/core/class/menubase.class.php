@@ -512,6 +512,7 @@ class Menubase
         if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
         $sql.= " ORDER BY m.position, m.rowid";
+		//print $sql;
 
 //$tmp1=dol_microtime_float();
 //print '>>> 1 0<br>';
@@ -533,17 +534,21 @@ class Menubase
                 $perms = true;
                 if ($menu['perms'])
                 {
-                    $perms = verifCond($menu['perms']);
-                    //print "verifCond rowid=".$menu['rowid']." ".$menu['perms'].":".$perms."<br>\n";
+                	$tmpcond=$menu['perms'];
+                	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z]+/','1==1',$tmpcond);	// Force part of condition to true
+                	$perms = verifCond($tmpcond);
+                    //print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
                 }
 
                 // Define $enabled
                 $enabled = true;
                 if ($menu['enabled'])
                 {
-                    $enabled = verifCond($menu['enabled']);
+                	$tmpcond=$menu['enabled'];
+                	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z]+/','1==1',$tmpcond);	// Force part of condition to true
+                    $enabled = verifCond($tmpcond);
                     if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION) && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
-                    //print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
+                    //print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$enabled."<br>\n";
                 }
 
                 // Define $title

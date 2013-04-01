@@ -425,7 +425,7 @@ if (! empty($conf->commande->enabled))
 
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
 
 llxFooter();

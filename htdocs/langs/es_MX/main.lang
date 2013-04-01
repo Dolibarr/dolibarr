@@ -1,0 +1,7 @@
+# Dolibarr language file - es_MX - main 
+CHARSET=UTF-8
+SeparatorDecimal=.
+SeparatorThousand=,
+AmountHT=Subtotal
+TotalHT=Subtotal
+TotalVAT=IVA

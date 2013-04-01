@@ -115,8 +115,9 @@ ErrNoZipEngine=Pas de moteur pour décompresser le fichier %s dans ce PHP
 ErrorFileMustBeADolibarrPackage=Le fichier doit être un package Dolibarr
 ErrorFileRequired=Il faut un fichier de package Dolibarr
 ErrorPhpCurlNotInstalled=L'extension PHP CURL n'est pas installée, ceci est indispensable pour dialoguer avec Paypal.
-ErrorFailedToAddToMailmanList=Echec de l'ajout à une liste Mailman ou base SPIP
-ErrorNewVaueCantMatchOldValue=La nouvelle valeur ne peut être égale à l'ancienne
+ErrorFailedToAddToMailmanList=Echec de l'ajout de %s à la liste Mailman %s ou base SPIP
+ErrorFailedToRemoveToMailmanList=Echec de la suppression de %s de la liste Mailman %s ou base SPIP
+ErrorNewValueCantMatchOldValue=La nouvelle valeur ne peut être égale à l'ancienne
 ErrorFailedToValidatePasswordReset=Echec de la réinitialisation du mot de passe. Il est possible que ce lien ait déjà été utilisé (l'utilisation de ce lien ne fonctionne qu'une fois). Si ce n'est pas le cas, essayer de recommencer le processus de réinit de mot de passe depuis le début.
 
 # Warnings
@@ -133,3 +134,4 @@ WarningLockFileDoesNotExists=Attention, une fois l'installation terminée, les o
 WarningUntilDirRemoved=Les alertes de sécurité sont visibles par les administrateurs uniquement et resteront actives tant que la vulnérabilité sera avérée (ou que la constante MAIN_REMOVE_INSTALL_WARNING aura été définie dans Configuration->Divers)
 WarningCloseAlways=Attention, la fermeture se fait même lorsque le montant diffère. N'activez cette fonctionnalité qu'en connaissance de cause.
 WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de sérieux ralentissement des pages affichant cette boite.
+WarningClickToDialUserSetupNotComplete=La configuration ClickToDial pour votre compte utilisateur n'est pas complète (voir l'onglet ClickToDial sur votre fiche utilisateur)

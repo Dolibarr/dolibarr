@@ -3122,7 +3122,7 @@ else if ($id > 0 || ! empty($ref))
 	        		{
 	        			$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
 	        		}
-	        		
+
 	        		if ($action == 'edit_extras' && $user->rights->facture->creer)
 	        		{
 	        			print $extrafields->showInputField($key,$value);
@@ -3495,7 +3495,7 @@ else if ($id > 0 || ! empty($ref))
 
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -3518,7 +3518,7 @@ else if ($id > 0 || ! empty($ref))
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 
@@ -3547,31 +3547,31 @@ else if ($id > 0 || ! empty($ref))
             $formmail->substit['__FACREF__']=$object->ref;
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
-            $formmail->substit['__CONTACTCIVNAME__']='';  
-            
+            $formmail->substit['__CONTACTCIVNAME__']='';
+
             //Find the good contact adress
             $custcontact='';
             $contactarr=array();
             $contactarr=$object->liste_contact(-1,'external');
-            	
+
             if (is_array($contactarr) && count($contactarr)>0) {
             	foreach($contactarr as $contact) {
             		if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
-            			
+
             			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-            			
+
             			$contactstatic=new Contact($db);
             			$contactstatic->fetch($contact['id']);
             			$custcontact=$contactstatic->getFullName($langs,1);
             		}
             	}
-            
+
             	if (!empty($custcontact)) {
             		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
             	}
             }
-            
-            
+
+
             // Tableau des parametres complementaires du post
             $formmail->param['action']=$action;
             $formmail->param['models']=$modelmail;

@@ -2374,7 +2374,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			{
 				$ref = dol_sanitizeFileName($object->ref);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+				$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
 				$file=$fileparams['fullname'];
 
 				// Build document if it not exists
@@ -2397,7 +2397,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						dol_print_error($db,$result);
 						exit;
 					}
-					$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+					$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
 					$file=$fileparams['fullname'];
 				}
 
@@ -2427,11 +2427,11 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$formmail->substit['__SIGNATURE__']=$user->signature;
 				$formmail->substit['__PERSONALIZED__']='';
 				$formmail->substit['__CONTACTCIVNAME__']='';
-				
+
 				$custcontact='';
 				$contactarr=array();
 				$contactarr=$object->liste_contact(-1,'external');
-				 
+
 				if (is_array($contactarr) && count($contactarr)>0) {
 					foreach($contactarr as $contact) {
 						if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
@@ -2440,12 +2440,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 							$custcontact=$contactstatic->getFullName($langs,1);
 						}
 					}
-					 
+
 					if (!empty($custcontact)) {
 						$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
 					}
 				}
-				
+
 				// Tableau des parametres complementaires
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';

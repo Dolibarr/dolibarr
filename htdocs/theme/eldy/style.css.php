@@ -596,10 +596,6 @@ div.mainmenu.companies {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
 }
 
-div.mainmenu.contacts {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/stethoscope.png',1) ?>);
-}
-
 div.mainmenu.commercial {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1) ?>);
 }
@@ -2543,7 +2539,7 @@ div.dolEventError h1, div.dolEventError h2 {
 	background-image: -ms-linear-gradient(top,#fdfdfd,#aaa) !important;
 	background-image: -o-linear-gradient(top,#fdfdfd,#aaa) !important;
 	background-image: linear-gradient(top,#fdfdfd,#aaa) !important;
-}	
+}
 .ui-bar-b .ui-link {
 	border: none;
 	font-weight: bold !important;

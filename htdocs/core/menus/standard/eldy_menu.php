@@ -49,14 +49,16 @@ class MenuManager
     	$this->type_user=$type_user;
         $this->db=$db;
     }
-    
-    
+
+
     /**
      * Load this->tabMenu
-     * 
+     *
+   	 * @param	string	$forcemainmenu		To force mainmenu to load
+   	 * @param	string	$forceleftmenu		To force leftmenu to load
      * @return	void
      */
-    function loadMenu()
+    function loadMenu($forcemainmenu='',$forceleftmenu='')
     {
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
@@ -75,6 +77,7 @@ class MenuManager
         	// On va le chercher en session si non defini par le lien
         	$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
         }
+        if (! empty($forcemainmenu)) $mainmenu=$forcemainmenu;
 
         if (isset($_GET["leftmenu"]))
         {
@@ -95,6 +98,7 @@ class MenuManager
         	// On va le chercher en session si non defini par le lien
         	$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
+        if (! empty($forceleftmenu)) $leftmenu=$forceleftmenu;
 
         require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
         $tabMenu=array();
@@ -123,13 +127,13 @@ class MenuManager
         }
 
         $res='ErrorBadParameterForMode';
-        
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
-        
+
         if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
         if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
-        if ($mode == 'jmobile') 
+        if ($mode == 'jmobile')
         {
         	$res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
 
@@ -140,7 +144,7 @@ class MenuManager
         		if ($val['enabled'] == 1)
         		{
 					$relurl=dol_buildpath($val['url'],1);
-					
+
         			print '<a href="#">'.$val['titre'].'</a>'."\n";
         			// Search submenu fot this entry
         			$tmpmainmenu=$val['mainmenu'];
@@ -166,18 +170,18 @@ class MenuManager
        				}
         			//var_dump($submenu);
         			print '</ul>';
-        		}        		
+        		}
         		if ($val['enabled'] == 2)
         		{
         			print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
-        		}	
+        		}
         		print '</li>';
         		print '</ul>'."\n";
         	}
         }
 
         unset($this->menu);
-        
+
         //print 'xx'.$mode;
         return $res;
     }

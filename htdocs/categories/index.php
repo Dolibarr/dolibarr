@@ -121,12 +121,13 @@ if ($catname || $id > 0)
 	}
 	print "</table>";
 }
+else print '&nbsp;';
 
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
-print '<br>';
+print '<div class="fichecenter"><br>';
 
 
 // Charge tableau des categories
@@ -187,6 +188,7 @@ else
 
 print "</table>";
 
+print '</div>';
 
 llxFooter();
 
