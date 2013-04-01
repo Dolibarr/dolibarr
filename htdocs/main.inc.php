@@ -1294,7 +1294,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
-    if (empty($_SESSION['dol_hide_topmenu']))
+    if (empty($_SESSION['dol_hide_topmenu']) && ! GETPOST('dol_hide_topmenu'))
     {
 	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
@@ -1425,7 +1425,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('searchform','leftblock'));
 
-    if (empty($_SESSION['dol_hide_leftmenu']))
+    if (empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu'))
     {
 	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 	    else print '<td class="vmenu" valign="top">';

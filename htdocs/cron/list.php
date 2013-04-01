@@ -105,17 +105,18 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 /*
  * View
  */
-if (!empty($status)) {
-	$pagetitle=$langs->trans("CronListActive");
-}else {
-	$pagetitle=$langs->trans("CronListInactive");
-}
+
+$form = new Form($db);
+
+if (!empty($status))  $pagetitle=$langs->trans("CronListActive");
+else $pagetitle=$langs->trans("CronListInactive");
 
 llxHeader('',$pagetitle);
 
+print_fiche_titre($pagetitle,'','setup');
 
-// Form object for popup
-$form = new Form($db);
+print $langs->trans('CronInfo');
+
 
 if ($action == 'delete')
 {
@@ -129,10 +130,6 @@ if ($action == 'execute'){
 }
 
 
-print_fiche_titre($pagetitle,'','setup');
-
-print $langs->trans('CronInfo');
-
 // liste des jobs creer
 $object = new Cronjob($db);
 $result=$object->fetch_all($sortorder, $sortfield, $limit, $offset, $status, $filter);
@@ -141,13 +138,11 @@ if ($result < 0) {
 }
 
 
-print "<p><h2>";
-print $langs->trans('CronWaitingJobs');
-print "</h2></p>";
+print "<br><br>";
 
 if (count($object->lines)>0) {
 
-	print '<table width="100%" cellspacing="0" cellpadding="4" class="border">';
+	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	$arg_url='&page='.$page.'&status='.$status.'&search_label='.$search_label;
 	print_liste_field_titre($langs->trans("CronLabel"),$_SERVEUR['PHP_SELF'],"t.label","",$arg_url,'',$sortfield,$sortorder);

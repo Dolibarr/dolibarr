@@ -131,8 +131,8 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
-        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
-        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
+        if ($mode == 'top')  $res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
         if ($mode == 'jmobile')
         {
         	$res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);

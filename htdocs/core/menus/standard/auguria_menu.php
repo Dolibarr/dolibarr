@@ -175,8 +175,8 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
-        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
-        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
+        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
         if ($mode == 'jmobile')
         {
         	$res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
@@ -206,7 +206,7 @@ class MenuManager
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
         			print '<ul>';
-        			if ($canonrelurl != $canonnexturl && $val['mainmenu'] != 'home')
+        			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
         			{
         				// We add sub entry
         				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
