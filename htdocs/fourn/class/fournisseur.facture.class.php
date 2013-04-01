@@ -123,7 +123,7 @@ class FactureFournisseur extends CommonInvoice
         if (empty($this->date)) $this->date=$now;
 
         $socid = $this->socid;
-        $number = $this->ref_supplier?$this->ref_supplier:$this->ref;
+        $ref_supplier = $this->ref_supplier;
         $amount = $this->amount;
         $remise = $this->remise;
 
@@ -147,7 +147,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ")";
         $sql.= " VALUES (";
 		$sql.= "'(PROV)'";
-        $sql.= ", '".$this->db->escape($number)."'";
+        $sql.= ", '".$this->db->escape($this->$ref_supplier)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->libelle)."'";
         $sql.= ", ".$this->socid;
