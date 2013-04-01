@@ -779,30 +779,8 @@ else
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
-        {
-        	foreach($extrafields->attribute_label as $key=>$label)
-        	{
-        		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-        		// Show separator only
-        		if ($extrafields->attribute_type[$key] == 'separate')
-        		{
-        			print $extrafields->showSeparator($key);
-        		}
-        		else
-        		{
-        			// Convert date into timestamp format
-        			if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
-        			{
-        				$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
-        			}
-        			 
-        			print '<tr><td';
-        			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-        			print '>'.$label.'</td><td colspan="3">';
-        			print $extrafields->showInputField($key,$value);
-        			print '</td></tr>'."\n";
-        		}
-        	}
+        {        	
+        	print $object->showOptionals($extrafields,'edit');
         }
 
         // Note (private, no output on invoices, propales...)
@@ -1001,29 +979,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-                foreach($extrafields->attribute_label as $key=>$label)
-            	{
-            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		// Show separator only
-            		if ($extrafields->attribute_type[$key] == 'separate')
-            		{
-            			print $extrafields->showSeparator($key);
-            		}
-            		else
-            		{
-            			// Convert date into timestamp format
-            			if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
-            			{
-            				$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
-            			}
-            			
-            			print '<tr><td';
-            			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            			print '>'.$label.'</td><td colspan="3">';
-            			print $extrafields->showInputField($key,$value);
-            			print '</td></tr>'."\n";
-            		}
-            	}
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             // Note
