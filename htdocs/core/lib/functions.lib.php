@@ -1581,7 +1581,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible. 0 for no limit. finale string size can be 1 more (if size was max+1) or 3 more (if we added ...)
+ *	@param  int		$size				Max string size visible. 0 for no limit. Final string size can be 1 more (if size was max+1) or 3 more (if we added ...)
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
