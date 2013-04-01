@@ -2601,7 +2601,7 @@ class Facture extends CommonInvoice
         global $conf;
 
         if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) return 1;
-        if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED))  return 1;
+        if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED))  return 0;
 
         // on verifie si la facture est en numerotation provisoire
         $facref = substr($this->ref, 1, 4);
