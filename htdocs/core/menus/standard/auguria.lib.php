@@ -252,92 +252,92 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 	// Show menu
 	if (empty($noout))
 	{
-	$alt=0;
-	$num=count($menu_array);
-	for ($i = 0; $i < $num; $i++)
-	{
-		$showmenu=true;
-		if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu=false;
-
-		$alt++;
-		if (empty($menu_array[$i]['level']) && $showmenu)
+		$alt=0;
+		$num=count($menu_array);
+		for ($i = 0; $i < $num; $i++)
 		{
-			if (($alt%2==0))
+			$showmenu=true;
+			if (! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($menu_array[$i]['enabled'])) 	$showmenu=false;
+
+			$alt++;
+			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
-				print '<div class="blockvmenuimpair">'."\n";
+				if (($alt%2==0))
+				{
+					print '<div class="blockvmenuimpair">'."\n";
+				}
+				else
+				{
+					print '<div class="blockvmenupair">'."\n";
+				}
 			}
-			else
+
+			// Place tabulation
+			$tabstring='';
+			$tabul=($menu_array[$i]['level'] - 1);
+			if ($tabul > 0)
 			{
-				print '<div class="blockvmenupair">'."\n";
+				for ($j=0; $j < $tabul; $j++)
+				{
+					$tabstring.='&nbsp; &nbsp;';
+				}
+			}
+
+			// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
+			$url=dol_buildpath($menu_array[$i]['url'],1);
+			$url=preg_replace('/__LOGIN__/',$user->login,$url);
+			$url=preg_replace('/__USERID__/',$user->id,$url);
+
+			if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
+			{
+				if (! preg_match('/\?/',$url)) $url.='?';
+				else $url.='&';
+				$url.='mainmenu='.$mainmenu;
+			}
+
+			print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' -->'."\n";
+
+			// Menu niveau 0
+			if ($menu_array[$i]['level'] == 0)
+			{
+				if ($menu_array[$i]['enabled'])
+				{
+					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
+				}
+				else if ($showmenu)
+				{
+					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
+				}
+				if ($showmenu)
+					print '<div class="menu_top"></div>'."\n";
+			}
+			// Menu niveau > 0
+			if ($menu_array[$i]['level'] > 0)
+			{
+				if ($menu_array[$i]['enabled'])
+				{
+					print '<div class="menu_contenu">'.$tabstring;
+					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					print $menu_array[$i]['titre'];
+					if ($menu_array[$i]['url']) print '</a>';
+					// If title is not pure text and contains a table, no carriage return added
+					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
+					print '</div>'."\n";
+				}
+				else if ($showmenu)
+				{
+					print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
+				}
+			}
+
+			// If next is a new block or end
+			if (empty($menu_array[$i+1]['level']))
+			{
+				if ($showmenu)
+					print '<div class="menu_end"></div>'."\n";
+				print "</div>\n";
 			}
 		}
-
-		// Place tabulation
-		$tabstring='';
-		$tabul=($menu_array[$i]['level'] - 1);
-		if ($tabul > 0)
-		{
-			for ($j=0; $j < $tabul; $j++)
-			{
-				$tabstring.='&nbsp; &nbsp;';
-			}
-		}
-
-		// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
-		$url=dol_buildpath($menu_array[$i]['url'],1);
-		$url=preg_replace('/__LOGIN__/',$user->login,$url);
-		$url=preg_replace('/__USERID__/',$user->id,$url);
-
-		if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
-		{
-			if (! preg_match('/\?/',$url)) $url.='?';
-			else $url.='&';
-			$url.='mainmenu='.$mainmenu;
-		}
-
-		print '<!-- Add menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' -->'."\n";
-
-		// Menu niveau 0
-		if ($menu_array[$i]['level'] == 0)
-		{
-			if ($menu_array[$i]['enabled'])
-			{
-				print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.$menu_array[$i]['titre'].'</a></div>';
-			}
-			else if ($showmenu)
-			{
-				print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
-			}
-			if ($showmenu)
-				print '<div class="menu_top"></div>'."\n";
-		}
-		// Menu niveau > 0
-		if ($menu_array[$i]['level'] > 0)
-		{
-			if ($menu_array[$i]['enabled'])
-			{
-				print '<div class="menu_contenu">'.$tabstring;
-				if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
-				print $menu_array[$i]['titre'];
-				if ($menu_array[$i]['url']) print '</a>';
-				// If title is not pure text and contains a table, no carriage return added
-				if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
-				print '</div>'."\n";
-			}
-			else if ($showmenu)
-			{
-				print '<div class="menu_contenu">'.$tabstring.'<font class="vsmenudisabled">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
-			}
-		}
-
-		// If next is a new block or end
-		if (empty($menu_array[$i+1]['level']))
-		{
-			if ($showmenu)
-				print '<div class="menu_end"></div>'."\n";
-			print "</div>\n";
-		}
-	}
 	}
 
 	return count($menu_array);
