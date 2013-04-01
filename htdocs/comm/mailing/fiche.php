@@ -48,6 +48,9 @@ $result=$object->fetch($id);
 
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('mailing');
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('mailingcard'));
 
@@ -631,8 +634,6 @@ if (! empty($_POST["cancel"]))
  * View
  */
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('mailing');
 
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('',$langs->trans("Mailing"),$help_url);
@@ -661,15 +662,7 @@ if ($action == 'create')
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-      		print '<tr><td';
-       		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-       		print '>'.$label.'</td><td colspan="3">';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
-		}
+		print $object->showOptionals($extrafields,'edit');
 	}
 
 	print '</table>';
@@ -823,15 +816,7 @@ else
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-					print $extrafields->showInputField($key,$value);
-					print "</td></tr>\n";
-				}
+				print $object->showOptionals($extrafields);
 			}
 
 			print '</table>';
@@ -1072,15 +1057,7 @@ else
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-					print $extrafields->showInputField($key,$value);
-					print "</td></tr>\n";
-				}
+				print $object->showOptionals($extrafields,'edit');
 			}
 
 			print '</table>';
