@@ -2104,10 +2104,10 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'star');
+		return img_picto($text, 'star', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info">').img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), 'star', 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 
