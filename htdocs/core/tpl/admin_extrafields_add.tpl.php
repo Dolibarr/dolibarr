@@ -48,6 +48,8 @@
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
+    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
+    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else size.val('').attr('disabled','disabled');
     	}
@@ -73,14 +75,20 @@
 <tr><td class="fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label'); ?>"></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?> (<?php echo $langs->trans("AlphaNumOnlyCharsAndNoSpace"); ?>)</td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"></td></tr>
-<!--  Value (for select list / radio) -->
+<!--  Value (for select list / radio/ checkbox) -->
 <tr id="value_choice">
+
 <td>
 	<?php echo $langs->trans("Value"); ?>
 </td>
 <td>
+<table class="nobordernopadding">
+<tr><td width="30%">
 	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
+</td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp"),1,0)?></td></tr>
+</table>
 </td>
+
 </tr>
 <!-- Default Value -->
 <tr><td><?php echo $langs->trans("DefaultValue"); ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo (GETPOST('"default_value"')?GETPOST('"default_value"'):''); ?>"></td></tr>
