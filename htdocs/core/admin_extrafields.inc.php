@@ -66,6 +66,20 @@ if ($action == 'add')
         	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
         	$action = 'create';
         }
+        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
+        	$action = 'create';
+        }
+        if (GETPOST('type')=='radio' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
+        	$action = 'create';
+        }
 
 	    if (! $error)
 	    {
