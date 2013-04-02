@@ -63,6 +63,9 @@ $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+
 //var_dump($_POST);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -203,14 +206,8 @@ if ($action == 'add_action')
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 	}
 
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$actioncomm->array_options[$key]=GETPOST($key);
-		}
-	}
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$actioncomm);
 
 	if (! $error)
 	{
@@ -343,14 +340,8 @@ if ($action == 'update')
 		}
 		$actioncomm->userdone = $userdone;
 
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$actioncomm->array_options[$key]=GETPOST($key);
-			}
-		}
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$actioncomm);
 
 		if (! $error)
 		{
@@ -394,9 +385,6 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form = new Form($db);
 $htmlactions = new FormActions($db);
-
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
 
 if ($action == 'create')
 {
@@ -603,22 +591,13 @@ if ($action == 'create')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$actioncomm,$action);    // Note that $action and $object may have been modified by hook
 
-	print '</table>';
 
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		print '<br><br><table class="border" width="100%">';
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($actioncomm->array_options["options_".$key])?$actioncomm->array_options["options_".$key]:''));
-			print '<tr><td';
-			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-			print ' width="30%">'.$label.'</td><td>';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
-		}
-		print '</table><br>';
+		print $actioncomm->showOptionals($extrafields,'edit');
 	}
+	
+	print '</table>';
 
 	print '<center><br>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -838,24 +817,13 @@ if ($id > 0)
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-
-		print '</table>';
-
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$act->array_options["options_".$key]);
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print ' width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
-			print '</table><br><br>';
+			print $actioncomm->showOptionals($extrafields,'edit');
+
 		}
 
+		print '</table>';
 
 		print '<center><br><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

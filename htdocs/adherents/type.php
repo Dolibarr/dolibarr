@@ -56,6 +56,9 @@ $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
 
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
+
 if (GETPOST('button_removefilter'))
 {
     $search_lastname="";
@@ -84,14 +87,8 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
 		
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$adht->array_options[$key]=GETPOST($key);
-			}
-		}
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
 
 		if ($adht->libelle)
 		{
@@ -127,14 +124,8 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
 
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$adht->array_options[$key]=GETPOST($key);
-			}
-		}
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
 		
 		$adht->update($user->id);
 
@@ -167,8 +158,6 @@ llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_
 
 $form=new Form($db);
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
 // Liste of members type
 
@@ -245,6 +234,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
 	$form = new Form($db);
+	$adht = new AdherentType($db);
 
 	print_fiche_titre($langs->trans("NewMemberType"));
 
@@ -278,23 +268,11 @@ if ($action == 'create')
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-	
-	print "</table>\n";
-
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		print '<br><br><table class="border" width="100%">';
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$act->array_options["options_".$key]);
-			print '<tr><td';
-			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-			print ' width="30%">'.$label.'</td><td>';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
-		}
-		print '</table><br><br>';
+		print $adht->showOptionals($extrafields,'edit');
 	}
+	print "</table>\n";
 	
 	print '<br>';
 	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
@@ -356,23 +334,13 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-		
-		print '</table>';
-		
-		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($adht->array_options['options_'.$key])?$adht->array_options['options_'.$key]:''));
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showOutputField($key,$value);
-				print "</td></tr>\n";
-			}
-			print '</table><br><br>';
+			// View extrafields
+			print $adht->showOptionals($extrafields);
 		}
 
+		print '</table>';
 		print '</div>';
 
 		/*

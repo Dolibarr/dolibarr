@@ -41,7 +41,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $ref;		 
+    var $ref;
     var $product_ref;
     var $ref_supplier;
     var $socid;
@@ -134,7 +134,7 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (";
 		$sql.= "ref";
-        $sql.= ", facnumber";
+        $sql.= ", ref_supplier";
         $sql.= ", entity";
         $sql.= ", libelle";
         $sql.= ", fk_soc";
@@ -263,7 +263,7 @@ class FactureFournisseur extends CommonInvoice
         $sql = "SELECT";
         $sql.= " t.rowid,";
 		$sql.= " t.ref,";
-        $sql.= " t.facnumber,";
+        $sql.= " t.ref_supplier,";
         $sql.= " t.entity,";
         $sql.= " t.type,";
         $sql.= " t.fk_soc,";
@@ -298,7 +298,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' s.nom as socnom, s.rowid as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
-        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";    // ref is id (facnumber is supplier ref)
+        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
         $sql.= ' AND t.fk_soc = s.rowid';
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -310,10 +310,9 @@ class FactureFournisseur extends CommonInvoice
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id					= $obj->rowid;
-                $this->ref					= $obj->ref;
+                $this->ref					= $obj->ref?$obj->ref:$obj->rowid;	// We take rowid if ref is empty for backward compatibility
 
-                $this->ref_supplier			= $obj->facnumber;
-                $this->facnumber			= $obj->facnumber;
+                $this->ref_supplier			= $obj->ref_supplier;
                 $this->entity				= $obj->entity;
                 $this->type					= empty($obj->type)?0:$obj->type;
                 $this->fk_soc				= $obj->fk_soc;
@@ -501,7 +500,7 @@ class FactureFournisseur extends CommonInvoice
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
-        $sql.= " facnumber=".(isset($this->facnumber)?"'".$this->db->escape($this->facnumber)."'":"null").",";
+        $sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
         $sql.= " entity=".(isset($this->entity)?$this->entity:"null").",";
         $sql.= " type=".(isset($this->type)?$this->type:"null").",";
         $sql.= " fk_soc=".(isset($this->fk_soc)?$this->fk_soc:"null").",";
@@ -665,38 +664,6 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
-    /**
-     *	Set supplier ref
-     *
-     *	@param      User	$user            	User that make change
-     *	@param      string	$ref_supplier    	Supplier ref
-     *	@return     int             			<0 if KO, >0 if OK
-     */
-    function set_ref_supplier($user, $ref_supplier)
-    {
-        if ($user->rights->fournisseur->facture->creer)
-        {
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET facnumber = '.(empty($ref_supplier) ? 'NULL' : '\''.$this->db->escape($ref_supplier).'\'');
-            $sql.= ' WHERE rowid = '.$this->id;
-
-            dol_syslog("FactureFournisseur::set_ref_supplier sql=".$sql);
-            if ($this->db->query($sql))
-            {
-                $this->ref_supplier = $ref_supplier;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->lasterror();
-                dol_syslog('FactureFournisseur::set_ref_supplier '.$this->error.' - '.$sql, LOG_ERR);
-                return -2;
-            }
-        }
-        else
-        {
-            return -1;
-        }
-    }
 
     /**
      *	Tag invoice as a payed invoice
@@ -1349,8 +1316,11 @@ class FactureFournisseur extends CommonInvoice
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
         if ($this->ref_supplier) $label.=' / '.$this->ref_supplier;
 
+        $ref=$this->ref;
+        if (empty($ref)) $ref=$this->id;
+
         if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
-        $result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
+        $result.=$lien.($max?dol_trunc($ref,$max):$ref).$lienfin;
         return $result;
     }
 

@@ -64,7 +64,7 @@ class box_factures_fourn extends ModeleBoxes
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$sql = "SELECT s.nom, s.rowid as socid,";
-			$sql.= " f.rowid as facid, f.facnumber, f.amount,";
+			$sql.= " f.rowid as facid, f.ref_supplier, f.amount,";
 			$sql.= " f.paye, f.fk_statut,";
 			$sql.= ' f.datef as df,';
 			$sql.= ' f.datec as datec,';
@@ -102,7 +102,7 @@ class box_factures_fourn extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->facnumber,
+                    'text' => $objp->ref_supplier,
                     'text2'=> $late,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 

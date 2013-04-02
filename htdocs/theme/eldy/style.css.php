@@ -356,7 +356,7 @@ td.showDragHandle {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->browser->phone) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'20':'24')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?((empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu'))?'20':'4'):'24')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->browser->phone)?'12':'6')); ?>px;
 }
 
@@ -839,9 +839,10 @@ a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php p
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #93a5aa; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextmain; ?>; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; padding: 1px 1px 1px 8px; }
-font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #93a5aa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextmain; ?>; }
+font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
 
@@ -1593,6 +1594,7 @@ table.liste td {
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
     height: 20px !important;
+    background: #7699A9;
     background-repeat: repeat-x;
 
 <?php if ($usecss3) { ?>
@@ -1602,7 +1604,6 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 	background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
 	background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
 <?php } else { ?>
-	background: #7699A9;
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/liste_titre2.png',1); ?>);
 <?php } ?>
     color: #<?php echo $colortextmain; ?>;
@@ -2522,8 +2523,9 @@ div.dolEventError h1, div.dolEventError h2 {
 /* ============================================================================== */
 
 .ui-body-c .ui-link {
-	color: #111 !important;
+	color: #FFF !important;
 }
+/*
 .ui-li-divider {
 	background: #eee !important;
 }
@@ -2546,7 +2548,7 @@ div.dolEventError h1, div.dolEventError h2 {
 	color: #444 !important;
 	text-shadow: 0 1px 1px #fff !important;
 }
-
+*/
 
 <?php
 if (is_object($db)) $db->close();

@@ -2189,6 +2189,76 @@ abstract class CommonObject
         }
         else return 0;
     }
+    
+   /**
+     * Function to show lines of extrafields with output datas
+     * 
+     * @param	object	$extrafields	extrafield Object
+     * @param	string	$mode			Show output (view) or input (edit) for extrafield 
+     * 
+     * return string	
+     */
+    function showOptionals($extrafields,$mode='view')
+    {
+		global $_POST;
+    	
+		$out = '';
+    	
+		if(count($extrafields->attribute_label) > 0)
+		{
+			$out .= "\n";
+			$out .= '<!-- showOptionalsInput --> ';
+			$out .= "\n";
+			
+			$e = 0;
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$colspan='3';
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+				if ($extrafields->attribute_type[$key] == 'separate')
+				{
+					$out .= $extrafields->showSeparator($key);
+				}
+				else
+				{
+					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+					{
+						$out .= '<tr>';
+						$colspan='0';
+					}
+					else 
+					{
+						$out .= '<tr>';
+					}
+					// Convert date into timestamp format
+					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+					{
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->array_options['options_'.$key];
+					}
+					$out .= '<td>'.$label.'</td>';
+					$out .='<td colspan="'.$colspan.'">';
+					    		
+					switch($mode) {
+					case "view":
+						$out .= $extrafields->showOutputField($key,$value);
+						break;
+					case "edit":
+						$out .= $extrafields->showInputField($key,$value);
+						break;
+					}
+					    		
+					$out .= '</td>'."\n";
+					    		
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+					else $out .= '</tr>';
+					$e++;
+				}
+			}
+			$out .= "\n";
+			$out .= '<!-- /showOptionalsInput --> ';
+		}
+		return $out;
+	}
 
 
     /**

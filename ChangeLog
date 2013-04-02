@@ -28,6 +28,7 @@ For users:
 - New: Script email_unpaid_invoices_to_representative accepts now a parameter test
   and a delay.
 - New: Can define a different clicktodial setup per user.
+- New: Add option INVOICE_CAN_NEVER_BE_REMOVED.
 - First change to prepare feature click to print for PDF.
   
 For translators:
