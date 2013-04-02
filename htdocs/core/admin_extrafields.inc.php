@@ -80,6 +80,33 @@ if ($action == 'add')
         	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
         	$action = 'create';
         }
+        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) 
+        {
+        		// Construct array for parameter (value of select list)
+    			$parameters = GETPOST('param');
+    			$parameters_array = explode("\r\n",$parameters);
+    			foreach($parameters_array as $param_ligne)
+    			{
+    				if (!empty($param_ligne)) {
+	    				if (preg_match_all('/,/',$param_ligne,$matches)) 
+	    				{
+	    					if (count($matches[0])>1) {
+	    						$error++;
+	    						$langs->load("errors");
+	    						$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	    						$action = 'create';
+	    					}
+	    				}
+	    				else 
+	    				{
+	    					$error++;
+	    					$langs->load("errors");
+	    					$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	    					$action = 'create';
+	    				}
+    				}
+    			}  	
+        }
 
 	    if (! $error)
 	    {
@@ -151,6 +178,54 @@ if ($action == 'update')
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'edit';
+        }
+        if (GETPOST('type')=='select' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
+        	$action = 'edit';
+        }
+        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
+        	$action = 'edit';
+        }
+        if (GETPOST('type')=='radio' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
+        	$action = 'edit';
+        }
+        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param'))
+        {
+        	// Construct array for parameter (value of select list)
+        	$parameters = GETPOST('param');
+        	$parameters_array = explode("\r\n",$parameters);
+        	foreach($parameters_array as $param_ligne)
+        	{
+        		if (!empty($param_ligne)) {
+	        		if (preg_match_all('/,/',$param_ligne,$matches))
+	        		{
+	        			if (count($matches[0])>1) {
+	        				$error++;
+	        				$langs->load("errors");
+	        				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	        				$action = 'edit';
+	        			}
+	        		}
+	        		else
+	        		{
+	        			$error++;
+	        			$langs->load("errors");
+	        			$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	        			$action = 'edit';
+	        		}
+        		}
+        	}
         }
 
 	    if (! $error)

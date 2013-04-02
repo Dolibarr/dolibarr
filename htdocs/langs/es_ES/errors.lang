@@ -62,6 +62,7 @@ ErrorSizeTooLongForVarcharType=Longitud del campo demasiado largo para el tipo c
 ErrorNoValueForSelectType=Los valores de la lista deben ser indicados
 ErrorNoValueForCheckBoxType=Los valores de la lista deben ser indicados
 ErrorNoValueForRadioType=Los valores de la lista deben ser indicados
+ErrorBadFormatValueList=Los valores de la lista no peudo contener mas de una coma : <u>%s</u>, pero necessita una: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales 
 ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado
 ErrorExportDuplicateProfil=El nombre del perfil ya existe para este lote de exportación
