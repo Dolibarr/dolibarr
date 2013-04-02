@@ -1893,13 +1893,28 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '</tr>';
 
 
-			// Societe
+			// Third party
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
 
-			// Ligne info remises tiers
-			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+			if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+			{
+				$filterabsolutediscount="fk_facture_source IS NULL";  // If we want deposit to be substracted to payments only and not to total of final invoice
+				$filtercreditnote="fk_facture_source IS NOT NULL";    // If we want deposit to be substracted to payments only and not to total of final invoice
+			}
+			else
+			{
+				$filterabsolutediscount="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')";
+				$filtercreditnote="fk_facture_source IS NOT NULL AND description <> '(DEPOSIT)'";
+			}
+
+	        // Relative and absolute discounts
+	        $addrelativediscount='<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("EditRelativeDiscounts").'</a>';
+	        $addabsolutediscount='<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
+	        $addcreditnote='<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
+
+        	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			print '. ';
@@ -1915,10 +1930,9 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				}
 				else
 				{
-					// Remise dispo de type non avoir
-					$filter='fk_facture_source IS NULL';
+					// Remise dispo de type remise fixe (not credit note)
 					print '<br>';
-					$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+					$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filterabsolutediscount);
 				}
 			}
 			if ($absolute_creditnote)
@@ -1958,10 +1972,9 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DateDeliveryPlanned');
 			print '</td>';
-
 			if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="2">';
+			print '</td><td colspan="3">';
 			if ($action == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
@@ -1976,6 +1989,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				print $object->date_livraison ? dol_print_date($object->date_livraison,'daytext') : '&nbsp;';
 			}
 			print '</td>';
+			print '</tr>';
 
 			// Terms of payment
 			print '<tr><td height="10">';
@@ -1984,7 +1998,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '</td>';
 			if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="2">';
+			print '</td><td colspan="3">';
 			if ($action == 'editconditions')
 			{
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->cond_reglement_id,'cond_reglement_id',1);
@@ -2004,7 +2018,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '</td>';
 			if ($action != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="2">';
+			print '</td><td colspan="3">';
 			if ($action == 'editmode')
 			{
 				$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
@@ -2022,7 +2036,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '</td>';
 			if ($action != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="2">';
+			print '</td><td colspan="3">';
 			if ($action == 'editavailability')
 			{
 				$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id,$object->availability_id,'availability_id',1);
@@ -2040,7 +2054,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '</td>';
 			if ($action != 'editdemandreason' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="2">';
+			print '</td><td colspan="3">';
 			if ($action == 'editdemandreason')
 			{
 				$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
@@ -2065,7 +2079,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				print '</td>';
 				if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 				print '</tr></table>';
-				print '</td><td colspan="2">';
+				print '</td><td colspan="3">';
 				//print "$object->id, $object->socid, $object->fk_project";
 				if ($action == 'classify')
 				{
@@ -2079,52 +2093,52 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			}
 
 			// Other attributes
-			$parameters=array('colspan' => ' colspan="2"');
+			$parameters=array('colspan' => ' colspan="3"');
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
 				print $object->showOptionals($extrafields,'edit');
 			}
 
+			$rowspan=4;
+			if ($mysoc->localtax1_assuj=="1") $rowspan++;
+			if ($mysoc->localtax2_assuj=="1") $rowspan++;
+
 			// Total HT
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-			print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-			print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
+			print '<td align="right">'.price($object->total_ht,'',$langs,'','',0,$conf->currency).'</td>';
 
 			// Margin Infos
-			if (! empty($conf->margin->enabled)) {
-				print '<td valign="top" width="50%" rowspan="4">';
+			if (! empty($conf->margin->enabled))
+			{
+				print '<td valign="top" width="50%" colspan="2" rowspan="'.$rowspan.'">';
 				$object->displayMarginInfos();
 				print '</td>';
 			}
+			else print '<td width="50%" colspan="2" rowspan="'.$rowspan.'"></td>';
+
 			print '</tr>';
 
 			// Total TVA
-			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td>';
-			print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva,'',$langs,'','',0,$conf->currency).'</td></tr>';
 
 			// Amount Local Taxes
 			if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-				print '<td align="right">'.price($object->total_localtax1).'</td>';
-				print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+				print '<td align="right">'.price($object->total_localtax1,'',$langs,'','',0,$conf->currency).'</td></tr>';
 			}
 			if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 			{
 				print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-				print '<td align="right">'.price($object->total_localtax2).'</td>';
-				print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+				print '<td align="right">'.price($object->total_localtax2,'',$langs,'','',0,$conf->currency).'</td></tr>';
 			}
 
 			// Total TTC
-			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td>';
-			print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc,'',$langs,'','',0,$conf->currency).'</td></tr>';
 
 			// Statut
-			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
-			print '</tr>';
+			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 			print '</table><br>';
 			print "\n";

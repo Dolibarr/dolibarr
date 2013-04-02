@@ -160,18 +160,24 @@ class MenuManager
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
         			print '<ul>';
-        			if ($canonrelurl != $canonnexturl && $val['mainmenu'] != 'home')
+        			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
 					{
         				// We add sub entry
         				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
         			}
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
        				{
-       					$relurl2=dol_buildpath($val2['url'],1);
+        				$relurl2=dol_buildpath($val2['url'],1);
 	        			$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
     	    			$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
-       					//var_dump($val2);
-       					print '<li'.($val2['level']==0?' data-role="list-divider"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
+        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
+        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
+        				print '<li'.($val2['level']==0?' data-role="list-divider"':'').'>';
+        				if ($relurl2) print '<a href="'.$relurl2.'">';
+        				print $val2['titre'];
+        				if ($relurl2) print '</a>';
+        				print '</li>'."\n";
        				}
         			//var_dump($submenu);
         			print '</ul>';

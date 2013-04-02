@@ -305,6 +305,10 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  */
 function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 {
+	global $conf;
+
+	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+
 	$msg = '<script type="text/javascript">
     $(function() {
     	$("#'.$htmlname.'").combobox({

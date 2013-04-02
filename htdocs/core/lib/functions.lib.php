@@ -588,10 +588,14 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
+	global $conf;
+
 	$out="\n".'<div class="tabs">'."\n";
 
-	// Affichage titre
-	if (! empty($title))
+	// Show title
+	$showtitle=1;
+	if (! empty($conf->browser->phone)) $showtitle=0;
+	if (! empty($title) && $showtitle)
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';

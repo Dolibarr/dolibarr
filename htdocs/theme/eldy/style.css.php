@@ -67,6 +67,8 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
+$dol_hide_topmenu=(! empty($_SESSION['dol_hide_topmenu']) || GETPOST('dol_hide_topmenu'));
+$dol_hide_leftmenu=(! empty($_SESSION['dol_hide_leftmenu']) || GETPOST('dol_hide_leftmenu'));
 
 // Define reference colors
 // Example: Light grey: $colred=235;$colgreen=235;$colblue=235;
@@ -356,7 +358,7 @@ td.showDragHandle {
 /* ============================================================================== */
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?((empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu'))?'20':'4'):'24')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->browser->phone)?'12':'6')); ?>px;
 }
 
@@ -1443,7 +1445,7 @@ span.butAction, span.butActionDelete {
 #undertopmenu {
 	/*	background-image: url("<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/gradient.gif',1) ?>"); */
 	background-repeat: repeat-x;
-	margin-top: 0px;
+	margin-top: <?php echo ($dol_hide_topmenu?'6':'0'); ?>px;
 }
 
 
@@ -2522,7 +2524,7 @@ div.dolEventError h1, div.dolEventError h2 {
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
-.ui-body-c .ui-link {
+li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
 /*

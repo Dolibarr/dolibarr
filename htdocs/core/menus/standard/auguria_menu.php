@@ -196,9 +196,7 @@ class MenuManager
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
-        			//var_dump($tmpmainmenu.' - '.$tmpleftmenu);
         			$res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
-        			//var_dump($submenu->liste);
         			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
