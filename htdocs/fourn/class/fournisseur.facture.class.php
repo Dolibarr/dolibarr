@@ -41,7 +41,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-    var $ref;		 
+    var $ref;
     var $product_ref;
     var $ref_supplier;
     var $socid;
@@ -298,7 +298,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' s.nom as socnom, s.rowid as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
-        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";    
+        if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
         $sql.= ' AND t.fk_soc = s.rowid';
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -310,9 +310,9 @@ class FactureFournisseur extends CommonInvoice
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id					= $obj->rowid;
-                $this->ref					= $obj->ref;
+                $this->ref					= $obj->ref?$obj->ref:$obj->rowid;	// We take rowid if ref is empty for backward compatibility
 
-                $this->ref_supplier			= $obj->ref_supplier;                
+                $this->ref_supplier			= $obj->ref_supplier;
                 $this->entity				= $obj->entity;
                 $this->type					= empty($obj->type)?0:$obj->type;
                 $this->fk_soc				= $obj->fk_soc;
@@ -663,7 +663,7 @@ class FactureFournisseur extends CommonInvoice
         	return -$error;
         }
     }
-	
+
 
     /**
      *	Tag invoice as a payed invoice
@@ -1316,8 +1316,11 @@ class FactureFournisseur extends CommonInvoice
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
         if ($this->ref_supplier) $label.=' / '.$this->ref_supplier;
 
+        $ref=$this->ref;
+        if (empty($ref)) $ref=$this->id;
+
         if ($withpicto) $result.=($lien.img_object($label,'bill').$lienfin.' ');
-        $result.=$lien.($max?dol_trunc($this->ref,$max):$this->ref).$lienfin;
+        $result.=$lien.($max?dol_trunc($ref,$max):$ref).$lienfin;
         return $result;
     }
 

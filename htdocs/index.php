@@ -260,7 +260,7 @@ print '<th class="liste_titre"align="right">'.$langs->trans("Number").'</th>';
 print '<th class="liste_titre"align="right">'.$langs->trans("Late").'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
 print '<th class="liste_titre"width="20">&nbsp;</th>';
-if ($showweather) print '<th class="liste_titre" width="80">&nbsp;</th>';
+if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
 print '</tr>';
 
 
@@ -483,7 +483,7 @@ foreach($dashboardlines as $key => $board)
     print '</td>';
     if ($showweather)
     {
-        print '<td class="nohover" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
+        print '<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
         $text='';
         if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
         $options='height="64px"';
