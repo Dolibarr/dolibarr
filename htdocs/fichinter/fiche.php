@@ -49,6 +49,8 @@ $socid		= GETPOST('socid','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
+$origin=GETPOST('origin','alpha');
+$originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -140,7 +142,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
     if ($object->socid > 0)
     {
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
-	    if ($_POST['origin'] && $_POST['originid'])
+	    if (!empty($origin) && !empty($originid) )
 	    {
 	        // Parse element/subelement (ex: project_task)
 	        $element = $subelement = $_POST['origin'];
@@ -155,8 +157,8 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 	        if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-	        $object->origin    = $_POST['origin'];
-	        $object->origin_id = $_POST['originid'];
+	        $object->origin    = $origin;
+	        $object->origin_id = $originid;
 
 	        // Possibility to add external linked objects with hooks
 	        $object->linked_objects[$object->origin] = $object->origin_id;
@@ -165,9 +167,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        	$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 	        }
 
-	        $object_id = $object->create($user);
+	        $id = $object->create($user);
 
-	        if ($object_id > 0)
+	        if ($id > 0)
 	        {
 	            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -236,7 +238,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$duration = 3600;
 
 		                    $result = $object->addline(
-		                        $object_id,
+		                        $id,
 		                        $desc,
 					            $date_intervention,
                  				$duration
@@ -992,6 +994,15 @@ if ($action == 'create')
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
+        
+        // Show link to origin object
+        if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
+        {
+        	$newclassname=$classname;
+        	if ($newclassname=='Propal') $newclassname='CommercialProposal';
+        	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+        }
+        
         print '</table>';
 
 	    if (is_object($objectsrc))
