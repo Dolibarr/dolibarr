@@ -2133,10 +2133,10 @@ abstract class CommonObject
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
             		case 'date':
-            			$this->array_options[$key] = dol_print_date($this->array_options[$key],'dayrfc');
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
             		case 'datetime':
-            			$this->array_options[$key] = dol_print_date($this->array_options[$key],'dayhourrfc');
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
                	}
             } 
