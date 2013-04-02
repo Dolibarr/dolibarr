@@ -64,7 +64,9 @@ class ExtraFields
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
 		'select' => 'ExtrafieldSelect',
-		'separate' => 'ExtrafieldSeparator'
+		'separate' => 'ExtrafieldSeparator',
+		'checkbox' => 'ExtrafieldCheckBox',
+		'radio' => 'ExtrafieldRadio',
 	);
 
 	/**
@@ -166,7 +168,7 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
-			} elseif ($type=='select') {
+			} elseif (($type=='select') || ($type=='radio') ||($type=='checkbox')){
 				$typedb='text';
 				$lengthdb='';
 			} else {
@@ -376,7 +378,7 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
-			} elseif ($type=='select') {
+			} elseif (($type=='select') || ($type=='radio') ||($type=='checkbox')) {
 				$typedb='text';
 				$lengthdb='';
 			} else {
@@ -676,6 +678,37 @@ class ExtraFields
         	}
         	$out.='</select>';
         }
+        elseif ($type == 'checkbox')
+        {
+        	$out='';
+        	$value_arr=explode(',',$value);
+
+        	foreach ($param['options'] as $keyopt=>$val )
+        	{
+        		
+        		$out.='<input type="checkbox" name="options_'.$key.'[]"';
+        		$out.=' value="'.$keyopt.'"';
+        		
+        		if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
+        			$out.= 'checked="checked"';
+        		}else {
+        			$out.='';
+        		}
+        		
+        		$out.='/>'.$val.'<br>';
+        	}
+        }
+        elseif ($type == 'radio')
+        {
+        	$out='';
+        	foreach ($param['options'] as $keyopt=>$val )
+        	{
+        		$out.='<input type="radio" name="options_'.$key.'"';
+        		$out.=' value="'.$keyopt.'"';
+        		$out.= ($value==$keyopt?'checked="checked"':'');
+        		$out.='/>'.$val.'<br>';
+        	}
+        }
         /* Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
         elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
@@ -740,6 +773,21 @@ class ExtraFields
         {
         	$value=$params['options'][$value];
         }
+        elseif ($type == 'radio')
+        {
+        	$value=$params['options'][$value];
+        }
+        elseif ($type == 'checkbox')
+        {
+        	$value_arr=explode(',',$value);
+        	$value='';
+        	if (is_array($value_arr)) 
+        	{
+	        	foreach ($value_arr as $keyval=>$valueval) {
+	        		$value.=$params['options'][$valueval].'<br>';
+	        	}
+        	}
+        }
         else
         {
             $showsize=round($size);
@@ -785,7 +833,12 @@ class ExtraFields
 	    			// Clean parameters
 	    			$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
 	    		}
-	    		else
+	    		else if (in_array($key_type,array('checkbox')))
+	    		{
+	    			$value_arr=GETPOST("options_".$key);
+	    			$value_key=implode($value_arr,',');
+	    		}
+	    		else 
 	    		{
 	    			$value_key=GETPOST("options_".$key);
 	    		}
