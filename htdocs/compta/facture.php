@@ -1826,7 +1826,7 @@ if ($action == 'create')
             $ref_client			= (! empty($objectsrc->ref_client)?$objectsrc->ref_client:'');
             $ref_int			= (! empty($objectsrc->ref_int)?$objectsrc->ref_int:'');
 
-            $soc = $objectsrc->client;
+            $soc = $objectsrc->thirdparty;
             $cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
             $mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
@@ -1854,7 +1854,8 @@ if ($action == 'create')
     print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
+	if ($soc->id > 0)
+		print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
     print '<input name="facnumber" type="hidden" value="provisoire">';
     print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
     print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
@@ -1905,7 +1906,7 @@ if ($action == 'create')
     // Tiers
     print '<tr>';
     print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
-    if($socid>0)
+    if($soc->id > 0)
     {
     	print '<td colspan="2">';
     	print $soc->getNomUrl(1);
