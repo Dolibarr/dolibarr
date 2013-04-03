@@ -19,8 +19,8 @@
  */
 
 /**
- *       \file       htdocs/core/getmenu_jmobile.php
- *       \brief      File to return menu
+ *       \file       htdocs/core/get_menudiv.php
+ *       \brief      File to return menu into a div tree
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -50,26 +50,24 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
  * View
  */
 
-// URL http://mydolibarr/core/getmenu_jmobile?mainmenu=mainmenu&leftmenu=leftmenu can be used for tests
-$arrayofjs=array('/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js');
-$arrayofcss=array('/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css');
+// URL http://mydolibarr/core/get_menudiv.php?dol_use_jmobile=1 can be used for tests
+$arrayofjs=array();
+$arrayofcss=array();
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 
-if (empty($user->societe_id))    // If internal user or not defined
+if (empty($user->societe_id))	// If internal user or not defined
 {
 	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 }
-else                        // If external user
+else                        	// If external user
 {
 	$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-	$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 }
 
 // Load the menu manager (only if not already done)
-$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
+$file_menu=$conf->standard_menu;
 if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
 if (! class_exists('MenuManager'))
 {

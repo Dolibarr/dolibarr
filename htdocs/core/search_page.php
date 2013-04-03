@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/core/search_jmobile.php
+ *       \file       htdocs/core/search_page.php
  *       \brief      File to return search box
  */
 
@@ -50,7 +50,7 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
  * View
  */
 
-// URL http://mydolibarr/core/getmenu_jmobime?mainmenu=mainmenu&leftmenu=leftmenu can be used for tests
+// URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 

@@ -52,13 +52,6 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-// If smartphone mode, we do not show main page, we show only menu. TODO Remove this
-if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
-{
-    include_once DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php';
-    exit;
-}
-
 llxHeader('',$langs->trans("HomeArea"));
 
 print_fiche_titre($langs->trans("HomeArea"));

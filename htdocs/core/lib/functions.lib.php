@@ -321,14 +321,14 @@ function dol_clone($object)
  *
  * 	@param	int		$size		Size we want
  * 	@param	string	$type		Type of optimizing:
- * 										'' = function used to define a size for truncation
- * 										'width' = function is used to define a width
+ * 								'' = function used to define a size for truncation
+ * 								'width' = function is used to define a width
  *	@return int					New size after optimizing
  */
 function dol_size($size,$type='')
 {
 	global $conf;
-	if (empty($conf->browser->phone)) return $size;
+	if (empty($conf->dol_optimize_smallscreen)) return $size;
 	if ($type == 'width' && $size > 250) return 250;
 	else return 10;
 }
@@ -594,7 +594,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
 	// Show title
 	$showtitle=1;
-	if (! empty($conf->browser->phone)) $showtitle=0;
+	if (! empty($conf->dol_optimize_smallscreen)) $showtitle=0;
 	if (! empty($title) && $showtitle)
 	{
 		$limittitle=30;
@@ -767,6 +767,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 {
 	global $conf,$langs;
 
+	// Clean parameters
 	$to_gmt=false;
 	$offsettz=$offsetdst=0;
 	if ($tzoutput)
@@ -792,36 +793,32 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 			}
 		}
 	}
-
 	if (! is_object($outputlangs)) $outputlangs=$langs;
-
-	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
-	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
+	if (! $format) $format='daytextshort';
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
-	if ($format == 'day')					$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
-	else if ($format == 'hour')				$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
-	else if ($format == 'hourduration')		$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
-	else if ($format == 'daytext')			$format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
-	else if ($format == 'daytextshort')		$format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
-	else if ($format == 'dayhour')			$format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
-	else if ($format == 'dayhoursec')		$format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
-	else if ($format == 'dayhourtext')		$format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
-	else if ($format == 'dayhourtextshort')	$format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
-
+	if ($format == 'day')					 $format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
+	else if ($format == 'hour')			 $format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
+	else if ($format == 'hourduration')	 $format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
+	else if ($format == 'daytext')			 $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
+	else if ($format == 'daytextshort')	 $format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
+	else if ($format == 'dayhour')			 $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
+	else if ($format == 'dayhoursec')		 $format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
+	else if ($format == 'dayhourtext')		 $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
+	else if ($format == 'dayhourtextshort') $format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
 	// Format not sensitive to language
-	else if ($format == 'dayhourlog')		$format='%Y%m%d%H%M%S';
-	else if ($format == 'dayhourldap')		$format='%Y%m%d%H%M%SZ';
-	else if ($format == 'dayhourxcard')		$format='%Y%m%dT%H%M%SZ';
-	else if ($format == 'dayxcard')			$format='%Y%m%d';
-	else if ($format == 'dayrfc')			$format='%Y-%m-%d';             // DATE_RFC3339
-	else if ($format == 'dayhourrfc')		$format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
+	else if ($format == 'dayhourlog')		 $format='%Y%m%d%H%M%S';
+	else if ($format == 'dayhourldap')		 $format='%Y%m%d%H%M%SZ';
+	else if ($format == 'dayhourxcard')	 $format='%Y%m%dT%H%M%SZ';
+	else if ($format == 'dayxcard')	 	 $format='%Y%m%d';
+	else if ($format == 'dayrfc')			 $format='%Y-%m-%d';             // DATE_RFC3339
+	else if ($format == 'dayhourrfc')		 $format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
+	else if ($format == 'standard')		 $format='%Y-%m-%d %H:%M:%S';
 
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
-	//print 'x'.$time;
-
+	// Clean format
 	if (preg_match('/%b/i',$format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
@@ -2477,7 +2474,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
@@ -2486,7 +2483,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 	else
 	{
-		if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+		if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
 	}
 

@@ -67,8 +67,12 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
-$dol_hide_topmenu=(! empty($_SESSION['dol_hide_topmenu']) || GETPOST('dol_hide_topmenu'));
-$dol_hide_leftmenu=(! empty($_SESSION['dol_hide_leftmenu']) || GETPOST('dol_hide_leftmenu'));
+$dol_hide_topmenu=$conf->dol_hide_topmenu;
+$dol_hide_leftmenu=$conf->dol_hide_leftmenu;
+$dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
+$dol_no_mouse_hover=$conf->dol_no_mouse_hover;
+$dol_use_jmobile=$conf->dol_use_jmobile;
+
 
 // Define reference colors
 // Example: Light grey: $colred=235;$colgreen=235;$colblue=235;
@@ -104,8 +108,8 @@ $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
 $colorbackbody='#ffffff url('.$img_head.') 0 0 no-repeat;';
 $colortext='40,40,40';
-$fontsize=empty($conf->browser->phone)?'12':'14';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'14';
+$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
+$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
 
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
@@ -171,7 +175,7 @@ else $colortextmain='101010';
 $usecss3=true;
 if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
 elseif ($conf->browser->name == 'iceweasel') $usecss3=false;
-elseif ($conf->browser->name == 'epiphany') $usecss3=false;
+elseif ($conf->browser->name == 'epiphany')  $usecss3=false;
 
 print '/*'."\n";
 print 'colred='.$colred.' colgreen='.$colgreen.' colblue='.$colblue."\n";
@@ -183,8 +187,14 @@ print 'colorbacklinepair1='.$colorbacklinepair1."\n";
 print 'colorbacklinepair2='.$colorbacklinepair2."\n";
 print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
 print 'usecss3='.$usecss3."\n";
+print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
+print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
+print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
+print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
+print 'dol_use_jmobile='.$dol_use_jmobile."\n";
 print '*/'."\n";
 
+if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 ?>
 
 /* ============================================================================== */
@@ -192,7 +202,7 @@ print '*/'."\n";
 /* ============================================================================== */
 
 body {
-<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->browser->phone)) {  ?>
+<?php if (GETPOST("optioncss") == 'print' || ! empty($conf->dol_optimize_smallscreen)) {  ?>
 	background-color: #FFFFFF;
 <?php } else { ?>
 	background: <?php print $colorbackbody; ?>;
@@ -301,6 +311,11 @@ div.float
 {
     float:<?php print $left; ?>;
 }
+div.floatright
+{
+    float:<?php print $right; ?>;
+}
+
 th .button {
     -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
@@ -332,7 +347,7 @@ th .button {
 /* ============================================================================== */
 
 .hideobject { display: none; }
-<?php if (! empty($conf->browser->phone)) { ?>
+<?php if (! empty($conf->dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 <?php } ?>
 .linkobject { cursor: pointer; }
@@ -359,7 +374,7 @@ td.showDragHandle {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->browser->phone)?'12':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
 }
 
 div.fichecenter {
@@ -367,25 +382,25 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 35%;\n"; } ?>
-	<?php if (! empty($conf->browser->phone)) { print "padding-bottom: 6px;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 35%;\n"; } ?>
+	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 65%;\n"; } ?>
-	<?php if (! empty($conf->browser->phone)) { print "padding-bottom: 6px\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 65%;\n"; } ?>
+	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->browser->phone))   { print "padding-left: 16px;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } ?>
 }
 
 
@@ -394,7 +409,7 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->browser->phone))
+if (! empty($conf->dol_optimize_smallscreen))
 {
 	$minwidthtmenu=0;
 	$heightmenu=19;
@@ -565,7 +580,7 @@ div.mainmenu {
 	min-width: 40px;
 }
 
-<?php if (empty($conf->browser->phone)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
@@ -795,7 +810,7 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
     margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
@@ -808,7 +823,7 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;
 	color: white;
@@ -953,7 +968,7 @@ div.blockvmenubookmarksold
 
 div.blockvmenuhelp
 {
-<?php if (empty($conf->browser->phone)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
     width:174px;
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
@@ -1089,7 +1104,7 @@ img.toolbarbutton {
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -1098,7 +1113,7 @@ img.toolbarbutton {
 /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
 .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
     background: #DDD;
-    width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px;
+    width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px;
 }
 .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
     border-left:  1px solid #BBB;
@@ -1134,7 +1149,7 @@ img.toolbarbutton {
  *  TOGGLER-BUTTONS
  */
 .ui-layout-toggler {
-    <?php if (empty($conf->browser->phone)) { ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { ?>
     border-top: 1px solid #AAA; /* match pane-border */
     border-right: 1px solid #AAA; /* match pane-border */
     border-bottom: 1px solid #AAA; /* match pane-border */
@@ -1146,14 +1161,14 @@ img.toolbarbutton {
 }
 .ui-layout-toggler-open {
 	height: 54px !important;
-	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'7':'22'); ?>px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
 	border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
-	height: <?php echo (empty($conf->browser->phone)?'54':'2'); ?>px !important;
-	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+	height: <?php echo (empty($conf->dol_optimize_smallscreen)?'54':'2'); ?>px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'7':'22'); ?>px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
 	border-radius:0px 10px 10px 0px;
@@ -1172,7 +1187,7 @@ img.toolbarbutton {
 }
 
 .ui-layout-north {
-	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
+	height: <?php print (empty($conf->dol_optimize_smallscreen)?'54':'21'); ?>px !important;
 }
 
 
@@ -1374,6 +1389,8 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
+div.divbutaction { margin-bottom: 1.4em; }
+
 .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
@@ -1382,8 +1399,8 @@ span.tabspan {
 	color: #434956;
 	text-decoration: none;
 	white-space: nowrap;
-	padding: 0.4em 0.7em;
-	margin: 0em 0.7em;
+	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.9':'0.7'); ?>em;
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
 	border-radius:0px 5px 0px 5px;

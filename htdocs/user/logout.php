@@ -61,8 +61,10 @@ $url=DOL_URL_ROOT."/index.php";		// By default go to login page
 if ($urlfrom) $url=DOL_URL_ROOT.$urlfrom;
 if (! empty($conf->global->MAIN_LOGOUT_GOTO_URL)) $url=$conf->global->MAIN_LOGOUT_GOTO_URL;
 
-if (GETPOST('dol_hide_topmenu'))  $url.=(preg_match('/\?/',$url)?'&':'?').'dol_hide_topmenu=1';
-if (GETPOST('dol_hide_leftmenu')) $url.=(preg_match('/\?/',$url)?'&':'?').'dol_hide_leftmenu=1';
+if (GETPOST('dol_hide_topmenu'))         $url.=(preg_match('/\?/',$url)?'&':'?').'dol_hide_topmenu=1';
+if (GETPOST('dol_hide_leftmenu'))        $url.=(preg_match('/\?/',$url)?'&':'?').'dol_hide_leftmenu=1';
+if (GETPOST('dol_optimize_smallscreen')) $url.=(preg_match('/\?/',$url)?'&':'?').'dol_optimize_smallscreen=1';
+if (GETPOST('dol_no_mouse_over'))        $url.=(preg_match('/\?/',$url)?'&':'?').'dol_no_mouse_over=1';
 
 // Destroy session
 $prefix=dol_getprefix();

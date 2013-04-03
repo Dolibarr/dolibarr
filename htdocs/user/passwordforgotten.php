@@ -153,20 +153,13 @@ $title='Dolibarr '.DOL_VERSION;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 // Select templates
-if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
+if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php"))
 {
-    $template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
+    $template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 }
 else
 {
-    if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php"))
-    {
-        $template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
-    }
-    else
-    {
-        $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
-    }
+    $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
 
 // Note: $conf->css looks like '/theme/eldy/style.css.php'

@@ -422,8 +422,9 @@ class Form
                 $htmltext = '';
             }
         }
-        // If info or help with smartphone, show only text
-        if (! empty($conf->browser->phone))
+
+        // If info or help with smartphone, show only text (tooltip can't works)
+        if (! empty($conf->dol_no_mouse_hover))
         {
             if ($type == 'info' || $type == 'help') return $text;
         }

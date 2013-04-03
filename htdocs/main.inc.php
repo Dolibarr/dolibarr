@@ -418,6 +418,11 @@ if (! defined('NOLOGIN'))
                 $dol_dst_second=$_POST["dst_second"];
                 $dol_screenwidth=$_POST["screenwidth"];
                 $dol_screenheight=$_POST["screenheight"];
+                $dol_hide_topmenu=$_POST['dol_hide_topmenu'];
+                $dol_hide_leftmenu=$_POST['dol_hide_leftmenu'];
+                $dol_optimize_smallscreen=$_POST['dol_optimize_smallscreen'];
+                $dol_no_mouse_hover=$_POST['dol_no_mouse_hover'];
+                $dol_use_jmobile=$_POST['dol_use_jmobile'];
             }
 
             if (! $login)
@@ -526,8 +531,8 @@ if (! defined('NOLOGIN'))
             exit;
         }
         else
-        {
-            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default
+       {
+            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming)
             {
                 // Call triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -545,9 +550,10 @@ if (! defined('NOLOGIN'))
     // If we are here, this means authentication was successfull.
     if (! isset($_SESSION["dol_login"]))
     {
-        $error=0;
+        // New session for this login.
+    	$error=0;
 
-        // New session for this login
+    	// Store value into session (values always stored)
         $_SESSION["dol_login"]=$user->login;
         $_SESSION["dol_authmode"]=isset($dol_authmode)?$dol_authmode:'';
         $_SESSION["dol_tz"]=isset($dol_tz)?$dol_tz:'';
@@ -560,8 +566,13 @@ if (! defined('NOLOGIN'))
         $_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
         $_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
         $_SESSION["dol_entity"]=$conf->entity;
-        if (GETPOST('dol_hide_topmenu')) $_SESSION['dol_hide_topmenu']=1;
-        if (GETPOST('dol_hide_leftmenu')) $_SESSION['dol_hide_leftmenu']=1;
+    	// Store value into session (values stored only if defined)
+        if (! empty($dol_hide_topmenu))         $_SESSION['dol_hide_topmenu']=$dol_hide_topmenu;
+        if (! empty($dol_hide_leftmenu))        $_SESSION['dol_hide_leftmenu']=$dol_hide_leftmenu;
+        if (! empty($dol_optimize_smallscreen)) $_SESSION['dol_optimize_smallscreen']=$dol_optimize_smallscreen;
+        if (! empty($dol_no_mouse_hover))       $_SESSION['dol_no_mouse_hover']=$dol_no_mouse_hover;
+        if (! empty($dol_use_jmobile))          $_SESSION['dol_use_jmobile']=$dol_use_jmobile;
+
         dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
         $db->begin();
@@ -630,32 +641,47 @@ if (! defined('NOLOGIN'))
 
     /*
      * Overwrite configs global by personal configs
-    */
+     */
+
     // Set liste_limit
-    if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
-    {
-        $conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
-    }
-    if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
-    {
-        $conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
-    }
+    if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;		// Can be 0
+    if (isset($user->conf->PRODUIT_LIMIT_SIZE))	$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;	// Can be 0
+
     // Replace conf->css by personalized value
     if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
     {
         $conf->theme=$user->conf->MAIN_THEME;
         $conf->css  = "/theme/".$conf->theme."/style.css.php";
     }
+}
 
-    // Set javascript option
-    if (! GETPOST('nojs'))   // If javascript was not disabled on URL
-    {
-        if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
-        {
-            $conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
-        }
-    }
-    else $conf->use_javascript_ajax=0;
+// Case forcing style from url
+if (GETPOST('theme'))
+{
+	$conf->theme=GETPOST('theme','alpha',1);
+	$conf->css  = "/theme/".$conf->theme."/style.css.php";
+}
+
+// Set javascript option
+if (! GETPOST('nojs'))   // If javascript was not disabled on URL
+{
+	if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
+	{
+		$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
+	}
+}
+else $conf->use_javascript_ajax=0;
+
+// Set terminal output option
+if (GETPOST('dol_hide_leftmenu') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
+if (GETPOST('dol_hide_topmenu') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
+if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
+if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
+if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
+if (! empty($conf->browser->phone))
+{
+	$conf->dol_optimize_smallscreen=1;
+	$conf->dol_no_mouse_hover=1;
 }
 
 if (! defined('NOREQUIRETRAN'))
@@ -673,19 +699,7 @@ if (! defined('NOREQUIRETRAN'))
             }
         }
     }
-/*    else	// If language was forced on URL
-    {
-        $langs->setDefaultLang(GETPOST('lang','alpha',1));
-    }*/
 }
-
-// Case forcing style from url
-if (GETPOST('theme'))
-{
-    $conf->theme=GETPOST('theme','alpha',1);
-    $conf->css  = "/theme/".$conf->theme."/style.css.php";
-}
-
 
 if (! defined('NOLOGIN'))
 {
@@ -775,16 +789,14 @@ if (! defined('NOREQUIREMENU'))
 	if (empty($user->societe_id))    // If internal user or not defined
 	{
 		$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
-		$conf->smart_menu=(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENU_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENU_SMARTPHONE):$conf->global->MAIN_MENU_SMARTPHONE_FORCED);
 	}
 	else                        // If external user
 	{
 		$conf->standard_menu=(empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED)?(empty($conf->global->MAIN_MENUFRONT_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENUFRONT_STANDARD):$conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
-		$conf->smart_menu=(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE)?'smartphone_menu.php':$conf->global->MAIN_MENUFRONT_SMARTPHONE):$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED);
 	}
 
 	// Load the menu manager (only if not already done)
-	$file_menu=empty($conf->browser->phone)?$conf->standard_menu:$conf->smart_menu;
+	$file_menu=$conf->standard_menu;
 	if (GETPOST('menu')) $file_menu=GETPOST('menu');     // example: menu=eldy_menu.php
 	if (! class_exists('MenuManager'))
 	{
@@ -947,7 +959,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css" />'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || GETPOST('jmobile'))
+            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
             }
@@ -971,8 +983,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         }
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))  $themeparam.='&amp;dol_hide_topmenu=1';
-        if (GETPOST('dol_hide_leftmenu')) $themeparam.='&amp;dol_hide_leftmenu=1';
+        if (GETPOST('dol_hide_topmenu'))           $themeparam.='&amp;dol_hide_topmenu=1';
+        if (GETPOST('dol_hide_leftmenu'))          $themeparam.='&amp;dol_hide_leftmenu=1';
+        if (GETPOST('dol_optimize_smallscreen'))   $themeparam.='&amp;dol_optimize_smallscreen=1';
+        if (GETPOST('dol_no_mouse_hover'))         $themeparam.='&amp;dol_no_mouse_hover=1';
+        if (GETPOST('dol_use_jmobile'))            $themeparam.='&amp;dol_use_jmobile=1';
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
@@ -1112,7 +1127,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || GETPOST('jmobile'))
+            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
             }
@@ -1247,7 +1262,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						//togglerLength_open: 0,
 						//	effect defaults - overridden on some panes
 						//slideTrigger_open:	"mouseover",
-						initClosed:	'.(empty($conf->browser->phone)?'false':'true').',
+						initClosed:	'.(empty($conf->dol_optimize_smallscreen)?'false':'true').',
 						fxName:	"drop",
 						fxSpeed: "fast",
 						fxSettings: { easing: "" }
@@ -1630,21 +1645,6 @@ function main_area($title='')
     print "\n";
 
     print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
-    if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
-    {
-        print '<div data-role="page"> <!-- begin div data-role="page" -->';
-
-        print '<div data-role="header" data-nobackbtn="false" data-theme="b">';
-        print '<div id="dol-homeheader">'."\n";
-        $appli='Dolibarr';
-        if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
-        print $appli;
-        print '</div>'."\n";
-        print '</div>'."\n";
-        print "\n";
-
-        print '<div data-role="content"> <!-- begin div data-role="content" -->'."\n";
-    }
     if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
 
@@ -1762,11 +1762,6 @@ if (! function_exists("llxFooter"))
         }
 
         print "\n\n";
-        if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
-        {
-            print '</div> <!-- end div data-role="content" -->'."\n";
-            print '</div> <!-- end div data-role="page" -->'."\n";
-        }
         print '</div> <!-- end div class="fiche" -->'."\n";
 
 
