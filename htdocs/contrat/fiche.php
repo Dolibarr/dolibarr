@@ -158,7 +158,7 @@ if (GETPOST('remonth') && GETPOST('reday') && GETPOST('reyear'))
 
 if ($action == 'add' && $user->rights->contrat->creer)
 {
-	
+
 	// Check
 	if (empty($datecontrat))
 	{
@@ -166,14 +166,14 @@ if ($action == 'add' && $user->rights->contrat->creer)
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 		$action='create';
 	}
-	
+
 	if ($socid<1)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		$action='create';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$object->socid						= $socid;
@@ -437,7 +437,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         {
             $pu_ht=GETPOST('price_ht');
             $price_base_type = 'HT';
-            $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0 
+            $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
             $desc=GETPOST('dp_desc');
         }
@@ -976,9 +976,9 @@ else
         	{
         		$numref = $object->ref;
         	}
-        	
+
         	$text=$langs->trans('ConfirmValidateContract',$numref);
-            
+
             $ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
             if ($ret == 'html') print '<br>';
         }
@@ -1595,26 +1595,26 @@ else
 
             if ($object->statut == 0 && $nbofservices)
             {
-                if ($user->rights->contrat->creer) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-                else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
+                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
 
             if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
                 $langs->load("bills");
-                if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a>';
-                else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+                if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
             }
 
             if ($object->nbofservicesclosed < $nbofservices)
             {
                 //if (! $numactive)
                 //{
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
                 //}
                 //else
                 //{
-                //	print '<a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a>';
+                //	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
                 //}
             }
 
@@ -1623,11 +1623,11 @@ else
             // - Droit de supprimer
             if (($user->rights->contrat->creer && $object->statut == 0) || $user->rights->contrat->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
             }
             else
             {
-            	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a>';
+            	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
             }
 
             print "</div>";

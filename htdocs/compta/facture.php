@@ -3243,16 +3243,16 @@ else if ($id > 0 || ! empty($ref))
                         {
                             if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate)
                             {
-                                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+                                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
                             }
                             else
                             {
-                                print '<span class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Modify').'</span>';
+                                print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('Modify').'</span></div>';
                             }
                         }
                         else
                         {
-                            print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Modify').'</span>';
+                            print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Modify').'</span></div>';
                         }
                     }
                 }
@@ -3262,11 +3262,11 @@ else if ($id > 0 || ! empty($ref))
                 {
                     if (! $objectidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
                     {
-                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
                     }
                     else
                     {
-                        print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+                        print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span></div>';
                     }
                 }
 
@@ -3279,7 +3279,7 @@ else if ($id > 0 || ! empty($ref))
                 {
                     if ($user->rights->facture->valider)
                     {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=valid">'.$langs->trans('Validate').'</a></div>';
                     }
                 }
 
@@ -3288,15 +3288,15 @@ else if ($id > 0 || ! empty($ref))
                 {
                     if ($objectidnext)
                     {
-                        print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span>';
+                        print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span></div>';
                     }
                     else
                     {
                         if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send)
                         {
-                            print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
                         }
-                        else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                        else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
                     }
                 }
 
@@ -3306,15 +3306,15 @@ else if ($id > 0 || ! empty($ref))
                     {
                         if ($objectidnext)
                         {
-                            print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
+                            print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span></div>';
                         }
                         else
                         {
                             if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send)
                             {
-                                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=prerelance&amp;mode=init">'.$langs->trans('SendRemindByMail').'</a>';
+                                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=prerelance&amp;mode=init">'.$langs->trans('SendRemindByMail').'</a></div>';
                             }
-                            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendRemindByMail').'</a>';
+                            else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendRemindByMail').'</a></div>';
                         }
                     }
                 }
@@ -3324,17 +3324,17 @@ else if ($id > 0 || ! empty($ref))
                 {
                     if ($objectidnext)
                     {
-                        print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span>';
+                        print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span></div>';
                     }
                     else
                     {
                         if ($resteapayer == 0)
                         {
-                            print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span>';
+                            print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
                         }
                         else
                         {
-                            print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+                            print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
                         }
                     }
                 }
@@ -3345,17 +3345,17 @@ else if ($id > 0 || ! empty($ref))
                     // For credit note only
                     if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement)
                     {
-                        print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a></div>';
                     }
                     // For credit note
                     if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0)
                     {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
                     }
                     // For deposit invoice
                     if ($object->type == 3 && $object->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer)
                     {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
                     }
                 }
 
@@ -3363,7 +3363,7 @@ else if ($id > 0 || ! empty($ref))
                 if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement &&
                 (($object->type != 2 && $object->type != 3 && $resteapayer <= 0) || ($object->type == 2 && $resteapayer >= 0)) )
                 {
-                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
                 }
 
                 // Classify 'closed not completely paid' (possible si validee et pas encore classee payee)
@@ -3373,17 +3373,17 @@ else if ($id > 0 || ! empty($ref))
                     if ($totalpaye > 0 || $totalcreditnotes > 0)
                     {
                         // If one payment or one credit note was linked to this invoice
-                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a></div>';
                     }
                     else
                     {
                         if ($objectidnext)
                         {
-                            print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ClassifyCanceled').'</span>';
+                            print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ClassifyCanceled').'</span></div>';
                         }
                         else
                         {
-                            print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+                            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a></div>';
                         }
                     }
                 }
@@ -3391,7 +3391,7 @@ else if ($id > 0 || ! empty($ref))
                 // Clone
                 if (($object->type == 0 || $object->type == 3 || $object->type == 4) && $user->rights->facture->creer)
                 {
-                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a></div>';
                 }
 
                 // Clone as predefined
@@ -3399,7 +3399,7 @@ else if ($id > 0 || ! empty($ref))
                 {
                     if (! $objectidnext)
                     {
-                        print '<a class="butAction" href="facture/fiche-rec.php?facid='.$object->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+                        print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid='.$object->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a></div>';
                     }
                 }
 
@@ -3408,24 +3408,24 @@ else if ($id > 0 || ! empty($ref))
                 {
                     if (! $object->is_erasable())
                     {
-                        print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a></div>';
                     }
                     else if ($objectidnext)
                     {
-                        print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a></div>';
                     }
                     elseif ($object->getSommePaiement())
                     {
-                        print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecausePayments").'">'.$langs->trans('Delete').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecausePayments").'">'.$langs->trans('Delete').'</a></div>';
                     }
                     else
                     {
-                        print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                        print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
                     }
                 }
                 else
                 {
-                    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+                    print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a></div>';
                 }
 
                 print '</div>';

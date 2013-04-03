@@ -997,7 +997,7 @@ else
 
     // Actions buttons
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a></div>';
     print '</div>';
 
     print '<br>';

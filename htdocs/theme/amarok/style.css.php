@@ -188,6 +188,10 @@ div.floatright
 {
     float:<?php print $right; ?>;
 }
+div.inline-block
+{
+	display:inline-block;
+}
 
 .valignmiddle {
 	vertical-align: middle;
@@ -860,7 +864,7 @@ div.ficheaddleft {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divbutaction { margin-bottom: 1.4em; }
+div.divButAction { margin-bottom: 1.4em; }
 
 .button, .butAction {background: #999; border: solid 1px #888; font-weight: normal; }
 .butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;}

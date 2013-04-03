@@ -118,7 +118,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
 	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
 	print "</div>";
 }
 

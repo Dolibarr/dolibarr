@@ -790,30 +790,30 @@ if ($id > 0)
 	/*
 	 * Barre d'actions
 	 */
-	print '<div class="tabsAction" style="clear: both;">';
+	print '<div class="tabsAction">';
 
 	if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
 	{
 		$langs->load("propal");
-		print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 	}
 
 	if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
 	{
 		$langs->load("orders");
-		print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
 	}
 
 	if ($user->rights->contrat->creer)
 	{
 		$langs->load("contracts");
-		print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 	}
 
 	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
 	{
 		$langs->load("fichinter");
-		print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 	}
 
 	// Add invoice
@@ -822,7 +822,7 @@ if ($id > 0)
 		if (! empty($conf->deplacement->enabled))
 		{
 			$langs->load("trips");
-			print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
 		}
 
 		if (! empty($conf->facture->enabled))
@@ -834,17 +834,17 @@ if ($id > 0)
 
 				if (! empty($conf->commande->enabled))
 				{
-					if($orders2invoice > 0) print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-					else print '<div class="floatright divbutaction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+					if($orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 
-				if ($object->client != 0) print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
-				else print '<div class="floatright divbutaction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				if ($object->client != 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+				else print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 
 			}
 			else
 			{
-				print '<div class="floatright divbutaction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 			}
 		}
 	}
@@ -854,11 +854,11 @@ if ($id > 0)
 	{
 		if ($user->rights->agenda->myactions->create)
 		{
-			print '<div class="floatright divbutaction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
 		}
 		else
 		{
-			print '<div class="floatright divbutaction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
 		}
 	}
 

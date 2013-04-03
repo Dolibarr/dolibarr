@@ -86,7 +86,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$adht->note        = trim($_POST["comment"]);
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
-		
+
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
 
@@ -126,7 +126,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
-		
+
 		$adht->update($user->id);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
@@ -218,7 +218,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	// New type
 	if ($user->rights->adherent->configurer)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a></div>';
 	}
 
 	print "</div>";
@@ -264,7 +264,7 @@ if ($action == 'create')
 	$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 	$doleditor->Create();
 	print '</td></tr>';
-	
+
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
@@ -273,7 +273,7 @@ if ($action == 'create')
 		print $adht->showOptionals($extrafields,'edit');
 	}
 	print "</table>\n";
-	
+
 	print '<br>';
 	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
@@ -352,16 +352,16 @@ if ($rowid > 0)
 		// Edit
 		if ($user->rights->adherent->configurer)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$adht->id.'">'.$langs->trans("Modify").'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$adht->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
-		print '<a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
 		if ($user->rights->adherent->configurer)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$adht->id.'">'.$langs->trans("DeleteType").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$adht->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";
@@ -370,7 +370,7 @@ if ($rowid > 0)
 		// Show list of members (nearly same code than in page liste.php)
 
 		$membertypestatic=new AdherentType($db);
-		
+
 		$now=dol_now();
 
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
@@ -662,13 +662,13 @@ if ($rowid > 0)
 		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 		$doleditor->Create();
 		print "</td></tr>";
-		
+
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
-		
+
 		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{

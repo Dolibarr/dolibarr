@@ -167,7 +167,7 @@ if ($id)
 
     if ($user->rights->adherent->creer && $action != 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+        print '<div class="inline-block divButAction"><a class="butAction" href="note.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify')."</a></div>";
     }
 
     print "</div>";

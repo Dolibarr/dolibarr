@@ -1832,7 +1832,7 @@ else
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 		}
 
-		// TODO : use showOptionals($extrafields) function 
+		// TODO : use showOptionals($extrafields) function
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
 	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
@@ -2033,21 +2033,21 @@ else
 			// Validate
 			if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 && $user->rights->propal->valider)
 			{
-			    if (count($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+			    if (count($object->lines) > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a></div>';
 			    //else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
 
 			// Edit
 			if ($object->statut == 1 && $user->rights->propal->creer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
 			}
 
 			// ReOpen
 			if (($object->statut == 2 || $object->statut == 3) && $user->rights->propal->cloturer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
-				print '>'.$langs->trans('ReOpen').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
+				print '>'.$langs->trans('ReOpen').'</a></div>';
 			}
 
 			// Send
@@ -2055,9 +2055,9 @@ else
 			{
 	            if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send)
 	            {
-				   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+				   print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
 	            }
-	            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+	            else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 			}
 
 	        // Create an order
@@ -2065,7 +2065,7 @@ else
 	        {
 	            if ($user->rights->commande->creer)
 	            {
-	                print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a></div>';
 	            }
 	        }
 
@@ -2076,7 +2076,7 @@ else
 
 				if ($user->rights->contrat->creer)
 				{
-				  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
+				  print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a></div>';
 				}
             }
 
@@ -2085,34 +2085,34 @@ else
 			{
 				if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
 				}
 
 				$arraypropal=$object->getInvoiceArrayList();
 				if (is_array($arraypropal) && count($arraypropal) > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a></div>';
 				}
 			}
 
 			// Close
 			if ($object->statut == 1 && $user->rights->propal->cloturer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
-				print '>'.$langs->trans('Close').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
+				print '>'.$langs->trans('Close').'</a></div>';
 			}
 
 			// Clone
 			if ($user->rights->propal->creer)
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
 			// Delete
 			if ($user->rights->propal->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
-				print '>'.$langs->trans('Delete').'</a>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+				print '>'.$langs->trans('Delete').'</a></div>';
 			}
 
 		}

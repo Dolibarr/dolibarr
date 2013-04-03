@@ -286,7 +286,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->public      = $_POST["public"];
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		// Check if we need to also synchronize user information
 		$nosyncuser=0;
@@ -458,7 +458,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->public      = $public;
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	// Check parameters
 	if (empty($morphy) || $morphy == "-1") {
@@ -1528,11 +1528,11 @@ else
 			// Modify
 			if ($user->rights->adherent->creer)
 			{
-				print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=edit">'.$langs->trans("Modify")."</a></div>";
 			}
 			else
 			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Modify")."</font>";
+				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
 			}
 
 			// Valider
@@ -1540,11 +1540,11 @@ else
 			{
 				if ($user->rights->adherent->creer)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Validate")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>';
 				}
 			}
 
@@ -1553,11 +1553,11 @@ else
 			{
 				if ($user->rights->adherent->creer)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Reenable")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
 				}
 			}
 
@@ -1566,17 +1566,17 @@ else
 			{
 				if ($object->statut >= 1)
 				{
-					if ($object->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
-					else print "<a class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NoEMail"))."\">".$langs->trans("SendCardByMail")."</a>\n";
+					if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a></div>\n";
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("ValidateBefore"))."\">".$langs->trans("SendCardByMail")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 				}
 			}
 			else
 			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
+				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 			}
 
 			// Resilier
@@ -1584,11 +1584,11 @@ else
 			{
 				if ($user->rights->adherent->supprimer)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Resiliate")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
 				}
 			}
 
@@ -1597,12 +1597,12 @@ else
 			{
 				if ($user->rights->societe->creer)
 				{
-					if ($object->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
-					else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+					if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrThirdParty")."</font></div>";
 				}
 			}
 
@@ -1611,23 +1611,23 @@ else
 			{
 				if ($user->rights->user->user->creer)
 				{
-					if ($object->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
-					else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+					if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrLogin")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
 				}
 			}
 
 			// Delete
 			if ($user->rights->adherent->supprimer)
 			{
-				print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$object->id&action=delete\">".$langs->trans("Delete")."</a>\n";
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="fiche.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>\n";
 			}
 			else
 			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Delete")."</font>";
+				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 			}
 
 			// Action SPIP
@@ -1637,21 +1637,22 @@ else
 
 				if ($isinspip == 1)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip")."</a></div>\n";
 				}
 				if ($isinspip == 0)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=add_spip\">".$langs->trans("AddIntoSpip")."</a>\n";
-				}
-				if ($isinspip == -1)
-				{
-					print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 				}
 			}
 
 		}
 
 		print '</div>';
+
+		if ($isinspip == -1)
+		{
+			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+		}
 		print "<br>\n";
 
 	}

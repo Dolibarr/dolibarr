@@ -174,6 +174,10 @@ div.floatright
 {
     float:<?php print $right; ?>;
 }
+div.inline-block
+{
+	display:inline-block;
+}
 
 .valignmiddle {
 	vertical-align: middle;
@@ -1217,7 +1221,7 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divbutaction { margin-bottom: 1.4em; }
+div.divButAction { margin-bottom: 1.4em; }
 
 .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;

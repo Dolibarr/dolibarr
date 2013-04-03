@@ -397,7 +397,7 @@ if ($action == 'create')
 	}
 
 	dol_set_focus("#label");
-	
+
     if (! empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript">';
@@ -596,7 +596,7 @@ if ($action == 'create')
 	{
 		print $actioncomm->showOptionals($extrafields,'edit');
 	}
-	
+
 	print '</table>';
 
 	print '<center><br>';
@@ -1026,30 +1026,30 @@ if ($id > 0)
 		if ($user->rights->agenda->allactions->create ||
 		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->create))
 		{
-			print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		if ($user->rights->agenda->allactions->delete ||
 		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->delete))
 		{
-			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
 
 	print '</div>';
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 
 
 /**

@@ -994,7 +994,7 @@ if ($action == 'create')
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
-        
+
         // Show link to origin object
         if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
         {
@@ -1002,7 +1002,7 @@ if ($action == 'create')
         	if ($newclassname=='Propal') $newclassname='CommercialProposal';
         	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         }
-        
+
         print '</table>';
 
 	    if (is_object($objectsrc))
@@ -1381,15 +1381,15 @@ else if ($id > 0 || ! empty($ref))
             // Validate
             if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
-                print '>'.$langs->trans("Valid").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
+                print '>'.$langs->trans("Valid").'</a></div>';
             }
 
             // Modify
             if ($object->statut == 1 && $user->rights->ficheinter->creer)
             {
-                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
-                print '>'.$langs->trans("Modify").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
+                print '>'.$langs->trans("Modify").'</a></div>';
             }
 
             // Send
@@ -1397,9 +1397,9 @@ else if ($id > 0 || ! empty($ref))
             {
                 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
                 {
-                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
                 }
-                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
             }
 
         	// Invoicing
@@ -1408,15 +1408,15 @@ else if ($id > 0 || ! empty($ref))
 				$langs->load("bills");
                 if ($object->statut < 2)
                 {
-					if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-					else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+					if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
                 }
 
                 if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))
                 {
 	                if ($object->statut != 2)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a></div>';
 					}
 	            }
             }
@@ -1424,8 +1424,8 @@ else if ($id > 0 || ! empty($ref))
             // Delete
             if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
-                print '>'.$langs->trans('Delete').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+                print '>'.$langs->trans('Delete').'</a></div>';
             }
 
         }

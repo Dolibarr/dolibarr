@@ -169,6 +169,10 @@ div.floatright
 {
     float:<?php print $right; ?>;
 }
+div.inline-block
+{
+	display:inline-block;
+}
 
 .valignmiddle {
 	vertical-align: middle;
@@ -1109,7 +1113,7 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divbutaction { margin-bottom: 1.4em; }
+div.divButAction { margin-bottom: 1.4em; }
 
 .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
