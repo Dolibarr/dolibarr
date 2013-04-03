@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2007-2013 Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ create table llx_user
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			    -- temporary password when asked for forget password
   civilite          varchar(6),
-  name              varchar(50),
+  lastname          varchar(50),
   firstname         varchar(50),
   address           varchar(255),                        		-- user personal address
   zip               varchar(25),                         		-- zipcode
