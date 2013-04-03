@@ -88,16 +88,6 @@ llxHeader();
 print_fiche_titre($langs->trans("CustomerArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-/*
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-print '<tr>';
-if ((! empty($conf->propal->enabled) && $user->rights->propale->lire) ||
-    (! empty($conf->contrat->enabled) && $user->rights->contrat->lire) ||
-    (! empty($conf->commande->enabled) && $user->rights->commande->lire))
-{
-	print '<td valign="top" width="30%" class="notopnoleft">';
-}
-*/
 
 // Recherche Propal
 if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
@@ -259,17 +249,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 }
 
 
-/*if ((! empty($conf->propal->enabled) && $user->rights->propale->lire) ||
-    (! empty($conf->contrat->enabled) && $user->rights->contrat->lire) ||
-    (! empty($conf->commande->enabled) && $user->rights->commande->lire))
-{
-	print '</td>';
-	print '<td valign="top" width="70%" class="notopnoleftnoright">';
-}
-else
-{
-	print '<td valign="top" width="100%" class="notopnoleftnoright">';
-}*/
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -545,7 +524,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 }
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 llxFooter();

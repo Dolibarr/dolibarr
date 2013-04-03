@@ -1400,7 +1400,7 @@ div.divbutaction { margin-bottom: 1.4em; }
 	text-decoration: none;
 	white-space: nowrap;
 	padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.9':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
 	border-radius:0px 5px 0px 5px;
@@ -2492,7 +2492,7 @@ div.ecmjqft {
 	bottom: 4px !important;
 <?php } ?>
 	text-align: center;
-	min-width: 500px;
+	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
