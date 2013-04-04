@@ -143,8 +143,7 @@ $head = member_stats_prepare_head($adh);
 dol_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), 0, 'user');
 
 
-print '<table class="notopnoleftnopadd" width="100%"><tr>';
-print '<td align="center" valign="top">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 /*print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -210,8 +209,8 @@ foreach ($data as $val)
 print '</table>';
 
 
-print '</td>';
-print '<td align="center" valign="top">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 // Show graphs
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
@@ -223,7 +222,10 @@ else {
 }
 print '</td></tr></table>';
 
-print '</td></tr></table>';
+
+print '</div></div></div>';
+print '<div style="clear:both"></div>';
+
 
 dol_fiche_end();
 
