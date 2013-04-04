@@ -867,7 +867,7 @@ div.ficheaddleft {
 div.divButAction { margin-bottom: 1.4em; }
 
 .button, .butAction {background: #999; border: solid 1px #888; font-weight: normal; }
-.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;}
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;	cursor: not-allowed; }
 .butActionDelete {background: #b33c37; border:solid 1px #8d2f2b; font-weight: normal;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {
