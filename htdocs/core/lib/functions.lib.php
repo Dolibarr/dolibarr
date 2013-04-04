@@ -3598,7 +3598,9 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				$module=$reg[1];
 
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+				// Include the user's functions file
 				require_once $dir.$substitfile['name'];
+				// Call the user's function, and only if it is defined
 				$function_name=$module."_".$callfunc;
 				if (function_exists($function_name)) $function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}
