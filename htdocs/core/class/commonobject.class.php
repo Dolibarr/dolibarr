@@ -2196,7 +2196,7 @@ abstract class CommonObject
      * @param	object	$extrafields	extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield 
      * 
-     * return string	
+     * @return string	
      */
     function showOptionals($extrafields,$mode='view')
     {

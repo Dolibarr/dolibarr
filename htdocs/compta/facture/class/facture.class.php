@@ -559,7 +559,6 @@ class Facture extends CommonInvoice
      *		Load an object from its id and create a new one in database
      *
      *		@param		int				$socid			Id of thirdparty
-	 *		@param		HookManager		$hookmanager	Hook manager instance
      * 	 	@return		int								New id of clone
      */
     function createFromClone($socid=0)

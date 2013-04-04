@@ -202,14 +202,14 @@ $sql.= $where;
 if ($month > 0) {
 	if ($year > 0) {
 		$start = dol_mktime(0, 0, 0, $month, 1, $year);
-		$end = dol_time_plus_duree($start, 1 , 'm') - 1;
+		$end = dol_time_plus_duree($start,1,'m') - 1;
 		$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 	} else {
 		$sql.= " AND date_format(".$datePrint.", '%m') = '".sprintf('%02d',$month)."'";
 	}
 } else if ($year > 0) {
 	$start = dol_mktime(0, 0, 0, 1, 1, $year);
-	$end = dol_time_plus_duree($start, 1 , 'y') - 1;
+	$end = dol_time_plus_duree($start,1,'y') - 1;
 	$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 }
 if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";

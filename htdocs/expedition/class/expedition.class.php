@@ -1195,14 +1195,14 @@ class Expedition extends CommonObject
         {
             while ($obj = $this->db->fetch_object($resql))
             {
-                $this->listmeths[$i][rowid] = $obj->rowid;
-                $this->listmeths[$i][code] = $obj->code;
+                $this->listmeths[$i]['rowid'] = $obj->rowid;
+                $this->listmeths[$i]['code'] = $obj->code;
                 $label=$langs->trans('SendingMethod'.$obj->code);
-                $this->listmeths[$i][libelle] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
-                $this->listmeths[$i][description] = $obj->description;
+                $this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+                $this->listmeths[$i]['description'] = $obj->description;
                 if ($obj->tracking)
                 {
-                    $this->listmeths[$i][tracking] = $obj->tracking;
+                    $this->listmeths[$i]['tracking'] = $obj->tracking;
                 }
                 else
                 {
@@ -1214,11 +1214,11 @@ class Expedition extends CommonObject
                         {
                             require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($obj->code).'.modules.php';
                             $shipmethod = new $classname();
-                            $this->listmeths[$i][tracking] = $shipmethod->provider_url_status('{TRACKID}');
+                            $this->listmeths[$i]['tracking'] = $shipmethod->provider_url_status('{TRACKID}');
                         }
                     }
                 }
-                $this->listmeths[$i][active] = $obj->active;
+                $this->listmeths[$i]['active'] = $obj->active;
                 $i++;
             }
         }
@@ -1227,7 +1227,9 @@ class Expedition extends CommonObject
 
     /**
      *  Update/create delivery method.
-     *  @param      id      $id     id method to activate
+     *  
+     *  @param	string      $id     id method to activate
+     *  
      *  @return void
      */
     function update_delivery_method($id='')
@@ -1235,16 +1237,16 @@ class Expedition extends CommonObject
         if ($id=='')
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-            $sql.=" VALUES ('".$this->update[code]."','".$this->update[libelle]."','".$this->update[description]."','".$this->update[tracking]."')";
+            $sql.=" VALUES ('".$this->update['code']."','".$this->update['libelle']."','".$this->update['description']."','".$this->update['tracking']."')";
             $resql = $this->db->query($sql);
         }
         else
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-            $sql.= " code='".$this->update[code]."'";
-            $sql.= ",libelle='".$this->update[libelle]."'";
-            $sql.= ",description='".$this->update[description]."'";
-            $sql.= ",tracking='".$this->update[tracking]."'";
+            $sql.= " code='".$this->update['code']."'";
+            $sql.= ",libelle='".$this->update['libelle']."'";
+            $sql.= ",description='".$this->update['description']."'";
+            $sql.= ",tracking='".$this->update['tracking']."'";
             $sql.= " WHERE rowid=".$id;
             $resql = $this->db->query($sql);
         }
@@ -1253,7 +1255,9 @@ class Expedition extends CommonObject
 
     /**
      *  Activate delivery method.
+     *  
      *  @param      id      $id     id method to activate
+     *  
      *  @return void
      */
     function activ_delivery_method($id)
@@ -1267,7 +1271,9 @@ class Expedition extends CommonObject
 
     /**
      *  DesActivate delivery method.
+     *  
      *  @param      id      $id     id method to desactivate
+     *  
      *  @return void
      */
     function disable_delivery_method($id)

@@ -407,7 +407,7 @@ class Cronjob extends CommonObject
 
     	$sql.= " ORDER BY $sortfield $sortorder ";
     	if (!empty($limit) && !empty($offset)) {
-    		$sql.= $this->db->plimit( $limit + 1 ,$offset);
+    		$sql.= $this->db->plimit($limit + 1,$offset);
     	}
 
     	$sqlwhere = array();
@@ -1061,7 +1061,8 @@ class Cronjob extends CommonObject
 /**
  *	Crob Job line class
  */
-class Cronjobline{
+class Cronjobline
+{
 
 	var $id;
 	var $ref;
