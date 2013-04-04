@@ -121,14 +121,14 @@ class doc_generic_order_odt extends ModelePDFCommandes
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,
         );
-        
+
         // Add vat by rates
         foreach ($object->lines as $line)
         {
         	if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
         	$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
         }
-        
+
         return $resarray;
     }
 
@@ -260,6 +260,15 @@ class doc_generic_order_odt extends ModelePDFCommandes
 			return -1;
 		}
 
+                // Add odtgeneration hook
+                if (! is_object($hookmanager))
+                {
+                        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+                        $hookmanager=new HookManager($this->db);
+                }
+                $hookmanager->initHooks(array('odtgeneration'));
+                global $action;
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
@@ -346,6 +355,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
                     '__TOTAL_VAT__' => $object->total_vat
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
+                // Call the ODTSubstitution hook
+                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
+                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Line of free text
 				$newfreetext='';
@@ -445,6 +457,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				// Replace tags of object + external modules
 			    $tmparray=$this->get_substitutionarray_object($object,$outputlangs);
 			    complete_substitutions_array($tmparray, $outputlangs, $object);
+                                // Call the ODTSubstitution hook
+                                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+                                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 foreach($tmparray as $key=>$value)
                 {
                     try {
@@ -470,6 +485,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
                     {
                         $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
                         complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+                        // Call the ODTSubstitutionLine hook
+                        $parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
+                        $reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                         foreach($tmparray as $key => $val)
                         {
                              try
@@ -494,15 +512,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
                     return -1;
                 }
 
-				// Add odtgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
-				$hookmanager->initHooks(array('odtgeneration'));
-				$parameters=array('odfHandler'=>$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				global $action;
+                                // Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 // Write new file

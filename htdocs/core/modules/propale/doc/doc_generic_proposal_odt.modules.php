@@ -149,10 +149,10 @@ class doc_generic_proposal_odt extends ModelePDFPropales
         $texte.= '</table>';
 
 		// Scan directories
-		if (count($listofdir)) 
+		if (count($listofdir))
 		{
 			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
-			
+
 			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
 				// Model for creation
@@ -163,14 +163,14 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$texte.= '<td colspan="">';
 				$texte.= $form->selectarray('value2',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT);
 				$texte.= "</td></tr>";
-				
+
 				$texte.= '<tr>';
 				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
 				$texte.= '<td colspan="">';
 				$texte.= $form->selectarray('value3',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL);
 				$texte.= "</td></tr>";
 				$texte.= '<tr>';
-				
+
 				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
 				$texte.= '<td colspan="">';
 				$texte.= $form->selectarray('value4',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED);
@@ -178,9 +178,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$texte.= '</table>';
 			}
 		}
-		
 
-		
+
+
 		$texte.= '</td>';
 
 
@@ -221,6 +221,15 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
 			return -1;
 		}
+
+                // Add odtgeneration hook
+                if (! is_object($hookmanager))
+                {
+                        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+                        $hookmanager=new HookManager($this->db);
+                }
+                $hookmanager->initHooks(array('odtgeneration'));
+                global $action;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
@@ -308,6 +317,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                     '__TOTAL_VAT__' => $object->total_vat
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
+                // Call the ODTSubstitution hook
+                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
+                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Line of free text
 				$newfreetext='';
@@ -408,6 +420,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			    $tmparray=$this->get_substitutionarray_propal($object,$outputlangs);
 			    //print_r($tmparray); exit;
 			    complete_substitutions_array($tmparray, $outputlangs, $object);
+                                // Call the ODTSubstitution hook
+                                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+                                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 foreach($tmparray as $key=>$value)
                 {
                     try {
@@ -433,6 +448,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                     {
                         $tmparray=$this->get_substitutionarray_propal_lines($line,$outputlangs);
                         complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+                        // Call the ODTSubstitutionLine hook
+                        $parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
+                        $reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                         foreach($tmparray as $key => $val)
                         {
                              try
@@ -457,10 +475,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                     return -1;
                 }
 
-				// Add odtgeneration hook
-				$hookmanager->initHooks(array('odtgeneration'));
-				$parameters=array('odfHandler'=>$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				global $action;
+                                // Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 // Write new file
