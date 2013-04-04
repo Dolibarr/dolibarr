@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacementstats.class
 
 $langs->load("trips");
 
-$WIDTH=500;
-$HEIGHT=200;
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
 $socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
