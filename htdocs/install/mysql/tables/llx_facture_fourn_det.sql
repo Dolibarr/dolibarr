@@ -43,6 +43,7 @@ create table llx_facture_fourn_det
   product_type	    integer      DEFAULT 0,
   date_start        datetime   DEFAULT NULL,       -- date debut si service
   date_end          datetime   DEFAULT NULL,       -- date fin si service
+  info_bits						integer    DEFAULT 0,				-- TVA NPR ou non
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
   import_key        varchar(14)
 )ENGINE=innodb;

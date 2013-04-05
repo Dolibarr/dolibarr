@@ -95,7 +95,9 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
     $quantity=GETPOST("qty");
 	$remise_percent=price2num(GETPOST('remise_percent','alpha'));
-    $tva_tx=price2num(GETPOST('tva_tx','alpha'));
+    $npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
+    $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
+    $tva_tx = price2num($tva_tx);
 
 	if (empty($quantity))
 	{
@@ -156,7 +158,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 			if (isset($_POST['ref_fourn_price_id']))
 				$product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent);
+			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, $npr);
 			if ($ret < 0)
 			{
 				$error++;
