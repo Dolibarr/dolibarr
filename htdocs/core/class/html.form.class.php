@@ -3321,8 +3321,12 @@ class Form
 
         if ($d)
         {
+        	$usecalendar='combo';
+        	if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'eldy':$conf->global->MAIN_POPUP_CALENDAR;
+			if ($conf->browser->phone) $usecalendar='combo';
+
             // Show date with popup
-            if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none"))
+            if ($usecalendar != 'combo')
             {
             	$formated_date='';
                 //print "e".$set_time." t ".$conf->format_date_short;
@@ -3333,7 +3337,7 @@ class Form
                 }
 
                 // Calendrier popup version eldy
-                if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
+                if ($usecalendar == "eldy")
                 {
                     // Zone de saisie manuelle de la date
                     $retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
@@ -3355,14 +3359,13 @@ class Form
                     $retstring.='<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
                 }
                 else
-                {
-                    print "Bad value of calendar";
+              {
+                    print "Bad value of MAIN_POPUP_CALENDAR";
                 }
             }
-
             // Show date with combo selects
-            if (empty($conf->use_javascript_ajax) || $conf->global->MAIN_POPUP_CALENDAR == "none")
-            {
+            else
+			{
                 // Day
                 $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'day">';
 
@@ -3373,15 +3376,7 @@ class Form
 
                 for ($day = 1 ; $day <= 31; $day++)
                 {
-                    if ($day == $sday)
-                    {
-                        $retstring.="<option value=\"$day\" selected=\"selected\">$day";
-                    }
-                    else
-                    {
-                        $retstring.="<option value=\"$day\">$day";
-                    }
-                    $retstring.="</option>";
+                    $retstring.='<option value="'.$day.'"'.($day == $sday ? ' selected="selected"':'').'>'.$day.'</option>';
                 }
 
                 $retstring.="</select>";
@@ -3412,15 +3407,7 @@ class Form
 
                     for ($year = $syear - 5; $year < $syear + 10 ; $year++)
                     {
-                        if ($year == $syear)
-                        {
-                            $retstring.="<option value=\"$year\" selected=\"true\">".$year;
-                        }
-                        else
-                        {
-                            $retstring.="<option value=\"$year\">".$year;
-                        }
-                        $retstring.="</option>";
+                        $retstring.='<option value="'.$year.'"'.($year == $syear ? ' selected="true"':'').'>'.$year.'</option>';
                     }
                     $retstring.="</select>\n";
                 }
@@ -3436,21 +3423,11 @@ class Form
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
             {
-                if (dol_strlen($hour) < 2)
-                {
-                    $hour = "0" . $hour;
-                }
-                if ($hour == $shour)
-                {
-                    $retstring.="<option value=\"$hour\" selected=\"true\">$hour</option>";
-                }
-                else
-                {
-                    $retstring.="<option value=\"$hour\">$hour</option>";
-                }
+                if (strlen($hour) < 2) $hour = "0" . $hour;
+                $retstring.='<option value="'.$hour.'"'.(($hour == $shour)?' selected="true"':'').'>'.$hour.(empty($conf->dol_optimize_smallscreen)?'':'H').'</option>';
             }
-            $retstring.="</select>";
-            $retstring.="H\n";
+            $retstring.='</select>';
+            if (empty($conf->dol_optimize_smallscreen)) $retstring.=":";
         }
 
         if ($m)
@@ -3460,21 +3437,10 @@ class Form
             if ($empty) $retstring.='<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
             {
-                if (dol_strlen($min) < 2)
-                {
-                    $min = "0" . $min;
-                }
-                if ($min == $smin)
-                {
-                    $retstring.="<option value=\"$min\" selected=\"true\">$min</option>";
-                }
-                else
-                {
-                    $retstring.="<option value=\"$min\">$min</option>";
-                }
+                if (strlen($min) < 2) $min = "0" . $min;
+                $retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected="true"':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
             }
-            $retstring.="</select>";
-            $retstring.="M\n";
+            $retstring.='</select>';
         }
 
         // Add a "Now" button

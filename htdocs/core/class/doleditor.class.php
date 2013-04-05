@@ -65,7 +65,7 @@ class DolEditor
     {
     	global $conf,$langs;
 
-    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
+    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
@@ -77,10 +77,8 @@ class DolEditor
         $this->uselocalbrowser=$uselocalbrowser;
 
         // Check if extended editor is ok. If not we force textarea
-        if (empty($conf->fckeditor->enabled) || ! $okforextendededitor)
-        {
-            $this->tool = 'textarea';
-        }
+        if (empty($conf->fckeditor->enabled) || ! $okforextendededitor) $this->tool = 'textarea';
+        if ($conf->browser->phone) $this->tool = 'textarea';
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')
