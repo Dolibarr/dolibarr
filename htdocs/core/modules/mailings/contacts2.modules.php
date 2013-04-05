@@ -151,9 +151,10 @@ class mailing_contacts2 extends MailingTargets
     /**
      * 		Return here number of distinct emails returned by your selector.
      *
+     *		@param	string	$sql		Requete sql de comptage
      * 		@return		int
      */
-    function getNbOfRecipients()
+    function getNbOfRecipients($sql='')
     {
     	global $conf;
 
