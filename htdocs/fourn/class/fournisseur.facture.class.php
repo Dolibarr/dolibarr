@@ -392,7 +392,7 @@ class FactureFournisseur extends CommonInvoice
     {
         $sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.tva_tx, f.tva';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.total_localtax1, f.total_localtax2 ';
-        $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
+        $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
@@ -433,6 +433,7 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->total_ttc			= $obj->total_ttc;
                     $this->lines[$i]->fk_product		= $obj->fk_product;
                     $this->lines[$i]->product_type		= $obj->product_type;
+                    $this->lines[$i]->info_bits		= $obj->info_bits;
 
                     $i++;
                 }
@@ -1077,6 +1078,7 @@ class FactureFournisseur extends CommonInvoice
         $pu_ttc = $tabprice[5];
         $total_localtax1 = $tabprice[9];
         $total_localtax2 = $tabprice[10];
+        $info_bits = empty($info_bits) ? 0 : $info_bits;
 
         if ($idproduct)
         {
@@ -1106,6 +1108,7 @@ class FactureFournisseur extends CommonInvoice
         if ($idproduct) $sql.= ", fk_product = ".$idproduct;
         else $sql.= ", fk_product = null";
         $sql.= ", product_type = ".$product_type;
+        $sql.= ", infos_bits = ".$infos_bits;
         $sql.= " WHERE rowid = ".$id;
 
         dol_syslog(get_class($this)."::updateline sql=".$sql);
