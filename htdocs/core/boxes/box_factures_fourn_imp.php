@@ -73,7 +73,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY datelimite DESC, f.facnumber DESC ";
+			$sql.= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
