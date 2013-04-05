@@ -295,7 +295,7 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid)
     {
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges";
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.recuperableonly as fourn_tva_npr";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
@@ -306,21 +306,21 @@ class ProductFournisseur extends Product
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->product_fourn_price_id	= $rowid;
-                $this->fourn_ref				= $obj->ref_fourn;
-                $this->fourn_price				= $obj->price;
-								$this->fourn_charges          = $obj->charges;
-								$this->fourn_qty              = $obj->quantity;
-								$this->fourn_remise_percent   = $obj->remise_percent;
-								$this->fourn_remise           = $obj->remise;
-								$this->fourn_unitprice        = $obj->unitprice;
-								$this->fourn_unitcharges      = $obj->unitcharges;
-                $this->tva_tx					= $obj->tva_tx;
-                $this->product_id				= $obj->fk_product;	// deprecated
-                $this->fk_product				= $obj->fk_product;
-                $this->fk_availability			= $obj->fk_availability;
-                $this->fourn_tva_npr			= $obj->recuperableonly;
-                return 1;
+            	$this->product_fourn_price_id	= $rowid;
+            	$this->fourn_ref				= $obj->ref_fourn;
+            	$this->fourn_price				= $obj->price;
+            	$this->fourn_charges            = $obj->charges;
+            	$this->fourn_qty                = $obj->quantity;
+            	$this->fourn_remise_percent     = $obj->remise_percent;
+            	$this->fourn_remise             = $obj->remise;
+            	$this->fourn_unitprice          = $obj->unitprice;
+            	$this->fourn_unitcharges        = $obj->unitcharges;
+            	$this->tva_tx					= $obj->tva_tx;
+            	$this->product_id				= $obj->fk_product;	// deprecated
+            	$this->fk_product				= $obj->fk_product;
+            	$this->fk_availability			= $obj->fk_availability;
+            	$this->fourn_tva_npr			= $obj->fourn_tva_npr;
+            	return 1;
             }
             else
             {
