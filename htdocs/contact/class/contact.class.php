@@ -62,7 +62,8 @@ class Contact extends CommonObject
 	var $email;
 	var $birthday;
 	var $default_lang;
-    var $note;                  // Private note
+    var $note_public;           // Public note
+	var $note;                  // Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
@@ -725,7 +726,7 @@ class Contact extends CommonObject
 				$this->error=$this->db->error().' sql='.$sql;
 			}
 		}
-		
+
 		// Removed extrafields
 		 if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) { // For avoid conflicts if trigger used
 			$result=$this->deleteExtraFields($this);
@@ -1028,13 +1029,17 @@ class Contact extends CommonObject
 		$this->specimen=1;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
-		$this->address = '61 jump street';
-		$this->zip = '75000';
-		$this->town = 'Paris';
+		$this->address = '21 jump street';
+		$this->zip = '99999';
+		$this->town = 'MyTown';
 		$this->country_id = 1;
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
+
+		$this->note_public='This is a comment (public)';
+		$this->note='This is a comment (private)';
+
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
 	}
