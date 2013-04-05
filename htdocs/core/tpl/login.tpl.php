@@ -76,7 +76,9 @@ if (isset($conf->modules_parts['css']))
 		}
 	}
 }
-print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
+if (! empty($conf_css)) print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
+
+// JQuery. Must be before other js includes
 $ext='.js';
 print '<!-- Includes JS for JQuery -->'."\n";
 if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
@@ -159,7 +161,7 @@ if (! empty($hookmanager->resArray['options'])) {
 ?>
 <?php if ($captcha) { ?>
 	<!-- Captcha -->
-	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
+	<tr><td valign="middle" class="loginfield" nowrap="nowrap"><b><?php echo $langs->trans('SecurityCode'); ?></b></td>
 	<td valign="top" nowrap="nowrap" align="left" class="none">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
