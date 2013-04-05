@@ -110,7 +110,7 @@ else
     // Search criteria
     if (GETPOST("search_ref"))         		$sql .=" AND p.rowid=".GETPOST("search_ref",'int');
     if (GETPOST("search_account") > 0)      $sql .=" AND b.fk_account=".GETPOST("search_account",'int');
-    if (GETPOST("search_paymenttype") > 0)  $sql .=" AND c.code='".GETPOST("search_paymenttype",'int')."'";
+    if (GETPOST("search_paymenttype") != "")  $sql .=" AND c.code='".GETPOST("search_paymenttype")."'";
     if (GETPOST("search_amount"))      		$sql .=" AND p.amount=".price2num(GETPOST("search_amount"));
     if (GETPOST("search_company"))     		$sql .=" AND s.nom LIKE '%".$db->escape(GETPOST("search_company"))."%'";
 }
