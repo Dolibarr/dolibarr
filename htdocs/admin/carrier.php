@@ -44,24 +44,24 @@ $object = new Expedition($db);
  * Actions
  */
 //if ($action==setvalue AND $carrier)
-if ($action==setvalue)
+if ($action=='setvalue')
 {
     // need to add check on values
-    $object->update[code]=GETPOST('code','alpha');
-    $object->update[libelle]=GETPOST('libelle','alpha');
-    $object->update[description]=GETPOST('description','alpha');
-    $object->update[tracking]=GETPOST('tracking','alpha');
+    $object->update['code']=GETPOST('code','alpha');
+    $object->update['libelle']=GETPOST('libelle','alpha');
+    $object->update['description']=GETPOST('description','alpha');
+    $object->update['tracking']=GETPOST('tracking','alpha');
     $object->update_delivery_method($carrier);
     header("Location: carrier.php");
     exit;
 }
 
-if ($action==activate_carrier AND $carrier!='')
+if ($action=='activate_carrier' && $carrier!='')
 {
     $object->activ_delivery_method($carrier);
 }
 
-if ($action==disable_carrier AND $carrier!='')
+if ($action=='disable_carrier' && $carrier!='')
 {
     $object->disable_delivery_method($carrier);
 }
@@ -134,26 +134,26 @@ if ($action=='edit_carrier' || $action=='setvalue')
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("Code").'</td><td>';
-    print '<input size="32" type="text" name="code" value="'.$object->listmeths[0][code].'">';
+    print '<input size="32" type="text" name="code" value="'.$object->listmeths[0]['code'].'">';
     print ' &nbsp; '.$langs->trans("Example").': CODE';
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("Name").'</td><td>';
-    print '<input size="32" type="text" name="libelle" value="'.$object->listmeths[0][libelle].'">';
+    print '<input size="32" type="text" name="libelle" value="'.$object->listmeths[0]['libelle'].'">';
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("Description").'</td><td>';
-    print '<input size="64" type="text" name="description" value="'.$object->listmeths[0][description].'">';
+    print '<input size="64" type="text" name="description" value="'.$object->listmeths[0]['description'].'">';
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("Tracking").'</td><td>';
-    print '<input size="128" type="text" name="tracking" value="'.$object->listmeths[0][tracking].'">';
+    print '<input size="128" type="text" name="tracking" value="'.$object->listmeths[0]['tracking'].'">';
     print ' &nbsp; '.$langs->trans("Example").': http://www.website.com/dir/{TRACKID}';
     print '</td></tr>';
 
@@ -186,25 +186,26 @@ else
     print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
     print '<td align="center" width="30">'.$langs->trans("Edit").'</td>';
     print "</tr>\n";
-    for ($i=0; $i<sizeof($object->listmeths); $i++)
+    $numlistmeths=count($object->listmeths);
+    for ($i=0; $i<$numlistmeths; $i++)
     {
         $var=!$var;
         print "<tr ".$bc[$var].">";
-        print '<td>'.$object->listmeths[$i][code].'</td>';
-        print '<td>'.$object->listmeths[$i][libelle].'</td>';
-        print '<td>'.$object->listmeths[$i][description].'</td>';
-        print '<td>'.$object->listmeths[$i][tracking].'</td>';
+        print '<td>'.$object->listmeths[$i]['code'].'</td>';
+        print '<td>'.$object->listmeths[$i]['libelle'].'</td>';
+        print '<td>'.$object->listmeths[$i]['description'].'</td>';
+        print '<td>'.$object->listmeths[$i]['tracking'].'</td>';
         print '<td align="center">';
-        if($object->listmeths[$i][active] == 0)
+        if($object->listmeths[$i]['active'] == 0)
         {
-            print '<a href="carrier.php?action=activate_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="carrier.php?action=activate_carrier&amp;carrier='.$object->listmeths[$i]['rowid'].'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
         else
         {
-            print '<a href="carrier.php?action=disable_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="carrier.php?action=disable_carrier&amp;carrier='.$object->listmeths[$i]['rowid'].'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
         print '</td><td align="center">';
-        print '<a href="carrier.php?action=edit_carrier&amp;carrier='.$object->listmeths[$i][rowid].'">'.img_picto($langs->trans("Edit"),'edit').'</a>';
+        print '<a href="carrier.php?action=edit_carrier&amp;carrier='.$object->listmeths[$i]['rowid'].'">'.img_picto($langs->trans("Edit"),'edit').'</a>';
         print '</td>';
         print "</tr>\n";
     }
