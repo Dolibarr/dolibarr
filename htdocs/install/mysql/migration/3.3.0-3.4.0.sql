@@ -211,3 +211,12 @@ ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
 ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
+
+create table llx_commande_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+ALTER TABLE llx_commande_extrafields ADD INDEX idx_commande_extrafields (fk_object);
