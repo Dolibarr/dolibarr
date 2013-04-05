@@ -785,7 +785,7 @@ class DolGraph
 
         $this->_stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
         $this->_stringtoshow.='<br><div align="center">'.$this->title.'</div><br>';
-        $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;"></div>'."\n";
+        $this->_stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph"></div>'."\n";
         $this->_stringtoshow.='<script id="'.$tag.'">'."\n";
         $this->_stringtoshow.='$(function () {'."\n";
         $i=$firstlot;
@@ -892,6 +892,21 @@ class DolGraph
     function show()
     {
         return $this->_stringtoshow;
+    }
+
+    /**
+     * getDefaultGraphSizeForStats
+     *
+     * @param	string	$direction		'width' or 'height'
+     * @return	int						Value of width or height to use by default
+     */
+    static function getDefaultGraphSizeForStats($direction)
+    {
+    	global $conf;
+
+    	if ($direction == 'width')  return ($conf->dol_optimize_smallscreen?'400':'500');
+    	if ($direction == 'height') return ($conf->dol_optimize_smallscreen?'160':'200');
+    	return 0;
     }
 }
 

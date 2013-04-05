@@ -210,6 +210,7 @@ ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
 ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
+
 CREATE TABLE llx_printer_ipp 
 (
 	rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -220,4 +221,6 @@ CREATE TABLE llx_printer_ipp
 	module varchar(16) NOT NULL,
 	login varchar(32) NOT NULL,
 )ENGINE=innodb;
+
+ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 

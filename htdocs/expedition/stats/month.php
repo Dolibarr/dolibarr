@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 llxHeader();
 
-$WIDTH=500;
-$HEIGHT=200;
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
