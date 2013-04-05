@@ -118,7 +118,7 @@ class MenuManager
     			if ($leftmenu=="modulesadmintools" && $user->admin)
     			{
     				$langs->load("products");
-			    	array_unshift($tabMenu,array(
+    				$array_menu_product=array(
 			    			'url'=>"/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",
 			    			'titre'=>$langs->trans("ProductVatMassChange"),
 			    			'enabled'=>($user->admin?true:false),
@@ -130,10 +130,11 @@ class MenuManager
 			    			'leftmenu'=>'modulesadmintools_massvat',
 			    			'type'=>'left',
 			    			'position'=>20
-			    	));
+			    	);
+			    	array_unshift($tabMenu,$array_menu_product);
     				//$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
     			}
-    			array_unshift($tabMenu,array(
+    			$array_menu_product=array(
 		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
 		    		'titre'=>$langs->trans("ModulesSystemTools"),
 		    		'enabled'=>($user->admin?true:false),
@@ -144,7 +145,8 @@ class MenuManager
 		    		'leftmenu'=>'modulesadmintools',
 		    		'type'=>'left',
 		    		'position'=>20
-				));
+				);
+    			array_unshift($tabMenu,$array_menu_product);
     		}
     	}
 

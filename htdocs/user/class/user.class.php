@@ -2090,11 +2090,15 @@ class User extends CommonObject
 	}
 
 	/**
-	 * Update user using data from the LDAP
-	 * // TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
+	 *  Update user using data from the LDAP
+	 *
+	 *  @param	ldapuser	&$ldapuser	Ladp User
+	 *
+	 *  @return int  				<0 if KO, >0 if OK
 	 */
 	function update_ldap2dolibarr(&$ldapuser)
 	{
+		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
 		global $user, $conf;
 
 		$this->firstname=$ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};

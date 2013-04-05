@@ -54,7 +54,7 @@ if(!empty($cancel)) {
 	if (!empty($id)) {
 		$action='';
 	}else {
-		Header ( "Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
+		Header("Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
 	}
 
 }
@@ -69,7 +69,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 		setEventMessage($object->error,'errors');
 		$action='edit';
 	}else {
-		Header ( "Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
+		Header("Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
 	}
 }
 

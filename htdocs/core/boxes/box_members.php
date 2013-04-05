@@ -45,7 +45,9 @@ class box_members extends ModeleBoxes
 
 
 	/**
-     *  Constructor
+	 *   Constructor
+	 *
+	 *   @param      DoliDB		$db      Database handler
 	 */
 	function __construct($db)
 	{

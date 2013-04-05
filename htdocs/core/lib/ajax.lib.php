@@ -299,9 +299,10 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 /**
  * 	Convert a html select field into an ajax combobox
  *
- * 	@param	string	$htmlname		Name of html select field
- * 	@param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
- *  @return	string					Return html string to convert a select field into a combo
+ * 	@param	string	$htmlname					Name of html select field
+ * 	@param	array	$event						Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+ *  @param  int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ *  @return	string								Return html string to convert a select field into a combo
  */
 function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 {
