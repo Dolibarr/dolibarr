@@ -894,6 +894,8 @@ class Contrat extends CommonObject
 	 *	@param	float		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
@@ -1034,6 +1036,8 @@ class Contrat extends CommonObject
 	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
 	 *	@param	float		$price_base_type	HT or TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)

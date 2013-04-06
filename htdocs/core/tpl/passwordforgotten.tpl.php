@@ -31,9 +31,34 @@ print '<head>
 <meta name="author" content="Dolibarr Development Team">
 <link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>
 <title>'.$langs->trans('Login').' '.$title.'</title>'."\n";
-print '<!-- Includes for JQuery (Ajax library) -->'."\n";
+print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
+$jquerytheme = 'smoothness';
+if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
 else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" />'."\n";                           // Tooltip
+print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
+// jQuery jMobile
+if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || GETPOST('dol_use_jmobile'))
+{
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
+}
+print '<!-- Includes CSS for Dolibarr theme -->'."\n";
+// Includes CSS for Dolibarr theme
+$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+$themesubdir='';
+if (! empty($conf->modules_parts['theme']))	// This slow down
+{
+	foreach($conf->modules_parts['theme'] as $reldir)
+	{
+		if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
+		{
+			$themepath=dol_buildpath($reldir.$conf->css, 1);
+			$themesubdir=$reldir;
+			break;
+		}
+	}
+}
 // CSS forced by modules (relative url starting with /)
 if (isset($conf->modules_parts['css']))
 {
@@ -51,13 +76,19 @@ if (isset($conf->modules_parts['css']))
 		}
 	}
 }
-// JQuery. Must be before other includes
+if (! empty($conf_css)) print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
+
+// JQuery. Must be before other js includes
 $ext='.js';
 print '<!-- Includes JS for JQuery -->'."\n";
 if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
 else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/dst.js"></script>'."\n";
-print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
+// jQuery jMobile
+if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || GETPOST('dol_use_jmobile'))
+{
+	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
+}
 if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
 print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 </head>';
@@ -95,7 +126,7 @@ $(document).ready(function () {
 
 <!-- Login -->
 <tr>
-<td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
+<td valign="bottom" class="loginfield" nowrap="nowrap"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
 <td valign="bottom" nowrap="nowrap">
 <input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
 </td>
@@ -115,7 +146,7 @@ if (! empty($hookmanager->resArray['options'])) {
 
 <?php if ($captcha) { ?>
 	<!-- Captcha -->
-	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
+	<tr><td valign="middle" class="loginfield" nowrap="nowrap"><b><?php echo $langs->trans('SecurityCode'); ?></b></td>
 	<td valign="top" nowrap="nowrap" align="left" class="none">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
@@ -145,9 +176,15 @@ if (! empty($hookmanager->resArray['options'])) {
 
 <br>
 <div align="center" style="margin-top: 4px;">
-<a style="color: #888888; font-size: 10px" href="<?php echo $dol_url_root; ?>/">
-	<?php echo '('.$langs->trans('BackToLoginPage').')'; ?>
-</a>
+	<?php
+	$moreparam='';
+	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+	if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+	
+	print '<a style="color: #888888; font-size: 10px" href="'.$dol_url_root.$moreparam.'">('.$langs->trans('BackToLoginPage').')</a>';
+	?>
 </div>
 
 </div>

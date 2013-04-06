@@ -2752,7 +2752,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
-		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		if ($local == 1) 
+		{
+			if ($thirdparty_seller->id==$mysoc->id)
+			{
+				if (! $thirdparty_buyer->localtax1_assuj) return 0;
+			}
+			else 
+			{
+				if (! $thirdparty_seller->localtax1_assuj) return 0;
+			}
+		}
+		
 		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
@@ -3049,13 +3060,29 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 /**
  *	Fonction qui renvoie si tva doit etre tva percue recuperable
  *
- *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
- *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Thirdparty seller
+ *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param  int			$idprod                 Id product
+ *  @param	int			$idprodfournprice		Id supplier price for product
  *	@return float       			        	0 or 1
  */
-function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
+function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
+	global $db;
+
+	if ($idprodfournprice > 0)
+	{
+		$prodprice = new ProductFournisseur($db);
+		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
+		return $prodprice->fourn_tva_npr;
+	}
+	elseif ($idprod > 0)
+	{
+		$prod = new Product($db);
+		$prod->fetch($idprod);
+		return $prod->tva_npr;
+	}
+
 	return 0;
 }
 
@@ -3065,8 +3092,8 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
  *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
  *	 Sinon TVA proposee par defaut=0. Fin de regle.
  *
- *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
- *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Thirdparty seller
+ *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
  *	@return float        				       	localtax, -1 si ne peut etre determine

@@ -97,6 +97,7 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param	string	$default_value		Defaulted value
      *  @param  array	$param				Params for field 
      *  @return int      					<=0 if KO, >0 if OK
      */
@@ -219,7 +220,7 @@ class ExtraFields
      *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0,$param)
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='')
 	{
 		global $conf;
 
@@ -356,7 +357,7 @@ class ExtraFields
      *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos,$param='')
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='')
 	{
         $table=$elementtype.'_extrafields';
         // Special case for not normalized table names
@@ -814,7 +815,7 @@ class ExtraFields
      * Fill array_options array for object by extrafields value (using for data send by forms)
      *
      * @param   array	$extralabels    $array of extrafields
-     * @param   object	$object         object
+     * @param   object	&$object         object
      * @return	int						1 if array_options set / 0 if no value
      */
     function setOptionalsFromPost($extralabels,&$object)

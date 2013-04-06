@@ -1002,7 +1002,7 @@ class Product extends CommonObject
 			else
 			{
 				$price = price2num($newprice,'MU');
-				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
+				$price_ttc = ( $newnpr != 1 ) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = price2num($price_ttc,'MU');
 
 				if ($newminprice!='' || $newminprice==0)

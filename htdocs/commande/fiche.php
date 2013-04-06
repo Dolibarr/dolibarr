@@ -1120,7 +1120,7 @@ else if ($action == 'print_file' AND $user->rights->printipp->use)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
 	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
-	$printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
+    $printer->print_file(GETPOST('file','alpha'),GETPOST('printer','alpha'));
 }
 
 else if ($action == 'update_extras')

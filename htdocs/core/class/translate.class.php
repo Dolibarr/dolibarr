@@ -694,6 +694,7 @@ class Translate
 	/**
 	 *	Return a currency code into its symbol
 	 *
+	 *  @param	string	$currency_code		Currency Code
 	 *  @param	string	$amount				If not '', show currency + amount according to langs ($10, 10€).
 	 *  @return	string						Amount + Currency symbol encoded into UTF8
 	 */

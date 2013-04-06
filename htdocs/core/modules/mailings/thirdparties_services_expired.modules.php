@@ -179,7 +179,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *	@param	string	$option		Option
      *	@return	int					Number of recipients
      */
-    function getNbOfRecipients($filter=1,$option='')
+    function getNbOfRecipients($sql,$filter=1,$option='')
     {
         $now=dol_now();
 
