@@ -990,7 +990,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
-			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DeliveryDate")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
