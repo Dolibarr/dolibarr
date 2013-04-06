@@ -43,8 +43,9 @@ MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descuento global se toma en cue
 MARGIN_TYPE=Tipo de margen gestionado
 MargeBrute=Margen bruto
 MargeNette=Margen neto
-MARGIN_TYPE_DETAILS=Margen bruto : Precio de venta sin IVA - Precio de compra sin IVA<br/>Margen neto : Precio de venta sin IVA - Costos
+MARGIN_TYPE_DETAILS=Margen bruto: Precio de venta sin IVA - Precio de compra sin IVA<br/>Margen neto: Precio de venta sin IVA - Costos
 
+CostPrice=Precio de compra
 BuyingCost=Costos
 UnitCharges=Carga unitaria
 Charges=Cargas
