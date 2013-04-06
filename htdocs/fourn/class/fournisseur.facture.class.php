@@ -1108,7 +1108,7 @@ class FactureFournisseur extends CommonInvoice
         if ($idproduct) $sql.= ", fk_product = ".$idproduct;
         else $sql.= ", fk_product = null";
         $sql.= ", product_type = ".$product_type;
-        $sql.= ", infos_bits = ".$info_bits;
+        $sql.= ", info_bits = ".$info_bits;
         $sql.= " WHERE rowid = ".$id;
 
         dol_syslog(get_class($this)."::updateline sql=".$sql);
