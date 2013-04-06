@@ -227,3 +227,6 @@ ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
 
+ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
+
+

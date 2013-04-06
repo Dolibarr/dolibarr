@@ -136,6 +136,7 @@ if ($action == 'add_action')
 	$actioncomm->priority = GETPOST("priority")?GETPOST("priority"):0;
 	$actioncomm->fulldayevent = (! empty($fulldayevent)?1:0);
 	$actioncomm->location = GETPOST("location");
+	$actioncomm->transparency = (GETPOST("transparency")=='on'?1:0);
 	$actioncomm->label = trim(GETPOST('label'));
 	if (! GETPOST('label'))
 	{
@@ -313,7 +314,7 @@ if ($action == 'update')
 		$actioncomm->percentage  = $percentage;
 		$actioncomm->priority    = $_POST["priority"];
         $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
-		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
+		$actioncomm->location    = GETPOST('location');
 		$actioncomm->societe->id = $_POST["socid"];
 		$actioncomm->contact->id = $_POST["contactid"];
 		$actioncomm->fk_project  = $_POST["projectid"];
@@ -333,6 +334,8 @@ if ($action == 'update')
 			$usertodo->fetch($_POST["affectedto"]);
 		}
 		$actioncomm->usertodo = $usertodo;
+		$actioncomm->transparency=(GETPOST("transparency")=='on'?1:0);
+
 		$userdone=new User($db);
 		if ($_POST["doneby"])
 		{
@@ -509,16 +512,24 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	// Affected by
+	// Assigned to
 	$var=false;
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($actioncomm->usertodo->id) && $actioncomm->usertodo->id > 0 ? $actioncomm->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
-	// Realised by
-	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
+	// Busy
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Busy").'</td><td>';
+	print '<input id="transparency" type="checkbox" name="transparency" value="'.$actioncomm->transparency.'">';
 	print '</td></tr>';
+
+	// Realised by
+	if ($conf->global->AGENDA_ENABLE_DONEBY)
+	{
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+		$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 	print '<br><br>';
@@ -745,21 +756,23 @@ if ($id > 0)
 
 		print '</table><br><br><table class="border" width="100%">';
 
-		// Input by
-		$var=false;
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		print $act->author->getNomUrl(1);
-		print '</td></tr>';
-
-		// Affected to
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		// Assigned to
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
-		// Realised by
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
+		// Busy
+		print '<tr><td nowrap="nowrap">'.$langs->trans("Busy").'</td><td>';
+		print '<input id="transparency" type="checkbox" name="transparency"'.($act->transparency?' checked="checked"':'').'">';
 		print '</td></tr>';
+
+		// Realised by
+		if ($conf->global->AGENDA_ENABLE_DONEBY)
+		{
+			print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
+			print '</td></tr>';
+		}
 
 		print '</table><br><br>';
 
@@ -909,22 +922,23 @@ if ($id > 0)
 
 		print '</table><br><br><table class="border" width="100%">';
 
-		// Input by
-		$var=false;
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		if ($act->author->id > 0) print $act->author->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-
-		// Affecte a
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		// Assigned to
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
-		// Done by
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
+		// Busy
+		print '<tr><td nowrap="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
+		print yn(($act->transparency > 0)?1:0);
 		print '</td></tr>';
+
+		// Done by
+		if ($conf->global->AGENDA_ENABLE_DONEBY)
+		{
+			print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
+			print '</td></tr>';
+		}
 
 		print '</table><br><br><table class="border" width="100%">';
 
