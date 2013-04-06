@@ -140,7 +140,7 @@ class Societe extends CommonObject
 
     var $array_options;
 
-    var $oldcopy;
+    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
     /**
@@ -251,7 +251,7 @@ class Societe extends CommonObject
                     // Fin appel triggers
                 }
                 else $error++;
-                
+
                 if (! $error)
                 {
                     dol_syslog(get_class($this)."::Create success id=".$this->id);
@@ -2584,6 +2584,9 @@ class Societe extends CommonObject
         $this->country_code='FR';
         $this->email='specimen@specimen.com';
         $this->url='http://www.specimen.com';
+
+        $this->phone='0909090901';
+        $this->fax='0909090909';
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');
