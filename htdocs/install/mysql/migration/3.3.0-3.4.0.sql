@@ -227,3 +227,4 @@ ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
 
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
