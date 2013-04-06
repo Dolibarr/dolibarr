@@ -219,7 +219,7 @@ CREATE TABLE llx_printer_ipp
 	printer_uri varchar(256) NOT NULL,
 	copy int(11) NOT NULL DEFAULT '1',
 	module varchar(16) NOT NULL,
-	login varchar(32) NOT NULL,
+	login varchar(32) NOT NULL
 )ENGINE=innodb;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
