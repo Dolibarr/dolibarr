@@ -2,7 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 3.4 compared to 3.3 *****
+***** ChangeLog for 3.4 compared to 3.3.2 *****
 For users:
 - New: Support revenue stamp onto invoices.
 - New: Add a tab "consumption" on thirdparties to list products bought/sells.
@@ -62,6 +62,14 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
   function to keep same behaviour.
 
   
+
+***** ChangeLog for 3.3.2 compared to 3.3.1 *****
+
+-Fix: Ducth (nl_NL) translation
+-Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
+-Generalize fix: file with a specific mask not found, again
+
+
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
 
