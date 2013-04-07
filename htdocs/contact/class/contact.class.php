@@ -75,7 +75,7 @@ class Contact extends CommonObject
 	var $user_login;
 	var $import_key;
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	var $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -1036,6 +1036,11 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
+
+		$this->phone_pro = '0909090901';
+		$this->phone_perso = '0909090902';
+		$this->phone_mobile = '0909090903';
+		$this->fax = '0909090909';
 
 		$this->note_public='This is a comment (public)';
 		$this->note='This is a comment (private)';

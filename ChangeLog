@@ -29,6 +29,7 @@ For users:
   and a delay.
 - New: Can define a different clicktodial setup per user.
 - New: Add option INVOICE_CAN_NEVER_BE_REMOVED.
+- New: Enhance agenda module to reach RFC2445 (add busy information).
 - First change to prepare feature click to print for PDF.
   
 For translators:

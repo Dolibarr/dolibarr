@@ -219,12 +219,14 @@ CREATE TABLE llx_printer_ipp
 	printer_uri varchar(256) NOT NULL,
 	copy int(11) NOT NULL DEFAULT '1',
 	module varchar(16) NOT NULL,
-	login varchar(32) NOT NULL,
+	login varchar(32) NOT NULL
 )ENGINE=innodb;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 
 ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
+
+ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
