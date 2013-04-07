@@ -129,8 +129,13 @@ class UserTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new User($this->savdb);
     	$localobject->initAsSpecimen();
+    	//test initAsSpecimen data is right
+    	print __METHOD__." lastname=".$localobject->lastname."\n";
+    	$this->assertEquals($localobject->lastname, 'DOLIBARR');
+    	print __METHOD__." firstname=".$localobject->firstname."\n";
+    	$this->assertEquals($localobject->firstname, 'SPECIMEN');
+    	
     	$result=$localobject->create($user);
-
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
     	return $result;
@@ -154,6 +159,11 @@ class UserTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new User($this->savdb);
     	$result=$localobject->fetch($id);
+    	//test the fetch data is right
+    	print __METHOD__." lastname=".$localobject->lastname."\n";
+    	$this->assertEquals($localobject->lastname, 'DOLIBARR');
+    	print __METHOD__." firstname=".$localobject->firstname."\n";
+    	$this->assertEquals($localobject->firstname, 'SPECIMEN'); 
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
