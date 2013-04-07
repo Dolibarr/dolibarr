@@ -219,7 +219,7 @@ CREATE TABLE llx_printer_ipp
 	printer_uri varchar(256) NOT NULL,
 	copy int(11) NOT NULL DEFAULT '1',
 	module varchar(16) NOT NULL,
-	login varchar(32) NOT NULL,
+	login varchar(32) NOT NULL
 )ENGINE=innodb;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
@@ -236,4 +236,4 @@ ALTER TABLE llx_commande_extrafields ADD INDEX idx_commande_extrafields (fk_obje
 ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
 
->>>>>>> refs/heads/develop
+ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
