@@ -147,7 +147,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ")";
         $sql.= " VALUES (";
 		$sql.= "'(PROV)'";
-        $sql.= ", '".$this->db->escape($this->$ref_supplier)."'";
+        $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->libelle)."'";
         $sql.= ", ".$this->socid;
@@ -159,12 +159,19 @@ class FactureFournisseur extends CommonInvoice
         $sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
         $sql.= ")";
 
-        dol_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn');
 
+            // Update ref with new one
+            $this->ref='(PROV'.$this->id.')';
+            $sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->ref."' WHERE rowid=".$this->id;
+
+            dol_syslog(get_class($this)."::create sql=".$sql);
+            $resql=$this->db->query($sql);
+            if (! $resql) $error++;
 
             // Add object linked
             if (! $error && $this->id && ! empty($this->origin) && ! empty($this->origin_id))
@@ -182,7 +189,7 @@ class FactureFournisseur extends CommonInvoice
                 $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
                 $sql .= ' VALUES ('.$this->id.');';
 
-                dol_syslog("FactureFournisseur::create sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
                 $resql_insert=$this->db->query($sql);
                 if ($resql_insert)
                 {
@@ -1078,7 +1085,7 @@ class FactureFournisseur extends CommonInvoice
         $pu_ttc = $tabprice[5];
         $total_localtax1 = $tabprice[9];
         $total_localtax2 = $tabprice[10];
-        $info_bits = empty($info_bits) ? 0 : $info_bits;
+        if (empty($info_bits)) $info_bits=0;
 
         if ($idproduct)
         {

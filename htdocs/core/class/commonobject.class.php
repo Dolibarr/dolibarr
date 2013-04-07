@@ -79,6 +79,26 @@ abstract class CommonObject
     }
 
     /**
+     * 	Return full address of contact
+     *
+     * 	@param		int			$withcountry		1=Add country into address string
+     *  @param		string		$sep				Separator to use to build string
+     *	@return		string							Full address string
+     */
+    function getFullAddress($withcountry=0,$sep="\n")
+    {
+    	if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
+    	{
+    		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
+    		$tmparray=getCountry($this->country_id,'all');
+    		$this->country_code=$tmparray['code'];
+    		$this->country     =$tmparray['label'];
+    	}
+
+    	return dol_format_address($this, $withcountry, $sep);
+    }
+
+    /**
      *  Check if ref is used.
      *
      * 	@return		int			<0 if KO, 0 if not found, >0 if found
@@ -1558,7 +1578,7 @@ abstract class CommonObject
 
             // Add revenue stamp to total
             $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
-            
+
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2139,7 +2159,7 @@ abstract class CommonObject
             			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
             			break;
                	}
-            } 
+            }
             $this->db->begin();
 
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
@@ -2189,27 +2209,27 @@ abstract class CommonObject
         }
         else return 0;
     }
-    
+
    /**
      * Function to show lines of extrafields with output datas
-     * 
+     *
      * @param	object	$extrafields	extrafield Object
-     * @param	string	$mode			Show output (view) or input (edit) for extrafield 
-     * 
-     * @return string	
+     * @param	string	$mode			Show output (view) or input (edit) for extrafield
+     *
+     * @return string
      */
     function showOptionals($extrafields,$mode='view')
     {
 		global $_POST;
-    	
+
 		$out = '';
-    	
+
 		if(count($extrafields->attribute_label) > 0)
 		{
 			$out .= "\n";
 			$out .= '<!-- showOptionalsInput --> ';
 			$out .= "\n";
-			
+
 			$e = 0;
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
@@ -2226,7 +2246,7 @@ abstract class CommonObject
 						$out .= '<tr>';
 						$colspan='0';
 					}
-					else 
+					else
 					{
 						$out .= '<tr>';
 					}
@@ -2237,7 +2257,7 @@ abstract class CommonObject
 					}
 					$out .= '<td>'.$label.'</td>';
 					$out .='<td colspan="'.$colspan.'">';
-					    		
+
 					switch($mode) {
 					case "view":
 						$out .= $extrafields->showOutputField($key,$value);
@@ -2246,9 +2266,9 @@ abstract class CommonObject
 						$out .= $extrafields->showInputField($key,$value);
 						break;
 					}
-					    		
+
 					$out .= '</td>'."\n";
-					    		
+
 					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
 					else $out .= '</tr>';
 					$e++;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
@@ -1777,7 +1777,7 @@ else
                 print '</td>';
 
                 // VAT
-                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'%</td>';
+                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'</td>';
 
                 // Unit price
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
