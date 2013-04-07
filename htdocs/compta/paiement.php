@@ -102,9 +102,8 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
 
     if (! empty($conf->banque->enabled))
     {
-        // Si module bank actif, un compte est obligatoire lors de la saisie
-        // d'un paiement
-        if (! $_POST['accountid'])
+        // If bank module is on, account is required to enter a payment
+        if (GETPOST('accountid') <= 0)
         {
             $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
             $error++;
@@ -157,6 +156,16 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 	    }
     }
 
+    if (! empty($conf->banque->enabled))
+    {
+    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
+    	if (GETPOST('accountid') <= 0)
+    	{
+    		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+    		$error++;
+    	}
+    }
+
     // Creation of payment line
     $paiement = new Paiement($db);
     $paiement->datepaye     = $datepaye;
@@ -179,7 +188,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
     {
     	$label='(CustomerInvoicePayment)';
     	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
-        $result=$paiement->addPaymentToBank($user,'payment',$label,$_POST['accountid'],$_POST['chqemetteur'],$_POST['chqbank']);
+        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
         if ($result < 0)
         {
             $errmsg=$paiement->error;
@@ -471,7 +480,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             {
             	$sign=1;
             	if ($facture->type == 2) $sign=-1;
-            	 
+
 				$arraytitle=$langs->trans('Invoice');
 				if ($facture->type == 2) $arraytitle=$langs->trans("CreditNotes");
 				$alreadypayedlabel=$langs->trans('Received');
