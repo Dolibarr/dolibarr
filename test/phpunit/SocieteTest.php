@@ -444,9 +444,10 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $localobjectadd->address='New address';
         $localobjectadd->zip='New zip';
         $localobjectadd->town='New town';
+        $localobjectadd->state='New state';
         $result=$localobjectadd->getFullAddress(1);
         print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nUnited States", $result);
+        $this->assertContains("New address\nNew town, New state, New zip\nUnited States", $result);
 
         return $localobjectadd->id;
     }
