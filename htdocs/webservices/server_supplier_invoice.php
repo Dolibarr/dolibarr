@@ -378,7 +378,13 @@ function getSupplierInvoicesForThirdParty($authentication,$idthirdparty)
 			    $obj=$db->fetch_object($resql);
 
 			    $invoice=new FactureFournisseur($db);
-			    $invoice->fetch($obj->facid);
+			    $result=$invoice->fetch($obj->facid);
+				if ($result < 0)
+				{
+					$error++;
+					$errorcode=$result; $errorlabel=$invoice->error;
+					break;
+				}
 
 				// Define lines of invoice
 				$linesresp=array();
