@@ -378,12 +378,12 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             $modulesfile = array();
             foreach ($conf->file->dol_document_root as $type => $dirroot)
             {
-            	$handlemodule=@opendir($dirroot);
+            	$handlemodule=@opendir($dirroot);		// $dirroot may be '..'
             	if (is_resource($handlemodule))
             	{
             		while (($filemodule = readdir($handlemodule))!==false)
             		{
-            			if (is_dir($dirroot.'/'.$filemodule.'/sql'))
+            			if (! preg_match('/\./',$filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql'))	// We exclude filemodule that contains . (are not directories) and are not directories.
             			{
             				//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
             				if (is_file($dirroot . '/' . $filemodule . '/sql/'.$file))

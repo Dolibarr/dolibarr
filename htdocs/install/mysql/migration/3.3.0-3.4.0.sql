@@ -231,4 +231,4 @@ ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
-
+ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;

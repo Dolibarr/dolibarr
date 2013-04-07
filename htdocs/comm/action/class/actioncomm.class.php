@@ -59,7 +59,7 @@ class ActionComm extends CommonObject
     var $punctual = 1;        // Milestone
     var $percentage;    // Percentage
     var $location;      // Location
-
+	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
     var $priority;      // Free text ('' By default)
     var $note;          // Description
 
@@ -121,6 +121,7 @@ class ActionComm extends CommonObject
         if (empty($this->priority))     $this->priority = 0;
         if (empty($this->fulldayevent)) $this->fulldayevent = 0;
         if (empty($this->punctual))     $this->punctual = 0;
+        if (empty($this->transparency)) $this->transparency = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
         if (! empty($this->datep) && ! empty($this->datef))   $this->durationp=($this->datef - $this->datep);
@@ -178,6 +179,7 @@ class ActionComm extends CommonObject
         $sql.= "fk_user_action,";
         $sql.= "fk_user_done,";
         $sql.= "label,percent,priority,fulldayevent,location,punctual,";
+        $sql.= "transparency,";
         $sql.= "fk_element,";
         $sql.= "elementtype,";
         $sql.= "entity";
@@ -196,6 +198,7 @@ class ActionComm extends CommonObject
         $sql.= (isset($this->usertodo->id) && $this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
         $sql.= (isset($this->userdone->id) && $this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
         $sql.= "'".$this->db->escape($this->label)."','".$this->percentage."','".$this->priority."','".$this->fulldayevent."','".$this->db->escape($this->location)."','".$this->punctual."',";
+        $sql.= "'".$this->transparency."',";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").",";
         $sql.= (! empty($this->elementtype)?"'".$this->elementtype."'":"null").",";
         $sql.= $conf->entity;
@@ -282,7 +285,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_user_action, a.fk_user_done,";
         $sql.= " a.fk_contact, a.percent as percentage,";
         $sql.= " a.fk_element, a.elementtype,";
-        $sql.= " a.priority, a.fulldayevent, a.location,";
+        $sql.= " a.priority, a.fulldayevent, a.location, a.transparency,";
         $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
@@ -331,6 +334,7 @@ class ActionComm extends CommonObject
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
+                $this->transparency			= $obj->transparency;
 
                 $this->socid				= $obj->fk_soc;	// To have fetch_thirdparty method working
                 $this->societe->id			= $obj->fk_soc;
@@ -437,6 +441,7 @@ class ActionComm extends CommonObject
         $this->note=trim($this->note);
         if (empty($this->percentage))    $this->percentage = 0;
         if (empty($this->priority))      $this->priority = 0;
+        if (empty($this->transparency))  $this->transparency = 0;
         if (empty($this->fulldayevent))  $this->fulldayevent = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
@@ -471,6 +476,7 @@ class ActionComm extends CommonObject
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fulldayevent = '".$this->fulldayevent."'";
         $sql.= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'":"null");
+        $sql.= ", transparency = '".$this->transparency."'";
         $sql.= ", fk_user_mod = '".$user->id."'";
         $sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");
         $sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
@@ -952,7 +958,7 @@ class ActionComm extends CommonObject
                     $event['priority']=$obj->priority;
                     $event['fulldayevent']=$obj->fulldayevent;
                     $event['location']=$obj->location;
-                    $event['transparency']='TRANSPARENT';		// OPAQUE (busy) or TRANSPARENT (not busy)
+                    $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['category']=$obj->libelle;	// libelle type action
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -1058,6 +1064,7 @@ class ActionComm extends CommonObject
         $this->punctual=0;
         $this->percentage=0;
         $this->location='Location';
+        $this->transparency=0;
         $this->priority='Priority X';
         $this->note = 'Note';
     }
