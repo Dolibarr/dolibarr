@@ -6,9 +6,14 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 
--Fix: Ducth (nl_NL) translation
--Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
--Generalize fix: file with a specific mask not found, again
+- Fix: Ducth (nl_NL) translation
+- Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
+- Generalize fix: file with a specific mask not found, again
+- Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
+- Fix: Can't reset payment due date
+- Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
+- Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
+- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed 
 
 
 
