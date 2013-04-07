@@ -13,7 +13,8 @@ English Dolibarr ChangeLog
 - Fix: Can't reset payment due date
 - Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
 - Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
-- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed 
+- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
+- Fix: Orderstoinvoice didn't act as expected when no order was checked
 
 
 
