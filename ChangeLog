@@ -72,7 +72,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
 - Fix: Can't reset payment due date
 - Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
-- Fix: [ bug #794 ] Lost filter on zipwode in prospect list 
+- Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
 - Fix: [ bug #774 ] Bug on creating event with box "all day" crossed 
 
 
