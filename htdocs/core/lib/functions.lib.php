@@ -675,19 +675,21 @@ function dol_get_fiche_end($notab=0)
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
  *      @param  Object		$object         A company or contact object
+ * 	    @param	int			$withcountry	1=Add country into address string
+ *      @param	string		$sep			Separator to use to build string
  *      @return string          			Formated string
  */
-function dol_format_address($object)
+function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('US','IN','GB','ES');
+	$countriesusingstate=array('AU','US','IN','GB','ES');
 
 	// Address
 	$ret .= $object->address;
 	// Zip/Town/State
-	if (in_array($object->country_code,array('US')))   	// US: title firstname name \n address lines \n town, state, zip \n country
+	if (in_array($object->country_code,array('US','AU')))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->town;
+		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
@@ -696,16 +698,16 @@ function dol_format_address($object)
 	}
 	else if (in_array($object->country_code,array('GB'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->town;
+		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
 		}
-		if ($object->zip) $ret .= ($ret ? "\n" : '' ).$object->zip;
+		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	else if (in_array($object->country_code,array('ES'))) // title firstname name \n address lines \n zip town \n state \n country
+	else if (in_array($object->country_code,array('ES'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
@@ -715,13 +717,15 @@ function dol_format_address($object)
 
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
 		}
 	}
+
+	if ($withcountry) $ret.=($object->country?$sep.$object->country:'');
 
 	return $ret;
 }
@@ -2752,18 +2756,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
-		if ($local == 1) 
+		if ($local == 1)
 		{
 			if ($thirdparty_seller->id==$mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax1_assuj) return 0;
 			}
-			else 
+			else
 			{
 				if (! $thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
-		
+
 		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else

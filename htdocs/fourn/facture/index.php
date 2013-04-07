@@ -255,14 +255,13 @@ if ($resql)
 		print '<td nowrap="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
 		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
 		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
-		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';
 		$supplierstatic->id=$obj->socid;
 		$supplierstatic->nom=$obj->nom;
 		print $supplierstatic->getNomUrl(1,'',12);
-		//print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
 		print '<td align="right">'.price($obj->total_ht).'</td>';
 		print '<td align="right">'.price($obj->total_ttc).'</td>';
 		$total+=$obj->total_ht;

@@ -672,7 +672,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 {
                     if (strlen(GETPOST('subject','alphs'))) $subject = GETPOST('subject','alpha');
                     else $subject = $langs->transnoentities('Intervention').' '.$object->ref;
-                    $actiontypecode='AC_FICH';
+                    $actiontypecode='AC_OTH_AUTO';
                     $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
                     if ($message)
                     {
