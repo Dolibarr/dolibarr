@@ -76,8 +76,7 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Agenda"));
 
-
-print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
+print $langs->trans("DefineHereComplementaryAttributes", $langs->transnoentitiesnoconv("Agenda")).'<br>'."\n";
 print '<br>';
 
 dol_htmloutput_errors($mesg);
