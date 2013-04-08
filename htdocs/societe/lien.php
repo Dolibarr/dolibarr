@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -147,7 +147,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(1,'idprof1',$object->idprof1,$object->country_code);
+        print $object->idprof1;
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -156,7 +156,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(2,'idprof2',$object->idprof2,$object->paycountry_codes_code);
+        print $object->idprof2;
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -167,7 +167,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(3,'idprof3',$object->idprof3,$object->country_code);
+        print $object->idprof3;
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -176,7 +176,7 @@ if ($socid)
     if ($idprof!='-')
     {
         print '<td>'.$idprof.'</td><td>';
-        print $formcompany->get_input_id_prof(4,'idprof4',$object->idprof4,$object->country_code);
+        print $object->idprof4;
         print '</td>';
     }
     else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -270,48 +270,53 @@ if ($socid)
 				print '<tr class="liste_titre">';
 				print '<td valign="right">';
 				print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
-				print '</td><td colspan="5" align="right">';
+				print '</td>';
+				print '<td colspan="4" align="right">';
 				print '<input type="image" name="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '</td>';
 				print "</tr>\n";
 				print '</form>';
 
+				$societestatic=new Societe($db);
+				
 				$var=True;
-
 				while ($i < min($num,$conf->liste_limit))
 				{
 					$obj = $db->fetch_object($resql);
 					$var=!$var;
-					print "<tr $bc[$var]><td>";
-					print $obj->nom."</td>\n";
+					print "<tr ".$bc[$var].">";
+					print "<td>";
+					$societestatic->name=$obj->nom;
+					$societestatic->id=$obj->socid;
+					print $societestatic->getNomUrl(1);
+					print "</td>\n";
 					print "<td>".$obj->town."&nbsp;</td>\n";
-					print "<td>".$langs->getLabelFromKey($db,$obj->code,'c_typent','code','libelle')."</td>\n";
+					print "<td>";
+					$s=$langs->getLabelFromKey($db,$obj->code,'c_typent','code','libelle');
+					if ($s != '-') print $s;
+					print "</td>\n";
 					print '<td align="center">';
-					if ($obj->client==1)
+					$x=0;
+					if ($obj->client==1 || $obj->client==3)
 					{
-						print $langs->trans("Customer")."\n";
+						print $langs->trans("Customer");
+						$x++;
 					}
-					elseif ($obj->client==2)
+					if ($obj->client==2)
 					{
-						print $langs->trans("Prospect")."\n";
+						if ($x) print '/';
+						print $langs->trans("Prospect");
+						$x++;
 					}
-					else
-					{
-						print "&nbsp;";
-					}
-					print "</td><td align=\"center\">";
 					if ($obj->fournisseur)
 					{
+						if ($x) print '/';
 						print $langs->trans("Supplier");
+						$x++;
 					}
-					else
-					{
-						print "&nbsp;";
-					}
-
 					print '</td>';
 					// Lien S�lectionner
-					print '<td align="center"><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->socid.'">'.$langs->trans("Select").'</a>';
+					print '<td align="center"><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->socid.'">'.$langs->trans("Add").'</a>';
 					print '</td>';
 
 					print '</tr>'."\n";
