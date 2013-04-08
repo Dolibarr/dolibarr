@@ -27,8 +27,8 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
-$WIDTH=500;
-$HEIGHT=200;
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode=GETPOST("mode")?GETPOST("mode"):'customer';
 if ($mode == 'customer' && ! $user->rights->facture->lire) accessforbidden();
@@ -214,8 +214,9 @@ complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
 
-print '<table class="notopnoleftnopadd" width="100%"><tr>';
-print '<td align="center" valign="top">';
+
+print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 //if (empty($socid))
 //{
@@ -280,8 +281,8 @@ foreach ($data as $val)
 print '</table>';
 
 
-print '</td>';
-print '<td align="center" valign="top">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 // Show graphs
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
@@ -295,7 +296,10 @@ else {
 }
 print '</td></tr></table>';
 
-print '</td></tr></table>';
+
+print '</div></div></div>';
+print '<div style="clear:both"></div>';
+
 
 dol_fiche_end();
 

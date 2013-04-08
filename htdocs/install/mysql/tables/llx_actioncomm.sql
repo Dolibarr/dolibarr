@@ -45,6 +45,7 @@ create table llx_actioncomm
   fk_parent			integer NOT NULL default 0,
 
   fk_user_action	integer,						-- id de la personne qui doit effectuer l'action
+  transparency      integer,						-- transparency (ical standard). used to say if people assigned to event are busy or not by event.
   fk_user_done		integer,						-- id de la personne qui a effectue l'action
   priority			smallint,
   fulldayevent		smallint NOT NULL default 0,

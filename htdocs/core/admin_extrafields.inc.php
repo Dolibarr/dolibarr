@@ -41,7 +41,7 @@ if ($action == 'add')
 		{
 			$error++;
 			$langs->load("errors");
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
 			$action = 'create';
 		}
 
@@ -49,22 +49,63 @@ if ($action == 'add')
         {
             $error++;
             $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
+            $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'create';
         }
         if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
+            $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'create';
         }
         if (GETPOST('type')=='select' && !GETPOST('param'))
         {
         	$error++;
         	$langs->load("errors");
-        	$mesg=$langs->trans("ErrorNoValueForSelectType");
+        	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
         	$action = 'create';
+        }
+        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
+        	$action = 'create';
+        }
+        if (GETPOST('type')=='radio' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
+        	$action = 'create';
+        }
+        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) 
+        {
+        		// Construct array for parameter (value of select list)
+    			$parameters = GETPOST('param');
+    			$parameters_array = explode("\r\n",$parameters);
+    			foreach($parameters_array as $param_ligne)
+    			{
+    				if (!empty($param_ligne)) {
+	    				if (preg_match_all('/,/',$param_ligne,$matches)) 
+	    				{
+	    					if (count($matches[0])>1) {
+	    						$error++;
+	    						$langs->load("errors");
+	    						$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	    						$action = 'create';
+	    					}
+	    				}
+	    				else 
+	    				{
+	    					$error++;
+	    					$langs->load("errors");
+	    					$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	    					$action = 'create';
+	    				}
+    				}
+    			}  	
         }
 
 	    if (! $error)
@@ -84,6 +125,7 @@ if ($action == 'add')
                 $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$default_value,$params);
     			if ($result > 0)
     			{
+    				setEventMessage($langs->trans('SetupSaved'));
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
@@ -91,6 +133,7 @@ if ($action == 'add')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
+                    setEventMessage($mesg,'errors');
     			}
     		}
     		else
@@ -98,8 +141,13 @@ if ($action == 'add')
                 $error++;
     		    $langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+    			setEventMessage($mesg,'errors');
     			$action = 'create';
     		}
+	    }
+	    else 
+	    {
+	    	setEventMessage($mesg,'errors');
 	    }
 	}
 }
@@ -114,22 +162,70 @@ if ($action == 'update')
 		{
 			$error++;
 			$langs->load("errors");
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
 			$action = 'create';
 		}
 		if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
+            $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'edit';
         }
         if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
-            $mesg=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
+            $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'edit';
+        }
+        if (GETPOST('type')=='select' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
+        	$action = 'edit';
+        }
+        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
+        	$action = 'edit';
+        }
+        if (GETPOST('type')=='radio' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
+        	$action = 'edit';
+        }
+        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param'))
+        {
+        	// Construct array for parameter (value of select list)
+        	$parameters = GETPOST('param');
+        	$parameters_array = explode("\r\n",$parameters);
+        	foreach($parameters_array as $param_ligne)
+        	{
+        		if (!empty($param_ligne)) {
+	        		if (preg_match_all('/,/',$param_ligne,$matches))
+	        		{
+	        			if (count($matches[0])>1) {
+	        				$error++;
+	        				$langs->load("errors");
+	        				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	        				$action = 'edit';
+	        			}
+	        		}
+	        		else
+	        		{
+	        			$error++;
+	        			$langs->load("errors");
+	        			$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	        			$action = 'edit';
+	        		}
+        		}
+        	}
         }
 
 	    if (! $error)
@@ -148,6 +244,7 @@ if ($action == 'update')
     			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0),(GETPOST('required')?1:0),$pos,$params);
     			if ($result > 0)
     			{
+    				setEventMessage($langs->trans('SetupSaved'));
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
@@ -155,6 +252,7 @@ if ($action == 'update')
     			{
                     $error++;
     			    $mesg=$extrafields->error;
+    			    setEventMessage($mesg,'errors');
     			}
     		}
     		else
@@ -162,7 +260,12 @@ if ($action == 'update')
     		    $error++;
     			$langs->load("errors");
     			$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+    			setEventMessage($mesg,'errors');
     		}
+	    }
+	    else
+	    {
+	    	setEventMessage($mesg,'errors');
 	    }
 	}
 }

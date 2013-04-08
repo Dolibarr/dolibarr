@@ -48,11 +48,13 @@ if ($action == 'update')
 	$amount=GETPOST('MEMBER_NEWFORM_AMOUNT');
 	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
+	$email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$editamount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db, "MEMBER_PAYONLINE_SENDEMAIL",$email,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -90,22 +92,39 @@ if ($conf->use_javascript_ajax)
 {
     print "\n".'<script type="text/javascript" language="javascript">';
     print 'jQuery(document).ready(function () {
+                function initemail()
+                {
+                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\')
+                    {
+                        jQuery("#tremail").hide();
+					}
+					else
+					{
+                        jQuery("#tremail").show();
+					}
+				}
                 function initfields()
                 {
-                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
+					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
                     {
-                        jQuery(".drag").hide();
+                        jQuery("#tramount").hide();
+                        jQuery("#tredit").hide();
+                        jQuery("#trpayment").hide();
+                        jQuery("#tremail").hide();
                     }
                     if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\')
                     {
-                        jQuery(".drag").show();
-                    }
-                }
-                initfields();
-                jQuery("#MEMBER_ENABLE_PUBLIC").change(function() {
-                    initfields();
-                });
-           })';
+                        jQuery("#tramount").show();
+                        jQuery("#tredit").show();
+                        jQuery("#trpayment").show();
+                        if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') jQuery("#tremail").hide();
+                        else jQuery("#tremail").show();
+					}
+				}
+				initfields();
+                jQuery("#MEMBER_ENABLE_PUBLIC").change(function() { initfields(); });
+                jQuery("#MEMBER_NEWFORM_PAYONLINE").change(function() { initemail(); });
+			})';
     print '</script>'."\n";
 }
 
@@ -119,7 +138,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="right">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
 
@@ -128,14 +147,14 @@ $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
-print '</td><td width="60" align="right">';
+print '</td><td align="right">';
 print $form->selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
 print "</td></tr>\n";
 
 // Type
 /*$var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bcdd[$var].'><td>';
+print '<tr '.$bc[$var].' class="drag"><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->MEMBER_NEWFORM_FORCETYPE,1);
@@ -144,32 +163,43 @@ print "</td></tr>\n"; */
 // Amount
 $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bcdd[$var].'><td>';
+print '<tr '.$bc[$var].' id="tramount"><td>';
 print $langs->trans("DefaultAmount");
-print '</td><td width="60" align="right">';
+print '</td><td align="right">';
 print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';;
 print "</td></tr>\n";
 
 // Can edit
 $var=! $var;
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bcdd[$var].'><td>';
+print '<tr '.$bc[$var].' id="tredit"><td>';
 print $langs->trans("CanEditAmount");
-print '</td><td width="60" align="right">';
+print '</td><td align="right">';
 print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 print "</td></tr>\n";
 
 if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 {
+	// Jump to an online payment page
+	$var=! $var;
+	print '<tr '.$bc[$var].' id="trpayment"><td>';
+	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
+	print '</td><td align="right">';
+	$listofval=array();
+	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
+	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
+	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
+	print "</td></tr>\n";
+}
+
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
+{
     // Jump to an online payment page
     $var=! $var;
-    print '<tr '.$bcdd[$var].'><td>';
-    print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-    print '</td><td width="60" align="right">';
-    $listofval=array();
-    if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
-    if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
-    print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
+    print '<tr '.$bc[$var].' id="tremail"><td>';
+    print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
+    print '</td><td align="right">';
+	print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';;
     print "</td></tr>\n";
 }
 

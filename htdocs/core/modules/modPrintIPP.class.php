@@ -35,10 +35,12 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 class modPrintIPP extends DolibarrModules
 {
 
-    /**
-     *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      handler d'acces base
-     */
+	
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
     function  __construct($db)
     {
         $this->db = $db ;
@@ -120,25 +122,33 @@ class modPrintIPP extends DolibarrModules
     }
 
     /**
-     *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-     *               Definit egalement les repertoires de donnees a creer pour ce module.
-     */
-    function init()
-    {
-        $sql = array("CREATE TABLE IF NOT EXISTS llx_printer_ipp (rowid int(11) NOT NULL AUTO_INCREMENT,printer_name text NOT NULL, printer_location text NOT NULL,printer_uri varchar(256) NOT NULL,copy int(11) NOT NULL DEFAULT '1',module varchar(16) NOT NULL,login varchar(32) NOT NULL,PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;");
-
-        return $this->_init($sql);
-    }
-
-    /**
-     *    \brief      Fonction appelee lors de la desactivation d'un module.
-     *                Supprime de la base les constantes, boites et permissions du module.
-     */
-    function remove()
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+    function init($options='')
     {
         $sql = array();
 
-        return $this->_remove($sql);
+        return $this->_init($sql, $options);
+    }
+
+   /**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+    	function remove($options='')
+    {
+        $sql = array();
+
+        return $this->_remove($sql, $options);
     }
 
 }

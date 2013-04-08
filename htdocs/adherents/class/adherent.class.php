@@ -41,6 +41,10 @@ class Adherent extends CommonObject
     public $table_element='adherent';
     protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    var $error;
+    var $errors;
+    var $mesgs;
+
     var $id;
     var $ref;
     var $civilite_id;
@@ -1370,10 +1374,10 @@ class Adherent extends CommonObject
      */
     function add_to_abo()
     {
-        global $conf;
+        global $conf,$langs;
 
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-        $mailmanspip=new MailmanSpip($db);
+        $mailmanspip=new MailmanSpip($this->db);
 
         $err=0;
 
@@ -1385,6 +1389,16 @@ class Adherent extends CommonObject
             {
             	$this->error=$mailmanspip->error;
                 $err+=1;
+            }
+            foreach ($mailmanspip->mladded_ko as $tmplist => $tmpemail)
+            {
+            	$langs->load("errors");
+            	$this->errors[]=$langs->trans("ErrorFailedToAddToMailmanList",$tmpemail,$tmplist);
+            }
+            foreach ($mailmanspip->mladded_ok as $tmplist => $tmpemail)
+            {
+            	$langs->load("mailmanspip");
+            	$this->mesgs[]=$langs->trans("SuccessToAddToMailmanList",$tmpemail,$tmplist);
             }
         }
 
@@ -1400,11 +1414,10 @@ class Adherent extends CommonObject
         }
         if ($err)
         {
-            // error
             return -$err;
         }
         else
-        {
+       {
             return 1;
         }
     }
@@ -1418,10 +1431,10 @@ class Adherent extends CommonObject
      */
     function del_to_abo()
     {
-        global $conf;
+        global $conf,$langs;
 
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-        $mailmanspip=new MailmanSpip($db);
+        $mailmanspip=new MailmanSpip($this->db);
 
         $err=0;
 
@@ -1431,7 +1444,19 @@ class Adherent extends CommonObject
             $result=$mailmanspip->del_to_mailman($this);
             if ($result < 0)
             {
+                $this->error=$mailmanspip->error;
                 $err+=1;
+            }
+
+            foreach ($mailmanspip->mlremoved_ko as $tmplist => $tmpemail)
+            {
+            	$langs->load("errors");
+            	$this->errors[]=$langs->trans("ErrorFailedToRemoveToMailmanList",$tmpemail,$tmplist);
+            }
+            foreach ($mailmanspip->mlremoved_ok as $tmplist => $tmpemail)
+            {
+            	$langs->load("mailmanspip");
+            	$this->mesgs[]=$langs->trans("SuccessToRemoveToMailmanList",$tmpemail,$tmplist);
             }
         }
 
@@ -1503,40 +1528,6 @@ class Adherent extends CommonObject
         if ($withpicto && $withpicto != 2) $result.=' ';
         $result.=$lien.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$lienfin;
         return $result;
-    }
-
-
-    /**
-     * 	Return full address of member
-     *
-     * 	@param		int			$withcountry		1=Add country into address string
-     *  @param		string		$sep				Separator to use to build string
-     *	@return		string							Full address string
-     */
-    function getFullAddress($withcountry=0,$sep="\n")
-    {
-        $ret='';
-        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
-        {
-            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-            $tmparray=getCountry($this->country_id,'all');
-            $this->country_code=$tmparray['code'];
-            $this->country     =$tmparray['label'];
-        }
-
-        if (in_array($this->country_code,array('US')))
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        else
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        return trim($ret);
     }
 
     /**

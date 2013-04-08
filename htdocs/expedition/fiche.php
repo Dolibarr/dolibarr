@@ -1405,7 +1405,7 @@ else
         {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -1428,7 +1428,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 
@@ -1458,7 +1458,7 @@ else
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
             $formmail->substit['__CONTACTCIVNAME__']='';
-            
+
             //Find the good contact adress
             //Find the good contact adress
             if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{
@@ -1475,22 +1475,22 @@ else
 
             if (is_array($contactarr) && count($contactarr)>0) {
             	foreach($contactarr as $contact) {
-            		
+
             		if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
-            			 
+
             			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-            			 
+
             			$contactstatic=new Contact($db);
             			$contactstatic->fetch($contact['id']);
             			$custcontact=$contactstatic->getFullName($langs,1);
             		}
             	}
-            
+
             	if (!empty($custcontact)) {
             		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
             	}
             }
-            
+
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='shipping_send';

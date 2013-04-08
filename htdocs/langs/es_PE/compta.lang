@@ -1,0 +1,26 @@
+# Dolibarr language file - es_PU - compta 
+CHARSET=UTF-8
+VATToPay=IGV ventas
+VATReceived=IGV repercutido
+VATToCollect=IGV compras
+VATSummary=Balance de IGV
+VATPaid=IGV Pagado
+VATCollected=IGV recuperado
+PaymentVat=Pago IGV
+NewVATPayment=Nuevo pago de IGV
+VATPayment=Pago IGV
+VATPayments=Pagos IGV
+SocialContributionsPayments=Pagos cargas sociales
+ShowVatPayment=Ver pagos IGV
+TotalVATReceived=Total IGV percibido
+RulesResultDue=- Los importes mostrados son importes totales<br>- Incluye las facturas, cargas e IGV debidos, que estén pagadas o no.<br>- Se basa en la fecha de validación para las facturas y el IGV y en la fecha de vencimiento para las cargas.<br>
+RulesResultInOut=- Los importes mostrados son importes totales<br>- Incluye los pagos realizados para las facturas, cargas e IGV.<br>- Se basa en la fecha de pago de las mismas.<br>
+VATReportByCustomersInInputOutputMode=Informe por cliente del IGV repercutido y pagado (IGV pagado)
+VATReportByCustomersInDueDebtMode=Informe por cliente del IGV repercutido y pagado (IGV debido)
+VATReportByQuartersInInputOutputMode=Informe por tasa del IGV repercutido y pagado (IGV pagado)
+VATReportByQuartersInDueDebtMode=Informe por tasa del IGV repercutido y pagado (IGV debido)
+SeeVATReportInInputOutputMode=Ver el informe <b>%sIGV pagado%s</b> para un modo de cálculo estandard
+SeeVATReportInDueDebtMode=Ver el informe <b>%sIGV debido%s</b> para un modo de cálculo con la opción sobre lo debido
+RulesVATIn=- Para los servicios, el informe incluye el IGV de los pagos efectivamente recibidos o emitidos basándose en la fecha del pago.<br>- Para los bienes materiales, incluye el IGV de las facturas basándose en la fecha de la factura.
+RulesVATDue=- Para los servicios, el informe incluye el IGV de las facturas debidas, pagadas o no basándose en la fecha de estas facturas.<br>- Para los bienes materiales, incluye el IGV de las facturas basándose en la fecha de la factura.
+COMPTA_VAT_ACCOUNT=Código contable por defecto para el IGV (si no está definido en el diccionario "Tasas de IGV")

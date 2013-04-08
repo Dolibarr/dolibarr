@@ -48,6 +48,9 @@ alter table llx_contratdet add column buy_price_ht double(24,8) DEFAULT 0 after 
 -- serialised array, to store value of select list choices for example
 alter table llx_extrafields add column param text after pos;
 
+-- numbering on supplier invoice
+alter table llx_facture_fourn add column ref varchar(30) NOT NULL after rowid;
+
 
 alter table llx_propal   CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
 alter table llx_commande CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
@@ -82,6 +85,7 @@ alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
 alter table llx_expedition   CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
+alter table llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(30);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
 
@@ -150,6 +154,7 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFA
 UPDATE llx_c_tva set localtax1=0, localtax1_type='0' where localtax1_type = '7';
 UPDATE llx_c_tva set localtax2=0, localtax2_type='0' where localtax2_type = '7';
 
+ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
 
 ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
 
@@ -204,7 +209,37 @@ ALTER TABLE llx_user ADD COLUMN   zip               varchar(25);
 ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
 ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
+ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
+DROP TABLE llx_printer_ipp;
+CREATE TABLE llx_printer_ipp 
+(
+	rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	tms 	timestamp,
+	datec 	datetime,
+	printer_name text NOT NULL, 
+	printer_location text NOT NULL,
+	printer_uri varchar(256) NOT NULL,
+	copy int(11) NOT NULL DEFAULT '1',
+	module varchar(16) NOT NULL,
+	login varchar(32) NOT NULL
+)ENGINE=innodb;
 
+ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 
+create table llx_commande_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+ALTER TABLE llx_commande_extrafields ADD INDEX idx_commande_extrafields (fk_object);
 
+ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
+ALTER TABLE llx_societe ADD COLUMN note_public text after note;
+
+ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
+ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
+
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);

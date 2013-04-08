@@ -187,14 +187,8 @@ if ($action == 'add' && $canadduser)
         $object->note			= GETPOST("note");
         $object->ldap_sid		= GETPOST("ldap_sid");
 
-        // Get extra fields
-        foreach($_POST as $key => $value)
-        {
-        	if (preg_match("/^options_/",$key))
-        	{
-        		$object->array_options[$key]=GETPOST($key);
-        	}
-        }
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         // If multicompany is off, admin users must all be on entity 0.
         if (! empty($conf->multicompany->enabled))
@@ -329,14 +323,8 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->openid		= GETPOST("openid");
             $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
-            // Get extra fields
-            foreach($_POST as $key => $value)
-            {
-            	if (preg_match("/^options_/",$key))
-            	{
-            		$object->array_options[$key]=GETPOST($key);
-            	}
-            }
+            // Fill array 'array_options' with data from add form
+        	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             if (! empty($conf->multicompany->enabled))
             {
@@ -927,15 +915,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
-    	foreach($extrafields->attribute_label as $key=>$label)
-    	{
-    		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-    		print '<tr><td';
-    		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-    		print '>'.$label.'</td><td colspan="3">';
-    		print $extrafields->showInputField($key,$value);
-    		print '</td></tr>'."\n";
-    	}
+    	print $object->showOptionals($extrafields,'edit');
     }
 
  	print "</table>\n";
@@ -1089,7 +1069,7 @@ else
 
             // Firstname
             print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td>'.$object->Firstname.'</td>';
+            print '<td>'.$object->firstname.'</td>';
             print '</tr>'."\n";
 
             // Position/Job
@@ -1304,15 +1284,7 @@ else
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-					print $extrafields->showOutputField($key,$value);
-					print '</td></tr>'."\n";
-				}
+				print $object->showOptionals($extrafields);
 			}
 
 			print "</table>\n";
@@ -1588,12 +1560,12 @@ else
             print '<td>';
             if ($caneditfield && !$object->ldap_sid)
             {
-                print '<input size="30" type="text" class="flat" name="Firstname" value="'.$object->Firstname.'">';
+                print '<input size="30" type="text" class="flat" name="firstname" value="'.$object->firstname.'">';
             }
             else
             {
-                print '<input type="hidden" name="Firstname" value="'.$object->Firstname.'">';
-                print $object->Firstname;
+                print '<input type="hidden" name="firstname" value="'.$object->firstname.'">';
+                print $object->firstname;
             }
             print '</td></tr>';
 
@@ -1921,15 +1893,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	foreach($extrafields->attribute_label as $key=>$label)
-            	{
-            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-            		print $extrafields->showInputField($key,$value);
-            		print '</td></tr>'."\n";
-            	}
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             print '</table>';

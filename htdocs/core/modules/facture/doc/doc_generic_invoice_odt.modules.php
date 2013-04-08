@@ -116,7 +116,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
         	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
             'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
-            'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
+            'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
+        	'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
             'object_payment_mode_code'=>$object->mode_reglement_code,
         	'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
         	'object_payment_term_code'=>$object->cond_reglement_code,
@@ -282,6 +283,15 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			return -1;
 		}
 
+                // Add odtgeneration hook
+                if (! is_object($hookmanager))
+                {
+                        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+                        $hookmanager=new HookManager($this->db);
+                }
+                $hookmanager->initHooks(array('odtgeneration'));
+                global $action;
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
@@ -374,6 +384,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     '__TOTAL_VAT__' => $object->total_tva
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
+                // Call the ODTSubstitution hook
+                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
+                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Line of free text
 				$newfreetext='';
@@ -415,9 +428,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_propal=is_object($propal_object)?$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal'):array();
+				$array_other=$this->get_substitutionarray_other($user,$outputlangs);
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+                                // Call the ODTSubstitution hook
+                                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+                                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 //var_dump($tmparray); exit;
                 foreach($tmparray as $key=>$value)
@@ -446,6 +463,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     {
                         $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
                         complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+                        // Call the ODTSubstitutionLine hook
+                        $parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
+                        $reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                         foreach($tmparray as $key => $val)
                         {
                              try
@@ -470,15 +490,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     return -1;
                 }
 
-				// Add odtgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
-				$hookmanager->initHooks(array('odtgeneration'));
-				$parameters=array('odfHandler'=>$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				global $action;
+                                // Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 // Write new file

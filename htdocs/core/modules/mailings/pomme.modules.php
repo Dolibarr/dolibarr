@@ -77,13 +77,15 @@ class mailing_pomme extends MailingTargets
 	}
 
 
-	/*
-	 *		\brief		Return here number of distinct emails returned by your selector.
-	 *					For example if this selector is used to extract 500 different
-	 *					emails from a text file, this function must return 500.
-	 *		\return		int
-	 */
-	function getNbOfRecipients()
+    /**
+     *	Return here number of distinct emails returned by your selector.
+     *	For example if this selector is used to extract 500 different
+     *	emails from a text file, this function must return 500.
+     *
+     *	@param	string	$sql		Requete sql de comptage
+     *	@return	int					Number of recipients
+     */
+	function getNbOfRecipients($sql='')
 	{
 		global $conf;
 

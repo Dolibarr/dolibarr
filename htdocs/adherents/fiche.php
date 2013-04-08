@@ -64,6 +64,9 @@ if (! empty($conf->mailmanspip->enabled))
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('member');
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -282,14 +285,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->statut      = $_POST["statut"];
 		$object->public      = $_POST["public"];
 
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$object->array_options[$key]=$_POST[$key];
-			}
-		}
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		// Check if we need to also synchronize user information
 		$nosyncuser=0;
@@ -356,14 +353,23 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 				{
 					if ($object->oldcopy->del_to_abo() < 0)
 					{
-						// error
-						$errmsgs[]= $langs->trans("FailedToCleanMailmanList").': '.$object->error."<br>\n";
+						if (! empty($object->oldcopy->error)) setEventMessage($langs->trans("ErrorFailedToRemoveToMailmanList").': '.$object->oldcopy->error, 'errors');
+						setEventMessage($object->oldcopy->errors, 'errors');
+					}
+					else
+					{
+						setEventMessage($object->oldcopy->mesgs,'mesgs');
 					}
 				}
-				if ($object->add_to_abo() < 0)    // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+    			// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+    			if ($object->add_to_abo() < 0)
+    			{
+    				 if (! empty($object->error)) setEventMessage($langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error, 'errors');
+    				 setEventMessage($object->errors, 'errors');
+    			}
+				else
 				{
-					// error
-					$errmsgs[]= $langs->trans("FailedToAddToMailmanList").': '.$object->error."<br>\n";
+					setEventMessage($object->mesgs, 'mesgs');
 				}
 			}
 
@@ -451,14 +457,8 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->fk_soc      = $socid;
 	$object->public      = $public;
 
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=$_POST[$key];
-		}
-	}
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	// Check parameters
 	if (empty($morphy) || $morphy == "-1") {
@@ -684,9 +684,6 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('member');
-
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("Member"),$help_url);
 
@@ -885,15 +882,7 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?GETPOST('options_'.$key,'alpha'):(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-           		print '<tr><td';
-           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
+			print $object->showOptionals($extrafields,'edit');
 		}
 
 		/*
@@ -1128,15 +1117,7 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-           		print '<tr><td';
-           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-           		print '>'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
+			print $object->showOptionals($extrafields,'edit');
 		}
 
 		// Third party Dolibarr
@@ -1458,13 +1439,7 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=$object->array_options["options_$key"];
-				print "<tr><td>".$label."</td><td>";
-				print $extrafields->showOutputField($key,$value);
-				print "</td></tr>\n";
-			}
+			print $object->showOptionals($extrafields);
 		}
 
 		// Third party Dolibarr
@@ -1553,11 +1528,11 @@ else
 			// Modify
 			if ($user->rights->adherent->creer)
 			{
-				print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=edit">'.$langs->trans("Modify")."</a></div>";
 			}
 			else
 			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Modify")."</font>";
+				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
 			}
 
 			// Valider
@@ -1565,11 +1540,11 @@ else
 			{
 				if ($user->rights->adherent->creer)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Validate")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>';
 				}
 			}
 
@@ -1578,11 +1553,11 @@ else
 			{
 				if ($user->rights->adherent->creer)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Reenable")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
 				}
 			}
 
@@ -1591,17 +1566,17 @@ else
 			{
 				if ($object->statut >= 1)
 				{
-					if ($object->email) print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
-					else print "<a class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NoEMail"))."\">".$langs->trans("SendCardByMail")."</a>\n";
+					if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a></div>\n";
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("ValidateBefore"))."\">".$langs->trans("SendCardByMail")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 				}
 			}
 			else
 			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("SendCardByMail")."</font>";
+				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 			}
 
 			// Resilier
@@ -1609,11 +1584,11 @@ else
 			{
 				if ($user->rights->adherent->supprimer)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$rowid.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Resiliate")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
 				}
 			}
 
@@ -1622,12 +1597,12 @@ else
 			{
 				if ($user->rights->societe->creer)
 				{
-					if ($object->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
-					else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a>';
+					if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrThirdParty")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrThirdParty")."</font></div>";
 				}
 			}
 
@@ -1636,23 +1611,23 @@ else
 			{
 				if ($user->rights->user->user->creer)
 				{
-					if ($object->statut != -1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
-					else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+					if ($object->statut != -1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 				}
 				else
 				{
-					print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("CreateDolibarrLogin")."</font>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
 				}
 			}
 
 			// Delete
 			if ($user->rights->adherent->supprimer)
 			{
-				print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$object->id&action=delete\">".$langs->trans("Delete")."</a>\n";
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="fiche.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>\n";
 			}
 			else
 			{
-				print "<font class=\"butActionRefused\" href=\"#\" title=\"".dol_escape_htmltag($langs->trans("NotEnoughPermissions"))."\">".$langs->trans("Delete")."</font>";
+				print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 			}
 
 			// Action SPIP
@@ -1662,21 +1637,22 @@ else
 
 				if ($isinspip == 1)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip")."</a></div>\n";
 				}
 				if ($isinspip == 0)
 				{
-					print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=add_spip\">".$langs->trans("AddIntoSpip")."</a>\n";
-				}
-				if ($isinspip == -1)
-				{
-					print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 				}
 			}
 
 		}
 
 		print '</div>';
+
+		if ($isinspip == -1)
+		{
+			print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
+		}
 		print "<br>\n";
 
 	}

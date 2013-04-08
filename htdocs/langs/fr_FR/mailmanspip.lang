@@ -23,3 +23,6 @@ DeleteIntoSpip=Supprimer de spip
 DeleteIntoSpipConfirmation=Êtes-vous sur de vouloir effacer cet adhérent de SPIP?
 DeleteIntoSpipError=Échec de la suppression de l'utilisateur de SPIP
 SPIPConnectionFailed=Échec de connexion à SPIP
+SuccessToAddToMailmanList=Ajout de %s à la liste Mailman %s ou base SPIP réalisé
+SuccessToRemoveToMailmanList=Suppression de %s de la liste Mailman %s ou base SPIP réalisé
+

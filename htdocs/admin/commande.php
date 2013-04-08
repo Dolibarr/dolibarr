@@ -8,6 +8,7 @@
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -202,15 +204,9 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 print '<br>';
 
-$h = 0;
+$head = order_admin_prepare_head(null);
 
-$head[$h][0] = DOL_URL_ROOT."/admin/commande.php";
-$head[$h][1] = $langs->trans("Orders");
-$head[$h][2] = 'Order';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'general', $langs->trans("ModuleSetup"), 0, 'order');
 
 /*
  * Orders Numbering model

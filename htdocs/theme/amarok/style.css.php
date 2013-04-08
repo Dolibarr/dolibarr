@@ -56,8 +56,8 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'12';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'11';
+$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
+$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
 $path='';    		// This value may be used in future for external module to overwrite theme
 $theme='amarok';	// Value of theme
@@ -179,6 +179,18 @@ select.flat {
 form {
     padding:0px;
     margin:0px;
+}
+div.float
+{
+    float:<?php print $left; ?>;
+}
+div.floatright
+{
+    float:<?php print $right; ?>;
+}
+div.inline-block
+{
+	display:inline-block;
 }
 
 .valignmiddle {
@@ -584,7 +596,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
  *  RESIZER-BARS
  */
 .ui-layout-resizer  { /* all 'resizer-bars' */
-	width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px !important;
 }
 .ui-layout-resizer-hover    {   /* affects both open and closed states */
 }
@@ -593,7 +605,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 /*.ui-layout-resizer-open-hover ,*/ /* hover-color to 'resize' */
 .ui-layout-resizer-dragging {   /* resizer beging 'dragging' */
     background: #DDD;
-    width: <?php echo (empty($conf->browser->phone)?'8':'24'); ?>px;
+    width: <?php echo (empty($conf->dol_optimize_smallscreen)?'8':'24'); ?>px;
 }
 .ui-layout-resizer-dragging {   /* CLONED resizer being dragged */
     border-left:  1px solid #BBB;
@@ -629,7 +641,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
  *  TOGGLER-BUTTONS
  */
 .ui-layout-toggler {
-    <?php if (empty($conf->browser->phone)) { ?>
+    <?php if (empty($conf->dol_optimize_smallscreen)) { ?>
     border-top: 1px solid #AAA; /* match pane-border */
     border-right: 1px solid #AAA; /* match pane-border */
     border-bottom: 1px solid #AAA; /* match pane-border */
@@ -641,14 +653,14 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 }
 .ui-layout-toggler-open {
 	height: 54px !important;
-	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'7':'22'); ?>px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
 	border-radius:0px 10px 10px 0px;
 }
 .ui-layout-toggler-closed {
-	height: <?php echo (empty($conf->browser->phone)?'54':'2'); ?>px !important;
-	width: <?php echo (empty($conf->browser->phone)?'7':'22'); ?>px !important;
+	height: <?php echo (empty($conf->dol_optimize_smallscreen)?'54':'2'); ?>px !important;
+	width: <?php echo (empty($conf->dol_optimize_smallscreen)?'7':'22'); ?>px !important;
     -moz-border-radius:0px 10px 10px 0px;
 	-webkit-border-radius:0px 10px 10px 0px;
 	border-radius:0px 10px 10px 0px;
@@ -667,7 +679,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 }
 
 .ui-layout-north {
-	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
+	height: <?php print (empty($conf->dol_optimize_smallscreen)?'54':'21'); ?>px !important;
 }
 
 
@@ -816,8 +828,8 @@ td.vmenu {
 
 div.fiche {
 	padding:8px 6px 10px;
-	margin-<?php print $left; ?>: <?php print (empty($conf->browser->phone) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'16':'24'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'12':'6'; ?>px;
+	margin-<?php print $left; ?>: <?php print (empty($conf->dol_optimize_smallscreen) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'16':'24'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'12':'6'; ?>px;
 }
 
 div.fichecenter {
@@ -825,25 +837,25 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 35%;\n"; } ?>
-	<?php if (! empty($conf->browser->phone)) { print "padding-bottom: 6px;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 35%;\n"; } ?>
+	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 65%;\n"; } ?>
-	<?php if (! empty($conf->browser->phone)) { print "padding-bottom: 6px\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 65%;\n"; } ?>
+	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->browser->phone))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone))   { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->browser->phone))   { print "padding-left: 16px;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } ?>
 }
 
 
@@ -852,9 +864,10 @@ div.ficheaddleft {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* boutons : */
+div.divButAction { margin-bottom: 1.4em; }
+
 .button, .butAction {background: #999; border: solid 1px #888; font-weight: normal; }
-.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;}
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;	cursor: not-allowed; }
 .butActionDelete {background: #b33c37; border:solid 1px #8d2f2b; font-weight: normal;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {

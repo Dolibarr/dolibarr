@@ -1199,7 +1199,6 @@ class Propal extends CommonObject
      *	Update value of extrafields on the proposal
      *
      *	@param      User	$user       Object user that modify
-     *	@param      double	$remise      Amount discount
      *	@return     int         		<0 if ko, >0 if ok
      */
     function update_extrafields($user)
@@ -1634,6 +1633,20 @@ class Propal extends CommonObject
                     $this->db->rollback();
                     return -2;
                 }
+                
+                if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                {
+                	// Define output language
+                	$outputlangs = $langs;
+                	if (! empty($conf->global->MAIN_MULTILANGS))
+                	{
+                		$outputlangs = new Translate("",$conf);
+                		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
+                		$outputlangs->setDefaultLang($newlang);
+                	}
+                	//$ret=$object->fetch($id);    // Reload to get new records
+                	propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                }
 
                 // Appel des triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -1646,6 +1659,21 @@ class Propal extends CommonObject
             }
             else
             {
+            	
+            	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+            	{
+            		// Define output language
+            		$outputlangs = $langs;
+            		if (! empty($conf->global->MAIN_MULTILANGS))
+            		{
+            			$outputlangs = new Translate("",$conf);
+            			$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
+            			$outputlangs->setDefaultLang($newlang);
+            		}
+            		//$ret=$object->fetch($id);    // Reload to get new records
+            		propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            	}
+            	
                 // Appel des triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);

@@ -42,6 +42,9 @@ class dolprintIPP
      * @param   DoliDB      $db         database
      * @param   string      $host       host of Cups
      * @param   string      $port       port
+     * @param   string      $userid     userid
+     * @param   string      $user       user
+     * @param   string      $password   password
      * @return  printIPP
      */
     function __construct($db,$host,$port,$userid,$user,$password)
@@ -76,7 +79,11 @@ class dolprintIPP
 
     /**
      *  Print selected file
+     *  
+     * @param   string      $file       file
+     * @param   string      $module     module
      *
+     *  @return void
      */
     function print_file($file,$module)
     {
@@ -113,6 +120,9 @@ class dolprintIPP
     /**
      *  List jobs print
      *
+     * @param   string      $module     module
+     *
+     *  @return void
      */
     function list_jobs($module)
     {

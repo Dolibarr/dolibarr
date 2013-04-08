@@ -78,8 +78,6 @@ dol_fiche_head($head, 'attributes', $langs->trans("Agenda"));
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
 
-dol_htmloutput_errors($mesg);
-
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
 

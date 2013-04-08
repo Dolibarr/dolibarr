@@ -81,6 +81,9 @@ $result = restrictedArea($user, 'propal', $id);
 $object = new Propal($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('propal');
+
 // Load object
 if ($id > 0 || ! empty($ref))
 {
@@ -338,15 +341,9 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     		}
 
-    		// Get extra fields
-    		foreach($_POST as $key => $value)
-    		{
-    			if (preg_match("/^options_/",$key))
-    			{
-    				$object->array_options[$key]=GETPOST($key);
-    			}
-    		}
-    		
+    		// Fill array 'array_options' with data from add form
+    		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
     		$id = $object->create($user);
     	}
 
@@ -1107,14 +1104,10 @@ else if ($action == 'down' && $user->rights->propal->creer)
 }
 else if ($action == 'update_extras')
 {
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=$_POST[$key];
-		}
-	}
+	// Fill array 'array_options' with data from update form
+	$extralabels=$extrafields->fetch_name_optionals_label('propal');
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
 	// Actions on extra fields (by external module or standard code)
 	// FIXME le hook fait double emploi avec le trigger !!
 	$hookmanager->initHooks(array('propaldao'));
@@ -1132,7 +1125,7 @@ else if ($action == 'update_extras')
 		}
 	}
 	else if ($reshook < 0) $error++;
-	 
+
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->creer)
@@ -1207,9 +1200,6 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
-
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('propal');
 
 $now=dol_now();
 
@@ -1331,7 +1321,7 @@ if ($action == 'create')
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
 	$liste=ModelePDFPropales::liste_modeles($db);
-	print $form->selectarray('model',$liste,$conf->global->PROPALE_ADDON_PDF);
+	print $form->selectarray('model',$liste,($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT?$conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT:$conf->global->PROPALE_ADDON_PDF));
 	print "</td></tr>";
 
 	// Project
@@ -1357,24 +1347,7 @@ if ($action == 'create')
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-			
-			// Show separator only
-			if ($extrafields->attribute_type[$key] == 'separate')
-			{
-				print $extrafields->showSeparator($key);
-			}
-			else 
-			{
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print '>'.$label.'</td><td colspan="3">';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
-		}
+		print $object->showOptionals($extrafields,'edit');
 	}
 
 	print "</table>";
@@ -1850,7 +1823,7 @@ else
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		
+
 		if ($action == 'edit_extras')
 		{
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
@@ -1858,8 +1831,8 @@ else
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 		}
-		
-		
+
+		// TODO : use showOptionals($extrafields) function
 	    foreach($extrafields->attribute_label as $key=>$label)
 	    {
 	        $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
@@ -1872,6 +1845,13 @@ else
 	        	print '<tr><td';
 	        	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
 	        	print '>'.$label.'</td><td colspan="3">';
+
+	        	// Convert date into timestamp format
+	        	if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+	        	{
+	        		$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+	        	}
+
 	        	if ($action == 'edit_extras' &&  $user->rights->propal->creer)
 	        	{
 	        		print $extrafields->showInputField($key,$value);
@@ -1883,19 +1863,19 @@ else
 	        	print '</td></tr>'."\n";
 	        }
 	    }
-	    
+
 	    if(count($extrafields->attribute_label) > 0) {
-	    	
+
 	    	if ($action == 'edit_extras' && $user->rights->propal->creer)
 	    	{
 	    		print '<tr><td></td><td>';
 	    		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 	    		print '</form>';
 	    		print '</td></tr>';
-	    		
+
 	    	}
 	    	else {
-	    		if ($object->statut == 0 && $user->rights->propal->creer)	    		
+	    		if ($object->statut == 0 && $user->rights->propal->creer)
 	    		{
 	    			print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
 	    		}
@@ -2053,21 +2033,21 @@ else
 			// Validate
 			if ($object->statut == 0 && $object->total_ttc >= 0 && count($object->lines) > 0 && $user->rights->propal->valider)
 			{
-			    if (count($object->lines) > 0) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+			    if (count($object->lines) > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a></div>';
 			    //else print '<a class="butActionRefused" href="#">'.$langs->trans('Validate').'</a>';
 			}
 
 			// Edit
 			if ($object->statut == 1 && $user->rights->propal->creer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
 			}
 
 			// ReOpen
 			if (($object->statut == 2 || $object->statut == 3) && $user->rights->propal->cloturer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
-				print '>'.$langs->trans('ReOpen').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#reopen').'"';
+				print '>'.$langs->trans('ReOpen').'</a></div>';
 			}
 
 			// Send
@@ -2075,9 +2055,9 @@ else
 			{
 	            if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send)
 	            {
-				   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+				   print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
 	            }
-	            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+	            else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 			}
 
 	        // Create an order
@@ -2085,7 +2065,7 @@ else
 	        {
 	            if ($user->rights->commande->creer)
 	            {
-	                print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a></div>';
 	            }
 	        }
 
@@ -2096,7 +2076,7 @@ else
 
 				if ($user->rights->contrat->creer)
 				{
-				  print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a>';
+				  print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans('AddContract').'</a></div>';
 				}
             }
 
@@ -2105,34 +2085,34 @@ else
 			{
 				if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
 				}
 
 				$arraypropal=$object->getInvoiceArrayList();
 				if (is_array($arraypropal) && count($arraypropal) > 0)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a></div>';
 				}
 			}
 
 			// Close
 			if ($object->statut == 1 && $user->rights->propal->cloturer)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
-				print '>'.$langs->trans('Close').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG)?'':'#close').'"';
+				print '>'.$langs->trans('Close').'</a></div>';
 			}
 
 			// Clone
 			if ($user->rights->propal->creer)
 			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
 			// Delete
 			if ($user->rights->propal->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
-				print '>'.$langs->trans('Delete').'</a>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+				print '>'.$langs->trans('Delete').'</a></div>';
 			}
 
 		}
@@ -2185,7 +2165,7 @@ else
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	    $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+	    $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref,'/'));
 	    $file=$fileparams['fullname'];
 
 	    // Build document if it not exists
@@ -2208,7 +2188,7 @@ else
 	            dol_print_error($db,$result);
 	            exit;
 	        }
-	        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+	        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref,'/'));
 	        $file=$fileparams['fullname'];
 	    }
 
@@ -2239,12 +2219,12 @@ else
 	    $formmail->substit['__SIGNATURE__']=$user->signature;
 	    $formmail->substit['__PERSONALIZED__']='';
 	    $formmail->substit['__CONTACTCIVNAME__']='';
-	    
+
 	    //Find the good contact adress
 	    $custcontact='';
 	    $contactarr=array();
 	    $contactarr=$object->liste_contact(-1,'external');
-	    
+
 	    if (is_array($contactarr) && count($contactarr)>0) {
 	    	foreach($contactarr as $contact) {
 	    		if ($contact['libelle']==$langs->trans('TypeContact_propal_external_CUSTOMER')) {
@@ -2253,19 +2233,19 @@ else
 	    			$custcontact=$contactstatic->getFullName($langs,1);
 	    		}
 	    	}
-	    		
+
 	    	if (!empty($custcontact)) {
 	    		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
 	    	}
 	    }
-	    
+
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['id']=$object->id;
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-		
-	
+
+
 		// Init list of files
 	    if (GETPOST("mode")=='init')
 		{

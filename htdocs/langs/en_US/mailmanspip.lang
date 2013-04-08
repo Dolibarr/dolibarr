@@ -24,3 +24,5 @@ DeleteIntoSpip=Remove from SPIP
 DeleteIntoSpipConfirmation=Are you sure you want to remove this member from SPIP?
 DeleteIntoSpipError=Failed to suppress the user from SPIP
 SPIPConnectionFailed=Failed to connect to SPIP
+SuccessToAddToMailmanList=Add of %s to mailman list %s or SPIP database done
+SuccessToRemoveToMailmanList=Removal of %s from mailman list %s or SPIP database done

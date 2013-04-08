@@ -76,8 +76,6 @@ dol_fiche_head($head, 'attributes', $langs->trans("Member"), 0, 'user');
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
 
-dol_htmloutput_errors($mesg);
-
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
 
@@ -119,7 +117,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
 	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
 	print "</div>";
 }
 

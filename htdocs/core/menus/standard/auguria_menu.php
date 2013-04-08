@@ -51,13 +51,15 @@ class MenuManager
     	$this->db=$db;
     }
 
-    
+
    	/**
    	 * Load this->tabMenu
    	 *
+   	 * @param	string	$forcemainmenu		To force mainmenu to load
+   	 * @param	string	$forceleftmenu		To force leftmenu to load
    	 * @return	void
    	 */
-   	function loadMenu()
+   	function loadMenu($forcemainmenu='',$forceleftmenu='')
    	{
     	global $conf, $user, $langs;
 
@@ -78,6 +80,7 @@ class MenuManager
     		// On va le chercher en session si non defini par le lien
     		$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
     	}
+		if (! empty($forcemainmenu)) $mainmenu=$forcemainmenu;
 
     	if (isset($_GET["leftmenu"]))
     	{
@@ -98,6 +101,7 @@ class MenuManager
     		// On va le chercher en session si non defini par le lien
     		$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
     	}
+    	if (! empty($forceleftmenu)) $leftmenu=$forceleftmenu;
 
     	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
     	$tabMenu=array();
@@ -114,7 +118,7 @@ class MenuManager
     			if ($leftmenu=="modulesadmintools" && $user->admin)
     			{
     				$langs->load("products");
-			    	array_unshift($tabMenu,array(
+    				$array_menu_product=array(
 			    			'url'=>"/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",
 			    			'titre'=>$langs->trans("ProductVatMassChange"),
 			    			'enabled'=>($user->admin?true:false),
@@ -126,10 +130,11 @@ class MenuManager
 			    			'leftmenu'=>'modulesadmintools_massvat',
 			    			'type'=>'left',
 			    			'position'=>20
-			    	));
+			    	);
+			    	array_unshift($tabMenu,$array_menu_product);
     				//$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
     			}
-    			array_unshift($tabMenu,array(
+    			$array_menu_product=array(
 		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
 		    		'titre'=>$langs->trans("ModulesSystemTools"),
 		    		'enabled'=>($user->admin?true:false),
@@ -140,7 +145,8 @@ class MenuManager
 		    		'leftmenu'=>'modulesadmintools',
 		    		'type'=>'left',
 		    		'position'=>20
-				));
+				);
+    			array_unshift($tabMenu,$array_menu_product);
     		}
     	}
 
@@ -151,12 +157,12 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode		'top' or 'left'
+     *	@param	string	$mode		'top', 'left', 'jmobile'
      *  @return	int     			Number of menu entries shown
 	 */
 	function showmenu($mode)
 	{
-    	global $conf;
+    	global $conf, $langs, $user;
 
         require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria.lib.php';
 
@@ -167,15 +173,72 @@ class MenuManager
         }
 
         $res='ErrorBadParameterForMode';
-        
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
-        
-        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu);
-        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu);
+
+        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        if ($mode == 'jmobile')
+        {
+        	$res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+
+        	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+        	{
+        		print '<ul data-role="listview" data-inset="true">';
+        		print '<li data-role="list-divider">';
+        		if ($val['enabled'] == 1)
+        		{
+        			$relurl=dol_buildpath($val['url'],1);
+        			$relurl=preg_replace('/__LOGIN__/',$user->login,$relurl);
+        			$relurl=preg_replace('/__USERID__/',$user->id,$relurl);
+
+        			print '<a href="#">'.$val['titre'].'</a>'."\n";
+        			// Search submenu fot this entry
+        			$tmpmainmenu=$val['mainmenu'];
+        			$tmpleftmenu='all';
+        			$submenu=new Menu();
+        			$res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
+        			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
+
+        			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
+        			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
+        			//var_dump($canonrelurl);
+        			//var_dump($canonnexturl);
+        			print '<ul>';
+        			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
+        			{
+        				// We add sub entry
+        				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+        			}
+        			foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+        			{
+        				$relurl2=dol_buildpath($val2['url'],1);
+	        			$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
+    	    			$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
+        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
+        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
+        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
+        				print '<li'.($val2['level']==0?' data-role="list-divider"':'').'>';
+        				if ($relurl2) print '<a href="'.$relurl2.'">';
+        				print $val2['titre'];
+        				if ($relurl2) print '</a>';
+        				print '</li>'."\n";
+        			}
+        			//var_dump($submenu);
+        			print '</ul>';
+        		}
+        		if ($val['enabled'] == 2)
+        		{
+        			print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+        		}
+        		print '</li>';
+        		print '</ul>'."\n";
+        	}
+        }
 
         unset($this->menu);
-        
+
         return $res;
     }
 }

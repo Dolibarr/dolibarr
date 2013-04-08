@@ -185,14 +185,14 @@ $form=new Form($db);
 
 if ($action == 'create' || $action == 'add_paiement')
 {
-    $facture = new FactureFournisseur($db);
-    $facture->fetch($facid);
+    $object = new FactureFournisseur($db);
+    $object->fetch($facid);
 
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';
-    $sql.= ' f.rowid as ref, f.facnumber, f.amount, f.total_ttc as total';
+    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -214,7 +214,7 @@ if ($action == 'create' || $action == 'add_paiement')
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add_paiement">';
             print '<input type="hidden" name="facid" value="'.$facid.'">';
-            print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
+            print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
             print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
 
@@ -248,91 +248,98 @@ if ($action == 'create' || $action == 'add_paiement')
             }
             print '</table>';
 
-            /*
-             * Autres factures impayees
-             */
-            $sql = 'SELECT f.rowid as facid, f.rowid as ref, f.facnumber, f.total_ht, f.total_ttc, f.datef as df';
-            $sql.= ', SUM(pf.amount) as am';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
-            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-            $sql.= " WHERE f.entity = ".$conf->entity;
-            $sql.= ' AND f.fk_soc = '.$facture->socid;
-            $sql.= ' AND f.paye = 0';
-            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-            $sql.= ' GROUP BY f.rowid, f.facnumber, f.total_ht, f.total_ttc, f.datef';
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                if ($num > 0)
-                {
-                    $i = 0;
-                    print '<br>';
 
-                    print $langs->trans('Invoices').'<br>';
-                    print '<table class="noborder" width="100%">';
-                    print '<tr class="liste_titre">';
-                    print '<td>'.$langs->trans('Ref').'</td>';
-                    print '<td>'.$langs->trans('RefSupplier').'</td>';
-                    print '<td align="center">'.$langs->trans('Date').'</td>';
-                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
-                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
-                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-                    print '<td align="center">'.$langs->trans('Amount').'</td>';
-                    print '</tr>';
+			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+			$error=$hookmanager->error; $errors=$hookmanager->errors;
+			if (empty($reshook))
+			{
+				/*
+	             * Autres factures impayees
+	             */
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef as df';
+	            $sql.= ', SUM(pf.amount) as am';
+	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
+	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
+	            $sql.= " WHERE f.entity = ".$conf->entity;
+	            $sql.= ' AND f.fk_soc = '.$object->socid;
+	            $sql.= ' AND f.paye = 0';
+	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
+	            $sql.= ' GROUP BY f.rowid, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+	            $resql = $db->query($sql);
+	            if ($resql)
+	            {
+	                $num = $db->num_rows($resql);
+	                if ($num > 0)
+	                {
+	                    $i = 0;
+	                    print '<br>';
 
-                    $var=True;
-                    $total=0;
-                    $total_ttc=0;
-                    $totalrecu=0;
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($resql);
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'>';
-                        print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
-                        print '</a></td>';
-                        print '<td>'.$objp->facnumber.'</td>';
-                        if ($objp->df > 0 )
-                        {
-                            print '<td align="center">';
-                            print dol_print_date($db->jdate($objp->df)).'</td>';
-                        }
-                        else
-                        {
-                            print '<td align="center"><b>!!!</b></td>';
-                        }
-                        print '<td align="right">'.price($objp->total_ttc).'</td>';
-                        print '<td align="right">'.price($objp->am).'</td>';
-                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
-                        print '<td align="center">';
-                        $namef = 'amount_'.$objp->facid;
-                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
-                        print "</td></tr>\n";
-                        $total+=$objp->total_ht;
-                        $total_ttc+=$objp->total_ttc;
-                        $totalrecu+=$objp->am;
-                        $i++;
-                    }
-                    if ($i > 1)
-                    {
-                        // Print total
-                        print '<tr class="liste_total">';
-                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
-                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
-                        print '<td align="center">&nbsp;</td>';
-                        print "</tr>\n";
-                    }
-                    print "</table>\n";
-                }
-                $db->free($resql);
-            }
-            else
-            {
-                dol_print_error($db);
-            }
+	                    print $langs->trans('Invoices').'<br>';
+	                    print '<table class="noborder" width="100%">';
+	                    print '<tr class="liste_titre">';
+	                    print '<td>'.$langs->trans('Ref').'</td>';
+	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
+	                    print '<td align="center">'.$langs->trans('Date').'</td>';
+	                    print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+	                    print '<td align="right">'.$langs->trans('AlreadyPaid').'</td>';
+	                    print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+	                    print '<td align="center">'.$langs->trans('Amount').'</td>';
+	                    print '</tr>';
+
+	                    $var=True;
+	                    $total=0;
+	                    $total_ttc=0;
+	                    $totalrecu=0;
+	                    while ($i < $num)
+	                    {
+	                        $objp = $db->fetch_object($resql);
+	                        $var=!$var;
+	                        print '<tr '.$bc[$var].'>';
+	                        print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
+	                        print '</a></td>';
+	                        print '<td>'.$objp->ref_supplier.'</td>';
+	                        if ($objp->df > 0 )
+	                        {
+	                            print '<td align="center">';
+	                            print dol_print_date($db->jdate($objp->df)).'</td>';
+	                        }
+	                        else
+	                        {
+	                            print '<td align="center"><b>!!!</b></td>';
+	                        }
+	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
+	                        print '<td align="right">'.price($objp->am).'</td>';
+	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
+	                        print '<td align="center">';
+	                        $namef = 'amount_'.$objp->facid;
+	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
+	                        print "</td></tr>\n";
+	                        $total+=$objp->total_ht;
+	                        $total_ttc+=$objp->total_ttc;
+	                        $totalrecu+=$objp->am;
+	                        $i++;
+	                    }
+	                    if ($i > 1)
+	                    {
+	                        // Print total
+	                        print '<tr class="liste_total">';
+	                        print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+	                        print '<td align="right"><b>'.price($totalrecu).'</b></td>';
+	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+	                        print '<td align="center">&nbsp;</td>';
+	                        print "</tr>\n";
+	                    }
+	                    print "</table>\n";
+	                }
+	                $db->free($resql);
+	            }
+	            else
+	           {
+	                dol_print_error($db);
+	            }
+			}
 
 			//			print '<tr><td colspan="3" align="center">';
 			print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
@@ -434,7 +441,7 @@ if (empty($action))
         print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','',$paramlist,'',$sortfield,$sortorder);
         print_liste_field_titre($langs->trans('Amount'),'paiement.php','f.amount','',$paramlist,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','',$paramlist,'',$sortfield,$sortorder);
+        //print_liste_field_titre($langs->trans('Invoice'),'paiement.php','ref_supplier','',$paramlist,'',$sortfield,$sortorder);
         print "</tr>\n";
 
         // Lines for filters fields
@@ -485,7 +492,7 @@ if (empty($action))
             print '<td align="right">'.price($objp->pamount).'</td>';
 
             // Ref invoice
-            /*$invoicesupplierstatic->ref=$objp->facnumber;
+            /*$invoicesupplierstatic->ref=$objp->ref_supplier;
             $invoicesupplierstatic->id=$objp->facid;
             print '<td nowrap="nowrap">';
             print $invoicesupplierstatic->getNomUrl(1);

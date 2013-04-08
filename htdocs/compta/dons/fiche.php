@@ -524,36 +524,36 @@ if (! empty($id) && $action != 'edit')
 	 */
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="fiche.php?action=edit&rowid='.$don->id.'">'.$langs->trans('Modify').'</a>';
+	print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=edit&rowid='.$don->id.'">'.$langs->trans('Modify').'</a></div>';
 
 	if ($don->statut == 0)
 	{
-		print '<a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$don->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
     if (($don->statut == 0 || $don->statut == 1) && $resteapayer == 0 && $don->paye == 0)
     {
-        print "<a class=\"butAction\" href=\"fiche.php?rowid=$don->id&action=set_cancel\">".$langs->trans("ClassifyCanceled")."</a>";
+        print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$don->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }
 
 	// TODO Gerer action emettre paiement
 	if ($don->statut == 1 && $resteapayer > 0)
 	{
-		print "<a class=\"butAction\" href=\"paiement.php?facid=$facid&action=create\">".$langs->trans("DoPayment")."</a>";
+		print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?rowid='.$don->id.'&action=create">'.$langs->trans("DoPayment")."</a></div>";
 	}
 
 	if ($don->statut == 1 && $resteapayer == 0 && $don->paye == 0)
 	{
-		print "<a class=\"butAction\" href=\"fiche.php?rowid=$don->id&action=set_paid\">".$langs->trans("ClassifyPaid")."</a>";
+		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?rowid='.$don->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 	}
 
 	if ($user->rights->don->supprimer)
 	{
-		print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$don->id&action=delete\">".$langs->trans("Delete")."</a>";
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="fiche.php?rowid='.$don->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
 	}
 	else
 	{
-		print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</a>";
+		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
 	}
 
 	print "</div>";

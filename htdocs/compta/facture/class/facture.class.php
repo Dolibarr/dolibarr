@@ -559,7 +559,6 @@ class Facture extends CommonInvoice
      *		Load an object from its id and create a new one in database
      *
      *		@param		int				$socid			Id of thirdparty
-	 *		@param		HookManager		$hookmanager	Hook manager instance
      * 	 	@return		int								New id of clone
      */
     function createFromClone($socid=0)
@@ -2590,7 +2589,7 @@ class Facture extends CommonInvoice
     /**
      *  Return if an invoice can be deleted
      *	Rule is:
-     *	If hidden option FACTURE_CAN_BE_REMOVED is on, we can
+     *	If hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is on, we can
      *  If invoice has a definitive ref, is last, without payment and not dipatched into accountancy -> yes end of rule
      *  If invoice is draft and ha a temporary ref -> yes
      *
@@ -2600,7 +2599,8 @@ class Facture extends CommonInvoice
     {
         global $conf;
 
-        if (! empty($conf->global->FACTURE_CAN_BE_REMOVED)) return 1;
+        if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) return 1;
+        if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED))  return 0;
 
         // on verifie si la facture est en numerotation provisoire
         $facref = substr($this->ref, 1, 4);

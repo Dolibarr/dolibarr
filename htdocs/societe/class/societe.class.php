@@ -140,7 +140,7 @@ class Societe extends CommonObject
 
     var $array_options;
 
-    var $oldcopy;
+    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
     /**
@@ -249,7 +249,11 @@ class Societe extends CommonObject
                     $result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
                     // Fin appel triggers
+                }
+                else $error++;
 
+                if (! $error)
+                {
                     dol_syslog(get_class($this)."::Create success id=".$this->id);
                     $this->db->commit();
                     return $this->id;
@@ -1518,40 +1522,6 @@ class Societe extends CommonObject
     }
 
     /**
-     * 	Return full address of third party
-     *
-     * 	@param		int			$withcountry		1=Add country into address string
-     *  @param		string		$sep				Separator to use to build string
-     *	@return		string							Full address string
-     */
-    function getFullAddress($withcountry=0,$sep="\n")
-    {
-        $ret='';
-        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
-        {
-            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-            $tmparray=getCountry($this->country_id,'all');
-            $this->country_code=$tmparray['code'];
-            $this->country     =$tmparray['label'];
-        }
-
-        if (in_array($this->country_code,array('US')))
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        else
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        return trim($ret);
-    }
-
-
-    /**
      *    Return list of contacts emails existing for third party
      *
      *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
@@ -2580,6 +2550,9 @@ class Societe extends CommonObject
         $this->country_code='FR';
         $this->email='specimen@specimen.com';
         $this->url='http://www.specimen.com';
+
+        $this->phone='0909090901';
+        $this->fax='0909090909';
 
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');

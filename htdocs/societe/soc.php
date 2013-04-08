@@ -55,6 +55,9 @@ if ($user->societe_id) $socid=$user->societe_id;
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('company');
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -166,14 +169,8 @@ if (empty($reshook))
         $object->commercial_id         = GETPOST('commercial_id');
         $object->default_lang          = GETPOST('default_lang');
 
-        // Get extra fields
-        foreach($_POST as $key => $value)
-        {
-            if (preg_match("/^options_/",$key))
-            {
-                $object->array_options[$key]=GETPOST($key);
-            }
-        }
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         if (GETPOST('deletephoto')) $object->logo = '';
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -226,7 +223,7 @@ if (empty($reshook))
 				}
 
 				$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	
+
 				if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
 				{
 					$langs->load("errors");
@@ -507,9 +504,6 @@ if (empty($reshook))
 /*
  *  View
  */
-
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('company');
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
@@ -980,33 +974,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	$e=0;
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-            	$colspan='3';
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-                if ($extrafields->attribute_type[$key] == 'separate')
-                {
-                	print $extrafields->showSeparator($key);
-                }
-                else
-                {
-	                if (($e % 2) == 0)
-	                {
-	                	print '<tr>';
-	                	$colspan='0';
-	                }           		
-	           		print '<td';
-	           		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	           		print '>'.$label.'</td>';
-	           		print '<td colspan="'.$colspan.'">';
-	                print $extrafields->showInputField($key,$value);
-	                print '</td>';
-	                
-	                if (($e % 2) == 1) print '</tr>'."\n";
-	                $e++;
-                }
-            }
+        	print $object->showOptionals($extrafields,'edit');
         }
 
         // Ajout du logo
@@ -1341,12 +1309,12 @@ else
                     print "}\n";
                     print '</script>';
                     print "\n";
-                    $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                    $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
                     $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
                 {
-                    $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+                    $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$object->country_id).'" class="hideonsmartphone" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
                 }
             }
             print $s;
@@ -1400,7 +1368,7 @@ else
             print '</td></tr>';
 
             // Capital
-            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
             // Default language
             if (! empty($conf->global->MAIN_MULTILANGS))
@@ -1410,45 +1378,17 @@ else
                 print '</td>';
                 print '</tr>';
             }
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	$old_pos=0;
-            	$e=0;
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-	                $colspan = '3';
-                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-                    if ($extrafields->attribute_type[$key] == 'separate')
-                    {
-                    	print $extrafields->showSeparator($key);
-                    }
-                    else
-                    {
-	                    if (($e % 2) == 0)
-	                    {
-	                    	print '<tr>'."\n";
-	                    	$colspan = '0';
-	                    }
-	            		print '<td';
-	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	            		print '>'.$label.'</td>'."\n";
-	            		print '<td colspan="'.$colspan.'">';
-	                    print $extrafields->showInputField($key,$value);
-	                    print "</td>"."\n";
-	                    
-	                    if (($e % 2) == 1 )
-	                    {
-	                    	print "</tr>\n";
-	                    }
-	                    $e++;
-                    }
-                }
+            	print $object->showOptionals($extrafields,'edit');
             }
+
             // Logo
-            print '<tr>';
+            print '<tr class="hideonsmartphone">';
             print '<td>'.$langs->trans("Logo").'</td>';
             print '<td colspan="3">';
             if ($object->logo) print $form->showphoto('societe',$object,50);
@@ -1680,12 +1620,12 @@ else
                     print "}\n";
                     print '</script>';
                     print "\n";
-                    $s.='<a href="#" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
+                    $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
                     $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
                 {
-                    $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+                    $s.='<a href="'.$langs->transcountry("VATIntraCheckURL",$object->country_id).'" class="hideonsmartphone" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
                 }
             }
             print $s;
@@ -1760,31 +1700,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	$e=0;
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-            	$colspan='3';
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                if ($extrafields->attribute_type[$key] == 'separate')
-                {
-                	print $extrafields->showSeparator($key);
-                }
-                else
-                {
-	                if (($e % 2) == 0) 
-	                {
-	                	print '<tr>';
-	                	$colspan='0';
-	                }
-	                print '<td>'.$label.'</td>';
-	                print '<td colspan="'.$colspan.'">';
-	                print $extrafields->showOutputField($key,$value);
-	                print "</td>";
-	                
-	                if (($e % 2) == 1) print '</tr>';
-	                $e++;
-                }
-            }
+        	print $object->showOptionals($extrafields);
         }
 
         // Ban
@@ -1868,18 +1784,18 @@ else
 
         if ($user->rights->societe->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
+            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
         }
 
         if ($user->rights->societe->supprimer)
         {
             if ($conf->use_javascript_ajax)
             {
-                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
             }
             else
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
             }
         }
 

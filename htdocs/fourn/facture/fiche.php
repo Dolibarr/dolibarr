@@ -1,10 +1,11 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ $errors=array();
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
+$ref		= GETPOST('ref','alpha');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -64,6 +66,12 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercard'));
 
 $object=new FactureFournisseur($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 
 
@@ -162,11 +170,12 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 }
 
 // Set supplier ref
-elseif ($action == 'setfacnumber' && $user->rights->fournisseur->facture->creer)
+if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 {
-    $object->fetch($id);
-    $result=$object->set_ref_supplier($user, GETPOST('facnumber'));
+    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
+    if ($result < 0) dol_print_error($db, $object->error);
 }
+
 
 // Set label
 elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
@@ -189,7 +198,7 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
 {
     $object->fetch($id);
     $object->date_echeance=dol_mktime(12,0,0,$_POST['date_lim_reglementmonth'],$_POST['date_lim_reglementday'],$_POST['date_lim_reglementyear']);
-    if ($object->date_echeance < $object->date)
+    if (! empty($object->date_echeance) && $object->date_echeance < $object->date)
     {
     	$object->date_echeance=$object->date;
     	setEventMessage($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"),'warnings');
@@ -245,7 +254,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
-    if (! GETPOST('facnumber'))
+    if (! GETPOST('ref_supplier'))
     {
         $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
         $action='create';
@@ -258,7 +267,8 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $db->begin();
 
         // Creation facture
-        $object->ref           = $_POST['facnumber'];
+        $object->ref           = $_POST['ref'];
+		$object->ref_supplier  = $_POST['ref_supplier'];
         $object->socid         = $_POST['socid'];
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
@@ -502,13 +512,14 @@ elseif ($action == 'addline')
             $label.= $_POST['np_desc'];
 
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
+            $npr = get_default_npr($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
             $localtax1tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
             $localtax2tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
             $remise_percent=GETPOST('remise_percent');
             $type = $product->type;
 
-            $result=$object->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $_POST['qty'], $idprod, $remise_percent);
+            $result=$object->addline($label, $product->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $_POST['qty'], $idprod, $remise_percent, '', '', 0, $npr);
 
         }
         if ($idprod == -1)
@@ -520,7 +531,9 @@ elseif ($action == 'addline')
     }
     else
     {
-        $tauxtva = price2num($_POST['tauxtva']);
+        $npr = preg_match('/\*/', $_POST['tauxtva']) ? 1 : 0 ;
+        $tauxtva = str_replace('*','',$_POST["tauxtva"]);
+        $tauxtva = price2num($tauxtva);
         $localtax1tx= get_localtax($tauxtva, 1, $mysoc,$object->thirdparty);
         $localtax2tx= get_localtax($tauxtva, 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
@@ -538,14 +551,14 @@ elseif ($action == 'addline')
                 $price_base_type = 'HT';
 
                 //$desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0)
-                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva, $localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
             else
             {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, 0, $price_base_type, $type);
+                $result=$object->addline($_POST['dp_desc'], $ht, $tauxtva,$localtax1tx, $localtax2tx, $_POST['qty'], 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
         }
     }
@@ -749,7 +762,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     {
                         $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
                         setEventMessage($mesg);
-                        
+
                         $error=0;
 
                         // Initialisation donnees
@@ -1039,7 +1052,7 @@ if ($action == 'create')
     print '</td>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.(isset($_POST['facnumber'])?$_POST['facnumber']:$fac_ori->ref).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$fac_ori->ref).'" type="text"></td>';
     print '</tr>';
 
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
@@ -1177,7 +1190,8 @@ if ($action == 'create')
         if (1==2 && ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
         {
             print '<tr class="liste_titre">';
-            print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
+            print '<td>&nbsp;</td>';
+            print '<td>'.$langs->trans('Label').'</td>';
             print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
             print '<td align="right">'.$langs->trans('VAT').'</td>';
             print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -1201,7 +1215,7 @@ if ($action == 'create')
     }
 
     // Other options
-    $parameters=array();
+    $parameters=array('colspan' => ' colspan="6"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
     // Bouton "Create Draft"
@@ -1242,14 +1256,16 @@ else
         $productstatic = new Product($db);
 
         $object->fetch($id);
-        $object->fetch_thirdparty();
+        $result=$object->fetch_thirdparty();
+        if ($result < 0) dol_print_error($db);
 
         $societe = new Fournisseur($db);
-        $societe->fetch($object->socid);
+        $result=$societe->fetch($object->socid);
+        if ($result < 0) dol_print_error($db);
 
         /*
          *	View card
-        */
+         */
         $head = facturefourn_prepare_head($object);
         $titre=$langs->trans('SupplierInvoice');
         dol_fiche_head($head, 'card', $titre, 0, 'bill');
@@ -1280,6 +1296,22 @@ else
         // Confirmation de la validation
         if ($action == 'valid')
         {
+			 // on verifie si l'objet est en numerotation provisoire
+            $objectref = substr($object->ref, 1, 4);
+            if ($objectref == 'PROV')
+            {
+                $savdate=$object->date;
+                if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
+                {
+                    $object->date=dol_now();
+                    $object->date_lim_reglement=$object->calculate_date_lim_reglement();
+                }
+                $numref = $object->getNextNumRef($soc);
+            }
+            else
+            {
+                $numref = $object->ref;
+            }
             $formquestion=array();
             if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
             {
@@ -1321,13 +1353,13 @@ else
 
         // Ref
         print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td>';
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
@@ -1571,7 +1603,7 @@ else
         }
 
         // Other options
-        $parameters=array('colspan' => ' colspan="3"');
+        $parameters=array('colspan' => ' colspan="4"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
         print '</table>';
@@ -1736,10 +1768,16 @@ else
                     // Show range
                     print_date_range($date_start,$date_end);
                 }
+
+                if (is_object($hookmanager))
+                {
+                	$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
+                	$reshook=$hookmanager->executeHooks('formViewProductSupplierOptions',$parameters,$object,$action);
+                }
                 print '</td>';
 
                 // VAT
-                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx).'%</td>';
+                print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'</td>';
 
                 // Unit price
                 print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
@@ -1808,7 +1846,7 @@ else
             if (is_object($hookmanager))
             {
                 $parameters=array();
-                $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+                $reshook=$hookmanager->executeHooks('formCreateSupplierProductOptions',$parameters,$object,$action);
             }
 
             // Editor wysiwyg
@@ -2036,10 +2074,10 @@ else
          * Show mail form
         */
         if ($action == 'presend')
-        {        	
+        {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -2062,7 +2100,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 
@@ -2092,12 +2130,12 @@ else
             $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
             $formmail->substit['__CONTACTCIVNAME__']='';
-            
+
             //Find the good contact adress
             $custcontact='';
             $contactarr=array();
             $contactarr=$object->liste_contact(-1,'external');
-            
+
             if (is_array($contactarr) && count($contactarr)>0) {
             	foreach($contactarr as $contact) {
             		if ($contact['libelle']==$langs->trans('TypeContact_invoice_supplier_external_BILLING')) {
@@ -2107,12 +2145,12 @@ else
             			$custcontact=$contactstatic->getFullName($langs,1);
             		}
             	}
-            
+
             	if (!empty($custcontact)) {
             		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
             	}
             }
-            
+
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='invoice_supplier_send';

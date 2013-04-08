@@ -38,7 +38,7 @@ $action = GETPOST("action");
  */
 if ($action == 'setvalue' && $user->admin)
 {
-    $result=dolibarr_set_const($db, "CLICKTODIAL_URL",GETPOST("url"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("url"), 'chaine', 0, '', $conf->entity);
     if ($result >= 0)
     {
         $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
@@ -53,6 +53,8 @@ if ($action == 'setvalue' && $user->admin)
 /*
  * View
  */
+
+$user->fetch_clicktodial();
 
 $wikihelp='EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
 llxHeader('',$langs->trans("ClickToDialSetup"),$wikihelp);
@@ -69,33 +71,67 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="120">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td valign="top">';
-print $langs->trans("URL").'</td><td>';
+print $langs->trans("DefaultLink").'</td><td>';
 print '<input size="92" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';
+
+//if (! empty($user->clicktodial_url))
+//{
+	print '<br>';
+	print info_admin($langs->trans("ValueOverwrittenByUserSetup"));
+//}
+
 print '</td></tr>';
 
-print '<tr><td colspan="3" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-print '</table></form>';
+print '</table>';
 
-/*if (! empty($conf->global->CLICKTODIAL_URL))
- {
- print $langs->trans("Test");
- // Add a phone number to test
- }
- */
+print '<center><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+
+print '</form><br><br>';
+
+
+if (! empty($conf->global->CLICKTODIAL_URL))
+{
+	$user->fetch_clicktodial();
+
+	$phonefortest=$mysoc->phone;
+	if (GETPOST('phonefortest')) $phonefortest=GETPOST('phonefortest');
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'">';
+	print $langs->trans("LinkToTestClickToDial",$user->login).' : ';
+	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
+	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
+	print '</form>';
+
+	$setupcomplete=1;
+	if (preg_match('/__LOGIN__/',$conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_login)) $setupcomplete=0;
+	if (preg_match('/__PASSWORD__/',$conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_password)) $setupcomplete=0;
+	if (preg_match('/__PHONEFROM__/',$conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_poste)) $setupcomplete=0;
+
+	if ($setupcomplete)
+	{
+		print $langs->trans("LinkToTest",$user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
+	}
+	else
+	{
+		$langs->load("errors");
+		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
+	}
+}
 
 dol_htmloutput_mesg($mesg);
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

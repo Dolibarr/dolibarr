@@ -396,7 +396,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
         $localobjectadd->town='New town';
         $result=$localobjectadd->getFullAddress(1);
         print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nUnited States", $result);
+        $this->assertContains("New address\nNew town, New zip\nUnited States", $result);
 
         return $localobjectadd->id;
     }

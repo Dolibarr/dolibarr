@@ -66,7 +66,9 @@ class FormFile
     {
         global $conf,$langs;
 
-        if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax)
+        if (! empty($conf->browser->phone)) return 0;
+
+		if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) && $useajax)
         {
             return $this->_formAjaxFileUpload($object);
         }

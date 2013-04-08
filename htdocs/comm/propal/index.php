@@ -513,7 +513,7 @@ if (! empty($conf->propal->enabled))
 */
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
 
 llxFooter();

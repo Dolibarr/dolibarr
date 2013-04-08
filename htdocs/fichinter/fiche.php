@@ -49,6 +49,8 @@ $socid		= GETPOST('socid','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
+$origin=GETPOST('origin','alpha');
+$originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -140,7 +142,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
     if ($object->socid > 0)
     {
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
-	    if ($_POST['origin'] && $_POST['originid'])
+	    if (!empty($origin) && !empty($originid) )
 	    {
 	        // Parse element/subelement (ex: project_task)
 	        $element = $subelement = $_POST['origin'];
@@ -155,8 +157,8 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 	        if ($element == 'contract') { $element = $subelement = 'contrat'; }
 
-	        $object->origin    = $_POST['origin'];
-	        $object->origin_id = $_POST['originid'];
+	        $object->origin    = $origin;
+	        $object->origin_id = $originid;
 
 	        // Possibility to add external linked objects with hooks
 	        $object->linked_objects[$object->origin] = $object->origin_id;
@@ -165,9 +167,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        	$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 	        }
 
-	        $object_id = $object->create($user);
+	        $id = $object->create($user);
 
-	        if ($object_id > 0)
+	        if ($id > 0)
 	        {
 	            dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -236,7 +238,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$duration = 3600;
 
 		                    $result = $object->addline(
-		                        $object_id,
+		                        $id,
 		                        $desc,
 					            $date_intervention,
                  				$duration
@@ -670,7 +672,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 {
                     if (strlen(GETPOST('subject','alphs'))) $subject = GETPOST('subject','alpha');
                     else $subject = $langs->transnoentities('Intervention').' '.$object->ref;
-                    $actiontypecode='AC_FICH';
+                    $actiontypecode='AC_OTH_AUTO';
                     $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
                     if ($message)
                     {
@@ -992,6 +994,15 @@ if ($action == 'create')
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
+
+        // Show link to origin object
+        if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
+        {
+        	$newclassname=$classname;
+        	if ($newclassname=='Propal') $newclassname='CommercialProposal';
+        	print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
+        }
+
         print '</table>';
 
 	    if (is_object($objectsrc))
@@ -1068,7 +1079,7 @@ else if ($id > 0 || ! empty($ref))
     		$numref = $object->ref;
     	}
     	$text=$langs->trans('ConfirmValidateIntervention',$numref);
-    	
+
         $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
@@ -1370,15 +1381,15 @@ else if ($id > 0 || ! empty($ref))
             // Validate
             if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
-                print '>'.$langs->trans("Valid").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
+                print '>'.$langs->trans("Valid").'</a></div>';
             }
 
             // Modify
             if ($object->statut == 1 && $user->rights->ficheinter->creer)
             {
-                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
-                print '>'.$langs->trans("Modify").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
+                print '>'.$langs->trans("Modify").'</a></div>';
             }
 
             // Send
@@ -1386,9 +1397,9 @@ else if ($id > 0 || ! empty($ref))
             {
                 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
                 {
-                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
                 }
-                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
             }
 
         	// Invoicing
@@ -1397,15 +1408,15 @@ else if ($id > 0 || ! empty($ref))
 				$langs->load("bills");
                 if ($object->statut < 2)
                 {
-					if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-					else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+					if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
                 }
 
                 if (! empty($conf->global->FICHINTER_CLASSIFY_BILLED))
                 {
 	                if ($object->statut != 2)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a></div>';
 					}
 	            }
             }
@@ -1413,8 +1424,8 @@ else if ($id > 0 || ! empty($ref))
             // Delete
             if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
-                print '>'.$langs->trans('Delete').'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete"';
+                print '>'.$langs->trans('Delete').'</a></div>';
             }
 
         }
@@ -1465,7 +1476,7 @@ else if ($id > 0 || ! empty($ref))
     {
         $ref = dol_sanitizeFileName($object->ref);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
         $file=$fileparams['fullname'];
 
         // Build document if it not exists
@@ -1488,7 +1499,7 @@ else if ($id > 0 || ! empty($ref))
                 dol_print_error($db,$result);
                 exit;
             }
-            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
         }
 
@@ -1519,12 +1530,12 @@ else if ($id > 0 || ! empty($ref))
         $formmail->substit['__SIGNATURE__']=$user->signature;
         $formmail->substit['__PERSONALIZED__']='';
         $formmail->substit['__CONTACTCIVNAME__']='';
-        
+
         //Find the good contact adress
         $custcontact='';
         $contactarr=array();
         $contactarr=$object->liste_contact(-1,'external');
-        	
+
         if (is_array($contactarr) && count($contactarr)>0) {
         	foreach($contactarr as $contact) {
         		if ($contact['libelle']==$langs->trans('TypeContact_fichinter_external_CUSTOMER')) {
@@ -1534,12 +1545,12 @@ else if ($id > 0 || ! empty($ref))
         			$custcontact=$contactstatic->getFullName($langs,1);
         		}
         	}
-        
+
         	if (!empty($custcontact)) {
         		$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
         	}
         }
-        
+
         // Tableau des parametres complementaires
         $formmail->param['action']='send';
         $formmail->param['models']='fichinter_send';

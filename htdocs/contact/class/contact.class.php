@@ -62,7 +62,8 @@ class Contact extends CommonObject
 	var $email;
 	var $birthday;
 	var $default_lang;
-    var $note;                  // Private note
+    var $note_public;           // Public note
+	var $note;                  // Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
@@ -74,7 +75,7 @@ class Contact extends CommonObject
 	var $user_login;
 	var $import_key;
 
-	var $oldcopy;		// To contains a clone of this when we need to save old properties of object
+	var $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 
 	/**
@@ -725,7 +726,7 @@ class Contact extends CommonObject
 				$this->error=$this->db->error().' sql='.$sql;
 			}
 		}
-		
+
 		// Removed extrafields
 		 if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) { // For avoid conflicts if trigger used
 			$result=$this->deleteExtraFields($this);
@@ -865,41 +866,6 @@ class Contact extends CommonObject
 		return $result;
 	}
 
-
-    /**
-     * 	Return full address of contact
-     *
-     * 	@param		int			$withcountry		1=Add country into address string
-     *  @param		string		$sep				Separator to use to build string
-     *	@return		string							Full address string
-     */
-    function getFullAddress($withcountry=0,$sep="\n")
-    {
-        $ret='';
-        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
-        {
-            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-            $tmparray=getCountry($this->country_id,'all');
-            $this->country_code=$tmparray['code'];
-            $this->country     =$tmparray['label'];
-        }
-
-        if (in_array($this->country_code,array('US')))
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        else
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        return trim($ret);
-    }
-
-
 	/**
 	 *    Return label of a civility contact
 	 *
@@ -1028,13 +994,22 @@ class Contact extends CommonObject
 		$this->specimen=1;
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
-		$this->address = '61 jump street';
-		$this->zip = '75000';
-		$this->town = 'Paris';
+		$this->address = '21 jump street';
+		$this->zip = '99999';
+		$this->town = 'MyTown';
 		$this->country_id = 1;
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
+
+		$this->phone_pro = '0909090901';
+		$this->phone_perso = '0909090902';
+		$this->phone_mobile = '0909090903';
+		$this->fax = '0909090909';
+
+		$this->note_public='This is a comment (public)';
+		$this->note='This is a comment (private)';
+
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
 	}

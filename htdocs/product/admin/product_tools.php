@@ -54,7 +54,7 @@ if ($action == 'convert')
 	if ($oldvatrate == $newvatrate)
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans("ErrorNewVaueCantMatchOldValue"),'errors');
+		setEventMessage($langs->trans("ErrorNewValueCantMatchOldValue"),'errors');
 		$error++;
 	}
 

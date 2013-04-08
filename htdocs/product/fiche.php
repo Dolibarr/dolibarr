@@ -56,6 +56,9 @@ if (! empty($user->societe_id)) $socid=$user->societe_id;
 $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('product');
+
 if ($id > 0 || ! empty($ref))
 {
 	$object = new Product($db);
@@ -212,14 +215,8 @@ if (empty($reshook))
                 }
             }
 
-            // Get extra fields
-            foreach($_POST as $key => $value)
-            {
-                if (preg_match("/^options_/",$key))
-                {
-                    $object->array_options[$key]=$_POST[$key];
-                }
-            }
+            // Fill array 'array_options' with data from add form
+        	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             $id = $object->create($user);
 
@@ -272,14 +269,8 @@ if (empty($reshook))
                 $object->finished           = GETPOST('finished');
                 $object->hidden             = GETPOST('hidden')=='yes'?1:0;
 
-                // Get extra fields
-                foreach($_POST as $key => $value)
-                {
-                    if (preg_match("/^options_/",$key))
-                    {
-                        $object->array_options[$key]=$_POST[$key];
-                    }
-                }
+                // Fill array 'array_options' with data from add form
+        		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
                 if ($object->check())
                 {
@@ -632,9 +623,6 @@ if (GETPOST("cancel") == $langs->trans("Cancel"))
  * View
  */
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('product');
-
 $helpurl='';
 if (GETPOST("type") == '0') $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
@@ -792,15 +780,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-            foreach($extrafields->attribute_label as $key=>$label)
-            {
-                $value=(GETPOST('options_'.$key)?GETPOST('options_'.$key):$object->array_options["options_".$key]);
-            	print '<tr><td';
-            	if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            	print '>'.$label.'</td><td colspan="3">';
-                print $extrafields->showInputField($key,$value);
-                print '</td></tr>'."\n";
-            }
+        	print $object->showOptionals($extrafields,'edit');
         }
 
         // Note (private, no output on invoices, propales...)
@@ -999,15 +979,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-                    print $extrafields->showInputField($key,$value);
-                    print '</td></tr>'."\n";
-                }
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             // Note
@@ -1231,13 +1203,7 @@ else
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-                    $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-                    print '<tr><td>'.$label.'</td><td colspan="3">';
-                    print $extrafields->showOutputField($key,$value);
-                    print '</td></tr>'."\n";
-                }
+            	print $object->showOptionals($extrafields);
             }
 
             // Note
@@ -1291,18 +1257,18 @@ if ($action == '' || $action == 'view')
 {
     if ($user->rights->produit->creer || $user->rights->service->creer)
     {
-        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
         if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
         {
             if (! empty($conf->use_javascript_ajax))
             {
-                print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
+                print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
                 print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
             }
             else
             {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
             }
         }
     }
@@ -1315,22 +1281,22 @@ if ($action == '' || $action == 'view')
         {
             if (! empty($conf->use_javascript_ajax))
             {
-                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
                 print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
             }
             else
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
             }
         }
         else
         {
-            print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
+            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
         }
     }
     else
     {
-        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
+        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
     }
 }
 
