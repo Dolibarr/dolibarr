@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +21,9 @@
  */
 
 /**
- *      \file       htdocs/admin/agenda_extrafields.php
- *		\ingroup    agenda
- *		\brief      Page to setup extra fields of agenda
+ *      \file       htdocs/admin/order_extrafields.php
+ *		\ingroup    order
+ *		\brief      Page to setup extra fields of order
  */
 
 require '../main.inc.php';
@@ -66,7 +67,7 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Orders");
 
-llxHeader();
+llxHeader('',$langs->trans("OrdersSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
@@ -109,7 +110,6 @@ foreach($extrafields->attribute_type as $key => $value)
     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
     print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
     print "</tr>";
-    //      $i++;
 }
 
 print "</table>";
@@ -128,8 +128,8 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation d'un champ optionnel
- /*                                                                            */
+/* Creation d'un champ optionnel											  */
+/*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
