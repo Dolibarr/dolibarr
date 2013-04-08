@@ -99,11 +99,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->franchise=!$mysoc->tva_assuj;
 
         // Get source company
-        //if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-        //$this->emetteur=$object->thirdparty;
-        //if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 		$this->emetteur=$mysoc;
-        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -287,7 +284,39 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// Description of product line
 					$curX = $this->posxdesc-1;
-                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,0,0,1);
+					$showpricebeforepagebreak=1;
+
+					$pdf->startTransaction();
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
+					$pageposafter=$pdf->getPage();
+					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					{
+						$pdf->rollbackTransaction(true);
+						$pageposafter=$pageposbefore;
+						//print $pageposafter.'-'.$pageposbefore;exit;
+						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc);
+						$posyafter=$pdf->GetY();
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						{
+							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$pdf->setPage($pagenb+1);
+							}
+						}
+						else
+						{
+							// We found a page break
+							$showpricebeforepagebreak=0;
+						}
+					}
+					else	// No pagebreak
+					{
+						$pdf->commitTransaction();
+					}
 
 					$nexY = $pdf->GetY();
                     $pageposafter=$pdf->getPage();
@@ -296,19 +325,19 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
-					if ($pageposafter > $pageposbefore) {
+					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
-                    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
-                    {
-                        $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
-                        $pdf->SetXY($this->posxtva, $curY);
-                        $pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
-                    }
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
+					{
+						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxtva, $curY);
+						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
+					}
 
 					// Unit price before discount
 					$pdf->SetXY($this->posxup, $curY);
@@ -335,22 +364,35 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
+					$localtax1_rate=$object->lines[$i]->localtax1_tx;
+					$localtax2_rate=$object->lines[$i]->localtax2_tx;
+					$localtax1_type=$object->lines[$i]->localtax1_type;
+					$localtax2_type=$object->lines[$i]->localtax2_type;
 
 					if (! empty($object->remise_percent)) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 					if (! empty($object->remise_percent)) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
 					if (! empty($object->remise_percent)) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
-					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
-					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
+					// TODO : store local taxes types into object lines and remove this
+					$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+					if ((! isset($localtax1_type)) || $localtax1_type=='') $localtax1_type = $localtaxtmp_array[0];
+					if ((! isset($localtax2_type)) || $localtax2_type=='') $localtax2_type = $localtaxtmp_array[2];
+					//end TODO
+
+				    // retrieve global local tax
+					if ($localtax1_type == '7') $localtax1_rate = $localtaxtmp_array[1];
+					if ($localtax2_type == '7') $localtax2_rate = $localtaxtmp_array[3];
+
+					if ($localtax1_type && ($localtax1ligne != 0 || $localtax1_type == '7'))
+						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
+					if ($localtax2_type && ($localtax2ligne != 0 || $localtax2_type == '7'))
+						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]='';
-					if (! isset($this->localtax1[$localtax1rate]))	$this->localtax1[$localtax1rate]='';
-					if (! isset($this->localtax2[$localtax2rate]))	$this->localtax2[$localtax2rate]='';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
 					$this->tva[$vatrate] += $tvaligne;
-					$this->localtax1[$localtax1rate]+=$localtax1ligne;
-					$this->localtax2[$localtax2rate]+=$localtax2ligne;
+
 
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -379,6 +421,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
@@ -395,6 +438,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
 
@@ -422,8 +466,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
 
-                // Pied de page
-				$this->_pagefoot($pdf, $object, $outputlangs);
+				// Pied de page
+				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -485,128 +529,55 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
 	    global $conf;
-
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
-	    $pdf->SetFont('','', $default_font_size - 1);
+        // If France, show VAT mention if not applicable
+		if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
+		{
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
-	    // If France, show VAT mention if not applicable
-	    /*if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
-	    {
-	        $pdf->SetFont('','B', $default_font_size - 2);
-	        $pdf->SetXY($this->marge_gauche, $posy);
-	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			$posy=$pdf->GetY()+4;
+		}
 
-	        $posy=$pdf->GetY()+4;
-	    }*/
+		$posxval=52;
 
 	    // Show payments conditions
-	    if ($object->cond_reglement_code || $object->cond_reglement)
+	    if (!empty($object->cond_reglement_code) || $object->cond_reglement)
 	    {
 	        $pdf->SetFont('','B', $default_font_size - 2);
 	        $pdf->SetXY($this->marge_gauche, $posy);
 	        $titre = $outputlangs->transnoentities("PaymentConditions").':';
 	        $pdf->MultiCell(80, 4, $titre, 0, 'L');
 
-	        $pdf->SetFont('','', $default_font_size - 2);
-	        $pdf->SetXY(52, $posy);
-	        $lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
-	        $lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
-	        $pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
+			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
+			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
 
 	        $posy=$pdf->GetY()+3;
 	    }
 
-        // Check a payment mode is defined
-        /* Not used with orders
-		if (empty($object->mode_reglement_code)
-        	&& ! $conf->global->FACTURE_CHQ_NUMBER
-        	&& ! $conf->global->FACTURE_RIB_NUMBER)
-		{
-            $pdf->SetXY($this->marge_gauche, $posy);
-            $pdf->SetTextColor(200,0,0);
-            $pdf->SetFont('','B', $default_font_size - 2);
-            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-            $pdf->SetTextColor(0,0,0);
-
-            $posy=$pdf->GetY()+1;
-        }
-		*/
-
-	    // Show payment mode
-        if ($object->mode_reglement_code
-	    //    && $object->mode_reglement_code != 'CHQ'
-	    //    && $object->mode_reglement_code != 'VIR'
-	    )
+      	// Show payment mode
+        if (!empty($object->mode_reglement_code))
         {
-            $pdf->SetFont('','B', $default_font_size - 2);
-            $pdf->SetXY($this->marge_gauche, $posy);
-            $titre = $outputlangs->transnoentities("PaymentMode").':';
-            $pdf->MultiCell(80, 4, $titre, 0, 'L');
+        	$pdf->SetFont('','B', $default_font_size - 2);
+        	$pdf->SetXY($this->marge_gauche, $posy);
+        	$titre = $outputlangs->transnoentities("PaymentMode").':';
+        	$pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-            $pdf->SetFont('','', $default_font_size - 2);
-	        $pdf->SetXY(52, $posy);
-            $lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
-            $pdf->MultiCell(80, 4, $lib_mode_reg,0,'L');
+        	$pdf->SetFont('','', $default_font_size - 2);
+        	$pdf->SetXY($posxval, $posy);
+        	$lib_mode_reg=$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code)!=('PaymentType'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentType".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
+        	$pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
 
-            $posy=$pdf->GetY()+2;
+        	$posy=$pdf->GetY()+2;
         }
 
-        // Show payment mode CHQ
-        /*
-        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
-        {
-            // Si mode reglement non force ou si force a CHQ
-            if (! empty($conf->global->FACTURE_CHQ_NUMBER))
-            {
-                if ($conf->global->FACTURE_CHQ_NUMBER > 0)
-                {
-                    $account = new Account($this->db);
-                    $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-
-                    $pdf->SetXY($this->marge_gauche, $posy);
-                    $pdf->SetFont('','B', $default_font_size - 3);
-                    $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
-                    $posy=$pdf->GetY()+1;
-                    $pdf->SetXY($this->marge_gauche, $posy);
-                    $pdf->SetFont('','', $default_font_size - 3);
-                    $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
-                    $posy=$pdf->GetY()+2;
-                }
-                if ($conf->global->FACTURE_CHQ_NUMBER == -1)
-                {
-                    $pdf->SetXY($this->marge_gauche, $posy);
-                    $pdf->SetFont('','B', $default_font_size - 3);
-                    $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
-                    $posy=$pdf->GetY()+1;
-
-                    $pdf->SetXY($this->marge_gauche, $posy);
-                    $pdf->SetFont('','', $default_font_size - 3);
-                    $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
-                    $posy=$pdf->GetY()+2;
-                }
-            }
-        }
-
-        // If payment mode not forced or forced to VIR, show payment with BAN
-        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
-        {
-            if (! empty($conf->global->FACTURE_RIB_NUMBER))
-            {
-                $account = new Account($this->db);
-                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
-
-                $curx=$this->marge_gauche;
-                $cury=$posy;
-
-                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
-
-                $posy+=2;
-            }
-        }
-		*/
-
-	    return $posy;
+		
+		return $posy;
 	}
 
 	/**
@@ -990,6 +961,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
