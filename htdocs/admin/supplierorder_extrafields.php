@@ -67,10 +67,10 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("SupplierOrder");
 
-llxHeader('',$langs->trans("SupplierOrderSetup"));
+llxHeader('',$langs->trans("SuppliersSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SupplierOrderSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 print "<br>\n";
 
 $head = supplierorder_admin_prepare_head(null);
