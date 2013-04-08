@@ -146,7 +146,7 @@ else if ($action == 'setdoc')
 	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -154,7 +154,7 @@ if ($action == 'setmod')
 	dolibarr_set_const($db, "COMMANDE_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
+else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
@@ -171,7 +171,7 @@ if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
     }
 }
 
-if ($action == 'set_COMMANDE_FREE_TEXT')
+else if ($action == 'set_COMMANDE_FREE_TEXT')
 {
 	$freetext = GETPOST("COMMANDE_FREE_TEXT");	// No alpha here, we want exact string
 
@@ -187,6 +187,14 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
     {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
+}
+else if ($action='setModuleOptions') {
+	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
+	}
 }
 
 
