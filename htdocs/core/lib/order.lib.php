@@ -122,7 +122,7 @@ function order_admin_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/order.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/commande.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
