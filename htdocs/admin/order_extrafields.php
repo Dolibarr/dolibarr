@@ -35,6 +35,7 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
+$langs->load("orders");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -63,11 +64,12 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
+$textobject=$langs->transnoentitiesnoconv("Orders");
 
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
+print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 print "<br>\n";
 
 $head = order_admin_prepare_head(null);
