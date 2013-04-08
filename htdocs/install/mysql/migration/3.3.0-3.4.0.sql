@@ -154,6 +154,7 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(10)	NOT NULL DEFA
 UPDATE llx_c_tva set localtax1=0, localtax1_type='0' where localtax1_type = '7';
 UPDATE llx_c_tva set localtax2=0, localtax2_type='0' where localtax2_type = '7';
 
+ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
 
 ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
 
@@ -210,10 +211,12 @@ ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
 ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
 ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
-
+DROP TABLE llx_printer_ipp;
 CREATE TABLE llx_printer_ipp 
 (
 	rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	tms 	timestamp,
+	datec 	datetime,
 	printer_name text NOT NULL, 
 	printer_location text NOT NULL,
 	printer_uri varchar(256) NOT NULL,
@@ -224,11 +227,19 @@ CREATE TABLE llx_printer_ipp
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 
+create table llx_commande_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+ALTER TABLE llx_commande_extrafields ADD INDEX idx_commande_extrafields (fk_object);
+
 ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
 
+ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
 ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
-
-ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer DEFAULT 0;
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
