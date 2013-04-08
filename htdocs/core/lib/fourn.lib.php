@@ -170,7 +170,7 @@ function supplierorder_admin_prepare_head($object)
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
 	$head[$h][2] = 'attributes';
 	$h++;
 
