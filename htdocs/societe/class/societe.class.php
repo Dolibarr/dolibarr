@@ -129,6 +129,7 @@ class Societe extends CommonObject
     var $date_update;
 
     var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+    var $parent;
     var $default_lang;
 
     var $ref_int;
@@ -1975,53 +1976,30 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Defini la societe mere pour les filiales
+     *    Define parent commany of current company
      *
-     *    @param	int		$id     id compagnie mere a positionner
+     *    @param	int		$id     Id of thirdparty to set or '' to remove
      *    @return	int     		<0 if KO, >0 if OK
      */
     function set_parent($id)
     {
         if ($this->id)
         {
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET parent = ".$id;
-            $sql .= " WHERE rowid = " . $this->id .";";
-
-            if ( $this->db->query($sql) )
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+            $sql.= " SET parent = ".($id > 0 ? $id : "null");
+            $sql.= " WHERE rowid = " . $this->id;
+			dol_syslog(get_class($this).'::set_parent sql='.$sql);
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 return 1;
             }
             else
-            {
+			{
                 return -1;
             }
         }
-    }
-
-    /**
-     *  Supprime la societe mere
-     *
-     *  @param	int		$id     id compagnie mere a effacer
-     *  @return int     		<0 if KO, >0 if KO
-     */
-    function remove_parent($id)
-    {
-        if ($this->id)
-        {
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET parent = null";
-            $sql .= " WHERE rowid = " . $this->id .";";
-
-            if ( $this->db->query($sql) )
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
-        }
+        else return -1;
     }
 
 	/**

@@ -148,14 +148,6 @@ function societe_prepare_head2($object)
 	    $h++;
     }
 
-    if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
-    {
-	    $head[$h][0] = 'lien.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("ParentCompany");
-	    $head[$h][2] = 'links';
-	    $h++;
-    }
-
     $head[$h][0] = 'commerciaux.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("SalesRepresentative");
     $head[$h][2] = 'salesrepresentative';
