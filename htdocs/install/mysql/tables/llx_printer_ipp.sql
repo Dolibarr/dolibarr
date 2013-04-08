@@ -18,13 +18,13 @@
 
 CREATE TABLE llx_printer_ipp 
 (
-	rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	tms 	timestamp,
-	datec 	datetime,
-	printer_name text NOT NULL, 
-	printer_location text NOT NULL,
-	printer_uri varchar(256) NOT NULL,
-	copy int(11) NOT NULL DEFAULT '1',
-	module varchar(16) NOT NULL,
-	login varchar(32) NOT NULL
+ rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ tms 	timestamp,
+ datec 	datetime,
+ printer_name text NOT NULL, 
+ printer_location text NOT NULL,
+ printer_uri varchar(256) NOT NULL,
+ copy integer NOT NULL DEFAULT '1',
+ module varchar(16) NOT NULL,
+ login varchar(32) NOT NULL
 )ENGINE=innodb;
