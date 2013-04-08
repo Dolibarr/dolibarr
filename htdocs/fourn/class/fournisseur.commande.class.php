@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2012	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2013	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -914,7 +914,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function create($user, $notrigger=0)
     {
-        global $langs,$conf;
+        global $langs,$conf,$hookmanager;
 
         $this->db->begin();
 
@@ -1001,7 +1001,28 @@ class CommandeFournisseur extends CommonOrder
 	                // On logue creation pour historique
 	                $this->log($user, 0, time());
 
-	                if (! $notrigger)
+	                if (! $error)
+                    {
+	                    // Actions on extra fields (by external module or standard code)
+	                    // FIXME le hook fait double emploi avec le trigger !!
+	                    $hookmanager->initHooks(array('supplierorderdao'));
+	                    $parameters=array('socid'=>$this->id);
+	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	                    if (empty($reshook))
+	                    {
+	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	                    	{
+	                    		$result=$this->insertExtraFields();
+	                    		if ($result < 0)
+	                    		{
+	                    			$error++;
+	                    		}
+	                    	}
+	                    }
+	                    else if ($reshook < 0) $error++;
+                    }
+					
+					if (! $notrigger)
 	                {
 	                    // Appel des triggers
 	                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
