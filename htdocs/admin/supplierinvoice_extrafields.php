@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       htdocs/admin/supplierorder_extrafields.php
+ *      \file       htdocs/admin/supplierinvoice_extrafields.php
  *		\ingroup    fourn
- *		\brief      Page to setup extra fields of supplierorder
+ *		\brief      Page to setup extra fields of supplierinvoice
  */
 
 require '../main.inc.php';
@@ -37,6 +37,7 @@ if (!$user->admin)
 $langs->load("admin");
 $langs->load("other");
 $langs->load("orders");
+$langs->load("suppliers");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -65,7 +66,7 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("SuppliersOrders");
+$textobject=$langs->transnoentitiesnoconv("SuppliersInvoices");
 
 llxHeader('',$langs->trans("SuppliersSetup"));
 
@@ -75,7 +76,7 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'supplierorder', $langs->trans("ModuleSetup"), 0, 'order');
+dol_fiche_head($head, 'supplierinvoice', $langs->trans("ModuleSetup"), 0, 'invoice');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
