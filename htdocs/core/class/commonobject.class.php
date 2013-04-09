@@ -1420,7 +1420,7 @@ abstract class CommonObject
         dol_syslog(get_class($this)."::update_note_private sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
-            $this->note_private = $note;
+            $this->note_private = $note_private;
             return 1;
         }
         else
@@ -1430,7 +1430,7 @@ abstract class CommonObject
             return -1;
         }
     }
-    
+
     /**
      *  Update private note of element
      *
@@ -1444,11 +1444,11 @@ abstract class CommonObject
     		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
     		return -1;
     	}
-    
+
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
-    
+
     	dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
