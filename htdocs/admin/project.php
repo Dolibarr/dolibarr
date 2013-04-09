@@ -152,7 +152,8 @@ else if ($action == 'setmod')
 
 	dolibarr_set_const($db, "PROJECT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
-else if ($action='setModuleOptions') {
+
+else if ($action=='setModuleOptions') {
 	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
