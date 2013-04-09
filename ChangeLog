@@ -30,7 +30,8 @@ For users:
 - New: Can define a different clicktodial setup per user.
 - New: Add option INVOICE_CAN_NEVER_BE_REMOVED.
 - New: Enhance agenda module to reach RFC2445 (add busy information).
-- First change to prepare feature click to print for PDF.
+- New: Add module Opensurvey.
+- First change to prepare feature "click to print" (IPP) for PDF.
   
 For translators:
 - Update language files.
