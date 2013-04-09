@@ -29,6 +29,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
@@ -197,20 +198,9 @@ print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 
 print "<br>";
 
-$h = 0;
+$head = supplierorder_admin_prepare_head(null);
 
-$head[$h][0] = DOL_URL_ROOT."/admin/supplier_order.php";
-$head[$h][1] = $langs->trans("SupplierOrder");
-$head[$h][2] = 'Order';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
-$head[$h][1] = $langs->trans("SuppliersInvoice");
-$head[$h][2] = 'Invoice';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'invoice', $langs->trans("ModuleSetup"));
 
 
 // Supplier invoice numbering module

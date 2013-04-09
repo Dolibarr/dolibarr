@@ -672,6 +672,21 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
+ * Return string to add class property on html element with pair/impair.
+ * 
+ * @param	string	$var			0 or 1
+ * @param	string	$moreclass		More class to add
+ * @return	string					String to add class onto HTML element
+ */
+function dol_bc($var,$moreclass='')
+{
+	global $bc;
+	$ret=' '.$bc[$var];
+	if ($moreclass) $ret=preg_replace('/class=\"/','class="'.$moreclass.' ',$ret);
+	return $ret;
+}
+
+/**
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
  *      @param  Object		$object         A company or contact object
