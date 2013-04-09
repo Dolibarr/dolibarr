@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load('bills');
 $langs->load('companies');
@@ -355,10 +357,10 @@ else if ($action == 'setnote_public' && $user->rights->facture->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->facture->creer)
+else if ($action == 'setnote_private' && $user->rights->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note_private(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -695,7 +697,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
             //$result=$object->fetch($_POST['fac_avoir']);
 
-            $object->socid				= $_POST['socid'];
+            $object->socid				= GETPOST('socid','int');
             $object->number				= $_POST['facnumber'];
             $object->date				= $datefacture;
             $object->note_public		= trim($_POST['note_public']);
@@ -742,12 +744,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
         if (! $error)
         {
-            $object->socid			= $_POST['socid'];
+            $object->socid			= GETPOST('socid','int');
             $object->type           = $_POST['type'];
             $object->number         = $_POST['facnumber'];
             $object->date           = $datefacture;
             $object->note_public	= trim($_POST['note_public']);
-            $object->note           = trim($_POST['note']);
+            $object->note_private   = trim($_POST['note_private']);
             $object->ref_client     = $_POST['ref_client'];
             $object->ref_int     	= $_POST['ref_int'];
             $object->modelpdf       = $_POST['model'];
@@ -778,12 +780,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
         if (! $error)
         {
             // Si facture standard
-            $object->socid				= $_POST['socid'];
-            $object->type				= $_POST['type'];
+            $object->socid				= GETPOST('socid','int');
+            $object->type				= GETPOST('type');
             $object->number				= $_POST['facnumber'];
             $object->date				= $datefacture;
             $object->note_public		= trim($_POST['note_public']);
-            $object->note				= trim($_POST['note']);
+            $object->note_private		= trim($_POST['note_private']);
             $object->ref_client			= $_POST['ref_client'];
             $object->ref_int			= $_POST['ref_int'];
             $object->modelpdf			= $_POST['model'];
@@ -2113,12 +2115,15 @@ if ($action == 'create')
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+    $note_public='';
     if (is_object($objectsrc))    // Take value from source object
     {
-        print $objectsrc->note_public;
+    	$note_public=$objectsrc->note_public;
     }
-    print '</textarea></td></tr>';
+    $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    print $doleditor->Create(1);
+    
+    //print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea></td></tr>';
 
     // Private note
     if (empty($user->societe_id))
@@ -2126,12 +2131,14 @@ if ($action == 'create')
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+        $note_private='';
         if (! empty($origin) && ! empty($originid) && is_object($objectsrc))    // Take value from source object
         {
-            print $objectsrc->note;
+        	$note_private=$objectsrc->note_private;
         }
-        print '</textarea></td></tr>';
+        $doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+        print $doleditor->Create(1);
+        //print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea></td></tr>';
     }
 
     if (! empty($origin) && ! empty($originid) && is_object($objectsrc))

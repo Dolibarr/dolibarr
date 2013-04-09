@@ -189,8 +189,8 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
 		$localobject->oldcopy=dol_clone($localobject);
 
-		$localobject->note='New note after update';
-		//$localobject->note_public='New note public after update';
+		$localobject->note_private='New private note after update';
+		$localobject->note_public='New public note after update';
 		$localobject->lastname='New name';
 		$localobject->firstname='New firstname';
 		$localobject->address='New address';
@@ -205,15 +205,18 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$localobject->email='newemail@newemail.com';
 		$localobject->jabberid='New im id';
 		$localobject->default_lang='es_ES';
+		
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Contact::update error');
-		$result=$localobject->update_note($localobject->note);
+		
+    	$result=$localobject->update_note_private($localobject->note_private);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0, 'Contact::update_note error');
-		//$result=$localobject->update_note_public($localobject->note_public);
-    	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	//$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, 'Contact::update_note_private error');
+		
+    	$result=$localobject->update_note_public($localobject->note_public);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0, 'Contact::update_note_public error');
 
 		$newobject=new Contact($this->savdb);
     	$result=$newobject->fetch($localobject->id);

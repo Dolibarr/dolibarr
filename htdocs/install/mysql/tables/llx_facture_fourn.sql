@@ -61,7 +61,7 @@ create table llx_facture_fourn
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
   date_lim_reglement 	date,                          -- date limite de reglement
 
-  note					text,
+  note_private			text,
   note_public			text,
   model_pdf				varchar(255),
   import_key			varchar(14),

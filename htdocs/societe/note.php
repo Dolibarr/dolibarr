@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,10 @@
  *   \ingroup    societe
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -32,39 +37,45 @@ $action = GETPOST('action');
 $langs->load("companies");
 
 // Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $socid, '&societe');
+$id = GETPOST('id','int');
+if ($user->societe_id) $id=$user->societe_id;
+$result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
-if ($socid > 0) $object->fetch($socid);
+if ($id > 0) $object->fetch($id);
 
 /*
  * Actions
  */
 
-if ($action == 'add' && ! GETPOST('cancel'))
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
+
+if ($action == 'setnote_public' && $user->rights->propale->creer)
 {
-    $result=$object->update_note($_POST["note"]);
-    if ($result < 0)
-    {
-         $errors[]=$object->errors;
-    }
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
+else if ($action == 'setnote_private' && $user->rights->propale->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_private(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
 
 /*
  *	View
  */
-
-if ($conf->global->MAIN_DIRECTEDITMODE && $user->rights->societe->creer) $action='edit';
 
 $form = new Form($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Notes"),$help_url);
 
-if ($socid > 0)
+if ($id > 0)
 {
     /*
      * Affichage onglets
@@ -72,7 +83,6 @@ if ($socid > 0)
     if (! empty($conf->notification->enabled)) $langs->load("mails");
 
     $head = societe_prepare_head($object);
-
 
     dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
 
@@ -110,61 +120,17 @@ if ($socid > 0)
         print '</td></tr>';
     }
 
-    print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
-    print '<td valign="top">';
-    if ($action == 'edit' && $user->rights->societe->creer)
-    {
-        print '<input type="hidden" name="action" value="add" />';
-        print '<input type="hidden" name="socid" value="'.$object->id.'" />';
-
-        // Editeur wysiwyg
-        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note',$object->note,'',360,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,20,70);
-        $doleditor->Create();
-    }
-    else
-    {
-        print dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true);
-    }
-    print "</td></tr>";
-
     print "</table>";
-
-    if ($action == 'edit')
-    {
-        print '<center><br>';
-        print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-        print ' &nbsp; ';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</center>';
-    }
-
-    print '</form>';
+    
+    print '<br>';
+    
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    
 
     dol_fiche_end();
 }
 
-dol_htmloutput_errors('',$errors);
-
-
-/*
- * Buttons
- */
-
-if ($action != 'edit')
-{
-    print '<div class="tabsAction">';
-
-    if ($user->rights->societe->creer)
-    {
-        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-    }
-
-    print '</div>';
-}
-
 llxFooter();
-
 $db->close();
 
 ?>

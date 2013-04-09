@@ -43,7 +43,7 @@ create table llx_facture_rec
   fk_mode_reglement  integer DEFAULT 0,  -- mode de reglement (Virement, Prelevement)
   date_lim_reglement date,               -- date limite de reglement
 
-  note               text,
+  note_private       text,
   note_public        text,
 
   usenewprice        integer,

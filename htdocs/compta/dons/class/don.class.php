@@ -2,6 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,8 @@ class Don extends CommonObject
     var $fk_project;
     var $modepaiement;
     var $modepaiementid;
-    var $note;
+    var $note_private;
+    var $note_public;
     var $statut;
 
     var $projet;
@@ -191,7 +193,8 @@ class Don extends CommonObject
         $this->address = 'Twist road';
         $this->zip = '99999';
         $this->town = 'Town';
-        $this->note_public='SPECIMEN';
+        $this->note_private='Private note';
+        $this->note_public='Public note';
         $this->email='email@email.com';
         $this->note='';
         $this->statut=1;
@@ -319,7 +322,8 @@ class Don extends CommonObject
         $sql.= ", country";
         $sql.= ", public";
         $sql.= ", fk_don_projet";
-        $sql.= ", note";
+        $sql.= ", note_private";
+        $sql.= ", note_public";
         $sql.= ", fk_user_author";
         $sql.= ", fk_user_valid";
         $sql.= ", datedon";
@@ -340,7 +344,8 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->country)."'"; // TODO use country_id
         $sql.= ", ".$this->public;
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
-        $sql.= ", '".$this->db->escape($this->note)."'";
+       	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
+		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql.= ", ".$user->id;
         $sql.= ", null";
         $sql.= ", '".$this->db->idate($this->date)."'";
@@ -400,7 +405,8 @@ class Don extends CommonObject
         $sql .= ",country='".$this->db->escape($this->country)."'"; // TODO use country_id
         $sql .= ",public=".$this->public;
         $sql .= ",fk_don_projet=".($this->fk_project>0?$this->fk_project:'null');
-        $sql .= ",note='".$this->db->escape($this->note)."'";
+        $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
+        $sql .= ",note_public=".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
         $sql .= ",datedon='".$this->db->idate($this->date)."'";
         $sql .= ",email='".$this->email."'";
         $sql .= ",phone='".$this->phone."'";
@@ -463,7 +469,9 @@ class Don extends CommonObject
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.tms as datem, d.datedon,";
-        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, d.country, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.phone, d.phone_mobile, d.fk_don_projet,";
+        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
+        $sql.= " 	d.country, d.public, d.amount, d.fk_paiement, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
+        $sql.= " 	d.phone_mobile, d.fk_don_projet,";
         $sql.= " p.title as project_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_don_projet";
@@ -501,7 +509,8 @@ class Don extends CommonObject
                 $this->modepaiementid = $obj->fk_paiement;
                 $this->modepaiement   = $obj->libelle;
                 $this->amount         = $obj->amount;
-                $this->note			  = $obj->note;
+                $this->note_private	  = $obj->note_private;
+                $this->note_public	  = $obj->note_public;
                 $this->commentaire    = $obj->note;	// deprecated
             }
             return 1;

@@ -4,6 +4,7 @@
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -107,6 +109,8 @@ if ($action == 'add')
     $object->shipping_method_id		= GETPOST('shipping_method_id','int');
     $object->tracking_number		= GETPOST('tracking_number','alpha');
     $object->ref_int				= GETPOST('ref_int','alpha');
+    $object->note_private			= GETPOST('note_private');
+    $object->note_public			= GETPOST('note_public');
 
     $num=count($objectsrc->lines);
     $totalqty=0;
@@ -629,12 +633,22 @@ if ($action == 'create')
             print $form->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);
             print "</td>\n";
             print '</tr>';
+            
+            // Note Public  
+            print '<tr><td>'.$langs->trans("NotePublic").'</td>';
+            print '<td colspan="3">';
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+            print "</td></tr>";
 
-            // Note
-            if ($object->note && ! $user->societe_id)
+            // Note Private
+            if ($object->note_private && ! $user->societe_id)
             {
                 print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
-                print '<td colspan="3">'.nl2br($object->note)."</td></tr>";
+                print '<td colspan="3">';
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+        		print $doleditor->Create(1);	
+                print "</td></tr>";
             }
 
             // Weight

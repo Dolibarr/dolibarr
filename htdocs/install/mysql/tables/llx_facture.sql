@@ -68,7 +68,7 @@ create table llx_facture
   fk_mode_reglement		integer,								-- mode de reglement (Virement, Prelevement)
   date_lim_reglement	date,									-- date limite de reglement
 
-  note					text,
+  note_private			text,
   note_public			text,
   model_pdf				varchar(255),
   import_key			varchar(14),
