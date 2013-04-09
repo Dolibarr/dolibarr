@@ -54,9 +54,9 @@ if ($action == 'setnote_public' && $user->rights->contrat->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->contrat->creer)
+else if ($action == 'setnote_private' && $user->rights->contrat->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note')), ENT_QUOTES));
+	$result=$object->update_note_private(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_private')), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 

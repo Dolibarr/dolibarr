@@ -44,7 +44,7 @@ create table llx_don
   fk_don_projet   integer NULL,                  -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NULL,
-  note            text,
+  note_private    text,
   note_public     text,
   model_pdf       varchar(255),
   import_key      varchar(14)

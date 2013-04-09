@@ -8,7 +8,8 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-*
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -237,9 +238,9 @@ else if ($action == 'setnote_public' && $user->rights->propal->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->propal->creer)
+else if ($action == 'setnote_private' && $user->rights->propal->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note_private(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,8 @@ if ($action == 'update')
 		$don->note        = $_POST["note"];
 		$don->public      = $_POST["public"];
 		$don->fk_project  = $_POST["projectid"];
-		$don->note        = $_POST["comment"];
+		$don->note_private= GETPOST("note_private");
+		$don->note_public = GETPOST("note_public");
 		$don->modepaiementid = $_POST["modepaiement"];
 
 		if ($don->update($user) > 0)
@@ -146,10 +148,10 @@ if ($action == 'add')
         $don->country     = $_POST["country"];
 		$don->email       = $_POST["email"];
 		$don->date        = $donation_date;
-		$don->note        = $_POST["note"];
+		$don->note_private= GETPOST("note_private");
+		$don->note_public = GETPOST("note_public");
 		$don->public      = $_POST["public"];
 		$don->fk_project  = $_POST["projectid"];
-		$don->note        = $_POST["comment"];
 		$don->modepaiementid = $_POST["modepaiement"];
 
 		if ($don->create($user) > 0)
@@ -283,7 +285,7 @@ if ($action == 'create')
 	print '</td>';
 
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
-    print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$_POST["comment"]."</textarea></td>";
+    print "<textarea name=\"note_private\" wrap=\"soft\" cols=\"40\" rows=\"15\">".GETPOST("note_private")."</textarea></td>";
     print "</tr>";
 
     // Amount
@@ -371,7 +373,7 @@ if (! empty($id) && $action == 'edit')
 	print '</td>';
 
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
-    print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$don->note."</textarea></td>";
+    print "<textarea name=\"note_private\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$don->note_private."</textarea></td>";
     print "</tr>";
 
 	// Amount
@@ -471,7 +473,7 @@ if (! empty($id) && $action != 'edit')
 	print "</td>";
 
     print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
-	print nl2br($don->note).'</td></tr>';
+	print nl2br($don->note_private).'</td></tr>';
 
     print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 

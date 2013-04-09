@@ -4,6 +4,7 @@
  * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2011-2012 Philippe Grand	     <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,9 @@ class Livraison extends CommonObject
 	var $socid;
 	var $ref_customer;
 	var $statut;
+	
+	var $note_public;
+	var $note_private;
 
 	var $expedition_id;
 
@@ -106,15 +110,19 @@ class Livraison extends CommonObject
 		$sql.= ", fk_user_author";
 		$sql.= ", date_delivery";
 		$sql.= ", fk_address";
+		$sql.= ", note_private";
+		$sql.= ", note_public";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->socid;
-		$sql.= ", '".$this->ref_customer."'";
+		$sql.= ", '".$this->db->escape($this->ref_customer)."'";
 		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_delivery?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
+		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ")";
 
 		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
@@ -253,7 +261,7 @@ class Livraison extends CommonObject
 		global $conf;
 
 		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_customer, l.fk_user_author,";
-		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note, l.note_public";
+		$sql.=" l.total_ht, l.fk_statut, l.fk_user_valid, l.note_private, l.note_public";
 		$sql.= ", l.date_delivery, l.fk_address, l.model_pdf";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
@@ -279,7 +287,8 @@ class Livraison extends CommonObject
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->user_valid_id        = $obj->fk_user_valid;
 				$this->fk_delivery_address  = $obj->fk_address;
-				$this->note                 = $obj->note;
+				$this->note                 = $obj->note_private; //TODO deprecated
+				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->origin               = $obj->origin;		// May be 'shipping'
@@ -488,7 +497,8 @@ class Livraison extends CommonObject
 
 		$this->origin               = $expedition->element;
 		$this->origin_id            = $expedition->id;
-		$this->note                 = $expedition->note;
+		$this->note_private         = $expedition->note_private;
+		$this->note_public          = $expedition->note_public;
 		$this->fk_project           = $expedition->fk_project;
 		$this->date_delivery        = $expedition->date_delivery;
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
@@ -792,7 +802,8 @@ class Livraison extends CommonObject
 		$this->specimen=1;
 		$this->socid = 1;
 		$this->date_delivery = $now;
-		$this->note_public='SPECIMEN';
+		$this->note_public='Pulbic note';
+		$this->note_private='Private note';
 
 		$i=0;
 		$line=new LivraisonLigne($this->db);

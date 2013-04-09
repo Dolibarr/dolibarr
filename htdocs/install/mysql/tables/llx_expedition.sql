@@ -48,7 +48,8 @@ create table llx_expedition
   size                  integer,						-- depth
   weight_units          integer,						-- unit of weight
   weight                integer,						-- weight
-  note                  text,
+  note_private          text,
+  note_public           text,
   model_pdf             varchar(255)
   
 )ENGINE=innodb;

@@ -37,7 +37,7 @@ create table llx_contrat
   fk_user_author			integer NOT NULL default 0,
   fk_user_mise_en_service	integer,
   fk_user_cloture			integer,
-  note						text,
+  note_private				text,
   note_public				text,
   import_key				varchar(14),
   extraparams				varchar(255)					-- for stock other parameters with json format

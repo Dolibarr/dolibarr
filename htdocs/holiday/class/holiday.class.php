@@ -2,6 +2,7 @@
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013   Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ class Holiday extends CommonObject
         $sql.= " cp.date_cancel,";
         $sql.= " cp.fk_user_cancel,";
         $sql.= " cp.detail_refuse,";
-        $sql.= " cp.note,";
+        $sql.= " cp.note_private,";
         $sql.= " cp.note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
@@ -223,7 +224,7 @@ class Holiday extends CommonObject
                 $this->date_cancel = $this->db->jdate($obj->date_cancel);
                 $this->fk_user_cancel = $obj->fk_user_cancel;
                 $this->detail_refuse = $obj->detail_refuse;
-                $this->note = $obj->note;
+                $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
             }
             $this->db->free($resql);

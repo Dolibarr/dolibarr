@@ -1402,42 +1402,65 @@ abstract class CommonObject
     /**
      *  Update private note of element
      *
-     *  @param      string		$note	New value for note
+     *  @param      string		$note_private	New value for note
      *  @return     int      		   	<0 if KO, >0 if OK
      */
-    function update_note($note)
+    function update_note_private($note_private)
     {
         if (! $this->table_element)
         {
-            dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
+            dol_syslog(get_class($this)."::update_note_private was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        // TODO uniformize fields to note_private
-        if ($this->table_element == 'fichinter' || $this->table_element == 'projet' || $this->table_element == 'projet_task')
-        {
-            $sql.= " SET note_private = '".$this->db->escape($note)."'";
-        }
-        else
-        {
-            $sql.= " SET note = '".$this->db->escape($note)."'";
-        }
+        $sql.= " SET note_private = ".(!empty($note_private)?("'".$this->db->escape($note_private)."'"):"NULL");
         $sql.= " WHERE rowid =". $this->id;
 
-        dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update_note_private sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
-            $this->note = $note;            // deprecated
             $this->note_private = $note;
             return 1;
         }
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::update_note_private error=".$this->error, LOG_ERR);
             return -1;
         }
+    }
+    
+    /**
+     *  Update private note of element
+     *
+     *  @param      string		$note	New value for note
+     *  @return     int      		   	<0 if KO, >0 if OK
+     */
+    function update_note($note)
+    {
+    	if (! $this->table_element)
+    	{
+    		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
+    		return -1;
+    	}
+    
+    	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    	$sql.= " SET note = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
+    	$sql.= " WHERE rowid =". $this->id;
+    
+    	dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
+    	if ($this->db->query($sql))
+    	{
+    		$this->note = $note;            // deprecated
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
+    		return -1;
+    	}
     }
 
     /**
@@ -1455,7 +1478,7 @@ abstract class CommonObject
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET note_public = '".$this->db->escape($note_public)."'";
+        $sql.= " SET note_public = ".(!empty($note_public)?("'".$this->db->escape($note_public)."'"):"NULL");
         $sql.= " WHERE rowid =". $this->id;
 
         dol_syslog(get_class($this)."::update_note_public sql=".$sql);

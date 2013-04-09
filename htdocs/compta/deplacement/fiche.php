@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,13 +235,13 @@ else if ($action == 'setkm' && $user->rights->deplacement->creer)
 else if ($action == 'setnote_public' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('note_public',GETPOST('note_public','alpha'));
+    $result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
     if ($result < 0) dol_print_error($db, $object->error);
 }
-else if ($action == 'setnote' && $user->rights->deplacement->creer)
+else if ($action == 'setnote_private' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('note',GETPOST('note','alpha'));
+    $result=$object->update_note_private(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 

@@ -46,7 +46,7 @@ create table llx_socpeople
   priv				smallint NOT NULL DEFAULT 0,
   fk_user_creat		integer DEFAULT 0,							-- user qui a creel'enregistrement
   fk_user_modif		integer,
-  note				text,
+  note_private		text,
   note_public		text,
   default_lang		varchar(6),
   canvas			varchar(32),			-- type of canvas if used (null by default)
