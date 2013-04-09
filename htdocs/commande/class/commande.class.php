@@ -150,7 +150,7 @@ class Commande extends CommonOrder
                 }
                 else
                 {
-                    dol_print_error($db,"Commande::getNextNumRef ".$obj->error);
+                    dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
                     return "";
                 }
             }
@@ -419,7 +419,7 @@ class Commande extends CommonOrder
         $sql.= ' SET fk_statut=1, facture=0';
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog("Commande::set_reopen sql=".$sql);
+        dol_syslog(get_class($this)."::set_reopen sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -530,7 +530,7 @@ class Commande extends CommonOrder
 		$sql.= " WHERE rowid = ".$this->id;
 		$sql.= " AND fk_statut = 1";
 
-		dol_syslog("Commande::cancel sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::cancel sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			// If stock is decremented on validate order, we must reincrement it
@@ -604,7 +604,7 @@ class Commande extends CommonOrder
         // Clean parameters
         $this->brouillon = 1;		// On positionne en mode brouillon la commande
 
-        dol_syslog("Commande::create user=".$user->id);
+        dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
         $soc = new Societe($this->db);
@@ -612,13 +612,13 @@ class Commande extends CommonOrder
         if ($result < 0)
         {
             $this->error="Failed to fetch company";
-            dol_syslog("Commande::create ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -2;
         }
         if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-            dol_syslog("Commande::create ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -655,7 +655,7 @@ class Commande extends CommonOrder
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog("Commande::create sql=".$sql);
+        dol_syslog(get_class($this)."::create sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1460,7 +1460,7 @@ class Commande extends CommonOrder
         if ($only_product) $sql .= ' AND p.fk_product_type = 0';
         $sql .= ' ORDER BY l.rang';
 
-        dol_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch_lines sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1587,7 +1587,7 @@ class Commande extends CommonOrder
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
         //print $sql;
 
-        dol_syslog("Commande::loadExpeditions sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::loadExpeditions sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1605,7 +1605,7 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("Commande::loadExpeditions ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::loadExpeditions ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -1820,7 +1820,7 @@ class Commande extends CommonOrder
             $sql.= ' SET remise_absolue = '.$remise;
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
-            dol_syslog("Commande::set_remise_absolue sql=$sql");
+            dol_syslog(get_class($this)."::set_remise_absolue sql=$sql");
 
             if ($this->db->query($sql))
             {
@@ -1852,7 +1852,7 @@ class Commande extends CommonOrder
             $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog("Commande::set_date sql=$sql",LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date sql=$sql",LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1862,7 +1862,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_date ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::set_date ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1887,7 +1887,7 @@ class Commande extends CommonOrder
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog("Commande::set_date_livraison sql=".$sql,LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1897,7 +1897,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1930,7 +1930,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_availability Erreur SQL");
+                dol_syslog(get_class($this)."::set_availability Erreur SQL");
                 return -1;
             }
         }
@@ -1959,7 +1959,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_demand_reason Erreur SQL");
+                dol_syslog(get_class($this)."::set_demand_reason Erreur SQL");
                 return -1;
             }
         }

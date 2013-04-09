@@ -346,6 +346,7 @@ th .button {
 }
 
 
+
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
 /* ============================================================================== */
@@ -1633,29 +1634,25 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
-    white-space: nowrap;
+    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
 {
-	/*border-top: 1px solid #DDDDDD;*/
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
-    white-space: nowrap;
+    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 }
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel
 {
-/*    color: #FFFFFF !important; */
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-bottom: 1px solid #FDFFFF;
-    white-space: nowrap;
+    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-decoration: underline;
 }
 input.liste_titre {
-    /*background: #7699A9;*/
-    /*background-repeat: repeat-x;*/
     background: transparent;
     border: 0px;
 }

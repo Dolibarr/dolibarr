@@ -59,7 +59,7 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Members");
+$textobject=$langs->transnoentitiesnoconv("MembersTypes");
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
@@ -71,7 +71,7 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_type', $langs->trans("Member"), 0, 'user');
+dol_fiche_head($head, 'attributes_type', $langs->trans("Members"), 0, 'user');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
@@ -106,7 +106,6 @@ foreach($extrafields->attribute_type as $key => $value)
 	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
 	print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=".$key."\">".img_delete()."</a></td>\n";
 	print "</tr>";
-	//      $i++;
 }
 
 print "</table>";
@@ -125,8 +124,8 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation d'un champ optionnel
- /*                                                                            */
+/* Creation d'un champ optionnel											  */
+/*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
