@@ -116,17 +116,24 @@ print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
+
+// Check parameters
+if (empty($conf->global->LDAP_MEMBER_DN))
+{
+	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr")."\n";
+	exit(1);
+}
+if ($typeid <= 0)
+{
+	print $langs->trans("Error").': Parameter id_member_type is not a valid ref of an existing member type'."\n";
+	exit(2);
+}
+
+
 print "Press a key to confirm...";
 $input = trim(fgets(STDIN));
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
-
-
-if (empty($conf->global->LDAP_MEMBER_DN))
-{
-	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr");
-	exit(1);
-}
 
 
 // Charge tableau de correspondance des pays
