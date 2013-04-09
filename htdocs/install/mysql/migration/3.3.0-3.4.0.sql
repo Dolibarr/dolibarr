@@ -244,6 +244,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
 
+ALTER TABLE llx_adherent ADD COLUMN canvas varchar(32) after fk_user_valid; 
+
 ALTER TABLE llx_expedition CHANGE COLUMN note note_private text;
 ALTER TABLE llx_expedition ADD COLUMN note_public text after note_private;
 ALTER TABLE llx_livraison CHANGE COLUMN note note_private text;

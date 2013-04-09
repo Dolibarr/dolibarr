@@ -162,7 +162,7 @@ if (empty($reshook))
         $object->birthday_alert = $_POST["birthday_alert"];
 
         // Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         if (! $_POST["lastname"])
         {
@@ -254,7 +254,7 @@ if (empty($reshook))
        		$object->note_private	= GETPOST("note_private");
 
             // Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             $result = $object->update($_POST["contactid"], $user);
 
@@ -300,11 +300,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if (empty($object->error) && $id)
  	{
-	     $object = new Contact($db);
-	     $object->fetch($id);
+ 		$object = new Contact($db);
+ 		$result=$object->fetch($id);
+		if ($result <= 0) dol_print_error('',$object->error);
  	}
-	$objcanvas->assign_values($action, $id);	// Set value for templates
-	$objcanvas->display_canvas($action);		// Show template
+   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
 }
 else
 {
@@ -510,7 +511,7 @@ else
             print $doleditor->Create(1);
             //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
             print '</td></tr>';
-            
+
             // Note Private
             print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
             print '<td colspan="3" valign="top">';
@@ -728,7 +729,7 @@ else
            // print isset($_POST["note"])?$_POST["note"]:$object->note;
            // print '</textarea></td></tr>';
            print '</td></tr>';
-           
+
            // Note Private
            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
            $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -941,7 +942,7 @@ else
         print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
         print nl2br($object->note_public);
         print '</td></tr>';
-        
+
         // Note Private
         print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
         print nl2br($object->note_private);

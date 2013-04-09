@@ -638,11 +638,17 @@ $formproduct = new FormProduct($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
-    // -----------------------------------------
-    // When used with CANVAS (more simple)
-    // -----------------------------------------
-    $objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
+	// -----------------------------------------
+	// When used with CANVAS
+	// -----------------------------------------
+	if (empty($object->error) && $id)
+	{
+		$object = new Product($db);
+		$result=$object->fetch($id);
+		if ($result <= 0) dol_print_error('',$object->error);
+	}
+	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+	$objcanvas->display_canvas($action);							// Show template
 }
 else
 {

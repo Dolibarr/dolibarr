@@ -531,8 +531,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	     $result=$object->fetch($socid);
 	     if ($result <= 0) dol_print_error('',$object->error);
  	}
-   	$objcanvas->assign_values($action, $socid);	// Set value for templates
-    $objcanvas->display_canvas($action);		// Show template
+   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
 }
 else
 {
