@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,9 @@ class Societe extends CommonObject
     var $code_compta;
     var $code_compta_fournisseur;
 
-    var $note;
+    var $note; //TODO deprecated
+    var $note_private;
+    var $note_public;
     //! code statut prospect
     var $stcomm_id;
     var $statut_commercial;
@@ -698,7 +701,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note, s.client, s.fournisseur';
+        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -832,7 +835,9 @@ class Societe extends CommonObject
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
 
-                $this->note = $obj->note;
+                $this->note = $obj->note_private; //TODO Deprecatedfor backward comtability
+                $this->note_private = $obj->note_private;
+                $this->note_public = $obj->note_public;
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
 
@@ -2444,7 +2449,7 @@ class Societe extends CommonObject
     	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
     	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
     	$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)?'':$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
-    	$this->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
+    	$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
     	$this->nom=$this->name; 									// deprecated
 
@@ -2541,7 +2546,7 @@ class Societe extends CommonObject
         $this->tva_assuj=1;
         $this->tva_intra='EU1234567';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
 
         $this->idprof1='idprof1';
         $this->idprof2='idprof2';

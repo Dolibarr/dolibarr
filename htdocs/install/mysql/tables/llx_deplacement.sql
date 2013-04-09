@@ -34,7 +34,7 @@ create table llx_deplacement
   km				real,
   fk_soc			integer,
   fk_projet         integer DEFAULT 0,
-  note				text,
+  note_private	    text,
   note_public       text,
   extraparams		varchar(255)					-- for stock other parameters with json format
   

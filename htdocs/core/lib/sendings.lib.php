@@ -63,6 +63,11 @@ function shipping_prepare_head($object)
 	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("Notes");
+	$head[$h][2] = 'note';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

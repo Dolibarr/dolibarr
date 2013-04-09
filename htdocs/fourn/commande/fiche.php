@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -37,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -142,9 +144,9 @@ else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->cr
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
+else if ($action == 'setnote_private' && $user->rights->fournisseur->commande->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note_private(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -675,7 +677,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         // Creation commande
         $object->ref_supplier  	= GETPOST('refsupplier');
         $object->socid         	= $socid;
-        $object->note			= GETPOST('note');
+        $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
 
         $id = $object->create($user);
@@ -997,14 +999,24 @@ if ($action=="create")
 	print '</tr>';
 
 	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans('Note').'</td>';
-	print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
-	print '</tr>';
-
+	
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
-	print '<td><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+	print '<td>';
+	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td>';
+	//print '<textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea>';
 	print '</tr>';
+
+	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
+	print '<td>';
+	$doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td>';
+	//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+	print '</tr>';
+
+	
 
 	// Other options
     $parameters=array();
@@ -1504,9 +1516,7 @@ elseif (! empty($object->id))
 				$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
 				$reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
 			}
-
-			// Description - Editor wysiwyg
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			
 			$nbrows=ROWS_2;
 			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 			$doleditor=new DolEditor('eldesc',$line->description,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1532,8 +1542,6 @@ elseif (! empty($object->id))
 	 */
 	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'editline')
 	{
-		//WYSIWYG Editor
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 		print '<tr class="liste_titre">';
 		print '<td>';
