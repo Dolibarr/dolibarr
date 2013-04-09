@@ -528,7 +528,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     if (empty($object->error) && $socid)
  	{
 	     $object = new Societe($db);
-	     $object->fetch($socid);
+	     $result=$object->fetch($socid);
+	     if ($result <= 0) dol_print_error('',$object->error);
  	}
    	$objcanvas->assign_values($action, $socid);	// Set value for templates
     $objcanvas->display_canvas($action);		// Show template
