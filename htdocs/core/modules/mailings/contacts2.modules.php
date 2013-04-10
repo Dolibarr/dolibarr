@@ -187,7 +187,6 @@ class mailing_contacts2 extends MailingTargets
 
         $sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND sp.email != ''";    // Note that null != '' is false
         $sql.= " AND sp.no_email = 0";
