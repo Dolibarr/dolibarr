@@ -141,7 +141,7 @@ if ($result > 0)
 
     print '<table class="border"width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
+    print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
     print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';
 
@@ -169,7 +169,7 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    print '<tr><td width="30%">'.$langs->trans("NbOfActiveNotifications").'</td>';
+    print '<tr><td>'.$langs->trans("NbOfActiveNotifications").'</td>';
     print '<td colspan="3">';
     $sql = "SELECT COUNT(n.rowid) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n";
