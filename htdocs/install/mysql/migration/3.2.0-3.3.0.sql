@@ -927,3 +927,6 @@ UPDATE llx_c_departements SET ncc='ALAVA', nom='Álava' WHERE code_departement='
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
 
 UPDATE llx_const SET name = __ENCRYPT('PRODUIT_MULTI_PRICES')__ WHERE __DECRYPT('name')__ = 'PRODUIT_MUTLI_PRICES';
+
+DELETE FROM llx_const WHERE entity <> 0 AND __DECRYPT('name')__ IN ('SYSLOG_HANDLERS','SYSLOG_LEVEL');
+UPDATE llx_const SET entity = 0 WHERE __DECRYPT('name')__ = 'SYSLOG_FILE';
