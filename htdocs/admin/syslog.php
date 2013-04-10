@@ -98,14 +98,14 @@ if ($action == 'set')
 					if ($_POST[$option['constant']])
 					{
 						dolibarr_del_const($db, $option['constant'], 0);
-						dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine');
+						dolibarr_set_const($db, $option['constant'], $_POST[$option['constant']], 'chaine',0, '', 0);
 					}
 				}
 			}
 		}
 	}
 
-	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine');
+	dolibarr_set_const($db, 'SYSLOG_HANDLERS', json_encode($activeModules), 'chaine',0,'',0);
 
     if (! $error)
 	{
