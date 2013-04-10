@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011 François Cerbelle <francois@cerbelle.net>
+/* Copyright (C) 2011	François Cerbelle	<francois@cerbelle.net>
+ * Copyright (C) 2013	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +88,7 @@ class mailing_contacts2 extends MailingTargets
     	$sql.= " AND sp.no_email = 0";
     	//$sql.= " AND sp.poste != ''";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
-    	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$filtersarray[0]."'";
+    	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
     	$resql = $this->db->query($sql);
     	if ($resql)
