@@ -162,6 +162,36 @@ if ($action == 'setdefaultduration')
     }
 }
 
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+if ($action == 'setModuleOptions')
+{
+	$post_size=count($_POST);
+
+	$db->begin();
+
+	for($i=0;$i < $post_size;$i++)
+	{
+	if (array_key_exists('param'.$i,$_POST))
+	{
+	$param=GETPOST("param".$i,'alpha');
+		$value=GETPOST("value".$i,'alpha');
+			if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+				if (! $res > 0) $error++;
+	}
+	}
+	if (! $error)
+	{
+	$db->commit();
+	$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	}
+		else
+		{
+		$db->rollback();
+			$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+}
+
+
 /*if ($action == 'setusecustomercontactasrecipient')
 {
 	dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
