@@ -252,18 +252,20 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             // Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
             if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".dol_htmlentities($newsql,ENT_NOQUOTES)."'</td></tr>\n";
             dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			$sqlmodified=0;
 
             // Replace for encrypt data
-            if (preg_match_all('/__ENCRYPT\(\'([A-Za-z0-9_\"\[\]]+)\'\)__/i',$newsql,$reg))
+            if (preg_match_all('/__ENCRYPT\(\'([^\']+)\'\)__/i',$newsql,$reg))
             {
                 $num=count($reg[0]);
 
-                for($i=0;$i<$num;$i++)
+                for($j=0;$j<$num;$j++)
                 {
-                    $from 	= $reg[0][$i];
-                    $to		= $db->encrypt($reg[1][$i],1);
+                    $from 	= $reg[0][$j];
+                    $to		= $db->encrypt($reg[1][$j],1);
                     $newsql	= str_replace($from,$to,$newsql);
                 }
+                $sqlmodified++;
             }
 
             // Replace for decrypt data
@@ -271,12 +273,13 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             {
                 $num=count($reg[0]);
 
-                for($i=0;$i<$num;$i++)
+                for($j=0;$j<$num;$j++)
                 {
-                    $from 	= $reg[0][$i];
-                    $to		= $db->decrypt($reg[1][$i]);
+                    $from 	= $reg[0][$j];
+                    $to		= $db->decrypt($reg[1][$j]);
                     $newsql	= str_replace($from,$to,$newsql);
                 }
+                $sqlmodified++;
             }
 
             // Replace __x__ with rowid of insert nb x
@@ -294,8 +297,10 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
                 $from='__'.$cursor.'__';
                 $to=$listofinsertedrowid[$cursor];
                 $newsql=str_replace($from,$to,$newsql);
-                dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
+                $sqlmodified++;
             }
+
+            if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
 
             $result=$db->query($newsql,$usesavepoint);
             if ($result)
