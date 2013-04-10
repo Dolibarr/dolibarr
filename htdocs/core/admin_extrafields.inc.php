@@ -66,6 +66,13 @@ if ($action == 'add')
         	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
         	$action = 'create';
         }
+        if (GETPOST('type')=='sellist' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForSelectListType");
+        	$action = 'create';
+        }
         if (GETPOST('type')=='checkbox' && !GETPOST('param'))
         {
         	$error++;
@@ -82,30 +89,30 @@ if ($action == 'add')
         }
         if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox') || (GETPOST('type')=='radio')) && GETPOST('param')) 
         {
-        		// Construct array for parameter (value of select list)
-    			$parameters = GETPOST('param');
-    			$parameters_array = explode("\r\n",$parameters);
-    			foreach($parameters_array as $param_ligne)
-    			{
-    				if (!empty($param_ligne)) {
-	    				if (preg_match_all('/,/',$param_ligne,$matches)) 
-	    				{
-	    					if (count($matches[0])>1) {
-	    						$error++;
-	    						$langs->load("errors");
-	    						$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
-	    						$action = 'create';
-	    					}
-	    				}
-	    				else 
-	    				{
+        	// Construct array for parameter (value of select list)
+    		$parameters = GETPOST('param');
+    		$parameters_array = explode("\r\n",$parameters);
+    		foreach($parameters_array as $param_ligne)
+    		{
+    			if (!empty($param_ligne)) {
+	    			if (preg_match_all('/,/',$param_ligne,$matches)) 
+	    			{
+	    				if (count($matches[0])>1) {
 	    					$error++;
 	    					$langs->load("errors");
 	    					$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
 	    					$action = 'create';
 	    				}
-    				}
-    			}  	
+	    			}
+	    			else 
+	    			{
+	    				$error++;
+	    				$langs->load("errors");
+	    				$mesg[]=$langs->trans("ErrorBadFormatValueList",$param_ligne);
+	    				$action = 'create';
+	    			}
+    			}
+    		}  	
         }
 
 	    if (! $error)
@@ -114,6 +121,7 @@ if ($action == 'add')
     		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
     			// Construct array for parameter (value of select list)
+        		$default_value = GETPOST('default_value');
     			$parameters = GETPOST('param');
     			$parameters_array = explode("\r\n",$parameters);
     			foreach($parameters_array as $param_ligne)
@@ -184,6 +192,13 @@ if ($action == 'update')
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
+        	$action = 'edit';
+        }
+        if (GETPOST('type')=='sellist' && !GETPOST('param'))
+        {
+        	$error++;
+        	$langs->load("errors");
+        	$mesg[]=$langs->trans("ErrorNoValueForSelectListType");
         	$action = 'edit';
         }
         if (GETPOST('type')=='checkbox' && !GETPOST('param'))
