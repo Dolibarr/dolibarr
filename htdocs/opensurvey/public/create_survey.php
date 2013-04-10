@@ -162,7 +162,7 @@ print '</script>'."\n";
 
 print '<br>'."\n";
 
-#affichage du cochage par défaut
+// Check or not
 $cocheplus='';
 if ($_SESSION["canedit"]) $cocheplus="checked";
 

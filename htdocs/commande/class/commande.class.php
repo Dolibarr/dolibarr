@@ -2783,7 +2783,6 @@ class Commande extends CommonOrder
      *	Update value of extrafields on the proposal
      *
      *	@param      User	$user       Object user that modify
-     *	@param      double	$remise      Amount discount
      *	@return     int         		<0 if ko, >0 if ok
      */
     function update_extrafields($user)

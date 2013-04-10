@@ -120,8 +120,8 @@ function get_server_name()
 /**
  * is_error
  *
- * @param unknown_type $cerr
- * @return boolean
+ * @param 	string	$cerr		Error value
+ * @return 	boolean				Error key found or not
  */
 function is_error($cerr)
 {
@@ -147,7 +147,7 @@ function validateEmail($email)
 {
 	$pattern = '/^(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){255,})(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){65,}@)(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22))(?:\\.(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-[a-z0-9]+)*\\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-[a-z0-9]+)*)|(?:\\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\\]))$/iD';
 
-	return (bool)preg_match($pattern, $email);
+	return (bool) preg_match($pattern, $email);
 }
 
 
@@ -188,15 +188,16 @@ function getUrlSondage($id, $admin = false)
 
 
 /**
- * Generate a random id
+ * 	Generate a random id
  *
- * @return	void
+ *	@param	string	$car	Char to generate key
+ * 	@return	void
  */
 function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	srand((double)microtime()*1000000);
+	srand((double) microtime()*1000000);
 	for($i=0; $i<$car; $i++) {
 		$string .= $chaine[rand()%strlen($chaine)];
 	}
@@ -229,7 +230,7 @@ function ajouter_sondage($origin)
 
 	if ($_SESSION["formatsondage"]=="D"||$_SESSION["formatsondage"]=="D+") {
 		//Calcul de la date de fin du sondage
-		$taille_tableau=sizeof($_SESSION["totalchoixjour"])-1;
+		$taille_tableau=count($_SESSION["totalchoixjour"])-1;
 		$date_fin=$_SESSION["totalchoixjour"][$taille_tableau]+200000;
 	}
 

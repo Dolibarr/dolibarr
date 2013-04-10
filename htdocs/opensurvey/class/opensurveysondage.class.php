@@ -340,7 +340,7 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsondageadmin	Num sondage to delete
 	 *  @return	int					 		<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0, $numsondageadmin)
+	function delete($user, $notrigger, $numsondageadmin)
 	{
 		global $conf, $langs;
 		$error=0;

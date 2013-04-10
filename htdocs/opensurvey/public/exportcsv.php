@@ -64,7 +64,6 @@ $now=dol_now();
 
 $nbcolonnes=substr_count($object->sujet,',')+1;
 $toutsujet=explode(",",$object->sujet);
-#$toutsujet=str_replace("°","'",$toutsujet);
 
 // affichage des sujets du sondage
 $input.=$langs->trans("Name").";";
@@ -139,15 +138,15 @@ if ($resql)
 else dol_print_error($db);
 
 
-$filesize = strlen( $input );
+$filesize = strlen($input);
 $filename=$numsondage."_".dol_print_date($now,'%Y%m%d%H%M').".csv";
 
 
 
-header( 'Content-Type: text/csv; charset=utf-8' );
-header( 'Content-Length: '.$filesize );
-header( 'Content-Disposition: attachment; filename="'.$filename.'"' );
-header( 'Cache-Control: max-age=10' );
+header('Content-Type: text/csv; charset=utf-8');
+header('Content-Length: '.$filesize);
+header('Content-Disposition: attachment; filename="'.$filename.'"');
+header('Cache-Control: max-age=10');
 echo $input;
 
 exit;

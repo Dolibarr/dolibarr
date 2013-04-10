@@ -146,6 +146,7 @@ class ProductFournisseur extends Product
      *    @param  	string		$charges			costs affering to product
 	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
 	 *    @param  	float		$remise				Discount  regarding qty (amount)
+	 *    @param  	int			$newnpr				Set NPR or not
      *    @return	int								<0 if KO, >=0 if OK
      */
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0)
