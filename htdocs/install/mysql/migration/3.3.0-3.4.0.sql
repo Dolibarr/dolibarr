@@ -26,18 +26,18 @@ create table llx_adherent_type_extrafields
 ) ENGINE=innodb;
 ALTER TABLE llx_adherent_type_extrafields ADD INDEX idx_adherent_type_extrafields (fk_object);
 
-UPDATE llx_const set value='eldy_menu.php' where value='eldy_backoffice.php';
-UPDATE llx_const set value='eldy_menu.php' where value='eldy_frontoffice.php';
-UPDATE llx_const set value='auguria_menu.php' where value='auguria_backoffice.php';
-UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.php';
-UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
-UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_ADDRESS' where name='MAIN_INFO_SOCIETE_ADRESSE';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_TOWN' where name='MAIN_INFO_SOCIETE_VILLE';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_ZIP' where name='MAIN_INFO_SOCIETE_CP';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_COUNTRY' where name='MAIN_INFO_SOCIETE_PAYS';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_STATE' where name='MAIN_INFO_SOCIETE_DEPARTEMENT';
-UPDATE llx_const set name='LIVRAISON_ADDON_NUMBER' where name='LIVRAISON_ADDON';
+UPDATE llx_const set value = __ENCRYPT('eldy_menu.php')__ where __DECRYPT('value')__ = 'eldy_backoffice.php';
+UPDATE llx_const set value = __ENCRYPT('eldy_menu.php')__ where __DECRYPT('value')__ = 'eldy_frontoffice.php';
+UPDATE llx_const set value = __ENCRYPT('auguria_menu.php')__ where __DECRYPT('value')__ = 'auguria_backoffice.php';
+UPDATE llx_const set value = __ENCRYPT('auguria_menu.php')__ where __DECRYPT('value')__ = 'auguria_frontoffice.php';
+UPDATE llx_const set value = __ENCRYPT('smartphone_menu.php')__ where __DECRYPT('value')__ = 'smartphone_backoffice.php';
+UPDATE llx_const set value = __ENCRYPT('smartphone_menu.php')__ where __DECRYPT('value')__ = 'smartphone_frontoffice.php';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_ADDRESS')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_ADRESSE';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_TOWN')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_VILLE';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_ZIP')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_CP';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_COUNTRY')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_PAYS';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_STATE')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_DEPARTEMENT';
+UPDATE llx_const set name = __ENCRYPT('LIVRAISON_ADDON_NUMBER')__ where __DECRYPT('name')__ = 'LIVRAISON_ADDON';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
