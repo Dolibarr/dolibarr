@@ -307,7 +307,7 @@ if ($object->fetch($id) >= 0)
 					 print $modulename;
 					 print "</td>";
 					 */
-					$nbofrecipient=$obj->getNbOfRecipients();
+					$nbofrecipient=$obj->getNbOfRecipients('');
 					print '<td align="center">';
 					if ($nbofrecipient >= 0)
 					{
