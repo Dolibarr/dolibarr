@@ -174,6 +174,7 @@ select.flat {
 	border-top:solid 1px rgba(0,0,0,.4);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 	box-shadow:1px 1px 2px rgba(0,0,0,.2) inset;
+	background: #FDFDFD;
 }
 
 form {
