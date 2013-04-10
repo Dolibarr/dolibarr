@@ -202,7 +202,7 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->forma
 
 		//on rajoute la valeur dans les valeurs
 		$datesbase = explode(",",$object->sujet);
-		$taillebase = sizeof($datesbase);
+		$taillebase = count($datesbase);
 
 		//recherche de l'endroit de l'insertion de la nouvelle date dans les dates deja entrées dans le tableau
 		if ($nouvelledate < $datesbase[0]) {

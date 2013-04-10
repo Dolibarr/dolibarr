@@ -120,7 +120,7 @@ function get_server_name()
 /**
  * is_error
  *
- * @param unknown_type $cerr
+ * @param unknown_type $cerr error number
  * @return boolean
  */
 function is_error($cerr)

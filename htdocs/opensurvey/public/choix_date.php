@@ -257,9 +257,9 @@ if (issetAndNoEmpty('choixjourajout')) {
 
 	// Si le test est passé, alors on insere la valeur dans la variable de session qui contient les dates
 	if ($journeuf && issetAndNoEmpty('choixjourajout') === true) {
-		array_push ($_SESSION["totalchoixjour"],mktime (0,0,0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]));
-		sort ($_SESSION["totalchoixjour"]);
-		$cle=array_search (mktime (0,0,0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
+		array_push($_SESSION["totalchoixjour"],mktime (0,0,0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]));
+		sort($_SESSION["totalchoixjour"]);
+		$cle=array_search(mktime (0,0,0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
 
 		//On sauvegarde les heures deja entrées
 		for ($i = 0; $i < $cle; $i++) {
