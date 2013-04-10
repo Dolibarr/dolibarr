@@ -1,7 +1,6 @@
-#!/usr/bin/php
 <?php
 /*
- * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -166,8 +165,8 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 				if ($result <= 0)
 				{
 					$error++;
-					if ($usestdout) print "Error: Failed to build PDF for invoice ".$fac->ref."\n";
-					else dol_syslog("Failed to build PDF for invoice ".$fac->ref, LOG_ERR);
+					if ($usestdout) print "Error: Failed to build PDF for invoice ".($fac->ref?$fac->ref:' id '.$obj->rowid)."\n";
+					else dol_syslog("Failed to build PDF for invoice ".($fac->ref?$fac->ref:' id '.$obj->rowid), LOG_ERR);
 				}
 
 	            $cpt++;
@@ -194,7 +193,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	            $pdf->setPrintHeader(false);
 	            $pdf->setPrintFooter(false);
 	        }
-	        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+	        $pdf->SetFont(pdf_getPDFFont($langs));
 
 	        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 			//$pdf->SetCompression(false);
@@ -230,16 +229,21 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			$filename='mergedpdf';
 
 			if (! empty($option)) $filename.='_'.$option;
+			$file=$diroutputpdf.'/'.$filename.'.pdf';
 
-			if ($pagecount)
+			if (! $error && $pagecount)
 			{
-				$file=$diroutputpdf.'/'.$filename.'.pdf';
 				$pdf->Output($file,'F');
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 			}
 
-			if ($usestdout) print "Merged PDF has been built in ".$file."\n";
+			if ($usestdout)
+			{
+				if (! $error) print "Merged PDF has been built in ".$file."\n";
+				else print "Can't build PDF ".$file."\n";
+			}
+
 			$result = 1;
 	    }
 	    else
