@@ -1421,12 +1421,14 @@ abstract class CommonObject
     	dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
-    		$this->note = $note;            // deprecated
+    		if ($suffix == '_public') $this->note_public = $note;
+    		else if ($suffix == '_private') $this->note_private = $note;
+    		else $this->note = $note;
     		return 1;
     	}
     	else
     	{
-    		$this->error=$this->db->error();
+    		$this->error=$this->db->lasterror();
     		dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
     		return -1;
     	}
