@@ -218,8 +218,7 @@ if (GETPOST("action") == 'gotodemo')
     // Do redirect to login page
 	if ($disablestring)
 	{
-		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
-		if (GETPOST('urlfrom','alpha')) $url.='&urlfrom='.GETPOST('urlfrom','alpha');
+		$url=DOL_URL_ROOT.'/index.php?'.(GETPOST('urlfrom','alpha')?'urlfrom='.urlencode(GETPOST('urlfrom','alpha')).'&':'').'disablemodules='.$disablestring;
 		header("Location: ".$url);
 		exit;
 	}
