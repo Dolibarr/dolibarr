@@ -297,7 +297,7 @@ foreach ($demoprofiles as $profilearray)
 
 		print '<form method="POST" name="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
-        print '<input type="hidden" name="urlfrom" value="'.urlencode($urlfrom).'">'."\n";
+        print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
         print '<input type="hidden" name="username" value="demo">'."\n";
         print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
