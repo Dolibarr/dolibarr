@@ -226,7 +226,7 @@ else if ($action == 'set_COMMANDE_FREE_TEXT')
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
 }
-else if ($action='setModuleOptions') {
+else if ($action=='setModuleOptions') {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
