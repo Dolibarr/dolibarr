@@ -211,13 +211,13 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
 elseif ($action == 'setnote_public' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 elseif ($action == 'setnote_private' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_private(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 

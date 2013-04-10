@@ -51,7 +51,7 @@ $object->fetch($id, $ref);
 
 if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
-    $result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
     if ($result < 0) dol_print_error($db,$object->error);
 }
 elseif ($action == 'setnote' && $user->rights->fournisseur->commande->creer)

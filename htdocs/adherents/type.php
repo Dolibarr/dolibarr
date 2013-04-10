@@ -146,7 +146,7 @@ if ($action == 'commentaire' && $user->rights->adherent->configurer)
 {
 	$don = new Don($db);
 	$don->fetch($rowid);
-	$don->update_note($_POST["commentaire"]);
+	$don->update_note(dol_html_entity_decode(GETPOST('commentaire'), ENT_QUOTES));
 }
 
 

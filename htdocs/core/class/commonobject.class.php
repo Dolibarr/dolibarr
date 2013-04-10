@@ -1400,44 +1400,13 @@ abstract class CommonObject
     }
 
     /**
-     *  Update private note of element
+     *  Update note of element
      *
-     *  @param      string		$note_private	New value for note
-     *  @return     int      		   	<0 if KO, >0 if OK
+     *  @param      string		$note		New value for note
+     *  @param		string		$suffix		'', '_public' or '_private'
+     *  @return     int      		   		<0 if KO, >0 if OK
      */
-    function update_note_private($note_private)
-    {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::update_note_private was called on objet with property table_element not defined", LOG_ERR);
-            return -1;
-        }
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET note_private = ".(!empty($note_private)?("'".$this->db->escape($note_private)."'"):"NULL");
-        $sql.= " WHERE rowid =". $this->id;
-
-        dol_syslog(get_class($this)."::update_note_private sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->note_private = $note_private;
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update_note_private error=".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
-
-    /**
-     *  Update private note of element
-     *
-     *  @param      string		$note	New value for note
-     *  @return     int      		   	<0 if KO, >0 if OK
-     */
-    function update_note($note)
+    function update_note($note,$suffix='')
     {
     	if (! $this->table_element)
     	{
@@ -1446,7 +1415,7 @@ abstract class CommonObject
     	}
 
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    	$sql.= " SET note = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
+    	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
 
     	dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
@@ -1464,36 +1433,17 @@ abstract class CommonObject
     }
 
     /**
-     * Update public note of element
-     *
-     * @param	string	$note_public	New value for note
-     * @return	int         			<0 if KO, >0 if OK
+     * 	Update public note (kept for backward compatibility)
+     * 
+     *  @param      string		$note		New value for note
+     *  @return     int      		   		<0 if KO, >0 if OK
+     *  @deprecated
      */
-    function update_note_public($note_public)
+    function update_note_public($note)
     {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::update_note_public was called on objet with property table_element not defined",LOG_ERR);
-            return -1;
-        }
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET note_public = ".(!empty($note_public)?("'".$this->db->escape($note_public)."'"):"NULL");
-        $sql.= " WHERE rowid =". $this->id;
-
-        dol_syslog(get_class($this)."::update_note_public sql=".$sql);
-        if ($this->db->query($sql))
-        {
-            $this->note_public = $note_public;
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
+    	return $this->update_note($note,'_public');
     }
-
+    
     /**
      *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
      *
