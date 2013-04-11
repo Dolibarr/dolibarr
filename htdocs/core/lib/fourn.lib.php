@@ -166,17 +166,17 @@ function supplierorder_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("SupplierOrder");
 	$head[$h][2] = 'order';
 	$h++;
-	
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
+	$head[$h][1] = $langs->trans("SuppliersInvoice");
+	$head[$h][2] = 'invoice';
+	$h++;
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
 	$head[$h][2] = 'supplierorder';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
-	$head[$h][1] = $langs->trans("SuppliersInvoice");
-	$head[$h][2] = 'invoice';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';

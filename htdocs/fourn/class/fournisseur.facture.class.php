@@ -1336,55 +1336,52 @@ class FactureFournisseur extends CommonInvoice
     }
 
 	 /**
-     *  Renvoie la reference de facture suivante non utilisee en fonction du modele
-     *                  de numerotation actif defini dans INVOICE_SUPPLIER_ADDON_NUMBER
-     *
-     *  @param	    Societe		$soc  		objet societe
-     *  @return     string                  reference libre pour la facture
-     */
-    function getNextNumRef($soc)
+      *      Return next reference of supplier invoice not already used (or last reference)
+      *      according to numbering module defined into constant INVOICE_SUPPLIER_ADDON_NUMBER
+      *
+      *      @param	   Society		$soc		object company
+      *      @param    string		$mode		'next' for next value or 'last' for last value
+      *      @return   string					free ref or last ref
+      */
+    function getNextNumRef($soc,$mode='next')
     {
         global $db, $langs, $conf;
         $langs->load("orders");
 
-        $dir = DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/';
+        // Clean parameters (if not defined or using deprecated value)
+        if (empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER)) $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER='mod_facture_fournisseur_cactus';
 
-        if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER))
+        $mybool=false;
+
+        $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.".php";
+        $classname = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
+        // Include file with class
+        foreach ($conf->file->dol_document_root as $dirroot)
         {
-            $file = $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER.'.php';
+            $dir = $dirroot."/core/modules/supplier_invoice/";
+            // Load file with numbering class (if found)
+            $mybool|=@include_once $dir.$file;
+        }
 
-            if (is_readable($dir.'/'.$file))
-            {
-                // Definition du nom de modele de numerotation de commande fournisseur
-                $modName=$conf->global->INVOICE_SUPPLIER_ADDON_NUMBER;
-                require_once $dir.'/'.$file;
+        if (! $mybool)
+        {
+        	dol_print_error('',"Failed to include file ".$file);
+        	return '';
+        }
 
-                // Recuperation de la nouvelle reference
-                $objMod = new $modName($this->db);
+        $obj = new $classname();
 
-                $numref = "";
-                $numref = $objMod->invoice_get_num($soc,$this);
+        $numref = "";
+        $numref = $obj->getNumRef($soc,$this,$mode);
 
-                if ( $numref != "")
-                {
-                    return $numref;
-                }
-                else
-                {
-                    dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
-                    return -1;
-                }
-            }
-            else
-            {
-                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_INVOICE_SUPPLIER_ADDON_NUMBER_File",$conf->global->INVOICE_SUPPLIER_ADDON_NUMBER);
-                return -2;
-            }
+        if ( $numref != "")
+        {
+        	return $numref;
         }
         else
-        {
-            print $langs->trans("Error")." ".$langs->trans("Error_INVOICE_SUPPLIER_ADDON_NUMBER_NotDefined");
-            return -3;
+       {
+        	//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+        	return false;
         }
     }
 

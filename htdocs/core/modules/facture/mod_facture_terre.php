@@ -137,7 +137,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);
-		dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
+		dol_syslog(get_class($this)."::getNextValue sql=".$sql);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
@@ -146,7 +146,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		}
 		else
 		{
-			dol_syslog("mod_facture_terre::getNextValue sql=".$sql, LOG_ERR);
+			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 
@@ -160,7 +160,7 @@ class mod_facture_terre extends ModeleNumRefFactures
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
+            dol_syslog(get_class($this)."::getNextValue sql=".$sql);
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -177,7 +177,7 @@ class mod_facture_terre extends ModeleNumRefFactures
     		$yymm = strftime("%y%m",$date);
     		$num = sprintf("%04s",$max+1);
 
-    		dol_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
+    		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
     		return $prefix.$yymm."-".$num;
 		}
 		else dol_print_error('','Bad parameter for getNextValue');

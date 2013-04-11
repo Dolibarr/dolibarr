@@ -102,13 +102,14 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
     }
 
 	/**
-	 *  Return next value
+	 * Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-     *  @return string      			Value if OK, 0 if KO
-	*/
-    function getNextValue($objsoc=0,$object='')
+	 * @param	Societe		$objsoc     Object third party
+	 * @param  	Object	    $object		Object
+     * @param	string		$mode       'next' for next value or 'last' for last value
+     * @return 	string      			Value if OK, 0 if KO
+	 */
+    function getNextValue($objsoc,$object,$mode='next')
     {
 		global $db,$conf;
 
@@ -128,18 +129,18 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		return  $numFinal;
 	}
 
-
     /**
-     *  Renvoie la reference de facture suivante non utilisee
-     *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-     *  @return string      			Texte descripif
+	 * Return next free value
+	 *
+     * @param	Societe		$objsoc     	Object third party
+     * @param	string		$objforref		Object for number to search
+     * @param   string		$mode       	'next' for next value or 'last' for last value
+     * @return  string      				Next free value
      */
-    function invoice_get_num($objsoc=0,$object='')
-    {
-        return $this->getNextValue($objsoc,$object);
-    }
+	function getNumRef($objsoc,$objforref,$mode='next')
+	{
+		return $this->getNextValue($objsoc,$objforref,$mode);
+	}
 }
 
 ?>

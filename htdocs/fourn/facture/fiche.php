@@ -1161,7 +1161,7 @@ if ($action == 'create')
     print '</td>';
    // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
     print '</tr>';
-    
+
     // Private note
     print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
     print '<td>';
@@ -1328,7 +1328,17 @@ else
             {
                 $numref = $object->ref;
             }
+
+            $text=$langs->trans('ConfirmValidateBill',$numref);
+            /*if (! empty($conf->notification->enabled))
+            {
+            	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+            	$notify=new Notify($db);
+            	$text.='<br>';
+            	$text.=$notify->confirmMessage('NOTIFY_VAL_FAC_SUP',$object->socid);
+            }*/
             $formquestion=array();
+
             if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
             {
                 $langs->load("stocks");
@@ -1341,7 +1351,7 @@ else
                 array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
             }
 
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $langs->trans('ConfirmValidateBill', $object->ref), 'confirm_valid', $formquestion, 1, 1, 240);
+            $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
             if ($ret == 'html') print '<br>';
         }
 

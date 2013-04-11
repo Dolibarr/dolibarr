@@ -950,6 +950,8 @@ ExtraFieldsThirdParties=Complementary attributes (thirdparty)
 ExtraFieldsContacts=Complementary attributes (contact/address)
 ExtraFieldsMember=Complementary attributes (member)
 ExtraFieldsMemberType=Complementary attributes (Member type)
+ExtraFieldsSupplierOrders=Complementary attributes (orders)
+ExtraFieldsSupplierInvoices=Complementary attributes (invoices)
 ExtraFieldHasWrongValue=Attribut %s has a wrong value.
 AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
 SendingMailSetup=Setup of sendings by email
@@ -1400,6 +1402,7 @@ MultiCompanySetup=Multi-company module setup
 SuppliersSetup=Supplier module setup
 SuppliersCommandModel=Complete template of supplier order (logo...)
 SuppliersInvoiceModel=Complete template of supplier invoice (logo...)
+SuppliersInvoiceNumberingModel=Supplier invoices numbering models
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP Maxmind module setup
 PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation.<br>Example: /usr/local/share/GeoIP/GeoIP.dat

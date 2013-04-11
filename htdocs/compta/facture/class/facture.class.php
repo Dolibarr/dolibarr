@@ -2448,7 +2448,7 @@ class Facture extends CommonInvoice
     }
 
     /**
-     *      Return next reference of invoice not already used (or last reference)
+     *      Return next reference of customer invoice not already used (or last reference)
      *      according to numbering module defined into constant FACTURE_ADDON
      *
      *      @param	   Society		$soc		object company
