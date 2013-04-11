@@ -84,8 +84,8 @@ class Expedition extends CommonObject
 	var $total_localtax2;   // Total Local tax 2
 
 	var $listmeths;			// List of carriers
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -186,7 +186,7 @@ class Expedition extends CommonObject
 		$sql.= ", date_delivery";
 		$sql.= ", fk_soc";
 		$sql.= ", fk_address";
-		$sql.= ", fk_expedition_methode";
+		$sql.= ", fk_shipping_method";
 		$sql.= ", tracking_number";
 		$sql.= ", weight";
 		$sql.= ", size";
@@ -380,7 +380,7 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery);	// Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->shipping_method_id	= $obj->fk_expedition_methode;
+				$this->shipping_method_id	= $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
@@ -395,7 +395,7 @@ class Expedition extends CommonObject
 				$this->height_units         = $obj->size_units;
 				$this->trueDepth            = $obj->size;
 				$this->depth_units          = $obj->size_units;
-				
+
 				$this->note_public          = $obj->note_public;
 				$this->note_private         = $obj->note_private;
 
@@ -417,7 +417,7 @@ class Expedition extends CommonObject
 				 * Thirparty
 				 */
 				$result=$this->fetch_thirdparty();
-				
+
 				/*
 				 * Lines
 				 */
@@ -1106,7 +1106,7 @@ class Expedition extends CommonObject
 
         $this->origin_id            = 1;
         $this->origin               = 'commande';
-        
+
         $this->note_private			= 'Private note';
         $this->note_public			= 'Public note';
 
@@ -1191,14 +1191,14 @@ class Expedition extends CommonObject
 
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
-     *  
+     *
      *  @param  id      $id     only this carrier, all if none
      *  @return void
      */
     function list_delivery_methods($id='')
     {
         global $langs;
-        
+
         $listmeths = array();
         $i=0;
 
@@ -1243,9 +1243,9 @@ class Expedition extends CommonObject
 
     /**
      *  Update/create delivery method.
-     *  
+     *
      *  @param	string      $id     id method to activate
-     *  
+     *
      *  @return void
      */
     function update_delivery_method($id='')
@@ -1271,9 +1271,9 @@ class Expedition extends CommonObject
 
     /**
      *  Activate delivery method.
-     *  
+     *
      *  @param      id      $id     id method to activate
-     *  
+     *
      *  @return void
      */
     function activ_delivery_method($id)
@@ -1287,9 +1287,9 @@ class Expedition extends CommonObject
 
     /**
      *  DesActivate delivery method.
-     *  
+     *
      *  @param      id      $id     id method to desactivate
-     *  
+     *
      *  @return void
      */
     function disable_delivery_method($id)
