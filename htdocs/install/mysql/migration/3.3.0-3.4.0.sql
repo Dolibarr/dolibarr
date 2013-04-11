@@ -84,7 +84,15 @@ alter table llx_socpeople  CHANGE COLUMN cp zip varchar(10);
 alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
-alter table llx_expedition   CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
+
+-- remove constraint and index before rename field
+ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_expedition_methode;
+ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_shipping_method;
+alter table llx_expedition CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
+-- and create the new index and constraint
+ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_shipping_method (fk_shipping_method);
+ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_shipping_method FOREIGN KEY (fk_shipping_method) REFERENCES llx_c_shipment_mode (rowid);
+
 alter table llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(30);
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAULT '' AFTER description;
