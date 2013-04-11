@@ -125,7 +125,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		'object_note_private'=>$object->note_private,
 		'object_note_public'=>$object->note_public,
 		'object_public'=>$object->public,
-		'object_statut'=>html_entity_decode($object->getLibStatut())
+		'object_statut'=>$object->getLibStatut()
 		);
 	}
 
@@ -478,7 +478,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				// Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user,$outputlangs);
-				//var_dump($tmparray); exit;
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -805,7 +804,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
 
 							$tmparray=$this->get_substitutionarray_project_contacts($contact,$outputlangs);
-							complete_substitutions_array($tmparray, $outputlangs, $contact, $contact, "completesubstitutionarray_lines");
 							foreach($tmparray as $key => $val)
 							{
 								try
@@ -937,7 +935,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 										$ref_array['amountttc']='';
 									}
 
-									$ref_array['status']=html_entity_decode($element->getLibStatut(0));
+									$ref_array['status']=$element->getLibStatut(0);
 
 									$tmparray=$this->get_substitutionarray_project_reference($ref_array,$outputlangs);
 
@@ -975,7 +973,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 
 				// Write new file
-				$odfHandler->saveToDisk($file);
+				$odfHandler->saveToDisk($file);	
+				//$odfHandler->exportAsAttachedPDF($file);
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
