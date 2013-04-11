@@ -79,12 +79,11 @@ class mailing_contacts3 extends MailingTargets
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
         $sql.= " sp.lastname, sp.firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s";
-    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c,";
-    	if ($filtersarray[0] <> 'all') $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
-        $sql.= " WHERE s.rowid = sp.fk_soc";
-    	$sql.= " AND sp.email != ''";     // Note that null != '' is false
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie as c";
+    	if ($filtersarray[0] <> 'all') $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+    	$sql.= " WHERE sp.email != ''";     // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
@@ -168,10 +167,9 @@ class mailing_contacts3 extends MailingTargets
     	// Number with a filter are show in the combo list for each filter.
         // If we want a filter "is inside at least one category", we must add it into formFilter
     	$sql = "SELECT count(distinct(c.email)) as nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.rowid = c.fk_soc";
-        $sql.= " AND c.entity IN (".getEntity('societe', 1).")";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
+        $sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND c.email != ''"; // Note that null != '' is false
         $sql.= " AND c.no_email = 0";
         /*
@@ -205,11 +203,9 @@ class mailing_contacts3 extends MailingTargets
 
         $sql = "SELECT c.label, count(distinct(sp.email)) AS nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s,";
         $sql.= " ".MAIN_DB_PREFIX."categorie as c,";
         $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
-        $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND sp.email != ''";     // Note that null != '' is false
+        $sql.= " WHERE sp.email != ''";     // Note that null != '' is false
         $sql.= " AND sp.no_email = 0";
         $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND cs.fk_categorie = c.rowid";

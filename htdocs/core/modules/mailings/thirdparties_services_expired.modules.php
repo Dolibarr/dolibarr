@@ -175,12 +175,10 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *	For example if this selector is used to extract 500 different
      *	emails from a text file, this function must return 500.
      *
-     *  @param	string	$sql		SQL request to get recipitien
-     *	@param	int		$filter		Filter
-     *	@param	string	$option		Option
+     *	@param	string	$sql		SQL request to use to count
      *	@return	int					Number of recipients
      */
-    function getNbOfRecipients($sql,$filter=1,$option='')
+    function getNbOfRecipients($sql='')
     {
         $now=dol_now();
 

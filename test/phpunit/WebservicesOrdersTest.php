@@ -118,11 +118,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSOrder_xxx
+     * testWSOrderXxx
      *
      * @return int
      */
-    public function testWSOrder_xxx()
+    public function testWSOrderXxx()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -178,11 +178,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSOther_GetVersions
+     * testWSOtherGetVersions
      *
      * @return int
      */
-    public function testWSOther_GetVersions()
+    public function testWSOtherGetVersions()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;

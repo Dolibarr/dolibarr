@@ -118,11 +118,11 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSUser_xxx
+     * testWSUserXxx
      *
      * @return int
      */
-    public function testWSUser_xxx()
+    public function testWSUserXxx()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;

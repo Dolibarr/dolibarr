@@ -257,9 +257,9 @@ if (issetAndNoEmpty('choixjourajout')) {
 
 	// Si le test est passé, alors on insere la valeur dans la variable de session qui contient les dates
 	if ($journeuf && issetAndNoEmpty('choixjourajout') === true) {
-		array_push($_SESSION["totalchoixjour"],mktime (0,0,0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]));
+		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]));
 		sort($_SESSION["totalchoixjour"]);
-		$cle=array_search(mktime (0,0,0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
+		$cle=array_search(dol_mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
 
 		//On sauvegarde les heures deja entrées
 		for ($i = 0; $i < $cle; $i++) {
@@ -540,7 +540,7 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheur
 
 //s'il n'y a pas d'erreur et que le bouton de creation est activé, on demande confirmation
 if (!$erreur  && (GETPOST('choixheures') || GETPOST('choixheures_x'))) {
-	$taille_tableau=sizeof($_SESSION["totalchoixjour"])-1;
+	$taille_tableau=count($_SESSION["totalchoixjour"])-1;
 	$jour_arret = $_SESSION["totalchoixjour"][$taille_tableau]+200000;
 	$date_fin=dol_print_date($jour_arret, 'dayhourtext');
 

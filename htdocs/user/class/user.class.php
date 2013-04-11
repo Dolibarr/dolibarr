@@ -76,11 +76,6 @@ class User extends CommonObject
 	var $fk_member;
 	var $fk_user;
 
-	var $webcal_login;
-	var $phenix_login;
-	var $phenix_pass;
-	var $phenix_pass_crypted;
-
 	var $clicktodial_url;
 	var $clicktodial_login;
 	var $clicktodial_password;
@@ -144,7 +139,7 @@ class User extends CommonObject
 
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
-		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
+		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
@@ -220,9 +215,6 @@ class User extends CommonObject
 				$this->datelastlogin		= $this->db->jdate($obj->datel);
 				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
-				$this->webcal_login         = $obj->webcal_login;
-				$this->phenix_login         = $obj->phenix_login;
-				$this->phenix_pass_crypted  = $obj->phenix_pass;
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
@@ -1111,12 +1103,6 @@ class User extends CommonObject
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
-		$this->webcal_login = trim($this->webcal_login);
-		$this->phenix_login = trim($this->phenix_login);
-		if ($this->phenix_pass != $this->phenix_pass_crypted)
-		{
-			$this->phenix_pass  = dol_hash(trim($this->phenix_pass));
-		}
 		$this->admin        = $this->admin?$this->admin:0;
 
 		// Check parameters
@@ -1146,9 +1132,6 @@ class User extends CommonObject
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
-		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
-		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
-		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
@@ -1954,6 +1937,8 @@ class User extends CommonObject
 	{
 		global $user,$langs;
 
+		$now=dol_now();
+		
 		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
@@ -1971,12 +1956,11 @@ class User extends CommonObject
 		$this->pass='dolibspec';
 		//$this->pass_indatabase='dolibspec';									Set after a fetch
 		//$this->pass_indatabase_crypted='e80ca5a88c892b0aaaf7e154853bccab';	Set after a fetch
-		$this->datec=time();
-		$this->datem=time();
-		$this->webcal_login='dolibspec';
+		$this->datec=$now;
+		$this->datem=$now;
 
-		$this->datelastlogin=time();
-		$this->datepreviouslogin=time();
+		$this->datelastlogin=$now;
+		$this->datepreviouslogin=$now;
 		$this->statut=1;
 
 		//$this->societe_id = 1;	For external users

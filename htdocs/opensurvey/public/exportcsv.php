@@ -64,7 +64,10 @@ $now=dol_now();
 
 $nbcolonnes=substr_count($object->sujet,',')+1;
 $toutsujet=explode(",",$object->sujet);
+<<<<<<< HEAD
 //$toutsujet=str_replace("°","'",$toutsujet);
+=======
+>>>>>>> branch 'develop' of https://github.com/Dolibarr/dolibarr.git
 
 // affichage des sujets du sondage
 $input.=$langs->trans("Name").";";

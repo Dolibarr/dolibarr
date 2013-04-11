@@ -210,7 +210,9 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->forma
 		} elseif ($nouvelledate > $datesbase[$taillebase-1]) {
 			$cleinsertion = count($datesbase);
 		} else {
-			for ($i = 0; $i < count($datesbase); $i++) {
+			$nbdatesbase=count($datesbase);
+			for ($i = 0; $i < $nbdatesbase; $i++) 
+			{
 				$j = $i + 1;
 				if ($nouvelledate > $datesbase[$i] && $nouvelledate < $datesbase[$j]) {
 					$cleinsertion = $j;
