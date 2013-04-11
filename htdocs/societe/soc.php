@@ -561,8 +561,7 @@ else
             if ($res) break;
         }
         $modCodeClient = new $module;
-        $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-        if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+        $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
         if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
         {
             $module = substr($module, 0, dol_strlen($module)-4);
@@ -1038,8 +1037,7 @@ else
             {
                 $prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
             }
-            $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-            if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
