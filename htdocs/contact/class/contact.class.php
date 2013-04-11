@@ -541,6 +541,7 @@ class Contact extends CommonObject
 				$this->mail				= $obj->email;
 
 				$this->birthday			= $this->db->jdate($obj->birthday);
+				$this->note				= $obj->note_private;		// deprecated
 				$this->note_private		= $obj->note_private;
 				$this->note_public		= $obj->note_public;
 				$this->default_lang		= $obj->default_lang;

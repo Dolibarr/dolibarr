@@ -36,7 +36,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 // Include Dolibarr environment
 require_once($path."../../htdocs/master.inc.php");
 // After this $db is an opened handler to database. We close it at end of file.
-require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
@@ -179,7 +178,7 @@ if (in_array('payments',$filter) && in_array('nopayment',$filter))
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate);
+$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option);
 
 
 

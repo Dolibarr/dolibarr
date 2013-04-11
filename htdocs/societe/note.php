@@ -92,7 +92,7 @@ if ($id > 0)
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+    print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
     print '<td colspan="3">';
     print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
     print '</td></tr>';
@@ -121,11 +121,12 @@ if ($id > 0)
     }
 
     print "</table>";
-    
+
     print '<br>';
-    
+
+    $colwidth='25';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-    
+
 
     dol_fiche_end();
 }
