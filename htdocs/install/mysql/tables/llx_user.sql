@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007-2013 Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -47,9 +47,6 @@ create table llx_user
   email             varchar(255),
   signature         text DEFAULT NULL,
   admin             smallint DEFAULT 0,
-  webcal_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)
-  phenix_login      varchar(25),			-- TODO move to an extra table (ex: llx_extra_fields)
-  phenix_pass       varchar(128),			-- TODO move to an extra table (ex: llx_extra_fields)
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
   fk_societe        integer,
@@ -64,6 +61,6 @@ create table llx_user
   openid            varchar(255),
   statut            tinyint DEFAULT 1,
   photo             varchar(255),     -- filename or url of photo
-  lang              varchar(6)
-  
+  lang              varchar(6),
+  color				varchar(6)
 )ENGINE=innodb;
