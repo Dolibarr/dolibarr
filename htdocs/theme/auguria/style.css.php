@@ -246,7 +246,8 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen)) { print "padding-left: 10px;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	else print "margin-top: 10px;\n"; ?>
 }
 
 
