@@ -2082,7 +2082,9 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
         $newclassname=$classname;
-        if ($newclassname=='Propal') $newclassname='CommercialProposal';
+        if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+        elseif ($newclassname == 'Commande') $newclassname = 'Order';
+
         print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
