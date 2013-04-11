@@ -1769,15 +1769,15 @@ class Societe extends CommonObject
     function get_codefournisseur($objsoc=0,$type=1)
     {
         global $conf;
-        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
-            $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
             $mod = new $var;
 
             $this->code_fournisseur = $mod->getNextValue($objsoc,$type);
@@ -1829,16 +1829,16 @@ class Societe extends CommonObject
     function codefournisseur_modifiable()
     {
         global $conf;
-        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
             $mod = new $var;
 
@@ -1902,16 +1902,16 @@ class Societe extends CommonObject
     function check_codefournisseur()
     {
         global $conf;
-        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
             $mod = new $var;
 

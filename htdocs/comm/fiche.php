@@ -187,8 +187,9 @@ if ($id > 0)
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"),0,'company');
 
 
-	print '<table width="100%" class="notopnoleftnoright">';
-	print '<tr><td valign="top" class="notopnoleft">';
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	//print '<table width="100%" class="notopnoleftnoright">';
+	//print '<tr><td valign="top" class="notopnoleft">';
 
 	print '<table class="border" width="100%">';
 
@@ -440,11 +441,12 @@ if ($id > 0)
 
 	print "</table>";
 
-	print "</td>\n";
+	
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	//print "</td>\n";
+	//print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
-
-	print '<td valign="top" width="50%" class="notopnoleftnoright">';
-
+	
 	// Nbre max d'elements des petites listes
 	$MAXLIST=4;
 	$tableaushown=1;
@@ -507,8 +509,8 @@ if ($id > 0)
 					print " ".img_warning();
 				}
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-				print '<td align="right" width="100" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
+				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
+				print '<td align="right" style="min-width: 60px" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
 				$var=!$var;
 				$i++;
 			}
@@ -576,11 +578,11 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
-				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-				print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
+				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
+				print '<td align="right" style="min-width: 60px" nowrap="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -781,10 +783,12 @@ if ($id > 0)
 		}
 	}
 
-	print "</td></tr>";
-	print "</table>";
+	print '</div></div></div>';
+	print '<div style="clear:both"></div>';
+	//print "</td></tr>";
+	//print "</table>";
 
-	print "\n</div>\n";
+	dol_fiche_end();
 
 
 	/*
