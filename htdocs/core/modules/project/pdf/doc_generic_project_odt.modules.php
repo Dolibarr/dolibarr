@@ -511,6 +511,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						else	// Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
+							$odfHandler->setVarsHeadFooter($key, $value, true, 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
