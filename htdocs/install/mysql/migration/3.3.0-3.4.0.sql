@@ -204,11 +204,13 @@ CREATE TABLE llx_cronjob
 
 ALTER TABLE llx_societe MODIFY COLUMN zip varchar(25);
 
-ALTER TABLE llx_user ADD COLUMN   address           varchar(255);
-ALTER TABLE llx_user ADD COLUMN   zip               varchar(25);
-ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
-ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
-ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN address           varchar(255);
+ALTER TABLE llx_user ADD COLUMN zip               varchar(25);
+ALTER TABLE llx_user ADD COLUMN town              varchar(50);
+ALTER TABLE llx_user ADD COLUMN fk_state          integer        DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN fk_country        integer        DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN color             varchar(6);
+
 ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
 DROP TABLE llx_printer_ipp;
