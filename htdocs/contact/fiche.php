@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -152,14 +154,15 @@ if (empty($reshook))
         $object->jabberid		= $_POST["jabberid"];
 		$object->no_email		= $_POST["no_email"];
         $object->priv			= $_POST["priv"];
-        $object->note			= $_POST["note"];
+        $object->note_public	= GETPOST("note_public");
+        $object->note_private	= GETPOST("note_private");
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
         $object->birthday_alert = $_POST["birthday_alert"];
 
         // Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         if (! $_POST["lastname"])
         {
@@ -247,10 +250,11 @@ if (empty($reshook))
             $object->jabberid		= $_POST["jabberid"];
 			$object->no_email		= $_POST["no_email"];
             $object->priv			= $_POST["priv"];
-            $object->note			= $_POST["note"];
+        	$object->note_public	= GETPOST("note_public");
+       		$object->note_private	= GETPOST("note_private");
 
             // Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels,$object); 
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             $result = $object->update($_POST["contactid"], $user);
 
@@ -296,11 +300,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if (empty($object->error) && $id)
  	{
-	     $object = new Contact($db);
-	     $object->fetch($id);
+ 		$object = new Contact($db);
+ 		$result=$object->fetch($id);
+		if ($result <= 0) dol_print_error('',$object->error);
  	}
-	$objcanvas->assign_values($action, $id);	// Set value for templates
-	$objcanvas->display_canvas($action);		// Show template
+   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
 }
 else
 {
@@ -499,8 +504,21 @@ else
             print $form->selectarray('priv',$selectarray,(isset($_POST["priv"])?$_POST["priv"]:$object->priv),0);
             print '</td></tr>';
 
-            // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="top"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea></td></tr>';
+            // Note Public
+            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+            print '<td colspan="3" valign="top">';
+            $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+            //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
+            print '</td></tr>';
+
+            // Note Private
+            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+            print '<td colspan="3" valign="top">';
+            $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+            //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
+            print '</td></tr>';
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
@@ -703,11 +721,23 @@ else
             print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
-            // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-            print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
-            print isset($_POST["note"])?$_POST["note"]:$object->note;
-            print '</textarea></td></tr>';
+            // Note Public
+            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+           // print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
+           // print isset($_POST["note"])?$_POST["note"]:$object->note;
+           // print '</textarea></td></tr>';
+           print '</td></tr>';
+
+           // Note Private
+           print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+           $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+           print $doleditor->Create(1);
+           // print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
+           // print isset($_POST["note"])?$_POST["note"]:$object->note;
+           // print '</textarea></td></tr>';
+           print '</td></tr>';
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
@@ -908,9 +938,14 @@ else
         print $object->LibPubPriv($object->priv);
         print '</td></tr>';
 
-        // Note
-        print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-        print nl2br($object->note);
+        // Note Public
+        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+        print nl2br($object->note_public);
+        print '</td></tr>';
+
+        // Note Private
+        print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+        print nl2br($object->note_private);
         print '</td></tr>';
 
         // Other attributes

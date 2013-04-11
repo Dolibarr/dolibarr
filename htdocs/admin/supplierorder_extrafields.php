@@ -65,7 +65,7 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("SupplierOrder");
+$textobject=$langs->transnoentitiesnoconv("SuppliersOrders");
 
 llxHeader('',$langs->trans("SuppliersSetup"));
 
@@ -75,7 +75,7 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $langs->trans("ModuleSetup"), 0, 'order');
+dol_fiche_head($head, 'supplierorder', $langs->trans("ModuleSetup"), 0, 'order');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

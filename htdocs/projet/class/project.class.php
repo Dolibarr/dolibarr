@@ -1011,7 +1011,7 @@ class Project extends CommonObject
         	else
         	{
         		$this->db->begin();
-				$res=$clone_project->update_note_public(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES));
+				$res=$clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES),'_public');
 				if ($res < 0)
 				{
 					$this->error.=$clone_project->error;

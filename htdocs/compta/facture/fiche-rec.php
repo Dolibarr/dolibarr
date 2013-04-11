@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ if ($action == 'add')
 	if (! $error)
 	{
 		$object->titre = GETPOST('titre', 'alpha');
-		$object->note  = GETPOST('note');
+		$object->note_private  = GETPOST('note_private');
 		$object->usenewprice = GETPOST('usenewprice');
 
 		if ($object->create($user, $id) > 0)
@@ -143,7 +144,7 @@ if ($action == 'create')
 
 		// Note
 		print '<td rowspan="'.$rowspan.'" valign="top">';
-		print '<textarea class="flat" name="note" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea>';
+		print '<textarea class="flat" name="note_private" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
 
 		// Author
@@ -394,7 +395,7 @@ else
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id,'none');
 			print "</td></tr>";
 
-			print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($object->note)."</td></tr>";
+			print '<tr><td>'.$langs->trans("Note").'</td><td colspan="3">'.nl2br($object->note_private)."</td></tr>";
 
 			print "</table>";
 

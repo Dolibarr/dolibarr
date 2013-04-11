@@ -26,18 +26,18 @@ create table llx_adherent_type_extrafields
 ) ENGINE=innodb;
 ALTER TABLE llx_adherent_type_extrafields ADD INDEX idx_adherent_type_extrafields (fk_object);
 
-UPDATE llx_const set value='eldy_menu.php' where value='eldy_backoffice.php';
-UPDATE llx_const set value='eldy_menu.php' where value='eldy_frontoffice.php';
-UPDATE llx_const set value='auguria_menu.php' where value='auguria_backoffice.php';
-UPDATE llx_const set value='auguria_menu.php' where value='auguria_frontoffice.php';
-UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_backoffice.php';
-UPDATE llx_const set value='smartphone_menu.php' where value='smartphone_frontoffice.php';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_ADDRESS' where name='MAIN_INFO_SOCIETE_ADRESSE';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_TOWN' where name='MAIN_INFO_SOCIETE_VILLE';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_ZIP' where name='MAIN_INFO_SOCIETE_CP';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_COUNTRY' where name='MAIN_INFO_SOCIETE_PAYS';
-UPDATE llx_const set name='MAIN_INFO_SOCIETE_STATE' where name='MAIN_INFO_SOCIETE_DEPARTEMENT';
-UPDATE llx_const set name='LIVRAISON_ADDON_NUMBER' where name='LIVRAISON_ADDON';
+UPDATE llx_const set value = __ENCRYPT('eldy_menu.php')__ where __DECRYPT('value')__ = 'eldy_backoffice.php';
+UPDATE llx_const set value = __ENCRYPT('eldy_menu.php')__ where __DECRYPT('value')__ = 'eldy_frontoffice.php';
+UPDATE llx_const set value = __ENCRYPT('auguria_menu.php')__ where __DECRYPT('value')__ = 'auguria_backoffice.php';
+UPDATE llx_const set value = __ENCRYPT('auguria_menu.php')__ where __DECRYPT('value')__ = 'auguria_frontoffice.php';
+UPDATE llx_const set value = __ENCRYPT('smartphone_menu.php')__ where __DECRYPT('value')__ = 'smartphone_backoffice.php';
+UPDATE llx_const set value = __ENCRYPT('smartphone_menu.php')__ where __DECRYPT('value')__ = 'smartphone_frontoffice.php';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_ADDRESS')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_ADRESSE';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_TOWN')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_VILLE';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_ZIP')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_CP';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_COUNTRY')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_PAYS';
+UPDATE llx_const set name = __ENCRYPT('MAIN_INFO_SOCIETE_STATE')__ where __DECRYPT('name')__ = 'MAIN_INFO_SOCIETE_DEPARTEMENT';
+UPDATE llx_const set name = __ENCRYPT('LIVRAISON_ADDON_NUMBER')__ where __DECRYPT('name')__ = 'LIVRAISON_ADDON';
 
 ALTER TABLE llx_user add COLUMN fk_user integer;
 
@@ -204,26 +204,28 @@ CREATE TABLE llx_cronjob
 
 ALTER TABLE llx_societe MODIFY COLUMN zip varchar(25);
 
-ALTER TABLE llx_user ADD COLUMN   address           varchar(255);
-ALTER TABLE llx_user ADD COLUMN   zip               varchar(25);
-ALTER TABLE llx_user ADD COLUMN   town              varchar(50);
-ALTER TABLE llx_user ADD COLUMN   fk_state          integer        DEFAULT 0;
-ALTER TABLE llx_user ADD COLUMN   fk_country        integer        DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN address           varchar(255);
+ALTER TABLE llx_user ADD COLUMN zip               varchar(25);
+ALTER TABLE llx_user ADD COLUMN town              varchar(50);
+ALTER TABLE llx_user ADD COLUMN fk_state          integer        DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN fk_country        integer        DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN color             varchar(6);
+
 ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
 DROP TABLE llx_printer_ipp;
 CREATE TABLE llx_printer_ipp 
 (
-	rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	tms 	timestamp,
 	datec 	datetime,
 	printer_name text NOT NULL, 
 	printer_location text NOT NULL,
 	printer_uri varchar(256) NOT NULL,
-	copy int(11) NOT NULL DEFAULT '1',
+	copy integer NOT NULL DEFAULT '1',
 	module varchar(16) NOT NULL,
 	login varchar(32) NOT NULL
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
 
@@ -243,3 +245,21 @@ ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 
 ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
+
+ALTER TABLE llx_adherent ADD COLUMN canvas varchar(32) after fk_user_valid; 
+
+ALTER TABLE llx_expedition CHANGE COLUMN note note_private text;
+ALTER TABLE llx_expedition ADD COLUMN note_public text after note_private;
+ALTER TABLE llx_livraison CHANGE COLUMN note note_private text;
+ALTER TABLE llx_facture CHANGE COLUMN note note_private text;
+ALTER TABLE llx_commande CHANGE COLUMN note note_private text;
+ALTER TABLE llx_propal CHANGE COLUMN note note_private text;
+ALTER TABLE llx_commande_fournisseur CHANGE COLUMN note note_private text;
+ALTER TABLE llx_contrat CHANGE COLUMN note note_private text;
+ALTER TABLE llx_deplacement CHANGE COLUMN note note_private text;
+ALTER TABLE llx_don CHANGE COLUMN note note_private text;
+ALTER TABLE llx_facture_fourn CHANGE COLUMN note note_private text;
+ALTER TABLE llx_facture_rec CHANGE COLUMN note note_private text;
+ALTER TABLE llx_holiday CHANGE COLUMN note note_private text;
+ALTER TABLE llx_societe CHANGE COLUMN note note_private text;
+ALTER TABLE llx_socpeople CHANGE COLUMN note note_private text;

@@ -71,11 +71,8 @@ class mailing_contacts1 extends MailingTargets
 		$statssql=array();
 		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label,";
 		$statssql[0].= " count(distinct(c.email)) as nb";
-		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-		$statssql[0].= " ".MAIN_DB_PREFIX."societe as s";
-		$statssql[0].= " WHERE s.rowid = c.fk_soc";
-		$statssql[0].= " AND c.entity IN (".getEntity('societe', 1).")";
-		$statssql[0].= " AND s.client IN (1, 3)";
+		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$statssql[0].= " WHERE c.entity IN (".getEntity('societe', 1).")";
 		$statssql[0].= " AND c.email != ''";      // Note that null != '' is false
 		$statssql[0].= " AND c.no_email = 0";
 
@@ -96,12 +93,11 @@ class mailing_contacts1 extends MailingTargets
 		global $conf;
 
 		$sql  = "SELECT count(distinct(c.email)) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-		$sql .= " ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.rowid = c.fk_soc";
-		$sql .= " AND c.entity IN (".getEntity('societe', 1).")";
-		$sql .= " AND c.email != ''"; // Note that null != '' is false
-		$sql .= " AND c.no_email = 0";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
+		$sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND c.email != ''"; // Note that null != '' is false
+		$sql.= " AND c.no_email = 0";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients
@@ -203,10 +199,9 @@ class mailing_contacts1 extends MailingTargets
 		$sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact,";
 		$sql.= " c.lastname, c.firstname, c.civilite,";
 		$sql.= " s.nom as companyname";
-		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		$sql.= " WHERE s.rowid = c.fk_soc";
-		$sql.= " AND c.entity IN (".getEntity('societe', 1).")";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
+		$sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
 		$sql.= " AND c.email != ''";
 		$sql.= " AND c.no_email = 0";
 		foreach($filtersarray as $key)

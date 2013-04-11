@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -209,13 +211,13 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
 elseif ($action == 'setnote_public' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-elseif ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setnote_private' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -273,7 +275,8 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
         $object->date_echeance = $datedue;
-        $object->note_public   = $_POST['note'];
+        $object->note_public   = GETPOST('note_public');
+        $object->note_private  = GETPOST('note_private');
 
         // If creation from another object of another module
         if ($_POST['origin'] && $_POST['originid'])
@@ -1152,7 +1155,20 @@ if ($action == 'create')
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('NotePublic').'</td>';
-    print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+    print '<td>';
+    $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    print $doleditor->Create(1);
+    print '</td>';
+   // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+    print '</tr>';
+    
+    // Private note
+    print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
+    print '<td>';
+    $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+    print $doleditor->Create(1);
+    print '</td>';
+    // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
     print '</tr>';
 
     if (is_object($objectsrc))
@@ -1702,8 +1718,6 @@ else
                     $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
                 }
 
-                // Description - Editor wysiwyg
-                require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
                 $doleditor=new DolEditor('desc',$object->lines[$i]->description,'',128,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1849,8 +1863,6 @@ else
                 $reshook=$hookmanager->executeHooks('formCreateSupplierProductOptions',$parameters,$object,$action);
             }
 
-            // Editor wysiwyg
-            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
             $doleditor=new DolEditor('dp_desc',GETPOST("dp_desc"),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);

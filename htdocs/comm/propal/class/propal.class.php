@@ -8,7 +8,8 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -673,7 +674,7 @@ class Propal extends CommonObject
         $sql.= ", datec";
         $sql.= ", ref";
         $sql.= ", fk_user_author";
-        $sql.= ", note";
+        $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", model_pdf";
         $sql.= ", fin_validite";
@@ -698,7 +699,7 @@ class Propal extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '(PROV)'";
         $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
-        $sql.= ", '".$this->db->escape($this->note)."'";
+        $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", '".$this->modelpdf."'";
         $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
@@ -1000,7 +1001,7 @@ class Propal extends CommonObject
         $sql.= ", p.fin_validite as dfv";
         $sql.= ", p.date_livraison as date_livraison";
         $sql.= ", p.model_pdf, p.ref_client, p.extraparams";
-        $sql.= ", p.note as note_private, p.note_public";
+        $sql.= ", p.note_private, p.note_public";
         $sql.= ", p.fk_projet, p.fk_statut";
         $sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
         $sql.= ", p.fk_delivery_address";
@@ -1584,7 +1585,7 @@ class Propal extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.", note = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);
@@ -1614,7 +1615,7 @@ class Propal extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.", note = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);
@@ -2322,7 +2323,7 @@ class Propal extends CommonObject
         $this->demand_reason_id    = 1;
         $this->demand_reason_code  = 'SRC_00';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
         // Lines
         $nbp = 5;
         $xnbp = 0;

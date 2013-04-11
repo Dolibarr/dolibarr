@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +64,8 @@ class Contact extends CommonObject
 	var $birthday;
 	var $default_lang;
     var $note_public;           // Public note
-	var $note;                  // Private note
+	var $note;                  // deprecated
+	var $note_private;			// Private note
     var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
@@ -238,7 +240,8 @@ class Contact extends CommonObject
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
-		$sql .= ", note='".$this->db->escape($this->note)."'";
+		$sql .= ", note_private='".$this->db->escape($this->note_private)."'";
+		$sql .= ", note_public='".$this->db->escape($this->note_public)."'";
 		$sql .= ", phone = '".$this->db->escape($this->phone_pro)."'";
 		$sql .= ", phone_perso = '".$this->db->escape($this->phone_perso)."'";
 		$sql .= ", phone_mobile = '".$this->db->escape($this->phone_mobile)."'";
@@ -366,7 +369,7 @@ class Contact extends CommonObject
 		if ($this->phone_perso && ! empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_CONTACT_FIELD_FAX))	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		if ($this->note && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note;
+		if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note_private;
 		if ($this->email && ! empty($conf->global->LDAP_CONTACT_FIELD_MAIL))     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
@@ -482,7 +485,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.priv, c.note, c.default_lang, c.no_email, c.canvas,";
+		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
@@ -538,7 +541,9 @@ class Contact extends CommonObject
 				$this->mail				= $obj->email;
 
 				$this->birthday			= $this->db->jdate($obj->birthday);
-				$this->note				= $obj->note;
+				$this->note				= $obj->note_private;		// deprecated
+				$this->note_private		= $obj->note_private;
+				$this->note_public		= $obj->note_public;
 				$this->default_lang		= $obj->default_lang;
 				$this->no_email			= $obj->no_email;
 				$this->user_id			= $obj->user_id;
@@ -1008,7 +1013,7 @@ class Contact extends CommonObject
 		$this->fax = '0909090909';
 
 		$this->note_public='This is a comment (public)';
-		$this->note='This is a comment (private)';
+		$this->note_private='This is a comment (private)';
 
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];

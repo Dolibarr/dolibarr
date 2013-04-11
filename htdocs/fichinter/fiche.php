@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 {
     require_once DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.'.php';
 }
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("companies");
 $langs->load("interventions");
@@ -378,7 +380,7 @@ else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
-    $result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
     if ($result < 0) dol_print_error($db,$object->error);
 }
 else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
@@ -977,16 +979,20 @@ if ($action == 'create')
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
         print '<td valign="top" colspan="2">';
-        print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
+        $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+        print $doleditor->Create(1);
+        //print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
         print '</td></tr>';
 
         // Private note
-        if (! $user->societe_id)
+        if (!empty($user->societe_id))
         {
         	print '<tr>';
         	print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         	print '<td valign="top" colspan="2">';
-        	print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
+        	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+        	print $doleditor->Create(1);
+        	//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
         	print '</td></tr>';
         }
 

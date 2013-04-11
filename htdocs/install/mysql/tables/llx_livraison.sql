@@ -37,7 +37,7 @@ create table llx_livraison
   fk_address  			integer,						-- delivery address (deprecated)
   fk_statut             smallint     DEFAULT 0,
   total_ht              double(24,8) DEFAULT 0,
-  note                  text,
+  note_private          text,
   note_public           text,
   model_pdf             varchar(255)
   

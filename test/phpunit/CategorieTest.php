@@ -276,10 +276,6 @@ class CategorieTest extends PHPUnit_Framework_TestCase
         print __METHOD__." retarray size=".count($retarray)."\n";
         $this->assertTrue(is_array($retarray));
 
-        $retarray=$localobject->is_fille($localobject2);
-        print __METHOD__." retarry size=".count($retarray)."\n";
-        $this->assertFalse($retarray);
-
         return $localobject->id;
     }
 

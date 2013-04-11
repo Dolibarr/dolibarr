@@ -4,6 +4,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,8 @@ class Expedition extends CommonObject
 	var $tracking_url;
 	var $statut;
 	var $billed;
+	var $note_public;
+	var $note_private;
 
 	var $trueWeight;
 	var $weight_units;
@@ -191,6 +194,8 @@ class Expedition extends CommonObject
 		$sql.= ", height";
 		$sql.= ", weight_units";
 		$sql.= ", size_units";
+		$sql.= ", note_private";
+		$sql.= ", note_public";
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
@@ -210,6 +215,8 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
 		$sql.= ", ".$this->weight_units;
 		$sql.= ", ".$this->size_units;
+		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ")";
 
 		$resql=$this->db->query($sql);
@@ -339,8 +346,9 @@ class Expedition extends CommonObject
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
-		$sql.= ", e.fk_expedition_methode, e.tracking_number";
+		$sql.= ", e.fk_shipping_method, e.tracking_number";
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
+		$sql.= ", e.note_private, e.note_public";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE e.entity = ".$conf->entity;
@@ -387,6 +395,9 @@ class Expedition extends CommonObject
 				$this->height_units         = $obj->size_units;
 				$this->trueDepth            = $obj->size;
 				$this->depth_units          = $obj->size_units;
+				
+				$this->note_public          = $obj->note_public;
+				$this->note_private         = $obj->note_private;
 
 				// A denormalized value
 				$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
@@ -690,7 +701,8 @@ class Expedition extends CommonObject
 		if (isset($this->size_units)) $this->size_units=trim($this->size_units);
 		if (isset($this->weight_units)) $this->weight_units=trim($this->weight_units);
 		if (isset($this->trueWeight)) $this->weight=trim($this->trueWeight);
-		if (isset($this->note)) $this->note=trim($this->note);
+		if (isset($this->note_private)) $this->note=trim($this->note_private);
+		if (isset($this->note_public)) $this->note=trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
 
 
@@ -721,7 +733,8 @@ class Expedition extends CommonObject
 		$sql.= " size=".(($this->trueDepth != '')?$this->trueDepth:"null").",";
 		$sql.= " weight_units=".(isset($this->weight_units)?$this->weight_units:"null").",";
 		$sql.= " weight=".(($this->trueWeight != '')?$this->trueWeight:"null").",";
-		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
+		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
 		$sql.= " entity=".$conf->entity;
 
@@ -1093,6 +1106,9 @@ class Expedition extends CommonObject
 
         $this->origin_id            = 1;
         $this->origin               = 'commande';
+        
+        $this->note_private			= 'Private note';
+        $this->note_public			= 'Public note';
 
 		$nbp = 5;
 		$xnbp = 0;

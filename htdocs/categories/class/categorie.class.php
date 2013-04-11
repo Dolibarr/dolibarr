@@ -477,7 +477,7 @@ class Categorie
 
 
 	/**
-	 * Retourne les filles de la categorie
+	 * Return childs of a category
 	 *
 	 * @return	void
 	 */
@@ -504,43 +504,6 @@ class Categorie
 			dol_print_error($this->db);
 			return -1;
 		}
-	}
-
-
-	/**
-	 * Return category description
-	 *
-	 * @param	int		$cate		Category id
-	 * @return	string				Description
-	 * @deprecated function not used ?
-	 */
-	function get_desc($cate)
-	{
-		$sql = "SELECT description FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE rowid = ".$cate;
-
-		$res = $this->db->query($sql);
-		$n   = $this->db->fetch_array($res);
-
-		return($n[0]);
-	}
-
-	/**
-	 * La categorie $fille est-elle une fille de cette categorie ?
-	 *
-	 * @param	Category	$child		Object category
-	 * @return	void
-	 * @deprecated function not used ?
-	 */
-	function is_fille($child)
-	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE fk_parent = ".$this->id." AND rowid = ".$child->id;
-
-		$res  = $this->db->query($sql);
-		$n    = $this->db->fetch_array($res);
-
-		return ($n[0] > 0);
 	}
 
 

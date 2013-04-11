@@ -68,7 +68,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('member');
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($socid);
+$object->getCanvas($rowid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
@@ -117,7 +117,7 @@ $hookmanager->initHooks(array('membercard'));
  * 	Actions
 */
 
-$parameters=array('socid'=>$socid, 'objcanvas'=>$objcanvas);
+$parameters=array('rowid'=>$rowid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
@@ -694,13 +694,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
-	if (empty($object->error) && $socid)
+	if (empty($object->error) && $rowid)
 	{
 		$object = new Adherent($db);
-		$object->fetch($socid);
+		$result=$object->fetch($rowid);
+		if ($result <= 0) dol_print_error('',$object->error);
 	}
-	$objcanvas->assign_values($action, $socid);	// Set value for templates
-	$objcanvas->display_canvas($action);		// Show template
+   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
 }
 else
 {

@@ -4,6 +4,7 @@
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -446,7 +447,7 @@ else
 		$delivery = new Livraison($db);
 		$result = $delivery->fetch($id);
 		$delivery->fetch_thirdparty();
-
+		
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($delivery->origin_id);
 		$typeobject = $expedition->origin;
@@ -537,6 +538,23 @@ else
 			print '<tr><td>'.$langs->trans("DateReceived").'</td>';
 			print '<td colspan="3">'.dol_print_date($delivery->date_delivery,'daytext')."</td>\n";
 			print '</tr>';
+			
+			// Note Public  
+            print '<tr><td>'.$langs->trans("NotePublic").'</td>';
+            print '<td colspan="3">';
+            print nl2br($delivery->note_public);
+            /*$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);*/
+            print "</td></tr>";
+			
+			// Note Private
+            print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
+            print '<td colspan="3">';
+            print nl2br($delivery->note_private);
+            /*$doleditor = new DolEditor('note_pprivate', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);*/
+            print "</td></tr>";
+            
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td>';

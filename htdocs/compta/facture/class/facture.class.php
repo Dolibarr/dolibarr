@@ -11,6 +11,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +145,7 @@ class Facture extends CommonInvoice
         if (empty($this->type)) $this->type = 0;
         $this->ref_client=trim($this->ref_client);
         $this->note=(isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-        $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note));
+        $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
         $this->note_public=trim($this->note_public);
         if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
         if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
@@ -190,7 +191,7 @@ class Facture extends CommonInvoice
             // Clean parametres
             if (! $this->type) $this->type = 0;
             $this->ref_client=trim($this->ref_client);
-            $this->note=trim($this->note);
+            $this->note_private=trim($this->note_private);
             $this->note_public=trim($this->note_public);
             //if (! $this->remise) $this->remise = 0;
             if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
@@ -213,7 +214,7 @@ class Facture extends CommonInvoice
         $sql.= ", remise_absolue";
         $sql.= ", remise_percent";
         $sql.= ", datef";
-        $sql.= ", note";
+        $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", ref_client, ref_int";
         $sql.= ", fk_facture_source, fk_user_author, fk_projet";
@@ -516,7 +517,7 @@ class Facture extends CommonInvoice
         $facture->socid 		    = $this->socid;
         $facture->date              = $this->date;
         $facture->note_public       = $this->note_public;
-        $facture->note              = $this->note;
+        $facture->note_private      = $this->note_private;
         $facture->ref_client        = $this->ref_client;
         $facture->modelpdf          = $this->modelpdf;
         $facture->fk_project        = $this->fk_project;
@@ -703,7 +704,7 @@ class Facture extends CommonInvoice
         $this->fk_delivery_address  = $object->fk_delivery_address;
         $this->contact_id           = $object->contactid;
         $this->ref_client           = $object->ref_client;
-        $this->note                 = $object->note;
+        $this->note_private         = $object->note_private;
         $this->note_public          = $object->note_public;
 
         $this->origin				= $object->element;
@@ -802,7 +803,7 @@ class Facture extends CommonInvoice
         $sql.= ', f.datec as datec';
         $sql.= ', f.date_valid as datev';
         $sql.= ', f.tms as datem';
-        $sql.= ', f.note as note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
+        $sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
         $sql.= ', f.fk_facture_source';
         $sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -1061,7 +1062,7 @@ class Facture extends CommonInvoice
         $sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
         $sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
         $sql.= " date_lim_reglement=".(strval($this->date_lim_reglement)!='' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";
-        $sql.= " note=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
+        $sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
         $sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
         $sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
         $sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";

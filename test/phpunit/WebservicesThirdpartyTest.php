@@ -118,11 +118,11 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSThirdparty_xxx
+     * testWSThirdpartyXxx
      *
      * @return int
      */
-    public function testWSThirdparty_xxx()
+    public function testWSThirdpartyXxx()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;

@@ -45,6 +45,7 @@ if (! empty($conf->projet->enabled)) {
 	require DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load('orders');
 $langs->load('sendings');
@@ -225,7 +226,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 		$db->begin();
 
 		$object->date_commande        = $datecommande;
-		$object->note                 = GETPOST('note');
+		$object->note_private         = GETPOST('note_private');
 		$object->note_public          = GETPOST('note_public');
 		$object->source               = GETPOST('source_id');
 		$object->fk_project           = GETPOST('projectid');
@@ -534,13 +535,13 @@ else if ($action == 'setremiseabsolue' && $user->rights->commande->creer)
 
 else if ($action == 'setnote_public' && $user->rights->commande->creer)
 {
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->commande->creer)
+else if ($action == 'setnote_private' && $user->rights->commande->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note_rivate(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1411,9 +1412,6 @@ $formorder = new FormOrder($db);
 *********************************************************************/
 if ($action == 'create' && $user->rights->commande->creer)
 {
-	//WYSIWYG Editor
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 	print_fiche_titre($langs->trans('CreateOrder'));
 
 	dol_htmloutput_mesg($mesg,$mesgs,'error');
@@ -1470,7 +1468,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$datedelivery		= (!empty($objectsrc->date_livraison)?$objectsrc->date_livraison:'');
 
-			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
+			$note_private		= (! empty($objectsrc->note_private) ? $objectsrc->note_private : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
 			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
 			// Object source contacts list
@@ -1632,7 +1630,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 		print '<td valign="top" colspan="2">';
 
-		$doleditor=new DolEditor('note', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+		$doleditor=new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 		print $doleditor->Create(1);
 		//print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 		print '</td></tr>';

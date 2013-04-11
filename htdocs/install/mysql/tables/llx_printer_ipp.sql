@@ -18,7 +18,7 @@
 
 CREATE TABLE llx_printer_ipp 
 (
- rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ rowid integer AUTO_INCREMENT PRIMARY KEY,
  tms 	timestamp,
  datec 	datetime,
  printer_name text NOT NULL, 

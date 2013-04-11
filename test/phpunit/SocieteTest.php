@@ -189,8 +189,8 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject->note='New note after update';
-		//$localobject->note_public='New note public after update';
+		$localobject->note_private='New private note after update';
+		$localobject->note_public='New public note after update';
 		$localobject->name='New name';
 		$localobject->address='New address';
 		$localobject->zip='New zip';
@@ -205,15 +205,18 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 		$localobject->idprof2='new idprof2';
 		$localobject->idprof3='new idprof3';
 		$localobject->idprof4='new idprof4';
+		
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note);
+		
+    	$result=$localobject->update_note_private($localobject->note_private);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-		//$result=$localobject->update_note_public($localobject->note_public);
-    	//print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	//$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, 'Holiday::update_note_private error');
+		
+    	$result=$localobject->update_note_public($localobject->note_public);
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
+    	$this->assertLessThan($result, 0, 'Holiday::update_note_public error');
 
 		$newobject=new Societe($this->savdb);
     	$result=$newobject->fetch($localobject->id);

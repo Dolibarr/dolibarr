@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +141,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", fk_soc";
         $sql.= ", datec";
         $sql.= ", datef";
-        $sql.= ", note";
+        $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", fk_user_author";
         $sql.= ", date_lim_reglement";
@@ -153,7 +154,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
-        $sql.= ", '".$this->db->escape($this->note)."'";
+        $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$user->id.",";
         $sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
@@ -297,7 +298,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.fk_projet,";
         $sql.= " t.fk_cond_reglement,";
         $sql.= " t.date_lim_reglement,";
-        $sql.= " t.note as note_private,";
+        $sql.= " t.note_private,";
         $sql.= " t.note_public,";
         $sql.= " t.model_pdf,";
         $sql.= " t.import_key,";
@@ -496,7 +497,7 @@ class FactureFournisseur extends CommonInvoice
         if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
         if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
         if (isset($this->fk_cond_reglement)) $this->fk_cond_reglement=trim($this->fk_cond_reglement);
-        if (isset($this->note)) $this->note=trim($this->note);
+        if (isset($this->note_private)) $this->note=trim($this->note_private);
         if (isset($this->note_public)) $this->note_public=trim($this->note_public);
         if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
         if (isset($this->import_key)) $this->import_key=trim($this->import_key);
@@ -535,7 +536,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
         $sql.= " fk_cond_reglement=".(isset($this->fk_cond_reglement)?$this->fk_cond_reglement:"null").",";
         $sql.= " date_lim_reglement=".(dol_strlen($this->date_echeance)!=0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
-        $sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+        $sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
         $sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
         $sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
         $sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
@@ -1433,7 +1434,7 @@ class FactureFournisseur extends CommonInvoice
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_code = 'CHQ';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
         // Lines
         $nbp = 5;
         $xnbp = 0;

@@ -57,7 +57,7 @@ create table llx_propal
   fk_cond_reglement		integer,						-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  
-  note					text,
+  note_private			text,
   note_public			text,
   model_pdf				varchar(255),
   date_livraison		date DEFAULT NULL,				-- delivery date

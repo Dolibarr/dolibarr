@@ -161,7 +161,7 @@ $server->wsdl->addComplexType(
         'total_net' => array('name'=>'type','type'=>'xsd:double'),
         'total_vat' => array('name'=>'type','type'=>'xsd:double'),
         'total' => array('name'=>'type','type'=>'xsd:double'),
-        'note' => array('name'=>'note','type'=>'xsd:string'),
+        'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
         'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
         'status' => array('name'=>'status','type'=>'xsd:int'),
         'close_code' => array('name'=>'close_code','type'=>'xsd:string'),
@@ -324,7 +324,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
                         'total_net' => $invoice->total_ht,
                         'total_vat' => $invoice->total_tva,
                         'total' => $invoice->total_ttc,
-                        'note' => $invoice->note?$invoice->note:'',
+                        'note_private' => $invoice->note_private?$invoice->note_private:'',
                         'note_public' => $invoice->note_public?$invoice->note_public:'',
                         'status'=> $invoice->statut,
                         'close_code' => $invoice->close_code?$invoice->close_code:'',
@@ -454,7 +454,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
                     'total_net' => $invoice->total_ht,
                     'total_vat' => $invoice->total_tva,
                     'total' => $invoice->total_ttc,
-                    'note' => $invoice->note?$invoice->note:'',
+                    'note_private' => $invoice->note_private?$invoice->note_private:'',
                     'note_public' => $invoice->note_public?$invoice->note_public:'',
                     'status'=> $invoice->statut,
                     'close_code' => $invoice->close_code?$invoice->close_code:'',
@@ -517,7 +517,7 @@ function createInvoice($authentication,$invoice)
         $newobject->type=$invoice['type'];
         $newobject->ref_ext=$invoice['ref_ext'];
         $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
-        $newobject->note=$invoice['note'];
+        $newobject->note_private=$invoice['note_private'];
         $newobject->note_public=$invoice['note_public'];
         $newobject->statut=$invoice['status'];
         $newobject->fk_project=$invoice['project_id'];

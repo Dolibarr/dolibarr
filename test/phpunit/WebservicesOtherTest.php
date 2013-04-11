@@ -118,11 +118,11 @@ class WebservicesOtherTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSOther_GetVersions
+     * testWSOtherGetVersions
      *
      * @return int
      */
-    public function testWSOther_GetVersions()
+    public function testWSOtherGetVersions()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;

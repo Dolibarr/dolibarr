@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'projet', $id);
 if ($action == 'setnote_public' && $user->rights->projet->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 

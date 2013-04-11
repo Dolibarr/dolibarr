@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2013	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +122,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.date_creation, c.date_valid, c.date_approve,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve,";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
-        $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
+        $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
@@ -602,7 +603,7 @@ class CommandeFournisseur extends CommonOrder
 
     /**
      *  Renvoie la reference de commande suivante non utilisee en fonction du modele
-     *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON
+     *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON_NUMBER
      *
      *  @param	    Societe		$soc  		objet societe
      *  @return     string                  reference libre pour la facture
@@ -614,14 +615,14 @@ class CommandeFournisseur extends CommonOrder
 
         $dir = DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/';
 
-        if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON))
+        if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER))
         {
-            $file = $conf->global->COMMANDE_SUPPLIER_ADDON.'.php';
+            $file = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER.'.php';
 
             if (is_readable($dir.'/'.$file))
             {
                 // Definition du nom de modele de numerotation de commande fournisseur
-                $modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
+                $modName=$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
                 require_once $dir.'/'.$file;
 
                 // Recuperation de la nouvelle reference
@@ -642,7 +643,7 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
-                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON);
+                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER);
                 return -2;
             }
         }
@@ -927,7 +928,7 @@ class CommandeFournisseur extends CommonOrder
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
         $sql.= "ref";
         $sql.= ", ref_supplier";
-        $sql.= ", note";
+        $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", entity";
         $sql.= ", fk_soc";
@@ -942,7 +943,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " VALUES (";
         $sql.= "''";
         $sql.= ", '".$this->ref_supplier."'";
-        $sql.= ", '".$this->note."'";
+        $sql.= ", '".$this->note_private."'";
         $sql.= ", '".$this->note_public."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
@@ -1874,7 +1875,7 @@ class CommandeFournisseur extends CommonOrder
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_code = 'CHQ';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
         // Lines
         $nbp = 5;
         $xnbp = 0;

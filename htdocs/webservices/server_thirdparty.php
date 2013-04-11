@@ -98,7 +98,8 @@ $thirdparty_fields= array(
         'supplier_code_accountancy' => array('name'=>'supplier_code_accountancy','type'=>'xsd:string'),
         'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
-        'note' => array('name'=>'note','type'=>'xsd:string'),
+        'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
+		'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
     	'address' => array('name'=>'address','type'=>'xsd:string'),
     	'zip' => array('name'=>'zip','type'=>'xsd:string'),
     	'town' => array('name'=>'town','type'=>'xsd:string'),
@@ -323,7 +324,9 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			            'capital' => $thirdparty->capital,
 			   			'barcode' => $thirdparty->barcode,
 			            'vat_used' => $thirdparty->tva_assuj,
-				        'vat_number' => $thirdparty->tva_intra);
+				        'vat_number' => $thirdparty->tva_intra,
+						'note_private' => $thirdparty->note_private,
+						'note_public' => $thirdparty->note_public);
 				
 				//Retreive all extrafield for thirdsparty
 				// fetch optionals attributes and labels
@@ -410,7 +413,8 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->code_compta=$thirdparty['customer_code_accountancy'];
         $newobject->code_compta_fournisseur=$thirdparty['supplier_code_accountancy'];
         $newobject->date_creation=$now;
-        $newobject->note=$thirdparty['note'];
+        $newobject->note_private=$thirdparty['note_private'];
+        $newobject->note_public=$thirdparty['note_public'];
         $newobject->address=$thirdparty['address'];
         $newobject->zip=$thirdparty['zip'];
         $newobject->town=$thirdparty['town'];
@@ -530,7 +534,8 @@ function updateThirdParty($authentication,$thirdparty)
 			$object->code_compta=$thirdparty['customer_code_accountancy'];
 			$object->code_compta_fournisseur=$thirdparty['supplier_code_accountancy'];
 			$object->date_creation=$now;
-			$object->note=$thirdparty['note'];
+			$object->note_private=$thirdparty['note_private'];
+			$object->note_public=$thirdparty['note_public'];
 			$object->address=$thirdparty['address'];
 			$object->zip=$thirdparty['zip'];
 			$object->town=$thirdparty['town'];
