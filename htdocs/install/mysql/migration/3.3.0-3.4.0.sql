@@ -17,6 +17,7 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
 create table llx_adherent_type_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -49,7 +50,13 @@ alter table llx_contratdet add column buy_price_ht double(24,8) DEFAULT 0 after 
 alter table llx_extrafields add column param text after pos;
 
 -- numbering on supplier invoice
-alter table llx_facture_fourn add column ref varchar(30) NOT NULL after rowid;
+ALTER TABLE llx_facture_fourn ADD COLUMN ref varchar(30) after rowid;
+ALTER TABLE llx_facture_fourn MODIFY COLUMN ref varchar(30);
+ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn;
+ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn_ref;
+UPDATE llx_facture_fourn set ref = NULL where ref = '';
+ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (ref, entity);
+ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref_supplier (ref_supplier, fk_soc, entity);
 
 
 alter table llx_propal   CHANGE COLUMN fk_adresse_livraison fk_delivery_address integer;
