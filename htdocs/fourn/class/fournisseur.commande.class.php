@@ -603,7 +603,7 @@ class CommandeFournisseur extends CommonOrder
 
     /**
      *  Renvoie la reference de commande suivante non utilisee en fonction du modele
-     *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON
+     *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON_NUMBER
      *
      *  @param	    Societe		$soc  		objet societe
      *  @return     string                  reference libre pour la facture
@@ -615,14 +615,14 @@ class CommandeFournisseur extends CommonOrder
 
         $dir = DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/';
 
-        if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON))
+        if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER))
         {
-            $file = $conf->global->COMMANDE_SUPPLIER_ADDON.'.php';
+            $file = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER.'.php';
 
             if (is_readable($dir.'/'.$file))
             {
                 // Definition du nom de modele de numerotation de commande fournisseur
-                $modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
+                $modName=$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
                 require_once $dir.'/'.$file;
 
                 // Recuperation de la nouvelle reference
@@ -643,7 +643,7 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
-                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON);
+                print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER);
                 return -2;
             }
         }
