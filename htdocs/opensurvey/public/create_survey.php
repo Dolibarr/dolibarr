@@ -162,11 +162,7 @@ print '</script>'."\n";
 
 print '<br>'."\n";
 
-<<<<<<< HEAD
-//affichage du cochage par défaut
-=======
 // Check or not
->>>>>>> branch 'develop' of https://github.com/Dolibarr/dolibarr.git
 $cocheplus='';
 if ($_SESSION["canedit"]) $cocheplus="checked";
 
