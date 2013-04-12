@@ -349,20 +349,27 @@ Int=numèric enter
 Float=Decimal
 DateAndTime=Data i hora
 Unique=Unic
-Boolean=Boleano (Checkbox)
+Boolean=Boleano (Casella de verificació)
 ExtrafieldPhone=Telèfon
 ExtrafieldPrice=Preu
 ExtrafieldMail=Correu
 ExtrafieldSelect=Llista de selecció
-ExtrafieldSeparator=Separator
-ExtrafieldCheckBox=Casilla
-ExtrafieldRadio=Opción
-ExtrafieldParamHelp=Optiones Lista esta llave,valor<br><br> para exemplo : <br>1,texto1<br>2,texto2<br>3,texto3<br>...
+ExtrafieldSeparator=Separador
+ExtrafieldCheckBox=Casella de verificació
+ExtrafieldRadio=Botó de selecció excloent
+ExtrafieldParamHelp=La llista ha de ser en forma clau, valor<br><br> per exemple : <br>1,text1<br>2,text2<br>3,text3<br>...
 LibraryToBuildPDF=Llibreria usada per a la creació d'arxius PDF
 WarningUsingFPDF=Atenció: El seu arxiu <b>conf.php</b> conté la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Això fa que s'usi la llibreria FPDF per generar els seus arxius PDF. Aquesta llibreria és antiga i no cobreix algunes funcionalitats (Unicode, transparència d'imatges, idiomes ciríl · lics, àrabs o asiàtics, etc.), Pel que pot tenir problemes en la generació dels PDF.<br> Per resoldre-ho, i disposar d'un suport complet de PDF, pot descarregar la <a href="http://www.tcpdf.org/" target="_blank"> llibreria TCPDF </a>, i a continuació comentar o eliminar la línia <b>$dolibarr_pdf_force_fpdf=1</b>, i afegir al seu lloc <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
 LocalTaxDesc=Alguns països apliquen 2 o 3 taxes a cada línia de factura. Si és el cas, escolliu el tipus de la segona i tercera taxa i el seu valor. Els possibles tipus són: <br> 1: taxa local aplicable a productes i serveis sense IVA (IVA no s'aplica a la taxa local) <br> 2: taxa local s'aplica a productes i serveis abans de l'IVA (IVA es calcula sobre import + taxa local) <br> 3: taxa local s'aplica a productes sense IVA (IVA no s'aplica a la taxa local) <br> 4: taxa local s'aplica a productes abans de l'IVA (IVA es calcula sobre l'import + taxa local) <br> 5: taxa local s'aplica a serveis sense IVA (IVA no s'aplica a la taxa local) <br> 6: taxa local s'aplica a serveis abans de l'IVA (IVA es calcula sobre import + taxa local)
 SuhosinSessionEncrypt=Emmagatzematge de sessions xifrades per Suhosin
-# Modules
+SMS=SMS
+LinkToTestClickToDial=Introduïu un número de telèfon que voleu marcar per provar l'enllaç de crida ClickToDial per a l'usuari <strong>%s</strong>
+RefreshPhoneLink=Refrescar enllaç
+LinkToTest=Enllaç seleccionable per l'usuari <strong>%s</strong> (feu clic al número per provar)
+KeepEmptyToUseDefault=Deixeu aquest camp buit per usar el valor per defecte
+DefaultLink=Enllaç per defecte
+ValueOverwrittenByUserSetup=Atenció: Aquest valor pot ser sobreescrit per un valor específic de la configuració de l'usuari (cada usuari pot tenir la seva pròpia url clicktodial)
+# Modules= undefined==
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -945,6 +952,8 @@ ExtraFieldsContacts=Atributs adicionals (contactes/adreçes)
 ExtraFieldsMember=Atributs complementaris (membres)
 ExtraFieldsMemberType=Atributs complementaris (tipus de membres)
 ExtraFieldsCustomerInvoices=Atributs complementaris (factures a clients)
+ExtraFieldsSupplierOrders=Atributs complementaris (comandes)
+ExtraFieldsSupplierInvoices=AAtributs complementaris (factures)
 ExtraFieldHasWrongValue=L'atribut %s te un valor incorrecte.
 AlphaNumOnlyCharsAndNoSpace=només carateres alfanumèrics sense espais
 SendingMailSetup=Configuració de l'enviament per mail
@@ -957,7 +966,7 @@ TranslationDesc=L'elecció de l'idioma mostrat en pantalla es modifica:<br>* A n
 ClassNotFoundIntoPathWarning=No s'ha trobat la classe %s en el seu path PHP
 YesInSummer=Sí a l'estiu
 OnlyFollowingModulesAreOpenedToExternalUsers=Recordeu que només els mòduls següents estan oberts a usuaris externs (siguin quins siguin els permisos dels usuaris):
-##### Module password generation
+##### Module password generation= undefined==
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
 ##### Users setup #####

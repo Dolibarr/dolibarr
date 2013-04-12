@@ -206,3 +206,5 @@ MembersStatisticsByProperties=Estadísticas de los miembros por características
 MembersByNature=Miembros por naturaleza
 VATToUseForSubscriptions=Tasa de IVA para las afiliaciones
 NoVatOnSubscription=Sin IVA para en las afiliaciones
+
+MEMBER_PAYONLINE_SENDEMAIL=E-Mail para advertir en caso de recepción de confirmación de un pago validado de una afiliación

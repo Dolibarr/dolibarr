@@ -349,20 +349,27 @@ Int=Numérico entero
 Float=Decimal
 DateAndTime=Fecha y hora
 Unique=Único
-Boolean=Boleano (Casilla unico)
+Boolean=Boleano (Casilla de verificación)
 ExtrafieldPhone=Teléfono
 ExtrafieldPrice=Precio
 ExtrafieldMail=Correo
 ExtrafieldSelect=Lista de selección
-ExtrafieldSeparator=Separator
-ExtrafieldCheckBox=Casilla
-ExtrafieldRadio=Opción
-ExtrafieldParamHelp=Optiones Lista esta llave,valor<br><br> para exemplo : <br>1,texto1<br>2,texto2<br>3,texto3<br>...
+ExtrafieldSeparator=Separador
+ExtrafieldCheckBox=Casilla de verificación
+ExtrafieldRadio=Botón de selección excluyente
+ExtrafieldParamHelp=La lista debe ser en forma llave,valor<br><br> por ejemplo : <br>1,texto1<br>2,texto2<br>3,texto3<br>...
 LibraryToBuildPDF=Librería usada para la creación de archivos PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>   
 LocalTaxDesc=Algunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
 SuhosinSessionEncrypt=Almacenamiento de sesiones cifradas por Suhosin
-# Modules
+SMS=SMS
+LinkToTestClickToDial=Introduzca un número de teléfono al que llamar para probar el enlace de llamada ClickToDial para el usuario <strong>%s</strong>
+RefreshPhoneLink=Refrescar enlace
+LinkToTest=Enlace seleccionable para el usuario  <strong>%s</strong> (haga clic en el número para probar)
+KeepEmptyToUseDefault=Deje este campo vacío para usar el valor por defecto
+DefaultLink=Enlace por defecto
+ValueOverwrittenByUserSetup=Atención: Este valor puede ser sobreescrito por un valor específico de la configuración del usuario (cada usuario puede tener su propia url clicktodial)
+# Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -680,10 +687,10 @@ Permission1411=Leer los movimientos contables
 Permission1412=Crear/modificar/anular movimientos contables
 Permission1415=Leer Balances, informes, diarios, libros maestros
 Permission1421=Exportar pedidos de clientes y atributos
-Permission23001 = Ver tareas programadas
-Permission23002 = Crear/actualizar tareas programadas
-Permission23003 = Borrar tareas programadas
-Permission23004 = Ejecutar tareas programadas
+Permission23001=Ver tareas programadas
+Permission23002=Crear/actualizar tareas programadas
+Permission23003=Borrar tareas programadas
+Permission23004=Ejecutar tareas programadas
 Permission2401=Leer acciones (eventos o tareas) vinculadas a su cuenta
 Permission2402=Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
 Permission2403=Modificar acciones (eventos o tareas) vinculadas a su cuenta
@@ -945,6 +952,8 @@ ExtraFieldsContacts=Atributos adicionales (contactos/direcciones)
 ExtraFieldsMember=Atributos complementarios (miembros)
 ExtraFieldsMemberType=Atributos complementarios  (tipos de miembros)
 ExtraFieldsCustomerInvoices=Atributos complementarios (facturas a clientes)
+ExtraFieldsSupplierOrders=Atributos complementarios (pedidos)
+ExtraFieldsSupplierInvoices=Atributos complementarios (facturas)
 ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
 AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
 SendingMailSetup=Configuración del envío por mail
@@ -957,7 +966,7 @@ TranslationDesc=La elección del idioma mostrado en pantalla se modifica:<br>* A
 ClassNotFoundIntoPathWarning=No se ha encontrado la clase %s en su path PHP 
 YesInSummer=Sí en verano
 OnlyFollowingModulesAreOpenedToExternalUsers=Tenga en cuenta que sólo los módulos siguientes están abiertos a usuarios externos (sean cuales sean los permisos de los usuarios):
-##### Module password generation
+##### Module password generation= undefined=
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
 ##### Users setup #####
