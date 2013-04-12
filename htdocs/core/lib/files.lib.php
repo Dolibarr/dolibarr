@@ -647,13 +647,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -2;
 		}
 
-		$hookmanager->initHooks(array('fileslib'));
+		$reshook=$hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
-		$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
+		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
 
-	if (empty($hookmanager->resPrint))
+	if (empty($reshook))
 	{
 		// The file functions must be in OS filesystem encoding.
 		$src_file_osencoded=dol_osencode($src_file);
@@ -687,7 +687,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 	}
 	else
-		return $hookmanager->resPrint;
+		return $reshook;
 }
 
 /**
