@@ -898,14 +898,15 @@ class DolGraph
      * getDefaultGraphSizeForStats
      *
      * @param	string	$direction		'width' or 'height'
+     * @param	string	$defaultsize	Value we want as default size
      * @return	int						Value of width or height to use by default
      */
-    static function getDefaultGraphSizeForStats($direction)
+    static function getDefaultGraphSizeForStats($direction,$defaultsize='')
     {
     	global $conf;
 
-    	if ($direction == 'width')  return ($conf->dol_optimize_smallscreen?'400':'500');
-    	if ($direction == 'height') return ($conf->dol_optimize_smallscreen?'160':'200');
+    	if ($direction == 'width')  return ($conf->dol_optimize_smallscreen?'400':($defaultsize?$defaultsize:'500'));
+    	if ($direction == 'height') return ($conf->dol_optimize_smallscreen?'160':($defaultsize?$defaultsize:'200'));
     	return 0;
     }
 }
