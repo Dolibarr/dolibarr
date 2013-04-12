@@ -1,34 +1,34 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
-* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
-* Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
-* Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
-* Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
-* Copyright (C) 2011      Philippe Grand        <philippe.grand@atoo-net.com>
-* Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-* Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
-* Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/commande/fiche.php
-*	\ingroup    commande
-*	\brief      Page to show customer order
-*/
+ *	\ingroup    commande
+ *	\brief      Page to show customer order
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -2201,7 +2201,7 @@ else
 
 		// Total HT
 		print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-		print '<td align="right">'.price($object->total_ht,'',$langs,'','',0,$conf->currency).'</td>';
+		print '<td align="right">'.price($object->total_ht,1,'',1,-1,-1,$conf->currency).'</td>';
 
 		// Margin Infos
 		if (! empty($conf->margin->enabled))
@@ -2215,22 +2215,22 @@ else
 		print '</tr>';
 
 		// Total TVA
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva,'',$langs,'','',0,$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 
 		// Amount Local Taxes
 		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax1,'',$langs,'','',0,$conf->currency).'</td></tr>';
+			print '<td align="right">'.price($object->total_localtax1,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax2,'',$langs,'','',0,$conf->currency).'</td></tr>';
+			print '<td align="right">'.price($object->total_localtax2,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 		}
 
 		// Total TTC
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc,'',$langs,'','',0,$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc,1,'',1,-1,-1,$conf->currency).'</td></tr>';
 
 		// Statut
 		print '<tr><td>'.$langs->trans('Status').'</td><td>'.$object->getLibStatut(4).'</td></tr>';
