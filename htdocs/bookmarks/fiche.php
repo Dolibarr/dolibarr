@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,23 +147,23 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td>'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td class="hideonsmartphone">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
 	print $form->selectarray('target',$liste,1);
-	print '</td><td>'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
+	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	$form->select_users(isset($_POST['userid'])?$_POST['userid']:$user->id,'userid',1);
-	print '</td><td>&nbsp;</td></tr>';
+	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
 	print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
-	print '</td><td>&nbsp;</td></tr>';
+	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	print '</table><br>';
 	

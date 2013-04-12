@@ -104,9 +104,9 @@ llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
 print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
 print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 $max=3;
 
@@ -323,7 +323,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -1032,8 +1031,9 @@ if ($resql)
 	print "</table><br>";
 }
 
-//print '</td></tr></table>';
+
 print '</div></div></div>';
+
 
 llxFooter();
 
