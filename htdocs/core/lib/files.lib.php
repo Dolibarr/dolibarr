@@ -686,6 +686,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -3;	// Unknown error
 		}
 	}
+	else
+		return $reshook;
 }
 
 /**
