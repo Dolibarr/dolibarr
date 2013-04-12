@@ -505,7 +505,7 @@ if ($rowid)
     print $form->showrefnav($object, 'rowid', $linkback);
     print '</td></tr>';
 
-    $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">'.$form->showphoto('memberphoto',$object).'</td>';
+    $showphoto='<td rowspan="'.$rowspan.'" class="hideonsmartphone" align="center" valign="middle" width="25%">'.$form->showphoto('memberphoto',$object).'</td>';
 
     // Login
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))

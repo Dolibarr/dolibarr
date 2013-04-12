@@ -1015,7 +1015,7 @@ else
 		print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 		print "</td>";
 		// Photo
-		print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+		print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="'.$rowspan.'">';
 		print $form->showphoto('memberphoto',$object)."\n";
 		if ($caneditfieldmember)
 		{
@@ -1356,7 +1356,7 @@ else
 		print $form->showrefnav($object, 'rowid', $linkback);
 		print '</td></tr>';
 
-		$showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+		$showphoto='<td rowspan="'.$rowspan.'" align="center" class="hideonsmartphone" valign="middle" width="25%">';
 		$showphoto.=$form->showphoto('memberphoto',$object);
 		$showphoto.='</td>';
 
@@ -1364,6 +1364,7 @@ else
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			print '<tr><td>'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td>';
+			// Photo
 			print $showphoto; $showphoto='';
 			print '</tr>';
 		}
