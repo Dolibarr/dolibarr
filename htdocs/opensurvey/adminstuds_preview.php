@@ -76,8 +76,8 @@ if (isset($_POST["boutonp"]) || isset($_POST["boutonp_x"]))
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom';
-		$sql.= ' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs';
-		$sql.= ' WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."'";
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
+		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."'";
 		$sql.= ' ORDER BY id_users';
 		$resql = $db->query($sql);
 		$num_rows = $db->num_rows($resql);
@@ -211,7 +211,7 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->forma
 			$cleinsertion = count($datesbase);
 		} else {
 			$nbdatesbase=count($datesbase);
-			for ($i = 0; $i < $nbdatesbase; $i++) 
+			for ($i = 0; $i < $nbdatesbase; $i++)
 			{
 				$j = $i + 1;
 				if ($nouvelledate > $datesbase[$i] && $nouvelledate < $datesbase[$j]) {
