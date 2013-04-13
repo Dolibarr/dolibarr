@@ -123,7 +123,7 @@ class modOpenSurvey extends DolibarrModules
 								'titre'=>'Surveys',
 								'mainmenu'=>'opensurvey',
 								'url'=>'/opensurvey/index.php',
-								'langs'=>'opensurvey@opensurvey',
+								'langs'=>'opensurvey',
 								'position'=>200,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 								'perms'=>'$user->rights->opensurvey->survey->read',
@@ -137,7 +137,7 @@ class modOpenSurvey extends DolibarrModules
 								'mainmenu'=>'opensurvey',
 								'leftmenu'=>'opensurvey',
 								'url'=>'/opensurvey/index.php?mainmenu=opensurvey&leftmenu=opensurvey',
-								'langs'=>'opensurvey@opensurvey',
+								'langs'=>'opensurvey',
 								'position'=>200,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 								'perms'=>'',
@@ -151,7 +151,7 @@ class modOpenSurvey extends DolibarrModules
 								'mainmenu'=>'opensurvey',
 								'leftmenu'=>'opensurvey_new',
 								'url'=>'/opensurvey/public/index.php?origin=dolibarr',
-								'langs'=>'opensurvey@opensurvey',
+								'langs'=>'opensurvey',
 								'position'=>210,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 								'perms'=>'',
@@ -165,7 +165,7 @@ class modOpenSurvey extends DolibarrModules
 								'mainmenu'=>'opensurvey',
 								'leftmenu'=>'opensurvey_list',
 								'url'=>'/opensurvey/list.php',
-								'langs'=>'opensurvey@opensurvey',
+								'langs'=>'opensurvey',
 								'position'=>220,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
 								'perms'=>'',
