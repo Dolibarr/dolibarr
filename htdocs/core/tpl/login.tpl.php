@@ -14,90 +14,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
+if (GETPOST('dol_hide_topmenu')) $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu=1;
+if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
+if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
+if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
+
+$arrayofjs=array('/core/js/dst.js');	// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
+print top_htmlhead('',$langs->trans('Login').' '.$title,0,0,$arrayofjs);
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
-<html>
-
-<?php
-print '<head>
-<meta name="robots" content="noindex,nofollow" />
-<meta name="author" content="Dolibarr Development Team">
-<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>
-<title>'.$langs->trans('Login').' '.$title.'</title>'."\n";
-print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
-$jquerytheme = 'smoothness';
-if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
-else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
-print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" />'."\n";                           // Tooltip
-print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
-// jQuery jMobile
-if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || GETPOST('dol_use_jmobile'))
-{
-	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
-}
-print '<!-- Includes CSS for Dolibarr theme -->'."\n";
-// Includes CSS for Dolibarr theme
-$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
-$themesubdir='';
-if (! empty($conf->modules_parts['theme']))	// This slow down
-{
-	foreach($conf->modules_parts['theme'] as $reldir)
-	{
-		if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
-		{
-			$themepath=dol_buildpath($reldir.$conf->css, 1);
-			$themesubdir=$reldir;
-			break;
-		}
-	}
-}
-// CSS forced by modules (relative url starting with /)
-if (isset($conf->modules_parts['css']))
-{
-	$arraycss=(array) $conf->modules_parts['css'];
-	foreach($arraycss as $modcss => $filescss)
-	{
-		$filescss=(array) $filescss;	// To be sure filecss is an array
-		foreach($filescss as $cssfile)
-		{
-			// cssfile is a relative path
-			print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
-			// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-			if (!preg_match('/\.css$/i',$cssfile) && ! empty($themeparam)) print $themeparam;
-			print '"><!-- Added by module '.$modcss. '-->'."\n";
-		}
-	}
-}
-if (! empty($conf_css)) print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
-
-// JQuery. Must be before other js includes
-$ext='.js';
-print '<!-- Includes JS for JQuery -->'."\n";
-if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
-else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
-print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/dst.js"></script>'."\n";
-// jQuery jMobile
-if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || GETPOST('dol_use_jmobile'))
-{
-	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
-}
-if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
-print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
-</head>';
-
-?>
 
 <body class="body">
 
-<!-- Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second -->
 <script type="text/javascript">
 $(document).ready(function () {
 	// Set focus on correct field
