@@ -396,7 +396,7 @@ class FormFile
             if (! empty($modellist))
             {
                 $out.= '<th align="center" class="formdoc liste_titre">';
-                $out.= $langs->trans('Model').' ';
+                $out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
                     $arraykeys=array_keys($modellist);
