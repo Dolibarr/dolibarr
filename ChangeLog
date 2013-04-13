@@ -15,6 +15,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
 - Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
 - Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
+- Fix: [ bug #816 ] Sales journal does not reflect localtaxes
 - Fix: Orderstoinvoice didn't act as expected when no order was checked
 
 
