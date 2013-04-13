@@ -249,7 +249,6 @@ foreach ($toutsujet as $value)
 	$tmp=explode('@',$value);
 	$listofanswers[]=array('label'=>$tmp[0],'format'=>($tmp[1]?$tmp[1]:'checkbox'));
 }
-$toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
 
 
@@ -369,8 +368,6 @@ if ($object->format=="D"||$object->format=="D+")
 }
 else
 {
-	$toutsujet=str_replace("°","'",$toutsujet);
-
 	//affichage des sujets du sondage
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
