@@ -166,7 +166,7 @@ class HookManager
                     			if ($action=='update') $action='edit';
                     		}
                     	}
-                    	
+
                     	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     }

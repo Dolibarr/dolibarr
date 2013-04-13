@@ -226,3 +226,5 @@ MigrationProjectTaskTime=Actualización de tiempo dedicado en segundos
 MigrationActioncommElement=Actualización de los datos de acciones sobre elementos
 # Migration payment mode
 MigrationPaymentMode=Actualización de los modos de pago
+# Migration categories
+MigrationCategorieAssociation=Actualización de las categorías

@@ -51,37 +51,32 @@ $sref			= GETPOST('sref');
 $sref_client	= GETPOST('sref_client');
 $sall			= GETPOST('sall');
 $socid			= GETPOST('socid','int');
+$selected		= GETPOST('orders_to_invoice');
+$sortfield		= GETPOST("sortfield",'alpha');
+$sortorder		= GETPOST("sortorder",'alpha');
+$viewstatut		= GETPOST('viewstatut');
 
-
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
 if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
 
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);	// Date for local PHP server
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
-$date_starty=dol_mktime(0,0,0,$_REQUEST["date_start_delymonth"],$_REQUEST["date_start_delyday"],$_REQUEST["date_start_delyyear"]);	// Date for local PHP server
-$date_endy=dol_mktime(23,59,59,$_REQUEST["date_end_delymonth"],$_REQUEST["date_end_delyday"],$_REQUEST["date_end_delyyear"]);
-$selected=GETPOST('orders_to_invoice');
-$action=GETPOST('action','alpha');
+$now = dol_now();
+$date_start = dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);	// Date for local PHP server
+$date_end = dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_starty = dol_mktime(0,0,0,$_REQUEST["date_start_delymonth"],$_REQUEST["date_start_delyday"],$_REQUEST["date_start_delyyear"]);	// Date for local PHP server
+$date_endy = dol_mktime(23,59,59,$_REQUEST["date_end_delymonth"],$_REQUEST["date_end_delyday"],$_REQUEST["date_end_delyyear"]);
+
 if ($action == 'create')
 {
-	if (! is_array($selected))
+	if (is_array($selected) == false)
 	{
-		$mesgs[]='<div class="error">'.$langs->trans('Error_OrderNotChecked').'</div>';
+		$mesgs = array('<div class="error">'.$langs->trans('Error_OrderNotChecked').'</div>');
 	}
 	else
 	{
-		$socid=GETPOST('socid');
-		$action=GETPOST('action');
-		$origin=GETPOST('origin');
-		$originid=GETPOST('originid');
+		$origin = GETPOST('origin');
+		$originid = GETPOST('originid');
 	}
 }
-$now=dol_now();
-
-$viewstatut=GETPOST('viewstatut');
-
 
 /*
  * Actions
@@ -358,7 +353,7 @@ $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 
 // Mode creation
-if ($action == 'create')
+if ($action == 'create' && empty($mesgs))
 {
 	$facturestatic=new Facture($db);
 
