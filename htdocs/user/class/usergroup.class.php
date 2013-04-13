@@ -176,19 +176,22 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of users id for group
 	 *
-	 * 	@return		array of users
+	 * 	@param	string	$excludefilter		Filter to exclude
+	 * 	@return	array 						Array of users
 	 */
-	function listUsersForGroup()
+	function listUsersForGroup($excludefilter='')
 	{
 		global $conf, $user;
 
 		$ret=array();
 
-		$sql = "SELECT u.rowid, ug.entity as usergroup_entity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
-		$sql.= " WHERE ug.fk_user = u.rowid";
-		$sql.= " AND ug.fk_usergroup = ".$this->id;
+		$sql = "SELECT u.rowid";
+		if (! empty($this->id)) $sql.= ", ug.entity as usergroup_entity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		if (! empty($this->id)) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+		$sql.= " WHERE 1 = 1";
+		if (! empty($this->id)) $sql.= " AND ug.fk_user = u.rowid";
+		if (! empty($this->id)) $sql.= " AND ug.fk_usergroup = ".$this->id;
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND u.entity IS NOT NULL";
@@ -197,12 +200,13 @@ class UserGroup extends CommonObject
 		{
 			$sql.= " AND u.entity IN (0,".$conf->entity.")";
 		}
+		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
 
 		dol_syslog(get_class($this)."::listUsersForGroup sql=".$sql,LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			while ($obj = $this->db->fetch_object($result))
+			while ($obj = $this->db->fetch_object($resql))
 			{
 				if (! array_key_exists($obj->rowid, $ret))
 				{
@@ -214,7 +218,7 @@ class UserGroup extends CommonObject
 				$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
 			}
 
-			$this->db->free($result);
+			$this->db->free($resql);
 
 			return $ret;
 		}

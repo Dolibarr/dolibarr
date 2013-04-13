@@ -32,6 +32,7 @@ For users:
 - New: Add option INVOICE_CAN_NEVER_BE_REMOVED.
 - New: Enhance agenda module to reach RFC2445 (add busy information).
 - New: Add module Opensurvey.
+- New: Default aprrover for holidays i sby default hierchical parent.
 - First change to prepare feature "click to print" (IPP) for PDF.
   
 For translators:

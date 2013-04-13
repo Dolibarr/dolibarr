@@ -166,8 +166,8 @@ if ($user->societe_id == 0)
 				 'bill',
 				 'order');
     // Translation keyword
-    $titres=array("Customers",
-                  "Prospects",
+    $titres=array("ThirdPartyCustomersStats",
+                  "ThirdPartyProspectsStats",
                   "Suppliers",
                   "Members",
                   "Products",

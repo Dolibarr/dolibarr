@@ -702,24 +702,29 @@ if (empty($id) || $action == 'add' || $action == 'request')
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
         print '</td>';
         print '</tr>';
+
+        // Approved by
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("ValidateByCP").'</td>';
-        // Liste des utiliseurs du groupes choisi dans la config
-        $idGroupValid = $cp->getConfCP('userGroup');
-
-        $validator = new UserGroup($db, $idGroupValid);
-        $valideurarray = $validator->listUsersForGroup();
-
+        // Liste des utiliseurs du groupe choisi dans la config
+        $validator = new UserGroup($db);
+        $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
+        $valideurobjects = $validator->listUsersForGroup($excludefilter);
+        $valideurarray = array();
+        foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
         print '<td>';
-        print $form->select_dolusers($validator->id, "valideur", 1, "", 0, $valideurarray);
+        print $form->select_dolusers($user->fk_user, "valideur", 1, "", 0, $valideurarray);	// By default, hierarchical parent
         print '</td>';
         print '</tr>';
+
+        // Description
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td>';
         print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70"></textarea>';
         print '</td>';
         print '</tr>';
+
         print '</tbody>';
         print '</table>';
         print '<div style="clear: both;"></div>';

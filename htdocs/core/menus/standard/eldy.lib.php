@@ -61,7 +61,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	$menu->add('/index.php?mainmenu=home&amp;leftmenu=', $langs->trans("Home"), 0, $showmode, $atarget, "home", '');
 
 	// Third parties
-	$tmpentry=array('enabled'=>(! empty($conf->societe->enabled) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
+	$tmpentry=array('enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -573,7 +573,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// Clients
-			if (! empty($conf->societe->enabled))
+			if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 			{
 				$langs->load("commercial");
 				$newmenu->add("/comm/list.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'customers');
