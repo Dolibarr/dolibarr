@@ -23,8 +23,9 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$graphwidth = 700;
+$graphwidth=DolGraph::getDefaultGraphSizeForStats('width',700);
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 

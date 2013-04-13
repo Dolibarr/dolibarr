@@ -55,8 +55,8 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 
 
-print '<body style="margin: 40px; text-align: center">'."\n";
-print '<center>';
+print '<body style="margin: 10px; text-align: center">'."\n";
+print '<center><br>';
 
 // Define $searchform
 if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
