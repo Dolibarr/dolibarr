@@ -1004,7 +1004,7 @@ else
 			{
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_readonly','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,70);
+				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_readonly','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,1);
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
@@ -1130,7 +1130,7 @@ else
 			print '<td colspan="3">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
+			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,120);
 			$doleditor->Create();
 			print '</td></tr>';
 
