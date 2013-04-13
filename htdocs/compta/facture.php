@@ -2789,7 +2789,7 @@ else if ($id > 0 || ! empty($ref))
             if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat')
             {
                 print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
-                print $form->textwithpicto($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+                print $form->textwithpicto($langs->trans("Discount").':',$langs->trans("HelpEscompte"),-1);
                 print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                 $resteapayeraffiche=0;
             }
