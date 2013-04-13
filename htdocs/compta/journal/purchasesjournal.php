@@ -24,6 +24,8 @@
  *		\ingroup    societe, fournisseur, facture
  *		\brief      Page with purchases journal
  */
+global $mysoc;
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -58,7 +60,7 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
  * View
  */
 
-llxHeader('','','');
+llxHeader('',$langs->trans("PurchasesJournal"),'');
 
 $form=new Form($db);
 
@@ -94,12 +96,14 @@ $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
 $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.libelle,";
-$sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type,";
+$sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
 $sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
-$sql.= " ct.accountancy_code_buy as account_tva";
+$sql.= " ct.accountancy_code_buy as account_tva, ctl1.accountancy_code_buy as account_localtax1, ctl2.accountancy_code_buy as account_localtax2";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ctl1 ON fd.localtax1_tx = ctl1.localtax1 AND ctl1.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ctl2 ON fd.localtax2_tx = ctl2.localtax2 AND ctl2.fk_pays = '".$idpays."'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
 $sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn";
 $sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
@@ -120,6 +124,8 @@ if ($result)
 	$tabht = array();
 	$tabtva = array();
 	$tabttc = array();
+	$tablocaltax1 = array();
+	$tablocaltax2 = array();
 	$tabcompany = array();
 
 	$i=0;
@@ -135,6 +141,8 @@ if ($result)
 			else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT)?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 		}
 		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
+		$compta_localtax1 = (! empty($obj->account_localtax1)?$obj->account_localtax1:$langs->trans("CodeNotDef"));
+		$compta_localtax2 = (! empty($obj->account_localtax2)?$obj->account_localtax2:$langs->trans("CodeNotDef"));
 
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
@@ -143,6 +151,8 @@ if ($result)
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+   		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 		$tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name);
 
 		$i++;
@@ -193,7 +203,6 @@ foreach ($tabfac as $key => $val)
 		}
 	}
 	// vat
-	//var_dump($tabtva);
 	foreach ($tabtva[$key] as $k => $mt)
 	{
 		if ($mt)
@@ -202,11 +211,41 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td>";
+			print "<td>".$k."</td><td>".$langs->trans("VAT")."</td>";
 			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
 			print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
 			print "</tr>";
 		}
+	}
+	// localtax1
+	foreach ($tablocaltax1[$key] as $k => $mt)
+	{
+	    if ($mt)
+	    {
+    		print "<tr ".$bc[$var].">";
+    		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+    		print "<td>".$val["date"]."</td>";
+    		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+    		print "<td>".$k."</td><td>".$langs->transcountrynoentities("LT1",$mysoc->country_code)."</td>";
+    		print "<td align='right'>".($mt>=0?price($mt):'')."</td>";
+    		print "<td align='right'>".($mt<0?price(-$mt):'')."</td>";
+    		print "</tr>";
+	    }
+	}
+	// localtax2
+	foreach ($tablocaltax2[$key] as $k => $mt)
+	{
+	    if ($mt)
+	    {
+    		print "<tr ".$bc[$var].">";
+    		//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+    		print "<td>".$val["date"]."</td>";
+    		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+    		print "<td>".$k."</td><td>".$langs->transcountrynoentities("LT2",$mysoc->country_code)."</td>";
+    		print "<td align='right'>".($mt>=0?price($mt):'')."</td>";
+    		print "<td align='right'>".($mt<0?price(-$mt):'')."</td>";
+    		print "</tr>";
+	    }
 	}
 	print "<tr ".$bc[$var].">";
 	// third party
