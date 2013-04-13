@@ -36,7 +36,7 @@ if (!$user->admin) accessforbidden();
  * View
  */
 
-$langs->load("opensurvey@opensurvey");
+$langs->load("opensurvey");
 llxHeader();
 
 print_fiche_titre($langs->trans("OpenSurveyArea"));

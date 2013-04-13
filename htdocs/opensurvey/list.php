@@ -66,7 +66,7 @@ if ($action == 'delete_confirm')
 
 $form=new Form($db);
 
-$langs->load("opensurvey@opensurvey");
+$langs->load("opensurvey");
 llxHeader();
 
 print '<div class=corps>'."\n";
