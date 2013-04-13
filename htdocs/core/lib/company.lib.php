@@ -43,16 +43,16 @@ function societe_prepare_head($object)
     $head[$h][2] = 'card';
     $h++;
 
-    if ($object->client==1 || $object->client==2 || $object->client==3 || (isset($object->object) && $object->object->client==1) || (isset($object->object) && $object->object->client==3))
+    if ($object->client==1 || $object->client==2 || $object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
-        if ($object->client==2 || $object->client==3) $head[$h][1] = $langs->trans("Prospect");
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client==2 || $object->client==3)) $head[$h][1] = $langs->trans("Prospect");
         if ($object->client==3)                       $head[$h][1] .= '/';
-        if ($object->client==1 || $object->client==3) $head[$h][1] .= $langs->trans("Customer");
+        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client==1 || $object->client==3)) $head[$h][1] .= $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
     }
-    if (! empty($conf->fournisseur->enabled) && ($object->fournisseur || (isset($object->object) && $object->object->fournisseur)) && ! empty($user->rights->fournisseur->lire))
+    if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
