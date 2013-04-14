@@ -77,7 +77,7 @@ print '<div class="tabBar">';
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-print 'Choix mois : <input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month.'">&nbsp;';
+print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month.'">&nbsp;';
 $htmlother->select_year($year,'year_start',1,10,3);
 
 print '<input type="submit" value="'.$langs->trans("Refresh").'" class="button" />';
