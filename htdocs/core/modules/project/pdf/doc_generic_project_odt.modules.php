@@ -1,28 +1,28 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
-* Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	\file       htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
  *	\ingroup    project
  *	\brief      File of class to build ODT documents for third parties
-*/
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -369,14 +369,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Commande	$object					Object source to build document
+	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
 	 *	@return	int         						1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath)
 	{
-		global $user,$langs,$conf,$mysoc;
+		global $user,$langs,$conf,$mysoc,$hookmanager;
 
 		if (empty($srctemplatepath))
 		{
@@ -392,6 +392,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
 		global $action;
+		
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
@@ -577,7 +578,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
 						
 
-
 					foreach ($tasksarray as $task)
 					{
 						$tmparray=$this->get_substitutionarray_tasks($task,$outputlangs);
@@ -742,7 +742,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
 					$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
 
-
 					foreach ($filearray as $filedetail)
 					{
 						//dol_syslog(get_class($this).'::main $filedetail'.var_export($filedetail,true));
@@ -878,7 +877,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				'test'=>$conf->agenda->enabled)
 				);
 
-				//Inser refenrence
+				//Insert reference
 				try
 				{
 					$listlines = $odfHandler->setSegment('projectrefs');

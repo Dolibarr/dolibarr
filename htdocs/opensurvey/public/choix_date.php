@@ -40,7 +40,9 @@ if (GETPOST('confirmation') || GETPOST('confirmation_x'))
 {
 	if (is_array($_SESSION['totalchoixjour']))
 	{
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) 
+		{
 			if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
 				$choixdate.=",";
 				$choixdate .= $_SESSION["totalchoixjour"][$i];
@@ -65,7 +67,8 @@ if (GETPOST('confirmation') || GETPOST('confirmation_x'))
 
 // Reset days
 if (GETPOST('reset')) {
-	for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	$nbofchoice=count($_SESSION["totalchoixjour"]);
+	for ($i = 0; $i < $nbofchoice; $i++) {
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 			unset($_SESSION["horaires$i"][$j]);
 		}
@@ -128,8 +131,10 @@ if (issetAndNoEmpty('moisavant') || issetAndNoEmpty('moisavant_x')) {
 	}
 
 	//On sauvegarde les heures deja entrées
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
@@ -148,8 +153,11 @@ if (issetAndNoEmpty('moisapres') || issetAndNoEmpty('moisapres_x')) {
 	}
 
 	//On sauvegarde les heures deja entrées
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) 
+		{
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
@@ -163,8 +171,10 @@ if (issetAndNoEmpty('anneeavant') || issetAndNoEmpty('anneeavant_x')) {
 	$_SESSION["annee"] -= 1;
 
 	//On sauvegarde les heures deja entrées
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
@@ -178,8 +188,10 @@ if (issetAndNoEmpty('anneeapres') || issetAndNoEmpty('anneeapres_x')) {
 	$_SESSION["annee"] += 1;
 
 	//On sauvegarde les heures deja entrées
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0;$j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
@@ -247,8 +259,10 @@ if (issetAndNoEmpty('choixjourajout')) {
 
 	// Test pour éviter les doublons dans la variable qui contient toutes les dates
 	$journeuf = true;
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('choixjourajout') === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('choixjourajout') === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
 			if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"])) {
 				$journeuf=false;
 			}
@@ -270,7 +284,8 @@ if (issetAndNoEmpty('choixjourajout')) {
 			}
 		}
 
-		for ($i = $cle; $i < count($_SESSION["totalchoixjour"]); $i++) {
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = $cle; $i < $nbofchoice; $i++) {
 			$k = $i + 1;
 			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
@@ -286,16 +301,19 @@ if (issetAndNoEmpty('choixjourajout')) {
 //retrait d'une entrée dans la variable de session qui contient toutes les dates
 if (issetAndNoEmpty('choixjourretrait')) {
 	//On sauvegarde les heures deja entrées
-	for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	$nbofchoice=count($_SESSION["totalchoixjour"]);
+	for ($i = 0; $i < $nbofchoice; $i++) {
 		//affichage des 5 cases horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 			$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
 		}
 	}
 
-	for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
-		if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourretrait"][0], $_SESSION["annee"])) {
-			for ($j = $i; $j < count($_SESSION["totalchoixjour"]); $j++) {
+	for ($i = 0; $i < $nbofchoice; $i++) 
+	{
+		if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourretrait"][0], $_SESSION["annee"])) 
+		{
+			for ($j = $i; $j < $nbofchoice; $j++) {
 				$k = $j+1;
 				$_SESSION["horaires$j"] = $_SESSION["horaires$k"];
 			}
@@ -308,7 +326,8 @@ if (issetAndNoEmpty('choixjourretrait')) {
 //report des horaires dans toutes les cases
 if (issetAndNoEmpty('reporterhoraires')) {
 	$_SESSION["horaires0"] = $_POST["horaires0"];
-	for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	$nbofchoice=count($_SESSION["totalchoixjour"]);
+	for ($i = 0; $i < $nbofchoice; $i++) {
 		$j = $i+1;
 		$_SESSION["horaires$j"] = $_SESSION["horaires$i"];
 	}
@@ -316,7 +335,8 @@ if (issetAndNoEmpty('reporterhoraires')) {
 
 //report des horaires dans toutes les cases
 if (issetAndNoEmpty('resethoraires')) {
-	for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	$nbofchoice=count($_SESSION["totalchoixjour"]);
+	for ($i = 0; $i < $nbofchoice; $i++) {
 		unset ($_SESSION["horaires$i"]);
 	}
 }
@@ -336,8 +356,10 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 	if ($i < $premierjourmois) {
 		print '<td class="avant"></td>'."\n";
 	} else {
-		if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) {
-			for ($j = 0; $j < count($_SESSION["totalchoixjour"]); $j++) {
+		if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) 
+		{
+			$nbofchoice=count($_SESSION["totalchoixjour"]);	
+			for ($j = 0; $j < $nbofchoice; $j++) {
 				//affichage des boutons ROUGES
 				if (date("j", $_SESSION["totalchoixjour"][$j]) == $numerojour && date("n", $_SESSION["totalchoixjour"][$j]) == $_SESSION["mois"] && date("Y", $_SESSION["totalchoixjour"][$j]) == $_SESSION["annee"]) {
 					print '<td align="center" class="choisi"><input type="submit" class="bouton OFF" name="choixjourretrait[]" value="'.$numerojour.'"></td>'."\n";
@@ -367,8 +389,10 @@ print '</div></center>'."\n";
 $errheure = $erreur = false;
 if (issetAndNoEmpty('choixheures') || issetAndNoEmpty('choixheures_x')) {
 	//On sauvegarde les heures deja entrées
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
@@ -377,8 +401,10 @@ if (issetAndNoEmpty('choixheures') || issetAndNoEmpty('choixheures_x')) {
 	}
 
 	//affichage des horaires
-	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) {
-		for ($i = 0; $i < count($_SESSION["totalchoixjour"]); $i++) {
+	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true) 
+	{
+		$nbofchoice=count($_SESSION["totalchoixjour"]);
+		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				$case = $j + 1;
@@ -487,7 +513,8 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) && (!issetAndNoEmpty('choixheur
 	print '</tr>'."\n";
 
 	//affichage de la liste des jours choisis
-	for ($i=0;$i<count($_SESSION["totalchoixjour"]);$i++)
+	$nbofchoice=count($_SESSION["totalchoixjour"]);
+	for ($i=0; $i<$nbofchoice; $i++)
 	{
 		print '<tr>'."\n";
 		print '<td>'.dol_print_date($_SESSION["totalchoixjour"][$i], 'daytext').' ('.dol_print_date($_SESSION["totalchoixjour"][$i], '%A').')</td>';

@@ -225,7 +225,8 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->forma
 		array_splice($datesbase, $cleinsertion, 0, $nouvelledate);
 		$cle = array_search($nouvelledate, $datesbase);
 		$dateinsertion = '';
-		for ($i = 0; $i < count($datesbase); $i++) {
+		$nbofdates=count($datesbase);
+		for ($i = 0; $i < $nbofdates; $i++) {
 			$dateinsertion.=",";
 			$dateinsertion.=$datesbase[$i];
 		}
@@ -511,7 +512,9 @@ if (GETPOST('ajoutsujet'))
 
 		print '<select name="nouvelleannee"> '."\n";
 		print '<OPTION VALUE="vide"></OPTION>'."\n";
-		for ($i = date("Y"); $i < (date("Y") + 5); $i++) {
+		$maxyear=date("Y")+5;
+		for ($i = date("Y"); $i < $maxyear; $i++) 
+		{
 			print '<OPTION VALUE="'.$i.'">'.$i.'</OPTION>'."\n";
 		}
 		print '</SELECT>'."\n";
@@ -618,7 +621,8 @@ if ($object->format=="D"||$object->format=="D+")
 
 	//affichage des années
 	$colspan=1;
-	for ($i=0;$i<count($toutsujet);$i++)
+	$nbofsujet=count($toutsujet);
+	for ($i=0;$i<$nbofsujet;$i++)
 	{
 		$current = $toutsujet[$i];
 
@@ -648,7 +652,7 @@ if ($object->format=="D"||$object->format=="D+")
 
 	//affichage des mois
 	$colspan = 1;
-	for ($i = 0; $i < count($toutsujet); $i++) {
+	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]);	// intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
 
 		if (isset($toutsujet[$i+1]) === false) {
@@ -674,7 +678,7 @@ if ($object->format=="D"||$object->format=="D+")
 
 	//affichage des jours
 	$colspan = 1;
-	for ($i = 0; $i < count($toutsujet); $i++) {
+	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]);
 		if (isset($toutsujet[$i+1]) === false) {
 			$next = false;

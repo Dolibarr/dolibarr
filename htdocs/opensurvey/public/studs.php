@@ -293,7 +293,8 @@ if ($object->format=="D"||$object->format=="D+")
 
 	//affichage des années
 	$colspan=1;
-	for ($i=0;$i<count($toutsujet);$i++)
+	$nbofsujet=count($toutsujet);
+	for ($i=0;$i<$nbofsujet;$i++)
 	{
 		if (isset($toutsujet[$i+1]) && date('Y', intval($toutsujet[$i])) == date('Y', intval($toutsujet[$i+1]))) {
 			$colspan++;
@@ -309,7 +310,7 @@ if ($object->format=="D"||$object->format=="D+")
 
 	//affichage des mois
 	$colspan=1;
-	for ($i=0;$i<count($toutsujet);$i++) {
+	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);	// intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
 
 		if (isset($toutsujet[$i+1]) === false) {
@@ -332,7 +333,7 @@ if ($object->format=="D"||$object->format=="D+")
 
 	//affichage des jours
 	$colspan=1;
-	for ($i=0;$i<count($toutsujet);$i++) {
+	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);
 		if (isset($toutsujet[$i+1]) === false) {
 			$next = false;

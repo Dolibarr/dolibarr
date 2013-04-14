@@ -6,14 +6,14 @@
 
   <body>
 
-    <div data-role="page">
+    <div>
 
     <!-- <div data-role="header" data-theme="b">
             <h1>Introduction</h1>
             <a href="../../" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Home</a>
         </div>
     -->
-    <div data-role="content">
+    <div>
 
     <h1>Error</h1>
 
