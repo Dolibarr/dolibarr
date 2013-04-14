@@ -673,7 +673,7 @@ function dol_get_fiche_end($notab=0)
 
 /**
  * Return string to add class property on html element with pair/impair.
- * 
+ *
  * @param	string	$var			0 or 1
  * @param	string	$moreclass		More class to add
  * @return	string					String to add class onto HTML element
@@ -2286,7 +2286,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		 For thead format
+ *	@param	int		$thead		 For thead format (0 by default)
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
@@ -2301,20 +2301,33 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	global $conf;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
+	$sortorder=strtoupper($sortorder);
 	$out='';
+
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<th class="liste_titre_sel" '. $moreattrib.'>';
+	else $out.= '<th class="liste_titre" '. $moreattrib.'>';
+
+	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
-		$out.= '<th class="liste_titre_sel" '. $moreattrib.'>';
+		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
+		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
+		$options=preg_replace('/&+/i','&',$options);
+		if (! preg_match('/^&/',$options)) $options='&'.$options;
+
+		if ($sortorder == 'DESC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+		if ($sortorder == 'ASC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
 	}
-	else
-	{
-		$out.= '<th class="liste_titre" '. $moreattrib.'>';
-	}
+
 	$out.=$name;
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	{
+		$out.='</a>';
+	}
+
+	if (empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -2323,28 +2336,21 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 		//print "&nbsp;";
 		$out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		if (! $sortorder)
+
+		if (! $sortorder || $field != $sortfield)
 		{
 			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		}
 		else
 		{
-			if ($field != $sortfield)
-			{
+			if ($sortorder == 'DESC' ) {
 				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
 			}
-			else {
-				$sortorder=strtoupper($sortorder);
-				if ($sortorder == 'DESC' ) {
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				}
-				if ($sortorder == 'ASC' ) {
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				}
+			if ($sortorder == 'ASC' ) {
+				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 			}
 		}
 	}
