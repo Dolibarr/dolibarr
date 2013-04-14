@@ -41,7 +41,7 @@
 <!-- Password -->
 <tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><label for="password">Mot de passe</label></strong> &nbsp; </td>
 <td valign="top" nowrap="nowrap">
-<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="" tabindex="2" autocomplete="off" />
+<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="" tabindex="2" />
 </td></tr>
 
 </table>
