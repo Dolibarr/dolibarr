@@ -139,7 +139,7 @@ if (isset($_POST["boutonp"]) || isset($_POST["boutonp_x"]))
 				if (! empty($object->mailsonde))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$cmailfile=new CMailFile("[".DOL_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $object->mail_admin, $conf->global->MAIN_MAIL_EMAIL_FROM, $nom." has filled a line.\nou can find your poll at the link:\n".getUrlSondage($numsondage));
+					$cmailfile=new CMailFile("[".MAIN_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $object->mail_admin, $conf->global->MAIN_MAIL_EMAIL_FROM, $nom." has filled a line.\nYou can find your poll at the link:\n".getUrlSondage($numsondage));
 					$result=$cmailfile->sendfile();
 					if ($result)
 					{
