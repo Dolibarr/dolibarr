@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -616,7 +616,10 @@ if ($action == 'create')
 
             // Ref client
             print '<tr><td>';
-            print $langs->trans('RefCustomer').'</td><td colspan="3">';
+            if ($origin == 'commande') print $langs->trans('RefCustomerOrder');
+            else if ($origin == 'propal') print $langs->trans('RefCustomerOrder');
+            else print $langs->trans('RefCustomer');
+            print '</td><td colspan="3">';
             print $object->ref_client;
             print '</td>';
             print '</tr>';
@@ -654,18 +657,18 @@ if ($action == 'create')
             // Weight
             print '<tr><td>';
             print $langs->trans("Weight");
-            print '</td><td><input name="weight" size="4" value="'.GETPOST('weight','int').'"></td><td>';
+            print '</td><td width="90px"><input name="weight" size="5" value="'.GETPOST('weight','int').'"></td><td>';
             print $formproduct->select_measuring_units("weight_units","weight",GETPOST('weight_units','int'));
             print '</td></tr><tr><td>';
             print $langs->trans("Width");
-            print ' </td><td><input name="sizeW" size="4" value="'.GETPOST('sizeW','int').'"></td><td rowspan="3">';
+            print ' </td><td><input name="sizeW" size="5" value="'.GETPOST('sizeW','int').'"></td><td rowspan="3">';
             print $formproduct->select_measuring_units("size_units","size");
             print '</td></tr><tr><td>';
             print $langs->trans("Height");
-            print '</td><td><input name="sizeH" size="4" value="'.GETPOST('sizeH','int').'"></td>';
+            print '</td><td><input name="sizeH" size="5" value="'.GETPOST('sizeH','int').'"></td>';
             print '</tr><tr><td>';
             print $langs->trans("Depth");
-            print '</td><td><input name="sizeS" size="4" value="'.GETPOST('sizeS','int').'"></td>';
+            print '</td><td><input name="sizeS" size="5" value="'.GETPOST('sizeS','int').'"></td>';
             print '</tr>';
 
             // Delivery method
@@ -690,12 +693,36 @@ if ($action == 'create')
 
             /*
              * Lignes de commandes
-            *
-            */
-            print '<br><table class="nobordernopadding" width="100%">';
-
+             */
+            
             //$lines = $object->fetch_lines(1);
             $numAsked = count($object->lines);
+            
+            print '<script type="text/javascript" language="javascript">
+            jQuery(document).ready(function() {
+	            jQuery("#autofill").click(function() {';
+    	    	$i=0;
+    	    	while($i < $numAsked)
+    	    	{
+    	    		print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+    	    		$i++;
+    	    	}
+        		print '});
+	            jQuery("#autoreset").click(function() {';
+    	    	$i=0;
+    	    	while($i < $numAsked)
+    	    	{
+    	    		print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
+    	    		$i++;
+    	    	}
+        		print '});
+        	});
+            </script>';
+            
+            
+            print '<br>';
+            print '<table class="noborder" width="100%">';
+
 
             /* Lecture des expeditions deja effectuees */
             $object->loadExpeditions();
@@ -706,7 +733,10 @@ if ($action == 'create')
                 print '<td>'.$langs->trans("Description").'</td>';
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-                print '<td align="left">'.$langs->trans("QtyToShip").'</td>';
+                print '<td align="center">'.$langs->trans("QtyToShip");
+                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+                print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
                     print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
@@ -780,13 +810,16 @@ if ($action == 'create')
                 }
 
                 // Qty
-                print '<td align="center">'.$line->qty.'</td>';
+                print '<td align="center">'.$line->qty;
+                print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
+                print '</td>';
                 $qtyProdCom=$line->qty;
 
                 // Qty already sent
                 print '<td align="center">';
                 $quantityDelivered = $object->expeditions[$line->id];
                 print $quantityDelivered;
+                print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
                 print '</td>';
 
                 $quantityAsked = $line->qty;
@@ -803,13 +836,13 @@ if ($action == 'create')
                 }
 
                 // Quantity to send
-                print '<td align="left">';
+                print '<td align="center">';
                 if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
                 {
                     print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-                    print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
                 }
-                else print '0';
+                else print $langs->trans("NA");
                 print '</td>';
 
                 // Stock
@@ -867,9 +900,13 @@ if ($action == 'create')
                 $indiceAsked++;
             }
 
-            print '<tr><td align="center" colspan="5"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
             print "</table>";
+            
+            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
+            
             print '</form>';
+            
+            print '<br>';
         }
         else
         {

@@ -4,6 +4,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
 For users:
+- New: Add link to autofill/reset with quantity to ship when creating a
+  delivery receipt.
 - New: Event into calendar use different colors for different users.
 - New: Support revenue stamp onto invoices.
 - New: Add a tab "consumption" on thirdparties to list products bought/sells.
