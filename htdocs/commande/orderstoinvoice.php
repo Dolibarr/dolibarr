@@ -28,9 +28,9 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
@@ -84,17 +84,12 @@ if ($action == 'create')
 
 if (($action == 'create' || $action == 'add') && empty($mesgs))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 	if (! empty($conf->projet->enabled)) {
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	}
 	$langs->load('bills');
 	$langs->load('products');
@@ -287,7 +282,9 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 												$lines[$i]->special_code,
 												$object->origin,
 												$lines[$i]->rowid,
-												$fk_parent_line
+												$fk_parent_line,
+												$lines[$i]->fk_fournprice,
+			                                    $lines[$i]->pa_ht
 										);
 										if ($result > 0)
 										{
