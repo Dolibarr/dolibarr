@@ -278,3 +278,21 @@ ALTER TABLE llx_facture_rec CHANGE COLUMN note note_private text;
 ALTER TABLE llx_holiday CHANGE COLUMN note note_private text;
 ALTER TABLE llx_societe CHANGE COLUMN note note_private text;
 ALTER TABLE llx_socpeople CHANGE COLUMN note note_private text;
+
+create table llx_projet_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_projet_extrafields ADD INDEX idx_projet_extrafields (fk_object);
+
+create table llx_projet_task_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_projet_task_extrafields ADD INDEX idx_projet_task_extrafields (fk_object);

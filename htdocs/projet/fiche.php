@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("projects");
 $langs->load('companies');
@@ -53,11 +54,15 @@ $result = restrictedArea($user, 'projet', $id);
 $hookmanager->initHooks(array('projectcard'));
 
 $object = new Project($db);
+$extrafields = new ExtraFields($db);
 $object->fetch($id,$ref);
 if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 }
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('projet');
 
 $date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
 $date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
@@ -132,6 +137,9 @@ if ($action == 'add' && $user->rights->projet->creer)
         $object->datec=dol_now();
         $object->date_start=$date_start;
         $object->date_end=$date_end;
+        
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         $result = $object->create($user);
         if ($result > 0)
@@ -201,6 +209,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
         $object->public       = GETPOST('public','alpha');
         $object->date_start   = empty($_POST["project"])?'':$date_start;
         $object->date_end     = empty($_POST["projectend"])?'':$date_end;
+        
+        // Fill array 'array_options' with data from add form
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         $result=$object->update($user);
 
@@ -405,6 +416,10 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    {
+    	print $object->showOptionals($extrafields,'edit');
+    }
 
     print '</table>';
 
@@ -429,6 +444,7 @@ else
     dol_htmloutput_mesg($mesg);
 
     if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
+    $res=$object->fetch_optionals($object->id,$extralabels);
 
     // To verify role of users
     $userAccess = $object->restrictedProjectArea($user,'read');
@@ -540,7 +556,11 @@ else
         // Other options
         $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        {
+        	print $object->showOptionals($extrafields,'edit');
+        }
+        
         print '</table>';
 
         print '<div align="center"><br>';
@@ -602,7 +622,10 @@ else
         // Other options
         $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        {
+        	print $object->showOptionals($extrafields);
+        }
         print '</table>';
     }
 
