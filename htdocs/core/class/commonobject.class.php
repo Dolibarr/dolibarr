@@ -1413,7 +1413,12 @@ abstract class CommonObject
     		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
     		return -1;
     	}
-
+		if (! in_array($suffix,array('','_public','_private')))
+		{
+    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+			return -2;
+		}
+		
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;

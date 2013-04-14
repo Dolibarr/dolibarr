@@ -210,9 +210,9 @@ class ContactTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Contact::update error');
 		
-    	$result=$localobject->update_note_private($localobject->note_private);
+    	$result=$localobject->update_note($localobject->note_private,'_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0, 'Contact::update_note_private error');
+    	$this->assertLessThan($result, 0, 'Contact::update_note error');
 		
     	$result=$localobject->update_note_public($localobject->note_public);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
@@ -223,8 +223,8 @@ class ContactTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Contact::fetch error');
 
-    	print __METHOD__." old=".$localobject->note." new=".$newobject->note."\n";
-    	$this->assertEquals($localobject->note, $newobject->note);
+    	print __METHOD__." old=".$localobject->note_private." new=".$newobject->note_private."\n";
+    	$this->assertEquals($localobject->note_private, $newobject->note_private);
     	//print __METHOD__." old=".$localobject->note_public." new=".$newobject->note_public."\n";
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
     	print __METHOD__." old=".$localobject->lastname." new=".$newobject->lastname."\n";

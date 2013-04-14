@@ -3002,7 +3002,8 @@ class Facture extends CommonInvoice
         		$this->total_tva      += $line->total_tva;
         		$this->total_ttc      += $line->total_ttc;
             }
-
+            $this->revenuestamp = 0;
+            
             // Add a line "offered"
             $line=new FactureLigne($this->db);
             $line->desc=$langs->trans("Description")." (offered line)";

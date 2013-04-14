@@ -221,7 +221,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$newlangs5=new Translate("",$conf);
     	$newlangs5->setDefaultLang('ru_RU');
     	$localobject->modelpdf='crabe';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs);
+    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $newlangs5);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
@@ -376,7 +376,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $conf->fichinter->dir_output.='/temp';
+        $conf->ficheinter->dir_output.='/temp';
         $localobject=new Fichinter($this->savdb);
         $localobject->initAsSpecimen();
 

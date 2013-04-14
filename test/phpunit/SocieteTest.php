@@ -210,7 +210,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 		
-    	$result=$localobject->update_note_private($localobject->note_private);
+    	$result=$localobject->update_note($localobject->note_private,'_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update_note_private error');
 		
@@ -223,7 +223,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	$this->assertEquals($localobject->note, $newobject->note);
+    	$this->assertEquals($localobject->note_private, $newobject->note_private);
     	//$this->assertEquals($localobject->note_public, $newobject->note_public);
     	$this->assertEquals($localobject->name, $newobject->name);
     	$this->assertEquals($localobject->address, $newobject->address);

@@ -204,9 +204,9 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update error');
 		
-    	$result=$localobject->update_note_private($localobject->note_private);
+    	$result=$localobject->update_note($localobject->note_private,'_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0, 'Holiday::update_note_private error');
+    	$this->assertLessThan($result, 0, 'Holiday::update_note error');
 		
     	$result=$localobject->update_note_public($localobject->note_public);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
