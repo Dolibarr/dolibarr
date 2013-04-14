@@ -1,6 +1,7 @@
 # Dolibarr language file - es_ES - holiday
 CHARSET= UTF-8
 
+Holidays=Vacaciones
 CPTitreMenu=Vacaciones
 MenuReportMonth=Estado mensual
 MenuAddCP=Nueva petición
@@ -88,6 +89,8 @@ FirstDayOfHoliday=Primer día libre
 LastDayOfHoliday=Último día libre
 Morning=Mañana
 Afternoon=Tarde
+HolidaysMonthlyUpdate=Actualización mensual
+ManualUpdate=Actualización manual
 
 ## Configuration du Module ##
 ConfCP=Configuración del módulo Vacaciones
@@ -99,7 +102,7 @@ LastUpdateCP=Última actualización automática de vacaciones
 UpdateConfCPOK=Actualización efectuada correctamente.
 ErrorUpdateConfCP=Se ha producido un error durante la actualización, vuélvalo a intentar.
 AddCPforUsers=Añada los saldos de vacaciones de los usuarios <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">haciendo clic aquí</a>.
-DelayForSubmitCP=La fecha límite para solicitar vacaciones
+DelayForSubmitCP=Antelación mínima para solicitar vacaciones
 AlertValidatorDelayCP=Advertir al usuario validador si la petición no respeta el límite previsto
 AlertValidorSoldeCP=Advertir al usuario validador si el usuario pide vacaciones superiores a su saldo
 nbUserCP=Número de usuarios tomados en cuenta en el módulo vacaciones
