@@ -284,7 +284,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 												$lines[$i]->rowid,
 												$fk_parent_line,
 												$lines[$i]->fk_fournprice,
-			                                    $lines[$i]->pa_ht
+												$lines[$i]->pa_ht
 										);
 										if ($result > 0)
 										{
