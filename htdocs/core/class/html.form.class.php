@@ -3319,12 +3319,12 @@ class Form
             $smin = '';
         }
 
+        $usecalendar='combo';
+        if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'eldy':$conf->global->MAIN_POPUP_CALENDAR;
+		if ($conf->browser->phone) $usecalendar='combo';
+
         if ($d)
         {
-        	$usecalendar='combo';
-        	if (! empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) $usecalendar=empty($conf->global->MAIN_POPUP_CALENDAR)?'eldy':$conf->global->MAIN_POPUP_CALENDAR;
-			if ($conf->browser->phone) $usecalendar='combo';
-
             // Show date with popup
             if ($usecalendar != 'combo')
             {
@@ -3450,7 +3450,7 @@ class Form
             $reset_scripts = "";
 
             // Generate the date part, depending on the use or not of the javascript calendar
-            if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
+            if ($usecalendar == "eldy")
             {
                 $base=DOL_URL_ROOT.'/core/';
                 $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');';
