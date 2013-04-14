@@ -48,10 +48,14 @@ $securitykey=GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE) accessforbidden('Bad security key value.');
+if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
+{
+	print 'Bad security key value.';
+	exit;
+}
 
 
-if (($tag!='') && ($unsuscrib=='1'))
+if (! empty($tag) && ($unsuscrib=='1'))
 {
 	//Udate status of mail in Destinaries maling list
 	$statut='3';
