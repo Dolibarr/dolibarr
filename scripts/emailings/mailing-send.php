@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: ".$script_file." ID_MAILING\n";
+	print "Usage: ".$script_file." (ID_MAILING|all)\n";
 	exit;
 }
 $id=$argv[1];
@@ -48,222 +48,249 @@ require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 $error = 0;
 
 
-// We read data of email
+// We get list of emailing to process
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
 $sql.= " m.email_from, m.email_replyto, m.email_errorsto";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql.= " WHERE m.statut >= 1";
-$sql.= " AND m.rowid= ".$id;
-$sql.= " LIMIT 1";
-
-$resql=$db->query($sql);
-if ($resql)
+$sql.= " WHERE m.statut = 1";
+if ($id != 'all')
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	if ($num == 1)
-	{
-		$obj = $db->fetch_object($resql);
-
-		dol_syslog("mailing ".$id);
-
-		$id       = $obj->rowid;
-		$subject  = $obj->sujet;
-		$message  = $obj->body;
-		$from     = $obj->email_from;
-		$replyto  = $obj->email_replyto;
-		$errorsto = $obj->email_errorsto;
-        // Le message est-il en html
-        $msgishtml=-1;  // Unknown by default
-        if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
-
-		$i++;
-	}
-	else
-	{
-		$mesg="Emailing with id ".$id." not found";
-		print $mesg."\n";
-		dol_syslog($mesg,LOG_ERR);
-	}
+	$sql.= " AND m.rowid= ".$id;
+	$sql.= " LIMIT 1";
 }
 
-
-$nbok=0; $nbko=0;
-
-// On choisit les mails non deja envoyes pour ce mailing (statut=0)
-// ou envoyes en erreur (statut=-1)
-$sql = "SELECT mc.rowid, mc.lastname as lastname, mc.firstname as firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
-$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
-
+dol_syslog("sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+	$j = 0;
 
 	if ($num)
 	{
-		dol_syslog("nb of targets = ".$num, LOG_DEBUG);
-
-		$now=dol_now();
-
-		// Positionne date debut envoi
-		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$id;
-
-		$resql2=$db->query($sql);
-		if (! $resql2)
+		for ($j=0; $j<$num; $j++)
 		{
-			dol_print_error($db);
-		}
-
-		// Look on each email and sent message
-		$i = 0;
-		while ($i < $num)
-		{
-			$res=1;
-			$now=dol_now();
-
 			$obj = $db->fetch_object($resql);
 
-			// sendto en RFC2822
-			$sendto = str_replace(',',' ',dolGetFirstLastname($obj->firstname, $obj->lastname) ." <".$obj->email.">");
+			dol_syslog("Process mailing with id ".$obj->rowid);
+			print "Process mailing with id ".$obj->rowid."\n";
 
-			// Make subtsitutions on topic and body
-			$other=explode(';',$obj->other);
-			$other1=$other[0];
-			$other2=$other[1];
-			$other3=$other[2];
-			$other4=$other[3];
-			$other5=$other[4];
-			$substitutionarray=array(
-				'__ID__' => $obj->source_id,
-				'__EMAIL__' => $obj->email,
-				'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-				'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-				'__MAILTOEMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
-				'__LASTNAME__' => $obj->lastname,
-				'__FIRSTNAME__' => $obj->firstname,
-				'__OTHER1__' => $other1,
-				'__OTHER2__' => $other2,
-				'__OTHER3__' => $other3,
-				'__OTHER4__' => $other4,
-				'__OTHER5__' => $other5
-			);
+			$id       = $obj->rowid;
+			$subject  = $obj->sujet;
+			$message  = $obj->body;
+			$from     = $obj->email_from;
+			$replyto  = $obj->email_replyto;
+			$errorsto = $obj->email_errorsto;
+			// Le message est-il en html
+			$msgishtml=-1;  // Unknown by default
+			if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
-			complete_substitutions_array($substitutionarray,$langs);
-			$newsubject=make_substitutions($subject,$substitutionarray);
-			$newmessage=make_substitutions($message,$substitutionarray);
+			$nbok=0; $nbko=0;
 
-            $substitutionisok=true;
+			// On choisit les mails non deja envoyes pour ce mailing (statut=0)
+			// ou envoyes en erreur (statut=-1)
+			$sql2 = "SELECT mc.rowid, mc.lastname as lastname, mc.firstname as firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
+			$sql2.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+			$sql2.= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
-            // Fabrication du mail
-			$mail = new CMailFile(
-			    $newsubject,
-			    $sendto,
-			    $from,
-			    $newmessage,
-			    array(),
-			    array(),
-			    array(),
-			    '',
-			    '',
-			    0,
-			    $msgishtml,
-			    $errorsto
-			);
-
-			if ($mail->error)
+			$resql2=$db->query($sql2);
+			if ($resql2)
 			{
-				$res=0;
-			}
-			if (! $substitutionisok)
-			{
-				$mail->error='Some substitution failed';
-				$res=0;
-			}
+				$num2 = $db->num_rows($resql2);
+				dol_syslog("Nb of targets = ".$num2, LOG_DEBUG);
+				print "Nb of targets = ".$num2."\n";
 
-			// Send Email
-			if ($res)
-			{
-				$res=$mail->sendfile();
-			}
-
-			if ($res)
-			{
-				// Mail successful
-				$nbok++;
-
-				dol_syslog("ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
-
-				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql.=" SET statut=1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
-				$resql2=$db->query($sql);
-				if (! $resql2)
+				if ($num2)
 				{
-					dol_print_error($db);
+					$now=dol_now();
+
+					// Positionne date debut envoi
+					$sqlstartdate="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$id;
+					$resqlstartdate=$db->query($sqlstartdate);
+					if (! $resqlstartdate)
+					{
+						dol_print_error($db);
+						$error++;
+					}
+
+					// Look on each email and sent message
+					$i = 0;
+					while ($i < $num2)
+					{
+						$res=1;
+						$now=dol_now();
+
+						$obj2 = $db->fetch_object($resql2);
+
+						// sendto en RFC2822
+						$sendto = str_replace(',',' ',dolGetFirstLastname($obj2->firstname, $obj2->lastname) ." <".$obj2->email.">");
+
+						// Make subtsitutions on topic and body
+						$other=explode(';',$obj2->other);
+						$other1=$other[0];
+						$other2=$other[1];
+						$other3=$other[2];
+						$other4=$other[3];
+						$other5=$other[4];
+						$substitutionarray=array(
+						'__ID__' => $obj->source_id,
+						'__EMAIL__' => $obj->email,
+						'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+						'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+						'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
+						'__LASTNAME__' => $obj2->lastname,
+						'__FIRSTNAME__' => $obj2->firstname,
+						'__OTHER1__' => $other1,
+						'__OTHER2__' => $other2,
+						'__OTHER3__' => $other3,
+						'__OTHER4__' => $other4,
+						'__OTHER5__' => $other5
+						);
+
+						complete_substitutions_array($substitutionarray,$langs);
+						$newsubject=make_substitutions($subject,$substitutionarray);
+						$newmessage=make_substitutions($message,$substitutionarray);
+
+						$substitutionisok=true;
+
+						// Fabrication du mail
+						$mail = new CMailFile(
+						    $newsubject,
+						    $sendto,
+						    $from,
+						    $newmessage,
+						    array(),
+						    array(),
+						    array(),
+						    '',
+						    '',
+						    0,
+						    $msgishtml,
+						    $errorsto
+						);
+
+						if ($mail->error)
+						{
+							$res=0;
+						}
+						if (! $substitutionisok)
+						{
+							$mail->error='Some substitution failed';
+							$res=0;
+						}
+
+						// Send Email
+						if ($res)
+						{
+							$res=$mail->sendfile();
+						}
+
+						if ($res)
+						{
+							// Mail successful
+							$nbok++;
+
+							dol_syslog("ok for emailing id ".$id." #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+
+							$sqlok ="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+							$sqlok.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj2->rowid;
+							$resqlok=$db->query($sqlok);
+							if (! $resqlok)
+							{
+								dol_print_error($db);
+								$error++;
+							}
+							else
+							{
+								//if cheack read is use then update prospect contact status
+								if (strpos($message, '__CHECK_READ__') !== false)
+								{
+									//Update status communication of thirdparty prospect
+									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj2->rowid.")";
+									dol_syslog("fiche.php: set prospect thirdparty status sql=".$sql, LOG_DEBUG);
+									$resqlx=$db->query($sqlx);
+									if (! $resqlx)
+									{
+										dol_print_error($db);
+										$error++;
+									}
+
+					    //Update status communication of contact prospect
+									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj2->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+									dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
+
+									$resqlx=$db->query($sqlx);
+									if (! $resqlx)
+									{
+										dol_print_error($db);
+										$error++;
+									}
+								}
+							}
+						}
+						else
+						{
+							// Mail failed
+							$nbko++;
+
+							dol_syslog("error for emailing id ".$id." #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
+
+							$sqlerror="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+							$sqlerror.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj2->rowid;
+							$resqlerror=$db->query($sqlerror);
+							if (! $resqlerror)
+							{
+								dol_print_error($db);
+								$error++;
+							}
+						}
+
+						$i++;
+					}
 				}
 				else
 				{
-					//if cheack read is use then update prospect contact status
-					if (strpos($message, '__CHECK_READ__') !== false)
-					{
-						//Update status communication of thirdparty prospect
-						$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj->rowid.")";
-						dol_syslog("fiche.php: set prospect thirdparty status sql=".$sql, LOG_DEBUG);
-						$resql2=$db->query($sql);
-						if (! $resql2)
-						{
-							dol_print_error($db);
-						}
+					$mesg="Emailing id ".$id." has no recipient to target";
+					print $mesg."\n";
+					dol_syslog($mesg,LOG_ERR);
+				}
 
-					    //Update status communication of contact prospect
-						$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
-						dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
+				// Loop finished, set global statut of mail
+				$statut=2;
+				if (! $nbko) $statut=3;
 
-						$resql2=$db->query($sql);
-						if (! $resql2)
-						{
-							dol_print_error($db);
-						}
-					}
+				$sqlenddate="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+
+				dol_syslog("update global status sql=".$sqlenddate, LOG_DEBUG);
+				print "Update status of emailing id ".$id." to ".$statut."\n";
+				$resqlenddate=$db->query($sqlenddate);
+				if (! $resqlenddate)
+				{
+					dol_print_error($db);
+					$error++;
 				}
 			}
 			else
 			{
-				// Mail failed
-				$nbko++;
-
-				dol_syslog("error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
-
-				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
-				$resql2=$db->query($sql);
-				if (! $resql2)
-				{
-					dol_print_error($db);
-				}
+				dol_print_error($db);
+				$error++;
 			}
-
-			$i++;
 		}
 	}
-
-	// Loop finished, set global statut of mail
-	$statut=2;
-	if (! $nbko) $statut=3;
-
-	$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-	dol_syslog("update global status sql=".$sql, LOG_DEBUG);
-	$resql2=$db->query($sql);
-	if (! $resql2)
+	else
 	{
-		dol_print_error($db);
+		$mesg="No validated emailing id to send found.";
+		print $mesg."\n";
+		dol_syslog($mesg,LOG_ERR);
+		$error++;
 	}
 }
 else
 {
 	dol_print_error($db);
+	$error++;
 }
 
+
+exit($error);
 ?>

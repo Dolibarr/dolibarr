@@ -66,18 +66,13 @@ $object->substitutionarray=array(
     '__OTHER3__' => 'Other3',
     '__OTHER4__' => 'Other4',
     '__OTHER5__' => 'Other5',
-    '__SIGNATURE__' => 'TagSignature'
-    //,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
+    '__SIGNATURE__' => 'TagSignature',
+    '__CHECK_READ__' => 'TagCheckMail'
+	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
 if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
-    $object->substitutionarray=array_merge(
-        $object->substitutionarray,
-        array(
-            '__CHECK_READ__' => 'TagCheckMail',
-            '__UNSUBSCRIBE__' => 'TagUnsubscribe'
-        )
-    );
+    $object->substitutionarray=array_merge($object->substitutionarray, array('__UNSUBSCRIBE__' => 'TagUnsubscribe'));
 }
 
 $object->substitutionarrayfortest=array(
