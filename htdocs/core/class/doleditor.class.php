@@ -61,7 +61,7 @@ class DolEditor
 	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
      *      @param  int		$rows                   Size of rows for textarea tool
 	 *      @param  int		$cols                   Size of cols for textarea tool
-	 *      @param	int		$readOnly				0=Read/Edit, 1=Read only
+	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
 	 */
     function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
     {
