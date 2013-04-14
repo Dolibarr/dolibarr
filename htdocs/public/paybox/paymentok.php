@@ -103,7 +103,8 @@ if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fu
 		'New subscription payed',
 		$sendto,
 		$from,
-		'New subscription payed '.$fulltag);
+		'New subscription payed '.$fulltag
+		);
 
 	$result=$mailfile->sendfile();
 	if ($result)

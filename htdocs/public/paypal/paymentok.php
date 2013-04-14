@@ -140,7 +140,8 @@ if ($PAYPALTOKEN)
 			'New subscription payed',
 			$sendto,
 			$from,
-			'New subscription payed '.$fulltag);
+			'New subscription payed '.$fulltag
+			);
 
 		$result=$mailfile->sendfile();
 		if ($result)
