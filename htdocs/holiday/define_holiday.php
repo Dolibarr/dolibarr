@@ -144,7 +144,7 @@ print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="action" value="update" />';
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
-print '<td width="5%">User ID</td>';
+print '<td width="5%">'.$langs->trans('ID').'</td>';
 print '<td width="20%">'.$langs->trans('UserName').'</td>';
 print '<td width="10%">'.$langs->trans('Available').'</td>';
 print '<td>'.$langs->trans('UpdateButtonCP').'</td>';
