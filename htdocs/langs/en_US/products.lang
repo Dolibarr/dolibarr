@@ -184,3 +184,4 @@ AlwaysUseNewPrice=Always use current price of product/service
 AlwaysUseFixedPrice=Use the fixed price
 PriceByQuantity=Price by quantity
 PriceByQuantityRange=Quantity range
+ProductsDashboard=Products/Services summary

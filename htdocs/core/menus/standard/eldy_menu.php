@@ -160,10 +160,11 @@ class MenuManager
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
         			print '<ul>';
-        			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
+        			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools'))
+        				|| strpos($canonrelurl,'/product/index.php') || strpos($canonrelurl,'/compta/bank/index.php'))
 					{
         				// We add sub entry
-        				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+        				print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans(ucfirst($val['mainmenu'])."Dashboard").'</a></li>'."\n";
         			}
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
        				{

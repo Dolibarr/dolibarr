@@ -152,3 +152,4 @@ Pcg_type=Pcg type
 Pcg_subtype=Pcg subtype
 InvoiceLinesToDispatch=Invoice lines to dispatch
 InvoiceDispatched=Dispatched invoices
+AccountancyDashboard=Accountancy summary

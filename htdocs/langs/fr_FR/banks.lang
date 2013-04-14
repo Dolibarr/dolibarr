@@ -148,3 +148,4 @@ InputReceiptNumber=Saisissez le relevé bancaire concerné par le rapprochement.
 EventualyAddCategory=Eventuellement, saisissez une catégorie dans laquelle classer les écritures
 ToConciliate=A rapprocher ?
 ThenCheckLinesAndConciliate=Ensuite, cochez les lignes présentes sur le relevé et cliquez sur
+BankDashboard=Synthèse comptes bancaires
