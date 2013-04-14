@@ -32,6 +32,7 @@ For users:
 - New: Add option INVOICE_CAN_NEVER_BE_REMOVED.
 - New: Enhance agenda module to reach RFC2445 (add busy information).
 - New: Add module Opensurvey.
+- New: Default aprrover for holidays i sby default hierchical parent.
 - First change to prepare feature "click to print" (IPP) for PDF.
   
 For translators:
@@ -58,10 +59,10 @@ For developers:
   modules.
 
 WARNING: If you used external modules, some of them may need to be upgraded due to:
-- fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse were
-  renamed into lastname, firstname, zip, town, address).
+- Fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse, tel
+  were renamed into lastname, firstname, zip, town, address, phone).
   This may also be true for some fields into web services.
-- if module use hook pdf_writelinedesc, module may have to add return 1 at end of 
+- If module use hook pdf_writelinedesc, module may have to add return 1 at end of 
   function to keep same behaviour.
 
   
@@ -76,6 +77,9 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
 - Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
 - Fix: [ bug #774 ] Bug on creating event with box "all day" crossed 
+- Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
+- Fix: [ bug #816 ] Sales journal does not reflect localtaxes
+- Fix: Orderstoinvoice didn't act as expected when no order was checked
 
 
 

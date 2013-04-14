@@ -28,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
-$langs->load("opensurvey@opensurvey");
+$langs->load("opensurvey");
 
 $origin=GETPOST('origin','alpha');
 

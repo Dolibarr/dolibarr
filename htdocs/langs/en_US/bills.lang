@@ -189,6 +189,7 @@ Abandoned=Abandoned
 RemainderToPay=Remainder to pay
 RemainderToTake=Remainder to take
 RemainderToPayBack=Remainder to pay back
+Rest=Pending
 AmountExpected=Amount claimed
 ExcessReceived=Excess received
 EscompteOffered=Discount offered (payment before term)

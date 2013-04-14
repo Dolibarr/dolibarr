@@ -236,13 +236,15 @@ if ($action == 'confirm_delete'  && $_GET['confirm'] == 'yes')
     if($user->rights->holiday->delete)
     {
         $cp = new Holiday($db);
-        $cp->fetch($_GET['id']);
+        $cp->fetch($id);
 
         // Si c'est bien un brouillon
-        if($cp->statut == 1) {
+        if ($cp->statut == 1)
+        {
             // Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
-            if($user->id == $cp->fk_user || $user->rights->holiday->lire_tous) {
-                $cp->delete($_GET['id']);
+            if ($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
+            {
+                $cp->delete($id);
                 header('Location: index.php');
                 exit;
             }
@@ -257,12 +259,10 @@ if ($action == 'confirm_delete'  && $_GET['confirm'] == 'yes')
 if ($action == 'confirm_send')
 {
     $cp = new Holiday($db);
-    $cp->fetch($_GET['id']);
-
-    $userID = $user->id;
+    $cp->fetch($id);
 
     // Si brouillon et créateur
-    if($cp->statut == 1 && $userID == $cp->fk_user)
+    if($cp->statut == 1 && $user->id == $cp->fk_user)
     {
         $cp->statut = 2;
 
@@ -351,12 +351,10 @@ if ($action == 'confirm_send')
 if($action == 'confirm_valid')
 {
     $cp = new Holiday($db);
-    $cp->fetch($_GET['id']);
-
-    $userID = $user->id;
+    $cp->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
-    if($cp->statut == 2 && $userID == $cp->fk_validator)
+    if($cp->statut == 2 && $user->id == $cp->fk_validator)
     {
 
         $cp->date_valid = dol_now();
@@ -375,7 +373,7 @@ if($action == 'confirm_valid')
             $newSolde = $soldeActuel - ($nbJour*$cp->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $cp->addLogCP($userID,$cp->fk_user,'Event : '.$langs->transnoentitiesnoconv("Holiday"),$newSolde);
+            $cp->addLogCP($user->id, $cp->fk_user, 'Event : '.$langs->transnoentitiesnoconv("Holiday"), $newSolde);
 
             // Mise à jour du solde
             $cp->updateSoldeCP($cp->fk_user,$newSolde);
@@ -433,11 +431,9 @@ if ($action == 'confirm_refuse')
         $cp = new Holiday($db);
         $cp->fetch($_GET['id']);
 
-        $userID = $user->id;
-
         // Si statut en attente de validation et valideur = utilisateur
-        if($cp->statut == 2 && $userID == $cp->fk_validator) {
-
+        if($cp->statut == 2 && $user->id == $cp->fk_validator)
+        {
             $cp->date_refuse = date('Y-m-d H:i:s', time());
             $cp->fk_user_refuse = $user->id;
             $cp->statut = 5;
@@ -500,15 +496,13 @@ if ($action == 'confirm_refuse')
 }
 
 // Si Validation de la demande
-if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
+if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
     $cp = new Holiday($db);
     $cp->fetch($_GET['id']);
 
-    $userID = $user->id;
-
     // Si statut en attente de validation et valideur = utilisateur
-    if ($cp->statut == 2 && $userID == $cp->fk_validator)
+    if ($cp->statut == 2 && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
     {
         $cp->date_cancel = dol_now();
         $cp->fk_user_cancel = $user->id;
@@ -702,24 +696,29 @@ if (empty($id) || $action == 'add' || $action == 'request')
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
         print '</td>';
         print '</tr>';
+
+        // Approved by
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("ValidateByCP").'</td>';
-        // Liste des utiliseurs du groupes choisi dans la config
-        $idGroupValid = $cp->getConfCP('userGroup');
-
-        $validator = new UserGroup($db, $idGroupValid);
-        $valideurarray = $validator->listUsersForGroup();
-
+        // Liste des utiliseurs du groupe choisi dans la config
+        $validator = new UserGroup($db);
+        $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
+        $valideurobjects = $validator->listUsersForGroup($excludefilter);
+        $valideurarray = array();
+        foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
         print '<td>';
-        print $form->select_dolusers($validator->id, "valideur", 1, "", 0, $valideurarray);
+        print $form->select_dolusers($user->fk_user, "valideur", 1, "", 0, $valideurarray);	// By default, hierarchical parent
         print '</td>';
         print '</tr>';
+
+        // Description
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td>';
         print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70"></textarea>';
         print '</td>';
         print '</tr>';
+
         print '</tbody>';
         print '</table>';
         print '<div style="clear: both;"></div>';
@@ -755,9 +754,6 @@ else
 
             $userRequest = new User($db);
             $userRequest->fetch($cp->fk_user);
-
-            // Utilisateur connecté
-            $userID = $user->id;
 
             //print_fiche_titre($langs->trans('TitreRequestCP'));
 
@@ -811,21 +807,21 @@ else
                 }
 
                 // Si envoi en validation
-                if ($action == 'sendToValidate' && $cp->statut == 1 && $userID == $cp->fk_user)
+                if ($action == 'sendToValidate' && $cp->statut == 1 && $user->id == $cp->fk_user)
                 {
                     $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si validation de la demande
-                if ($action == 'valid' && $cp->statut == 2 && $userID == $cp->fk_validator)
+                if ($action == 'valid' && $cp->statut == 2 && $user->id == $cp->fk_validator)
                 {
                     $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
                     if ($ret == 'html') print '<br />';
                 }
 
                 // Si refus de la demande
-                if ($action == 'refuse' && $cp->statut == 2 && $userID == $cp->fk_validator)
+                if ($action == 'refuse' && $cp->statut == 2 && $user->id == $cp->fk_validator)
                 {
                     $array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif de refus :",'name'=>"detail_refuse",'size'=>"50",'value'=>""));
                     $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), "", "confirm_refuse", $array_input, 1, 0);
@@ -833,7 +829,7 @@ else
                 }
 
                 // Si annulation de la demande
-                if ($action == 'cancel' && $cp->statut == 2 && $userID == $cp->fk_validator)
+                if ($action == 'cancel' && $cp->statut == 2 && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
                 {
                     $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                     if ($ret == 'html') print '<br />';
@@ -1031,16 +1027,16 @@ else
                     	print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
 
-                    // Si le statut est en attente de validation et que le valideur est connecté
-                    if ($userID == $cp->fk_validator && $cp->statut == 2)
+                    if ($user->id == $cp->fk_validator && $cp->statut == 2)
                     {
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
                     }
 
-                    if (($userID == $cp->fk_validator && $cp->statut == 2) || ($cp->date_debut > dol_now()) || $user->admin)
+                    if (($user->id == $cp->fk_validator || $user->id == $cp->fk_user) && $cp->statut == 2)
                     {
-	                    print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+                    	if (($cp->date_debut > dol_now()) || $user->admin) print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
+                    	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
                     }
 
                     print '</div>';

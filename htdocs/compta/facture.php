@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2161,7 +2161,9 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
         $newclassname=$classname;
-        if ($newclassname=='Propal') $newclassname='CommercialProposal';
+        if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+        elseif ($newclassname == 'Commande') $newclassname = 'Order';
+
         print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
@@ -2870,7 +2872,7 @@ else if ($id > 0 || ! empty($ref))
             if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat')
             {
                 print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
-                print $form->textwithpicto($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+                print $form->textwithpicto($langs->trans("Discount").':',$langs->trans("HelpEscompte"),-1);
                 print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                 $resteapayeraffiche=0;
             }

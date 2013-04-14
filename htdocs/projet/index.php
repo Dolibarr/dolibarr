@@ -68,12 +68,16 @@ else
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-print '<tr><td width="30%" valign="top" class="notopnoleft">';
+
+
+print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 print_projecttasks_array($db,$socid,$projectsListId);
 
-print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
+
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -128,7 +132,9 @@ else
 }
 print "</table>";
 
-print '</td></tr></table>';
+
+print '</div></div></div>';
+
 
 llxFooter();
 

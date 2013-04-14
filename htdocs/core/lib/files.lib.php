@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012 	   Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2013	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -647,7 +647,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -2;
 		}
 
-		$hookmanager->initHooks(array('fileslib'));
+		$reshook=$hookmanager->initHooks(array('fileslib'));
 
 		$parameters=array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
 		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
@@ -686,6 +686,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			return -3;	// Unknown error
 		}
 	}
+	else
+		return $reshook;
 }
 
 /**

@@ -1432,7 +1432,7 @@ else
                 }
 
                 /*
-                 * Groupes affectes
+                 * Groups assigned to user
                  */
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
@@ -1455,11 +1455,11 @@ else
                         print '<td>';
                         if ($caneditgroup)
                         {
-                            print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->nom.'</a>';
+                            print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
                         }
                         else
                         {
-                            print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
+                            print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
                         }
                         print '</td>';
                         if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)

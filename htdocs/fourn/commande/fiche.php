@@ -1528,7 +1528,7 @@ elseif (! empty($object->id))
 			print '</td>';
 			print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
 			print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
-			print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$line->remise_percent.'">%</td>';
+			print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$line->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
 			print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 			print '</tr>' .	"\n";
@@ -1596,7 +1596,7 @@ elseif (! empty($object->id))
 		print '</td>';
 		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
 		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-		print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'">%</td>';
+		print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'"><span class="hideonsmartphone">%</span></td>';
 		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 		print '</tr>';
 
@@ -1653,7 +1653,7 @@ elseif (! empty($object->id))
 
 			print '</td>';
 			print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-			print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'">%</td>';
+			print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'"><span class="hideonsmartphone">%</span></td>';
 			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
 			print '</tr>';
 

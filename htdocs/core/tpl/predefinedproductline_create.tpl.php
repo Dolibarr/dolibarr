@@ -106,7 +106,7 @@ jQuery(document).ready(function() {
 	?>
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" value="1"></td>
-	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
+	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	$colspan = 4;
 	if (! empty($usemargins)) 

@@ -33,6 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 $origin=GETPOST('origin','alpha');
 
+$langs->load("opensurvey");
+
 
 /*
  * View

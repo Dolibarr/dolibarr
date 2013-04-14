@@ -31,7 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
  * View
  */
 
-$langs->load("opensurvey@opensurvey");
+$langs->load("opensurvey");
+
 llxHeader();
 
 $nbsondages=0;

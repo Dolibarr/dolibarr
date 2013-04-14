@@ -45,6 +45,7 @@ MargeBrute=Raw margin
 MargeNette=Net margin
 MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
 
+CostPrice=Cost price
 BuyingCost=Cost price
 UnitCharges=Unit charges
 Charges=Charges

@@ -39,7 +39,9 @@ $numsondageadmin=GETPOST("sondage");
 $numsondage=substr($numsondageadmin, 0, 16);
 
 $object=new Opensurveysondage($db);
-$object->fetch(0,$numsondageadmin);
+$result=$object->fetch(0,$numsondage);
+if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
+
 $nblignes=count($object->fetch_lines());
 
 
@@ -76,8 +78,8 @@ if (isset($_POST["boutonp"]) || isset($_POST["boutonp_x"]))
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom';
-		$sql.= ' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs';
-		$sql.= ' WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."'";
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
+		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."'";
 		$sql.= ' ORDER BY id_users';
 		$resql = $db->query($sql);
 		$num_rows = $db->num_rows($resql);
@@ -211,7 +213,7 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D" || $object->forma
 			$cleinsertion = count($datesbase);
 		} else {
 			$nbdatesbase=count($datesbase);
-			for ($i = 0; $i < $nbdatesbase; $i++) 
+			for ($i = 0; $i < $nbdatesbase; $i++)
 			{
 				$j = $i + 1;
 				if ($nouvelledate > $datesbase[$i] && $nouvelledate < $datesbase[$j]) {
@@ -587,7 +589,7 @@ print '<input type="hidden" name="sondage" value="'.$numsondageadmin.'">';
 print '<div class="cadre"> '."\n";
 print '<br>'."\n";
 
-//debut de l'affichage de résultats
+// Start to show survey result
 print '<table class="resultats">'."\n";
 
 //reformatage des données des sujets du sondage
@@ -863,14 +865,14 @@ while ($compteur < $num)
 		}
 	}
 
-	//a la fin de chaque ligne se trouve les boutons modifier
+	// Button edit at end of line
 	if ($compteur != $ligneamodifier)
 	{
 		print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
 	//demande de confirmation pour modification de ligne
-	for ($i = 0; $i < $nblignes; $i++)
+	for ($i=0; $i<$nblignes; $i++)
 	{
 		if (isset($_POST["modifierligne".$i]))
 		{
@@ -935,10 +937,12 @@ for ($i=0; $i < $nbcolonnes + 1; $i++)
 	$nbofcheckbox++;
 	if (isset($sumfor[$i]))
 	{
-		if ($i == 0) {
+		if ($i == 0)
+		{
 			$meilleurecolonne = $sumfor[$i];
 		}
-		if (isset($sumfor[$i]) && $sumfor[$i] > $meilleurecolonne){
+		if (isset($sumfor[$i]) && $sumfor[$i] > $meilleurecolonne)
+		{
 			$meilleurecolonne = $sumfor[$i];
 		}
 	}
@@ -1015,7 +1019,7 @@ $toutsujet = explode(",", $object->sujet);
 $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
-	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne){
+	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
 		$meilleursujet.=", ";
 
 		if ($object->format == "D" || $object->format == "D+") {
@@ -1038,7 +1042,6 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 	}
 }
 
-//adaptation pour affichage des valeurs
 $meilleursujet = substr("$meilleursujet", 1);
 $meilleursujet = str_replace("°", "'", $meilleursujet);
 
@@ -1046,17 +1049,19 @@ $meilleursujet = str_replace("°", "'", $meilleursujet);
 if ($nbofcheckbox >= 2)
 {
 	$vote_str = $langs->trans('votes');
-	print '<p class=affichageresultats>'."\n";
+	print '<p class="affichageresultats">'."\n";
 
 	if (isset($meilleurecolonne) && $compteursujet == "1") {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . " : <b>$meilleursujet </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".<br>\n";
+		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoice') . " : <b>$meilleursujet </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	} elseif (isset($meilleurecolonne)) {
-		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . " : <b>$meilleursujet </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".<br>\n";
+		print "<img src=\"".dol_buildpath('/opensurvey/img/medaille.png',1)."\"> " . $langs->trans('TheBestChoices') . " : <b>$meilleursujet </b>" . $langs->trans("with") . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 	}
-	print '</p><br>'."\n";
+	print '<br></p><br>'."\n";
 }
 
 print '</form>'."\n";
+
+print '<a name="bas"></a>'."\n";
 
 llxFooterSurvey();
 

@@ -1667,7 +1667,7 @@ else
                 print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
                 print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('Discount').'</td>';
+                print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
                 print '<td align="right">'.$langs->trans('TotalHTShort').'</td>';
                 print '<td align="right">'.$langs->trans('TotalTTCShort').'</td>';
                 print '<td>&nbsp;</td>';
@@ -1746,7 +1746,7 @@ else
 
                 print '<td align="right"><input size="1" name="qty" type="text" value="'.$object->lines[$i]->qty.'"></td>';
 
-                print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'">%</td>';
+                print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
 
                 print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 
@@ -1845,7 +1845,7 @@ else
             print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
             print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
             print '<td align="right">'.$langs->trans('Qty').'</td>';
-            print '<td align="right">&nbsp;</td>';
+            print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
             print '<td align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
             print '<td>&nbsp;</td>';
@@ -1891,7 +1891,7 @@ else
             print '<td align="right">';
             print '<input size="1" name="qty" type="text" value="1">';
             print '</td>';
-            print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'">%</td>';
+            print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
             print '<td>&nbsp;</td>';
             print '<td>&nbsp;</td>';
             print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
@@ -1913,7 +1913,7 @@ else
                 }
                 print '</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
-            	print '<td>&nbsp;</td>';
+            	print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
                 print '<td>&nbsp;</td>';
                 print '<td colspan="4">&nbsp;</td>';
                 print '</tr>';
@@ -1958,7 +1958,7 @@ else
 
                 print '</td>';
                 print '<td align="right"><input type="text" id="pqty" name="qty" value="1" size="1"></td>';
-            	print '<td align="right" nowrap="nowrap"><input size="1" id="p_remise_percent" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'">%</td>';
+            	print '<td align="right" nowrap="nowrap"><input size="1" id="p_remise_percent" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'"></td>';

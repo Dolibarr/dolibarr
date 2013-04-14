@@ -1719,7 +1719,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     $ret.='<input type="text" class="flat" ';
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
-    $ret.=' name="'.$htmlinputname.'" size="10" />&nbsp;';
+    $ret.=' name="'.$htmlinputname.'" size="10" />';
     $ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
     $ret.="</form>\n";
     return $ret;
