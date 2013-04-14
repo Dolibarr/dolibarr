@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,8 +135,8 @@ if ($resql)
 						$substitutionarray=array(
 						'__ID__' => $obj->source_id,
 						'__EMAIL__' => $obj->email,
-						'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-						'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+						'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+						'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 						'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
 						'__LASTNAME__' => $obj2->lastname,
 						'__FIRSTNAME__' => $obj2->firstname,

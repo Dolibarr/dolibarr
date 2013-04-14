@@ -31,15 +31,17 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require '../../main.inc.php';
 
 $tag=GETPOST('tag');
+$securitykey=GETPOST('securitykey');
 
-if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not enabled');
+//if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not enabled');
+if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE) accessforbidden('Bad security key value.');
 
 
 /*
  * Actions
  */
 
-if ($tag!='')
+if (! empty($tag))
 {
 	$statut='2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
