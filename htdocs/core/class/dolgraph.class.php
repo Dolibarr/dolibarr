@@ -905,7 +905,7 @@ class DolGraph
     {
     	global $conf;
 
-    	if ($direction == 'width')  return ($conf->dol_optimize_smallscreen?'400':($defaultsize?$defaultsize:'500'));
+    	if ($direction == 'width')  return ($conf->dol_optimize_smallscreen?(empty($_SESSION['dol_screen_width'])?'280':$_SESSION['dol_screen_width']-40):($defaultsize?$defaultsize:'500'));
     	if ($direction == 'height') return ($conf->dol_optimize_smallscreen?'160':($defaultsize?$defaultsize:'200'));
     	return 0;
     }

@@ -379,7 +379,7 @@ td.showDragHandle {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'4')); ?>px;
 }
 
 div.fichecenter {
@@ -405,7 +405,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 
@@ -1280,8 +1280,8 @@ div.tabs {
 div.tabBar {
     color: #<?php echo $colortextmain; ?>;
     padding-top: 9px;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
+    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'8'); ?>px;
     padding-bottom: 8px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:6px;
@@ -1301,9 +1301,11 @@ div.tabBar {
 <?php } else { ?>
 	background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
 <?php } ?>
+<?php if (empty($dol_optimize_smallscreen)) { ?>
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
     box-shadow: 4px 4px 4px #CCC;
+<?php } ?>
 }
 
 div.tabsAction {
@@ -2546,6 +2548,16 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+.ui-btn-inner {
+	padding-left: 12px;
+}
+.ui-select .ui-btn-icon-right .ui-btn-inner {
+	padding-right: 36px;
+}
+/* Warning: setting this make screen not beeing refreshed after a combo selection */
+/*.ui-body-c {
+	background: #fff;
+}*/
 /*
 .ui-li-divider {
 	background: #eee !important;

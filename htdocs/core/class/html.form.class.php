@@ -3476,7 +3476,7 @@ class Form
                 if ($fullday) $reset_scripts .= ' } ';
             }
             // If reset_scripts is not empty, print the button with the reset_scripts in OnClick
-            if ($reset_scripts)
+            if ($reset_scripts && empty($conf->dol_optimize_smallscreen))
             {
                 $retstring.=' <button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Now" onClick="'.$reset_scripts.'">';
                 $retstring.=$langs->trans("Now");
