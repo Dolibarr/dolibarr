@@ -24,16 +24,18 @@
  *	\brief      Prelevement creation page
  */
 
-require '../bank/pre.inc.php';
+require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+$langs->load("banks");
+$langs->load("categories");
 $langs->load("widthdrawals");
 $langs->load("companies");
-$langs->load("banks");
 $langs->load("bills");
 
 // Security check
