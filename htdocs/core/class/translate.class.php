@@ -205,7 +205,7 @@ class Translate
 
 			$filelangexists=is_file($file_lang_osencoded);
 
-			//dol_syslog('Translate::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
+			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' newdomain='.$domain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 
 			if ($filelangexists)
 			{
@@ -694,6 +694,7 @@ class Translate
 	/**
 	 *	Return a currency code into its symbol
 	 *
+	 *  @param	string	$currency_code		Currency Code
 	 *  @param	string	$amount				If not '', show currency + amount according to langs ($10, 10€).
 	 *  @return	string						Amount + Currency symbol encoded into UTF8
 	 */

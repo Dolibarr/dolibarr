@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Marc Barilley		<marc@ocebo.com>
+ * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +145,46 @@ function ordersupplier_prepare_head($object)
 	$head[$h][1] = $langs->trans("OrderFollow");
 	$head[$h][2] = 'info';
 	$h++;
+
+	return $head;
+}
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @param	Object	$object		order
+ *  @return	array   	        head array with tabs
+ */
+function supplierorder_admin_prepare_head($object)
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_order.php";
+	$head[$h][1] = $langs->trans("SupplierOrder");
+	$head[$h][2] = 'order';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
+	$head[$h][1] = $langs->trans("SuppliersInvoice");
+	$head[$h][2] = 'invoice';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin');
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
+	$head[$h][2] = 'supplierorder';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
+	$head[$h][2] = 'supplierinvoice';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplierorder_admin','remove');
 
 	return $head;
 }

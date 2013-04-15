@@ -134,6 +134,18 @@ class Task extends CommonObject
                 // End call triggers
             }
         }
+        
+        //Update extrafield
+        if (!$error) {
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
+        }
 
         // Commit or rollback
         if ($error)
@@ -274,6 +286,18 @@ class Task extends CommonObject
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // End call triggers
             }
+        }
+        
+        //Update extrafield
+        if (!$error) {
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
         }
 
         // Commit or rollback
@@ -1027,7 +1051,7 @@ class Task extends CommonObject
         	else
         	{
         		$this->db->begin();
-				$res=$clone_task->update_note_public(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES));
+				$res=$clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES),'_public');
 				if ($res < 0)
 				{
 					$this->error.=$clone_task->error;

@@ -139,9 +139,7 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled))
     {
-    	// FIXME socid parameters is not valid, a member is not a thirparty
-        //print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create">'.$langs->trans("AddAction").'</a>';
+        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create">'.$langs->trans("AddAction").'</a></div>';
     }
 
     print '</div>';

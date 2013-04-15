@@ -52,13 +52,6 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-// If smartphone mode, we do not show main page, we show only menu. TODO Remove this
-if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
-{
-    include_once DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/menu.tpl.php';
-    exit;
-}
-
 llxHeader('',$langs->trans("HomeArea"));
 
 print_fiche_titre($langs->trans("HomeArea"));
@@ -173,8 +166,8 @@ if ($user->societe_id == 0)
 				 'bill',
 				 'order');
     // Translation keyword
-    $titres=array("Customers",
-                  "Prospects",
+    $titres=array("ThirdPartyCustomersStats",
+                  "ThirdPartyProspectsStats",
                   "Suppliers",
                   "Members",
                   "Products",
@@ -260,7 +253,7 @@ print '<th class="liste_titre"align="right">'.$langs->trans("Number").'</th>';
 print '<th class="liste_titre"align="right">'.$langs->trans("Late").'</th>';
 print '<th class="liste_titre">&nbsp;</th>';
 print '<th class="liste_titre"width="20">&nbsp;</th>';
-if ($showweather) print '<th class="liste_titre" width="80">&nbsp;</th>';
+if ($showweather) print '<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
 print '</tr>';
 
 
@@ -483,7 +476,7 @@ foreach($dashboardlines as $key => $board)
     print '</td>';
     if ($showweather)
     {
-        print '<td class="nohover" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
+        print '<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
         $text='';
         if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
         $options='height="64px"';

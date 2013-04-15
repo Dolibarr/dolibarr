@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -37,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
@@ -138,13 +140,13 @@ else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->
 
 else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
+else if ($action == 'setnote_private' && $user->rights->fournisseur->commande->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -675,7 +677,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         // Creation commande
         $object->ref_supplier  	= GETPOST('refsupplier');
         $object->socid         	= $socid;
-        $object->note			= GETPOST('note');
+        $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
 
         $id = $object->create($user);
@@ -997,14 +999,24 @@ if ($action=="create")
 	print '</tr>';
 
 	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans('Note').'</td>';
-	print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
-	print '</tr>';
-
+	
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
-	print '<td><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+	print '<td>';
+	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td>';
+	//print '<textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea>';
 	print '</tr>';
+
+	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
+	print '<td>';
+	$doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+	print $doleditor->Create(1);
+	print '</td>';
+	//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
+	print '</tr>';
+
+	
 
 	// Other options
     $parameters=array();
@@ -1504,9 +1516,7 @@ elseif (! empty($object->id))
 				$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
 				$reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
 			}
-
-			// Description - Editor wysiwyg
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			
 			$nbrows=ROWS_2;
 			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 			$doleditor=new DolEditor('eldesc',$line->description,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1518,7 +1528,7 @@ elseif (! empty($object->id))
 			print '</td>';
 			print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
 			print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
-			print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$line->remise_percent.'">%</td>';
+			print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$line->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
 			print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 			print '</tr>' .	"\n";
@@ -1532,8 +1542,6 @@ elseif (! empty($object->id))
 	 */
 	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'editline')
 	{
-		//WYSIWYG Editor
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 		print '<tr class="liste_titre">';
 		print '<td>';
@@ -1588,7 +1596,7 @@ elseif (! empty($object->id))
 		print '</td>';
 		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
 		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-		print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'">%</td>';
+		print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_client).'"><span class="hideonsmartphone">%</span></td>';
 		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 		print '</tr>';
 
@@ -1645,7 +1653,7 @@ elseif (! empty($object->id))
 
 			print '</td>';
 			print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
-			print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'">%</td>';
+			print '<td align="right" nowrap="nowrap"><input type="text" size="1" id="p_remise_percent" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$object->thirdparty->remise_client).'"><span class="hideonsmartphone">%</span></td>';
 			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
 			print '</tr>';
 
@@ -1855,7 +1863,7 @@ elseif (! empty($object->id))
 	{
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
 
 		// Build document if it not exists
@@ -1878,7 +1886,7 @@ elseif (! empty($object->id))
 				dol_print_error($db,$result);
 				exit;
 			}
-			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+			$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
 			$file=$fileparams['fullname'];
 		}
 

@@ -48,6 +48,9 @@ $result=$object->fetch($id);
 
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('mailing');
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('mailingcard'));
 
@@ -63,18 +66,13 @@ $object->substitutionarray=array(
     '__OTHER3__' => 'Other3',
     '__OTHER4__' => 'Other4',
     '__OTHER5__' => 'Other5',
-    '__SIGNATURE__' => 'TagSignature'
-    //,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
+    '__SIGNATURE__' => 'TagSignature',
+    '__CHECK_READ__' => 'TagCheckMail'
+	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
 if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
-    $object->substitutionarray=array_merge(
-        $object->substitutionarray,
-        array(
-            '__CHECK_READ__' => 'TagCheckMail',
-            '__UNSUBSCRIBE__' => 'TagUnsubscribe'
-        )
-    );
+    $object->substitutionarray=array_merge($object->substitutionarray, array('__UNSUBSCRIBE__' => 'TagUnsubscribe'));
 }
 
 $object->substitutionarrayfortest=array(
@@ -631,8 +629,6 @@ if (! empty($_POST["cancel"]))
  * View
  */
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('mailing');
 
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('',$langs->trans("Mailing"),$help_url);
@@ -661,15 +657,7 @@ if ($action == 'create')
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-      		print '<tr><td';
-       		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-       		print '>'.$label.'</td><td colspan="3">';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
-		}
+		print $object->showOptionals($extrafields,'edit');
 	}
 
 	print '</table>';
@@ -823,15 +811,7 @@ else
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-					print $extrafields->showInputField($key,$value);
-					print "</td></tr>\n";
-				}
+				print $object->showOptionals($extrafields);
 			}
 
 			print '</table>';
@@ -1019,7 +999,7 @@ else
 			{
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_readonly','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,70);
+				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_readonly','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,1);
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);
@@ -1072,15 +1052,7 @@ else
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook) && ! empty($extrafields->attribute_label))
 			{
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		print '<tr><td';
-            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-            		print '>'.$label.'</td><td colspan="3">';
-					print $extrafields->showInputField($key,$value);
-					print "</td></tr>\n";
-				}
+				print $object->showOptionals($extrafields,'edit');
 			}
 
 			print '</table>';
@@ -1153,7 +1125,7 @@ else
 			print '<td colspan="3">';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
+			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,120);
 			$doleditor->Create();
 			print '</td></tr>';
 

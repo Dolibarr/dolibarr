@@ -89,7 +89,7 @@ if (! $sortorder) $sortorder="ASC";
 if ($user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT s.rowid as socid, s.nom,";
-	$sql.= " f.rowid as ref, f.facnumber, f.total_ht, f.total_ttc,";
+	$sql.= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
 	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql.= " ,sum(pf.amount) as am";
@@ -121,7 +121,7 @@ if ($user->rights->fournisseur->facture->lire)
 	}
 	if ($search_ref_supplier)
 	{
-		$sql .= " AND f.facnumber LIKE '%".$search_ref_supplier."%'";
+		$sql .= " AND f.ref_supplier LIKE '%".$search_ref_supplier."%'";
 	}
 
 	if ($search_societe)
@@ -141,14 +141,14 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if (dol_strlen(GETPOST('sf_re')) > 0)
 	{
-		$sql .= " AND f.facnumber LIKE '%".GETPOST('sf_re')."%'";
+		$sql .= " AND f.ref_supplier LIKE '%".GETPOST('sf_re')."%'";
 	}
-	$sql.= " GROUP BY f.facnumber, f.rowid, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
+	$sql.= " GROUP BY f.ref_supplier, f.rowid, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
 
 	$sql.= " ORDER BY ";
 	$listfield=explode(',',$sortfield);
 	foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
-	$sql.= " f.facnumber DESC";
+	$sql.= " f.ref_supplier DESC";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -191,7 +191,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.rowid","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.ref_supplier","",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
@@ -242,7 +242,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
-				print "<td nowrap>".dol_trunc($objp->facnumber,12)."</td>\n";
+				print "<td nowrap>".dol_trunc($objp->ref_supplier,12)."</td>\n";
 
 				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
 				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite),'day');

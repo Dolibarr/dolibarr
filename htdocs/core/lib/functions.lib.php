@@ -321,14 +321,14 @@ function dol_clone($object)
  *
  * 	@param	int		$size		Size we want
  * 	@param	string	$type		Type of optimizing:
- * 										'' = function used to define a size for truncation
- * 										'width' = function is used to define a width
+ * 								'' = function used to define a size for truncation
+ * 								'width' = function is used to define a width
  *	@return int					New size after optimizing
  */
 function dol_size($size,$type='')
 {
 	global $conf;
-	if (empty($conf->browser->phone)) return $size;
+	if (empty($conf->dol_optimize_smallscreen)) return $size;
 	if ($type == 'width' && $size > 250) return 250;
 	else return 10;
 }
@@ -588,10 +588,14 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
+	global $conf;
+
 	$out="\n".'<div class="tabs">'."\n";
 
-	// Affichage titre
-	if (! empty($title))
+	// Show title
+	$showtitle=1;
+	if (! empty($conf->dol_optimize_smallscreen)) $showtitle=0;
+	if (! empty($title) && $showtitle)
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';
@@ -668,22 +672,39 @@ function dol_get_fiche_end($notab=0)
 }
 
 /**
+ * Return string to add class property on html element with pair/impair.
+ *
+ * @param	string	$var			0 or 1
+ * @param	string	$moreclass		More class to add
+ * @return	string					String to add class onto HTML element
+ */
+function dol_bc($var,$moreclass='')
+{
+	global $bc;
+	$ret=' '.$bc[$var];
+	if ($moreclass) $ret=preg_replace('/class=\"/','class="'.$moreclass.' ',$ret);
+	return $ret;
+}
+
+/**
  *      Return a formated address (part address/zip/town/state) according to country rules
  *
  *      @param  Object		$object         A company or contact object
+ * 	    @param	int			$withcountry	1=Add country into address string
+ *      @param	string		$sep			Separator to use to build string
  *      @return string          			Formated string
  */
-function dol_format_address($object)
+function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('US','IN','GB','ES');
+	$countriesusingstate=array('AU','US','IN','GB','ES');
 
 	// Address
 	$ret .= $object->address;
 	// Zip/Town/State
-	if (in_array($object->country_code,array('US')))   	// US: title firstname name \n address lines \n town, state, zip \n country
+	if (in_array($object->country_code,array('US','AU')))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->town;
+		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
@@ -692,16 +713,16 @@ function dol_format_address($object)
 	}
 	else if (in_array($object->country_code,array('GB'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->town;
+		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
 		}
-		if ($object->zip) $ret .= ($ret ? "\n" : '' ).$object->zip;
+		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
-	else if (in_array($object->country_code,array('ES'))) // title firstname name \n address lines \n zip town \n state \n country
+	else if (in_array($object->country_code,array('ES'))) // ES: title firstname name \n address lines \n zip town \n state \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
@@ -711,13 +732,15 @@ function dol_format_address($object)
 
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
-		$ret .= ($ret ? "\n" : '' ).$object->zip;
+		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ' '.$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=", ".$object->state;
 		}
 	}
+
+	if ($withcountry) $ret.=($object->country?$sep.$object->country:'');
 
 	return $ret;
 }
@@ -763,6 +786,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 {
 	global $conf,$langs;
 
+	// Clean parameters
 	$to_gmt=false;
 	$offsettz=$offsetdst=0;
 	if ($tzoutput)
@@ -788,36 +812,32 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 			}
 		}
 	}
-
 	if (! is_object($outputlangs)) $outputlangs=$langs;
-
-	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
-	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
+	if (! $format) $format='daytextshort';
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
-	if ($format == 'day')					$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
-	else if ($format == 'hour')				$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
-	else if ($format == 'hourduration')		$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
-	else if ($format == 'daytext')			$format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
-	else if ($format == 'daytextshort')		$format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
-	else if ($format == 'dayhour')			$format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
-	else if ($format == 'dayhoursec')		$format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
-	else if ($format == 'dayhourtext')		$format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
-	else if ($format == 'dayhourtextshort')	$format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
-
+	if ($format == 'day')					 $format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
+	else if ($format == 'hour')			 $format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
+	else if ($format == 'hourduration')	 $format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
+	else if ($format == 'daytext')			 $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
+	else if ($format == 'daytextshort')	 $format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
+	else if ($format == 'dayhour')			 $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
+	else if ($format == 'dayhoursec')		 $format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
+	else if ($format == 'dayhourtext')		 $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
+	else if ($format == 'dayhourtextshort') $format=($outputlangs->trans("FormatDateHourTextShort")!="FormatDateHourTextShort"?$outputlangs->trans("FormatDateHourTextShort"):$conf->format_date_hour_text_short);
 	// Format not sensitive to language
-	else if ($format == 'dayhourlog')		$format='%Y%m%d%H%M%S';
-	else if ($format == 'dayhourldap')		$format='%Y%m%d%H%M%SZ';
-	else if ($format == 'dayhourxcard')		$format='%Y%m%dT%H%M%SZ';
-	else if ($format == 'dayxcard')			$format='%Y%m%d';
-	else if ($format == 'dayrfc')			$format='%Y-%m-%d';             // DATE_RFC3339
-	else if ($format == 'dayhourrfc')		$format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
+	else if ($format == 'dayhourlog')		 $format='%Y%m%d%H%M%S';
+	else if ($format == 'dayhourldap')		 $format='%Y%m%d%H%M%SZ';
+	else if ($format == 'dayhourxcard')	 $format='%Y%m%dT%H%M%SZ';
+	else if ($format == 'dayxcard')	 	 $format='%Y%m%d';
+	else if ($format == 'dayrfc')			 $format='%Y-%m-%d';             // DATE_RFC3339
+	else if ($format == 'dayhourrfc')		 $format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
+	else if ($format == 'standard')		 $format='%Y-%m-%d %H:%M:%S';
 
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
-	//print 'x'.$time;
-
+	// Clean format
 	if (preg_match('/%b/i',$format))		// There is some text to translate
 	{
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
@@ -1155,17 +1175,18 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
  * 	@param 	string	$country 	Country code to use for formatting
  * 	@param 	int		$cid 		Id of contact if known
  * 	@param 	int		$socid 		Id of third party if known
- * 	@param 	int		$addlink	0=no link to create action
- * 	@param 	string	$separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	@param 	int		$addlink	''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$separ 		Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  * 	@return string 				Formated phone number
  */
-function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ="&nbsp;")
+function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;")
 {
-	global $conf,$user,$langs;
+	global $conf,$user,$langs,$mysoc;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
 	if (empty($phone)) { return ''; }
+	if (empty($country)) $country=$mysoc->country_code;
 
 	$newphone=$phone;
 	if (strtoupper($country) == "FR")
@@ -1198,8 +1219,11 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 		{
 			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
-			if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured';
-			else $urlmask=$conf->global->CLICKTODIAL_URL;
+			// Define urlmask
+			$urlmask='ErrorClickToDialModuleNotConfigured';
+			if (! empty($conf->global->CLICKTODIAL_URL)) $urlmask=$conf->global->CLICKTODIAL_URL;
+			if (! empty($user->clicktodial_url)) $urlmask=$user->clicktodial_url;
+
 			$clicktodial_poste=(! empty($user->clicktodial_poste)?urlencode($user->clicktodial_poste):'');
 			$clicktodial_login=(! empty($user->clicktodial_login)?urlencode($user->clicktodial_login):'');
 			$clicktodial_password=(! empty($user->clicktodial_password)?urlencode($user->clicktodial_password):'');
@@ -1223,7 +1247,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$type='AC_TEL'; $link='';
 			if ($addlink == 'AC_FAX') $type='AC_FAX';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORPHONE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.($cid?'&amp;contactid='.$cid:'').($socid?'&amp;socid='.$socid:'').'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
-			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
+			if ($link) $newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>&nbsp;'.$link.'</td></tr></table>';
 		}
 	}
 
@@ -1577,7 +1601,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible. 0 for no limit. finale string size can be 1 more (if size was max+1) or 3 more (if we added ...)
+ *	@param  int		$size				Max string size visible. 0 for no limit. Final string size can be 1 more (if size was max+1) or 3 more (if we added ...)
  *	@param	string	$trunc				Where to trunc: right, left, middle (size must be a 2 power), wrap
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
@@ -1640,10 +1664,11 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@param		string		$options			Add more attribute on img tag (For example 'style="float: right"')
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
+function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srconly=0)
 {
 	global $conf;
 
@@ -1678,7 +1703,8 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
-	return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.(! empty($options)?' '.$options:'').'>';
+	if ($srconly) return $fullpathpicto;
+	else return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.(! empty($options)?' '.$options:'').'>';
 }
 
 /**
@@ -2098,10 +2124,10 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'star');
+		return img_picto($text, 'star', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info">').img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), 'star', 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -2260,7 +2286,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	Get title line of an array
  *
  *	@param	string	$name        Label of field
- *	@param	int		$thead		 For thead format
+ *	@param	int		$thead		 For thead format (0 by default)
  *	@param	string	$file        Url used when we click on sort picto
  *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
@@ -2275,20 +2301,33 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 	global $conf;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
+	$sortorder=strtoupper($sortorder);
 	$out='';
+
 	// If field is used as sort criteria we use a specific class
 	// Example if (sortfield,field)=("nom","xxx.nom") or (sortfield,field)=("nom","nom")
-	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field)))
+	if ($field && ($sortfield == $field || $sortfield == preg_replace("/^[^\.]+\./","",$field))) $out.= '<th class="liste_titre_sel" '. $moreattrib.'>';
+	else $out.= '<th class="liste_titre" '. $moreattrib.'>';
+
+	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
-		$out.= '<th class="liste_titre_sel" '. $moreattrib.'>';
+		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
+		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
+		$options=preg_replace('/&+/i','&',$options);
+		if (! preg_match('/^&/',$options)) $options='&'.$options;
+
+		if ($sortorder == 'DESC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+		if ($sortorder == 'ASC' ) 	$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
 	}
-	else
-	{
-		$out.= '<th class="liste_titre" '. $moreattrib.'>';
-	}
+
 	$out.=$name;
 
-	if (empty($thead) && $field)    // If this is a sort field
+	if (! empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
+	{
+		$out.='</a>';
+	}
+
+	if (empty($conf->dol_optimize_smallscreen) && empty($thead) && $field)    // If this is a sort field
 	{
 		$options=preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i','',$moreparam);
 		$options=preg_replace('/sortorder=([a-zA-Z0-9,\s\.]+)/i','',$options);
@@ -2297,28 +2336,21 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 
 		//print "&nbsp;";
 		$out.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		if (! $sortorder)
+
+		if (! $sortorder || $field != $sortfield)
 		{
 			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 			$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 		}
 		else
 		{
-			if ($field != $sortfield)
-			{
+			if ($sortorder == 'DESC' ) {
 				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
 			}
-			else {
-				$sortorder=strtoupper($sortorder);
-				if ($sortorder == 'DESC' ) {
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				}
-				if ($sortorder == 'ASC' ) {
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-					$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				}
+			if ($sortorder == 'ASC' ) {
+				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+				$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 			}
 		}
 	}
@@ -2467,7 +2499,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
@@ -2476,7 +2508,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 	else
 	{
-		if (empty($conf->browser->phone) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+		if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
 	}
 
@@ -2562,7 +2594,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
  *		@param	int			$rounding		Minimum number of decimal to show. If not defined we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
- *		@param	int			$forcerounding	Force the number of decimal
+ *		@param	int			$forcerounding	Force the number of decimal fo forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
@@ -2745,7 +2777,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
-		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		if ($local == 1)
+		{
+			if ($thirdparty_seller->id==$mysoc->id)
+			{
+				if (! $thirdparty_buyer->localtax1_assuj) return 0;
+			}
+			else
+			{
+				if (! $thirdparty_seller->localtax1_assuj) return 0;
+			}
+		}
+
 		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
@@ -3042,13 +3085,29 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 /**
  *	Fonction qui renvoie si tva doit etre tva percue recuperable
  *
- *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
- *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Thirdparty seller
+ *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param  int			$idprod                 Id product
+ *  @param	int			$idprodfournprice		Id supplier price for product
  *	@return float       			        	0 or 1
  */
-function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
+function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
+	global $db;
+
+	if ($idprodfournprice > 0)
+	{
+		$prodprice = new ProductFournisseur($db);
+		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
+		return $prodprice->fourn_tva_npr;
+	}
+	elseif ($idprod > 0)
+	{
+		$prod = new Product($db);
+		$prod->fetch($idprod);
+		return $prod->tva_npr;
+	}
+
 	return 0;
 }
 
@@ -3058,8 +3117,8 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
  *	 Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
  *	 Sinon TVA proposee par defaut=0. Fin de regle.
  *
- *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
- *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Thirdparty seller
+ *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
  *	@return float        				       	localtax, -1 si ne peut etre determine
@@ -3491,16 +3550,17 @@ function dol_textishtml($msg,$option=0)
 	{
 		if (preg_match('/<html/i',$msg))				return true;
 		elseif (preg_match('/<body/i',$msg))			return true;
+		elseif (preg_match('/<b>/i',$msg))				return true;
 		elseif (preg_match('/<br/i',$msg))				return true;
-		elseif (preg_match('/<span/i',$msg))			return true;
 		elseif (preg_match('/<div/i',$msg))				return true;
-		elseif (preg_match('/<li/i',$msg))				return true;
-		elseif (preg_match('/<table/i',$msg))			return true;
+		elseif (preg_match('/<em>/i',$msg))				return true;
 		elseif (preg_match('/<font/i',$msg))			return true;
-		elseif (preg_match('/<strong/i',$msg))			return true;
 		elseif (preg_match('/<img/i',$msg))				return true;
 		elseif (preg_match('/<i>/i',$msg))				return true;
-		elseif (preg_match('/<b>/i',$msg))				return true;
+		elseif (preg_match('/<li/i',$msg))				return true;
+		elseif (preg_match('/<span/i',$msg))			return true;
+		elseif (preg_match('/<strong/i',$msg))			return true;
+		elseif (preg_match('/<table/i',$msg))			return true;
 		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
 		return false;
@@ -3591,7 +3651,9 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				$module=$reg[1];
 
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+				// Include the user's functions file
 				require_once $dir.$substitfile['name'];
+				// Call the user's function, and only if it is defined
 				$function_name=$module."_".$callfunc;
 				if (function_exists($function_name)) $function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}

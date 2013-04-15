@@ -2,6 +2,7 @@
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013   Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,7 +193,7 @@ class Holiday extends CommonObject
         $sql.= " cp.date_cancel,";
         $sql.= " cp.fk_user_cancel,";
         $sql.= " cp.detail_refuse,";
-        $sql.= " cp.note,";
+        $sql.= " cp.note_private,";
         $sql.= " cp.note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
@@ -223,7 +224,7 @@ class Holiday extends CommonObject
                 $this->date_cancel = $this->db->jdate($obj->date_cancel);
                 $this->fk_user_cancel = $obj->fk_user_cancel;
                 $this->detail_refuse = $obj->detail_refuse;
-                $this->note = $obj->note;
+                $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
             }
             $this->db->free($resql);
@@ -267,10 +268,17 @@ class Holiday extends CommonObject
         $sql.= " cp.fk_user_refuse,";
         $sql.= " cp.date_cancel,";
         $sql.= " cp.fk_user_cancel,";
-        $sql.= " cp.detail_refuse";
+        $sql.= " cp.detail_refuse,";
+		
+		$sql.= " uu.lastname as user_lastname,";
+        $sql.= " uu.firstname as user_firstname,";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
-        $sql.= " WHERE cp.fk_user = '".$user_id."'";
+        $sql.= " ua.lastname as validator_lastname,";
+        $sql.= " ua.firstname as validator_firstname";
+
+        $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
+		$sql.= " WHERE cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+        $sql.= " AND cp.fk_user = '".$user_id."'";
 
         // Filtre de séléction
         if(!empty($filter)) {
@@ -319,6 +327,12 @@ class Holiday extends CommonObject
                 $tab_result[$i]['date_cancel'] = $this->db->jdate($obj->date_cancel);
                 $tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
                 $tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
+
+                $tab_result[$i]['user_firstname'] = $obj->user_firstname;
+                $tab_result[$i]['user_lastname'] = $obj->user_lastname;
+
+                $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
+                $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
 
                 $i++;
             }
@@ -862,7 +876,7 @@ class Holiday extends CommonObject
      */
     function updateSoldeCP($userID='',$nbHoliday='')
     {
-        global $user;
+        global $user, $langs;
 
         if (empty($userID) && empty($nbHoliday))
         {
@@ -900,7 +914,7 @@ class Holiday extends CommonObject
                     $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
 
                     // On ajoute la modification dans le LOG
-                    $this->addLogCP($user->id,$users[$i]['rowid'],'Event : Mise à jour mensuelle',$new_solde);
+                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('Event').': '.$langs->trans('HolidaysMonthlyAssignment'),$new_solde);
 
                     $i++;
                 }

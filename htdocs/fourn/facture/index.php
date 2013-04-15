@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,7 @@ $htmlother=new FormOther($db);
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
-$sql.= " fac.rowid as ref, fac.rowid as facid, fac.facnumber, fac.datef, fac.date_lim_reglement as date_echeance,";
+$sql.= " fac.rowid as facid, fac.ref, fac.ref_supplier, fac.datef, fac.date_lim_reglement as date_echeance,";
 $sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
@@ -130,7 +131,7 @@ if (GETPOST("search_ref"))
 }
 if (GETPOST("search_ref_supplier"))
 {
-	$sql .= " AND fac.facnumber LIKE '%".$db->escape(GETPOST("search_ref_supplier"))."%'";
+	$sql .= " AND fac.ref_supplier LIKE '%".$db->escape(GETPOST("search_ref_supplier"))."%'";
 }
 if ($month > 0)
 {
@@ -191,8 +192,8 @@ if ($resql)
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"facnumber","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"fac.ref,fac.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"ref_supplier","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fac.datef,fac.rowid","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"fac.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"fac.libelle","",$param,"",$sortfield,$sortorder);
@@ -248,20 +249,19 @@ if ($resql)
 		print '<td nowrap="nowrap">';
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
-		$facturestatic->ref_supplier=$obj->facnumber;
+		$facturestatic->ref_supplier=$obj->ref_supplier;
 		print $facturestatic->getNomUrl(1);
 		print "</td>\n";
-		print '<td nowrap="nowrap">'.dol_trunc($obj->facnumber,10)."</td>";
+		print '<td nowrap="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
 		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
 		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
-		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
+		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
 		print '<td>';
 		$supplierstatic->id=$obj->socid;
 		$supplierstatic->nom=$obj->nom;
 		print $supplierstatic->getNomUrl(1,'',12);
-		//print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
 		print '<td align="right">'.price($obj->total_ht).'</td>';
 		print '<td align="right">'.price($obj->total_ttc).'</td>';
 		$total+=$obj->total_ht;

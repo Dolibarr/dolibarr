@@ -155,7 +155,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return label of object status
 	 *
 	 *  @param      int		$mode            0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
-	 *  @param      int		$alreadypaid     0=No payment already done, 1=Some payments already done
+	 *  @param      double	$alreadypaid     0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return     string			         Label
 	 */
 	function getLibStatut($mode=0,$alreadypaid=-1)
@@ -166,27 +166,27 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
-	 *	@param    	int  	$paye          	Etat paye
-	 *	@param      int		$statut        	Id statut
-	 *	@param      int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *	@param		double	$alreadypaid	Montant deja paye
+	 *	@param    	int  	$paye          	Status field paye
+	 *	@param      int		$status        	Id status
+	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+	 *	@param		double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *	@param		int		$type			Type facture
 	 *	@return     string        			Libelle du statut
 	 */
-	function LibStatut($paye,$statut,$mode=0,$alreadypaid=-1,$type=0)
+	function LibStatut($paye,$status,$mode=0,$alreadypaid=-1,$type=0)
 	{
 		global $langs;
 		$langs->load('bills');
 
-		//print "$paye,$statut,$mode,$alreadypaid,$type";
+		//print "$paye,$status,$mode,$alreadypaid,$type";
 		if ($mode == 0)
 		{
 			$prefix='';
 			if (! $paye)
 			{
-				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
-				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($status == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
+				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -202,9 +202,9 @@ abstract class CommonInvoice extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($status == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
+				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return $langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -220,9 +220,9 @@ abstract class CommonInvoice extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
+				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -238,9 +238,9 @@ abstract class CommonInvoice extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
-				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
+				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
@@ -255,9 +255,9 @@ abstract class CommonInvoice extends CommonObject
 		{
 			if (! $paye)
 			{
-				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
-				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
+				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('BillStatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
 			}
@@ -273,9 +273,9 @@ abstract class CommonInvoice extends CommonObject
 			$prefix='Short';
 			if (! $paye)
 			{
-				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('BillStatusDraft'),'statut0');
-				if (($statut == 3 || $statut == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($statut == 3 || $statut == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' '.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if ($status == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('BillStatusDraft'),'statut0');
+				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' '.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
 				if ($alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPaid').' '.img_picto($langs->trans('BillStatusNotPaid'),'statut1');
 				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}

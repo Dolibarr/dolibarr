@@ -71,6 +71,31 @@ foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
 
+// Send an email
+if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fulltag))
+{
+	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+	$from=$conf->global->MAILING_EMAIL_FROM;
+	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+	$mailfile = new CMailFile(
+		'New subscription payed',
+		$sendto,
+		$from,
+		'New subscription payed '.$fulltag
+		);
+
+	$result=$mailfile->sendfile();
+	if ($result)
+	{
+		dol_syslog("EMail sent to ".$sendto);
+	}
+	else
+	{
+		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR);
+	}
+}
+
+
 llxHeaderPaypal($langs->trans("PaymentForm"));
 
 

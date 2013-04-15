@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -268,7 +268,7 @@ if ($action == 'edit' || $action == 'updateedit')
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+    print '<tr class="liste_titre"><th width="35%">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">'.$langs->trans("CompanyName").'</td><td>';
@@ -336,7 +336,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     // Logo
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
+    print '<tr'.dol_bc($var,'hideonsmartphone').'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
     print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" size="50">';
     print '</td><td valign="middle" align="right">';
@@ -997,7 +997,7 @@ else
 
     // Actions buttons
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a></div>';
     print '</div>';
 
     print '<br>';

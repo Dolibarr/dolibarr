@@ -25,21 +25,45 @@
  *      \brief      Script use to update mail status if destinaries read it (if images during mail read are display)
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this output page does not require to be logged.
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check anti CSRF attack test
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');	// Do not check anti POST attack test
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
+
+/**
+ * Header empty
+ *
+ * @return	void
+ */
+function llxHeader() { }
+/**
+ * Footer empty
+ *
+ * @return	void
+ */
+function llxFooter() { }
+
 
 require '../../main.inc.php';
 
 $tag=GETPOST('tag');
-
-if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not enabled');
+$securitykey=GETPOST('securitykey');
 
 
 /*
  * Actions
  */
 
-if ($tag!='')
+dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
+
+if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
+{
+	print 'Bad security key value.';
+	exit;
+}
+
+if (! empty($tag))
 {
 	$statut='2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";

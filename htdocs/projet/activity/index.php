@@ -65,8 +65,9 @@ else
 	else print $langs->trans("TasksPublicDesc").'<br><br>';
 }
 
-print '<table border="0" width="100%" class="notopnoleftnoright">';
-print '<tr><td width="30%" valign="top" class="notopnoleft">';
+
+print '<div class="fichecenter"><div class="fichethirdleft">';
+
 
 print_projecttasks_array($db,$socid,$projectsListId,$mine);
 
@@ -180,7 +181,8 @@ print "</table>";
 }
 
 
-print '</td><td width="70%" valign="top" class="notopnoleftright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 // TODO Do not use week function to be compatible with all database
 if ($db->type != 'pgsql')
@@ -326,7 +328,9 @@ else
 }
 print "</table>";
 
-print '</td></tr></table>';
+
+print '</div></div></div>';
+
 
 llxFooter();
 

@@ -54,11 +54,17 @@ if (! empty($_GET["theme"])) $conf->theme=$_GET["theme"];  // If theme was force
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->browser->phone)?'12':'12';
-$fontsizesmaller=empty($conf->browser->phone)?'11':'11';
+$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
+$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
 $fontlist='arial,tahoma,verdana,helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
+
+$dol_hide_topmenu=$conf->dol_hide_topmenu;
+$dol_hide_leftmenu=$conf->dol_hide_leftmenu;
+$dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
+$dol_no_mouse_hover=$conf->dol_no_mouse_hover;
+$dol_use_jmobile=$conf->dol_use_jmobile;
 
 $path='';    		// This value may be used in future for external module to overwrite theme
 $theme='cameleo';	// Value of theme
@@ -170,6 +176,14 @@ div.float
 {
     float:<?php print $left; ?>;
 }
+div.floatright
+{
+    float:<?php print $right; ?>;
+}
+div.inline-block
+{
+	display:inline-block;
+}
 
 .valignmiddle {
 	vertical-align: middle;
@@ -193,8 +207,9 @@ div.float
 /* ============================================================================== */
 
 .hideobject { display: none; }
-<?php if (! empty($conf->browser->phone)) { ?>
+<?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
+.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 
@@ -223,8 +238,8 @@ div.leftContent {
 }
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print empty($conf->browser->phone)?'5':'2'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->browser->phone)?'5':''; ?>px;
+	margin-<?php print $left; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'5':'2'; ?>px;
+	margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'5':''; ?>px;
 }
 
 div.fichecenter {
@@ -232,23 +247,24 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone)) { print "width: 35%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 35%;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone)) { print "width: 65%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 65%;\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->browser->phone)) { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->browser->phone)) { print "width: 50%;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "float: ".$left.";\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->browser->phone)) { print "padding-left: 6px;\n"; } ?>
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	else print "margin-top: 10px;\n"; ?>
 }
 
 
@@ -257,7 +273,7 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->browser->phone))
+if (! empty($conf->dol_optimize_smallscreen))
 {
 	$minwidthtmenu=0;
 	$heightmenu=19;
@@ -404,7 +420,7 @@ div.mainmenu {
 	margin-left: 0px;
 }
 
-<?php if (empty($conf->browser->phone)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 
 div.mainmenu.agenda {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
@@ -608,7 +624,7 @@ div#login_left, div#login_right {
 
 div.login {
 	white-space:nowrap;
-    padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+    padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
     margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
@@ -621,7 +637,7 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;
 	color: white;
@@ -657,7 +673,8 @@ a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; colo
 a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
 a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 4px; }
 a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: #7F0A29; margin: 1px 1px 1px 4px; }
-font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
+font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #202020; }
+font.vsmenudisabledmargin { margin: 1px 1px 1px 4px; }
 
 a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -780,7 +797,7 @@ div.blockvmenubookmarks
 
 div.blockvmenuhelp
 {
-<?php if (empty($conf->browser->phone)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	text-align: center;
 	border-spacing: 0px;
     width: 162px;
@@ -1009,7 +1026,7 @@ img.toolbarbutton {
 }
 
 .ui-layout-north {
-	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
+	height: <?php print (empty($conf->dol_optimize_smallscreen)?'54':'21'); ?>px !important;
 }
 
 /* ECM */
@@ -1212,7 +1229,7 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe a utiliser */
+div.divButAction { margin-bottom: 1.4em; }
 
 .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;

@@ -63,6 +63,9 @@ $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+
 //var_dump($_POST);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -133,6 +136,7 @@ if ($action == 'add_action')
 	$actioncomm->priority = GETPOST("priority")?GETPOST("priority"):0;
 	$actioncomm->fulldayevent = (! empty($fulldayevent)?1:0);
 	$actioncomm->location = GETPOST("location");
+	$actioncomm->transparency = (GETPOST("transparency")=='on'?1:0);
 	$actioncomm->label = trim(GETPOST('label'));
 	if (! GETPOST('label'))
 	{
@@ -203,14 +207,8 @@ if ($action == 'add_action')
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 	}
 
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$actioncomm->array_options[$key]=GETPOST($key);
-		}
-	}
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$actioncomm);
 
 	if (! $error)
 	{
@@ -316,7 +314,7 @@ if ($action == 'update')
 		$actioncomm->percentage  = $percentage;
 		$actioncomm->priority    = $_POST["priority"];
         $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
-		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
+		$actioncomm->location    = GETPOST('location');
 		$actioncomm->societe->id = $_POST["socid"];
 		$actioncomm->contact->id = $_POST["contactid"];
 		$actioncomm->fk_project  = $_POST["projectid"];
@@ -336,6 +334,8 @@ if ($action == 'update')
 			$usertodo->fetch($_POST["affectedto"]);
 		}
 		$actioncomm->usertodo = $usertodo;
+		$actioncomm->transparency=(GETPOST("transparency")=='on'?1:0);
+
 		$userdone=new User($db);
 		if ($_POST["doneby"])
 		{
@@ -343,14 +343,8 @@ if ($action == 'update')
 		}
 		$actioncomm->userdone = $userdone;
 
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$actioncomm->array_options[$key]=GETPOST($key);
-			}
-		}
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$actioncomm);
 
 		if (! $error)
 		{
@@ -395,9 +389,6 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $form = new Form($db);
 $htmlactions = new FormActions($db);
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
-
 if ($action == 'create')
 {
 	$contact = new Contact($db);
@@ -409,7 +400,7 @@ if ($action == 'create')
 	}
 
 	dol_set_focus("#label");
-	
+
     if (! empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript">';
@@ -427,7 +418,7 @@ if ($action == 'create')
 	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
 	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
 	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
-	            			$("#p2").attr("disabled","disabled").val("");
+	            			$("#p2").removeAttr("disabled");
 	            		}
 	            	}
                     setdatefields();
@@ -521,16 +512,24 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	// Affected by
+	// Assigned to
 	$var=false;
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($actioncomm->usertodo->id) && $actioncomm->usertodo->id > 0 ? $actioncomm->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
-	// Realised by
-	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
+	// Busy
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Busy").'</td><td>';
+	print '<input id="transparency" type="checkbox" name="transparency" value="'.$actioncomm->transparency.'">';
 	print '</td></tr>';
+
+	// Realised by
+	if ($conf->global->AGENDA_ENABLE_DONEBY)
+	{
+		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+		$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 	print '<br><br>';
@@ -590,8 +589,6 @@ if ($action == 'create')
 	print '<input type="text" name="priority" value="'.(GETPOST('priority')?GETPOST('priority'):($actioncomm->priority?$actioncomm->priority:'')).'" size="5">';
 	print '</td></tr>';
 
-	add_row_for_calendar_link();
-
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -603,22 +600,13 @@ if ($action == 'create')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$actioncomm,$action);    // Note that $action and $object may have been modified by hook
 
-	print '</table>';
 
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		print '<br><br><table class="border" width="100%">';
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($actioncomm->array_options["options_".$key])?$actioncomm->array_options["options_".$key]:''));
-			print '<tr><td';
-			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-			print ' width="30%">'.$label.'</td><td>';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
-		}
-		print '</table><br>';
+		print $actioncomm->showOptionals($extrafields,'edit');
 	}
+
+	print '</table>';
 
 	print '<center><br>';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -766,21 +754,23 @@ if ($id > 0)
 
 		print '</table><br><br><table class="border" width="100%">';
 
-		// Input by
-		$var=false;
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		print $act->author->getNomUrl(1);
-		print '</td></tr>';
-
-		// Affected to
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		// Assigned to
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
-		// Realised by
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
+		// Busy
+		print '<tr><td nowrap="nowrap">'.$langs->trans("Busy").'</td><td>';
+		print '<input id="transparency" type="checkbox" name="transparency"'.($act->transparency?' checked="checked"':'').'">';
 		print '</td></tr>';
+
+		// Realised by
+		if ($conf->global->AGENDA_ENABLE_DONEBY)
+		{
+			print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
+			print '</td></tr>';
+		}
 
 		print '</table><br><br>';
 
@@ -838,24 +828,13 @@ if ($id > 0)
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-
-		print '</table>';
-
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$act->array_options["options_".$key]);
-				print '<tr><td';
-				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-				print ' width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key,$value);
-				print '</td></tr>'."\n";
-			}
-			print '</table><br><br>';
+			print $actioncomm->showOptionals($extrafields,'edit');
+
 		}
 
+		print '</table>';
 
 		print '<center><br><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -901,7 +880,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -910,7 +889,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarweek').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -919,7 +898,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarday').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
         print '</form>'."\n";
         print '</td>';
 		print '</tr>';
@@ -941,22 +920,23 @@ if ($id > 0)
 
 		print '</table><br><br><table class="border" width="100%">';
 
-		// Input by
-		$var=false;
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		if ($act->author->id > 0) print $act->author->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td></tr>';
-
-		// Affecte a
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		// Assigned to
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
-		// Done by
-		print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
+		// Busy
+		print '<tr><td nowrap="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
+		print yn(($act->transparency > 0)?1:0);
 		print '</td></tr>';
+
+		// Done by
+		if ($conf->global->AGENDA_ENABLE_DONEBY)
+		{
+			print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
+			print '</td></tr>';
+		}
 
 		print '</table><br><br><table class="border" width="100%">';
 
@@ -1058,111 +1038,29 @@ if ($id > 0)
 		if ($user->rights->agenda->allactions->create ||
 		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->create))
 		{
-			print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		if ($user->rights->agenda->allactions->delete ||
 		   (($act->author->id == $user->id || $act->usertodo->id == $user->id) && $user->rights->agenda->myactions->delete))
 		{
-			print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
 
 	print '</div>';
 }
 
-$db->close();
 
 llxFooter();
 
-
-/**
- *  Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
- *
- *  @return     int     Retourne le nombre de lignes ajoutees
- */
-function add_row_for_calendar_link()
-{
-	global $conf,$langs,$user;
-	$nbtr=0;
-
-	// Lien avec calendrier si module active
-	// TODO external module
-	if (! empty($conf->webcalendar->enabled))
-	{
-		if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
-		{
-			$langs->load("other");
-
-			print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Webcalendar").'</td>';
-
-			if (! $user->webcal_login)
-			{
-				print '<td><input type="checkbox" disabled name="add_webcal">';
-				print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-				print '</td>';
-				print '</tr>';
-				$nbtr++;
-			}
-			else
-			{
-				if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
-				{
-					print '<input type="hidden" name="add_webcal" value="on">';
-				}
-				else
-				{
-					print '<td><input type="checkbox" name="add_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
-					print '</tr>';
-					$nbtr++;
-				}
-			}
-		}
-	}
-
-	// TODO external module
-	if (! empty($conf->phenix->enabled))
-	{
-		if ($conf->global->PHPPHENIX_SYNCRO != 'never')
-		{
-			$langs->load("other");
-
-			print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Phenix").'</td>';
-
-			if (! $user->phenix_login)
-			{
-				print '<td><input type="checkbox" disabled name="add_phenix">';
-				print ' '.$langs->transnoentities("ErrorPhenixLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-				print '</td>';
-				print '</tr>';
-				$nbtr++;
-			}
-			else
-			{
-				if ($conf->global->PHPPHENIX_SYNCRO == 'always')
-				{
-					print '<input type="hidden" name="add_phenix" value="on">';
-				}
-				else
-				{
-					print '<td><input type="checkbox" name="add_phenix"'.(($conf->global->PHPPHENIX_SYNCRO=='always' || $conf->global->PHPPHENIX_SYNCRO=='yesbydefault')?' checked':'').'></td>';
-					print '</tr>';
-					$nbtr++;
-				}
-			}
-		}
-	}
-
-	return $nbtr;
-}
-
-
+$db->close();
 ?>

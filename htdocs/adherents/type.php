@@ -56,6 +56,9 @@ $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
 
 $extrafields = new ExtraFields($db);
 
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
+
 if (GETPOST('button_removefilter'))
 {
     $search_lastname="";
@@ -83,15 +86,9 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$adht->note        = trim($_POST["comment"]);
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
-		
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$adht->array_options[$key]=GETPOST($key);
-			}
-		}
+
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
 
 		if ($adht->libelle)
 		{
@@ -127,15 +124,9 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 		$adht->mail_valid  = trim($_POST["mail_valid"]);
 		$adht->vote        = trim($_POST["vote"]);
 
-		// Get extra fields
-		foreach($_POST as $key => $value)
-		{
-			if (preg_match("/^options_/",$key))
-			{
-				$adht->array_options[$key]=GETPOST($key);
-			}
-		}
-		
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$adht);
+
 		$adht->update($user->id);
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
@@ -155,7 +146,7 @@ if ($action == 'commentaire' && $user->rights->adherent->configurer)
 {
 	$don = new Don($db);
 	$don->fetch($rowid);
-	$don->update_note($_POST["commentaire"]);
+	$don->update_note(dol_html_entity_decode(GETPOST('commentaire'), ENT_QUOTES));
 }
 
 
@@ -167,8 +158,6 @@ llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_
 
 $form=new Form($db);
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
 
 // Liste of members type
 
@@ -229,7 +218,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	// New type
 	if ($user->rights->adherent->configurer)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a></div>';
 	}
 
 	print "</div>";
@@ -245,6 +234,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
 	$form = new Form($db);
+	$adht = new AdherentType($db);
 
 	print_fiche_titre($langs->trans("NewMemberType"));
 
@@ -274,28 +264,16 @@ if ($action == 'create')
 	$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 	$doleditor->Create();
 	print '</td></tr>';
-	
+
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-	
-	print "</table>\n";
-
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-		print '<br><br><table class="border" width="100%">';
-		foreach($extrafields->attribute_label as $key=>$label)
-		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$act->array_options["options_".$key]);
-			print '<tr><td';
-			if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-			print ' width="30%">'.$label.'</td><td>';
-			print $extrafields->showInputField($key,$value);
-			print '</td></tr>'."\n";
-		}
-		print '</table><br><br>';
+		print $adht->showOptionals($extrafields,'edit');
 	}
-	
+	print "</table>\n";
+
 	print '<br>';
 	print '<center><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp; &nbsp; ';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></center>';
@@ -356,23 +334,13 @@ if ($rowid > 0)
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
-		
-		print '</table>';
-		
-		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($adht->array_options['options_'.$key])?$adht->array_options['options_'.$key]:''));
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showOutputField($key,$value);
-				print "</td></tr>\n";
-			}
-			print '</table><br><br>';
+			// View extrafields
+			print $adht->showOptionals($extrafields);
 		}
 
+		print '</table>';
 		print '</div>';
 
 		/*
@@ -384,16 +352,16 @@ if ($rowid > 0)
 		// Edit
 		if ($user->rights->adherent->configurer)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$adht->id.'">'.$langs->trans("Modify").'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$adht->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
-		print '<a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?action=create&typeid='.$adht->id.'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
 		if ($user->rights->adherent->configurer)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$adht->id.'">'.$langs->trans("DeleteType").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$adht->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
 		print "</div>";
@@ -402,7 +370,7 @@ if ($rowid > 0)
 		// Show list of members (nearly same code than in page liste.php)
 
 		$membertypestatic=new AdherentType($db);
-		
+
 		$now=dol_now();
 
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
@@ -694,13 +662,13 @@ if ($rowid > 0)
 		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,90);
 		$doleditor->Create();
 		print "</td></tr>";
-		
+
 		// Other attributes
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
-		
+
 		//Extra field
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{

@@ -145,6 +145,18 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
+        
+        //Update extrafield
+        if (!$error) {
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
+        }
 
         if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
@@ -210,6 +222,18 @@ class Project extends CommonObject
                         $this->errors = $interface->errors;
                     }
                     // End call triggers
+                }
+                
+                //Update extrafield
+                if (!$error) {
+                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	{
+                		$result=$this->insertExtraFields();
+                		if ($result < 0)
+                		{
+                			$error++;
+                		}
+                	}
                 }
 
                 if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
@@ -1011,7 +1035,7 @@ class Project extends CommonObject
         	else
         	{
         		$this->db->begin();
-				$res=$clone_project->update_note_public(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES));
+				$res=$clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES),'_public');
 				if ($res < 0)
 				{
 					$this->error.=$clone_project->error;

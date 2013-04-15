@@ -35,7 +35,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
 	var $nom = 'Cactus';
-	var $prefix='SI';
+	var $prefixinvoice='SI';
 
 
     /**
@@ -46,7 +46,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc",$this->prefixinvoice);
     }
 
 
@@ -57,7 +57,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
      */
     function getExample()
     {
-        return $this->prefix."1301-0001";
+        return $this->prefixinvoice."1301-0001";
     }
 
 
@@ -75,7 +75,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$posindice=8;
 		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$this->prefixinvoice."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
@@ -83,7 +83,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
             $row = $db->fetch_row($resql);
             if ($row) { $siyymm = substr($row[0],0,6); $max=$row[0]; }
         }
-        if (! $siyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$siyymm))
+        if (! $siyymm || preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i',$siyymm))
         {
             return true;
         }
@@ -96,52 +96,87 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     }
 
     /**
-     * 	Return next value
+     * Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object		$object		Object
-	 *  @return string      			Value if OK, 0 if KO
+	 * @param	Societe		$objsoc     Object third party
+	 * @param  	Object		$object		Object
+     * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @return 	string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc=0,$object='')
+    function getNextValue($objsoc,$object,$mode='next')
     {
         global $db,$conf;
 
+        if ($object->type == 2) $prefix=$this->prefixcreditnote;
+        else $prefix=$this->prefixinvoice;
+
         // D'abord on recupere la valeur max
         $posindice=8;
-        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";	// This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+        $sql.= " WHERE ref LIKE '".$prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
+        dol_syslog(get_class($this)."::getNextValue sql=".$sql);
         if ($resql)
         {
-            $obj = $db->fetch_object($resql);
-            if ($obj) $max = intval($obj->max);
-            else $max=0;
+        	$obj = $db->fetch_object($resql);
+        	if ($obj) $max = intval($obj->max);
+        	else $max=0;
+        }
+        else
+        {
+        	dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
+        	return -1;
         }
 
-		//$date=time();
-        $date=$object->datec;   // Not always defined
-        if (empty($date)) $date=$object->date;  // Creation date is invoice date for suppliers invoices
-        $yymm = strftime("%y%m",$date);
-        $num = sprintf("%04s",$max+1);
+        if ($mode == 'last')
+        {
+        	$num = sprintf("%04s",$max);
 
-        return $this->prefix.$yymm."-".$num;
+        	$ref='';
+        	$sql = "SELECT ref as ref";
+        	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+        	$sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
+        	$sql.= " AND entity = ".$conf->entity;
+
+        	dol_syslog(get_class($this)."::getNextValue sql=".$sql);
+        	$resql=$db->query($sql);
+        	if ($resql)
+        	{
+        		$obj = $db->fetch_object($resql);
+        		if ($obj) $ref = $obj->ref;
+        	}
+        	else dol_print_error($db);
+
+        	return $ref;
+        }
+        else if ($mode == 'next')
+        {
+        	$date=$object->date;	// This is invoice date (not creation date)
+        	$yymm = strftime("%y%m",$date);
+        	$num = sprintf("%04s",$max+1);
+
+        	dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
+        	return $prefix.$yymm."-".$num;
+        }
+        else dol_print_error('','Bad parameter for getNextValue');
     }
 
 
     /**
-     * 	Renvoie la reference de facture suivante non utilisee
-     *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-     *  @return string      			Texte descripif
+	 * Return next free value
+	 *
+     * @param	Societe		$objsoc     	Object third party
+     * @param	string		$objforref		Object for number to search
+     * @param   string		$mode       	'next' for next value or 'last' for last value
+     * @return  string      				Next free value
      */
-    function invoice_get_num($objsoc=0,$object='')
-    {
-        return $this->getNextValue($objsoc,$object);
-    }
+	function getNumRef($objsoc,$objforref,$mode='next')
+	{
+		return $this->getNextValue($objsoc,$objforref,$mode);
+	}
 }
 
 ?>

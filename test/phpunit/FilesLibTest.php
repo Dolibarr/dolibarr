@@ -312,35 +312,35 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 
         $result=dol_copy($file, '/adir/that/does/not/exists/file.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThan(0,$result);    // We should have error
+        $this->assertLessThan(0,$result,'copy dir that does not exists');    // We should have error
 
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result);    // Should be 1
+        $this->assertGreaterThanOrEqual(1,$result, 'copy into a dir that exists');    // Should be 1
 
         // Again to test with overwriting=0
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,0);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(0,$result);    // Should be 0
+        $this->assertEquals(0,$result, 'copy destination already exists, no overwrite');    // Should be 0
 
         // Again to test with overwriting=1
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result);    // Should be 1
+        $this->assertGreaterThanOrEqual(1,$result,'copy destination already eists, overwrite');    // Should be 1
 
         // Again to test with overwriting=1
         $result=dol_move($conf->admin->dir_temp.'/file.csv',$conf->admin->dir_temp.'/file2.csv',0,1);
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result);
+        $this->assertTrue($result,'copy destination does not exists');
 
         $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result);
+        $this->assertTrue($result,'delete file');
 
-        // Again to test no erreor when deleteing a non existing file
+        // Again to test no error when deleteing a non existing file
         $result=dol_delete_file($conf->admin->dir_temp.'/file2.csv');
         print __METHOD__." result=".$result."\n";
-        $this->assertTrue($result);
+        $this->assertTrue($result,'delete file that does not exists');
     }
 
     /**

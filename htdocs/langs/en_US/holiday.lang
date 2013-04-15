@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - holiday
 CHARSET= UTF-8
 
+Holidays=Holidays
 CPTitreMenu=Holidays
 MenuReportMonth=Monthly statement
 MenuAddCP=Apply for holidays
@@ -86,6 +87,8 @@ UserName=Name
 Employee=Employee
 FirstDayOfHoliday=First day of holiday
 LastDayOfHoliday=Last day of holiday
+HolidaysMonthlyUpdate=Monthly update
+ManualUpdate=Manual update
 
 ## Configuration du Module ##
 ConfCP=Configuration of holidays module
@@ -99,6 +102,7 @@ ErrorUpdateConfCP=An error occurred during the update, please try again.
 AddCPforUsers=Please add the balance of holidays of users by <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">clicking here</a>.
 DelayForSubmitCP=Deadline to apply for holidays
 AlertapprobatortorDelayCP=Prevent the approbator if the holiday request does not match the deadline
+AlertValidatorDelayCP=Préevent the approbator if the holiday request exceed delay
 AlertValidorSoldeCP=Prevent the approbator if the holiday request exceed the balance
 nbUserCP=Number of users supported in the module holidays
 nbHolidayDeductedCP=Number of holidays to be deducted per day of holiday taken

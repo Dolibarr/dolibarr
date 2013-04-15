@@ -3,6 +3,7 @@
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,16 +43,16 @@ function societe_prepare_head($object)
     $head[$h][2] = 'card';
     $h++;
 
-    if ($object->client==1 || $object->client==2 || $object->client==3 || (isset($object->object) && $object->object->client==1) || (isset($object->object) && $object->object->client==3))
+    if ($object->client==1 || $object->client==2 || $object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
-        if ($object->client==2 || $object->client==3) $head[$h][1] = $langs->trans("Prospect");
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client==2 || $object->client==3)) $head[$h][1] = $langs->trans("Prospect");
         if ($object->client==3)                       $head[$h][1] .= '/';
-        if ($object->client==1 || $object->client==3) $head[$h][1] .= $langs->trans("Customer");
+        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client==1 || $object->client==3)) $head[$h][1] .= $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
     }
-    if (! empty($conf->fournisseur->enabled) && ($object->fournisseur || (isset($object->object) && $object->object->fournisseur)) && ! empty($user->rights->fournisseur->lire))
+    if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
@@ -85,7 +86,7 @@ function societe_prepare_head($object)
     if ($user->societe_id == 0)
     {
     	// Notes
-        $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?socid='.$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Note");
         $head[$h][2] = 'note';
         $h++;
@@ -145,14 +146,6 @@ function societe_prepare_head2($object)
 	    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
 	    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
 	    $head[$h][2] = 'rib';
-	    $h++;
-    }
-
-    if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
-    {
-	    $head[$h][0] = 'lien.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("ParentCompany");
-	    $head[$h][2] = 'links';
 	    $h++;
     }
 
@@ -537,7 +530,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays, p.poste, p.phone, p.phone_mobile, p.fax, p.email ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";

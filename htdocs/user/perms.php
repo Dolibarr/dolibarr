@@ -83,6 +83,7 @@ if ($action == 'addrights' && $caneditperms)
 	{
 		$user->clearrights();
 		$user->getrights();
+		$menumanager->loadMenu();
 	}
 }
 
@@ -98,6 +99,7 @@ if ($action == 'delrights' && $caneditperms)
 	{
 		$user->clearrights();
 		$user->getrights();
+		$menumanager->loadMenu();
 	}
 }
 
@@ -185,6 +187,7 @@ if (! empty($conf->multicompany->enabled)) {
 }
 $sql.= " AND ur.fk_user = ".$fuser->id;
 
+dol_syslog("get user perms sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {
@@ -220,6 +223,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transv
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 
+dol_syslog("get user perms sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {

@@ -56,7 +56,7 @@ class modProjet extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->config_page_url = array("project.php");
+		$this->config_page_url = array("project.php@projet");
 		$this->picto='project';
 
 		// Data directories to create when module is enabled
@@ -89,7 +89,7 @@ class modProjet extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "PROJECT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/project";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/projects";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 

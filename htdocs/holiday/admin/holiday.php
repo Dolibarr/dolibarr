@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2012-2103 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 /**
  * 	Page module configuration paid holiday.
  *
- *   	\file       holiday.php
- *		\ingroup    holiday
- *		\brief      Page module configuration paid holiday.
+ *  \file       holiday.php
+ *	\ingroup    holiday
+ *	\brief      Page module configuration paid holiday.
  */
 
 require '../../main.inc.php';
@@ -63,10 +63,10 @@ if ($action == "add")
     $error = false;
 
     // Option du groupe de validation
-    if (!$cp->updateConfCP('userGroup',$_POST['userGroup']))
+    /*if (!$cp->updateConfCP('userGroup',$_POST['userGroup']))
     {
         $error = true;
-    }
+    }*/
 
     // Option du délai pour faire une demande de congés payés
     if (!$cp->updateConfCP('delayForRequest',$_POST['delayForRequest']))
@@ -276,11 +276,12 @@ print '</tr>';
 
 $var=true;
 
-$var=!$var;
+/*$var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px; width: 40%;">'.$langs->trans('GroupToValidateCP').'</td>'."\n";
 print '<td style="padding:5px;">'.$cp->selectUserGroup('userGroup').'</td>'."\n";
 print '</tr>'."\n";
+*/
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
@@ -312,18 +313,6 @@ print '<td style="padding:5px;">'.$langs->trans('nbHolidayDeductedCP').'</td>'."
 print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayDeducted" value="'.$cp->getConfCP('nbHolidayDeducted').'" size="2"/> '.$langs->trans('Jours').'</td>'."\n";
 print '</tr>'."\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td style="padding:5px;">'.$langs->trans('nbUserCP').'</td>'."\n";
-print '<td style="padding:5px;"><input class="flat" type="text" name="nbUser" value="'.$cp->getConfCP('nbUser').'" disabled="disabled" size="4"/></td>'."\n";
-print '</tr>'."\n";
-
-$var=!$var;
-print '<tr '.$bc[$var].'>'."\n";
-print '<td style="padding:5px;">'.$langs->trans('LastUpdateCP').'</td>'."\n";
-print '<td style="padding:5px;"><input class="flat" type="text" name="lastUpdate" value="'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'" disabled="disabled"/></td>'."\n";
-print '</tr>'."\n";
-
 print '</tbody>'."\n";
 print '</table>'."\n";
 
@@ -331,6 +320,16 @@ print '<div align="center"><input type="submit" value="'.$langs->trans("ConfirmC
 print '</form>'."\n\n";
 
 dol_fiche_end();
+
+
+/*$var=!$var;
+print $langs->trans('nbUserCP').': '."\n";
+print $cp->getConfCP('nbUser')."<br>\n";
+*/
+
+$var=!$var;
+print $langs->trans('LastUpdateCP').': '."\n";
+print dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser')."<br>\n";
 
 print '<br>';
 

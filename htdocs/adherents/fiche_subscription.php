@@ -371,18 +371,18 @@ if ($rowid && $action != 'edit')
 	{
 		if (! $bankline->rappro)
 		{
-			print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Modify")."</a>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
 		}
 		else
 		{
-			print "<a class=\"butActionRefused\" title=\"".$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";
 		}
 	}
 
     // Supprimer
     if ($user->rights->adherent->cotisation->creer)
     {
-        print "<a class=\"butActionDelete\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=delete\">".$langs->trans("Delete")."</a>\n";
+        print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";
     }
 
     print '</div>';

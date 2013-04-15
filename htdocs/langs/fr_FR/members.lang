@@ -207,4 +207,4 @@ MembersStatisticsByProperties=Statistiques des adhérents par caractéristiques
 MembersByNature=Adhérents par nature
 VATToUseForSubscriptions=Taux de TVA pour les adhésions
 NoVatOnSubscription=Pas de TVA sur les adhésions
-
+MEMBER_PAYONLINE_SENDEMAIL=Email à avertir en cas de retour de paiement validé pour une cotisation

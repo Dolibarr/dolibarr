@@ -42,6 +42,7 @@ class DolEditor
 	var $cols;
 	var $height;
 	var $width;
+	var $readonly;
 
 
     /**
@@ -60,12 +61,13 @@ class DolEditor
 	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
      *      @param  int		$rows                   Size of rows for textarea tool
 	 *      @param  int		$cols                   Size of cols for textarea tool
+	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
 	 */
-    function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
+    function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
     {
     	global $conf,$langs;
 
-    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
+    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
@@ -75,12 +77,11 @@ class DolEditor
         $defaulteditor='ckeditor';
         $this->tool=empty($conf->global->FCKEDITOR_EDITORNAME)?$defaulteditor:$conf->global->FCKEDITOR_EDITORNAME;
         $this->uselocalbrowser=$uselocalbrowser;
+        $this->readonly=$readonly;
 
         // Check if extended editor is ok. If not we force textarea
-        if (empty($conf->fckeditor->enabled) || ! $okforextendededitor)
-        {
-            $this->tool = 'textarea';
-        }
+        if (empty($conf->fckeditor->enabled) || ! $okforextendededitor) $this->tool = 'textarea';
+        if ($conf->browser->phone) $this->tool = 'textarea';
 
         // Define content and some properties
         if ($this->tool == 'ckeditor')
@@ -158,6 +159,7 @@ class DolEditor
         if (in_array($this->tool,array('textarea','ckeditor')))
         {
             $found=1;
+            //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'"'.($this->readonly?' disabled="disabled"':'').' class="flat">';
             $out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'" cols="'.$this->cols.'" class="flat">';
             $out.= $this->content;
             $out.= '</textarea>';
@@ -179,7 +181,9 @@ class DolEditor
                             /* should be editor=CKEDITOR.replace but what if serveral editors ? */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
+            						/* property:xxx is same than CKEDITOR.config.property = xxx */
             						customConfig : ckeditorConfig,
+            						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',

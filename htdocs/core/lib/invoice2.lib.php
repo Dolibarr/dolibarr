@@ -1,7 +1,6 @@
-#!/usr/bin/php
 <?php
 /*
- * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,22 +28,23 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 /**
  * Function to build a compiled PDF
- * 
- * @param	DoliDB		$db						Database handler					
- * @param	Translate	$langs					Object langs					
- * @param	Conf		$conf					Object conf					
+ *
+ * @param	DoliDB		$db						Database handler
+ * @param	Translate	$langs					Object langs
+ * @param	Conf		$conf					Object conf
  * @param	string		$diroutputpdf			Dir to output file
  * @param	string		$newlangid				Lang id
  * @param 	array		$filter					Array with filters
- * @param 	date		$dateafterdate			Invoice after date 
+ * @param 	date		$dateafterdate			Invoice after date
  * @param 	date 		$datebeforedate			Invoice before date
  * @param 	date		$paymentdateafter		Payment after date
  * @param 	date		$paymentdatebefore		Payment before date
  * @param	int			$usestdout				Add information onto standard output
- * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template, 
- * @return	int									Error code 
+ * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
+ * @param	string		$option					Suffix to add into file name of generated PDF
+ * @return	int									Error code
  */
-function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0)
+function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate=0, $option='')
 {
 	$sql = "SELECT DISTINCT f.rowid, f.facnumber";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -104,19 +104,19 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	}
 	if ($sqlwhere) $sql.=$sqlwhere;
 	if ($sqlorder) $sql.=$sqlorder;
-	
+
 	//print $sql; exit;
 	dol_syslog("scripts/invoices/rebuild_merge.php: sql=".$sql);
-	
+
 	if ($usestdout) print '--- start'."\n";
-	
+
 	// Start of transaction
 	//$db->begin();
-	
+
 	$error = 0;
 	$result = 0;
 	$files = array() ;		// liste les fichiers
-	
+
 	dol_syslog("scripts/invoices/rebuild_merge.php sql=".$sql);
 	if ( $resql=$db->query($sql) )
 	{
@@ -125,16 +125,16 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	    $oldemail = '';
 	    $message = '';
 	    $total = '';
-	
+
 	    if ($num)
 	    {
 	    	// First loop on each resultset to build PDF
 	    	// -----------------------------------------
-	
+
 	        while ($cpt < $num)
 	        {
 	            $obj = $db->fetch_object($resql);
-	
+
 				$fac = new Facture($db);
 				$result=$fac->fetch($obj->rowid);
 				if ($result > 0)
@@ -157,35 +157,35 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					else {
 					    if ($usestdout) print "PDF for invoice ".$obj->facnumber." already exists\n";
 					}
-	
+
 					// Add file into files array
 					$files[] = $filename;
 				}
-	
+
 				if ($result <= 0)
 				{
 					$error++;
-					if ($usestdout) print "Error: Failed to build PDF for invoice ".$fac->ref."\n";
-					else dol_syslog("Failed to build PDF for invoice ".$fac->ref, LOG_ERR);
+					if ($usestdout) print "Error: Failed to build PDF for invoice ".($fac->ref?$fac->ref:' id '.$obj->rowid)."\n";
+					else dol_syslog("Failed to build PDF for invoice ".($fac->ref?$fac->ref:' id '.$obj->rowid), LOG_ERR);
 				}
-	
+
 	            $cpt++;
 	        }
-	
 
-	        // Define format of output PDF 
+
+	        // Define format of output PDF
 	        $formatarray=pdf_getFormat();
 	        $page_largeur = $formatarray['width'];
 	        $page_hauteur = $formatarray['height'];
 	        $format = array($page_largeur,$page_hauteur);
-	        
+
 	        if ($usestdout) print "Using output PDF format ".join('x',$format)."\n";
 	        else dol_syslog("Using output PDF format ".join('x',$format), LOG_ERR);
-	        
-	        
+
+
 	        // Now, build a merged files with all files in $files array
 			//---------------------------------------------------------
-	        
+
 	        // Create empty PDF
 	        $pdf=pdf_getInstance($format);
 	        if (class_exists('TCPDF'))
@@ -193,12 +193,12 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	            $pdf->setPrintHeader(false);
 	            $pdf->setPrintFooter(false);
 	        }
-	        $pdf->SetFont(pdf_getPDFFont($outputlangs));
-	
+	        $pdf->SetFont(pdf_getPDFFont($langs));
+
 	        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 			//$pdf->SetCompression(false);
-	
-	
+
+
 			//$pdf->Open();
 			//$pdf->AddPage();
 			//$title=$langs->trans("BillsCustomersUnpaid");
@@ -224,21 +224,26 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 			// Create output dir if not exists
 			dol_mkdir($diroutputpdf);
-	
+
 			// Save merged file
 			$filename='mergedpdf';
-	
+
 			if (! empty($option)) $filename.='_'.$option;
-	
-			if ($pagecount)
+			$file=$diroutputpdf.'/'.$filename.'.pdf';
+
+			if (! $error && $pagecount)
 			{
-				$file=$diroutputpdf.'/'.$filename.'.pdf';
 				$pdf->Output($file,'F');
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 			}
-	
-			if ($usestdout) print "Merged PDF has been built in ".$file."\n";
+
+			if ($usestdout)
+			{
+				if (! $error) print "Merged PDF has been built in ".$file."\n";
+				else print "Can't build PDF ".$file."\n";
+			}
+
 			$result = 1;
 	    }
 	    else
@@ -254,7 +259,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	    dol_syslog("scripts/invoices/rebuild_merge.php: Error");
 	    $error++;
 	}
-	
+
 	if ($error) return -1;
 	else return $result;
 }

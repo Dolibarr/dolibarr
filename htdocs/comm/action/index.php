@@ -942,7 +942,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     global $user, $conf, $langs;
     global $filter, $filtera, $filtert, $filterd, $status;
     global $theme_datacolor;
-    global $cachethirdparties, $cachecontacts;
+    global $cachethirdparties, $cachecontacts, $colorindexused;
 
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
@@ -972,6 +972,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
     $ymd=sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
 
+    $nextindextouse=count($colorindexused);
+	//print $nextindextouse;
+
     foreach ($eventarray as $daykey => $notused)
     {
         $annee = date('Y',$daykey);
@@ -989,10 +992,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     $color=-1; $cssclass=''; $colorindex=-1;
                     if ((! empty($event->author->id) && $event->author->id == $user->id)
                     || (! empty($event->usertodo->id) && $event->usertodo->id == $user->id)
-                    || (! empty($event->userdone->id) && $event->userdone->id == $user->id)) {
-                    	$nummytasks++; $colorindex=1; $cssclass='family_mytasks';
+                    || (! empty($event->userdone->id) && $event->userdone->id == $user->id))
+                    {
+                    	$nummytasks++; $cssclass='family_mytasks';
                     }
-                    else if ($event->type_code == 'ICALEVENT') {
+                    else if ($event->type_code == 'ICALEVENT')
+                    {
                     	$numical++;
                     	if (! empty($event->icalname)) {
                     		if (! isset($numicals[dol_string_nospecial($event->icalname)])) {
@@ -1004,8 +1009,25 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other');
                     }
                     else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday'; }
-                    else { $numother++; $colorindex=2; $cssclass='family_other'; }
-                    if ($color == -1) $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+                    else { $numother++; $cssclass='family_other'; }
+                    if ($color == -1)	// Color was not forced. Set color according to color index.
+                    {
+                    	// Define color index if not yet defined
+                    	$idusertouse=($event->usertodo->id?$event->usertodo->id:0);
+                    	if (isset($colorindexused[$idusertouse]))
+                    	{
+                    		$colorindex=$colorindexused[$idusertouse];	// Color already assigned to this user
+                    	}
+                    	else
+                    	{
+                    		$colorindex=$nextindextouse;
+                    		$colorindexused[$idusertouse]=$colorindex;
+                    		if (! empty($theme_datacolor[$nextindextouse+1])) $nextindextouse++;	// Prepare to use next color
+                    	}
+                    	//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
+						// Define color
+                    	$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+                    }
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
                     // Show rect of event
@@ -1182,6 +1204,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '</div>'."\n";
 }
 
+/**
+ * Change color with a delta
+ *
+ * @param	string	$color		Color
+ * @param 	int		$minus		Delta
+ * @return	string				New color
+ */
 function dol_color_minus($color, $minus)
 {
 	$newcolor=$color;

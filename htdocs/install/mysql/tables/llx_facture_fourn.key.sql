@@ -17,8 +17,8 @@
 --
 -- ============================================================================
 
-
-ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, fk_soc, entity);
+ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (ref, entity);
+ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref_supplier (ref_supplier, fk_soc, entity);
 
 ALTER TABLE llx_facture_fourn ADD INDEX idx_facture_fourn_date_lim_reglement (date_lim_reglement);
 

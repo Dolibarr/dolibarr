@@ -184,23 +184,23 @@ if ($object->id)
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	print "\n<div class=\"tabsAction\">\n";
+	print '<div class="tabsAction">'."\n";
 
 	if ($action != 'ajout_photo' && $user->rights->categorie->creer)
 	{
 		if (! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
+			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#">';
+			print '<a class="butActionRefused hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
 	}
 
-	print "\n</div>\n";
+	print '</div>'."\n";
 
 	/*
 	 * Ajouter une photo

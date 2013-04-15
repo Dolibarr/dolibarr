@@ -11,6 +11,7 @@ DateToBirth=Data de naiximent
 BirthdayAlertOn=alerta aniversari activada
 BirthdayAlertOff=alerta aniversari desactivada
 Notify_FICHINTER_VALIDATE=Validació fitxa intervenció
+Notify_FICHINTER_SENTBYMAIL=Enviament fitxa intervenció per e-mail
 Notify_BILL_VALIDATE=Validació factura
 Notify_BILL_UNVALIDATE=Devalidació factura a client
 Notify_ORDER_SUPPLIER_APPROVE=Aprovació comanda a proveïdor

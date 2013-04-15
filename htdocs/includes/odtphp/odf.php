@@ -10,8 +10,10 @@ class OdfException extends Exception
  *
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
+ * @copyright  GPL License 2010 -  Vikas Mahajan - http://vikasmahajan.wordpress.com
+ * @copyright  GPL License 2012 - Stephen Larroque - lrq3000@gmail.com
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
- * @version 1.4.3 (last update 2012-07-29)
+ * @version 1.4.6 (last update 2013-04-07)
  */
 class Odf
 {
@@ -82,7 +84,7 @@ class Odf
 				throw new OdfException("Nothing to parse - Check that the content.xml file is correctly formed in source file '$filename'");
 			}
 			if (($this->manifestXml = $this->file->getFromName('META-INF/manifest.xml')) === false) {
- 				throw new OdfException("Something is wrong with META-INF/manifest.xm in source file '$filename'");
+ 				throw new OdfException("Something is wrong with META-INF/manifest.xml in source file '$filename'");
 			}
 			if (($this->stylesXml = $this->file->getFromName('styles.xml')) === false) {
 				throw new OdfException("Nothing to parse - Check that the styles.xml file is correctly formed in source file '$filename'");
@@ -110,19 +112,71 @@ class Odf
 		 */
 		public function setVars($key, $value, $encode = true, $charset = 'ISO-8859')
 		{
+                    $tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
 		    // TODO Warning string may be:
 		    // <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
 		    // instead of {aaa} so we should enhance this function.
             //print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
-		    if (strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']) === false) {
+		    if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml , $tag) === false) {
                 //if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
 		        throw new OdfException("var $key not found in the document");
                 //}
 		    }
 			$value = $encode ? htmlspecialchars($value) : $value;
 			$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-			$this->vars[$this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']] = str_replace("\n", "<text:line-break/>", $value);
+			$this->vars[$tag] = str_replace("\n", "<text:line-break/>", $value);
 			return $this;
+		}
+		
+		/**
+		 * Assing a template variable
+		 *
+		 * @param string $key name of the variable within the template
+		 * @param string $value replacement value
+		 * @param bool $encode if true, special XML characters are encoded
+		 * @throws OdfException
+		 * @return odf
+		 */
+		public function setVarsHeadFooter($key, $value, $encode = true, $charset = 'ISO-8859')
+		{
+			$tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
+			// TODO Warning string may be:
+			// <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
+			// instead of {aaa} so we should enhance this function.
+			//print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
+			if (strpos($this->stylesXml, $tag) === false && strpos($this->stylesXml , $tag) === false) {
+			//if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
+				throw new OdfException("var $key not found in the document");
+				//}
+			}
+			$value = $encode ? htmlspecialchars($value) : $value;
+				$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
+				$this->vars[$tag] = str_replace("\n", "<text:line-break/>", $value);
+				return $this;
+		}
+
+		/**
+		 * Evaluating php codes inside the ODT and output the buffer (print, echo) inplace of the code
+		 *
+		 */
+		public function phpEval()
+		{
+			preg_match_all('/[\{\<]\?(php)?\s+(?P<content>.+)\?[\}\>]/iU',$this->contentXml, $matches); // detecting all {?php code ?} or <?php code ? >
+			for ($i=0;$i < count($matches['content']);$i++) {
+				try {
+				$ob_output = ''; // flush the output for each code. This var will be filled in by the eval($code) and output buffering : any print or echo or output will be redirected into this variable
+				$code = $matches['content'][$i];
+				ob_start();
+				eval ($code);
+				$ob_output = ob_get_contents(); // send the content of the buffer into $ob_output
+				$this->contentXml = str_replace($matches[0][$i], $ob_output, $this->contentXml);
+				ob_end_clean();
+				} catch (Exception $e) {
+					ob_end_clean();
+					$this->contentXml = str_replace($matches[0][$i], 'ERROR: there was a problem while evaluating this portion of code, please fix it: '.$e, $this->contentXml);
+				}
+			}
+			return 0;
 		}
 
 		/**
@@ -145,7 +199,7 @@ class Odf
 			$width *= self::PIXEL_TO_CM;
 			$height *= self::PIXEL_TO_CM;
 			$xml = <<<IMG
-			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="char" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
+			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="aschar" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
 IMG;
 			$this->images[$value] = $file;
 			$this->setVars($key, $xml, false);
@@ -333,8 +387,10 @@ IMG;
 				throw new OdfException('Error during file export addFromString');
 			}
 			foreach ($this->images as $imageKey => $imageValue) {
+				// Add the image inside the ODT document
 				$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
-            	$this->addImageToManifest($imageValue);
+                                // Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
+				$this->addImageToManifest($imageValue);
 			}
         	if (! $this->file->addFromString('./META-INF/manifest.xml', $this->manifestXml)) {
             	throw new OdfException('Error during file export: manifest.xml');
@@ -349,15 +405,18 @@ IMG;
 		 */
 		public function addImageToManifest($file)
 		{
-		        $extension = explode('.', $file);
-		        $add = ' <manifest:file-entry manifest:media-type="image/'.$extension[1].'" manifest:full-path="Pictures/'.$file.'"/>'."\n";
-		        $this->manifestXml = str_replace('</manifest:manifest>', $add.'</manifest:manifest>', $this->manifestXml);
+                        // Get the file extension
+		        $ext = substr(strrchr($val, '.'), 1);
+                        // Create the correct image XML entry to add to the manifest (this is necessary because ODT format requires that we keep a list of the images in the manifest.xml)
+		        $add = ' <manifest:file-entry manifest:media-type="image/'.$ext.'" manifest:full-path="Pictures/'.$file.'"/>'."\n";
+                        // Append the image to the manifest
+		        $this->manifestXml = str_replace('</manifest:manifest>', $add.'</manifest:manifest>', $this->manifestXml); // we replace the manifest closing tag by the image XML entry + manifest closing tag (this results in appending the data, we do not overwrite anything)
 		}
 
 		/**
 		 * Export the file as attached file by HTTP
 		 *
-		 * @param string $name (optionnal)
+		 * @param string $name (optional)
 		 * @throws OdfException
 		 * @return void
 		 */
@@ -375,8 +434,42 @@ IMG;
 
 			header('Content-type: application/vnd.oasis.opendocument.text');
 			header('Content-Disposition: attachment; filename="'.$name.'"');
+			header('Content-Length: '.filesize($this->tmpfile));
 			readfile($this->tmpfile);
 		}
+
+		/**
+		 * Convert the ODT file to PDF and export the file as attached file by HTTP
+		 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
+		 *
+		 * @param string $name (optional)
+		 * @throws OdfException
+		 * @return void
+		 */
+		public function exportAsAttachedPDF($name="")
+                {
+                    if( $name == "" ) $name = md5(uniqid());
+
+                    $this->saveToDisk("$name.odt");
+                    exec("./odt2pdf.sh $name",$output,$ret_val);
+                    if($ret_val == 0)
+                    {
+                        if (headers_sent($filename, $linenum)) {
+                            throw new OdfException("headers already sent ($filename at $linenum)");
+                        }
+
+                        header('Content-type: application/pdf');
+                        header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+                        readfile("$name.pdf");
+                        unlink("$name.odt");
+                        unlink("$name.pdf");
+                    } else {
+                        echo "Error occured:<br>";
+                        foreach($output as $line)
+                            echo $line."<br>";
+                    }
+		}
+
 		/**
 		 * Returns a variable of configuration
 		 *

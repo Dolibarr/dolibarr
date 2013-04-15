@@ -64,7 +64,9 @@ class ExtraFields
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
 		'select' => 'ExtrafieldSelect',
-		'separate' => 'ExtrafieldSeparator'
+		'separate' => 'ExtrafieldSeparator',
+		'checkbox' => 'ExtrafieldCheckBox',
+		'radio' => 'ExtrafieldRadio',
 	);
 
 	/**
@@ -95,6 +97,7 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @param	int		$unique				Is field unique or not
      *  @param	int		$required			Is field required or not
+     *  @param	string	$default_value		Defaulted value
      *  @param  array	$param				Params for field 
      *  @return int      					<=0 if KO, >0 if OK
      */
@@ -166,7 +169,7 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
-			} elseif ($type=='select') {
+			} elseif (($type=='select') || ($type=='radio') ||($type=='checkbox')){
 				$typedb='text';
 				$lengthdb='';
 			} else {
@@ -217,7 +220,7 @@ class ExtraFields
      *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0,$param)
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='')
 	{
 		global $conf;
 
@@ -354,7 +357,7 @@ class ExtraFields
      *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos,$param='')
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='')
 	{
         $table=$elementtype.'_extrafields';
         // Special case for not normalized table names
@@ -376,7 +379,7 @@ class ExtraFields
 			}elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
-			} elseif ($type=='select') {
+			} elseif (($type=='select') || ($type=='radio') ||($type=='checkbox')) {
 				$typedb='text';
 				$lengthdb='';
 			} else {
@@ -582,7 +585,7 @@ class ExtraFields
 	 *  Return HTML string to put an input field into a page
 	 *
 	 *  @param	string	$key             Key of attribute
-	 *  @param  string	$value           Value to show
+	 *  @param  string	$value           Value to show (for date type it must be in timestamp format)
 	 *  @param  string	$moreparam       To add more parametes on html input tag
 	 *  @return	void
 	 */
@@ -619,7 +622,13 @@ class ExtraFields
         {
         	$tmp=explode(',',$size);
         	$newsize=$tmp[0];
-        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        	if(!class_exists('Form'))
+        		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+        	$formstat = new Form($db);
+        	
+        	$showtime = in_array($type,array('datetime')) ? 1 : 0;
+        	$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
+        	//$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
         elseif (in_array($type,array('int','double')))
         {
@@ -670,9 +679,41 @@ class ExtraFields
         	}
         	$out.='</select>';
         }
-        // Add comments
+        elseif ($type == 'checkbox')
+        {
+        	$out='';
+        	$value_arr=explode(',',$value);
+
+        	foreach ($param['options'] as $keyopt=>$val )
+        	{
+        		
+        		$out.='<input type="checkbox" name="options_'.$key.'[]"';
+        		$out.=' value="'.$keyopt.'"';
+        		
+        		if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
+        			$out.= 'checked="checked"';
+        		}else {
+        			$out.='';
+        		}
+        		
+        		$out.='/>'.$val.'<br>';
+        	}
+        }
+        elseif ($type == 'radio')
+        {
+        	$out='';
+        	foreach ($param['options'] as $keyopt=>$val )
+        	{
+        		$out.='<input type="radio" name="options_'.$key.'"';
+        		$out.=' value="'.$keyopt.'"';
+        		$out.= ($value==$keyopt?'checked="checked"':'');
+        		$out.='/>'.$val.'<br>';
+        	}
+        }
+        /* Add comments
 	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
         elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+        */
 	    return $out;
 	}
 
@@ -698,10 +739,12 @@ class ExtraFields
         if ($type == 'date')
         {
             $showsize=10;
+            $value=dol_print_date($value,'day');
         }
         elseif ($type == 'datetime')
         {
             $showsize=19;
+            $value=dol_print_date($value,'dayhour');
         }
         elseif ($type == 'int')
         {
@@ -731,6 +774,21 @@ class ExtraFields
         {
         	$value=$params['options'][$value];
         }
+        elseif ($type == 'radio')
+        {
+        	$value=$params['options'][$value];
+        }
+        elseif ($type == 'checkbox')
+        {
+        	$value_arr=explode(',',$value);
+        	$value='';
+        	if (is_array($value_arr)) 
+        	{
+	        	foreach ($value_arr as $keyval=>$valueval) {
+	        		$value.=$params['options'][$valueval].'<br>';
+	        	}
+        	}
+        }
         else
         {
             $showsize=round($size);
@@ -751,6 +809,48 @@ class ExtraFields
     {
     	$out = '<tr class="liste_titre"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
     	return $out;
+    }
+    
+    /**
+     * Fill array_options array for object by extrafields value (using for data send by forms)
+     *
+     * @param   array	$extralabels    $array of extrafields
+     * @param   object	&$object         object
+     * @return	int						1 if array_options set / 0 if no value
+     */
+    function setOptionalsFromPost($extralabels,&$object)
+    {
+    	global $_POST;
+    	
+    	if (is_array($extralabels))
+    	{
+	    	// Get extra fields
+	    	foreach ($extralabels as $key => $value)
+	    	{
+	    		$key_type = $this->attribute_type[$key];
+	    	
+	    		if (in_array($key_type,array('date','datetime')))
+	    		{
+	    			// Clean parameters
+	    			$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+	    		}
+	    		else if (in_array($key_type,array('checkbox')))
+	    		{
+	    			$value_arr=GETPOST("options_".$key);
+	    			$value_key=implode($value_arr,',');
+	    		}
+	    		else 
+	    		{
+	    			$value_key=GETPOST("options_".$key);
+	    		}
+	    		$object->array_options["options_".$key]=$value_key;
+	    	}
+    	
+    		return 1;
+    	}
+    	else {
+    		return 0;
+    	}
     }
 }
 ?>

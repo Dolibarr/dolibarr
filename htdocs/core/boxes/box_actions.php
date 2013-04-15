@@ -101,7 +101,7 @@ class box_actions extends ModeleBoxes
 					'logo' => ("action"),
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left" nowrap="1"',
+					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 					'text' => dol_trunc($label,32),
 					'text2'=> $late,
 					'url' => DOL_URL_ROOT."/comm/action/fiche.php?id=".$objp->id);

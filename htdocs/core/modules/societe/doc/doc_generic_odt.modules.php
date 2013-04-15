@@ -173,6 +173,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			return -1;
 		}
 
+                // Add odtgeneration hook
+                if (! is_object($hookmanager))
+                {
+                        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+                        $hookmanager=new HookManager($this->db);
+                }
+                $hookmanager->initHooks(array('odtgeneration'));
+                global $action;
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
@@ -276,6 +285,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
                 complete_substitutions_array($tmparray, $outputlangs, $object);
+                // Call the ODTSubstitution hook
+                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 //var_dump($object->id); exit;
 				foreach($tmparray as $key=>$value)
 				{
@@ -296,10 +308,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 
-				// Add odtgeneration hook
-				$hookmanager->initHooks(array('odtgeneration'));
-				$parameters=array('odfHandler'=>$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				global $action;
+                                // Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file

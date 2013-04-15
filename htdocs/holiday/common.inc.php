@@ -23,7 +23,7 @@
  *		\brief      Common load of data
  */
 
-require_once realpath(dirname(__FILE__)) . '/../main.inc.php';
+require_once realpath(dirname(__FILE__)).'/../main.inc.php';
 if (! class_exists('Holiday')) {
 	require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 }
@@ -43,7 +43,7 @@ if (empty($conf->holiday->enabled))
 }
 
 
-$sql = "SELECT value";
+/*$sql = "SELECT value";
 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
 $sql.= " WHERE name = 'userGroup'";
 
@@ -63,5 +63,6 @@ if ($obj->value == null || $obj->value < 0)
     llxFooter();
     exit();
 }
+*/
 
 ?>

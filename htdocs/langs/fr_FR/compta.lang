@@ -163,3 +163,4 @@ Pcg_type=Classe de compte
 Pcg_subtype=Sous classe de compte
 InvoiceLinesToDispatch=Lignes de factures à ventiler
 InvoiceDispatched=Factures ventilées
+AccountancyDashboard=Synthèse compta/tréso

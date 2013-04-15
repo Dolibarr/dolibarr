@@ -22,12 +22,13 @@ create table llx_extrafields
 	rowid           integer AUTO_INCREMENT PRIMARY KEY,
 	name            varchar(64) NOT NULL,       -- nom de l'attribut
 	entity          integer DEFAULT 1 NOT NULL,	-- multi company id
-    elementtype     varchar(64) NOT NULL DEFAULT 'member',
+    	elementtype     varchar(64) NOT NULL DEFAULT 'member',
 	tms             timestamp,
 	label           varchar(255) NOT NULL,      -- label correspondant a l'attribut
 	type            varchar(8),
 	size            varchar(8) DEFAULT NULL,
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
-	pos             integer DEFAULT 0
+	pos             integer DEFAULT 0,
+	param		text
 )ENGINE=innodb;

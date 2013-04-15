@@ -50,7 +50,7 @@ create table llx_commande_fournisseur
   localtax2				double(24,8)      default 0,
   total_ht				double(24,8)      default 0,
   total_ttc				double(24,8)      default 0,
-  note					text,
+  note_private			text,
   note_public			text,
   model_pdf				varchar(255),
 

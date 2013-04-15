@@ -77,21 +77,21 @@ MailingStatusRead=Read
 CheckRead=Read Receipt
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 MailtoEMail=Hyper link to email
-ActivateCheckRead=Allow to use the "Read receipt" tracker and the "Unsubcribe" link
+ActivateCheckRead=Allow to use the "Unsubcribe" link
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
 
 # Libelle des modules de liste de destinataires mailing
-MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)
+MailingModuleDescContactCompanies=Contacts/addresses of all third parties (customer, prospect, supplier, ...)
 MailingModuleDescDolibarrUsers=Dolibarr users
 MailingModuleDescFundationMembers=Foundation members with emails
 MailingModuleDescEmailsFromFile=EMails from a text file (email;lastname;firstname;other)
 MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Third parties (by category)
 MailingModuleDescDolibarrContractsLinesExpired=Third parties with expired contract's lines
-MailingModuleDescContactsByCompanyCategory=Contacts of third parties (by third parties category)
+MailingModuleDescContactsByCompanyCategory=Contacts/addresses of third parties (by third parties category)
 MailingModuleDescMembersCategories=Foundation members (by categories)
-MailingModuleDescContactsByFunction=Contacts of third parties (by position/function)
+MailingModuleDescContactsByFunction=Contacts/addresses of third parties (by position/function)
 
 
 LineInFile=Line %s in file
@@ -100,7 +100,7 @@ MailSelectedRecipients=Selected recipients
 MailingArea=EMailings area
 LastMailings=Last %s emailings
 TargetsStatistics=Targets statistics
-NbOfCompaniesContacts=Unique contacts of companies
+NbOfCompaniesContacts=Unique contacts/addresses
 MailNoChangePossible=Recipients for validated emailing can't be changed
 SearchAMailing=Search mailing
 SendMailing=Send emailing

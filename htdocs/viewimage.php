@@ -36,13 +36,18 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 // Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! defined("NOLOGIN")) define("NOLOGIN",'1');
 
-
 /**
- * Wrapper, donc header vierge
+ * Header empty
  *
- * @return  null
+ * @return	void
  */
 function llxHeader() { }
+/**
+ * Footer empty
+ *
+ * @return	void
+ */
+function llxFooter() { }
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

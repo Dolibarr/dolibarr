@@ -279,7 +279,7 @@ if ($resql)
 
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
 llxFooter();
 

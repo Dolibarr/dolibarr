@@ -79,6 +79,26 @@ abstract class CommonObject
     }
 
     /**
+     * 	Return full address of contact
+     *
+     * 	@param		int			$withcountry		1=Add country into address string
+     *  @param		string		$sep				Separator to use to build string
+     *	@return		string							Full address string
+     */
+    function getFullAddress($withcountry=0,$sep="\n")
+    {
+    	if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
+    	{
+    		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
+    		$tmparray=getCountry($this->country_id,'all');
+    		$this->country_code=$tmparray['code'];
+    		$this->country     =$tmparray['label'];
+    	}
+
+    	return dol_format_address($this, $withcountry, $sep);
+    }
+
+    /**
      *  Check if ref is used.
      *
      * 	@return		int			<0 if KO, 0 if not found, >0 if found
@@ -1380,77 +1400,57 @@ abstract class CommonObject
     }
 
     /**
-     *  Update private note of element
+     *  Update note of element
      *
-     *  @param      string		$note	New value for note
-     *  @return     int      		   	<0 if KO, >0 if OK
+     *  @param      string		$note		New value for note
+     *  @param		string		$suffix		'', '_public' or '_private'
+     *  @return     int      		   		<0 if KO, >0 if OK
      */
-    function update_note($note)
+    function update_note($note,$suffix='')
     {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
-            return -1;
-        }
+    	if (! $this->table_element)
+    	{
+    		dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
+    		return -1;
+    	}
+		if (! in_array($suffix,array('','_public','_private')))
+		{
+    		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
+			return -2;
+		}
+		
+    	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
+    	$sql.= " WHERE rowid =". $this->id;
 
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        // TODO uniformize fields to note_private
-        if ($this->table_element == 'fichinter' || $this->table_element == 'projet' || $this->table_element == 'projet_task')
-        {
-            $sql.= " SET note_private = '".$this->db->escape($note)."'";
-        }
-        else
-        {
-            $sql.= " SET note = '".$this->db->escape($note)."'";
-        }
-        $sql.= " WHERE rowid =". $this->id;
-
-        dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $this->note = $note;            // deprecated
-            $this->note_private = $note;
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
-            return -1;
-        }
+    	dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
+    	if ($this->db->query($sql))
+    	{
+    		if ($suffix == '_public') $this->note_public = $note;
+    		else if ($suffix == '_private') $this->note_private = $note;
+    		else $this->note = $note;
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->lasterror();
+    		dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
+    		return -1;
+    	}
     }
 
     /**
-     * Update public note of element
-     *
-     * @param	string	$note_public	New value for note
-     * @return	int         			<0 if KO, >0 if OK
+     * 	Update public note (kept for backward compatibility)
+     * 
+     *  @param      string		$note		New value for note
+     *  @return     int      		   		<0 if KO, >0 if OK
+     *  @deprecated
      */
-    function update_note_public($note_public)
+    function update_note_public($note)
     {
-        if (! $this->table_element)
-        {
-            dol_syslog(get_class($this)."::update_note_public was called on objet with property table_element not defined",LOG_ERR);
-            return -1;
-        }
-
-        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET note_public = '".$this->db->escape($note_public)."'";
-        $sql.= " WHERE rowid =". $this->id;
-
-        dol_syslog(get_class($this)."::update_note_public sql=".$sql);
-        if ($this->db->query($sql))
-        {
-            $this->note_public = $note_public;
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
+    	return $this->update_note($note,'_public');
     }
-
+    
     /**
      *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
      *
@@ -1558,7 +1558,7 @@ abstract class CommonObject
 
             // Add revenue stamp to total
             $this->total_ttc       += isset($this->revenuestamp)?$this->revenuestamp:0;
-            
+
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2132,15 +2132,19 @@ abstract class CommonObject
             		case 'price':
             			$this->array_options[$key] = price2num($this->array_options[$key]);
             			break;
+            		case 'date':
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			break;
+            		case 'datetime':
+            			$this->array_options[$key]=$this->db->idate($this->array_options[$key]);
+            			break;
                	}
             }
-
             $this->db->begin();
 
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
             dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
             $this->db->query($sql_del);
-
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)
             {
@@ -2185,6 +2189,76 @@ abstract class CommonObject
         }
         else return 0;
     }
+
+   /**
+     * Function to show lines of extrafields with output datas
+     *
+     * @param	object	$extrafields	extrafield Object
+     * @param	string	$mode			Show output (view) or input (edit) for extrafield
+     *
+     * @return string
+     */
+    function showOptionals($extrafields,$mode='view')
+    {
+		global $_POST;
+
+		$out = '';
+
+		if(count($extrafields->attribute_label) > 0)
+		{
+			$out .= "\n";
+			$out .= '<!-- showOptionalsInput --> ';
+			$out .= "\n";
+
+			$e = 0;
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$colspan='3';
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
+				if ($extrafields->attribute_type[$key] == 'separate')
+				{
+					$out .= $extrafields->showSeparator($key);
+				}
+				else
+				{
+					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+					{
+						$out .= '<tr>';
+						$colspan='0';
+					}
+					else
+					{
+						$out .= '<tr>';
+					}
+					// Convert date into timestamp format
+					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+					{
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->array_options['options_'.$key];
+					}
+					$out .= '<td>'.$label.'</td>';
+					$out .='<td colspan="'.$colspan.'">';
+
+					switch($mode) {
+					case "view":
+						$out .= $extrafields->showOutputField($key,$value);
+						break;
+					case "edit":
+						$out .= $extrafields->showInputField($key,$value);
+						break;
+					}
+
+					$out .= '</td>'."\n";
+
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+					else $out .= '</tr>';
+					$e++;
+				}
+			}
+			$out .= "\n";
+			$out .= '<!-- /showOptionalsInput --> ';
+		}
+		return $out;
+	}
 
 
     /**

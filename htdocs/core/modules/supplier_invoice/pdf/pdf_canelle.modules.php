@@ -561,8 +561,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT1",$mysoc->country_code).' ';
-						$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
+						$totalvat = $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code).' ';
+						$totalvat.= vatrate(abs($tvakey),1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -589,8 +589,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalLT2",$mysoc->country_code).' ';
-						$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
+						$totalvat = $outputlangs->transcountrynoentities("TotalLT2",$mysoc->country_code).' ';
+						$totalvat.= vatrate(abs($tvakey),1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);

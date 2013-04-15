@@ -47,9 +47,11 @@ print "<br>\n";
 $modules = array();
 $modules_names = array();
 $modules_files = array();
+$modules_fullpath = array();
 $modulesdir = dolGetModulesDirs();
 
 // Load list of modules
+$i=0;
 foreach($modulesdir as $dir)
 {
 	$handle=@opendir(dol_osencode($dir));
@@ -63,13 +65,25 @@ foreach($modulesdir as $dir)
 
     			if ($modName)
     			{
-    				include_once $dir.$file;
-    				$objMod = new $modName($db);
+    				//print 'xx'.$dir.$file.'<br>';
+					if (in_array($file, $modules_files))
+					{
+						// File duplicate
+						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
+					}
+					else
+					{
+						// File to load
+    					include_once $dir.$file;
 
-    				$modules[$objMod->numero]=$objMod;
-    				$modules_names[$objMod->numero]=$objMod->name;
-    				$modules_files[$objMod->numero]=$file;
-    				$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+	    				$objMod = new $modName($db);
+
+	    				$modules[$objMod->numero]=$objMod;
+	    				$modules_names[$objMod->numero]=$objMod->name;
+	    				$modules_files[$objMod->numero]=$file;
+	    				$modules_fullpath[$file]=$dir.$file;
+	    				$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
+					}
     			}
     		}
     	}
@@ -127,8 +141,7 @@ sort($rights_ids);
 $old='';
 foreach($rights_ids as $right_id)
 {
-	if ($old == $right_id)
-		print "Warning duplicate id on permission : ".$right_id."<br>";
+	if ($old == $right_id) print "Warning duplicate id on permission : ".$right_id."<br>";
 	$old = $right_id;
 }
 

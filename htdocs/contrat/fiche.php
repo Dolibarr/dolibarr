@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
@@ -158,7 +160,7 @@ if (GETPOST('remonth') && GETPOST('reday') && GETPOST('reyear'))
 
 if ($action == 'add' && $user->rights->contrat->creer)
 {
-	
+
 	// Check
 	if (empty($datecontrat))
 	{
@@ -166,14 +168,14 @@ if ($action == 'add' && $user->rights->contrat->creer)
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
 		$action='create';
 	}
-	
+
 	if ($socid<1)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		$action='create';
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$object->socid						= $socid;
@@ -182,7 +184,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
     	$object->commercial_suivi_id		= GETPOST('commercial_suivi_id','int');
     	$object->commercial_signature_id	= GETPOST('commercial_signature_id','int');
 
-    	$object->note						= GETPOST('note','alpha');
+    	$object->note_private				= GETPOST('note_private','alpha');
     	$object->note_public				= GETPOST('note_public','alpha');
     	$object->fk_project					= GETPOST('projectid','int');
     	$object->remise_percent				= GETPOST('remise_percent','alpha');
@@ -437,7 +439,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         {
             $pu_ht=GETPOST('price_ht');
             $price_base_type = 'HT';
-            $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0 
+            $tva_tx=GETPOST('tva_tx')?str_replace('*','',GETPOST('tva_tx')):0;		// tva_tx field may be disabled, so we use vat rate 0
             $tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
             $desc=GETPOST('dp_desc');
         }
@@ -656,13 +658,13 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 
 else if ($action == 'setnote_public' && $user->rights->contrat->creer)
 {
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->contrat->creer)
+else if ($action == 'setnote_private' && $user->rights->contrat->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -785,7 +787,7 @@ if ($action == 'create')
 
             $soc = $objectsrc->client;
 
-            $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
+            $note_private		= (! empty($objectsrc->note_private) ? $objectsrc->note_private : '');
             $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
             // Object source contacts list
@@ -794,7 +796,7 @@ if ($action == 'create')
     }
     else {
 		$projectid = GETPOST('projectid','int');
-		$note_private = GETPOST("note");
+		$note_private = GETPOST("note_private");
 		$note_public = GETPOST("note_public");
 	}
 
@@ -869,25 +871,16 @@ if ($action == 'create')
 
     print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
 
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    
     $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
     print $doleditor->Create(1);
-    /*
-    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-    print $note_public;
-    print '</textarea></td></tr>';
-	*/
+   
 
     if (! $user->societe_id)
     {
         print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
-        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor('note', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
+        $doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
         print $doleditor->Create(1);
-        /*
-        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-        print $note_private;
-        print '</textarea>';*/
         print '</td></tr>';
     }
 
@@ -976,9 +969,9 @@ else
         	{
         		$numref = $object->ref;
         	}
-        	
+
         	$text=$langs->trans('ConfirmValidateContract',$numref);
-            
+
             $ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
             if ($ret == 'html') print '<br>';
         }
@@ -1595,26 +1588,26 @@ else
 
             if ($object->statut == 0 && $nbofservices)
             {
-                if ($user->rights->contrat->creer) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-                else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
+                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
 
             if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
                 $langs->load("bills");
-                if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a>';
-                else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+                if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
             }
 
             if ($object->nbofservicesclosed < $nbofservices)
             {
                 //if (! $numactive)
                 //{
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
                 //}
                 //else
                 //{
-                //	print '<a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a>';
+                //	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a></div>';
                 //}
             }
 
@@ -1623,11 +1616,11 @@ else
             // - Droit de supprimer
             if (($user->rights->contrat->creer && $object->statut == 0) || $user->rights->contrat->supprimer)
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
             }
             else
             {
-            	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a>';
+            	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
             }
 
             print "</div>";

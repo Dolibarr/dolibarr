@@ -366,7 +366,7 @@ class Paiement extends CommonObject
 
 
     /**
-     *      A record into bank for payment with links between this bank record and invoices of payment.
+     *      Add a record into bank for payment with links between this bank record and invoices of payment.
      *      All payment properties (this->amount, this->amounts, ...) must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
@@ -384,16 +384,26 @@ class Paiement extends CommonObject
 
         $error=0;
         $bank_line_id=0;
-        $this->fk_account=$accountid;
 
         if (! empty($conf->banque->enabled))
         {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+        	if ($accountid <= 0)
+        	{
+        		$this->error='Bad value for parameter accountid';
+        		dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
+        		return -1;
+        	}
+
+        	$this->db->begin();
+
+        	$this->fk_account=$accountid;
+
+        	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             dol_syslog("$user->id,$mode,$label,$this->fk_account,$emetteur_nom,$emetteur_banque");
 
             $acc = new Account($this->db);
-            $acc->fetch($this->fk_account);
+            $result=$acc->fetch($this->fk_account);
 
             $totalamount=$this->amount;
             if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
@@ -442,7 +452,7 @@ class Paiement extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if (! $error)
+                if (! $error  && $label != '(WithdrawalPayment)')
                 {
                     $linkaddedforthirdparty=array();
                     foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
@@ -497,9 +507,18 @@ class Paiement extends CommonObject
 				}
             }
             else
-            {
+			{
                 $this->error=$acc->error;
                 $error++;
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            }
+            else
+			{
+            	$this->db->rollback();
             }
         }
 

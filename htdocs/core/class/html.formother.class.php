@@ -211,9 +211,10 @@ class FormOther
     /**
      *    Return list of revenue stamp for country
      *
-     *    @param	string	$selected   Value of preselected revenue stamp
-     *    @param    string	$htmlname   Name of combo list
-     *    @return	string				HTML select list
+     *    @param	string	$selected   	Value of preselected revenue stamp
+     *    @param    string	$htmlname   	Name of combo list
+     *    @param    string	$country_code   Country Code
+     *    @return	string					HTML select list
      */
     function select_revenue_stamp($selected='',$htmlname='revenuestamp',$country_code='')
     {

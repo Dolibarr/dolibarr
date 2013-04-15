@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -49,6 +51,9 @@ if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('contact');
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -149,20 +154,15 @@ if (empty($reshook))
         $object->jabberid		= $_POST["jabberid"];
 		$object->no_email		= $_POST["no_email"];
         $object->priv			= $_POST["priv"];
-        $object->note			= $_POST["note"];
+        $object->note_public	= GETPOST("note_public");
+        $object->note_private	= GETPOST("note_private");
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
         $object->birthday_alert = $_POST["birthday_alert"];
 
-        // Get extra fields
-        foreach($_POST as $key => $value)
-        {
-        	if (preg_match("/^options_/",$key))
-        	{
-        		$object->array_options[$key]=GETPOST($key);
-        	}
-        }
+        // Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
         if (! $_POST["lastname"])
         {
@@ -250,16 +250,11 @@ if (empty($reshook))
             $object->jabberid		= $_POST["jabberid"];
 			$object->no_email		= $_POST["no_email"];
             $object->priv			= $_POST["priv"];
-            $object->note			= $_POST["note"];
+        	$object->note_public	= GETPOST("note_public");
+       		$object->note_private	= GETPOST("note_private");
 
-            // Get extra fields
-            foreach($_POST as $key => $value)
-            {
-            	if (preg_match("/^options_/",$key))
-            	{
-            		$object->array_options[$key]=GETPOST($key);
-            	}
-            }
+            // Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
             $result = $object->update($_POST["contactid"], $user);
 
@@ -283,8 +278,6 @@ if (empty($reshook))
  *	View
  */
 
-// fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('contact');
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ContactsAddresses"),$help_url);
@@ -307,11 +300,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     if (empty($object->error) && $id)
  	{
-	     $object = new Contact($db);
-	     $object->fetch($id);
+ 		$object = new Contact($db);
+ 		$result=$object->fetch($id);
+		if ($result <= 0) dol_print_error('',$object->error);
  	}
-	$objcanvas->assign_values($action, $id);	// Set value for templates
-	$objcanvas->display_canvas($action);		// Show template
+   	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
+    $objcanvas->display_canvas($action);							// Show template
 }
 else
 {
@@ -510,30 +504,28 @@ else
             print $form->selectarray('priv',$selectarray,(isset($_POST["priv"])?$_POST["priv"]:$object->priv),0);
             print '</td></tr>';
 
-            // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="top"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea></td></tr>';
+            // Note Public
+            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
+            print '<td colspan="3" valign="top">';
+            $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+            //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
+            print '</td></tr>';
+
+            // Note Private
+            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
+            print '<td colspan="3" valign="top">';
+            $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+            //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
+            print '</td></tr>';
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	foreach($extrafields->attribute_label as $key=>$label)
-            	{
-            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
-            		if ($extrafields->attribute_type[$key] == 'separate')
-            		{
-            			print $extrafields->showSeparator($key);
-            		}
-            		else
-            		{
-	            		print '<tr><td';
-	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	            		print '>'.$label.'</td><td colspan="3">';
-	            		print $extrafields->showInputField($key,$value);
-	            		print '</td></tr>'."\n";
-            		}
-            	}
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             print "</table><br>";
@@ -729,33 +721,30 @@ else
             print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
-            // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-            print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
-            print isset($_POST["note"])?$_POST["note"]:$object->note;
-            print '</textarea></td></tr>';
+            // Note Public
+            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+            print $doleditor->Create(1);
+           // print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
+           // print isset($_POST["note"])?$_POST["note"]:$object->note;
+           // print '</textarea></td></tr>';
+           print '</td></tr>';
+
+           // Note Private
+           print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+           $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+           print $doleditor->Create(1);
+           // print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
+           // print isset($_POST["note"])?$_POST["note"]:$object->note;
+           // print '</textarea></td></tr>';
+           print '</td></tr>';
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
-            	foreach($extrafields->attribute_label as $key=>$label)
-            	{
-            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
-            		if ($extrafields->attribute_type[$key] == 'separate')
-            		{
-            			print $extrafields->showSeparator($key);
-            		}
-            		else
-            		{
-	            		print '<tr><td';
-	            		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
-	            		print '>'.$label.'</td><td colspan="3">';
-	            		print $extrafields->showInputField($key,$value);
-	            		print "</td></tr>\n";
-            		}
-            	}
+            	print $object->showOptionals($extrafields,'edit');
             }
 
             $object->load_ref_elements();
@@ -949,9 +938,14 @@ else
         print $object->LibPubPriv($object->priv);
         print '</td></tr>';
 
-        // Note
-        print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-        print nl2br($object->note);
+        // Note Public
+        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+        print nl2br($object->note_public);
+        print '</td></tr>';
+
+        // Note Private
+        print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+        print nl2br($object->note_private);
         print '</td></tr>';
 
         // Other attributes
@@ -959,20 +953,7 @@ else
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	foreach($extrafields->attribute_label as $key=>$label)
-        	{
-        		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-        		if ($extrafields->attribute_type[$key] == 'separate')
-        		{
-        			print $extrafields->showSeparator($key);
-        		}
-        		else
-        		{
-	        		print '<tr><td>'.$label.'</td><td colspan="3">';
-	        		print $extrafields->showOutputField($key,$value);
-	        		print "</td></tr>\n";
-        		}
-        	}
+        	print $object->showOptionals($extrafields);
         }
 
         $object->load_ref_elements();

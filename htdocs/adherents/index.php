@@ -419,7 +419,7 @@ print "</tr>\n";
 print "</table><br>\n";
 
 //print '</td></tr></table>';
-print '<div></div></div>';
+print '</div></div></div>';
 
 
 llxFooter();

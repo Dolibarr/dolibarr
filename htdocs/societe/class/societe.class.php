@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,9 @@ class Societe extends CommonObject
     var $code_compta;
     var $code_compta_fournisseur;
 
-    var $note;
+    var $note; //TODO deprecated
+    var $note_private;
+    var $note_public;
     //! code statut prospect
     var $stcomm_id;
     var $statut_commercial;
@@ -129,6 +132,7 @@ class Societe extends CommonObject
     var $date_update;
 
     var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+    var $parent;
     var $default_lang;
 
     var $ref_int;
@@ -140,7 +144,7 @@ class Societe extends CommonObject
 
     var $array_options;
 
-    var $oldcopy;
+    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
 
 
     /**
@@ -249,7 +253,11 @@ class Societe extends CommonObject
                     $result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
                     // Fin appel triggers
+                }
+                else $error++;
 
+                if (! $error)
+                {
                     dol_syslog(get_class($this)."::Create success id=".$this->id);
                     $this->db->commit();
                     return $this->id;
@@ -693,7 +701,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note, s.client, s.fournisseur';
+        $sql .= ', s.phone, s.fax, s.email, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -827,7 +835,9 @@ class Societe extends CommonObject
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
 
-                $this->note = $obj->note;
+                $this->note = $obj->note_private; //TODO Deprecatedfor backward comtability
+                $this->note_private = $obj->note_private;
+                $this->note_public = $obj->note_public;
                 $this->default_lang = $obj->default_lang;
                 $this->logo = $obj->logo;
 
@@ -1518,40 +1528,6 @@ class Societe extends CommonObject
     }
 
     /**
-     * 	Return full address of third party
-     *
-     * 	@param		int			$withcountry		1=Add country into address string
-     *  @param		string		$sep				Separator to use to build string
-     *	@return		string							Full address string
-     */
-    function getFullAddress($withcountry=0,$sep="\n")
-    {
-        $ret='';
-        if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
-        {
-            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-            $tmparray=getCountry($this->country_id,'all');
-            $this->country_code=$tmparray['code'];
-            $this->country     =$tmparray['label'];
-        }
-
-        if (in_array($this->country_code,array('US')))
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        else
-        {
-	        $ret.=($this->address?$this->address.$sep:'');
-	        $ret.=trim($this->zip.' '.$this->town);
-	        if ($withcountry) $ret.=($this->country?$sep.$this->country:'');
-        }
-        return trim($ret);
-    }
-
-
-    /**
      *    Return list of contacts emails existing for third party
      *
      *	  @param	  int		$addthirdparty		1=Add also a record for thirdparty email
@@ -1793,15 +1769,15 @@ class Societe extends CommonObject
     function get_codefournisseur($objsoc=0,$type=1)
     {
         global $conf;
-        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
-            $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
             $mod = new $var;
 
             $this->code_fournisseur = $mod->getNextValue($objsoc,$type);
@@ -1853,16 +1829,16 @@ class Societe extends CommonObject
     function codefournisseur_modifiable()
     {
         global $conf;
-        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
             $mod = new $var;
 
@@ -1926,16 +1902,16 @@ class Societe extends CommonObject
     function check_codefournisseur()
     {
         global $conf;
-        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
 
-            $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+            $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
             $mod = new $var;
 
@@ -2005,53 +1981,30 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Defini la societe mere pour les filiales
+     *    Define parent commany of current company
      *
-     *    @param	int		$id     id compagnie mere a positionner
+     *    @param	int		$id     Id of thirdparty to set or '' to remove
      *    @return	int     		<0 if KO, >0 if OK
      */
     function set_parent($id)
     {
         if ($this->id)
         {
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET parent = ".$id;
-            $sql .= " WHERE rowid = " . $this->id .";";
-
-            if ( $this->db->query($sql) )
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+            $sql.= " SET parent = ".($id > 0 ? $id : "null");
+            $sql.= " WHERE rowid = " . $this->id;
+			dol_syslog(get_class($this).'::set_parent sql='.$sql);
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 return 1;
             }
             else
-            {
+			{
                 return -1;
             }
         }
-    }
-
-    /**
-     *  Supprime la societe mere
-     *
-     *  @param	int		$id     id compagnie mere a effacer
-     *  @return int     		<0 if KO, >0 if KO
-     */
-    function remove_parent($id)
-    {
-        if ($this->id)
-        {
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET parent = null";
-            $sql .= " WHERE rowid = " . $this->id .";";
-
-            if ( $this->db->query($sql) )
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
-        }
+        else return -1;
     }
 
 	/**
@@ -2496,7 +2449,7 @@ class Societe extends CommonObject
     	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
     	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
     	$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)?'':$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
-    	$this->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
+    	$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
     	$this->nom=$this->name; 									// deprecated
 
@@ -2581,6 +2534,9 @@ class Societe extends CommonObject
         $this->email='specimen@specimen.com';
         $this->url='http://www.specimen.com';
 
+        $this->phone='0909090901';
+        $this->fax='0909090909';
+
         $this->code_client='CC-'.dol_print_date($now,'dayhourlog');
         $this->code_fournisseur='SC-'.dol_print_date($now,'dayhourlog');
         $this->capital=10000;
@@ -2590,7 +2546,7 @@ class Societe extends CommonObject
         $this->tva_assuj=1;
         $this->tva_intra='EU1234567';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
 
         $this->idprof1='idprof1';
         $this->idprof2='idprof2';

@@ -76,10 +76,10 @@ class User extends CommonObject
 	var $fk_member;
 	var $fk_user;
 
-	var $webcal_login;
-	var $phenix_login;
-	var $phenix_pass;
-	var $phenix_pass_crypted;
+	var $clicktodial_url;
+	var $clicktodial_login;
+	var $clicktodial_password;
+	var $clicktodial_poste;
 
 	var $datelastlogin;
 	var $datepreviouslogin;
@@ -139,7 +139,7 @@ class User extends CommonObject
 
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.job, u.signature, u.office_phone, u.office_fax, u.user_mobile,";
-		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.phenix_pass, u.note,";
+		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
 		$sql.= " u.statut, u.lang, u.entity,";
@@ -215,9 +215,6 @@ class User extends CommonObject
 				$this->datelastlogin		= $this->db->jdate($obj->datel);
 				$this->datepreviouslogin	= $this->db->jdate($obj->datep);
 
-				$this->webcal_login         = $obj->webcal_login;
-				$this->phenix_login         = $obj->phenix_login;
-				$this->phenix_pass_crypted  = $obj->phenix_pass;
 				$this->societe_id           = $obj->fk_societe;
 				$this->contact_id           = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
@@ -1106,12 +1103,6 @@ class User extends CommonObject
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
-		$this->webcal_login = trim($this->webcal_login);
-		$this->phenix_login = trim($this->phenix_login);
-		if ($this->phenix_pass != $this->phenix_pass_crypted)
-		{
-			$this->phenix_pass  = dol_hash(trim($this->phenix_pass));
-		}
 		$this->admin        = $this->admin?$this->admin:0;
 
 		// Check parameters
@@ -1141,9 +1132,6 @@ class User extends CommonObject
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
-		$sql.= ", webcal_login = '".$this->db->escape($this->webcal_login)."'";
-		$sql.= ", phenix_login = '".$this->db->escape($this->phenix_login)."'";
-		$sql.= ", phenix_pass = '".$this->db->escape($this->phenix_pass)."'";
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
@@ -1545,7 +1533,7 @@ class User extends CommonObject
 	 */
 	function fetch_clicktodial()
 	{
-		$sql = "SELECT login, pass, poste ";
+		$sql = "SELECT url, login, pass, poste ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
 		$sql.= " WHERE u.fk_user = ".$this->id;
 
@@ -1556,6 +1544,7 @@ class User extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
+				$this->clicktodial_url = $obj->url;
 				$this->clicktodial_login = $obj->login;
 				$this->clicktodial_password = $obj->pass;
 				$this->clicktodial_poste = $obj->poste;
@@ -1585,26 +1574,28 @@ class User extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " WHERE fk_user = ".$this->id;
 
+		dol_syslog(get_class($this).'::update_clicktodial sql='.$sql);
 		$result = $this->db->query($sql);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_clicktodial";
-		$sql .= " (fk_user,login,pass,poste)";
+		$sql .= " (fk_user,url,login,pass,poste)";
 		$sql .= " VALUES (".$this->id;
-		$sql .= ", '". $this->clicktodial_login ."'";
-		$sql .= ", '". $this->clicktodial_password ."'";
-		$sql .= ", '". $this->clicktodial_poste."')";
+		$sql .= ", '". $this->db->escape($this->clicktodial_url) ."'";
+		$sql .= ", '". $this->db->escape($this->clicktodial_login) ."'";
+		$sql .= ", '". $this->db->escape($this->clicktodial_password) ."'";
+		$sql .= ", '". $this->db->escape($this->clicktodial_poste) ."')";
 
+		dol_syslog(get_class($this).'::update_clicktodial sql='.$sql);
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
 			$this->db->commit();
-			return 0;
+			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -1946,6 +1937,8 @@ class User extends CommonObject
 	{
 		global $user,$langs;
 
+		$now=dol_now();
+		
 		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
@@ -1961,15 +1954,18 @@ class User extends CommonObject
 		$this->admin=0;
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
-		$this->datec=time();
-		$this->datem=time();
-		$this->webcal_login='dolibspec';
+		//$this->pass_indatabase='dolibspec';									Set after a fetch
+		//$this->pass_indatabase_crypted='e80ca5a88c892b0aaaf7e154853bccab';	Set after a fetch
+		$this->datec=$now;
+		$this->datem=$now;
 
-		$this->datelastlogin=time();
-		$this->datepreviouslogin=time();
+		$this->datelastlogin=$now;
+		$this->datepreviouslogin=$now;
 		$this->statut=1;
 
-		$this->societe_id = 1;
+		//$this->societe_id = 1;	For external users
+		//$this->contact_id = 1;	For external users
+		$this->entity = 1;
 	}
 
 	/**
@@ -2078,11 +2074,15 @@ class User extends CommonObject
 	}
 
 	/**
-	 * Update user using data from the LDAP
-	 * // TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
+	 *  Update user using data from the LDAP
+	 *
+	 *  @param	ldapuser	&$ldapuser	Ladp User
+	 *
+	 *  @return int  				<0 if KO, >0 if OK
 	 */
 	function update_ldap2dolibarr(&$ldapuser)
 	{
+		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
 		global $user, $conf;
 
 		$this->firstname=$ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};

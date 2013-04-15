@@ -5,7 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013     Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -338,7 +339,7 @@ class Contrat extends CommonObject
 		$sql.= " fk_user_author,";
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql.= " note as note_private, note_public, extraparams";
+		$sql.= " note_private, note_public, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if ($ref)
 		{
@@ -649,7 +650,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref, entity, note, note_public)";
+		$sql.= " ref, entity, note_private, note_public)";
 		$sql.= " VALUES (".$this->db->idate($now).",".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
@@ -657,7 +658,7 @@ class Contrat extends CommonObject
 		$sql.= ",".($this->fk_project>0?$this->fk_project:"NULL");
 		$sql.= ", ".(dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".(!empty($this->note)?("'".$this->db->escape($this->note)."'"):"NULL");
+		$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
@@ -894,6 +895,8 @@ class Contrat extends CommonObject
 	 *	@param	float		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int             				<0 si erreur, >0 si ok
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
@@ -1034,6 +1037,8 @@ class Contrat extends CommonObject
 	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
 	 *	@param	float		$price_base_type	HT or TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
+	 * 	@param  int			$fk_fournprice		Fourn price id
+	 *  @param  int			$pa_ht				Buying price HT
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0)
@@ -1601,8 +1606,8 @@ class Contrat extends CommonObject
 		$this->date_contrat = dol_now();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
-		$this->note='This is a comment (private)';
-		$this->note='This is a comment (public)';
+		$this->note_private='This is a comment (private)';
+		$this->note_public='This is a comment (public)';
 		$this->fk_projet = 0;
 		// Lines
 		$nbp = 5;

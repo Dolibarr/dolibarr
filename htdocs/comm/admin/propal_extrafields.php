@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("admin");
+$langs->load('propal');
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -58,7 +59,7 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Propales");
+$textobject=$langs->transnoentitiesnoconv("Proposals");
 
 
 llxHeader('',$langs->trans("PropalSetup"));
@@ -70,13 +71,11 @@ print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 $head = propal_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $langs->trans("Propal"), 0, 'propal');
+dol_fiche_head($head, 'attributes', $langs->trans("Proposals"), 0, 'propal');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
-
-dol_htmloutput_errors($mesg);
 
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
@@ -121,7 +120,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
     print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a></div>';
     print "</div>";
 }
 

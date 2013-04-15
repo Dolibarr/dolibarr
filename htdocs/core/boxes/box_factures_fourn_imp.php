@@ -61,7 +61,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$sql = "SELECT s.nom, s.rowid as socid,";
-			$sql.= " f.rowid as facid, f.facnumber, f.date_lim_reglement as datelimite,";
+			$sql.= " f.rowid as facid, f.ref_supplier, f.date_lim_reglement as datelimite,";
 			$sql.= " f.amount, f.datef as df,";
 			$sql.= " f.paye, f.fk_statut, f.type";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -73,7 +73,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY datelimite DESC, f.facnumber DESC ";
+			$sql.= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -98,7 +98,7 @@ class box_factures_fourn_imp extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->facnumber,
+                    'text' => $objp->ref_supplier,
 					'text2'=> $late,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 

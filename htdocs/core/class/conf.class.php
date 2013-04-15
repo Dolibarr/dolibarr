@@ -47,9 +47,8 @@ class Conf
 	//! Used to store current css (from theme)
 	public $theme;        // Contains current theme ("eldy", "auguria", ...)
 	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
-    //! Used to store current menu handlers
+    //! Used to store current menu handler
 	public $standard_menu;
-	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
 	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array());
@@ -64,6 +63,11 @@ class Conf
 	//! Used to store list of entities to use for each element
 	public $entities				= array();
 
+	public $dol_hide_topmenu;			// Set if we force param dol_hide_topmenu into login url
+	public $dol_hide_leftmenu;			// Set if we force param dol_hide_leftmenu into login url
+	public $dol_optimize_smallscreen;	// Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
+	public $dol_no_mouse_hover;			// Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
+	public $dol_use_jmobile;			// Set if we force param dol_use_jmobile into login url
 
 
 	/**
@@ -327,7 +331,6 @@ class Conf
 
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON))  $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
         // Security

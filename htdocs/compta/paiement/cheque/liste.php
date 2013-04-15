@@ -23,10 +23,12 @@
  *   \brief      Page liste des bordereau de remise de cheque
  */
 
-require 'pre.inc.php';
+require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+$langs->load("banks");
+$langs->load("categories");
 $langs->load("bills");
 
 // Security check

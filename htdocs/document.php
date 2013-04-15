@@ -40,11 +40,17 @@ if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 /**
- * Wrapper, donc header vierge
+ * Header empty
  *
- * @return  null
+ * @return	void
  */
 function llxHeader() { }
+/**
+ * Footer empty
+ *
+ * @return	void
+ */
+function llxFooter() { }
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

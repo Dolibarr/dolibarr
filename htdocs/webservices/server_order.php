@@ -179,7 +179,7 @@ $server->wsdl->addComplexType(
 				'remise_percent' => array('name'=>'remise_percent','type'=>'xsd:string'),
 				'remise_absolue' => array('name'=>'remise_absolue','type'=>'xsd:string'),
 				'source' => array('name'=>'source','type'=>'xsd:string'),
-				'note' => array('name'=>'note','type'=>'xsd:string'),
+				'note_private' => array('name'=>'note_private','type'=>'xsd:string'),
 				'note_public' => array('name'=>'note_public','type'=>'xsd:string'),
 				'project_id' => array('name'=>'project_id','type'=>'xsd:string'),
 
@@ -399,7 +399,7 @@ function getOrder($authentication,$id='',$ref='',$ref_ext='')
 
 					'source' => $order->source,
 					'facturee' => $order->facturee,
-					'note' => $order->note,
+					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
 					'cond_reglement_code' => $order->cond_reglement_code,
@@ -556,7 +556,7 @@ function getOrdersForThirdParty($authentication,$idthirdparty)
 
 					'source' => $order->source,
 					'facturee' => $order->facturee,
-					'note' => $order->note,
+					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
 					'cond_reglement' => $order->cond_reglement,
@@ -633,7 +633,7 @@ function createOrder($authentication,$order)
 		$newobject->ref_ext=$order['ref_ext'];
 		$newobject->date=dol_stringtotime($order['date'],'dayrfc');
 		$newobject->date_lim_reglement=dol_stringtotime($order['date_due'],'dayrfc');
-		$newobject->note=$order['note'];
+		$newobject->note_private=$order['note_private'];
 		$newobject->note_public=$order['note_public'];
 		$newobject->statut=$order['status'];
 		$newobject->facturee=$order['facturee'];

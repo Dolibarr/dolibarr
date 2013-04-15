@@ -22,8 +22,8 @@
 create table llx_facture_fourn
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  
-  facnumber				varchar(50) NOT NULL,
+  ref					varchar(30),
+  ref_supplier			varchar(50) NOT NULL,
   entity				integer  DEFAULT 1 NOT NULL,	 -- multi company id
 
   ref_ext				varchar(30),                  -- reference into an external system (not used by dolibarr)
@@ -61,7 +61,7 @@ create table llx_facture_fourn
   fk_cond_reglement		integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
   date_lim_reglement 	date,                          -- date limite de reglement
 
-  note					text,
+  note_private			text,
   note_public			text,
   model_pdf				varchar(255),
   import_key			varchar(14),

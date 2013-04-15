@@ -128,10 +128,10 @@ class HookManager
         $parameters['context']=join(':',$this->contextarray);
         dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
-        // Define type of hook ('output', 'returnvalue' or 'addreplace')
+        // Define type of hook ('output', 'returnvalue' or 'addreplace'). 'addreplace' should be type for all hooks. 'output' and 'returnvalue' are deprecated.
         $hooktype='output';
         if (preg_match('/^pdf_/',$method)) $hooktype='returnvalue';	// pdf_xxx except pdf_writelinedesc are returnvalue hooks. When there is 2 hooks of this type, only last one win.
-        if ($method == 'doActions' || $method == 'formObjectOptions' || $method == 'pdf_writelinedesc') $hooktype='addreplace';
+        if (in_array($method,array('doActions','formObjectOptions','moveUploadedFile','pdf_writelinedesc','paymentsupplierinvoices'))) $hooktype='addreplace';
 
         // Loop on each hook to qualify modules that declared context
         $modulealreadyexecuted=array();
@@ -150,7 +150,7 @@ class HookManager
                 	// test to avoid to run twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
                     $modulealreadyexecuted[$module]=$module;
-                    // Hooks that return int
+                    // Hooks that return int (doActions, formObjectOptions, pdf_writelinedesc, paymentsupplierinvoices)
                     if ($hooktype == 'addreplace')
                     {
                     	$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
@@ -159,18 +159,21 @@ class HookManager
                     		$error++;
                     		$this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
 
-                    		// TODO remove this. Change must be inside the method if required
+                    		// TODO remove this. Change must be inside the method of hook if required
                     		if ($method == 'doActions')
                     		{
                     			if ($action=='add')    $action='create';
                     			if ($action=='update') $action='edit';
                     		}
                     	}
+
+                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
                     }
-                    // Generic hooks that return a string (printSearchForm, printLeftBlock, printTopRightMenu, formAddObjectLine, formBuilddocOptions, ...)
+                    // Generic hooks that return a string or array (printSearchForm, printLeftBlock, printTopRightMenu, formAddObjectLine, formBuilddocOptions, ...)
                     else
 					{
-                    	// TODO. this should be done into the method by returning nothing
+                    	// TODO. this should be done into the method of hook by returning nothing
                     	if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
 
                     	$result = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)

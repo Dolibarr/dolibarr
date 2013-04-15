@@ -23,16 +23,19 @@
  *	\brief      Fiche prelevement
  */
 
-require '../bank/pre.inc.php';
+require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+$langs->load("banks");
+$langs->load("categories");
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
 
 $langs->load("bills");
 $langs->load("withdrawals");
-$langs->load("categories");
 
 
 // Security check

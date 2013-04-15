@@ -29,6 +29,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
@@ -197,20 +198,9 @@ print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 
 print "<br>";
 
-$h = 0;
+$head = supplierorder_admin_prepare_head(null);
 
-$head[$h][0] = DOL_URL_ROOT."/admin/supplier_order.php";
-$head[$h][1] = $langs->trans("SupplierOrder");
-$head[$h][2] = 'Order';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
-$head[$h][1] = $langs->trans("SuppliersInvoice");
-$head[$h][2] = 'Invoice';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'invoice', $langs->trans("ModuleSetup"));
 
 
 // Supplier invoice numbering module
@@ -330,7 +320,7 @@ $def = array();
 
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = 'order_supplier'";
+$sql.= " WHERE type = 'invoice_supplier'";
 $sql.= " AND entity = ".$conf->entity;
 
 $resql=$db->query($sql);
@@ -409,7 +399,7 @@ foreach ($dirmodels as $reldir)
                     else
                     {
                         print '<td align="center">'."\n";
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=invoice_supplier">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                         print "</td>";
                     }
 

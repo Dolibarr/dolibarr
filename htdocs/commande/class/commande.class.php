@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU  *General Public License as published by
@@ -150,7 +151,7 @@ class Commande extends CommonOrder
                 }
                 else
                 {
-                    dol_print_error($db,"Commande::getNextNumRef ".$obj->error);
+                    dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
                     return "";
                 }
             }
@@ -419,7 +420,7 @@ class Commande extends CommonOrder
         $sql.= ' SET fk_statut=1, facture=0';
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog("Commande::set_reopen sql=".$sql);
+        dol_syslog(get_class($this)."::set_reopen sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -530,7 +531,7 @@ class Commande extends CommonOrder
 		$sql.= " WHERE rowid = ".$this->id;
 		$sql.= " AND fk_statut = 1";
 
-		dol_syslog("Commande::cancel sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::cancel sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			// If stock is decremented on validate order, we must reincrement it
@@ -598,13 +599,13 @@ class Commande extends CommonOrder
      */
     function create($user, $notrigger=0)
     {
-        global $conf,$langs,$mysoc;
+        global $conf,$langs,$mysoc,$hookmanager;
         $error=0;
 
         // Clean parameters
         $this->brouillon = 1;		// On positionne en mode brouillon la commande
 
-        dol_syslog("Commande::create user=".$user->id);
+        dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
         $soc = new Societe($this->db);
@@ -612,13 +613,13 @@ class Commande extends CommonOrder
         if ($result < 0)
         {
             $this->error="Failed to fetch company";
-            dol_syslog("Commande::create ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -2;
         }
         if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-            dol_syslog("Commande::create ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -630,7 +631,7 @@ class Commande extends CommonOrder
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client, ref_int";
+        $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
         $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
@@ -639,7 +640,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
         $sql.= ", ".$this->db->idate($date);
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
-        $sql.= ", '".$this->db->escape($this->note)."'";
+        $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
@@ -655,7 +656,7 @@ class Commande extends CommonOrder
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog("Commande::create sql=".$sql);
+        dol_syslog(get_class($this)."::create sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -759,6 +760,27 @@ class Commande extends CommonOrder
                         		}
                         	}
                         }
+                    }
+                    
+                    if (! $error)
+                    {
+	                    // Actions on extra fields (by external module or standard code)
+	                    // FIXME le hook fait double emploi avec le trigger !!
+	                    $hookmanager->initHooks(array('orderdao'));
+	                    $parameters=array('socid'=>$this->id);
+	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	                    if (empty($reshook))
+	                    {
+	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	                    	{
+	                    		$result=$this->insertExtraFields();
+	                    		if ($result < 0)
+	                    		{
+	                    			$error++;
+	                    		}
+	                    	}
+	                    }
+	                    else if ($reshook < 0) $error++;
                     }
 
                     if (! $notrigger)
@@ -931,7 +953,7 @@ class Commande extends CommonOrder
             $this->fk_delivery_address  = $object->fk_delivery_address;
             $this->contact_id           = $object->contactid;
             $this->ref_client           = $object->ref_client;
-            $this->note                 = $object->note;
+            $this->note_private         = $object->note_private;
             $this->note_public          = $object->note_public;
 
             $this->origin				= $object->element;
@@ -1246,7 +1268,7 @@ class Commande extends CommonOrder
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
-        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
+        $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1439,7 +1461,7 @@ class Commande extends CommonOrder
         if ($only_product) $sql .= ' AND p.fk_product_type = 0';
         $sql .= ' ORDER BY l.rang';
 
-        dol_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch_lines sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1566,7 +1588,7 @@ class Commande extends CommonOrder
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
         //print $sql;
 
-        dol_syslog("Commande::loadExpeditions sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::loadExpeditions sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1584,7 +1606,7 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("Commande::loadExpeditions ".$this->error,LOG_ERR);
+            dol_syslog(get_class($this)."::loadExpeditions ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -1799,7 +1821,7 @@ class Commande extends CommonOrder
             $sql.= ' SET remise_absolue = '.$remise;
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
-            dol_syslog("Commande::set_remise_absolue sql=$sql");
+            dol_syslog(get_class($this)."::set_remise_absolue sql=$sql");
 
             if ($this->db->query($sql))
             {
@@ -1831,7 +1853,7 @@ class Commande extends CommonOrder
             $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog("Commande::set_date sql=$sql",LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date sql=$sql",LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1841,7 +1863,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_date ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::set_date ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1866,7 +1888,7 @@ class Commande extends CommonOrder
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog("Commande::set_date_livraison sql=".$sql,LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1876,7 +1898,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1909,7 +1931,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_availability Erreur SQL");
+                dol_syslog(get_class($this)."::set_availability Erreur SQL");
                 return -1;
             }
         }
@@ -1938,7 +1960,7 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("Commande::set_demand_reason Erreur SQL");
+                dol_syslog(get_class($this)."::set_demand_reason Erreur SQL");
                 return -1;
             }
         }
@@ -2676,7 +2698,7 @@ class Commande extends CommonOrder
         $this->availability_code   = 'DSP';
         $this->demand_reason_code  = 'SRC_00';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
         // Lines
         $nbp = 5;
         $xnbp = 0;
@@ -2755,6 +2777,43 @@ class Commande extends CommonOrder
             $this->error=$this->db->error();
             return -1;
         }
+    }
+    
+    /**
+     *	Update value of extrafields on the proposal
+     *
+     *	@param      User	$user       Object user that modify
+     *	@return     int         		<0 if ko, >0 if ok
+     */
+    function update_extrafields($user)
+    {
+    	// Actions on extra fields (by external module or standard code)
+    	// FIXME le hook fait double emploi avec le trigger !!
+    	$hookmanager->initHooks(array('orderdao'));
+    	$parameters=array('id'=>$this->id);
+    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    	if (empty($reshook))
+    	{
+    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+    		{
+    			$result=$this->insertExtraFields();
+    			if ($result < 0)
+    			{
+    				$error++;
+    			}
+    		}
+    	}
+    	else if ($reshook < 0) $error++;
+    	 
+    	if (!$error)
+    	{
+    		return 1;
+    	}
+    	else
+    	{
+    		return -1;
+    	}
+    	 
     }
 
     /**

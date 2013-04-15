@@ -168,25 +168,18 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$conf_css = $themepath."?lang=".$langs->defaultlang;
 
 	// Select templates
-	if (! empty($conf->browser->phone) && preg_match('/^smartphone/',$conf->smart_menu))
+	if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
 	{
-		$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl/'));
+		foreach($dirtpls as $reldir)
+		{
+			$tmp=dol_buildpath($reldir.'login.tpl.php');
+			if (file_exists($tmp)) { $template_dir=preg_replace('/login\.tpl\.php$/','',$tmp); break; }
+		}
 	}
 	else
 	{
-		if (! empty($conf->modules_parts['tpl']))	// Using this feature slow down application
-		{
-			$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl/'));
-			foreach($dirtpls as $reldir)
-			{
-				$tmp=dol_buildpath($reldir.'login.tpl.php');
-				if (file_exists($tmp)) { $template_dir=preg_replace('/login\.tpl\.php$/','',$tmp); break; }
-			}
-		}
-		else
-		{
-			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
-		}
+		$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 	}
 
 	// Set cookie for timeout management
@@ -295,9 +288,12 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$jquerytheme = 'smoothness';
 	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
-	// Set dol_hide_topmenu and dol_hide_leftmenu
+	// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_nomousehover
 	$dol_hide_topmenu=GETPOST('dol_hide_topmenu');
 	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu');
+	$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen');
+	$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover');
+	$dol_use_jmobile=GETPOST('dol_use_jmobile');
 
 	// Include login page template
 	include $template_dir.'login.tpl.php';

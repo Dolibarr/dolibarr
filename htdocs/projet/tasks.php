@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *	\file       htdocs/projet/tasks.php
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("users");
 $langs->load("projects");
@@ -43,10 +44,19 @@ $mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
+$extrafields_project = new ExtraFields($db);
+$extrafields_task = new ExtraFields($db);
 if ($ref)
 {
-    $object->fetch(0,$ref);
-    $id=$object->id;
+	$object->fetch(0,$ref);
+	$id=$object->id;
+}
+
+// fetch optionals attributes and labels
+if (!empty($id)) {
+	$extralabels_projet=$extrafields_project->fetch_name_optionals_label('projet');
+	$extralabels_task=$extrafields_task->fetch_name_optionals_label('projet_task');
+	
 }
 
 // Security check
@@ -67,14 +77,14 @@ $userAccess=0;
 
 /*
  * Actions
- */
+*/
 
 if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
 	$date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-    $date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+	$date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 
 	if (empty($_POST["cancel"]))
 	{
@@ -109,6 +119,9 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
+				
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task,$task);
 
 			$taskid = $task->create($user);
 
@@ -120,7 +133,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 		if (! $error)
 		{
-		    if (! empty($backtopage))
+			if (! empty($backtopage))
 			{
 				header("Location: ".$backtopage);
 				exit;
@@ -139,18 +152,18 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			header("Location: ".$backtopage);
 			exit;
 		}
-	    else if (empty($id))
-        {
-            // We go back on task list
-            header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
-            exit;
-        }
+		else if (empty($id))
+		{
+			// We go back on task list
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+			exit;
+		}
 	}
 }
 
 /*
  * View
- */
+*/
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -164,74 +177,84 @@ if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id, $ref);
 	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
-
-    // To verify role of users
-    //$userAccess = $object->restrictedProjectArea($user,'read');
-    $userWrite  = $object->restrictedProjectArea($user,'write');
-    //$userDelete = $object->restrictedProjectArea($user,'delete');
-    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+	$res=$object->fetch_optionals($object->id,$extralabels_projet);
 
 
-    $tab=GETPOST('tab')?GETPOST('tab'):'tasks';
+	// To verify role of users
+	//$userAccess = $object->restrictedProjectArea($user,'read');
+	$userWrite  = $object->restrictedProjectArea($user,'write');
+	//$userDelete = $object->restrictedProjectArea($user,'delete');
+	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-    $head=project_prepare_head($object);
-    dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
-    $param=($mode=='mine'?'&mode=mine':'');
+	$tab=GETPOST('tab')?GETPOST('tab'):'tasks';
 
-    print '<table class="border" width="100%">';
+	$head=project_prepare_head($object);
+	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+	$param=($mode=='mine'?'&mode=mine':'');
 
-    // Ref
-    print '<tr><td width="30%">';
-    print $langs->trans("Ref");
-    print '</td><td>';
-    // Define a complementary filter for search of next/prev ref.
-    if (! $user->rights->projet->all->lire)
-    {
-        $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
-        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-    }
-    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
-    print '</td></tr>';
+	print '<table class="border" width="100%">';
 
-    print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
 
-    print '<tr><td>'.$langs->trans("Company").'</td><td>';
-    if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
-    else print '&nbsp;';
-    print '</td>';
-    print '</tr>';
+	// Ref
+	print '<tr><td width="30%">';
+	print $langs->trans("Ref");
+	print '</td><td>';
+	// Define a complementary filter for search of next/prev ref.
+	if (! $user->rights->projet->all->lire)
+	{
+		$projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+		$object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+	}
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
+	print '</td></tr>';
 
-    // Visibility
-    print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-    if ($object->public) print $langs->trans('SharedProject');
-    else print $langs->trans('PrivateProject');
-    print '</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-    // Statut
-    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td>';
+	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
 
-    // Date start
-    print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print dol_print_date($object->date_start,'day');
-    print '</td></tr>';
+	// Visibility
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) print $langs->trans('SharedProject');
+	else print $langs->trans('PrivateProject');
+	print '</td></tr>';
 
-    // Date end
-    print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print dol_print_date($object->date_end,'day');
-    print '</td></tr>';
+	// Statut
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
-    print '</table>';
+	// Date start
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print dol_print_date($object->date_start,'day');
+	print '</td></tr>';
 
-    dol_fiche_end();
+	// Date end
+	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+	
+	// Other options
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields_project->attribute_label))
+	{
+		print $object->showOptionals($extrafields_project);
+	}
+
+	print '</table>';
+
+	dol_fiche_end();
 }
 
 
 if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
 {
-    if ($id > 0 || ! empty($ref)) print '<br>';
+	if ($id > 0 || ! empty($ref)) print '<br>';
 
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -280,9 +303,13 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$description.'</textarea>';
 	print '</td></tr>';
 
-        // Other options
-        $parameters=array();
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+	// Other options
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields_task->attribute_label))
+	{
+		print $object->showOptionals($extrafields_task,'edit');
+	}
 
 	print '</table>';
 
@@ -299,11 +326,11 @@ else
 {
 	/*
 	 * Fiche projet en mode visu
-	 */
+	*/
 
 	/*
 	 * Actions
-	 */
+	*/
 	print '<div class="tabsAction">';
 
 	if ($user->rights->projet->all->creer || $user->rights->projet->creer)

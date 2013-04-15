@@ -47,9 +47,8 @@ print $langs->trans("FormatedImportDesc1").'<br>';
 print $langs->trans("FormatedImportDesc2").'<br>';
 print '<br>';
 
-print '<table class="notopnoleftnoright" width="100%">';
 
-print '<tr><td valign="top" width="70%" class="notopnoleft">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // List of import set
@@ -99,9 +98,10 @@ if (count($import->array_import_code))
 	//}
 }
 print '</center>';
+print '<br>';
 
 
-print '</td><td valign="top" width="30%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // List of available import format
@@ -132,12 +132,10 @@ foreach($liste as $key)
 print '</table>';
 
 
-print '</td></tr>';
-print '</table>';
-
-$db->close();
+print '</div></div></div>';
 
 
 llxFooter();
 
+$db->close();
 ?>

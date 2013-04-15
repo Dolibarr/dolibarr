@@ -21,11 +21,13 @@
  *     \brief      Onglet info d'une ecriture bancaire
  */
 
-require 'pre.inc.php';
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
+$langs->load("categories");
 $langs->load("companies");
 
 

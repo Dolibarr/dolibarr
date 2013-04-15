@@ -81,6 +81,15 @@ if (empty($PAYPAL_API_SIGNATURE))
     return -1;
 }
 
+$source=GETPOST('source');
+$ref=GETPOST('ref');
+$PAYPALTOKEN=GETPOST('TOKEN');
+if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
+$PAYPALPAYERID=GETPOST('PAYERID');
+if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
+$PAYPALFULLTAG=GETPOST('FULLTAG');
+if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
+
 
 /*
  * Actions
@@ -105,15 +114,6 @@ llxHeaderPaypal($langs->trans("PaymentForm"));
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 
-$source=GETPOST('source');
-$ref=GETPOST('ref');
-$PAYPALTOKEN=GETPOST('TOKEN');
-if (empty($PAYPALTOKEN)) $PAYPALTOKEN=GETPOST('token');
-$PAYPALPAYERID=GETPOST('PAYERID');
-if (empty($PAYPALPAYERID)) $PAYPALPAYERID=GETPOST('PayerID');
-$PAYPALFULLTAG=GETPOST('FULLTAG');
-if (empty($PAYPALFULLTAG)) $PAYPALFULLTAG=GETPOST('fulltag');
-
 if ($PAYPALTOKEN)
 {
     // Get on url call
@@ -129,6 +129,33 @@ if ($PAYPALTOKEN)
 
 	dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag);
 
+
+	// Send an email
+	if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fulltag))
+	{
+		$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+		$from=$conf->global->MAILING_EMAIL_FROM;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+		$mailfile = new CMailFile(
+			'New subscription payed',
+			$sendto,
+			$from,
+			'New subscription payed '.$fulltag
+			);
+
+		$result=$mailfile->sendfile();
+		if ($result)
+		{
+			dol_syslog("EMail sent to ".$sendto);
+		}
+		else
+		{
+			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR);
+		}
+	}
+
+
+	// Validate record
     if (! empty($paymentType))
     {
         dol_syslog("We call GetExpressCheckoutDetails");

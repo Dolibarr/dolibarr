@@ -118,11 +118,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSInvoices_xxx
+     * testWSInvoicesXxx
      *
      * @return int
      */
-    public function testWSInvoices_xxx()
+    public function testWSInvoicesXxx()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;

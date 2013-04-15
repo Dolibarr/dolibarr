@@ -109,4 +109,35 @@ function commande_prepare_head($object)
     return $head;
 }
 
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @param	Object	$object		order
+ *  @return	array   	        head array with tabs
+ */
+function order_admin_prepare_head($object)
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/commande.php';
+	$head[$h][1] = $langs->trans("Miscellaneous");
+	$head[$h][2] = 'general';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin');
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'attributes';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'order_admin','remove');
+
+	return $head;
+}
+
+
 ?>

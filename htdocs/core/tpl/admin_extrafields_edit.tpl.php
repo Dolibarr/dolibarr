@@ -55,7 +55,7 @@ $required=$extrafields->attribute_required[$attrname];
 $pos=$extrafields->attribute_pos[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 
-if($type == 'select' && is_array($param))
+if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_array($param))
 {
 	$param_chain = '';
 	foreach ($param['options'] as $key => $value)
@@ -80,7 +80,7 @@ if($type == 'select' && is_array($param))
 </td></tr>
 <!--  Value (for select list / radio) -->
 <?php 
-if($type == 'select') 
+if(($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) 
 {
 ?>
 <tr id="value_choice">

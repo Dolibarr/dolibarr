@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 $langs->load("admin");
 $langs->load("errors");
 $langs->load('other');
+$langs->load('propal');
 
 if (! $user->admin) accessforbidden();
 
@@ -162,10 +163,34 @@ if ($action == 'setdefaultduration')
     }
 }
 
-/*if ($action == 'setusecustomercontactasrecipient')
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+if ($action == 'setModuleOptions')
 {
-	dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
-}*/
+	$post_size=count($_POST);
+
+	$db->begin();
+
+	for($i=0;$i < $post_size;$i++)
+    {
+    	if (array_key_exists('param'.$i,$_POST))
+    	{
+    		$param=GETPOST("param".$i,'alpha');
+    		$value=GETPOST("value".$i,'alpha');
+    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+	    	if (! $res > 0) $error++;
+    	}
+    }
+	if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+}
 
 
 
@@ -226,12 +251,11 @@ print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 $head = propal_admin_prepare_head(null);
 
-dol_fiche_head($head, 'general', $langs->trans("Propales"), 0, 'propal');
+dol_fiche_head($head, 'general', $langs->trans("Proposals"), 0, 'propal');
 
 /*
  *  Module numerotation
  */
-print "<br>";
 print_titre($langs->trans("ProposalsNumberingModules"));
 
 print '<table class="noborder" width="100%">';

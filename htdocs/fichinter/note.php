@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Regis Houssin	<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +48,13 @@ $object->fetch($id,$ref);
 
 if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 {
-	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 

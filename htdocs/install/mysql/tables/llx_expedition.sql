@@ -38,7 +38,7 @@ create table llx_expedition
   date_expedition       datetime,						-- shipping date
   date_delivery			datetime	DEFAULT NULL,		-- delivery date
   fk_address  			integer		DEFAULT NULL, 		-- delivery address (deprecated)
-  fk_expedition_methode integer,
+  fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,
   
@@ -48,7 +48,8 @@ create table llx_expedition
   size                  integer,						-- depth
   weight_units          integer,						-- unit of weight
   weight                integer,						-- weight
-  note                  text,
+  note_private          text,
+  note_public           text,
   model_pdf             varchar(255)
   
 )ENGINE=innodb;
