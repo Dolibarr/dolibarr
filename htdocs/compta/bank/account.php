@@ -293,7 +293,7 @@ if ($id > 0 || ! empty($ref))
 	//print 'nbpage='.$totalPages.' viewline='.$viewline.' limitsql='.$limitsql;
 	if ($limitsql > $viewline) $navig.='<a href="account.php?'.$param.'&amp;page='.($page+1).'">'.img_previous().'</a>';
 	$navig.= $langs->trans("Page")." "; // ' Page ';
-	$navig.='<input type="text" name="negpage" size="1" class="noenlargeonsmartphone" value="'.($totalPages-$page).'">';
+	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($totalPages-$page).'">';
 	$navig.='<input type="hidden" name="paiementtype" value="'.$paiementtype.'">';
 	$navig.='<input type="hidden" name="req_nb"     value="'.$req_nb.'">';
 	$navig.='<input type="hidden" name="req_desc"   value="'.GETPOST("req_desc").'">';
