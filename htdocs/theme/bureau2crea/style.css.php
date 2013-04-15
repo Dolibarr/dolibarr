@@ -60,6 +60,12 @@ $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 $fontlist='arial,tahoma,verdana,helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 
+$dol_hide_topmenu=$conf->dol_hide_topmenu;
+$dol_hide_leftmenu=$conf->dol_hide_leftmenu;
+$dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
+$dol_no_mouse_hover=$conf->dol_no_mouse_hover;
+$dol_use_jmobile=$conf->dol_use_jmobile;
+
 $path='';    			// This value may be used in future for external module to overwrite theme
 $theme='bureau2crea';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
@@ -225,8 +231,9 @@ div.inline-block
 /* ============================================================================== */
 
 .hideobject { display: none; }
-<?php if (! empty($conf->dol_optimize_smallscreen)) { ?>
+<?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
+.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 

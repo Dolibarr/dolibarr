@@ -222,6 +222,7 @@ class MenuManager
         				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
         				print str_pad('',$val2['level']+1).'<li'.($val2['level']==0?' data-role="list-divider"':'').' class="lilevel'.($val2['level']+1).'">';
         				if ($relurl2) print '<a href="'.$relurl2.'">';
+        				print str_pad('',($val2['level']+1)*12,'&nbsp;');
         				print $val2['titre'];
         				if ($relurl2) print '</a>';
         				print '</li>'."\n";

@@ -62,7 +62,13 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 
 // Define image path files
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
-//'/theme/auguria/img/menus/trtitle.png';
+
+$dol_hide_topmenu=$conf->dol_hide_topmenu;
+$dol_hide_leftmenu=$conf->dol_hide_leftmenu;
+$dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
+$dol_no_mouse_hover=$conf->dol_no_mouse_hover;
+$dol_use_jmobile=$conf->dol_use_jmobile;
+
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
 $img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
@@ -196,8 +202,9 @@ div.inline-block
 /* ============================================================================== */
 
 .hideobject { display: none; }
-<?php if (! empty($conf->dol_optimize_smallscreen)) { ?>
+<?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
+.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 

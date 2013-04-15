@@ -352,8 +352,9 @@ th .button {
 /* ============================================================================== */
 
 .hideobject { display: none; }
-<?php if (! empty($conf->dol_optimize_smallscreen)) { ?>
+<?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
+.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 
