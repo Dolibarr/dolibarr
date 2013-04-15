@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 $langs->load("admin");
 $langs->load("errors");
 $langs->load('other');
+$langs->load('propal');
 
 if (! $user->admin) accessforbidden();
 
@@ -250,12 +251,11 @@ print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 $head = propal_admin_prepare_head(null);
 
-dol_fiche_head($head, 'general', $langs->trans("Propales"), 0, 'propal');
+dol_fiche_head($head, 'general', $langs->trans("Proposals"), 0, 'propal');
 
 /*
  *  Module numerotation
  */
-print "<br>";
 print_titre($langs->trans("ProposalsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
