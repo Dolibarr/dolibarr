@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		 <florian.henry@open-concept.pro>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -661,7 +661,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		$pu_ttc=0;
 		$price_min=0;
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
-
+		
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
@@ -768,6 +768,9 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		// Margin
 		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
 		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+		
+		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -803,7 +806,9 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				GETPOST('fk_parent_line'),
 				$fournprice,
 				$buyingprice,
-				$label
+				$label,
+				$date_start,
+				$date_end
 			);
 
 			if ($result > 0)
@@ -868,6 +873,9 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
 	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
+	$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	
 	// Define special_code for special lines
 	$special_code=0;
 	if (! GETPOST('qty')) $special_code=3;
@@ -924,7 +932,9 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			$fournprice,
 			$buyingprice,
 			$label,
-			$type
+			$type,
+			$date_start,
+			$date_end
 		);
 
 		if ($result >= 0)
@@ -1967,18 +1977,18 @@ else
 			if ($conf->global->MAIN_FEATURES_LEVEL > 1)
 			{
 				// Add free or predefined products/services
-				$object->formAddObjectLine(0,$mysoc,$soc);
+				$object->formAddObjectLine(1,$mysoc,$soc);
 			}
 			else
 			{
 				// Add free products/services
-				$object->formAddFreeProduct(0,$mysoc,$soc);
+				$object->formAddFreeProduct(1,$mysoc,$soc);
 
 				// Add predefined products/services
 				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 				{
 					$var=!$var;
-					$object->formAddPredefinedProduct(0,$mysoc,$soc);
+					$object->formAddPredefinedProduct(1,$mysoc,$soc);
 				}
 			}
 
