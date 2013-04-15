@@ -1762,6 +1762,8 @@ elseif (! empty($object->id))
 
 			print "</div>";
 		}
+		print "<br>";
+
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		//print '<table width="100%"><tr><td width="50%" valign="top">';

@@ -3440,7 +3440,7 @@ else if ($id > 0 || ! empty($ref))
                 print '</div>';
             }
         }
-
+        print '<br>';
 
         if ($action != 'prerelance' && $action != 'presend')
         {
@@ -3457,7 +3457,6 @@ else if ($id > 0 || ! empty($ref))
             $genallowed=$user->rights->facture->creer;
             $delallowed=$user->rights->facture->supprimer;
 
-            print '<br>';
             print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
             $somethingshown=$formfile->numoffiles;
 
@@ -3475,8 +3474,6 @@ else if ($id > 0 || ! empty($ref))
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
             //print '</td><td valign="top" width="50%">';
-
-            print '<br>';
 
             // List of actions on element
             include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

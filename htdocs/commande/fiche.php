@@ -2307,7 +2307,7 @@ else
 
 		/*
 		 * Boutons actions
-		*/
+		 */
 		if ($action != 'presend')
 		{
 			if ($user->societe_id == 0 && $action <> 'editline')
@@ -2435,8 +2435,8 @@ else
 
 				print '</div>';
 			}
-			print '<br>';
 		}
+		print '<br>';
 
 
 		if ($action != 'presend')

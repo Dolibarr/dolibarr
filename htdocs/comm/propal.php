@@ -2119,8 +2119,8 @@ else
 		}
 
 		print '</div>';
-		print "<br>\n";
 	}
+	print "<br>\n";
 
 	if ($action != 'presend')
 	{
