@@ -18,6 +18,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #816 ] Sales journal does not reflect localtaxes
 - Fix: [ bug #806 ] Margins module with orders2invoice does not respect cost price
 - Fix: Orderstoinvoice didn't act as expected when no order was checked
+- Fix: Bad link to all proposals into Third party card if customer is prospect
 
 
 
