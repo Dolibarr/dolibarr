@@ -1188,6 +1188,9 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 	if (empty($phone)) { return ''; }
 	if (empty($country)) $country=$mysoc->country_code;
 
+	// Short format for small screens
+	if ($conf->dol_optimize_smallscreen) $separ='';
+
 	$newphone=$phone;
 	if (strtoupper($country) == "FR")
 	{
