@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - holiday
 CHARSET= UTF-8
 
+Holidays=Congés
 CPTitreMenu=Congés
 MenuReportMonth=Etat mensuel
 MenuAddCP=Nouvelle demande
@@ -84,8 +85,10 @@ NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.
 UserName=Nom Prénom
 Employee=Salarié
-FirstDayOfHoliday=Premier jour de congés
-LastDayOfHoliday=Dernier jour de congés
+FirstDayOfHoliday=Premier jour de congès
+LastDayOfHoliday=Dernier jour de congès
+HolidaysMonthlyUpdate=Mise à jour mensuelle
+ManualUpdate=Mise à jour manuelle
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés
