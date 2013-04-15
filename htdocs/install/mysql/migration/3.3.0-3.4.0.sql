@@ -56,6 +56,7 @@ ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn;
 ALTER TABLE llx_facture_fourn DROP INDEX uk_facture_fourn_ref;
 UPDATE llx_facture_fourn set ref = NULL where ref = '';
 ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (ref, entity);
+ALTER TABLE llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(30);
 ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref_supplier (ref_supplier, fk_soc, entity);
 
 
@@ -92,7 +93,6 @@ alter table llx_societe_rib CHANGE COLUMN adresse_proprio owner_address text;
 alter table llx_societe_address CHANGE COLUMN ville town text;
 alter table llx_societe_address CHANGE COLUMN cp zip varchar(10);
 
-alter table llx_facture_fourn CHANGE COLUMN facnumber ref_supplier varchar(30);
 
 -- remove constraint and index before rename field
 ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_expedition_methode;
