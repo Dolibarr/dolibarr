@@ -627,6 +627,10 @@ class ExtraFields
         	$formstat = new Form($db);
         	
         	$showtime = in_array($type,array('datetime')) ? 1 : 0;
+        	// Do not show current date when field not required (see select_date() method)
+        	if(!$required && $value == '')
+        		$value = '-1';
+        	
         	$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
         	//$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
