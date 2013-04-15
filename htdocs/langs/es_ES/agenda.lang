@@ -15,6 +15,7 @@ MyEvents=Mis eventos
 OtherEvents=Otros eventos
 ListOfActions=Listado de eventos
 EventOnFullDay=Evento para todo el día
+Busy=Ocupado
 Location=Localización
 SearchAnAction=Buscar un evento/tarea
 MenuToDoActions=Eventos incompletos

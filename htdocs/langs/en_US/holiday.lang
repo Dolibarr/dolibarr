@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - holiday
 CHARSET= UTF-8
 
+Holidays=Holidays
 CPTitreMenu=Holidays
 MenuReportMonth=Monthly statement
 MenuAddCP=Apply for holidays
@@ -86,6 +87,8 @@ UserName=Name
 Employee=Employee
 FirstDayOfHoliday=First day of holiday
 LastDayOfHoliday=Last day of holiday
+HolidaysMonthlyUpdate=Monthly update
+ManualUpdate=Manual update
 
 ## Configuration du Module ##
 ConfCP=Configuration of holidays module
