@@ -9,7 +9,7 @@
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -2124,8 +2124,9 @@ else
 
 	if ($action != 'presend')
 	{
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-		print '<a name="builddoc"></a>'; // ancre
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		//print '<table width="100%"><tr><td width="50%" valign="top">';
+		//print '<a name="builddoc"></a>'; // ancre
 
 
 		/*
@@ -2147,14 +2148,19 @@ else
 		 */
 		$somethingshown=$object->showLinkedObjectBlock();
 
-		print '</td><td valign="top" width="50%">';
+
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		//print '</td><td valign="top" width="50%">';
+
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
 		$somethingshown=$formactions->showactions($object,'propal',$socid);
 
-		print '</td></tr></table>';
+
+		//print '</td></tr></table>';
+		print '</div></div></div>';
 	}
 
 

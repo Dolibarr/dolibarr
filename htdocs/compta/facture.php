@@ -2122,7 +2122,7 @@ if ($action == 'create')
     }
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
-    
+
     //print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea></td></tr>';
 
     // Private note
@@ -3444,8 +3444,9 @@ else if ($id > 0 || ! empty($ref))
 
         if ($action != 'prerelance' && $action != 'presend')
         {
-            print '<table width="100%"><tr><td width="50%" valign="top">';
-            print '<a name="builddoc"></a>'; // ancre
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+        	//print '<table width="100%"><tr><td width="50%" valign="top">';
+            //print '<a name="builddoc"></a>'; // ancre
 
             /*
              * Documents generes
@@ -3472,7 +3473,8 @@ else if ($id > 0 || ! empty($ref))
                 print showPaypalPaymentUrl('invoice',$object->ref);
             }
 
-            print '</td><td valign="top" width="50%">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+            //print '</td><td valign="top" width="50%">';
 
             print '<br>';
 
@@ -3481,7 +3483,8 @@ else if ($id > 0 || ! empty($ref))
             $formactions=new FormActions($db);
             $somethingshown=$formactions->showactions($object,'invoice',$socid);
 
-            print '</td></tr></table>';
+            //print '</td></tr></table>';
+            print '</div></div></div>';
         }
         else
         {

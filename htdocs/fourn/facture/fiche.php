@@ -2057,8 +2057,9 @@ else
 
             if ($action != 'edit')
             {
-                print '<table width="100%"><tr><td width="50%" valign="top">';
-                print '<a name="builddoc"></a>'; // ancre
+				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+            	//print '<table width="100%"><tr><td width="50%" valign="top">';
+                //print '<a name="builddoc"></a>'; // ancre
 
                 /*
                  * Documents generes
@@ -2081,15 +2082,17 @@ else
                 */
                 $somethingshown=$object->showLinkedObjectBlock();
 
-                print '</td><td valign="top" width="50%">';
-                print '<br>';
+				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+                //print '</td><td valign="top" width="50%">';
+                //print '<br>';
 
                 // List of actions on element
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
                 $formactions=new FormActions($db);
                 $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
 
-                print '</td></tr></table>';
+				print '</div></div></div>';
+                //print '</td></tr></table>';
             }
         }
         /*
