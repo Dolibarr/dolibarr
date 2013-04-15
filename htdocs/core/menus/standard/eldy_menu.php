@@ -159,12 +159,12 @@ class MenuManager
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
-        			print '<ul>';
+        			print '<ul>'."\n";
         			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools'))
         				|| strpos($canonrelurl,'/product/index.php') || strpos($canonrelurl,'/compta/bank/index.php'))
 					{
         				// We add sub entry
-        				print '<li data-role="list-divider" class="lilevel1><a href="'.$relurl.'">'.$langs->trans(ucfirst($val['mainmenu'])."Dashboard").'</a></li>'."\n";
+        				print str_pad('',1).'<li data-role="list-divider" class="lilevel1><a href="'.$relurl.'">'.$langs->trans(ucfirst($val['mainmenu'])."Dashboard").'</a></li>'."\n";
         			}
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
        				{
@@ -174,7 +174,7 @@ class MenuManager
         				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
         				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
         				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
-        				print '<li'.($val2['level']==0?' data-role="list-divider"':'').' class="lilevel'.($val2['level']+1).'">';
+        				print str_pad('',$val2['level']+1).'<li'.($val2['level']==0?' data-role="list-divider"':'').' class="lilevel'.($val2['level']+1).'">';
         				if ($relurl2) print '<a href="'.$relurl2.'">';
         				print $val2['titre'];
         				if ($relurl2) print '</a>';
