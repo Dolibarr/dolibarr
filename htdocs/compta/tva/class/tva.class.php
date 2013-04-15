@@ -500,13 +500,13 @@ class Tva extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount";
         if ($this->note)  $sql.=", note";
         if ($this->label) $sql.=", label";
-        $sql.= ", fk_user_creat, fk_bank";
+        $sql.= ", fk_user_creat, fk_bank, entity";
 		$sql.= ") ";
         $sql.= " VALUES ('".$this->db->idate($this->datep)."',";
         $sql.= "'".$this->db->idate($this->datev)."'," . $this->amount;
         if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.=", '".$user->id."', NULL";
+        $sql.=", '".$user->id."', NULL, ".$conf->entity;
         $sql.= ")";
 
 		dol_syslog("Tva::addPayment sql=".$sql);
