@@ -278,19 +278,20 @@ if($user->rights->holiday->lire_tous) {
 }
 
 // VALIDEUR
-if($user->rights->holiday->lire_tous){
+if($user->rights->holiday->lire_tous)
+{
     print '<td class="liste_titre" align="left">';
 
-    // Liste des utiliseurs du groupes Comptabilité
-
-    $idGroupValid = $holiday->getConfCP('userGroup');
-
-    $validator = new UserGroup($db,$idGroupValid);
-    $valideur = $validator->listUsersForGroup();
-
-    $form->select_users($search_valideur,"search_valideur",1,"",0,$valideur,'');
+    $validator = new UserGroup($db);
+    $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
+    $valideurobjects = $validator->listUsersForGroup($excludefilter);
+    $valideurarray = array();
+    foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
+    $form->select_users($search_valideur,"search_valideur",1,"",0,$valideurarray,'');
     print '</td>';
-} else {
+}
+else 
+{
     print '<td class="liste_titre">&nbsp;</td>';
 }
 

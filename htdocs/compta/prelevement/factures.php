@@ -24,14 +24,16 @@
  *     \brief      Page liste des factures prelevees
  */
 
-require '../bank/pre.inc.php';
+require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("companies");
+$langs->load("banks");
 $langs->load("categories");
+$langs->load("companies");
 $langs->load('withdrawals');
 
 // Securite acces client

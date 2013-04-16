@@ -23,15 +23,16 @@
  *		\brief      Page d'affichage d'un releve
  */
 
-require 'pre.inc.php';
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$action=GETPOST('action', 'alpha');
-
-$langs->load("companies");
 $langs->load("banks");
+$langs->load("categories");
+$langs->load("companies");
 $langs->load("bills");
 
+$action=GETPOST('action', 'alpha');
 $id=GETPOST('account');
 $ref=GETPOST('ref');
 $dvid=GETPOST('dvid');

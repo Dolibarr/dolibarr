@@ -74,9 +74,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre") || GET
 		$_SESSION["mailsonde"] = false;
 	}
 
-	if(validateEmail($adresse) === false) {
-		$erreur_adresse = true;
-	}
+	if (! isValidEmail($adresse)) $erreur_adresse = true;
 
 	//var_dump($titre.' - '.$nom.' - '.$adresse.' - '.!$erreur_adresse.' - '.! $erreur_injection_titre.' - '.! $erreur_injection_commentaires.' - '.! $erreur_injection_nom.' - '.$creation_sondage_date.' - '.$creation_sondage_autre); exit;
 

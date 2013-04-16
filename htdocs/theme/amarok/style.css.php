@@ -336,10 +336,19 @@ table.login_table .vmenu {
 /* ! Message d'erreur lors du login : */
 center .error { padding:8px !important; padding-left:26px !important; padding-right:20px; width:inherit; max-width:450px;color:#552323 !important; font-size:14px; border-radius:8px; text-align: left;}
 
-/* For hide object and add pointer cursor */
 
-.hideobject {display:none;}
-.linkobject {cursor:pointer;}
+
+/* ============================================================================== */
+/* Styles to hide objects                                                         */
+/* ============================================================================== */
+
+.hideobject { display:none; }
+<?php if (! empty($dol_optimize_smallscreen)) { ?>
+.hideonsmartphone { display: none; }
+.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+<?php } ?>
+.linkobject { cursor:pointer; }
+
 
 /* For dragging lines */
 

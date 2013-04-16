@@ -24,10 +24,12 @@
  *		\brief      Page de saisie d'un virement
  */
 
-require 'pre.inc.php';
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
+$langs->load("categories");
 
 if (! $user->rights->banque->transfer)
   accessforbidden();
@@ -36,8 +38,9 @@ $action = GETPOST('action','alpha');
 
 
 /*
- * Action ajout d'un virement
+ * Actions
  */
+
 if ($action == 'add')
 {
 	$langs->load("errors");

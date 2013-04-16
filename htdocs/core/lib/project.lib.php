@@ -438,7 +438,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-					print '<td align="center" class="tdlineupdown">&nbsp;</td>';
+					print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
@@ -459,13 +459,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	if ($total>0)
 	{
-		print '<tr class="liste_total"><td class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<tr class="liste_total">';
+		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td></tr>';
+		if ($addordertick) print '<td class="hideonsmartphone"></td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td>';
+		print '</tr>';
 	}
 
 	return $inc;

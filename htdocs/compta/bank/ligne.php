@@ -25,13 +25,13 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require 'pre.inc.php';
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
+$langs->load("categories");
 $langs->load("compta");
 $langs->load("bills");
-$langs->load("categories");
 if (! empty($conf->adherent->enabled)) $langs->load("members");
 
 

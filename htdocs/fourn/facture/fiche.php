@@ -2054,11 +2054,13 @@ else
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
             }
             print '</div>';
+            print '<br>';
 
             if ($action != 'edit')
             {
-                print '<table width="100%"><tr><td width="50%" valign="top">';
-                print '<a name="builddoc"></a>'; // ancre
+				print '<div class="fichecenter"><div class="fichehalfleft">';
+            	//print '<table width="100%"><tr><td width="50%" valign="top">';
+                //print '<a name="builddoc"></a>'; // ancre
 
                 /*
                  * Documents generes
@@ -2072,7 +2074,6 @@ else
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
                 $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
-                print '<br>';
                 print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
                 $somethingshown=$formfile->numoffiles;
 
@@ -2081,15 +2082,17 @@ else
                 */
                 $somethingshown=$object->showLinkedObjectBlock();
 
-                print '</td><td valign="top" width="50%">';
-                print '<br>';
+				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+                //print '</td><td valign="top" width="50%">';
+                //print '<br>';
 
                 // List of actions on element
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
                 $formactions=new FormActions($db);
                 $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
 
-                print '</td></tr></table>';
+				print '</div></div></div>';
+                //print '</td></tr></table>';
             }
         }
         /*

@@ -125,8 +125,8 @@
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
   	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
   	<?php
-    }
-    if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
+  }
+  if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
   	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
   <?php } } ?>
 
@@ -152,7 +152,7 @@
 		</a>
 	</td>
 
-	<?php if ($num > 1) { ?>
+	<?php if ($num > 1 && empty($conf->browser->phone)) { ?>
 	<td align="center" class="tdlineupdown">
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
@@ -166,10 +166,10 @@
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center" class="tdlineupdown">&nbsp;</td>
+    <td align="center"<?php echo (empty($conf->browser->phone)?' class="tdlineupdown"':''); ?>></td>
 	<?php } ?>
 <?php } else { ?>
-	<td colspan="3">&nbsp;</td>
+	<td colspan="3"></td>
 <?php } ?>
 
 </tr>

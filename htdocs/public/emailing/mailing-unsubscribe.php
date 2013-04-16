@@ -29,6 +29,20 @@ if (! defined('NOLOGIN'))        define("NOLOGIN",1);			// This means this outpu
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check anti CSRF attack test
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
 
+/**
+ * Header empty
+ *
+ * @return	void
+ */
+function llxHeader() { }
+/**
+ * Footer empty
+ *
+ * @return	void
+ */
+function llxFooter() { }
+
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 

@@ -31,6 +31,20 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');		// Do not check ant
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');	// Do not check anti POST attack test
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no need to load and show top and left menu
 
+/**
+ * Header empty
+ *
+ * @return	void
+ */
+function llxHeader() { }
+/**
+ * Footer empty
+ *
+ * @return	void
+ */
+function llxFooter() { }
+
+
 require '../../main.inc.php';
 
 $tag=GETPOST('tag');

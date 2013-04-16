@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
@@ -999,7 +999,7 @@ if ($action=="create")
 	print '</tr>';
 
 	print '</td></tr>';
-	
+
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -1016,7 +1016,7 @@ if ($action=="create")
 	//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	
+
 
 	// Other options
     $parameters=array();
@@ -1516,7 +1516,7 @@ elseif (! empty($object->id))
 				$parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
 				$reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
 			}
-			
+
 			$nbrows=ROWS_2;
 			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 			$doleditor=new DolEditor('eldesc',$line->description,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
@@ -1671,7 +1671,7 @@ elseif (! empty($object->id))
 		 */
 		if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
 		{
-			print '<div	class="tabsAction">';
+			print '<div	 class="tabsAction">';
 
 			// Validate
 			if ($object->statut == 0 && $num > 0)
@@ -1762,9 +1762,12 @@ elseif (! empty($object->id))
 
 			print "</div>";
 		}
+		print "<br>";
 
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-		print '<a name="builddoc"></a>'; // ancre
+
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		//print '<table width="100%"><tr><td width="50%" valign="top">';
+		//print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -1785,7 +1788,8 @@ elseif (! empty($object->id))
 		 */
 		$somethingshown=$object->showLinkedObjectBlock();
 
-		print '</td><td valign="top" width="50%">';
+		//print '</td><td valign="top" width="50%">';
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
@@ -1853,7 +1857,8 @@ elseif (! empty($object->id))
 		$somethingshown=$formactions->showactions($object,'order_supplier',$socid);
 		*/
 
-		print '</td></tr></table>';
+		print '</div></div></div>';
+		//print '</td></tr></table>';
 	}
 
 	/*
