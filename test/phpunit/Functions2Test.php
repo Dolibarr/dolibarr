@@ -127,8 +127,32 @@ class Functions2Test extends PHPUnit_Framework_TestCase
         $result=jsUnEscape('%u03BD%u03B5%u03BF');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals('νεο',$result);
-
-        return;
     }
+    
+    /**
+     * isValidMailDomain
+     * 
+     * @return void
+     */
+    public function testIsValidMailDomain()
+    {
+    	
+    }
+
+    /**
+     * isValidURL
+     * 
+     * @return	void
+     */
+    public function testIsValidUrl()
+    {
+    	$result=isValidUrl('http://www.google.com',1);
+        print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(1,$result);
+    	$result=isValidUrl('www.google.com',2);
+        print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(0,$result);
+    }
+
 }
 ?>
