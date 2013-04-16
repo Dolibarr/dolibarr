@@ -1188,6 +1188,9 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 	if (empty($phone)) { return ''; }
 	if (empty($country)) $country=$mysoc->country_code;
 
+	// Short format for small screens
+	if ($conf->dol_optimize_smallscreen) $separ='';
+
 	$newphone=$phone;
 	if (strtoupper($country) == "FR")
 	{
@@ -1213,9 +1216,14 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 		}
 	}
 
-	if (! empty($addlink))
+	if (! empty($addlink))	// Link on phone number + link to add action (if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
-		if (! empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')
+		if (! empty($conf->browser))	// If phone, we use link of phone
+		{
+			$newphone ='<a href="tel:'.$phone.'"';
+			$newphone.='>'.$phone.'</a>';
+		}
+		else if (! empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')		// If click to dial, we use click to dial url
 		{
 			if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 

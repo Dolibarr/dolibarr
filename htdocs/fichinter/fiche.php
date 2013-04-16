@@ -1442,7 +1442,9 @@ else if ($id > 0 || ! empty($ref))
 
     if ($action != 'presend')
     {
-        print '<table width="100%"><tr><td width="50%" valign="top">';
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+    	//print '<table width="100%"><tr><td width="50%" valign="top">';
+
         /*
          * Built documents
          */
@@ -1464,14 +1466,16 @@ else if ($id > 0 || ! empty($ref))
     	 */
     	$somethingshown=$object->showLinkedObjectBlock();
 
-    	print '</td><td valign="top" width="50%">';
+    	//print '</td><td valign="top" width="50%">';
+    	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
     	// List of actions on element
     	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
     	$formactions=new FormActions($db);
     	$somethingshown=$formactions->showactions($object,'fichinter',$socid);
-        print "</td><td>";
-        print "&nbsp;</td>";
-        print "</tr></table>\n";
+
+        print '</div></div></div>';
+    	//print "</td></tr></table>\n";
     }
 
 

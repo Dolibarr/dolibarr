@@ -24,11 +24,14 @@
  *	\brief      List of bank transactions
  */
 
-require 'pre.inc.php';
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+
+$langs->load("banks");
+$langs->load("categories");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -134,9 +137,9 @@ if ($resql)
 
 	// Title
 	$bankcateg=new BankCateg($db);
-	if (! empty($_REQUEST["bid"]))
+	if (GETPOST("bid"))
 	{
-		$result=$bankcateg->fetch($_REQUEST["bid"]);
+		$result=$bankcateg->fetch(GETPOST("bid"));
 		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->nom:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	else

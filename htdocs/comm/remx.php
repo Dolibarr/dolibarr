@@ -269,7 +269,8 @@ if ($socid > 0)
 	print_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
 	print '<table class="border" width="100%">';
 	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
-	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
+	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
 	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$objsoc);

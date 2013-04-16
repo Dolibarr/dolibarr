@@ -23,10 +23,11 @@
  *       \brief      Home page of bank module
  */
 
-require 'pre.inc.php';
+require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -232,20 +233,20 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
-
-
 print "</table>";
+print "<br>";
 
 
 /*
  * Boutons d'actions
  */
-print "<br><div class=\"tabsAction\">\n";
-if ($user->rights->banque->configurer) {
+
+print '<div class="tabsAction">'."\n";
+if ($user->rights->banque->configurer) 
+{
 	print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
-	print '<a class="butAction" href="categ.php">'.$langs->trans("Rubriques").'</a>';
 }
-print "</div>";
+print '</div>';
 
 
 llxFooter();

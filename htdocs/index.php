@@ -188,7 +188,7 @@ if ($user->societe_id == 0)
     DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
     DOL_URL_ROOT.'/contrat/liste.php');
     // Translation lang files
-    $langfile=array("bills",
+    $langfile=array("companies",
                     "prospects",
                     "suppliers",
                     "members",
