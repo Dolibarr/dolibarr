@@ -110,6 +110,14 @@ ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(256) NOT NULL DEFAUL
 -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- VPGSQL8.2 DROP table llx_c_shipment_mode;
 -- VPGSQL8.2 CREATE TABLE llx_c_shipment_mode (rowid SERIAL PRIMARY KEY, tms timestamp, code varchar(30) NOT NULL, libelle varchar(50) NOT NULL, description text, tracking varchar(256) NOT NULL, active integer DEFAULT 0, module varchar(32) NULL);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (1,'CATCH','Catch','Catch by client','',1);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (2,'TRANS','Transporter','Generic transporter','',1);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi','',0);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (4,'LETTREMAX','Lettre Max','Courrier Suivi et Lettre Max','',0);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (5,'UPS','UPS','United Parcel Service','http://wwwapps.ups.com/etracking/tracking.cgi?InquiryNumber2=&InquiryNumber3=&tracknums_displayed=3&loc=fr_FR&TypeOfInquiryNumber=T&HTMLVersion=4.0&InquiryNumber22=&InquiryNumber32=&track=Track&Suivi.x=64&Suivi.y=7&Suivi=Valider&InquiryNumber1={TRACKID}',0);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (6,'KIALA','KIALA','Relais Kiala','http://www.kiala.fr/tnt/delivery/{TRACKID}',0);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (7,'GLS','GLS','General Logistics Systems','http://www.gls-group.eu/276-I-PORTAL-WEB/content/GLS/FR01/FR/5004.htm?txtAction=71000&txtRefNo={TRACKID}',0);
+-- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (8,'CHRONO','Chronopost','Chronopost','http://www.chronopost.fr/expedier/inputLTNumbersNoJahia.do?listeNumeros={TRACKID}',0);
 
 -- and create the new index and constraint
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_shipping_method (fk_shipping_method);
