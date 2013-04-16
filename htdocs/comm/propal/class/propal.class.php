@@ -307,11 +307,13 @@ class Propal extends CommonObject
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
+     *		@param      timestamp	$date_start       	Start date of the line 
+     *		@param      timestamp	$date_end         	End date of the line 
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='')
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$date_start='', $date_end='')
     {
         global $conf;
 
@@ -401,6 +403,9 @@ class Propal extends CommonObject
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
+            
+            $this->line->date_start=$date_start;
+            $this->line->date_end=$date_end;
 
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
@@ -465,9 +470,11 @@ class Propal extends CommonObject
      *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
+     *	@param      timestamp	$date_start       	Start date of the line 
+     *	@param      timestamp	$date_end         	End date of the line 
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $type=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='')
     {
         global $conf,$user,$langs;
 
@@ -545,6 +552,9 @@ class Propal extends CommonObject
             // infos marge
             $this->line->fk_fournprice = $fk_fournprice;
             $this->line->pa_ht = $pa_ht;
+            
+            $this->line->date_start=$date_start;
+            $this->line->date_end=$date_end;
 
             // TODO deprecated
             $this->line->price=$price;
@@ -1098,7 +1108,8 @@ class Propal extends CommonObject
                  */
                 $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
-                $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
+                $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+                $sql.= ' d.date_start, d.date_end';
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
                 $sql.= " WHERE d.fk_propal = ".$this->id;
@@ -1153,6 +1164,9 @@ class Propal extends CommonObject
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
+                        
+                        $line->date_start  		= $objp->date_start;
+                        $line->date_end  		= $objp->date_end;
 
                         $this->lines[$i]        = $line;
                         //dol_syslog("1 ".$line->fk_product);
@@ -2626,6 +2640,9 @@ class PropaleLigne
     var $localtax2_tx;
     var $total_localtax1;
     var $total_localtax2;
+    
+    var $date_start;
+    var $date_end;
 
     var $skip_update_total; // Skip update price total for special lines
 
@@ -2651,7 +2668,8 @@ class PropaleLigne
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
-		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
+		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql.= ' pd.date_start, pd.date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql.= ' WHERE pd.rowid = '.$rowid;
@@ -2695,6 +2713,9 @@ class PropaleLigne
 			$this->libelle			= $objp->product_label;  // deprecated
 			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
+			
+			$this->date_start       = $this->db->jdate($objp->date_start);
+            $this->date_end         = $this->db->jdate($objp->date_end);
 
 			$this->db->free($result);
 		}
@@ -2749,7 +2770,8 @@ class PropaleLigne
         $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
-        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang)';
+        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
+        $sql.= ' date_start, date_end)';
         $sql.= " VALUES (".$this->fk_propal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -2772,7 +2794,9 @@ class PropaleLigne
         $sql.= " ".(isset($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
         $sql.= " ".(isset($this->pa_ht)?"'".price2num($this->pa_ht)."'":"null").",";
         $sql.= ' '.$this->special_code.',';
-        $sql.= ' '.$this->rang;
+        $sql.= ' '.$this->rang.',';
+        $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
+        $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ')';
 
         dol_syslog(get_class($this).'::insert sql='.$sql, LOG_DEBUG);
@@ -2904,6 +2928,8 @@ class PropaleLigne
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
+        $sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+        $sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= " WHERE rowid = ".$this->rowid;
 
         dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);

@@ -2946,11 +2946,24 @@ abstract class CommonObject
         global $conf,$langs,$bc;
 
         //var_dump($line);
-
-        $date_start=$line->date_debut_prevue;
-        if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
-        $date_end=$line->date_fin_prevue;
-        if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
+		if (!empty($line->date_start)) 
+		{ 
+			$date_start=$line->date_start;
+		}
+		else  
+		{
+			$date_start=$line->date_debut_prevue;
+			if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
+		}
+		if (!empty($line->date_end))
+		{
+			$date_end=$line->date_end;
+		}
+		else 
+		{
+			$date_end=$line->date_fin_prevue;
+			if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
+		}
 
         $this->tpl['label'] = '';
         if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
@@ -2978,7 +2991,11 @@ abstract class CommonObject
         else
         {
             $this->tpl['label'].= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
-            $this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
+            if (!empty($line->desc)) {
+            	$this->tpl['label'].=$line->desc;
+            }else {
+            	$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
+            }            
             // Dates
             if ($line->product_type == 1 && ($date_start || $date_end))
             {
