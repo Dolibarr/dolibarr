@@ -95,7 +95,7 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.libelle,";
+$sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle,";
 $sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
 $sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
@@ -146,7 +146,7 @@ if ($result)
 		$compta_localtax2 = (! empty($obj->account_localtax2)?$obj->account_localtax2:$langs->trans("CodeNotDef"));
 
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
-		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["lib"] = $obj->libelle;
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
