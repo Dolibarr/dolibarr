@@ -137,8 +137,13 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Contact($this->savdb);
     	$localobject->initAsSpecimen();
+    	//test initAsSpecimen data is right
+    	print __METHOD__." lastname=".$localobject->lastname."\n";
+    	$this->assertEquals($localobject->lastname, 'DOLIBARR');
+    	print __METHOD__." firstname=".$localobject->firstname."\n";
+    	$this->assertEquals($localobject->firstname, 'SPECIMEN');
+    	
     	$result=$localobject->create($user);
-
         print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
@@ -166,6 +171,12 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
+    	
+    	//test fetch data is right
+    	print __METHOD__." lastname=".$localobject->lastname."\n";
+    	$this->assertEquals($localobject->lastname, 'DOLIBARR');
+    	print __METHOD__." firstname=".$localobject->firstname."\n";
+    	$this->assertEquals($localobject->firstname, 'SPECIMEN'); 	
 
     	return $localobject;
     }
@@ -286,11 +297,24 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject->getFullAddress(1);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
+        $this->assertContains("New address\nNew zip New town\nBelgium", $result);        
 
         $localobject->info($localobject->id);
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
+        
+        //test other branches of getFullAddress
+        $localobject->country_code = '';
+        $localobject->country = '';
+        $result=$localobject->getFullAddress(1);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertContains("New address",$result);
+        
+        $localobject->country_code = '';
+        $localobject->country = 'US';
+        $result=$localobject->getFullAddress(1);
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertContains("New address",$result);
 
         return $localobject->id;
     }
