@@ -153,7 +153,7 @@ if ($action=='edit_carrier' || $action=='setvalue')
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("Tracking").'</td><td>';
-    print '<input size="128" type="text" name="tracking" value="'.$object->listmeths[0]['tracking'].'">';
+    print '<input size="80" type="text" name="tracking" value="'.$object->listmeths[0]['tracking'].'">';
     print ' &nbsp; '.$langs->trans("Example").': http://www.website.com/dir/{TRACKID}';
     print '</td></tr>';
 
@@ -194,7 +194,7 @@ else
         print '<td>'.$object->listmeths[$i]['code'].'</td>';
         print '<td>'.$object->listmeths[$i]['libelle'].'</td>';
         print '<td>'.$object->listmeths[$i]['description'].'</td>';
-        print '<td>'.$object->listmeths[$i]['tracking'].'</td>';
+        print '<td>'.dol_trunc($object->listmeths[$i]['tracking'],92,'middle').'</td>';
         print '<td align="center">';
         if($object->listmeths[$i]['active'] == 0)
         {
