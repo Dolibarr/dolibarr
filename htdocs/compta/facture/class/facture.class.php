@@ -1576,7 +1576,7 @@ class Facture extends CommonInvoice
         $now=dol_now();
 
         $error=0;
-        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse, LOG_WARNING);
+        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
 
 	    // Check parameters
         if (! $this->brouillon)
@@ -2554,11 +2554,10 @@ class Facture extends CommonInvoice
         {
             $maxfacnumber = $this->getNextNumRef($this->client,'last');
             $ventilExportCompta = $this->getVentilExportCompta();
-            // Si derniere facture et si non ventilee, on peut supprimer
-            if ($maxfacnumber == $this->ref && $ventilExportCompta == 0)
-            {
-                return 1;
-            }
+            // If there is no invoice into the reset range and not already dispatched, we can delete
+            if ($maxfacnumber == '' && $ventilExportCompta == 0) return 1;
+            // If invoice to delete is last one and not already dispatched, we can delete
+            if ($maxfacnumber == $this->ref && $ventilExportCompta == 0) return 1;
         }
         else if ($this->statut == 0 && $facref == 'PROV') // Si facture brouillon et provisoire
         {

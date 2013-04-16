@@ -140,17 +140,19 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		$result2=$localobject->create($user,1);
-		$result3=$localobject->validate($user, $result);
+		$result3=$localobject->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1915-0001', $result);	// counter must start to 1
+		$this->assertEquals('1915-0001', $result);				// counter must start to 1
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice (there is no reset into mask)
 		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+		$this->assertEquals('1915-0001', $result);
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1916-0002', $result);	// counter must not be reset
+		$this->assertEquals('1916-0002', $result);				// counter must not be reseted so be 2
 
 		// Now we try with a reset
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000@1}';
@@ -162,7 +164,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1910-0001', $result);	// counter must start to 1
+		$this->assertEquals('1910-0001', $result);				// counter must start to 1
 
 		// Same mask but we add month
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@1}';
@@ -175,15 +177,15 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result2=$localobject->create($user,1);
 		$result3=$localobject->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('192001-0001', $result);	// counter must start to 1
+		$this->assertEquals('192001-0001', $result);			// counter must start to 1
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1921);	// we use following year for second invoice
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1921);	// we use following year for second invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('192101-0001', $result);	// counter must be resete to 1
+    	$this->assertEquals('192101-0001', $result);			// counter must be reseted to 1
 
 
 		// Now we try with a different fiscal month (forced by mask)
@@ -194,16 +196,25 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->initAsSpecimen();
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1930);	// we use year 1930 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
+    	$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+    	print __METHOD__." result for last=".$result."\n";
+    	$this->assertEquals('', $result);						// no existing ref into reset range
     	$result=$numbering->getNextValue($mysoc, $localobject);
     	$result2=$localobject->create($user,1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('193001-0001', $result);	// counter must start to 1
+    	$this->assertEquals('193001-0001', $result);			// counter must start to 1
+    	$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+    	print __METHOD__." result for last=".$result."\n";
+    	$this->assertEquals('193001-0001', $result);			// last ref into reset range should be same than last created
 
     	$localobject=new Facture($this->savdb);
     	$localobject->initAsSpecimen();
     	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1930);	// we use same year but fiscal month after
     	$numbering=new mod_facture_mercure();
+    	$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+    	print __METHOD__." result for last=".$result."\n";
+    	$this->assertEquals('', $result);						// last ref into reset range should be ''
     	$result=$numbering->getNextValue($mysoc, $localobject);
     	$result2=$localobject->create($user,1);
     	$result3=$localobject->validate($user, $result);
