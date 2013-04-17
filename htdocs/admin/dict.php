@@ -139,7 +139,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, p.code as country_code, p.libelle as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 $tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -154,7 +154,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT rowid   as rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number as accountancy_code, account_parent, label, active FROM ".MAIN_DB_PREFIX."accountingaccount";
 $tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, p.code as country_code, p.libelle as pays, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_pays as p WHERE s.fk_pays=p.rowid and p.active=1";
-$tabsql[25]= "SELECT t.rowid, t.taux, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[25]= "SELECT t.rowid, t.taux, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 
 // Critere de tri du dictionnaire
 $tabsqlsort=array();
