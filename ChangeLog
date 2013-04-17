@@ -48,7 +48,8 @@ For users:
 - New: [ task #798 ] Add range limit date on product/services as it is done on order and invoice
 - New: [ task #814 ] Add extrafield feature into Project/project tasks module
 - New: [ task #770 ] Add ODT document generation for Projects module
-  
+- New: [ task #741 ] Add intervention box
+
 For translators:
 - Update language files.
 
