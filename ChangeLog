@@ -36,6 +36,18 @@ For users:
 - New: Add module Opensurvey.
 - New: Default aprrover for holidays i sby default hierchical parent.
 - First change to prepare feature "click to print" (IPP) for PDF.
+- New: [ task #350 ] Merge tab customer and prospect
+- New: [ task #710 ] Add substitution into mailing send (and HTML is now valid)
+- New: [ task #711 ] Add combobox for contact as done for product/thirdparty
+- New: [ task #714 ] In Emailing module admin autogenerate security key of READRECIEPT
+- New: [ task #743 ] GED : Add aministration option to disabled autotree to display
+- New: [ task #767 ] Customer Address fallback when a contact doesn't have an address
+- New: [ task #768 ] WYSIWYG for all mail
+- New: [ task #773 ] Add Project document in GED(ECM) modules
+- New: [ task #783 ] Add checkbox and radio into extrafield feature
+- New: [ task #798 ] Add range limit date on product/services as it is done on order and invoice
+- New: [ task #814 ] Add extrafield feature into Project/project tasks module
+
   
 For translators:
 - Update language files.
@@ -59,6 +71,8 @@ For developers:
 - New: when adding an action, we can define a free code to tag it for a specific need.
 - New: Enhance Dolibarr migration process to include migration script of external 
   modules.
+- New: [ task #811 ] Uniformanize note field.
+  
 
 WARNING: If you used external modules, some of them may need to be upgraded due to:
 - Fields of classes were renamed to be normalized (nom, prenom, cp, ville, adresse, tel
