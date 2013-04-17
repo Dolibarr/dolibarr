@@ -89,6 +89,7 @@ class modFicheinter extends DolibarrModules
 
         // Boites
         $this->boxes = array();
+        $this->boxes[0][1] = "box_ficheinter.php";
 
         // Permissions
         $this->rights = array();
