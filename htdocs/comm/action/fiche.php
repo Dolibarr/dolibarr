@@ -427,7 +427,7 @@ if ($action == 'create')
 	            			$(".fulldaystartmin").attr("disabled","disabled").val("00");
 	            			$(".fulldayendhour").attr("disabled","disabled").val("23");
 	            			$(".fulldayendmin").attr("disabled","disabled").val("59");
-	            			$("#p2").attr("disabled","disabled").val("");
+	            			$("#p2").removeAttr("disabled");
 	            		}
 	            	}
                     setdatefields();

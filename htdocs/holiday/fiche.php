@@ -375,7 +375,7 @@ if($action == 'confirm_valid')
             $newSolde = $soldeActuel - ($nbJour*$cp->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $cp->addLogCP($userID,$cp->fk_user,'Event : '.$langs->transnoentitiesnoconv("Holiday"),$newSolde);
+            $cp->addLogCP($userID,$cp->fk_user, $langs->trans('Event').': '.$langs->transnoentitiesnoconv("Holidays"),$newSolde);
 
             // Mise à jour du solde
             $cp->updateSoldeCP($cp->fk_user,$newSolde);

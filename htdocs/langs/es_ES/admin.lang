@@ -449,10 +449,6 @@ Module1780Name=Categorías
 Module1780Desc=Gestión de categorías (productos, proveedores y clientes)
 Module2000Name=Editor WYSIWYG
 Module2000Desc=Permite la edición de ciertas zonas de texto mediante un editor avanzado
-Module2200Name=Derecho de préstamos
-Module2200Desc=Gestión de los derechos de préstamos
-Module2300Name=Menús
-Module2300Desc=Administración de los menús por base de datos
 Module2400Name=Agenda
 Module2400Desc=Gestión de la agenda y de las acciones
 Module2500Name=Gestión Electrónica de Documentos
@@ -1344,7 +1340,7 @@ AccountancyCodeBuy=Código contable compras
 AgendaSetup=Módulo configuración de acciones y agenda
 PasswordTogetVCalExport=Clave de autorización vcal export link
 PastDelayVCalExport=No exportar los eventos de más de
-AGENDA_USE_EVENT_TYPE=Use los tipos de eventos (administrables desde Configuración->Diccionarios->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Usar los tipos de eventos (administrables desde Configuración->Diccionarios->llx_c_actioncomm)
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####

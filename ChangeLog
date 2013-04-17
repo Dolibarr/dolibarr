@@ -4,6 +4,25 @@ English Dolibarr ChangeLog
 
 
 
+***** ChangeLog for 3.3.2 compared to 3.3.1 *****
+
+- Fix: Ducth (nl_NL) translation
+- Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
+- Generalize fix: file with a specific mask not found, again
+- Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
+- Fix: Can't reset payment due date
+- Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
+- Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
+- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
+- Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
+- Fix: [ bug #816 ] Sales journal does not reflect localtaxes
+- Fix: [ bug #806 ] Margins module with orders2invoice does not respect cost price
+- Fix: Orderstoinvoice didn't act as expected when no order was checked
+- Fix: Bad link to all proposals into Third party card if customer is prospect
+- Fix: [ bug #789 ] VAT not being calculated in POS
+
+
+
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
 
 - Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
