@@ -47,7 +47,7 @@ For users:
 - New: [ task #783 ] Add checkbox and radio into extrafield feature
 - New: [ task #798 ] Add range limit date on product/services as it is done on order and invoice
 - New: [ task #814 ] Add extrafield feature into Project/project tasks module
-
+- New: [ task #770 ] Add ODT document generation for Projects module
   
 For translators:
 - Update language files.
