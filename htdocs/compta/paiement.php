@@ -286,7 +286,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             					$(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
             					if ($(\'#fieldchqemetteur\').val() == \'\')
             					{
-            						$(\'#fieldchqemetteur\').val(jQuery(\'#thirdpartylabel\').val());
+            						var emetteur = ('.$facture->type.' == 2) ? \''.dol_escape_htmltag(MAIN_INFO_SOCIETE_NOM).'\' : jQuery(\'#thirdpartylabel\').val();
+            						$(\'#fieldchqemetteur\').val(emetteur);
             					}
             				}
             				else
