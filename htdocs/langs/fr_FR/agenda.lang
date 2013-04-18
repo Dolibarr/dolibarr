@@ -40,6 +40,7 @@ ActionsEvents=Événements pour lesquels Dolibarr doit créer une action dans l'
 PropalValidatedInDolibarr=Proposition %s validée
 InvoiceValidatedInDolibarr=Facture %s validée
 InvoiceBackToDraftInDolibarr=Facture %s repassée en brouillon
+InvoiceDeleteDolibarr=Facture %s supprimée
 OrderValidatedInDolibarr=Commande %s validée
 OrderApprovedInDolibarr=Commande %s approuvée
 OrderBackToDraftInDolibarr=Commande %s repassée en brouillon

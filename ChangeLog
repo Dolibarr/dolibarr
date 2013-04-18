@@ -49,6 +49,7 @@ For users:
 - New: [ task #814 ] Add extrafield feature into Project/project tasks module
 - New: [ task #770 ] Add ODT document generation for Projects module
 - New: [ task #741 ] Add intervention box
+- New: [ task #826 ] Optionnal increase stock when deleting an invoice already validated
 
 For translators:
 - Update language files.

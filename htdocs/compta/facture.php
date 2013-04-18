@@ -156,7 +156,21 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 {
 	$result = $object->fetch($id);
 	$object->fetch_thirdparty();
-	$result = $object->delete();
+	
+	$idwarehouse=GETPOST('idwarehouse');
+	
+	//Check for warehouse
+	if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_DELETE_INVOICE) && $object->hasProductsOrServices(1) && $object->statut>=1)
+	{
+		if (! $idwarehouse || $idwarehouse == -1)
+		{
+			$error++;
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")),'errors');
+			$action='';
+		}
+	}
+	
+	$result = $object->delete(0,0,$idwarehouse);
 	if ($result > 0)
 	{
 		header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php');
@@ -2334,8 +2348,23 @@ else if ($id > 0 || ! empty($ref))
         // Confirmation to delete invoice
         if ($action == 'delete')
         {
-            $text=$langs->trans('ConfirmDeleteBill');
-            $formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete','',0,1);
+            $text=$langs->trans('ConfirmDeleteBill',$object->ref);
+            $formquestion=array();
+            if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_DELETE_INVOICE) && $object->hasProductsOrServices(1) &&  $object->statut>=1)
+            {
+            	$langs->load("stocks");
+            	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+            	$formproduct=new FormProduct($db);
+            	$label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
+            	$formquestion=array(
+            	//'text' => $langs->trans("ConfirmClone"),
+            	//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+            	//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+            	array('type' => 'other', 'name' => 'idwarehouse',   'label' => $label,   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+            	$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete',$formquestion,"yes",1);
+            }else {
+            	$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete','','',1);
+            }            
         }
 
         // Confirmation de la validation
