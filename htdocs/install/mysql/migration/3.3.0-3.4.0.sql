@@ -180,6 +180,7 @@ UPDATE llx_c_tva set localtax1=0, localtax1_type='0' where localtax1_type = '7';
 UPDATE llx_c_tva set localtax2=0, localtax2_type='0' where localtax2_type = '7';
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after tva_tx;
 
 ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
 
