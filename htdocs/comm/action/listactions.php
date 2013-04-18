@@ -182,7 +182,7 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
-print $sql;
+//print $sql;
 
 dol_syslog("comm/action/listactions.php sql=".$sql);
 $resql=$db->query($sql);
