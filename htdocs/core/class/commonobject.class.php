@@ -1418,7 +1418,7 @@ abstract class CommonObject
     		dol_syslog(get_class($this)."::upate_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
-		
+
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
@@ -1441,7 +1441,7 @@ abstract class CommonObject
 
     /**
      * 	Update public note (kept for backward compatibility)
-     * 
+     *
      *  @param      string		$note		New value for note
      *  @return     int      		   		<0 if KO, >0 if OK
      *  @deprecated
@@ -1450,7 +1450,7 @@ abstract class CommonObject
     {
     	return $this->update_note($note,'_public');
     }
-    
+
     /**
      *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
      *
@@ -2702,31 +2702,47 @@ abstract class CommonObject
 		global $conf,$langs,$hookmanager;
 
 		print '<tr class="liste_titre nodrag nodrop">';
-		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
-		{
-			print '<td align="center" width="5">&nbsp;</td>';
-		}
+
+		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
+
+		// Description
 		print '<td>'.$langs->trans('Description').'</td>';
+
+		// VAT
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+
+		// Price HT
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-			print '<td align="right" width="80">&nbsp;</td>';
+
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<td align="right" width="80">&nbsp;</td>';
+
+		// Qty
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+
+		// Reduction short
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+
 		if (! empty($conf->margin->enabled)) {
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
 				print '<td align="right" width="80">'.$langs->trans('CostPrice').'</td>';
+
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
 		}
+
+		// Total HT
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
-		print '<td width="10">&nbsp;</td>';
-		print '<td width="10">&nbsp;</td>';
-		print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
+
+		print '<td width="10"></td>';
+
+		print '<td width="10"></td>';
+
+		print '<td nowrap="nowrap"></td>'; // No width to allow autodim
+
 		print "</tr>\n";
 
 		$num = count($this->lines);
@@ -2930,11 +2946,24 @@ abstract class CommonObject
         global $conf,$langs,$bc;
 
         //var_dump($line);
-
-        $date_start=$line->date_debut_prevue;
-        if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
-        $date_end=$line->date_fin_prevue;
-        if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
+		if (!empty($line->date_start)) 
+		{ 
+			$date_start=$line->date_start;
+		}
+		else  
+		{
+			$date_start=$line->date_debut_prevue;
+			if ($line->date_debut_reel) $date_start=$line->date_debut_reel;
+		}
+		if (!empty($line->date_end))
+		{
+			$date_end=$line->date_end;
+		}
+		else 
+		{
+			$date_end=$line->date_fin_prevue;
+			if ($line->date_fin_reel) $date_end=$line->date_fin_reel;
+		}
 
         $this->tpl['label'] = '';
         if (! empty($line->fk_parent_line)) $this->tpl['label'].= img_picto('', 'rightarrow');
@@ -2962,7 +2991,11 @@ abstract class CommonObject
         else
         {
             $this->tpl['label'].= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''),'service') : img_object($langs->trans(''),'product')));
-            $this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
+            if (!empty($line->desc)) {
+            	$this->tpl['label'].=$line->desc;
+            }else {
+            	$this->tpl['label'].= ($line->label ? '&nbsp;'.$line->label : '');
+            }            
             // Dates
             if ($line->product_type == 1 && ($date_start || $date_end))
             {

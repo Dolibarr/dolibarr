@@ -393,17 +393,15 @@ class Cronjob extends CommonObject
     	$sql.= " t.note,";
     	$sql.= " t.nbrun";
 
-
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-    	$status = (empty($status))?'0':'1';
-    	$sql.= " WHERE t.status=".$status;
+    	$sql.= " WHERE 1 = 1";
+    	if ($status >= 0) $sql.= " AND t.status = ".(empty($status)?'0':'1');
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
     		foreach($filter as $key => $value) {
     				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
     		}
     	}
-
 
     	$sql.= " ORDER BY $sortfield $sortorder ";
     	if (!empty($limit) && !empty($offset)) {
@@ -836,7 +834,7 @@ class Cronjob extends CommonObject
 
 		$error=0;
 		$now=dol_now();
-		
+
 		$langs->load('cron');
 
 			if (empty($userlogin)) {

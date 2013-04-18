@@ -9,17 +9,17 @@
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -272,7 +272,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 			{
 				$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
 			}
-				
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
@@ -329,8 +329,8 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$lines[$i]->fk_remise_except,
 							'HT',
 							0,
-							$datestart,
-							$dateend,
+							$date_start,
+							$date_end,
 							$product_type,
 							$lines[$i]->rang,
 							$lines[$i]->special_code,
@@ -373,7 +373,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 		{
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-				
+
 			$object_id = $object->create($user);
 
 			// If some invoice's lines already known
@@ -2307,7 +2307,7 @@ else
 
 		/*
 		 * Boutons actions
-		*/
+		 */
 		if ($action != 'presend')
 		{
 			if ($user->societe_id == 0 && $action <> 'editline')
@@ -2435,19 +2435,19 @@ else
 
 				print '</div>';
 			}
-			print '<br>';
 		}
+		print '<br>';
 
 
 		if ($action != 'presend')
 		{
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-			print '<a name="builddoc"></a>'; // ancre
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+			//print '<table width="100%"><tr><td width="50%" valign="top">';
+			//print '<a name="builddoc"></a>'; // ancre
 
 			/*
 			 * Documents generes
-			*
-			*/
+			 */
 			$comref = dol_sanitizeFileName($object->ref);
 			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 			$relativepath = $comref.'/'.$comref.'.pdf';
@@ -2461,17 +2461,19 @@ else
 
 			/*
 			 * Linked object block
-			*/
+			 */
 			$somethingshown=$object->showLinkedObjectBlock();
 
-			print '</td><td valign="top" width="50%">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			//print '</td><td valign="top" width="50%">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions=new FormActions($db);
 			$somethingshown=$formactions->showactions($object,'order',$socid);
 
-			print '</td></tr></table>';
+			//print '</td></tr></table>';
+            print '</div></div></div>';
 		}
 
 
