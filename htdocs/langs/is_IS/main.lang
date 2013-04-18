@@ -12,7 +12,11 @@ DIRECTION=ltr
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
 FormatHourShort=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
@@ -604,7 +608,6 @@ Reason=Ástæða
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
 // Reference language: en_US -> is_IS
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Bæta við tengli
 Of=á
 SearchOf=Leita
