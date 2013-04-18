@@ -40,11 +40,6 @@ $langs->load("main");
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 
-//var_dump($langs->defaultlang);
-//var_dump($conf->format_date_short_java);
-//var_dump($langs->trans("FormatDateShortJava"));
-
-
 
 /*
  * View

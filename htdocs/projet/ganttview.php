@@ -184,8 +184,8 @@ if (count($tasksarray)>0)
 
 	// Show Gant diagram from $taskarray using JSGantt
 
-	$dateformat=$langs->trans("FormatDateShort");
-	$dateformat=strtolower($langs->trans("FormatDateShortJava"));
+	$dateformat=$langs->trans("FormatDateShort");				// Used by include ganttchart.php later
+	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.php later
 	$array_contacts=array();
 	$tasks=array();
 	$project_dependencies=array();
