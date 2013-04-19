@@ -383,7 +383,7 @@ if ($id == 11)
 
 // Define localtax_typeList (used for dictionnary "c_tva")
 $localtax_typeList = array();
-if (GETPOST("id") == 10)
+if ($id == 10)
 {
 	$localtax_typeList = array(
 			"0" => $langs->trans("No"),
@@ -433,7 +433,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
 
-            $msg.=$langs->trans("ErrorFieldRequired",$langs->transnoentities($fieldnamekey)).'<br>';
+            $msg.=$langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)).'<br>';
         }
     }
     // Other checks
@@ -441,14 +441,24 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $ok=0;
         $msg.="Value 'system' and 'systemauto' for type is reserved. You can use 'user' as value to add your own record.<br>";
     }
-    if (isset($_POST["code"]) && $_POST["code"]=='0') {
-        $ok=0;
-        $msg.="Code can't contains value 0<br>";
+    if (isset($_POST["code"])
+    {
+    	if ($_POST["code"]=='0')
+    	{
+        	$ok=0;
+        	$msg.="Code can't contains value 0<br>";
+        }
+        if (!is_numeric($_POST['code']))
+    	{
+	    	$ok = 0;
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    }
     }
     if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
         $ok=0;
-        $msg.=$langs->trans("ErrorFieldRequired",$langs->trans("Country")).'<br>';
+        $msg.=$langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")).'<br>';
     }
+
 	// Clean some parameters
     if (isset($_POST["localtax1"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
     if (isset($_POST["localtax2"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
@@ -510,7 +520,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         else
         {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                $msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
+                $msg=$langs->transnoentities("ErrorRecordAlreadyExists").'<br>';
             }
             else {
                 dol_print_error($db);
@@ -580,7 +590,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     {
         if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
         {
-            $msg='<div class="error">'.$langs->trans("ErrorRecordIsUsedByChild").'</div>';
+            $msg='<div class="error">'.$langs->transnoentities("ErrorRecordIsUsedByChild").'</div>';
         }
         else
         {
