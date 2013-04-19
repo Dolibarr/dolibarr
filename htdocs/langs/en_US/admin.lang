@@ -526,6 +526,7 @@ Permission98=Dispatch invoice accountancy lines
 Permission101=Read sendings
 Permission102=Create/modify sendings
 Permission104=Validate sendings
+Permission106=Export sendings
 Permission109=Delete sendings
 Permission111=Read financial accounts
 Permission112=Create/modify/delete and compare transactions

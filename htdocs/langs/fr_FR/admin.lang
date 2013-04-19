@@ -520,6 +520,7 @@ Permission98= Ventiler les lignes de factures
 Permission101= Consulter les expéditions
 Permission102= Créer/modifier les expéditions
 Permission104= Valider les expéditions
+Permission106= Exporter les expéditions
 Permission109= Supprimer les expéditions
 Permission111= Consulter les comptes financiers (comptes bancaires, caisses)
 Permission112= Créer/modifier montant/supprimer écritures bancaires
