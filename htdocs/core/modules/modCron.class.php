@@ -25,6 +25,7 @@
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
+
 /**
  *	Class to describe a Cron module
  */
@@ -122,22 +123,10 @@ class modCron extends DolibarrModules
         $r=0;
         $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'left',			                // This is a Left menu entry
-						        'titre'=>'CronListActive',
-						        'url'=>'/cron/list.php?status=1',
+						        'titre'=>'CronList',
+						        'url'=>'/cron/list.php?status=-1',
 						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
-						        'enabled'=>'$leftmenu==\'modulesadmintools\'',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-						        'perms'=>'$user->rights->cron->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-						        'target'=>'',
-						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
-
-        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-						        'type'=>'left',			                // This is a Left menu entry
-						        'titre'=>'CronListInactive',
-						        'url'=>'/cron/list.php?status=0',
-						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-						        'position'=>201,
 						        'enabled'=>'$leftmenu==\'modulesadmintools\'',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 						        'perms'=>'$user->rights->cron->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',

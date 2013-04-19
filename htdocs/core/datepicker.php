@@ -224,16 +224,16 @@ function displayBox($selectedDate,$month,$year)
 		if($thedate==$selDate) $dayclass="dpSelected";
 		elseif($thedate==$today) $dayclass="dpToday";
 
-		if ($langs->trans("FormatDateShortJava")=="FormatDateShortJava")
+		if ($langs->trans("FormatDateShortJavaInput")=="FormatDateShortJavaInput")
 		{
-		    print "ERROR FormatDateShortJava not defined for language ".$langs->defaultlang;
+		    print "ERROR FormatDateShortJavaInput not defined for language ".$langs->defaultlang;
 		    exit;
 		}
 
 		// Sur click dans calendrier, appelle fonction dpClickDay
 		echo "<TD class=\"".$dayclass."\"";
 		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",parseInt('".dol_print_date($thedate,"%m")."',10),".$mydate["mday"].",tradMonths)\"";
-		echo " onClick=\"dpClickDay(".$mydate["year"].",parseInt('".dol_print_date($thedate,"%m")."',10),".$mydate["mday"].",'".$langs->trans("FormatDateShortJava")."')\"";
+		echo " onClick=\"dpClickDay(".$mydate["year"].",parseInt('".dol_print_date($thedate,"%m")."',10),".$mydate["mday"].",'".$langs->trans("FormatDateShortJavaInput")."')\"";
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 

@@ -108,8 +108,9 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 
 $form = new Form($db);
 
-if (!empty($status))  $pagetitle=$langs->trans("CronListActive");
-else $pagetitle=$langs->trans("CronListInactive");
+//if (! empty($status))  $pagetitle=$langs->trans("CronListActive");
+//else $pagetitle=$langs->trans("CronListInactive");
+$pagetitle=$langs->trans("CronList");
 
 llxHeader('',$pagetitle);
 
@@ -155,8 +156,8 @@ if (count($object->lines)>0) {
 	print_liste_field_titre($langs->trans("CronNbRun"),$_SERVEUR['PHP_SELF'],"t.nbrun","",$arg_url,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CronLastResult"),$_SERVEUR['PHP_SELF'],"t.lastresult","",$arg_url,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVEUR['PHP_SELF'],"t.lastoutput","",$arg_url,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Active"),$_SERVEUR['PHP_SELF'],"t.status","",$arg_url,'align="center"',$sortfield,$sortorder);
 	print '<td></td>';
-
 	print '</tr>';
 
 	print '<form method="get" action="'.$url_form.'" name="search_form">'."\n";
@@ -177,7 +178,11 @@ if (count($object->lines)>0) {
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<td class="liste_titre" align="center">';
+	print $form->selectarray('status', array('0'=>$langs->trans("No"),'1'=>$langs->trans("Yes")), GETPOST('status'), 1);
+	print '</td><td class="liste_titre" align="right">';
+	print '&nbsp;';
+	print '<input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp; ';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
@@ -189,7 +194,8 @@ if (count($object->lines)>0) {
 
 	// Boucler sur chaque job
 	$style='impair';
-	foreach($object->lines as $line){
+	foreach($object->lines as $line)
+	{
 		// title profil
 		if ($style=='pair') {$style='impair';}
 		else {$style='pair';}
@@ -259,6 +265,10 @@ if (count($object->lines)>0) {
 		print '</td>';
 
 		print '<td align="center">';
+		print yn($line->status);
+		print '</td>';
+
+		print '<td align="right">';
 		if ($user->rights->cron->delete) {
 			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=delete\" title=\"".$langs->trans('CronDelete')."\">".img_delete()."</a> &nbsp;";
 		} else {

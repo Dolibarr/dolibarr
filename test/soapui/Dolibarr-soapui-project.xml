@@ -130,7 +130,7 @@
           <xsd:element name="total_net" type="xsd:double"/>
           <xsd:element name="total_vat" type="xsd:double"/>
           <xsd:element name="total" type="xsd:double"/>
-          <xsd:element name="note" type="xsd:string"/>
+          <xsd:element name="note_private" type="xsd:string"/>
           <xsd:element name="note_public" type="xsd:string"/>
           <xsd:element name="status" type="xsd:int"/>
           <xsd:element name="close_code" type="xsd:string"/>
@@ -628,7 +628,7 @@
           <xsd:element name="total_net" type="xsd:double"/>
           <xsd:element name="total_vat" type="xsd:double"/>
           <xsd:element name="total" type="xsd:double"/>
-          <xsd:element name="note" type="xsd:string"/>
+          <xsd:element name="note_private" type="xsd:string"/>
           <xsd:element name="note_public" type="xsd:string"/>
           <xsd:element name="status" type="xsd:int"/>
           <xsd:element name="close_code" type="xsd:string"/>

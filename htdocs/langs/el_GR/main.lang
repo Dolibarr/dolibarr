@@ -7,7 +7,11 @@ FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
 FormatHourShort=%I:%M %p
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%b %d, %Y
@@ -592,7 +596,6 @@ ShortSunday=Κ
 
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Προσθήκη συνδέσμου
 Of=του
 AmountByMonth=Ποσό ανά μήνα

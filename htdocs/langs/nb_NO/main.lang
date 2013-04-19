@@ -3,7 +3,11 @@ CHARSET=UTF-8
 SeparatorDecimal=,
 SeparatorThousand=
 FormatDateShort=%d.%m.%Y
+FormatDateShortInput=%d.%m.%Y
 FormatDateShortJava=dd.MM.yyyy
+FormatDateShortJavaInput=dd.MM.yyyy
+FormatDateShortJQuery=dd.mm.yy
+FormatDateShortJQueryInput=dd.mm.yy
 FormatHourShort=%H.%M
 FormatDateTextShort=%d. %b %Y
 FormatDateText=%d. %B %Y
@@ -535,8 +539,8 @@ Login=Innlogging
 Month01=januar
 Month02=februar
 Month03=mars
-Month04=April
-Month05=kan
+Month04=april
+Month05=mai
 Month06=juni
 Month07=juli
 Month08=August
@@ -606,7 +610,6 @@ Day0=Søndag
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
 // Reference language: en_US -> nb_NO
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Legg til link
 Of=av
 SearchOf=Søk

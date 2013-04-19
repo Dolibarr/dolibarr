@@ -14,7 +14,11 @@ CHARSET=UTF-8
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
 FormatHourShort=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
@@ -624,7 +628,6 @@ Prefix=Præfiks
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
 // Reference language: en_US -> da_DK
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Tilføj link
 Of=af
 SearchOf=Søg
