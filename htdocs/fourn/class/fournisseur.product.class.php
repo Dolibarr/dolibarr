@@ -296,7 +296,7 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid)
     {
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.recuperableonly as fourn_tva_npr";
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
@@ -320,7 +320,7 @@ class ProductFournisseur extends Product
             	$this->product_id				= $obj->fk_product;	// deprecated
             	$this->fk_product				= $obj->fk_product;
             	$this->fk_availability			= $obj->fk_availability;
-            	$this->fourn_tva_npr			= $obj->fourn_tva_npr;
+            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // FIXME this field not exist in llx_product_fournisseur_price
             	return 1;
             }
             else
