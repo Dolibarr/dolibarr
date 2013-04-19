@@ -337,7 +337,7 @@ class Opensurveysondage extends CommonObject
 	 *
      *	@param  User	$user        		User that deletes
      *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
-     *  @param	string	$numsondageadmin	Num sondage to delete
+     *  @param	string	$numsondageadmin	Num sondage admin to delete
 	 *  @return	int					 		<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger, $numsondageadmin)
@@ -345,6 +345,8 @@ class Opensurveysondage extends CommonObject
 		global $conf, $langs;
 		$error=0;
 
+		$numsondage=substr($numsondageadmin, 0, 16);
+		
 		$this->db->begin();
 
 		if (! $error)
@@ -366,10 +368,10 @@ class Opensurveysondage extends CommonObject
 		if (! $error)
 		{
 
-			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage_admin = '".$numsondageadmin."'";
+			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$numsondage."'";
 			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
-			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage_admin = '".$numsondageadmin."'";
+			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$numsondage."'";
 			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 
