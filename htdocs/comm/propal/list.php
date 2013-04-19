@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
@@ -167,7 +167,7 @@ if ($search_societe)
 }
 if ($search_montant_ht)
 {
-	$sql.= " AND p.total_ht='".$db->escape(trim($search_montant_ht))."'";
+	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
 }
 if ($sall) $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pd.description LIKE '%".$db->escape($sall)."%')";
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
