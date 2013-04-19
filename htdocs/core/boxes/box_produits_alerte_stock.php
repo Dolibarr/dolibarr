@@ -64,20 +64,23 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, s.reel";
+			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte,";
+			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
-			$sql.= " AND p.tosell = 1";
+			$sql.= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
-			$sql.= " HAVING s.reel < p.seuil_stock_alerte";
-			$sql.= $db->order('s.reel', 'DESC');
+			$sql.= " GROUP BY p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte";
+			$sql.= " HAVING SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") < p.seuil_stock_alerte";
+			$sql.= $db->order('p.seuil_stock_alerte', 'DESC');
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
 			if ($result)
 			{
+				$langs->load("stocks");
 				$num = $db->num_rows($result);
 				$i = 0;
 				while ($i < $num)
@@ -128,7 +131,8 @@ class box_produits_alerte_stock extends ModeleBoxes
                     'text' => $price_base_type);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="center"',
-                    'text' => $objp->reel . ' / '.$objp->seuil_stock_alerte);
+                    'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit")));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->tosell,3,0));
@@ -138,7 +142,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
                     $i++;
 				}
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProducts"));
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoTooLowStockProducts"));
 			}
 			else
 			{
