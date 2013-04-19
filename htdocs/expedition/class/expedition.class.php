@@ -1309,8 +1309,6 @@ class Expedition extends CommonObject
 	 */
 	function GetUrlTrackingStatus($value='')
 	{
-		$code='';
-
 		if (! empty($this->shipping_method_id))
 		{
 			$sql = "SELECT em.code, em.tracking";
@@ -1322,46 +1320,21 @@ class Expedition extends CommonObject
 			{
 				if ($obj = $this->db->fetch_object($resql))
 				{
-					$code = $obj->code;
-                    $tracking = $obj->tracking;
+					$tracking = $obj->tracking;
 				}
 			}
 		}
 
-        if ($tracking)
-        {
-                $url = str_replace('{TRACKID}', $value, $tracking);
-                $this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
-        }
-        else
-        {
-            if ($code)
-            {
-                $classname = "methode_expedition_".strtolower($code);
-
-                $url='';
-                if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
-                {
-                    require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).'.modules.php';
-                    $shipmethod = new $classname();
-                    $url = $shipmethod->provider_url_status($this->tracking_number);
-                }
-
-                if ($url)
-                {
-                    $this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
-                }
-                else
-                {
-                    $this->tracking_url = $value;
-                }
-            }
-            else
-            {
-                $this->tracking_url = $value;
-            }
-        }
-    }
+		if (!empty($tracking))
+		{
+			$url = str_replace('{TRACKID}', $value, $tracking);
+			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
+		}
+		else
+		{
+			$this->tracking_url = $value;
+		}
+	}
 
 	/**
 	 *	Classify the shipping as invoiced
