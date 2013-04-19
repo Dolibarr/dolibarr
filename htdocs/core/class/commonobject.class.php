@@ -2310,7 +2310,7 @@ abstract class CommonObject
     /**
      *  Function to say how many lines object contains
      *
-     *	@param	int		$predefined		-1=All, 0=Count free product/service only, 1=Count predefined product/service only
+     *	@param	int		$predefined		-1=All, 0=Count free product/service only, 1=Count predefined product/service only, 2=Count predefined product, 3=Count predefined service
      *  @return	int						<0 if KO, 0 if no predefined products, nb of lines with predefined products if found
      */
     function hasProductsOrServices($predefined=-1)
@@ -2323,6 +2323,8 @@ abstract class CommonObject
             if ($predefined == -1) $qualified=1;
             if ($predefined == 1 && $val->fk_product > 0) $qualified=1;
             if ($predefined == 0 && $val->fk_product <= 0) $qualified=1;
+            if ($predefined == 2 && $val->fk_product > 0 && $val->product_type==0) $qualified=1;
+            if ($predefined == 3 && $val->fk_product > 0 && $val->product_type==1) $qualified=1;
             if ($qualified) $nb++;
         }
         dol_syslog(get_class($this).'::hasProductsOrServices we found '.$nb.' qualified lines of products/servcies');
