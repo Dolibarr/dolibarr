@@ -953,7 +953,9 @@ class FormOther
 	        	jQuery(".boxclose").click(function() {
 	        		var self = this;	// because JQuery can modify this
 	        		var boxid=self.id.substring(8);
+	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
 	        		jQuery(\'#boxto_\'+boxid).remove();
+	        		// TODO Add id, label into combo list
 	        		updateBoxOrder(1);
 	        	});
 	        
