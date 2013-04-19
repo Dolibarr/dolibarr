@@ -1298,7 +1298,7 @@ class Facture extends CommonInvoice
 			}
 
 			// If we decrament stock on invoice validation, we increment
-			if ($this->type != 3 && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_DELETE_INVOICE))
+			if ($this->type != 3 && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse!=-1)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");

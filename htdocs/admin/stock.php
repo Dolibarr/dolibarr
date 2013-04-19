@@ -62,8 +62,7 @@ if ($action == 'STOCK_CALCULATE_ON_BILL'
 // Mode of stock increase
 if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
 || $action == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'
-|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER' 
-|| $action == 'STOCK_CALCULATE_ON_DELETE_INVOICE')
+|| $action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')
 {
 	$db->begin();
 	$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '','chaine',0,'',$conf->entity);
@@ -73,7 +72,6 @@ if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
 	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", GETPOST('STOCK_CALCULATE_ON_SUPPLIER_BILL','alpha'),'chaine',0,'',$conf->entity);
 	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", GETPOST('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER','alpha'),'chaine',0,'',$conf->entity);
 	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", GETPOST('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER','alpha'),'chaine',0,'',$conf->entity);
-	if ($action == 'STOCK_CALCULATE_ON_DELETE_INVOICE') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_DELETE_INVOICE", GETPOST('STOCK_CALCULATE_ON_DELETE_INVOICE','alpha'),'chaine',0,'',$conf->entity);
 }
 
 if($action)
