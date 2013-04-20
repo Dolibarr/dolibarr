@@ -278,7 +278,7 @@ $var=true;
 
 /*$var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
-print '<td style="padding:5px; width: 40%;">'.$langs->trans('GroupToValidateCP').'</td>'."\n";
+print '<td style="padding:5px;">'.$langs->trans('GroupToValidateCP').'</td>'."\n";
 print '<td style="padding:5px;">'.$cp->selectUserGroup('userGroup').'</td>'."\n";
 print '</tr>'."\n";
 */
