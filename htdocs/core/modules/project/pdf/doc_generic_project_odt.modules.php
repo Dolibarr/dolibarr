@@ -650,7 +650,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 						//Time ressources
 						$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
-						$sql.= ", u.name, u.firstname";
+						$sql.= ", u.lastname, u.firstname";
 						$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 						$sql .= " , ".MAIN_DB_PREFIX."user as u";
 						$sql .= " WHERE t.fk_task =".$task->id;
@@ -973,8 +973,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 
 				// Write new file
-				$odfHandler->saveToDisk($file);	
-				//$odfHandler->exportAsAttachedPDF($file);
+				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+					$odfHandler->exportAsAttachedPDF($file);
+				}
+				else {
+					$odfHandler->saveToDisk($file);
+				}	
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

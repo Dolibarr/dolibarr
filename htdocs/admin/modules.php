@@ -194,7 +194,7 @@ asort($orders);
 
 $nbofactivatedmodules=count($conf->modules);
 $moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
-
+if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
 print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'setup');
 
 // Start to show page
@@ -206,7 +206,7 @@ if ($mode==='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
 if ($mode==='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
 if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
 
-if ($nbofactivatedmodules <= 1) print ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+
 //print '<br>'."\n";
 
 
