@@ -386,7 +386,7 @@ else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
-    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
