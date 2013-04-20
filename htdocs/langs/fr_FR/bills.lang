@@ -322,6 +322,8 @@ PaymentTypeVAD=Paiement en ligne
 PaymentTypeShortVAD=Paiement en ligne
 PaymentTypeTRA=Paiement par traite
 PaymentTypeShortTRA=Traite
+FixAmount=Montant Fixe
+VarAmount=Montant variable (%% tot.)
 
 BankDetails=Coordonnées bancaires
 BankCode=Code banque

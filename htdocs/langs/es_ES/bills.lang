@@ -287,6 +287,8 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma del importe de los 2 nuevos descuen
 ConfirmRemoveDiscount=¿Está seguro de querer eliminar este descuento?
 RelatedBill=Factura asociada
 RelatedBills=Facturas asociadas
+FixAmount=Importe fijo
+VarAmount=Importe variable (%% total)
 
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepción
