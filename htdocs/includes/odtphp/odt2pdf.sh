@@ -1,7 +1,7 @@
 #!/bin/bash
 # @copyright  GPL License 2010 -  Vikas Mahajan - http://vikasmahajan.wordpress.com
 
-if [ -f "$1.odt" ]
+if [ -f $1 ]
 then
 pgrep -U `id -u` soffice
 if [ $? -ne 0 ]
@@ -9,7 +9,7 @@ then
 soffice -headless -accept="socket,host=127.0.0.1,port=8100;urp;" -nofirststartwizard
 sleep 2
 fi
-jodconverter "$1.odt" "$1.pdf"
+jodconverter $1 "$1.pdf"
 if [ $? -ne 0 ]
 then
 echo "Error while converting odt to pdf"

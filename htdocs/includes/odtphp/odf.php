@@ -450,10 +450,39 @@ IMG;
                 {
                     if( $name == "" ) $name = md5(uniqid());
 
-                    $this->saveToDisk("$name.odt");
-                    exec("./odt2pdf.sh $name",$output,$ret_val);
-                    if($ret_val == 0)
-                    {
+                    dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
+                    $this->saveToDisk($name);
+                    
+                	$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+                	$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name;
+                	dol_syslog('$execmethod='.$execmethod.' Run command='.$command);
+					if ($execmethod == 1)
+					{
+						exec($command, $output_arr, $retval);
+					}
+					if ($execmethod == 2)
+					{
+						$ok=0;
+						$handle = fopen($outputfile, 'w');
+						if ($handle)
+						{
+							dol_syslog("Run command ".$command);
+							$handlein = popen($command, 'r');
+							while (!feof($handlein))
+							{
+								$read = fgets($handlein);
+								fwrite($handle,$read);
+								$output_arr[]=$read;
+							}
+							pclose($handlein);
+							fclose($handle);
+						}
+						if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+					}
+                    
+                    if($retval == 0)
+                    { 
+                    	dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
                         if (headers_sent($filename, $linenum)) {
                             throw new OdfException("headers already sent ($filename at $linenum)");
                         }
@@ -464,9 +493,12 @@ IMG;
                         unlink("$name.odt");
                         unlink("$name.pdf");
                     } else {
+                    	dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
+                    	dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
                         echo "Error occured:<br>";
-                        foreach($output as $line)
+                        foreach($output_arr as $line)
                             echo $line."<br>";
+                        dol_syslog(get_class($this).'::exportAsAttachedPDF ERROR $line='.$line, LOG_DEBUG);
                     }
 		}
 
