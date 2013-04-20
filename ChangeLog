@@ -6,7 +6,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 
-- Fix: Ducth (nl_NL) translation
+- Fix: Dutch (nl_NL) translation
 - Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
 - Generalize fix: file with a specific mask not found, again
 - Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
@@ -19,11 +19,12 @@ English Dolibarr ChangeLog
 - Fix: [ bug #806 ] Margins module with orders2invoice does not respect cost price
 - Fix: Orderstoinvoice didn't act as expected when no order was checked
 - Fix: Bad link to all proposals into Third party card if customer is prospect
+- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
 - Fix: [ bug #789 ] VAT not being calculated in POS
 - Fix: [ bug #794 ] Lost filter on zipcode in prospect list
-- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
 - Fix: [ bug #810 ] Cannot update ODT template path
 - Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionnary
+- Fix: [ bug #828 ] Error when code_region is not a number in llx_c_regions (with postgres)
 
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
