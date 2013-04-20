@@ -25,12 +25,12 @@
 
 require '../main.inc.php';
 
-$langs->load("externalsite@externalsite");
+$langs->load("externalsite");
 
 if (empty($conf->global->EXTERNALSITE_URL))
 {
 	llxHeader();
-	print '<div class="error">Module ExternalSite was not configured properly.</div>';
+	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
 }
 
