@@ -61,10 +61,10 @@ padding: 0px 0px 0px 0px;
 margin: 0px 0px 0px 0px;
 }
 
-input[type=text] {
+input[type=text], input[type=password] {
     border: 1px solid #ACBCBB;
 }
-input[type=text]:focus, textarea:focus, select:focus {
+input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus {
     border: 1px solid #ACBCBB;
 	box-shadow: 0 0 5px #C091AF;
 }

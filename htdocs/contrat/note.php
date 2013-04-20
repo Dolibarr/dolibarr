@@ -50,7 +50,7 @@ $object->fetch($id,$ref);
 
 if ($action == 'setnote_public' && $user->rights->contrat->creer)
 {
-	$result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_public')), ENT_QUOTES),'_pubic');
+	$result=$object->update_note(dol_html_entity_decode(dol_htmlcleanlastbr(GETPOST('note_public')), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
