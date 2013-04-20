@@ -295,7 +295,6 @@ if ($sql_select)
 			// Define output language
 			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 			{
-				//$object->fetch_thirdparty();
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
