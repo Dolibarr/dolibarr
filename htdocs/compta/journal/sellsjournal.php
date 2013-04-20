@@ -115,7 +115,7 @@ else $sql.= " AND f.type IN (0,1,2,3)";
 $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
-print $sql;
+
 $result = $db->query($sql);
 if ($result)
 {
