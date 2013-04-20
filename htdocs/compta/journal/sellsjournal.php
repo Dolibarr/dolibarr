@@ -102,15 +102,12 @@ $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
 $sql.= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
 $sql.= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell,";
-$sql.= " ct.accountancy_code_sell as account_tva, ct.recuperableonly,";
-$sql.= " ctl1.accountancy_code_sell as account_localtax1, ctl2.accountancy_code_sell as account_localtax2";
+$sql.= " ct.accountancy_code_sell as account_tva, ct.recuperableonly";
 $sql.= " FROM ".MAIN_DB_PREFIX."facturedet fd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
 $sql.= " JOIN ".MAIN_DB_PREFIX."facture f ON f.rowid = fd.fk_facture";
 $sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ctl1 ON fd.localtax1_tx = ctl1.localtax1 AND ctl1.fk_pays = '".$idpays."'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ctl2 ON fd.localtax2_tx = ctl2.localtax2 AND ctl2.fk_pays = '".$idpays."'";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
@@ -129,6 +126,8 @@ if ($result)
 	$tablocaltax2 = array();
 	$tabttc = array();
 	$tabcompany = array();
+	$account_localtax1=0;
+	$account_localtax2=0;
 
 	$num = $db->num_rows($result);
    	$i=0;
@@ -147,9 +146,12 @@ if ($result)
 		}
 		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
 		$compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
-		$compta_localtax1 = (! empty($obj->account_localtax1)?$obj->account_localtax1:$langs->trans("CodeNotDef"));
-		$compta_localtax2 = (! empty($obj->account_localtax2)?$obj->account_localtax2:$langs->trans("CodeNotDef"));
 
+		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
+		$compta_localtax1= (! empty($account_localtax1[3])?$account_localtax1[3]:$langs->trans("CodeNotDef"));
+		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
+		$compta_localtax2= (! empty($account_localtax2[3])?$account_localtax2[3]:$langs->trans("CodeNotDef"));
+		
     	//la ligne facture
    		$tabfac[$obj->rowid]["date"] = $obj->datef;
    		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;

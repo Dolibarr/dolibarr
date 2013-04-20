@@ -519,8 +519,12 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				//$result=$odfHandler->exportAsAttachedFile('toto');
-				$odfHandler->saveToDisk($file);
+				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+					$odfHandler->exportAsAttachedPDF($file);
+				}
+				else {
+					$odfHandler->saveToDisk($file);
+				}	
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
