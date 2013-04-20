@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -24,3 +24,4 @@ ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_ref (ref, entity);
 ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
 ALTER TABLE llx_product ADD INDEX idx_product_import_key (import_key);
+ALTER TABLE llx_product ADD INDEX idx_product_seuil_stock_alerte (seuil_stock_alerte);

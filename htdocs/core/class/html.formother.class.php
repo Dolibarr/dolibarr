@@ -893,9 +893,34 @@ class FormOther
             $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
         }
 
+        // Javascript code for dynamic actions
         if (! empty($conf->use_javascript_ajax))
         {
 	        print '<script type="text/javascript" language="javascript">
+	        
+	        // To update list of activated boxes
+	        function updateBoxOrder(closing) {
+	        	var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+	        	var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+	        	var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
+	        	{
+	        		jQuery.ajax({
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			async: false
+	        		});
+	        		// We force reload to be sure to get all boxes into list
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=delbox\';
+	        	}
+	        	else
+	        	{
+	        		jQuery.ajax({
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			async: true
+	        		});
+	        	}
+	        }
+	        
 	        jQuery(document).ready(function() {
 	        	jQuery("#boxcombo").change(function() {
 	        	var boxid=jQuery("#boxcombo").val();
@@ -910,10 +935,33 @@ class FormOther
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
-	        if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
-	        print  '
-	    	});
-	        </script>';
+	        	if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
+	        	print  '
+	    	
+	        	jQuery("#left, #right").sortable({
+		        	/* placeholder: \'ui-state-highlight\', */
+	    	    	handle: \'.boxhandle\',
+	    	    	revert: \'invalid\',
+	       			items: \'.box\',
+	        		containment: \'.fiche\',
+	        		connectWith: \'.connectedSortable\',
+	        		stop: function(event, ui) {
+	        			updateBoxOrder(0);
+	        		}
+	    		});
+
+	        	jQuery(".boxclose").click(function() {
+	        		var self = this;	// because JQuery can modify this
+	        		var boxid=self.id.substring(8);
+	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
+	        		jQuery(\'#boxto_\'+boxid).remove();
+	        		// TODO Add id, label into combo list
+	        		updateBoxOrder(1);
+	        	});
+	        
+        	});'."\n";
+	        
+	        print '</script>'."\n";
         }
 
         $nbboxactivated=count($boxidactivatedforuser);
@@ -996,59 +1044,6 @@ class FormOther
 
             print "</td></tr>";
             print "</table>";
-
-            if ($conf->use_javascript_ajax)
-            {
-                print "\n";
-                print '<script type="text/javascript" language="javascript">';
-                // For moving
-                print 'jQuery(function() {
-                            jQuery("#left, #right").sortable({
-                                /* placeholder: \'ui-state-highlight\', */
-                                handle: \'.boxhandle\',
-                                revert: \'invalid\',
-                                items: \'.box\',
-                                containment: \'.fiche\',
-                                connectWith: \'.connectedSortable\',
-                                stop: function(event, ui) {
-                                    updateBoxOrder(0);
-                                }
-                            });
-                        });
-                '."\n";
-                // To update list of activated boxes
-                print 'function updateBoxOrder(closing) {
-	                		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-	                		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
-	                		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-	    					if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
-	    					{
-		    					jQuery.ajax({
-		    						url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
-		    						async: false
-		    					});
-	    						// We force reload to be sure to get all boxes into list
-			        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=delbox\';
-	    					}
-	    					else
-	    					{
-	    						jQuery.ajax({
-		    						url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
-		    						async: true
-		    					});
-	    					}
-                		}'."\n";
-                // For closing
-                print 'jQuery(document).ready(function() {
-                          	jQuery(".boxclose").click(function() {
-                          		var self = this;	// because JQuery can modify this
-                              	var boxid=self.id.substring(8);
-                                jQuery(\'#boxto_\'+boxid).remove();
-                                updateBoxOrder(1);
-                           	});
-                       });'."\n";
-                print '</script>'."\n";
-            }
         }
 
         return count($boxactivated);

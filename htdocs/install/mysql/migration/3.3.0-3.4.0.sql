@@ -306,3 +306,44 @@ create table llx_projet_task_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_projet_task_extrafields ADD INDEX idx_projet_task_extrafields (fk_object);
+
+
+CREATE TABLE llx_opensurvey_comments (
+    id_comment INTEGER unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_sondage CHAR(16) NOT NULL,
+    comment text NOT NULL,
+    tms timestamp,
+    usercomment text
+) ENGINE=InnoDB;
+
+CREATE TABLE llx_opensurvey_sondage (
+       id_sondage VARCHAR(16) PRIMARY KEY,
+       id_sondage_admin CHAR(24),
+       commentaires text,
+       mail_admin VARCHAR(128),
+       nom_admin VARCHAR(64),
+       titre text,
+       date_fin datetime,
+       format VARCHAR(2),
+       mailsonde varchar(2) DEFAULT '0',
+       survey_link_visible integer DEFAULT 1,
+	   canedit integer DEFAULT 0,
+       origin varchar(64),
+       tms timestamp,
+	   sujet TEXT
+) ENGINE=InnoDB;
+CREATE TABLE llx_opensurvey_user_studs (
+    id_users INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(64) NOT NULL,
+    id_sondage VARCHAR(16) NOT NULL,
+    reponses VARCHAR(100) NOT NULL,
+    tms timestamp
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_comment (id_comment);
+ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_id_sondage_admin (id_sondage_admin);
+ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_users (id_users);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_nom (nom);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
