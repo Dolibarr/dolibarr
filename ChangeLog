@@ -6,7 +6,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 
-- Fix: Ducth (nl_NL) translation
+- Fix: Dutch (nl_NL) translation
 - Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
 - Generalize fix: file with a specific mask not found, again
 - Fix: translations and BILL_SUPPLIER_BUILDDOC trigger

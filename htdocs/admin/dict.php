@@ -439,14 +439,14 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     // Other checks
     if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
-        $msg.="Value 'system' and 'systemauto' for type is reserved. You can use 'user' as value to add your own record.<br>";
+        $msg.= $langs->transnoentities('ErrorReservedTypeSystemSystemAuto').'<br>';
     }
-    if (isset($_POST["code"])
+    if (isset($_POST["code"]))
     {
     	if ($_POST["code"]=='0')
     	{
         	$ok=0;
-        	$msg.="Code can't contains value 0<br>";
+        	$msg.= $langs->transnoentities('ErrorCodeCantContainZero').'<br>';
         }
         if (!is_numeric($_POST['code']))
     	{
@@ -988,6 +988,7 @@ if ($id)
                                 $valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
                             else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_type_contact') {
+                            	$langs->load('agenda');
                                 $key=$langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
