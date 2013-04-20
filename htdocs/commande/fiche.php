@@ -541,7 +541,7 @@ else if ($action == 'setnote_public' && $user->rights->commande->creer)
 
 else if ($action == 'setnote_private' && $user->rights->commande->creer)
 {
-	$result=$object->update_note_rivate(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
