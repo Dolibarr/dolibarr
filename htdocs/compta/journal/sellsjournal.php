@@ -3,8 +3,8 @@
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Alexandre Spangaro	  <alexandre.spangaro@gmail.com>
- * Copyright (C) 2013       Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2011-2012  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,17 +178,15 @@ else {
  */
 
 
-$i = 0;
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
-print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Piece").' ('.$langs->trans("InvoiceRef").")</td>";
-print "<td>".$langs->trans("Account")."</td>";
-print "<td>".$langs->trans("Type")."</td><td align='right'>".$langs->trans("Debit")."</td><td align='right'>".$langs->trans("Credit")."</td>";
+print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
+print '<td>'.$langs->trans('Account').'</td>';
+print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
 $var=true;
-$r='';
 
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);
@@ -199,73 +197,61 @@ foreach ($tabfac as $key => $val)
 	$invoicestatic->ref=$val["ref"];
 	$invoicestatic->type=$val["type"];
 
-	print "<tr ".$bc[$var].">";
-	// third party
-	//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-	print "<td>".$val["date"]."</td>";
-	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-	foreach ($tabttc[$key] as $k => $mt)
+	$companystatic->id=$tabcompany[$key]['id'];
+	$companystatic->name=$tabcompany[$key]['name'];
+	$companystatic->client=$tabcompany[$key]['client'];
+
+	$lines = array(
+		array(
+			'var' => $tabttc[$key],
+			'label' => $langs->trans('ThirdParty').' ('.$companystatic->getNomUrl(0, 'customer', 16).')',
+			'nomtcheck' => true,
+			'inv' => true
+		),
+		array(
+			'var' => $tabht[$key],
+			'label' => $langs->trans('Products'),
+		),
+		array(
+			'var' => $tabtva[$key],
+			'label' => $langs->trans('VAT')
+		),
+		array(
+			'var' => $tablocaltax1[$key],
+			'label' => $langs->transcountry('LT1', $mysoc->country_code)
+		),
+		array(
+			'var' => $tablocaltax2[$key],
+			'label' => $langs->transcountry('LT2', $mysoc->country_code)
+		)	
+	);
+
+	foreach ($lines as $line)
 	{
-    	$companystatic->id=$tabcompany[$key]['id'];
-    	$companystatic->name=$tabcompany[$key]['name'];
-    	$companystatic->client=$tabcompany[$key]['client'];
-    	print "<td>".$k;
-		print "</td><td>".$langs->trans("ThirdParty");
-		print ' ('.$companystatic->getNomUrl(0,'customer',16).')';
-		print "</td><td align='right'>".($mt>=0?price($mt):'')."</td><td align='right'>".($mt<0?price(-$mt):'')."</td>";
-	}
-	print "</tr>";
-	// product
-	foreach ($tabht[$key] as $k => $mt)
-	{
-		if ($mt)
+		foreach ($line['var'] as $k => $mt)
 		{
-			print "<tr ".$bc[$var].">";
-			//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-			print "<td>".$val["date"]."</td>";
-			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k;
-			print "</td><td>".$langs->trans("Products")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+			if (isset($line['nomtcheck']) || $mt)
+			{
+				print "<tr ".$bc[$var]." >";
+				//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
+				print "<td>".$val["date"]."</td>";
+				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print "<td>".$k."</td><td>".$line['label']."</td>";
+
+				if (isset($line['inv']))
+				{
+					print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+				}
+				else
+				{
+					print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+	    			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+				}
+
+				print "</tr>";
+			}
 		}
-	}
-	// vat
-	foreach ($tabtva[$key] as $k => $mt)
-	{
-	    if ($mt)
-	    {
-    		print "<tr ".$bc[$var].">";
-    		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-    		print "<td>".$val["date"]."</td>";
-    		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k;
-    		print "</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
-	    }
-	}
-	// localtax1
-	foreach ($tablocaltax1[$key] as $k => $mt)
-	{
-	    if ($mt)
-	    {
-    		print "<tr ".$bc[$var].">";
-    		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-    		print "<td>".$val["date"]."</td>";
-    		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k;
-    		print "</td><td>".$langs->transcountrynoentities("LT1",$mysoc->country_code)."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
-	    }
-	}
-	// localtax2
-	foreach ($tablocaltax2[$key] as $k => $mt)
-	{
-	    if ($mt)
-	    {
-    		print "<tr ".$bc[$var].">";
-    		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-    		print "<td>".$val["date"]."</td>";
-    		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k;
-    		print "</td><td>".$langs->transcountrynoentities("LT2",$mysoc->country_code)."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
-	    }
 	}
 
 	$var = !$var;
