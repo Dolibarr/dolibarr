@@ -58,7 +58,7 @@ if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"
 {
 	$db->begin();
 
-	$res=$fuser->update_note($_POST["note"],$user);
+	$res=$fuser->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$adh->error.'</div>';
