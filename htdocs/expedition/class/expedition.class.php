@@ -1199,7 +1199,7 @@ class Expedition extends CommonObject
     {
         global $langs;
 
-        $listmeths = array();
+        $this->listmeths = array();
         $i=0;
 
         $sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
@@ -1216,29 +1216,11 @@ class Expedition extends CommonObject
                 $label=$langs->trans('SendingMethod'.$obj->code);
                 $this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
                 $this->listmeths[$i]['description'] = $obj->description;
-                if ($obj->tracking)
-                {
-                    $this->listmeths[$i]['tracking'] = $obj->tracking;
-                }
-                else
-                {
-                    if ($obj->code)
-                    {
-                        $classname = "methode_expedition_".strtolower($obj->code);
-
-                        if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($obj->code).".modules.php") )
-                        {
-                            require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($obj->code).'.modules.php';
-                            $shipmethod = new $classname();
-                            $this->listmeths[$i]['tracking'] = $shipmethod->provider_url_status('{TRACKID}');
-                        }
-                    }
-                }
+                $this->listmeths[$i]['tracking'] = $obj->tracking;
                 $this->listmeths[$i]['active'] = $obj->active;
                 $i++;
             }
         }
-        else dol_print_error($this->db,'');
     }
 
     /**
@@ -1325,7 +1307,7 @@ class Expedition extends CommonObject
 			}
 		}
 
-		if (!empty($tracking))
+		if (!empty($tracking) && !empty($value))
 		{
 			$url = str_replace('{TRACKID}', $value, $tracking);
 			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value?$value:'url').'</a>',$url,$url);
