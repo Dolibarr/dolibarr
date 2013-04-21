@@ -151,6 +151,7 @@ EMailTextOrderApproved=La commande %s a été approuvée.
 EMailTextOrderApprovedBy=La commande %s a été approuvée par %s.
 EMailTextOrderRefused=La commande %s a été refusée.
 EMailTextOrderRefusedBy=La commande %s a été refusée par %s.
+EMailTextExpeditionValidated=
 ImportedWithSet=Lot d'importation (Import key)
 DolibarrNotification=Notification automatique
 ResizeDesc=Entrer la nouvelle largeur <b>OU</b> la nouvelle hauteur. Le ratio est conservé lors du redimensionnement...
