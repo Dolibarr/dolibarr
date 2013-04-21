@@ -185,3 +185,13 @@ AlwaysUseFixedPrice=Use the fixed price
 PriceByQuantity=Price by quantity
 PriceByQuantityRange=Quantity range
 ProductsDashboard=Products/Services summary
+### composition fabrication
+Building=Production and items dispatchment
+Build=Produce
+BuildIt=Produce & Dispatch
+BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Qty
+UnitPmp=Net unit VWAP
+CostPmpHT=Net total VWAP
+ProductUsedForBuild=Auto consumed by production
+ProductBuilded=Production completed
