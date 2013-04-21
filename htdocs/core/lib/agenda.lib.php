@@ -40,9 +40,10 @@
  * @param 	int		$pid			Product id
  * @param 	int		$socid			Third party id
  * @param	array	$showextcals	Array with list of external calendars, or -1 to show no legend
+ * @param	string	$actioncode		Preselected value of actioncode for filter on type
  * @return	void
  */
-function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$showextcals=array())
+function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$showextcals=array(),$actioncode='')
 {
 	global $conf,$user,$langs,$db;
 
@@ -94,8 +95,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print $langs->trans("Type");
 				print ' &nbsp;</td><td nowrap="nowrap">';
 
-				// print $formactions->select_type_actions(GETPOST('actioncode'), "actioncode");
-				print $formactions->select_type_actions(GETPOST('actioncode')?GETPOST('actioncode'):'manual', "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+				print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
 
 				print '</td></tr>';
 			}

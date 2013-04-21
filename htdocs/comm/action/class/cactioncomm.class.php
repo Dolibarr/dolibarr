@@ -132,7 +132,7 @@ class CActionComm
                     $qualified=1;
 
                     // $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
-                    if ($qualified && $onlyautoornot && preg_match('/^system/',$obj->type) && ! preg_match('/^AC_OTH/',$obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTHER)
+                    if ($qualified && $onlyautoornot && preg_match('/^system/',$obj->type) && ! preg_match('/^AC_OTH/',$obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 
                     if ($qualified && $obj->module)
                     {
