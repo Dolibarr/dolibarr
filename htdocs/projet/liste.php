@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Bariley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2013	Charles-Fr Benke		<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,11 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load('projects');
-
-$title = $langs->trans("Projects");
+$langs->load('companies');
 
 // Security check
 $socid = (is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
@@ -41,7 +43,6 @@ if ($socid > 0)
 	$title .= ' (<a href="liste.php">'.$soc->nom.'</a>)';
 }
 if (!$user->rights->projet->lire) accessforbidden();
-
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -60,6 +61,8 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$viewstatut=GETPOST("viewstatut");
+$viewstatut = is_numeric($viewstatut) ? $viewstatut : -1;
 
 
 /*
@@ -96,6 +99,11 @@ if ($_GET["search_societe"])
 {
 	$sql.= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 }
+if ($viewstatut >= 0)
+{
+	$sql.= " AND p.fk_statut =".$viewstatut;
+}
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -126,6 +134,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("NbTasks"),"","","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DurationTasks"),"","","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DurationTasks"),"","","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Total_ht"),"","","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -139,10 +151,24 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
+	print '<td class="liste_titre" colspan=2>&nbsp;</td>';
+	print '<td class="liste_titre" >'.$langs->trans("Planned").'</td>';
+	print '<td class="liste_titre" >'.$langs->trans("Effective").'</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
-	print "</tr>\n";
-
+	print '<td class="liste_titre" align="right">';
+	print '<select class="flat" name="viewstatut">';
+	print '<option value="-1">&nbsp;</option>';
+	for ($i=0; $i <=2; $i++)
+	{
+		print '<option ';
+		if ($viewstatut == $i) print ' selected ';
+		print ' value="'.$i.'">'.$projectstatic->LibStatut($i,1).'</option>';
+	}
+	print '</select>';
+	print '<input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '</tr>';
+	
+	$i = 0;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($resql);
@@ -189,14 +215,34 @@ if ($resql)
 			else print $langs->trans('PrivateProject');
 			print '</td>';
 
+			//nbTasks
+			print '<td align="left">';
+			print nbTasksProject($db, $objp->projectid);
+			print '</td>';
+			
+			//DurationTasks Planned
+			print '<td align="left">';
+			print nbDurationProject($db, $objp->projectid, 0);
+			print '</td>';
+			
+			//DurationTasks Effective
+			print '<td align="left">';
+			print nbDurationProject($db, $objp->projectid, 1);
+			print '</td>';
+			
+			//AmountTasks
+			print '<td align="left">';
+			print MntAmountProject($db, $objp->projectid);
+			print '</td>';
+			
 			// Status
 			$projectstatic->statut = $objp->fk_statut;
+			
 			print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 
 			print "</tr>\n";
 
 		}
-
 		$i++;
 	}
 

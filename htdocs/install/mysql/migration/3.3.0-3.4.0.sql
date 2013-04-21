@@ -327,10 +327,10 @@ CREATE TABLE llx_opensurvey_sondage (
        format VARCHAR(2),
        mailsonde varchar(2) DEFAULT '0',
        survey_link_visible integer DEFAULT 1,
-	   canedit integer DEFAULT 0,
+       canedit integer DEFAULT 0,
        origin varchar(64),
        tms timestamp,
-	   sujet TEXT
+       sujet TEXT
 ) ENGINE=InnoDB;
 CREATE TABLE llx_opensurvey_user_studs (
     id_users INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -347,3 +347,13 @@ ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_users (id_users);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_nom (nom);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
+
+ALTER TABLE llx_projet_task ADD duration_planned REAL NULL DEFAULT NULL;
+ALTER TABLE llx_projet_task ADD subprice DOUBLE(24,8) NULL DEFAULT NULL;
+
+ALTER TABLE llx_fichinter ADD datee datetime NULL DEFAULT NULL;
+ALTER TABLE llx_fichinter ADD dateo datetime NULL DEFAULT NULL;
+ALTER TABLE llx_fichinter ADD fulldayevent integer NULL DEFAULT NULL;
+ALTER TABLE llx_fichinter ADD total_ht DOUBLE(24,8) NULL DEFAULT NULL;
+ALTER TABLE llx_fichinterdet ADD subprice DOUBLE(24,8) NULL DEFAULT NULL;
+ALTER TABLE llx_fichinterdet MODIFY COLUMN duree real;

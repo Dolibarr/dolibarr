@@ -1,28 +1,29 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2013	Charles-fr BENKE 	<charles.fr@benke.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
- *	    \file       htdocs/core/lib/project.lib.php
- *		\brief      Functions used by project module
- *      \ingroup    project
-*/
+ *		\file	   htdocs/core/lib/project.lib.php
+ *		\brief	  Functions used by project module
+ *	  \ingroup	project
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
@@ -91,6 +92,7 @@ function project_prepare_head($object)
 	$h++;
 	*/
 
+
 	$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Gantt");
 	$head[$h][2] = 'gantt';
@@ -129,10 +131,10 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task_time';
 	$h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname);   												to remove a tab
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
@@ -150,42 +152,7 @@ function task_prepare_head($object)
 	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task','remove');
-
-	return $head;
-}
-
-/**
- * Prepare array with list of tabs
- *
- * @return  array				Array of tabs to shoc
- */
-function project_admin_prepare_head()
-{
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
-
-	$h = 0;
-
-	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project.php";
-	$head[$h][1] = $langs->trans("Projects");
-	$head[$h][2] = 'project';
-	$h++;
-
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'project_admin');
-
-	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project_extrafields.php";
-	$head[$h][1] = $langs->trans("ExtraFieldsProject");
-	$head[$h][2] = 'attributes';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
-	$head[$h][2] = 'attributes_task';
-	$h++;
-
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'project_admin','remove');
-
+	
 	return $head;
 }
 
@@ -194,11 +161,11 @@ function project_admin_prepare_head()
 /**
  *	Show a combo list with projects qualified for a third party
  *
- *	@param	int		$socid      Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+ *	@param	int		$socid	  Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
  *	@param  int		$selected   Id project preselected
  *	@param  string	$htmlname   Nom de la zone html
  *	@param	int		$maxlength	Maximum length of label
- *	@return int         		Nbre of project if OK, <0 if KO
+ *	@return int		 		Nbre of project if OK, <0 if KO
  */
 function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16)
 {
@@ -313,6 +280,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 {
 	global $user, $bc, $langs;
 	global $projectstatic, $taskstatic;
+	global $total, $totalMntHT,$totalPrevis;
 
 	$lastprojectid=0;
 
@@ -425,6 +393,22 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print $lines[$i]->progress.' %';
 				print '</td>';
 
+				// Cost Task
+				print '<td align="right">';
+				print price2num($lines[$i]->subprice, 'MU');
+				print '</td>';
+
+
+				// Time planned
+				print '<td align="right">';
+				if ($lines[$i]->duration_planned) print ConvertSecondToTime($lines[$i]->duration_planned,'all');
+				print '</td>';
+
+				// Cost Task
+				print '<td align="right">';
+				print price2num($lines[$i]->total_ht, 'MU');
+				print '</td>';
+
 				// Time spent
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
@@ -435,20 +419,26 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				else print '</a>';
 				print '</td>';
 
+				// status of the task
+				$taskstatic->fk_statut = $lines[$i]->status;
+				print '<td align="right">'.$taskstatic->getLibStatut(5).'</td>';
+
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-					print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
+					print '<td align="center" class="tdlineupdown">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
-
+				
 				if (! $showlineingray) $inc++;
 
 				$level++;
 				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
 				$level--;
 				$total += $lines[$i]->duration;
+				$totalMntHT+= $lines[$i]->total_ht;
+				$totalPrevis+= $lines[$i]->duration_planned;
 			}
 		}
 		else
@@ -467,8 +457,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($totalPrevis, 'all').'</td>';
+		print '<td align="right" nowrap="nowrap" class="liste_total">'.price2num($totalMntHT, 'MU').'</td>';
 		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td>';
 		print '</tr>';
+		
 	}
 
 	return $inc;
@@ -644,7 +637,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 /**
  * Clean task not linked to a parent
  *
- * @param	DoliDB	$db     Database handler
+ * @param	DoliDB	$db	 Database handler
  * @return	int				Nb of records deleted
  */
 function clean_orphelins($db)
@@ -703,8 +696,8 @@ function clean_orphelins($db)
  *
  * @param	DoliDB	$db					Database handler
  * @param   int		$socid				Id thirdparty
- * @param   int		$projectsListId     Id of project i have permission on
- * @param   int		$mytasks            Limited to task i am contact to
+ * @param   int		$projectsListId	 Id of project i have permission on
+ * @param   int		$mytasks			Limited to task i am contact to
  * @return	void
  */
 function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
@@ -722,8 +715,10 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DurationTasks")." ".$langs->trans("Planned"),"","","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DurationTasks")." ".$langs->trans("Effective"),"","","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+	print '</tr>';
 
 	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -776,7 +771,11 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
 				print ' - '.$objp->title.'</td>';
-				print '<td align="right">'.$objp->nb.'</td>';
+				print '<td align="left"><a href='.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'>';
+				print nbTasksProject($db, $objp->projectid).'</a></td>';
+				print '<td align="left">'.nbDurationProject($db, $objp->projectid, 0).'</td>';
+				print '<td align="left">'.nbDurationProject($db, $objp->projectid, 1).'</td>';
+
 				$projectstatic->statut = $objp->fk_statut;
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
 				print "</tr>\n";
@@ -792,6 +791,265 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 		dol_print_error($db);
 	}
 	print "</table>";
+}
+
+/**
+ * Return array for a project of number of  tasks
+ *
+ * @param   $db
+ * @param   $projectsListId	 Id of project 
+ */
+
+function nbTasksProject($db, $projectsId)
+{
+	$sql = "SELECT t.fk_statut, COUNT(t.rowid) as nb";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+	$sql.= " WHERE t.fk_projet IN (".$projectsId.")";
+	$sql.= " GROUP BY t.fk_statut";
+	$sql.= " ORDER BY t.fk_statut";
+
+	$resql = $db->query($sql);
+	if ( $resql )
+	{	
+		require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
+		
+		$nbTask=array();
+		for ($i=0;$i<5;$i++) $nbTask[$i]=0; 
+		
+		$i = 0;
+		$num = $db->num_rows($resql);
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+			$nbTask[$objp->fk_statut]=$objp->nb;
+			$i++;
+		}
+		$task = new Task($db);
+		$nbtot=0;
+		$szRes='';
+		for ($i=0;$i<5;$i++)
+		{
+			if ($nbTask[$i] >0)
+			{
+				$nbtot+=$nbTask[$i];
+				$szRes.=$nbTask[$i]."&nbsp;".$task->LibStatut($i,3)."&nbsp;&nbsp;";
+			}
+		}
+		if ($nbtot >0)
+			return $nbtot."<br>".$szRes;
+	}
+	else
+		return "";
+}
+
+/**
+ * Return array FOR a project of duration tasks
+ *
+ * @param   $db
+ * @param   $projectsListId	 Id of project 
+ * @param   $DurationType	   0: planned; 1: effective
+ */
+
+function nbDurationProject($db, $projectsId, $DurationType=0)
+{
+	if ($DurationType==0)
+		$sql = "SELECT t.fk_statut, sum(t.duration_planned) as duration";
+	else
+		$sql = "SELECT t.fk_statut, sum(t.duration_effective) as duration";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+	$sql.= " WHERE t.fk_projet IN (".$projectsId.")";
+	$sql.= " GROUP BY t.fk_statut";
+	$sql.= " ORDER BY t.fk_statut";
+
+	$resql = $db->query($sql);
+	if ( $resql )
+	{
+		$Duration=array();
+		for ($i=0;$i<5;$i++) $Duration[$i]=0; 
+		
+		$i = 0;
+		$num = $db->num_rows($resql);
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+			$Duration[$objp->fk_statut]=$objp->duration;
+			$i++;
+		}
+		
+		$task = new Task($db);
+		$DurationTot=0;
+		$szRes='';
+		for ($i=0;$i<5;$i++)
+		{
+			if ($Duration[$i] >0)
+			{
+				$DurationTot+=$Duration[$i];
+				$szRes.=ConvertSecondToTime($Duration[$i],'all',25200,5)."&nbsp;".$task->LibStatut($i,3)."&nbsp;&nbsp;";
+			}
+		}
+		if ($DurationTot >0)
+			return ConvertSecondToTime($DurationTot,'all',25200,5)."<br>".$szRes;
+	}
+	else
+		return "";
+}
+
+function MntAmountProject($db, $projectsId)
+{
+	$sql = "SELECT t.fk_statut, sum(t.total_ht) as MntTot";
+	$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+	$sql.= " WHERE t.fk_projet IN (".$projectsId.")";
+	$sql.= " GROUP BY t.fk_statut";
+	$sql.= " ORDER BY t.fk_statut";
+
+	$resql = $db->query($sql);
+	if ( $resql )
+	{
+		$MntTot=array();
+		for ($i=0;$i<5;$i++) $MntTot[$i]=0; 
+		
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$objp = $db->fetch_object($resql);
+			$MntTot[$objp->fk_statut]=$objp->MntTot;
+			$i++;
+		}
+		
+		$task = new Task($db);
+		$MntTotTot=0;
+		$szRes='';
+		for ($i=0;$i<5;$i++)
+		{
+			if ($MntTot[$i] >0)
+			{
+				$MntTotTot+=$MntTot[$i];
+				$szRes.=number_format($MntTot[$i], 0, ',', ' ')."&nbsp;".$task->LibStatut($i,3)."&nbsp;&nbsp;";
+			}
+		}
+		if ($MntTotTot >0)
+			return number_format($MntTotTot, 0, ',', ' ')."<br>".$szRes;
+	}
+	else
+		return "";
+}
+
+
+function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
+{
+	// r�cup�ration des infos de la tache
+	$task = new Task($db);
+	if ($task->fetch($taskid) > 0)
+	{
+		
+		// r�cup�ration des infos du projet associ� � la tache (soci�t� nottament)
+		$projet = new Project($db);
+		$result=$projet->fetch($task->fk_project);
+		$socid=$projet->socid;
+		$dateo = $projet->date_start;
+		$datee = $projet->date_end;
+		$desc = $projet->description;
+		$note_public = $projet->note_public;
+		$note_private = $projet->note_private;
+	
+		// on r�cup�re les contact projet client pour alimenter la note public qui sera utilis� sur la facture.
+	   	$sql = "SELECT * FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc, ".MAIN_DB_PREFIX."socpeople as sp ";
+		$sql .= " WHERE ctc.element='project' and source='external'";
+		$sql .= " AND ec.fk_c_type_contact = ctc.rowid";
+		$sql .= " AND ec.fk_socpeople = sp.rowid";
+		$sql .= " AND ec.element_id =".$task->fk_project;
+		$resqlContact = $db->query($sql);
+		if ($resqlContact) 
+		{
+			$num = $db->num_rows($resqlContact);
+			$i = 0;
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resqlContact);
+				$note_public .= "\n".$objp->libelle." : ".$objp->name." ".$objp->firstname;
+				$i++;
+			}
+		}
+
+		// r�cup�ration de la r�f�rence 
+		if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
+		{
+			require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
+		}
+		// cr�ation de la fiche d'intervention 
+		require_once(DOL_DOCUMENT_ROOT ."/fichinter/class/fichinter.class.php");
+		$object = new Fichinter($db);
+		$object->date = time();
+		$obj = $conf->global->FICHEINTER_ADDON;
+		$obj = "mod_".$obj;
+		$modFicheinter = new $obj;
+		
+		$numpr =$modFicheinter->getNextValue($societe,$object);
+		
+		// cr�ation d'une nouvelle fiche d'intervention
+		$object->socid			= $socid;
+		$object->fk_project		= $task->fk_project;
+		$object->note_public	= $note_public;
+		$object->note_private	= $note_private;
+		$object->dateo			= $dateo;
+		$object->datee			= $datee;
+		$object->author			= $user->id;
+		$object->description	= $desc;
+		$object->fulldayevent = 1;
+		$object->statut=0; 	// fich inter en mode draft
+
+		$object->ref=$numpr;
+		$object->modelpdf=0; // � rien par d�faut
+	
+		$result = $object->create();
+		if ($result > 0)
+		{
+			$sql = "SELECT t.rowid, t.dateo, t.duration_planned, label, subprice, total_ht";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+			$sql .= " WHERE t.rowid =".$taskid;
+			$sql .= " ORDER BY t.dateo DESC";
+	
+			$var=true;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($resql);
+					$object->addline(
+						$result,
+						$objp->label,
+						$db->jdate($objp->dateo),
+						$objp->duration_planned,
+						$objp->subprice,
+						$objp->total_ht
+					);
+					$i++;
+				}
+				$db->free($resql);
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+			
+			// on met � jour le statut de la tache pour ne plus pouvoir recr�er de fiche d'inter dessus
+			$id=$result;	  // Force raffraichissement sur fiche venant d'etre cree
+			// la tache passe � l'�tat transmit en fiche inter
+			$task->fk_statut=4;
+			$result=$task->update($user);
+			$taskid=$task->id;  // On retourne sur la fiche tache
+		}
+		else
+		{
+			$langs->load("errors");
+			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			$action = 'create';
+		}
+	}
 }
 
 ?>

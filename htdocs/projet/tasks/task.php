@@ -1,21 +1,22 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2013	Charles-Fr BENKE		<charles.fr@benke.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/projet/tasks/task.php
@@ -23,12 +24,20 @@
  *	\brief      Page of a project task
  */
 
-require ("../../main.inc.php");
+require( "../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+$langs->load("projects");
+$langs->load("companies");
+
+$taskid = GETPOST("id",'int');
+$taskref = GETPOST("ref",'int');
+
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -53,7 +62,7 @@ $projectstatic = new Project($db);
 $extralabels=$extrafields->fetch_name_optionals_label('projet_task');
 /*
  * Actions
-*/
+ */
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
@@ -79,9 +88,17 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$object->progress = $_POST['progress'];
 
+		$object->subprice = $_POST['subprice'];
+		$object->duration_planned = $_POST["duration_plannedhour"]*60*60;	// We store duration in seconds
+		$object->duration_planned+= $_POST["duration_plannedmin"]*60;		// We store duration in seconds
+		if ($_POST['subprice'])
+			$object->total_ht = $_POST['subprice']*($object->duration_planned/3600);
+		else
+			$object->total_ht = $_POST['total_ht'];
+
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-
+		
 		$result=$object->update($user);
 	}
 	else
@@ -113,6 +130,10 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 		}
 	}
 }
+if ($action == 'confirm_TaskToInter' && $_REQUEST['confirm'] == 'yes' && $user->rights->projet->creer)
+{
+	Task_Transfer_FichInter($db, $conf, $langs, $user, $_GET["id"]);
+}
 
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
@@ -133,14 +154,16 @@ if (! empty($project_ref) && ! empty($withproject))
 
 /*
  * View
-*/
+ */
 
 $langs->load('projects');
 
 llxHeader('', $langs->trans("Task"));
 
+
 $form = new Form($db);
 $formother = new FormOther($db);
+//$project = new Project($db);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -201,40 +224,11 @@ if ($id > 0 || ! empty($ref))
 			print '<br>';
 		}
 
-		/*
-		 * Actions
-		*/
-		/*print '<div class="tabsAction">';
-
-		if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-		{
-		if ($projectstatic->public || $userWrite > 0)
-		{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
-		}
-		else
-		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-		}
-		}
-		else
-		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
-		}
-
-		print '</div>';
-		*/
-
-		// To verify role of users
-		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
-		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		dol_htmloutput_mesg($mesg);
 
 		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
-
-
 
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{
@@ -288,6 +282,30 @@ if ($id > 0 || ! empty($ref))
 			print $formother->select_percent($object->progress,'progress');
 			print '</td></tr>';
 
+			//unit price 
+			print '<tr><td >'.$langs->trans("Subprice").'</td><td colspan="3">';
+			print '<input size="5" name="subprice" value="'.price2num($object->subprice, 'MU').'">';
+			print '</td></tr>';
+
+			//planned time
+			print '<tr><td >'.$langs->trans("DurationPlanned").'</td><td colspan="3">';
+			print $form->select_duration('duration_planned',$object->duration_planned);
+			print '</td></tr>';
+
+			//Amount Task
+			print '<tr><td >'.$langs->trans("Total_ht").'</td><td colspan="3">';
+			// si le prix unitaire est saisie on bloque le montant total
+			if($object->subprice == null || $object->subprice == 0)
+				print '<input size="5" name="total_ht" value="'.price2num($object->total_ht, 'MU').'">';
+			else
+				print price2num($object->total_ht, 'MU');
+			print '</td></tr>';
+
+			// Status
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+			print $object->getLibStatut(4);
+			print '</td></tr>';
+
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 			print '<td>';
@@ -301,7 +319,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print $object->showOptionals($extrafields,'edit');
 			}
-
+			
 			print '</table>';
 
 			print '<center><br>';
@@ -315,13 +333,19 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Fiche tache en mode visu
-			*/
+			 */
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 			if ($action == 'delete')
 			{
 				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+				if ($ret == 'html') print '<br>';
+			}
+
+			if ($action == 'TaskToInter')
+			{
+				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Transfert de la tache en intervention","Confirmation du transfert de la tache en intervention","confirm_TaskToInter",'',0,1);
 				if ($ret == 'html') print '<br>';
 			}
 
@@ -373,6 +397,31 @@ if ($id > 0 || ! empty($ref))
 			print $object->progress.' %';
 			print '</td></tr>';
 
+			//Amount Task
+			print '<tr><td >'.$langs->trans("Subprice").'</td><td colspan="3">';
+			print price2num($object->subprice,'MU').'</td></tr>';
+
+			//planned time
+			print '<tr><td >'.$langs->trans("DurationPlanned").' / '.$langs->trans("TimesSpent").' / '.$langs->trans("DurationRemain").'</td><td>';  
+			print ConvertSecondToTime($object->duration_planned,'all').'</td>';
+			$TaskTimeSpent=$object->getTaskTimeSpent($taskid);
+			print '<td >'.ConvertSecondToTime($TaskTimeSpent).'</td>';
+			if ($object->progress>0)
+				$EstimatedTimeRemind=($TaskTimeSpent/($object->progress/100))-$TaskTimeSpent;
+			else
+				$EstimatedTimeRemind=$object->duration_planned;
+			print '<td>'.ConvertSecondToTime($EstimatedTimeRemind).'</td>';
+			print '</tr>';
+
+			//Amount Task
+			print '<tr><td >'.$langs->trans("Total_ht").'</td><td colspan="3">';
+			print price2num($object->total_ht,'MU').'</td></tr>';
+
+			// Status
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
+			print $object->getLibStatut(4);
+			print '</td></tr>';
+
 			// Description
 			print '<td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 			print nl2br($object->description);
@@ -385,23 +434,22 @@ if ($id > 0 || ! empty($ref))
 			{
 				print $object->showOptionals($extrafields);
 			}
-			
+
 			print '</table>';
 
 		}
 
 		dol_fiche_end();
 
-
-		if ($_GET["action"] != 'edit')
+		if ($_GET["action"] != 'edit' && $projectstatic->statut!=2)
 		{
 			/*
 			 * Actions
-			*/
+			 */
 			print '<div class="tabsAction">';
 
 			// Modify
-			if ($user->rights->projet->creer)
+			if ($user->rights->projet->creer && $object->fk_statut!=4)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
 			}
@@ -419,12 +467,20 @@ if ($id > 0 || ! empty($ref))
 			{
 				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 			}
-
+			
+			// trasnfert autoris� ssi date de fin tache saisie, tache termin� � 100% et pas d�j� transf�r�e
+			if ($user->rights->projet->creer && $object->date_end && $object->progress==100 && $object->fk_statut!=4)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=TaskToInter">'.'Transfert intervention'.'</a>';
+			}
+			else
+			{
+				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.'Transfert intervention'.'</a>';
+			}
 			print '</div>';
 		}
 	}
 }
-
 
 llxFooter();
 $db->close();

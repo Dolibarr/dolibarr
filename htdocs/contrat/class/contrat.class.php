@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2012-2013	Charles-fr BENKE		<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,7 +285,7 @@ class Contrat extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
-		
+
 		// Definition du nom de module de numerotation de commande
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
@@ -421,7 +422,19 @@ class Contrat extends CommonObject
 
 		// Selectionne les lignes contrats liees a un produit
 		$sql = "SELECT p.label, p.description as product_desc, p.ref,";
-		$sql.= " d.rowid, d.fk_contrat, d.statut, d.description, d.price_ht, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql.= " d.rowid, ";
+		$sql.= " d.fk_contrat, ";
+		$sql.= " d.statut, ";
+		$sql.= " d.description, ";
+		$sql.= " d.price_ht, ";
+		$sql.= " d.tva_tx, ";
+		$sql.= " d.localtax1_tx, ";
+		$sql.= " d.localtax2_tx, ";
+		$sql.= " d.qty, ";
+		$sql.= " d.remise_percent, ";
+		$sql.= " d.subprice, ";
+		$sql.= " d.fk_product_fournisseur_price as fk_fournprice, ";
+		$sql.= " d.buy_price_ht as pa_ht,";
 		$sql.= " d.total_ht,";
 		$sql.= " d.total_tva,";
 		$sql.= " d.total_localtax1,";
@@ -469,10 +482,6 @@ class Contrat extends CommonObject
 				$line->total_ttc		= $objp->total_ttc;
 				$line->fk_product		= $objp->fk_product;
 				$line->info_bits		= $objp->info_bits;
-
-				$line->fk_fournprice 	= $objp->fk_fournprice;
-				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
-				$line->pa_ht 			= $marginInfos[0];
 
 				$line->fk_user_author	= $objp->fk_user_author;
 				$line->fk_user_ouverture= $objp->fk_user_ouverture;
@@ -645,8 +654,6 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
-		$now=dol_now();
-
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
@@ -667,7 +674,7 @@ class Contrat extends CommonObject
 			$error=0;
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
-			
+
 			// Mise a jour ref
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 			if ($this->db->query($sql))
@@ -1437,6 +1444,44 @@ class Contrat extends CommonObject
 			return -1;
 		}
 	}
+
+    function get_element_list($type)
+    {
+        $elements = array();
+
+        $sql = '';
+        if ($type == 'intervention')
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "fichinter WHERE fk_contrat=" . $this->id;
+        if (! $sql) return -1;
+
+        //print $sql;
+        dol_syslog(get_class($this)."::get_element_list sql=" . $sql);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $nump = $this->db->num_rows($result);
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object($result);
+
+                    $elements[$i] = $obj->rowid;
+
+                    $i++;
+                }
+                $this->db->free($result);
+
+                /* Return array */
+                return $elements;
+            }
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+    }
 
 
 	/**

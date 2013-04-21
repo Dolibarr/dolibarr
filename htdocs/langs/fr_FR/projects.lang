@@ -34,6 +34,7 @@ LabelTask=Libellé tâche
 NewTimeSpent=Nouveau consommé
 MyTimeSpent=Mon consommé
 MyTasks=Mes tâches
+MyCalendar=Mon calendrier
 Tasks=Tâches
 Task=Tâche
 NewTask=Nouvelle tâche
@@ -105,3 +106,40 @@ TypeContact_project_task_internal_CONTRIBUTOR=Intervenant
 TypeContact_project_task_external_CONTRIBUTOR=Intervenant
 # Documents models
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
+#### Additionnal Translates ####
+DoneAndToDoTasks=Liste des taches réalisées ou à faire
+TasksAskedBy=Tâches enregistrées par
+TasksDoneBy=Tâches validées par
+NbTasks=Nb Tâches
+DurationTasks=Durées (Hrs)
+Total_ht=Montant HT
+DurationPlanned=Durée prévue
+Planned=Prévue
+DurationRemain=Restant estimée
+AgendaShowTaskProjet=Visualiser les tâches du projet
+AgendaShowTimeUse=Visualiser les temps consommés
+### TASK STATUS
+Draft=Brouillon
+Validated=Validé
+Running=En cours
+Finish=Terminée
+Transfered=Transmise
+### Export Fields
+ProjectId=Id Projet
+ProjectRef=Référence Projet
+DateDebutProjet=Début Projet
+DateFinProjet=Fin Projet
+ProjectStatus=Etat
+projectNote=Description
+TaskDesc=Description
+TaskDatee=Date Fin de tache
+TaskDateo=Date début de tache
+Subprice=Prix Unit. H.T.
+TaskTimeDate=Date de réalisation
+TaskTimeNote=Description
+TaskTimeUser=Ressources
+### Stats Fields 
+ProjetStatistics=Statistiques Projets
+Add-on=Fonctions additionnelles
+NbOfProjectByMonth=Nombre de projet mensuel
+AmountOfProjectByMonthHT=Montant HT des projets mensuels

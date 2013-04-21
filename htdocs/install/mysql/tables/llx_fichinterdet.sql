@@ -23,6 +23,7 @@ create table llx_fichinterdet
   fk_fichinter      integer,
   date              datetime,          -- date de la ligne d'intervention
   description       text,              -- description de la ligne d'intervention
-  duree             integer,           -- duree de la ligne d'intervention
+  duree             real,           -- duree de la ligne d'intervention
+  subprice	    double(28,4)
   rang              integer DEFAULT 0  -- ordre affichage sur la fiche
 )ENGINE=innodb;
