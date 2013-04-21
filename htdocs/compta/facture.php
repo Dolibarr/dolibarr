@@ -2523,7 +2523,7 @@ else if ($id > 0 || ! empty($ref))
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$object->socid);
+				$text.=$notify->confirmMessage('BILL_VALIDATE',$object->socid);
 			}
 			$formquestion=array();
 
