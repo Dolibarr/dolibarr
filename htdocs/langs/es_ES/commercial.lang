@@ -81,6 +81,7 @@ ActionAC_SHIP=Envío expedición por correo
 ActionAC_SUP_ORD=Envío pedido a proveedor por correo
 ActionAC_SUP_INV=Envío factura de proveedor por correo
 ActionAC_OTH=Otra
+ActionAC_OTH_AUTO=Otra (eventos insertados automáticamente)
 ActionAC_MANUAL=Eventos creados manualmente
 ActionAC_AUTO=Eventos creados automáticamente
 Stats=Estadísticas de venta
