@@ -151,6 +151,7 @@ EMailTextOrderApproved=Pedido %s aprobado
 EMailTextOrderApprovedBy=Pedido %s aprobado por %s
 EMailTextOrderRefused=Pedido %s rechazado
 EMailTextOrderRefusedBy=Pedido %s rechazado por %s
+EMailTextExpeditionValidated=El envío %s ha sido validado.
 ImportedWithSet=Lote de importación (import key)
 DolibarrNotification=Notificación automática
 ResizeDesc=Introduzca el nuevo ancho <b>O</b> la nueva altura. La relación se conserva al cambiar el tamaño ...

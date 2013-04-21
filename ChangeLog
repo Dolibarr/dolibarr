@@ -50,6 +50,7 @@ For users:
 - New: [ task #770 ] Add ODT document generation for Projects module
 - New: [ task #741 ] Add intervention box
 - New: [ task #826 ] Optionnal increase stock when deleting an invoice already validated
+- New: [ task #823 ] Shipping_validate email notification
 
 For translators:
 - Update language files.
