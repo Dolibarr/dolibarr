@@ -188,7 +188,7 @@ if ($modecompta == 'CREANCES-DETTES') {
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
      * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
-	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(DISTINCT pf.amount) as amount_ttc";
+	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u" ;
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid ";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
