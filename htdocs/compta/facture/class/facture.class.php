@@ -3457,7 +3457,7 @@ class FactureLigne
         	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
