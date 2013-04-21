@@ -44,6 +44,7 @@
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
+<input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
 <table summary="listofattributes" class="border centpercent">
 
@@ -80,7 +81,7 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 </td></tr>
 <!--  Value (for select list / radio) -->
 <?php 
-if(($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) 
+if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio'))) 
 {
 ?>
 <tr id="value_choice">
@@ -88,7 +89,11 @@ if(($type == 'select') || ($type == 'checkbox') ||(($type == 'radio')))
 	<?php echo $langs->trans("Value"); ?>
 </td>
 <td>
+<table class="nobordernopadding">
+<tr><td width="30%">
 	<textarea name="param" id="param"><?php echo $param_chain; ?></textarea>
+</td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
+</table>
 </td>
 </tr>
 <?php 
