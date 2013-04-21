@@ -2412,6 +2412,10 @@ class Product extends CommonObject
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$this->id.'">';
 			$lienfin='</a>';
         }
+        else if ($option == 'category')
+        {
+        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=0">';
+        }        
         else
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
