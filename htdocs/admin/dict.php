@@ -448,11 +448,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	$ok=0;
         	$msg.= $langs->transnoentities('ErrorCodeCantContainZero').'<br>';
         }
-        if (!is_numeric($_POST['code']))
+        // FIXME regresion if code with not in numeric base
+        /*if (!is_numeric($_POST['code']))
     	{
 	    	$ok = 0;
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
-	    }
+	    }*/
     }
     if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
         $ok=0;
