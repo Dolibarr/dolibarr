@@ -849,6 +849,7 @@ ALTER TABLE llx_product_price_by_qty ADD CONSTRAINT fk_product_price_by_qty_fk_p
 ALTER TABLE llx_product_price_by_qty ADD remise_percent DOUBLE NOT NULL DEFAULT '0' AFTER price_ttc;
 ALTER TABLE llx_product_price_by_qty ADD remise DOUBLE NOT NULL DEFAULT '0' AFTER remise_percent;
 ALTER TABLE llx_product_price_by_qty ADD unitprice DOUBLE (24,8) NOT NULL DEFAULT '0' AFTER qty_min;
+ALTER TABLE llx_product_price_by_qty CHANGE qty_min quantity DOUBLE NULL DEFAULT NULL;
 
 -- Change index name to be compliant with SQL standard, index name must be unique in database schema
 ALTER TABLE llx_c_actioncomm DROP INDEX code;
