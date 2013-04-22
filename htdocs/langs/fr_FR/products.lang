@@ -187,3 +187,11 @@ AlwaysUseFixedPrice=Utiliser le prix fixé
 PriceByQuantity=Prix par quantité
 PriceByQuantityRange=Grille de quantités
 ProductsDashboard=Synthèse produits/services
+### composition fabrication
+Building=Fabrication
+Build=Fabriquer
+BuildIt=Lancer la fabrication
+BuildindListInfo=Nombre de produit fabricable par entrepot, si saisie à zéro on ne fabrique pas
+QtyNeed=Affectée
+UnitPmp=Prix Achat Unitaire
+CostPmpHT=Cout à l'achat HT

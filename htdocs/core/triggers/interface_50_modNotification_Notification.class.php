@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,8 @@ class InterfaceNotification
     	'PROPAL_VALIDATE',
         'FICHINTER_VALIDATE',
     	'ORDER_SUPPLIER_APPROVE',
-    	'ORDER_SUPPLIER_REFUSE'
+    	'ORDER_SUPPLIER_REFUSE',
+        'SHIPPING_VALIDATE'
    	);
 
     /**
@@ -196,6 +198,19 @@ class InterfaceNotification
             $notify = new Notify($this->db);
             $notify->send($action, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
 		}
+        elseif ($action == 'SHIPPING_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+            $ref = dol_sanitizeFileName($object->ref);
+            $filepdf = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
+            if (! file_exists($filepdf)) $filepdf='';
+            $mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated",$object->ref);
+
+
+            $notify = new Notify($this->db);
+            $notify->send($action, $object->socid, $mesg, 'expedition', $object->id, $filepdf);
+        }
 
 		// If not found
 /*

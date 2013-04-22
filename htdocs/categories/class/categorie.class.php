@@ -420,6 +420,7 @@ class Categorie
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".($type=='fournisseur'?'societe':$type)."   = ".$obj->id;
 
+		dol_syslog(get_class($this).'::del_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
 			return 1;

@@ -1797,8 +1797,16 @@ class Product extends CommonObject
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
 	{
-		$sql = 'DELETE from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" AND fk_product_fils = "'.$id_fils.'"';
+		// Clean parameters
+		if (! is_numeric($id_pere)) $id_pere=0;
+		if (! is_numeric($id_fils)) $id_fils=0;
+
+		$result=$this->del_sousproduit($id_pere, $id_fils);
+		if ($result < 0) return $result;
+		
+		// Check not already father of id_pere (to avoid father -> child -> father links)
+		$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
+		$sql .= ' WHERE fk_product_pere  = '.$id_fils.' AND fk_product_fils = '.$id_pere;
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -1806,37 +1814,27 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
-			$sql .= ' WHERE fk_product_pere  = "'.$id_fils.'" AND fk_product_fils = "'.$id_pere.'"';
-			if (! $this->db->query($sql))
+			$result = $this->db->query($sql);
+			if ($result)
 			{
-				dol_print_error($this->db);
-				return -1;
-			}
-			else
-			{
-				$result = $this->db->query($sql);
-				if ($result)
+				$num = $this->db->num_rows($result);
+				if($num > 0)
 				{
-					$num = $this->db->num_rows($result);
-					if($num > 0)
+					$this->error="isFatherOfThis";
+					return -1;
+				}
+				else
+				{
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.')';
+					if (! $this->db->query($sql))
 					{
-						$this->error="isFatherOfThis";
+						dol_print_error($this->db);
 						return -1;
 					}
 					else
 					{
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
-						$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
-						if (! $this->db->query($sql))
-						{
-							dol_print_error($this->db);
-							return -1;
-						}
-						else
-						{
-							return 1;
-						}
+						return 1;
 					}
 				}
 			}
@@ -1848,14 +1846,18 @@ class Product extends CommonObject
 	 *
 	 *  @param      int	$fk_parent		Id du produit auquel ne sera plus lie le produit lie
 	 *  @param      int	$fk_child		Id du produit a ne plus lie
-	 *  @return     int			    	< 0 si erreur, > 0 si ok
+	 *  @return     int			    	< 0 if KO, > 0 if OK
 	 */
 	function del_sousproduit($fk_parent, $fk_child)
 	{
+		if (! is_numeric($fk_parent)) $fk_parent=0;
+		if (! is_numeric($fk_child)) $fk_child=0;
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
-		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
-		$sql.= " AND fk_product_fils = '".$fk_child."'";
-
+		$sql.= " WHERE fk_product_pere  = ".$fk_parent;
+		$sql.= " AND fk_product_fils = ".$fk_child;
+		
+		dol_syslog(get_class($this).'::del_sousproduit sql='.$sql);
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -2413,6 +2415,10 @@ class Product extends CommonObject
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$this->id.'">';
 			$lienfin='</a>';
         }
+        else if ($option == 'category')
+        {
+        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=0">';
+        }        
         else
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';

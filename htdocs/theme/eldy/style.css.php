@@ -58,6 +58,8 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
+$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
+$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
 $path='';    	// This value may be used in future for external module to overwrite theme
 $theme='eldy';	// Value of theme
@@ -198,7 +200,7 @@ if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 ?>
 
 /* ============================================================================== */
-/* Styles par defaut                                                              */
+/* Default styles                                                                 */
 /* ============================================================================== */
 
 body {
@@ -304,8 +306,8 @@ input[type=image] { background-color: transparent; border: none; box-shadow: non
     box-shadow: 4px 4px 4px #CCC;
 }
 form {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding:0px;
+    margin:0px;
 }
 div.float
 {
@@ -852,9 +854,9 @@ td.vmenu {
 
 .vmenu {
 	margin-left: 4px;
-<?php if (GETPOST("optioncss") == 'print') { ?>
+	<?php if (GETPOST("optioncss") == 'print') { ?>
     display: none;
-<?php } ?>
+	<?php } ?>
 }
 
 .menu_contenu { padding-top: 1px; }
@@ -1317,11 +1319,14 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: #657090;
-    color: white;
+/*    background: #657090;
+    color: white;*/
+    color:rgba(0,0,0,.5);
+    margin-right:10px;
+    text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
-    padding: 0px 6px 2px 6px;
+    padding: 5px 6px 2px 6px;
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
@@ -1329,7 +1334,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-    padding: 2px 6px 2px 6px;
+    padding: 5px 6px 2px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -1364,6 +1369,7 @@ a.tab#active {
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active
 {
     color: #<?php echo $colortextmain; ?>;
+	font-weight: normal !important;
 }
 
 a.tabimage {

@@ -99,7 +99,7 @@ $error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->e
 
 if (empty($reshook))
 {
-	//Suppression d'un objet d'une categorie
+	// Remove element from category
 	if ($removecat > 0)
 	{
 		if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -113,17 +113,20 @@ if (empty($reshook))
 		{
 			$object = new Societe($db);
 			$result = $object->fetch($objectid);
+			$elementtype = 'fournisseur';
 		}
 		if ($type==2 && $user->rights->societe->creer)
 		{
 			$object = new Societe($db);
 			$result = $object->fetch($objectid);
+			$elementtype = 'societe';
 		}
 		if ($type == 3 && $user->rights->adherent->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$object = new Adherent($db);
 			$result = $object->fetch($objectid);
+			$elementtype = 'member';
 		}
 		$cat = new Categorie($db);
 		$result=$cat->fetch($removecat);
@@ -507,7 +510,7 @@ function formCategory($db,$object,$typeid,$socid=0)
 				//print $c->getNomUrl(1);
 				print img_object('','category').' '.$way."</td>";
 
-				// Lien supprimer
+				// Link to delete from category
 				print '<td align="right">';
 				$permission=0;
 				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
