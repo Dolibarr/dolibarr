@@ -201,10 +201,6 @@ $head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 $head[$h][1] = $langs->trans("Setup");
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/carrier.php";
-$head[$h][1] = $langs->trans("Carriers");
-$h++;
-
 $head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 $head[$h][1] = $langs->trans("Sending");
 $hselected=$h;

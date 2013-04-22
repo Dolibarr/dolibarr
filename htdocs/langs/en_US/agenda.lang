@@ -67,6 +67,7 @@ AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to use
 AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.
 AgendaShowBirthdayEvents=Show birthday's contacts
 AgendaHideBirthdayEvents=Hide birthday's contacts
+Busy=Busy
 
 # External Sites ical
 ExportCal=Export calendar

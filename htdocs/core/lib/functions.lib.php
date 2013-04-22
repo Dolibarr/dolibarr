@@ -1072,9 +1072,11 @@ function dol_now($mode='gmt')
  */
 function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {
-	global $langs;
+	global $conf,$langs;
 	$level=1024;
-
+	
+	if (! empty($conf->dol_optimize_smallscreen)) $shortunit=1;
+	
 	// Set value text
 	if (empty($shortvalue) || $size < ($level*10))
 	{

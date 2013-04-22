@@ -209,10 +209,10 @@ class FormActions
     /**
      *  Output list of type of event
      *
-     *  @param	string		$selected       Type pre-selectionne
+     *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'
      *  @param  string		$htmlname       Nom champ formulaire
      *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not
+     *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
      * 	@return	void
      */
     function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0)
@@ -224,11 +224,14 @@ class FormActions
         $caction=new CActionComm($this->db);
         $form=new Form($this->db);
 
-       	// Suggest a list with manual event or all auto events
+       	// Suggest a list with manual events or all auto events
        	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
        	array_unshift($arraylist,'&nbsp;');     // Add empty line at start
        	//asort($arraylist);
 
+       	if ($selected == 'manual') $selected='AC_OTH';
+       	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
+       	
         print $form->selectarray($htmlname, $arraylist, $selected);
         if ($user->admin && empty($onlyautoornot)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }

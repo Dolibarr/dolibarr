@@ -107,7 +107,7 @@ print '<br>';
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/compta.php";
-$head[$h][1] = $langs->trans("Compta");
+$head[$h][1] = $langs->trans("Accountancy");
 $head[$h][2] = 'Compta';
 $hselected=$h;
 $h++;

@@ -423,11 +423,11 @@ else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 }
 else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 {
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
-	if ($result < 0) dol_print_error($db,$object->error);
+    $object->fetch($id);
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
+    if ($result < 0) dol_print_error($db,$object->error);
 }
-if ($action == 'setdatee')
+else if ($action == 'setdatee')
 {
 	$datee=dol_mktime(
 		$fulldayevent?'23':GETPOST("fulldayendhour",'int'),
@@ -442,8 +442,7 @@ if ($action == 'setdatee')
 	$result=$object->set_datee($user,$datee);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-
-if ($action == 'setdateo')
+else if ($action == 'setdateo')
 {
 	$dateo=dol_mktime(
 		$fulldayevent?'23':GETPOST("fulldaystarthour",'int'),
@@ -458,9 +457,7 @@ if ($action == 'setdateo')
 	$result=$object->set_dateo($user,$dateo);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-
-
-if ($action == 'setfulldayevent')
+else if ($action == 'setfulldayevent')
 {	
 	$fullday=GETPOST('fulldayevent','int');
 	$object = new Fichinter($db);
@@ -468,9 +465,6 @@ if ($action == 'setfulldayevent')
 	$result=$object->set_fullday($user,$fullday);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-
-
-
 // Add line
 else if ($action == "addline" && $user->rights->ficheinter->creer)
 {
