@@ -156,6 +156,41 @@ function task_prepare_head($object)
 	return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to shoc
+ */
+function project_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project.php";
+	$head[$h][1] = $langs->trans("Projects");
+	$head[$h][2] = 'project';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'project_admin');
+
+	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project_extrafields.php";
+	$head[$h][1] = $langs->trans("ExtraFieldsProject");
+	$head[$h][2] = 'attributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
+	$head[$h][2] = 'attributes_task';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'project_admin','remove');
+
+	return $head;
+}
+
 
 
 /**
@@ -426,7 +461,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-					print '<td align="center" class="tdlineupdown">&nbsp;</td>';
+					print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
@@ -718,7 +753,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 	print_liste_field_titre($langs->trans("DurationTasks")." ".$langs->trans("Planned"),"","","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DurationTasks")." ".$langs->trans("Effective"),"","","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
-	print '</tr>';
+	print "</tr>\n";
 
 	$sql = "SELECT p.rowid as projectid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut, COUNT(t.rowid) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
