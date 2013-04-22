@@ -142,7 +142,8 @@ class EcmDirectory // extends CommonObject
 
 				$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
 				$result=dol_mkdir($dir);
-
+				if ($result < 0) { $error++; $this->error="ErrorFailedToCreateDir"; }
+				
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);

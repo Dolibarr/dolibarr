@@ -1784,7 +1784,7 @@ else
 				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				$notify=new Notify($db);
 				$text.='<br>';
-				$text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$object->socid);
+				$text.=$notify->confirmMessage('ORDER_VALIDATE',$object->socid);
 			}
 			$formquestion=array();
 			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))

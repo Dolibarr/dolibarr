@@ -36,6 +36,7 @@ $ref=GETPOST('ref');
 $type=GETPOST('type');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
+$removeelem = GETPOST('removeelem','int');
 
 if ($id == "")
 {
@@ -60,6 +61,40 @@ $type=$object->type;
 /*
  *	Actions
  */
+
+// Remove element from category
+if ($id > 0 && $removeelem > 0)
+{
+	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$tmpobject = new Product($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'product';
+	}
+	if ($type==1 && $user->rights->societe->creer)
+	{
+		$tmpobject = new Societe($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'fournisseur';
+	}
+	if ($type==2 && $user->rights->societe->creer)
+	{
+		$tmpobject = new Societe($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'societe';
+	}
+	if ($type == 3 && $user->rights->adherent->creer)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$tmpobject = new Adherent($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'member';
+	}
+	
+	$result=$object->del_type($tmpobject,$elementtype);
+	if ($result < 0) dol_print_error('',$object->error);
+}
 
 if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confirm == 'yes')
 {
@@ -214,7 +249,7 @@ if ($object->type == 0)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ProductsAndServices")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices")."</td></tr>\n";
 
 		if (count($prods) > 0)
 		{
@@ -224,10 +259,24 @@ if ($object->type == 0)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
-				if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
-				else print img_object($langs->trans("ShowProduct"),"product");
-				print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
+				print $prod->getNomUrl(1,'category');
+				print "</td>\n";
 				print '<td valign="top">'.$prod->libelle."</td>\n";
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 1) $permission=$user->rights->societe->creer;
+				if ($typeid == 2) $permission=$user->rights->societe->creer;
+				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$prod->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print '</td>';
 				print "</tr>\n";
 			}
 		}
@@ -249,8 +298,8 @@ if ($object->type == 1)
 	else
 	{
 		print "<br>";
-		print "<table class='noborder' width='100%'>\n";
-		print "<tr class='liste_titre'><td>".$langs->trans("Suppliers")."</td></tr>\n";
+		print '<table class="noborder" width="100%">'."\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Suppliers")."</td></tr>\n";
 
 		if (count($socs) > 0)
 		{
@@ -261,9 +310,24 @@ if ($object->type == 1)
 				print "\t<tr ".$bc[$var].">\n";
 
 				print '<td nowrap="nowrap" valign="top">';
-				print $soc->getNomUrl(1);
+				print $soc->getNomUrl(1,'category_supplier');
 				print "</td>\n";
-
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 1) $permission=$user->rights->societe->creer;
+				if ($typeid == 2) $permission=$user->rights->societe->creer;
+				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print '</td>';
+				
 				print "</tr>\n";
 			}
 		}
@@ -285,8 +349,8 @@ if($object->type == 2)
 	else
 	{
 		print "<br>";
-		print "<table class='noborder' width='100%'>\n";
-		print "<tr class='liste_titre'><td>".$langs->trans("Customers")."</td></tr>\n";
+		print '<table class="noborder" width="100%">'."\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Customers")."</td></tr>\n";
 
 		if (count($socs) > 0)
 		{
@@ -298,9 +362,23 @@ if($object->type == 2)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
-				print $soc->getNomUrl(1);
+				print $soc->getNomUrl(1,'category');
 				print "</td>\n";
-
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 1) $permission=$user->rights->societe->creer;
+				if ($typeid == 2) $permission=$user->rights->societe->creer;
+				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print '</td>';
 				print "</tr>\n";
 			}
 		}
@@ -326,7 +404,7 @@ if ($object->type == 3)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Member")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Member")."</td></tr>\n";
 
 		if (count($prods) > 0)
 		{
@@ -336,10 +414,25 @@ if ($object->type == 3)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 				print '<td nowrap="nowrap" valign="top">';
-				print $member->getNomUrl(1);
+				$member->ref=$member->login;
+				print $member->getNomUrl(1,0,'category');
 				print "</td>\n";
 				print '<td valign="top">'.$member->lastname."</td>\n";
 				print '<td valign="top">'.$member->firstname."</td>\n";
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 1) $permission=$user->rights->societe->creer;
+				if ($typeid == 2) $permission=$user->rights->societe->creer;
+				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$member->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
 				print "</tr>\n";
 			}
 		}

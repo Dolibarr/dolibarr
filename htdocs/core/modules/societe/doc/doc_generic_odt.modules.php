@@ -109,7 +109,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt','','name',SORT_ASC,0,true); // Disable hook for the moment
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0,true); // Disable hook for the moment
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
@@ -210,16 +210,27 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
-				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
+				$newfiletmp=preg_replace('/\.od(s|t)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				// Get extension (ods or odt)
+				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
+				if ( ! empty($conf->global->MAIN_ODT_USE_TIMING))
+				{
+					$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.'.$newfileformat;
+				}
+				else
+				{
+					$filename=$newfiletmp.'.'.$newfileformat;
+				}
 				$file=$dir.'/'.$filename;
 				$object->builddoc_filename=$filename; // For triggers
+				//print "newfileformat=".$newfileformat;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
+				//exit;
 
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
 

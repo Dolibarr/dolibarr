@@ -458,7 +458,7 @@ if (! $error && $db->connected && $action == "set")
         print '<tr><td>';
         print $langs->trans("ConfFileReload");
         print '</td>';
-        print '<td>'.$langs->trans("OK").'</td></tr>';
+        print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
 
         $userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
@@ -508,7 +508,7 @@ if (! $error && $db->connected && $action == "set")
                         print $langs->trans("UserCreation").' : ';
                         print $dolibarr_main_db_user;
                         print '</td>';
-                        print '<td>'.$langs->trans("OK").'</td></tr>';
+                        print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
                     }
                     else
                     {
@@ -542,7 +542,7 @@ if (! $error && $db->connected && $action == "set")
                     print $langs->trans("UserCreation").' : ';
                     print $dolibarr_main_db_user;
                     print '</td>';
-                    print '<td>'.$langs->trans("Error").'</td>';
+                    print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td>';
                     print '</tr>';
 
                     // Affiche aide diagnostique
@@ -576,7 +576,7 @@ if (! $error && $db->connected && $action == "set")
                     print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
                     print $dolibarr_main_db_name;
                     print '</td>';
-                    print "<td>".$langs->trans("OK")."</td></tr>";
+                    print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
                     $check1=$newdb->getDefaultCharacterSetDatabase();
                     $check2=$newdb->getDefaultCollationDatabase();
@@ -606,7 +606,7 @@ if (! $error && $db->connected && $action == "set")
                 print $langs->trans("DatabaseCreation")." (".$langs->trans("User")." ".$userroot.") : ";
                 print $dolibarr_main_db_name;
                 print '</td>';
-                print '<td>'.$langs->trans("Error").'</td>';
+                print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td>';
                 print '</tr>';
 
                 // Affiche aide diagnostique
@@ -632,43 +632,35 @@ if (! $error && $db->connected && $action == "set")
 
             if ($db->connected == 1)
             {
+                dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
+                print "<tr><td>";
+                print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
+                print $dolibarr_main_db_host;
+                print "</td><td>";
+                print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
+                print "</td></tr>";
+
                 // si acces serveur ok et acces base ok, tout est ok, on ne va pas plus loin, on a meme pas utilise le compte root.
                 if ($db->database_selected == 1)
                 {
-                    dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
-                    print "<tr><td>";
-                    print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
-                    print $dolibarr_main_db_host;
-                    print "</td><td>";
-                    print $langs->trans("OK");
-                    print "</td></tr>";
-
                     dolibarr_install_syslog("etape1: connexion to database : ".$conf->db->name.", by user : ".$conf->db->user." is ok", LOG_DEBUG);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                     print $dolibarr_main_db_name;
                     print "</td><td>";
-                    print $langs->trans("OK");
+                    print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
                     print "</td></tr>";
 
                     $error = 0;
                 }
                 else
                 {
-                    dolibarr_install_syslog("etape1: connexion to server by user ".$conf->db->user." is ok", LOG_DEBUG);
-                    print "<tr><td>";
-                    print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
-                    print $dolibarr_main_db_host;
-                    print "</td><td>";
-                    print $langs->trans("OK");
-                    print "</td></tr>";
-
                     dolibarr_install_syslog("etape1: connexion to database ".$conf->db->name.", by user : ".$conf->db->user." has failed", LOG_ERR);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                     print $dolibarr_main_db_name;
                     print '</td><td>';
-                    print $langs->trans("Error");
+                    print '<img src="../theme/eldy/img/error.png" alt="Error">';
                     print "</td></tr>";
 
                     // Affiche aide diagnostique
@@ -688,7 +680,7 @@ if (! $error && $db->connected && $action == "set")
                 print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
                 print $dolibarr_main_db_host;
                 print '</td><td>';
-                print '<font class="error">'.$db->error.'</div>';
+                print '<img src="../theme/eldy/img/error.png" alt="Error">';
                 print "</td></tr>";
 
                 // Affiche aide diagnostique
@@ -938,7 +930,7 @@ function write_conf_file($conffile)
 			print $langs->trans("SaveConfigurationFile");
 			print ' <strong>'.$conffile.'</strong>';
 			print "</td><td>";
-			print $langs->trans("OK");
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
 			print "</td></tr>";
 		}
 		else

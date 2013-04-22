@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -228,7 +228,6 @@ if ($id > 0)
 	print "</tr>\n";
 
 	print '</table><br>';
-
 }
 else
 {
@@ -242,7 +241,15 @@ $nbaquis=$holiday->getCPforUser($user_id);
 $nbdeduced=$holiday->getConfCP('nbHolidayDeducted');
 $nb_holiday = $nbaquis / $nbdeduced;
 print $langs->trans('SoldeCPUser',round($nb_holiday,2)).($nbdeduced != 1 ? ' ('.$nbaquis.' / '.$nbdeduced.')' : '');
-print '</div>';
+
+if ($id > 0)
+{
+	dol_fiche_end();
+	print '</br>';
+}
+else {
+	print '</div>';
+} 
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';

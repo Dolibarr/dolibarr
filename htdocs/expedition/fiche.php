@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -974,7 +975,18 @@ else
                 {
                     $numref = $object->ref;
                 }
-                $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$numref),'confirm_valid','',0,1);
+
+                $text = $langs->trans("ConfirmValidateSending",$numref);
+
+                if (! empty($conf->notification->enabled))
+                {
+                    require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+                    $notify=new Notify($db);
+                    $text.='<br>';
+                    $text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
+                }
+
+                $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
                 if ($ret == 'html') print '<br>';
             }
             /*
