@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -200,12 +200,15 @@ if ($id || $ref)
 			// Number of subproducts
 			$prodsfather = $product->getFather(); //Parent Products
 			$product->get_sousproduits_arbo();
-			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.count($product->get_arbo_each_prod()).'</td>';
+			$nbofsubproducts=count($product->get_arbo_each_prod());
+			print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>';
+			print $form->textwithpicto($nbofsubproducts, $langs->trans('IfZeroItIsNotAVirtualProduct'));
+			print '</td>';
 
 			dol_fiche_end();
 
 
-			// List of subproducts
+			// List of products into this virtual product
 			$prods_arbo = $product->get_arbo_each_prod();
 			if (count($prods_arbo) > 0)
 			{
@@ -231,8 +234,10 @@ if ($id || $ref)
 				print '</td></tr>';
 			}
 
-			// Number of parent products
-			print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.count($prodsfather).'</td>';
+			// Number of parent virtual products
+			print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>';
+			print $form->textwithpicto(count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
+			print '</td>';
 
 			if (count($prodsfather) > 0)
 			{

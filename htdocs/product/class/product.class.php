@@ -2137,6 +2137,7 @@ class Product extends CommonObject
 				$id=(! empty($desc_pere[0]) ? $desc_pere[0] :'');
 				$nb=(! empty($desc_pere[1]) ? $desc_pere[1] :'');
 				$type=(! empty($desc_pere[2]) ? $desc_pere[2] :'');
+				$label=(! empty($desc_pere[3]) ? $desc_pere[3] :'');
 
 				if ($multiply)
 				{
@@ -2157,10 +2158,10 @@ class Product extends CommonObject
 */								'id'=>$id,					// Id product
 								'nb'=>$nb,					// Nb of units that compose parent product
 								'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
-								'stock'=>$this->stock_warehouse[1]->real,		// Stock
+								'stock'=>$this->stock_warehouse[1]->real,	// Stock
 								'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
-								'fullpath' => $compl_path.$nom_pere,	// Label
-								'type'=>$type					// Nb of units that compose parent product
+								'fullpath' => $compl_path.$label,			// Label
+								'type'=>$type				// Nb of units that compose parent product
 								);
 				}
 				else
