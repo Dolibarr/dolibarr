@@ -94,6 +94,10 @@ class FileUpload
 		elseif ($element == 'action') {
 			$pathname = 'comm/action'; $filename='actioncomm';
 			$dir_output=$conf->agenda->dir_output;
+		}
+		elseif ($element == 'chargesociales') {
+			$pathname = 'compta/sociales'; $filename='chargesociales';
+			$dir_output=$conf->tax->dir_output;
 		} else {
 			$dir_output=$conf->$element->dir_output;
 		}
