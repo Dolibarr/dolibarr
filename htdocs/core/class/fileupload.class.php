@@ -91,6 +91,9 @@ class FileUpload
 			$pathname = 'fourn'; $filename='fournisseur.facture';
 			$dir_output=$conf->fournisseur->facture->dir_output;
 		}
+		elseif ($element == 'product') {
+			$dir_output = $conf->product->multidir_output[$conf->entity];
+		}
 		elseif ($element == 'action') {
 			$pathname = 'comm/action'; $filename='actioncomm';
 			$dir_output=$conf->agenda->dir_output;
