@@ -47,7 +47,7 @@ function societe_prepare_head($object)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$object->id;
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client==2 || $object->client==3)) $head[$h][1] = $langs->trans("Prospect");
-        if ($object->client==3)                       $head[$h][1] .= '/';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client==3) $head[$h][1] .= '/';
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client==1 || $object->client==3)) $head[$h][1] .= $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
