@@ -227,7 +227,7 @@ if ($id || $ref)
 					//print $value[0];	// This contains a tr line.
 					print '<tr>';
 					//print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].($value['nb_total'] > $value['nb']?'->'.$value['nb_total']:'').') &nbsp &nbsp</td>';
-					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb_total'].') &nbsp &nbsp</td>';
+					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
 					if (! empty($conf->stock->enabled)) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 					print '</tr>';
 				}
@@ -292,12 +292,14 @@ if ($id || $ref)
 		// Number of subproducts
 		$prodsfather = $product->getFather(); //Parent Products
 		$product->get_sousproduits_arbo();
-		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.count($product->get_arbo_each_prod()).'</td>';
+		$prods_arbo=$product->get_arbo_each_prod();
+		$nbofsubproducts=count($prods_arbo);
+		print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>';
+		print $form->textwithpicto($nbofsubproducts, $langs->trans('IfZeroItIsNotAVirtualProduct'));
+		print '</td>';
 		print '</tr>';
 
 		// List of subproducts
-		$prods_arbo = $product->get_arbo_each_prod();
-		//var_dump($prods_arbo);
 		if(count($prods_arbo) > 0)
 		{
 			print '<tr><td colspan="2">';
@@ -322,8 +324,10 @@ if ($id || $ref)
 			print '</td></tr>';
 		}
 
-		// Number of parent products
-		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>'.count($prodsfather).'</td>';
+		// Number of parent virtual products
+		print '<tr><td>'.$langs->trans("ParentProductsNumber").'</td><td>';
+		print $form->textwithpicto(count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
+		print '</td>';
 
 		if (count($prodsfather) > 0)
 		{
