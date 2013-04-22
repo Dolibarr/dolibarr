@@ -27,6 +27,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
 $action=GETPOST('action');
 $id=GETPOST('id');
+$numsondage=substr($id, 0, 16);
 
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.titre";
@@ -45,16 +46,10 @@ if ($action == 'delete_confirm')
 {
 	$db->begin();
 
-	$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage_admin = '".$id."'";
-	dol_syslog("Delete poll sql=".$sql, LOG_DEBUG);
-	$resql=$db->query($sql);
-	$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage_admin = '".$id."'";
-	dol_syslog("Delete poll sql=".$sql, LOG_DEBUG);
-	$resql=$db->query($sql);
-	$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_sondage WHERE id_sondage_admin = '".$id."'";
-	dol_syslog("Delete poll sql=".$sql, LOG_DEBUG);
-	$resql=$db->query($sql);
-
+	$object=new Opensurveysondage($db);
+	
+	$result=$object->delete($user,'',$numsondageadmin);
+	
 	$db->commit();
 }
 

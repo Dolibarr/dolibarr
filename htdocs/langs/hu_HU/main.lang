@@ -5,7 +5,11 @@ FONTFORPDF=dejavusans
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
 FormatHourShort=%I:%M %p
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%b %d, %Y
@@ -587,7 +591,6 @@ ShortSunday=V
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
 // Reference language: en_US -> hu_HU
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Link hozzáadása
 Of=A
 SearchOf=Keresés

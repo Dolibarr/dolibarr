@@ -32,7 +32,7 @@ ViewCal=Month view
 ViewDay=Day view
 ViewWeek=Week view
 ViewWithPredefinedFilters= View with predefined filters
-AutoActions= Automatic filling of agenda
+AutoActions= Automatic filling
 AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
 AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
@@ -40,6 +40,7 @@ ActionsEvents= Events for which Dolibarr will create an action in agenda automat
 PropalValidatedInDolibarr= Proposal %s validated
 InvoiceValidatedInDolibarr= Invoice %s validated
 InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Order %s validated
 OrderApprovedInDolibarr=Order %s approved
 OrderBackToDraftInDolibarr=Order %s go back to draft status
@@ -66,6 +67,7 @@ AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to use
 AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.
 AgendaShowBirthdayEvents=Show birthday's contacts
 AgendaHideBirthdayEvents=Hide birthday's contacts
+Busy=Busy
 
 # External Sites ical
 ExportCal=Export calendar

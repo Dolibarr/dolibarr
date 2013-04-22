@@ -63,7 +63,7 @@ if ($id > 0 || ! empty($ref))
 
 		$relativepath = 'bon/'.$object->ref;
 
-		print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$object->ref.'</a>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$object->ref.'</a>';
 
 		print '</td></tr>';
 		print '</table><br>';

@@ -118,6 +118,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		{
 			$langs->load("errors");
 			setEventMessage($langs->trans($ecmdir->error), 'errors');
+			setEventMessage($ecmdir->errors, 'errors');
 			$action = 'create';
 		}
 	}

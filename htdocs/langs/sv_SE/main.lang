@@ -12,7 +12,11 @@ DIRECTION=ltr
 SeparatorDecimal=,
 SeparatorThousand=
 FormatDateShort=%Y-%m-%d
+FormatDateShortInput=%Y-%m-%d
 FormatDateShortJava=yyyy-MM-dd
+FormatDateShortJavaInput=yyyy-MM-dd
+FormatDateShortJQuery=yy-mm-dd
+FormatDateShortJQueryInput=yy-mm-dd
 FormatHourShort=%H:%M
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%b %d %Y
@@ -594,7 +598,6 @@ ShortSunday=S
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
 // Reference language: en_US -> sv_SE
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Tillsätt länk
 Of=av
 SearchOf=Sök

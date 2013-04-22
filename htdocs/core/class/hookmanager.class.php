@@ -144,7 +144,6 @@ class HookManager
                 foreach($modules as $module => $actionclassinstance)
                 {
                 	//print 'class='.get_class($actionclassinstance).' method='.$method.' action='.$action;
-
                 	// jump to next class if method does not exists
                     if (! method_exists($actionclassinstance,$method)) continue;
                 	// test to avoid to run twice a hook, when a module implements several active contexts
@@ -178,7 +177,7 @@ class HookManager
 
                     	$result = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 
-                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
 
                     	// TODO. remove this. array result must be set into $actionclassinstance->results

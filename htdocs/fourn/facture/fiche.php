@@ -41,6 +41,8 @@ if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (!empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled))
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 
 $langs->load('bills');
@@ -271,6 +273,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         // Creation facture
         $object->ref           = $_POST['ref'];
 		$object->ref_supplier  = $_POST['ref_supplier'];
+		$object->fk_project    = GETPOST('projectid');
         $object->socid         = $_POST['socid'];
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
@@ -1153,6 +1156,15 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
+	
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$langs->load('projects');
+		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+		select_projects(-1, $projectid, 'projectid');
+		print '</td></tr>';
+	}
 
     print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
@@ -1335,7 +1347,7 @@ else
             	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
             	$notify=new Notify($db);
             	$text.='<br>';
-            	$text.=$notify->confirmMessage('NOTIFY_VAL_FAC_SUP',$object->socid);
+            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid);
             }*/
             $formquestion=array();
 

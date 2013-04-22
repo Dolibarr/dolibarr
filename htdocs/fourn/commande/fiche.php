@@ -1077,7 +1077,7 @@ elseif (! empty($object->id))
 			require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 			$notify=new	Notify($db);
 			$text.='<br>';
-			$text.=$notify->confirmMessage(3,$object->socid);
+			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid);
 		}
 
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);

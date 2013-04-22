@@ -78,14 +78,15 @@ function user_prepare_head($object)
 	    $head[$h][2] = 'clicktodial';
         $h++;
     }
-
+    
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
-
-    if (! empty($user->societe_id))
+	
+    //Info on users is visible only by internal user
+    if (empty($user->societe_id))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("Note");

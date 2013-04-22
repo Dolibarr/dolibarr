@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ $hookmanager->initHooks(array('demo'));
 
 $demoprofiles=array(
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,prelevement,product,stock',
+	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,margin,prelevement,product,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
 	'disablemodules'=>'adherent,boutique,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
@@ -54,10 +54,10 @@ $demoprofiles=array(
 	'disablemodules'=>'adherent,boutique,don,externalsite,mailmanspip',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
 );
 

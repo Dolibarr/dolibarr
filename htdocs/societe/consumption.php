@@ -295,14 +295,13 @@ if ($sql_select)
 			// Define output language
 			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 			{
-				$this->fetch_thirdparty();
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
 				$outputlangs = $langs;
 				$newlang='';
 				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-				if (empty($newlang)) $newlang=$this->client->default_lang;
+				if (empty($newlang)) $newlang=$object->default_lang;
 				if (! empty($newlang))
 				{
 					$outputlangs = new Translate("",$conf);

@@ -814,13 +814,14 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 	if (! $format) $format='daytextshort';
-
+	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','hour')))?1:0;
+	
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
-	if ($format == 'day')					 $format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
-	else if ($format == 'hour')			 $format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
-	else if ($format == 'hourduration')	 $format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
+	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
+	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
+	else if ($format == 'hourduration')	$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
 	else if ($format == 'daytext')			 $format=($outputlangs->trans("FormatDateText")!="FormatDateText"?$outputlangs->trans("FormatDateText"):$conf->format_date_text);
-	else if ($format == 'daytextshort')	 $format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
+	else if ($format == 'daytextshort')	$format=($outputlangs->trans("FormatDateTextShort")!="FormatDateTextShort"?$outputlangs->trans("FormatDateTextShort"):$conf->format_date_text_short);
 	else if ($format == 'dayhour')			 $format=($outputlangs->trans("FormatDateHourShort")!="FormatDateHourShort"?$outputlangs->trans("FormatDateHourShort"):$conf->format_date_hour_short);
 	else if ($format == 'dayhoursec')		 $format=($outputlangs->trans("FormatDateHourSecShort")!="FormatDateHourSecShort"?$outputlangs->trans("FormatDateHourSecShort"):$conf->format_date_hour_sec_short);
 	else if ($format == 'dayhourtext')		 $format=($outputlangs->trans("FormatDateHourText")!="FormatDateHourText"?$outputlangs->trans("FormatDateHourText"):$conf->format_date_hour_text);
@@ -828,12 +829,18 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	// Format not sensitive to language
 	else if ($format == 'dayhourlog')		 $format='%Y%m%d%H%M%S';
 	else if ($format == 'dayhourldap')		 $format='%Y%m%d%H%M%SZ';
-	else if ($format == 'dayhourxcard')	 $format='%Y%m%dT%H%M%SZ';
-	else if ($format == 'dayxcard')	 	 $format='%Y%m%d';
+	else if ($format == 'dayhourxcard')	$format='%Y%m%dT%H%M%SZ';
+	else if ($format == 'dayxcard')	 	$format='%Y%m%d';
 	else if ($format == 'dayrfc')			 $format='%Y-%m-%d';             // DATE_RFC3339
 	else if ($format == 'dayhourrfc')		 $format='%Y-%m-%dT%H:%M:%SZ';   // DATETIME RFC3339
-	else if ($format == 'standard')		 $format='%Y-%m-%d %H:%M:%S';
+	else if ($format == 'standard')		$format='%Y-%m-%d %H:%M:%S';
 
+	if ($reduceformat)
+	{
+		$format=str_replace('%Y','%y',$format);
+		$format=str_replace('yyyy','yy',$format);
+	}
+	
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
@@ -1072,9 +1079,11 @@ function dol_now($mode='gmt')
  */
 function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {
-	global $langs;
+	global $conf,$langs;
 	$level=1024;
-
+	
+	if (! empty($conf->dol_optimize_smallscreen)) $shortunit=1;
+	
 	// Set value text
 	if (empty($shortvalue) || $size < ($level*10))
 	{
@@ -2846,7 +2855,7 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	dol_syslog("getLocalTaxesFromRate vatrate=".$vatrate." local=".$local." thirdparty id=".(is_object($thirdparty)?$thirdparty->id:''));
 
 	// Search local taxes
-	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type";
+	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type,t.accountancy_code_sell,t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
@@ -2855,9 +2864,9 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1);
-		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2);
-		else return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2);
+		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+		else return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 	}
 
 	return 0;
@@ -3105,12 +3114,16 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
 
 	if ($idprodfournprice > 0)
 	{
+		if (! class_exists('ProductFournisseur'))
+			require DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 		$prodprice = new ProductFournisseur($db);
 		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
 		return $prodprice->fourn_tva_npr;
 	}
 	elseif ($idprod > 0)
 	{
+		if (! class_exists('Product'))
+			require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 		$prod = new Product($db);
 		$prod->fetch($idprod);
 		return $prod->tva_npr;

@@ -85,8 +85,9 @@ if ($object->fetch($id))
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
 
 
-	print '<table width="100%" class="notopnoleftnoright">';
-	print '<tr><td valign="top" width="50%" class="notopnoleft">';
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	//print '<table width="100%" class="notopnoleftnoright">';
+	//print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
 	print '<table width="100%" class="border">';
 	print '<tr><td width="20%">'.$langs->trans("ThirdPartyName").'</td><td width="80%" colspan="3">';
@@ -216,7 +217,11 @@ if ($object->fetch($id))
 
 	print '</table>';
 
-	print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
+	
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	//print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
+
+	
 	$var=true;
 
 	$MAXLIST=5;
@@ -367,9 +372,12 @@ if ($object->fetch($id))
 		}
 	}
 
-	print '</td></tr>';
-	print '</table>' . "\n";
-	print '</div>';
+	print '</div></div></div>';
+	print '<div style="clear:both"></div>';
+	//print '</td></tr>';
+	//print '</table>' . "\n";
+	
+	dol_fiche_end();
 
 
 	/*

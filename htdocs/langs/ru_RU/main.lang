@@ -15,7 +15,11 @@ DIRECTION=ltr
 SeparatorDecimal=,
 SeparatorThousand=
 FormatDateShort=%d.%m.%Y
+FormatDateShortInput=%d.%m.%Y
 FormatDateShortJava=dd.MM.yyyy
+FormatDateShortJavaInput=dd.MM.yyyy
+FormatDateShortJQuery=dd.mm.yy
+FormatDateShortJQueryInput=dd.mm.yy
 FormatHourShort=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
@@ -628,7 +632,6 @@ Person=Персона
 
 // START - Lines generated via autotranslator.php tool (2011-08-18 23:26:41).
 // Reference language: en_US -> ru_RU
-FormatDateShortJQuery=dd/mm/yy
 AddLink=Добавить ссылку
 Of=из
 AmountByMonth=Сумма за месяц

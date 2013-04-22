@@ -141,6 +141,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", fk_soc";
         $sql.= ", datec";
         $sql.= ", datef";
+		$sql.= ", fk_projet";
         $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", fk_user_author";
@@ -154,6 +155,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
+		$sql.= ", ".$this->fk_project;
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$user->id.",";

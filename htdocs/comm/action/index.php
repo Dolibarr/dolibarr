@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -72,11 +72,11 @@ $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 $day=GETPOST("day","int")?GETPOST("day","int"):0;
-$actioncode=GETPOST("actioncode","alpha",3);
 $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=="0"?'':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 
 if (GETPOST('viewcal'))  {
     $action='show_month'; $day='';
@@ -271,7 +271,7 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 $head = calendars_prepare_head('');
 
 dol_fiche_head($head, 'card', $langs->trans('Events'), 0, $picto);
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals);
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals,$actioncode);
 dol_fiche_end();
 
 $link='';
