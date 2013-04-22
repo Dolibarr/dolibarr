@@ -179,7 +179,7 @@ if ($forgetpasslink || $helpcenterlink)
 <?php if ($main_home)
 {
 ?>
-	<center><div align="center" style="max-width: 80%">
+	<center><div align="center" class="login_main_home" style="max-width: 80%">
 	<?php echo $main_home; ?>
 	</div></center><br>
 <?php
