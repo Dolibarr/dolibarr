@@ -139,7 +139,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, p.code as pays_code, p.libelle as pays, a.fk_pays as pays_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
 $tabsql[9] = "SELECT code_iso as code, label as libelle, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -383,7 +383,7 @@ if ($id == 11)
 
 // Define localtax_typeList (used for dictionnary "c_tva")
 $localtax_typeList = array();
-if (GETPOST("id") == 10)
+if ($id == 10)
 {
 	$localtax_typeList = array(
 			"0" => $langs->trans("No"),
@@ -433,22 +433,32 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
 
-            $msg.=$langs->trans("ErrorFieldRequired",$langs->transnoentities($fieldnamekey)).'<br>';
+            $msg.=$langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)).'<br>';
         }
     }
     // Other checks
     if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
-        $msg.="Value 'system' and 'systemauto' for type is reserved. You can use 'user' as value to add your own record.<br>";
+        $msg.= $langs->transnoentities('ErrorReservedTypeSystemSystemAuto').'<br>';
     }
-    if (isset($_POST["code"]) && $_POST["code"]=='0') {
-        $ok=0;
-        $msg.="Code can't contains value 0<br>";
+    if (isset($_POST["code"]))
+    {
+    	if ($_POST["code"]=='0')
+    	{
+        	$ok=0;
+        	$msg.= $langs->transnoentities('ErrorCodeCantContainZero').'<br>';
+        }
+        if (!is_numeric($_POST['code']))
+    	{
+	    	$ok = 0;
+	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
+	    }
     }
     if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
         $ok=0;
-        $msg.=$langs->trans("ErrorFieldRequired",$langs->trans("Country")).'<br>';
+        $msg.=$langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")).'<br>';
     }
+
 	// Clean some parameters
     if (isset($_POST["localtax1"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
     if (isset($_POST["localtax2"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
@@ -510,7 +520,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         else
         {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                $msg=$langs->trans("ErrorRecordAlreadyExists").'<br>';
+                $msg=$langs->transnoentities("ErrorRecordAlreadyExists").'<br>';
             }
             else {
                 dol_print_error($db);
@@ -580,7 +590,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     {
         if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
         {
-            $msg='<div class="error">'.$langs->trans("ErrorRecordIsUsedByChild").'</div>';
+            $msg='<div class="error">'.$langs->transnoentities("ErrorRecordIsUsedByChild").'</div>';
         }
         else
         {
@@ -978,6 +988,7 @@ if ($id)
                                 $valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
                             else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_type_contact') {
+                            	$langs->load('agenda');
                                 $key=$langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }

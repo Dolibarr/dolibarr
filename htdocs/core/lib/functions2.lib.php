@@ -506,7 +506,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 }
 
 /**
- * Return next value for a mask
+ * Return last or next value for a mask (according to area we should not reset)
  *
  * @param	DoliDB		$db				Database handler
  * @param   string		$mask			Mask to use
@@ -688,7 +688,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $posnumstart=strpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
     $sqlstring='SUBSTRING('.$field.', '.($posnumstart+1).', '.dol_strlen($maskcounter).')';
-    //print "x".$sqlstring;
 
     // Define $maskLike
     $maskLike = dol_string_nospecial($mask);
@@ -701,7 +700,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $maskLike = preg_replace('/\{dd\}/i','__',$maskLike);
     $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
-    //if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),str_pad("",dol_strlen($masktype),"_"),$maskLike);
     if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
 
     // Get counter in database
@@ -715,7 +713,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
     //print $sql.'<br>';
-    dol_syslog("functions2::get_next_value sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2::get_next_value mode=".$mode." sql=".$sql, LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -725,7 +723,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     else dol_print_error($db);
     if (empty($counter) || preg_match('/[^0-9]/i',$counter)) $counter=$maskoffset;
 
-    if ($mode == 'last')
+    if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
     {
         $counterpadded=str_pad($counter,dol_strlen($maskcounter),"0",STR_PAD_LEFT);
 
@@ -740,15 +738,17 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $maskLike = preg_replace('/\{dd\}/i','__',$maskLike);
         $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),$counterpadded,$maskLike);
         if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
-        //if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),str_pad("",dol_strlen($masktype),"_"),$maskLike);
         if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
-
+        
         $ref='';
-        $sql = "SELECT facnumber as ref";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql.= " WHERE facnumber LIKE '".$maskLike."'";
+        $sql = "SELECT ".$field." as ref";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$table;
+        $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
+    	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
         $sql.= " AND entity IN (".getEntity($table, 1).")";
-
+        if ($where) $sql.=$where;
+        if ($sqlwhere) $sql.=' AND '.$sqlwhere;
+        
         dol_syslog("functions2::get_next_value sql=".$sql);
         $resql=$db->query($sql);
         if ($resql)

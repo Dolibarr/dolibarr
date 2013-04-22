@@ -1451,7 +1451,7 @@ else if ($id > 0 || ! empty($ref))
     {
         $ref = dol_sanitizeFileName($object->ref);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
         $file=$fileparams['fullname'];
 
         // Build document if it not exists
@@ -1474,7 +1474,7 @@ else if ($id > 0 || ! empty($ref))
                 dol_print_error($db,$result);
                 exit;
             }
-            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
         }
 

@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - holiday
 CHARSET= UTF-8
 
+Holidays=Congés
 CPTitreMenu=Congés
 MenuReportMonth=Etat mensuel
 MenuAddCP=Nouvelle demande
@@ -86,6 +87,8 @@ UserName=Nom Prénom
 Employee=Salarié
 FirstDayOfHoliday=Premier jour de congès
 LastDayOfHoliday=Dernier jour de congès
+HolidaysMonthlyUpdate=Mise à jour mensuelle
+ManualUpdate=Mise à jour manuelle
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés
@@ -128,3 +131,8 @@ Jours=jours
 nbJours=Nombre jours
 TitleAdminCP=Configuration des Congés
 Permission20001=Lire / Créer / modifier ses congès
+Permission20002=Lire / Modifier toutes les demandes de congés payés
+Permission20003=Supprimer des demandes de congés payés
+Permission20004=Définir les congés payés des utilisateurs
+Permission20005=Voir les logs de modification des congés payés
+Permission20006=Accéder au rapport mensuel des congés payés

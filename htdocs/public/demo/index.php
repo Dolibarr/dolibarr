@@ -70,16 +70,18 @@ $object=new stdClass();
 $reshook=$hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
+// Visible
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
 $alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
+// Not visible
 $alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 								'mailmanspip','notification','syslog','user','webservices',
                                 // Extended modules
                                 'memcached','numberwords','zipautofillfr');
 $alwayshiddenuncheckedmodules=array('boutique','ftp',
                                 // Extended modules
-                                'awstats','bittorrent','cabinetmed','cmcic','concatpdf','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','nltechno','numberingpack','openstreetmap',
-                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
+                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','nltechno','numberingpack','openstreetmap',
+                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;
@@ -216,8 +218,7 @@ if (GETPOST("action") == 'gotodemo')
     // Do redirect to login page
 	if ($disablestring)
 	{
-		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
-		if (GETPOST('urlfrom','alpha')) $url.='&urlfrom='.GETPOST('urlfrom','alpha');
+		$url=DOL_URL_ROOT.'/index.php?'.(GETPOST('urlfrom','alpha')?'urlfrom='.urlencode(GETPOST('urlfrom','alpha')).'&':'').'disablemodules='.$disablestring;
 		header("Location: ".$url);
 		exit;
 	}
@@ -296,7 +297,7 @@ foreach ($demoprofiles as $profilearray)
 
 		print '<form method="POST" name="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
-        print '<input type="hidden" name="urlfrom" value="'.urlencode($urlfrom).'">'."\n";
+        print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
         print '<input type="hidden" name="username" value="demo">'."\n";
         print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";

@@ -168,7 +168,7 @@ class HookManager
 
                     	$result = $actionclassinstance->$method($parameters, $object, $action, $this);
 
-                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
 
                     	// TODO. remove this. array result must be set into $actionclassinstance->results

@@ -233,7 +233,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                         dolibarr_install_syslog('install/etape5.php Activate module file='.$file);
                         $res=dol_include_once("/core/modules/".$file);
 
-                        $res=Activate($modtoactivatenew,1);
+                        $res=activateModule($modtoactivatenew,1);
                         if (! $result) print 'ERROR in activating module file='.$file;
                     }
                 }

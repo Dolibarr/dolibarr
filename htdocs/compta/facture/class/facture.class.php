@@ -1576,7 +1576,7 @@ class Facture extends CommonInvoice
         $now=dol_now();
 
         $error=0;
-        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse, LOG_WARNING);
+        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
 
 	    // Check parameters
         if (! $this->brouillon)
@@ -2554,11 +2554,10 @@ class Facture extends CommonInvoice
         {
             $maxfacnumber = $this->getNextNumRef($this->client,'last');
             $ventilExportCompta = $this->getVentilExportCompta();
-            // Si derniere facture et si non ventilee, on peut supprimer
-            if ($maxfacnumber == $this->ref && $ventilExportCompta == 0)
-            {
-                return 1;
-            }
+            // If there is no invoice into the reset range and not already dispatched, we can delete
+            if ($maxfacnumber == '' && $ventilExportCompta == 0) return 1;
+            // If invoice to delete is last one and not already dispatched, we can delete
+            if ($maxfacnumber == $this->ref && $ventilExportCompta == 0) return 1;
         }
         else if ($this->statut == 0 && $facref == 'PROV') // Si facture brouillon et provisoire
         {
@@ -3458,7 +3457,7 @@ class FactureLigne
         	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;

@@ -8,10 +8,10 @@ Margins=Marges
 TotalMargin=Marge total
 MarginOnProducts=Marge / Productes
 MarginOnServices=Marge / Serveis
-MarginRate=Taxa de marge
-MarkRate=Taxa de marca
-DisplayMarginRates=Mostrar les taxes de marge
-DisplayMarkRates=Mostrar les taxes de marca
+MarginRate=Marge sobre cost
+MarkRate=Marge sobre venda
+DisplayMarginRates=Mostrar els marges sobre cost
+DisplayMarkRates=Mostrar els marges sobre venda
 InputPrice=Introduir un preu
 
 margin=Gestió de marges

@@ -309,6 +309,10 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             }
         }
     }
+    
+    // For multicompany
+    $out.="&entity=".$conf->entity;
+    
     return $out;
 }
 

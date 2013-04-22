@@ -341,7 +341,8 @@ class Conf
 
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON))  $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
+		// Unused constant and for avoid problem with multicompany sharing
+		//if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON))  $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
         // Security

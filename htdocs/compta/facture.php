@@ -29,13 +29,13 @@
  */
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-require DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
-require DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-require DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-require DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
@@ -2082,7 +2082,9 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
         $newclassname=$classname;
-        if ($newclassname=='Propal') $newclassname='CommercialProposal';
+        if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+        elseif ($newclassname == 'Commande') $newclassname = 'Order';
+
         print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
@@ -2787,7 +2789,7 @@ else if ($id > 0 || ! empty($ref))
             if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat')
             {
                 print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
-                print $form->textwithpicto($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+                print $form->textwithpicto($langs->trans("Discount").':',$langs->trans("HelpEscompte"),-1);
                 print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                 $resteapayeraffiche=0;
             }
@@ -3350,7 +3352,7 @@ else if ($id > 0 || ! empty($ref))
 
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -3373,7 +3375,7 @@ else if ($id > 0 || ! empty($ref))
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

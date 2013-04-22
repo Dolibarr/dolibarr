@@ -66,7 +66,7 @@ if ($action == 'updateMask')
     }
 }
 
-if ($action == 'specimen')
+else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
@@ -111,7 +111,8 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set')
+// Activate a model
+else if ($action == 'set')
 {
 	$label = GETPOST('label','alpha');
 	$scandir = GETPOST('scandir','alpha');
@@ -128,7 +129,7 @@ if ($action == 'set')
 	}
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
 	$type='order';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
@@ -142,7 +143,8 @@ if ($action == 'del')
 	}
 }
 
-if ($action == 'setdoc')
+// Set default model
+else if ($action == 'setdoc')
 {
 	$label = GETPOST('label','alpha');
 	$scandir = GETPOST('scandir','alpha');
@@ -182,7 +184,7 @@ if ($action == 'setdoc')
 	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -190,7 +192,7 @@ if ($action == 'setmod')
 	dolibarr_set_const($db, "COMMANDE_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
+else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
@@ -207,7 +209,7 @@ if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
     }
 }
 
-if ($action == 'set_COMMANDE_FREE_TEXT')
+else if ($action == 'set_COMMANDE_FREE_TEXT')
 {
 	$freetext = GETPOST("COMMANDE_FREE_TEXT");	// No alpha here, we want exact string
 
@@ -223,6 +225,14 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
     {
         $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
     }
+}
+else if ($action=='setModuleOptions') {
+	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
+	}
 }
 
 

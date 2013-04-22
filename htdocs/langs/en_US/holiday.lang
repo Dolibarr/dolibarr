@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - holiday
 CHARSET= UTF-8
 
+Holidays=Holidays
 CPTitreMenu=Holidays
 MenuReportMonth=Monthly statement
 MenuAddCP=Apply for holidays
@@ -86,6 +87,8 @@ UserName=Name
 Employee=Employee
 FirstDayOfHoliday=First day of holiday
 LastDayOfHoliday=Last day of holiday
+HolidaysMonthlyUpdate=Monthly update
+ManualUpdate=Manual update
 
 ## Configuration du Module ##
 ConfCP=Configuration of holidays module
@@ -128,4 +131,9 @@ NoCPforMonth=No leave this month.
 Jours=days
 nbJours=Number days
 TitleAdminCP=Configuration of Holidays
-Permission20001=Read / Modify all requests of holidays
+Permission20001=Read/create/modify their holidays
+Permission20002=Read/modify all requests of holidays
+Permission20003=Delete their holidays requests
+Permission20004=Define users holidays
+Permission20005=Review log of modified holidays
+Permission20006=Access holidays monthly report

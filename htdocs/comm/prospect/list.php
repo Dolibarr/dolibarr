@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,7 +245,7 @@ if ($resql)
         llxHeader('',$langs->trans("ThirdParty"),$help_url);
 	}
 
-	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_zipcode='.urlencode($search_code).'&amp;search_ville='.urlencode($search_ville);
+	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($search_nom).'&amp;search_zipcode='.urlencode($search_zipcode).'&amp;search_ville='.urlencode($search_ville);
  	// Added by Matelli
  	// Store the status filter in the URL
  	if (isSet($search_cstc))

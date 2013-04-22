@@ -58,8 +58,6 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Members");
-
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
@@ -73,7 +71,7 @@ $head = member_admin_prepare_head();
 dol_fiche_head($head, 'attributes', $langs->trans("Member"), 0, 'user');
 
 
-print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
+print $langs->trans("DefineHereComplementaryAttributes", $langs->transnoentitiesnoconv("Members")).'<br>'."\n";
 print '<br>';
 
 dol_htmloutput_errors($mesg);

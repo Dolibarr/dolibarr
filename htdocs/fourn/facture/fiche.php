@@ -191,7 +191,7 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
 {
     $object->fetch($id);
     $object->date_echeance=dol_mktime(12,0,0,$_POST['date_lim_reglementmonth'],$_POST['date_lim_reglementday'],$_POST['date_lim_reglementyear']);
-    if ($object->date_echeance < $object->date)
+    if (! empty($object->date_echeance) && $object->date_echeance < $object->date)
     {
     	$object->date_echeance=$object->date;
     	setEventMessage($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"),'warnings');
@@ -1609,7 +1609,7 @@ else
                 print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
                 print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
-                print '<td align="right">'.$langs->trans('Discount').'</td>';
+                print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
                 print '<td align="right">'.$langs->trans('TotalHTShort').'</td>';
                 print '<td align="right">'.$langs->trans('TotalTTCShort').'</td>';
                 print '<td>&nbsp;</td>';
@@ -1783,7 +1783,7 @@ else
             print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
             print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
             print '<td align="right">'.$langs->trans('Qty').'</td>';
-            print '<td align="right">&nbsp;</td>';
+            print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
             print '<td align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
             print '<td>&nbsp;</td>';
@@ -1853,7 +1853,7 @@ else
                 }
                 print '</td>';
                 print '<td align="right">'.$langs->trans('Qty').'</td>';
-            	print '<td>&nbsp;</td>';
+            	print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
                 print '<td>&nbsp;</td>';
                 print '<td colspan="4">&nbsp;</td>';
                 print '</tr>';
@@ -2039,7 +2039,7 @@ else
         {
             $ref = dol_sanitizeFileName($object->ref);
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
 
             // Build document if it not exists
@@ -2062,7 +2062,7 @@ else
                     dol_print_error($db,$result);
                     exit;
                 }
-                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($object->ref,'/'));
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
                 $file=$fileparams['fullname'];
             }
 

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011 François Cerbelle <francois@cerbelle.net>
+/* Copyright (C) 2011	François Cerbelle	<francois@cerbelle.net>
+ * Copyright (C) 2013	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,14 +81,13 @@ class mailing_contacts2 extends MailingTargets
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
         $sql.= " sp.name as name, sp.firstname as firstname, sp.civilite,";
         $sql.= " s.nom as companyname";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.rowid = sp.fk_soc";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+        $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	//$sql.= " AND sp.poste != ''";
-    	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
-    	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$filtersarray[0]."'";
+    	if ($filtersarray[0]<>'all') $sql.= " AND sp.poste ='".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
     	$resql = $this->db->query($sql);
     	if ($resql)
@@ -151,9 +151,10 @@ class mailing_contacts2 extends MailingTargets
     /**
      * 		Return here number of distinct emails returned by your selector.
      *
+     *		@param	string	$sql		Requete sql de comptage
      * 		@return		int
      */
-    function getNbOfRecipients()
+    function getNbOfRecipients($sql='')
     {
     	global $conf;
 
@@ -161,10 +162,9 @@ class mailing_contacts2 extends MailingTargets
         // Number with a filter are show in the combo list for each filter.
         // If we want a filter "a position is defined", we must add it into formFilter
     	$sql = "SELECT count(distinct(sp.email)) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+        $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
     	$sql.= " AND sp.email != ''";  // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	//$sql.= " AND sp.poste != ''";
@@ -186,10 +186,9 @@ class mailing_contacts2 extends MailingTargets
     	$langs->load("companies");
 
         $sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp,";
-        $sql.= " ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";
+        $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND sp.email != ''";    // Note that null != '' is false
         $sql.= " AND sp.no_email = 0";
         $sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";

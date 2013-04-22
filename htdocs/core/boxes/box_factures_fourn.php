@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,7 @@ class box_factures_fourn extends ModeleBoxes
 				$now=dol_now();
 
 				$i = 0;
-				$l_due_date =  $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
 
 				while ($i < $num)
 				{
@@ -105,7 +105,7 @@ class box_factures_fourn extends ModeleBoxes
 					$datec=$db->jdate($objp->datec);
 
 					$late = '';
-					if ($objp->paye == 0 && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
+					if ($objp->paye == 0 && $datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,

@@ -2689,7 +2689,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
-		if ($local == 1 && ! $thirdparty_buyer->localtax1_assuj) return 0;
+		if ($local == 1) 
+		{
+			if ($thirdparty_seller->id==$mysoc->id)
+			{
+				if (! $thirdparty_buyer->localtax1_assuj) return 0;
+			}
+			else 
+			{
+				if (! $thirdparty_seller->localtax1_assuj) return 0;
+			}
+		}
+		
 		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
