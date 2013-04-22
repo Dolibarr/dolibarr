@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Antoine Iauch        <aiauch@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,12 @@ if (! $sortfield) $sortfield="name";
 // Date range
 $year=GETPOST("year");
 $month=GETPOST("month");
+$date_startyear = GETPOST("date_startyear");
+$date_startmonth = GETPOST("date_startmonth");
+$date_startday = GETPOST("date_startday");
+$date_endyear = GETPOST("date_endyear");
+$date_endmonth = GETPOST("date_endmonth");
+$date_endday = GETPOST("date_endday");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -89,9 +96,34 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 else
 {
 	// TODO We define q
-
 }
 
+$commonparams=array();
+$commonparams['modecompta']=$modecompta;
+$commonparams['sortorder'] = $sortorder;
+$commonparams['sortfield'] = $sortfield;
+
+$headerparams = array();
+$headerparams['date_startyear'] = $date_startyear;
+$headerparams['date_startmonth'] = $date_startmonth;
+$headerparams['date_startday'] = $date_startday;
+$headerparams['date_endyear'] = $date_endyear;
+$headerparams['date_endmonth'] = $date_endmonth;
+$headerparams['date_endday'] = $date_endday;
+$headerparams['q'] = $q;
+
+$tableparams = array();
+$tableparams['search_categ'] = $selected_cat;
+$tableparams['subcat'] = ($subcat === true)?'yes':'';
+
+// Adding common parameters
+$allparams = array_merge($commonparams, $headerparams, $tableparams);
+$headerparams = array_merge($commonparams, $headerparams);
+$tableparams = array_merge($commonparams, $tableparams);
+
+foreach($allparams as $key => $value) {
+    $paramslink .= '&' . $key . '=' . $value;
+}
 
 /*
  * View
@@ -102,9 +134,8 @@ llxHeader();
 
 $form=new Form($db);
 
-// Affiche en-tete du rapport
-if ($modecompta=="CREANCES-DETTES")
-{
+// Show report header
+if ($modecompta=="CREANCES-DETTES") {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
     $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -114,8 +145,7 @@ if ($modecompta=="CREANCES-DETTES")
 	else  $description.= $langs->trans("DepositsAreIncluded");
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
-}
-else {
+} else {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
     $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -131,20 +161,29 @@ if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam);
 
 
-// Charge tableau
-$catotal=0;
-if ($modecompta == 'CREANCES-DETTES')
+// Show array
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+// Extra parameters management
+foreach($headerparams as $key => $value)
 {
+     print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+}
+
+$catotal=0;
+if ($modecompta == 'CREANCES-DETTES') {
     $sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
     $sql.= " WHERE f.fk_statut in (1,2)";
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
-	else $sql.= " AND f.type IN (0,1,2,3)";
-	if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-}
-else
-{
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	    $sql.= " AND f.type IN (0,1,2)";
+	    } else {
+	    $sql.= " AND f.type IN (0,1,2,3)";
+	}
+	if ($date_start && $date_end) {
+	    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+	}
+} else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
      * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -155,7 +194,9 @@ else
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.rowid = pf.fk_paiement";
 	$sql.= " WHERE 1=1";
-	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	if ($date_start && $date_end) {
+	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	}
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -163,27 +204,25 @@ $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i=0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
          $obj = $db->fetch_object($result);
-         $amount[$obj->rowid] = $obj->amount_ttc;
-         $name[$obj->rowid] = $obj->lastname.' '.$obj->firstname;
-         $catotal+=$obj->amount_ttc;
-         $i++;
+	 $amount_ht[$obj->rowid] = $obj->amount;
+	 $amount[$obj->rowid] = $obj->amount_ttc;
+	 $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
+	 $catotal_ht+=$obj->amount;
+	 $catotal+=$obj->amount_ttc;
+	 $i++;
     }
-}
-else {
+} else {
     dol_print_error($db);
 }
 
-// On ajoute les paiements ancienne version, non lies par paiement_facture donc sans user
-if ($modecompta != 'CREANCES-DETTES')
-{
-    $sql = "SELECT -1 as rowidx, '' as lastname, '' as firstname, sum(p.amount) as amount_ttc";
+// Adding old-version payments, non-bound by "paiement_facture" then without User
+if ($modecompta != 'CREANCES-DETTES') {
+    $sql = "SELECT -1 as rowidx, '' as name, '' as firstname, sum(DISTINCT p.amount) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
     $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
     $sql.= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -192,42 +231,86 @@ if ($modecompta != 'CREANCES-DETTES')
     $sql.= " AND p.fk_bank = b.rowid";
     $sql.= " AND b.fk_account = ba.rowid";
     $sql.= " AND ba.entity = ".$conf->entity;
-	if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	if ($date_start && $date_end) {
+	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	}
     $sql.= " GROUP BY rowidx, name, firstname";
     $sql.= " ORDER BY rowidx";
 
     $result = $db->query($sql);
-    if ($result)
-    {
+    if ($result) {
         $num = $db->num_rows($result);
         $i=0;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($result);
             $amount[$obj->rowidx] = $obj->amount_ttc;
-            $name[$obj->rowidx] = $obj->lastname.' '.$obj->firstname;
+            $name[$obj->rowidx] = $obj->name.' '.$obj->firstname;
             $catotal+=$obj->amount_ttc;
             $i++;
         }
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
 
-
 $i = 0;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"name","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("OtherStatistics"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
+print_liste_field_titre(
+	$langs->trans("User"),
+	$_SERVER["PHP_SELF"],
+	"name",
+	"",
+	$paramslink,
+	"",
+	$sortfield,
+	$sortorder
+	);
+if ($modecompta == 'CREANCES-DETTES') {
+    print_liste_field_titre(
+           $langs->trans('AmountHT'),
+           $_SERVER["PHP_SELF"],
+           "amount_ht",
+           "",
+           $paramslink,
+           'align="right"',
+           $sortfield,
+           $sortorder
+	   );
+    } else {
+	print '<td colspan="1"></td>';
+}
+print_liste_field_titre(
+	$langs->trans("AmountTTC"),
+	$_SERVER["PHP_SELF"],
+	"amount_ttc",
+	"",
+	$paramslink,
+	'align="right"',
+	$sortfield,
+	$sortorder
+	);
+print_liste_field_titre(
+	$langs->trans("Percentage"),
+	$_SERVER["PHP_SELF"],"amount_ttc",
+	"",
+	$paramslink,
+	'align="right"',
+	$sortfield,
+	$sortorder
+	);
+print_liste_field_titre(
+	$langs->trans("OtherStatistics"),
+	$_SERVER["PHP_SELF"],
+	"",
+	"",
+	"",
+	'align="center" width="20%"'
+	);
 print "</tr>\n";
 $var=true;
 
-if (count($amount))
-{
+if (count($amount)) {
     $arrayforsort=$name;
 
     // We define arrayforsort
@@ -239,6 +322,14 @@ if (count($amount))
         arsort($name);
         $arrayforsort=$name;
     }
+    if ($sortfield == 'amount_ht' && $sortorder == 'asc') {
+        asort($amount_ht);
+        $arrayforsort=$amount_ht;
+    }
+    if ($sortfield == 'amount_ht' && $sortorder == 'desc') {
+        arsort($amount_ht);
+        $arrayforsort=$amount_ht;
+    }
     if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
         asort($amount);
         $arrayforsort=$amount;
@@ -248,8 +339,7 @@ if (count($amount))
         $arrayforsort=$amount;
     }
 
-    foreach($arrayforsort as $key => $value)
-    {
+    foreach($arrayforsort as $key => $value) {
         $var=!$var;
         print "<tr ".$bc[$var].">";
 
@@ -257,23 +347,44 @@ if (count($amount))
         $fullname=$name[$key];
         if ($key >= 0) {
             $linkname='<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
-        }
-        else {
+        } else {
             $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }
         print "<td>".$linkname."</td>\n";
 
-        // Amount
+	// Amount w/o VAT
         print '<td align="right">';
         if ($modecompta != 'CREANCES-DETTES')
         {
-            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
-            else print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+            if ($key > 0) {
+		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+		} else {
+		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+		}
+        } else {
+            if ($key > 0) {
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+	    } else {
+		print '<a href="#">';
+	    }
+	    print price($amount_ht[$key]);
         }
-        else
-        {
-            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
-            else print '<a href="#">';
+        print '</td>';
+
+        // Amount with VAT
+        print '<td align="right">';
+        if ($modecompta != 'CREANCES-DETTES') {
+            if ($key > 0) {
+		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+		} else {
+		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+		}
+        } else {
+            if ($key > 0) {
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+	    } else {
+		print '<a href="#">';
+	    }
         }
         print price($amount[$key]);
         print '</td>';
@@ -283,17 +394,30 @@ if (count($amount))
 
         // Other stats
         print '<td align="center">';
-        if (! empty($conf->propal->enabled) && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
-        if (! empty($conf->commande->enabled) && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
-        if (! empty($conf->facture->enabled) && $key>0) print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+        if (! empty($conf->propal->enabled) && $key>0) {
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
+	}
+        if (! empty($conf->commande->enabled) && $key>0) {
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
+	}
+        if (! empty($conf->facture->enabled) && $key>0) {
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
+	}
         print '</td>';
-
         print "</tr>\n";
         $i++;
     }
 
     // Total
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td>';
+    print '<tr class="liste_total">';
+    print '<td>'.$langs->trans("Total").'</td>';
+    if ($modecompta != 'CREANCES-DETTES') {
+	print '<td colspan="1"></td>';
+    } else {
+	    print '<td align="right">'.price($catotal_ht).'</td>';
+    }
+    print '<td align="right">'.price($catotal).'</td>';
+    print '<td>&nbsp;</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';
 

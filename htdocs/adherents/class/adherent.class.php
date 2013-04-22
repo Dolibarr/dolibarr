@@ -1520,7 +1520,12 @@ class Adherent extends CommonObject
             $lien = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.'">';
             $lienfin='</a>';
         }
-
+        if ($option == 'category')
+        {
+        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
+        	$lienfin='</a>';
+        }
+        
         $picto='user';
         $label=$langs->trans("ShowMember");
 

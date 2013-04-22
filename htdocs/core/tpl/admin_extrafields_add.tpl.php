@@ -27,7 +27,7 @@
     		var required = jQuery("#required");
     		var default_value = jQuery("#default_value");
     		<?php
-    		if(GETPOST('type') != "select") 
+    		if((GETPOST('type') != "select") &&  (GETPOST('type') != "sellist"))
     		{
     			print 'jQuery("#value_choice").hide();';
     		}
@@ -48,6 +48,7 @@
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
+    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
@@ -63,6 +64,7 @@
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="add">
+<input type="hidden" name="rowid" value="<?php echo $rowid ?>">
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Type -->
@@ -85,7 +87,7 @@
 <table class="nobordernopadding">
 <tr><td width="30%">
 	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
-</td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp"),1,0)?></td></tr>
+</td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
 </table>
 </td>
 

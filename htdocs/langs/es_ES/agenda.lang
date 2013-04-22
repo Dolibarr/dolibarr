@@ -41,6 +41,7 @@ ActionsEvents=Eventos para que Dolibarr cree una acción de forma automática
 PropalValidatedInDolibarr=Presupuesto %s validado
 InvoiceValidatedInDolibarr=Factura %s validada
 InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
+InvoiceDeleteDolibarr=Factura %s eliminada
 OrderValidatedInDolibarr=Pedido %s validado
 OrderApprovedInDolibarr=Pedido %s aprobado
 OrderBackToDraftInDolibarr=Pedido %s devuelto a borrador

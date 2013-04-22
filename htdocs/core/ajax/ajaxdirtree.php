@@ -117,7 +117,7 @@ if (file_exists($fullpathselecteddir))
     	        // Loop on all database entries (sqltree) to find the one matching the subdir found into dir to scan
 		        foreach($sqltree as $key => $tmpval)
 		        {
-    	            //print "-- key=".$key." - ".$val['fullrelativename']." vs ".(($selecteddir != '/'?$selecteddir.'/':'').$file).'<br>';
+    	            //print "-- key=".$key." - ".$tmpval['fullrelativename']." vs ".(($selecteddir != '/'?$selecteddir.'/':'').$file)."<br>\n";
 		        	if ($tmpval['fullrelativename'] == (($selecteddir != '/'?$selecteddir.'/':'').$file))		// We found equivalent record into database
 		            {
 		                $val=$tmpval;

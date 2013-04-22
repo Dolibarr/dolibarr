@@ -138,7 +138,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
     		$mod=new $class($db);
             $result=$mod->remove();
             $result=$mod->init();
-        	$this->assertLessThan($result, 0);
+        	$this->assertLessThan($result, 0, $modlabel);
         	print __METHOD__." result=".$result."\n";
 		}
 

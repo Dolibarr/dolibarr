@@ -80,8 +80,8 @@ if (! empty($conf->margin->enabled)) {
 							'origin_price_ht_cache' => 'price_ht',
 							'origin_tva_tx_cache' => 'tva_tx',
 							'origin_price_ttc_cache' => 'price_ttc',
-							'qty' => 'qty'
-							,'remise_percent' => 'discount'
+							'qty' => 'qty',
+							'remise_percent' => 'discount'
 					),
 					'update_textarea' => array(
 							'product_desc' => 'desc'
@@ -160,7 +160,10 @@ if (! empty($conf->margin->enabled)) {
 		<input type="hidden" id="origin_price_ttc_cache" name="origin_price_ttc_cache" value="" />
 	</td>
 	<td align="right"><input type="text" size="3" id="qty" name="qty" value="<?php echo (GETPOST('qty')?GETPOST('qty'):1); ?>"></td>
-	<td align="right" nowrap="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" id="remise_percent" name="remise_percent">%</td>
+	<td align="right" nowrap="nowrap">
+		<input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" id="remise_percent" name="remise_percent">%
+		<input type="hidden" id="origin_remise_percent" name="origin_remise_percent" value="<?php echo $buyer->remise_client; ?>" />
+	</td>
 <?php
 $colspan = 4;
 if (! empty($conf->margin->enabled)) {
@@ -372,6 +375,11 @@ $(document).ready(function() {
 	if ($('#idprod').val() == 0 && $('#tva_tx').val() == 0) {
 		$('#price_ttc').attr('disabled','disabled');
 	}
+
+	$('#remise_percent').bind('change', function() {
+		if ($(this).val() < $('#origin_remise_percent').val())
+			$('#remise_percent').val($('#origin_remise_percent').val());
+	});
 
 	$('#tva_tx').change(function() {
 		if ($(this).val() == 0) {

@@ -93,7 +93,7 @@ if ($action == 'setnote_public' && ! empty($permission))
 
 else if ($action == 'setnote_private' && ! empty($permission))
 {
-    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES), '_private');
     if ($result < 0) dol_print_error($db,$object->error);
 }
 

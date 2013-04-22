@@ -128,7 +128,7 @@ if ($id > 0 || ! empty($ref))
 
 			print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
 
-			print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
+			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
 			print '<td align="right">'.dol_print_size(dol_filesize($file)).'</td>';
 			print '<td align="right">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';
 			print '</tr>';
@@ -139,7 +139,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print "<tr $bc[$var]><td>Commande detaillee</td>";
 
-				print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
+				print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
 				print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';
 				print '<td align="right">'.dol_print_date(dol_filemtime($filedetail),'dayhour').'</td>';
 				print '</tr>';

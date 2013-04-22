@@ -1064,7 +1064,7 @@ class Task extends CommonObject
 				}
 
 				$this->db->begin();
-				$res=$clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES));
+				$res=$clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES), '_private');
 				if ($res < 0)
 				{
 					$this->error.=$clone_task->error;

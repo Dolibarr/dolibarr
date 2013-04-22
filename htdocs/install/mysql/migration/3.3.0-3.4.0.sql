@@ -180,6 +180,7 @@ UPDATE llx_c_tva set localtax1=0, localtax1_type='0' where localtax1_type = '7';
 UPDATE llx_c_tva set localtax2=0, localtax2_type='0' where localtax2_type = '7';
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after tva_tx;
 
 ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
 
@@ -266,7 +267,6 @@ ALTER TABLE llx_commande_extrafields ADD INDEX idx_commande_extrafields (fk_obje
 ALTER TABLE llx_socpeople ADD COLUMN note_public text after note;
 ALTER TABLE llx_societe ADD COLUMN note_public text after note;
 
-ALTER TABLE llx_facture_fourn_det ADD COLUMN info_bits integer NOT NULL DEFAULT 0 after date_end;
 ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
@@ -306,3 +306,44 @@ create table llx_projet_task_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_projet_task_extrafields ADD INDEX idx_projet_task_extrafields (fk_object);
+
+
+CREATE TABLE llx_opensurvey_comments (
+    id_comment INTEGER unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_sondage CHAR(16) NOT NULL,
+    comment text NOT NULL,
+    tms timestamp,
+    usercomment text
+) ENGINE=InnoDB;
+
+CREATE TABLE llx_opensurvey_sondage (
+       id_sondage VARCHAR(16) PRIMARY KEY,
+       id_sondage_admin CHAR(24),
+       commentaires text,
+       mail_admin VARCHAR(128),
+       nom_admin VARCHAR(64),
+       titre text,
+       date_fin datetime,
+       format VARCHAR(2),
+       mailsonde varchar(2) DEFAULT '0',
+       survey_link_visible integer DEFAULT 1,
+	   canedit integer DEFAULT 0,
+       origin varchar(64),
+       tms timestamp,
+	   sujet TEXT
+) ENGINE=InnoDB;
+CREATE TABLE llx_opensurvey_user_studs (
+    id_users INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(64) NOT NULL,
+    id_sondage VARCHAR(16) NOT NULL,
+    reponses VARCHAR(100) NOT NULL,
+    tms timestamp
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_comment (id_comment);
+ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_id_sondage_admin (id_sondage_admin);
+ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_users (id_users);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_nom (nom);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);

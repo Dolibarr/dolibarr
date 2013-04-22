@@ -406,7 +406,7 @@ if (! empty($force_install_message))
 	<tr class="hidesqlite">
 		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="text" id="db_pass" autocomplete="off"
+		<td class="label" valign="top"><input type="password" id="db_pass" autocomplete="off"
 			name="db_pass"
 			value="<?php
 			//$autofill=((! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass);
@@ -460,7 +460,7 @@ if (! empty($force_install_message))
 	<tr class="hidesqlite hideroot">
 		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="text" autocomplete="off"
+		<td class="label" valign="top"><input type="password" autocomplete="off"
 			id="db_pass_root" name="db_pass_root" class="needroot"
 			value="<?php
 			$autofill=((! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass);
