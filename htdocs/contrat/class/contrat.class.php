@@ -483,6 +483,10 @@ class Contrat extends CommonObject
 				$line->fk_product		= $objp->fk_product;
 				$line->info_bits		= $objp->info_bits;
 
+				$line->fk_fournprice 	= $objp->fk_fournprice;
+				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
+				$line->pa_ht 			= $marginInfos[0];
+
 				$line->fk_user_author	= $objp->fk_user_author;
 				$line->fk_user_ouverture= $objp->fk_user_ouverture;
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
@@ -653,6 +657,8 @@ class Contrat extends CommonObject
 		if (! $paramsok) return -1;
 
 		$this->db->begin();
+
+		$now=dol_now();
 
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
