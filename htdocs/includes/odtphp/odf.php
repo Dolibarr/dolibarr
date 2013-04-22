@@ -459,7 +459,8 @@ IMG;
 		 
 		$name=str_replace('.odt', '', $name);
 		$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name;
-		//dol_syslog('$execmethod='.$execmethod.' Run command='.$command);
+		
+		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
 		if ($execmethod == 1)
 		{
 			exec($command, $output_arr, $retval);
@@ -486,16 +487,16 @@ IMG;
 
 		if($retval == 0)
 		{
-			//dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			if (headers_sent($filename, $linenum)) {
 				throw new OdfException("headers already sent ($filename at $linenum)");
 			}
 
-			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			/*if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				header('Content-type: application/pdf');
 				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
 				readfile("$name.pdf");
-			}
+			}*/
 			unlink("$name.odt");
 		} else {
 			//dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
