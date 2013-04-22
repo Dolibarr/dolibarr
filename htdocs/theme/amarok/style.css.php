@@ -349,6 +349,8 @@ div.tmenu ul li a.tmenusel {/* texte du menu principal sélectionné */
 
 /* Login */
 
+body.body center { color:white; margin-top: 100px; }
+
 form#login {
 	display:block;
 	border:solid 1px rgba(0,0,0,.4);
@@ -491,6 +493,10 @@ img.login, img.printer, img.entity {
 	text-decoration:none;
 	color: white;
 	font-weight:bold;
+}
+
+div.login_main_home {
+	color: #000000;
 }
 
 
@@ -913,7 +919,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 
