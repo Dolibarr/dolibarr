@@ -263,7 +263,7 @@ if ($objectid > 0)
 
 		// Affiche formulaire upload
 	   	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id,'',0,0,($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create));
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id,'',0,0,($user->rights->agenda->myactions->create||$user->rights->agenda->allactions->create),50,$act);
 
 
 		// List of document
