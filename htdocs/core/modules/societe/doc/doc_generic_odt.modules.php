@@ -314,10 +314,20 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
-					$odfHandler->exportAsAttachedPDF($file);
+					try {
+						$odfHandler->exportAsAttachedPDF($file);
+					}catch (Exception $e){
+						$this->error=$e->getMessage();
+						return -1;
+					}
 				}
 				else {
+					try {
 					$odfHandler->saveToDisk($file);
+					}catch (Exception $e){
+						$this->error=$e->getMessage();
+						return -1;
+					}
 				}	
 
 				if (! empty($conf->global->MAIN_UMASK))
