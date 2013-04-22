@@ -220,48 +220,11 @@ function getDocument($authentication, $modulepart, $file)
 		// find the subdirectory name as the reference
 		$refname=basename(dirname($original_file)."/");
 
-		// Wrapping for invoices
-		if ($modulepart == 'facture')
-		{
-			if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
-			{
-				$accessallowed=1;
-			}
-			$original_file = $conf->facture->dir_output.'/'.$original_file;
-			$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$refname."' AND entity=".$conf->entity;
-		}
-		// Wrapping pour les propales
-		else if ($modulepart == 'propal')
-		{
-			if ($fuser->rights->propal->lire || preg_match('/^specimen/i',$original_file))
-			{
-				$accessallowed=1;
-			}
-			$original_file = $conf->propal->dir_output.'/'.$original_file;
-			$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$refname."' AND entity=".$conf->entity;
-		}
-
-		// Wrapping pour les commandes
-		else if ($modulepart == 'commande')
-		{
-			if ($fuser->rights->commande->lire || preg_match('/^specimen/i',$original_file))
-			{
-				$accessallowed=1;
-			}
-			$original_file=$conf->commande->dir_output.'/'.$original_file;
-			$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$refname."' AND entity=".$conf->entity;
-		}
-		// Wrapping pour generic module
-		else
-		{
-			if ($fuser->rights->$modulepart->read || preg_match('/^specimen/i',$original_file))
-			{
-				$accessallowed=1;
-			}
-			$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
-			// TODO
-			//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."registration WHERE ref='".$refname."' AND entity=".$conf->entity;
-		}
+		// Security check
+		$accessallowed=0;
+		$check_access = dol_check_secure_access_document($modulepart,$original_file);
+		$accessallowed=$check_access['accessallowed'];
+		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 
 		// Basic protection (against external users only)
 		if ($fuser->societe_id > 0)
