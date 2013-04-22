@@ -576,7 +576,7 @@ class Task extends CommonObject
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public,";
 		$sql.= " t.rowid as taskid, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress,";
-		$sql.= " t.dateo as date_start, t.datee as date_end, t.total_ht, t.subprice, t.duration_planned, t.fk_statut";
+		$sql.= " t.dateo as date_start, t.datee as date_end, t.subprice, t.duration_planned, t.fk_statut";
 		if ($mode == 0)
 		{
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
