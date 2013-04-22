@@ -285,7 +285,7 @@ else
 	dol_print_error($db);
 }
 
-// Si acc�s issu d'une recherche et rien de trouv�
+// Si accés issu d'une recherche et rien de trouvé
 if ($_POST["action"] == "search" && ! $num)
 {
 	print $langs->trans("NoRecordFound");

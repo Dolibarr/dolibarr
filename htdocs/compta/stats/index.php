@@ -439,7 +439,7 @@ print "</table>";
  $i++;
  }
  $var=!$var;
- print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r�gl� des factures partiellement r�gl�es</td></tr>";
+ print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja réglé des factures partiellement réglées</td></tr>";
  }
  $db->free($resql);
  }

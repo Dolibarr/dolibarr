@@ -938,12 +938,12 @@ function MntAmountProject($db, $projectsId)
 
 function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 {
-	// r�cup�ration des infos de la tache
+	// récupération des infos de la tache
 	$task = new Task($db);
 	if ($task->fetch($taskid) > 0)
 	{
 		
-		// r�cup�ration des infos du projet associ� � la tache (soci�t� nottament)
+		// récupération des infos du projet associé é la tache (société nottament)
 		$projet = new Project($db);
 		$result=$projet->fetch($task->fk_project);
 		$socid=$projet->socid;
@@ -953,7 +953,7 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 		$note_public = $projet->note_public;
 		$note_private = $projet->note_private;
 	
-		// on r�cup�re les contact projet client pour alimenter la note public qui sera utilis� sur la facture.
+		// on récupére les contact projet client pour alimenter la note public qui sera utilisé sur la facture.
 	   	$sql = "SELECT * FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc, ".MAIN_DB_PREFIX."socpeople as sp ";
 		$sql .= " WHERE ctc.element='project' and source='external'";
 		$sql .= " AND ec.fk_c_type_contact = ctc.rowid";
@@ -972,12 +972,12 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 			}
 		}
 
-		// r�cup�ration de la r�f�rence 
+		// récupération de la référence 
 		if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 		{
 			require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
 		}
-		// cr�ation de la fiche d'intervention 
+		// création de la fiche d'intervention 
 		require_once(DOL_DOCUMENT_ROOT ."/fichinter/class/fichinter.class.php");
 		$object = new Fichinter($db);
 		$object->date = time();
@@ -987,7 +987,7 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 		
 		$numpr =$modFicheinter->getNextValue($societe,$object);
 		
-		// cr�ation d'une nouvelle fiche d'intervention
+		// création d'une nouvelle fiche d'intervention
 		$object->socid			= $socid;
 		$object->fk_project		= $task->fk_project;
 		$object->note_public	= $note_public;
@@ -1000,7 +1000,7 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 		$object->statut=0; 	// fich inter en mode draft
 
 		$object->ref=$numpr;
-		$object->modelpdf=0; // � rien par d�faut
+		$object->modelpdf=0; // à rien par défaut
 	
 		$result = $object->create();
 		if ($result > 0)
@@ -1036,9 +1036,9 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 				dol_print_error($db);
 			}
 			
-			// on met � jour le statut de la tache pour ne plus pouvoir recr�er de fiche d'inter dessus
+			// update date
 			$id=$result;	  // Force raffraichissement sur fiche venant d'etre cree
-			// la tache passe � l'�tat transmit en fiche inter
+			// la tache passe à l'état transmit en fiche inter
 			$task->fk_statut=4;
 			$result=$task->update($user);
 			$taskid=$task->id;  // On retourne sur la fiche tache

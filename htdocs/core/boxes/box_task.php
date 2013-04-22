@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012 Charles-FranÁois BENKE <charles.fr@benke.fr>
+/* Copyright (C) 2012 Charles-Fran√ßois BENKE <charles.fr@benke.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +18,7 @@
  *	\file       htdocs/core/boxes/box_task.php
  *	\ingroup    Projet
  *	\brief      Module to Task activity of the current year
- *	\version	$Id: box_task.php,v 1.1 2012/09/11 Charles-FranÁois BENKE
+ *	\version	$Id: box_task.php,v 1.1 2012/09/11 Charles-Fran√ßois BENKE
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
@@ -111,7 +111,7 @@ class box_task extends ModeleBoxes {
 		}
 
 
-		// Add the sum ‡ the bottom of the boxes
+		// Add the sum to the bottom of the boxes
 		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'colspan=2 align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalDuree,'all',25200,5));

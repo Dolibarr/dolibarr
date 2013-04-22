@@ -95,12 +95,12 @@ if (is_resource($handle))
                     if (! $conf->$key->enabled || (! $user->admin && $mailmodule->require_admin))
                     {
                         $qualified=0;
-                        //print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
+                        //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
                         break;
                     }
                 }
 
-                // Si le module mailing est qualifi�
+                // Si le module mailing est qualifié
                 if ($qualified)
                 {
                     $var = !$var;

@@ -468,7 +468,7 @@ if ($id > 0 || ! empty($ref))
 				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 			}
 			
-			// trasnfert autoris� ssi date de fin tache saisie, tache termin� � 100% et pas d�j� transf�r�e
+			// trasnfert autorisé ssi date de fin tache saisie, tache terminé à 100% et pas déjà transférée
 			if ($user->rights->projet->creer && $object->date_end && $object->progress==100 && $object->fk_statut!=4)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=TaskToInter">'.'Transfert intervention'.'</a>';
