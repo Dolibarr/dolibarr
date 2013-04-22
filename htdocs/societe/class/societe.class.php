@@ -1455,6 +1455,15 @@ class Societe extends CommonObject
         {
             $lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id;
         }
+        else if ($option == 'category')
+        {
+        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
+        }
+        else if ($option == 'category_supplier')
+        {
+        	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
+        }
+       
         // By default
         if (empty($lien))
         {
@@ -1462,7 +1471,7 @@ class Societe extends CommonObject
         }
 
         // Add type of canvas
-        $lien.=(!empty($this->canvas)?'&amp;canvas='.$this->canvas:'').'">';
+        $lien.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'">';
         $lienfin='</a>';
 
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$name,'company').$lienfin);

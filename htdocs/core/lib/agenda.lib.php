@@ -384,6 +384,11 @@ function agenda_prepare_head()
 	$head[$h][2] = 'extsites';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_other.php";
+	$head[$h][1] = $langs->trans("Other");
+	$head[$h][2] = 'other';
+	$h++;
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'agenda_admin');
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";

@@ -76,36 +76,36 @@ class Task extends CommonObject
 	}
 
 
-	/**
-	 *  Create into database
-	 *
-	 *  @param	User	$user			User that create
-	 *  @param 	int		$notrigger		0=launch triggers after, 1=disable triggers
-	 *  @return int 					<0 if KO, Id of created object if OK
-	 */
-	function create($user, $notrigger=0)
-	{
-		global $conf, $langs;
+    /**
+     *  Create into database
+     *
+     *  @param	User	$user        	User that create
+     *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *  @return int 		        	<0 if KO, Id of created object if OK
+     */
+    function create($user, $notrigger=0)
+    {
+        global $conf, $langs;
 
-		$error=0;
+        $error=0;
 
-		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
+        // Clean parameters
+        $this->label = trim($this->label);
+        $this->description = trim($this->description);
 
-		// Check parameters
-		// Put here code to add control on parameters values
-		if ($this->progress==0)
-		{
-			if ($this->duration_planned == 0)
-			{	$this->fk_statut=0; }
-			else
-			{	$this->fk_statut=1; }
-		}
-		elseif ($this->progress!=100)
-		{	$this->fk_statut=2; }
-		else
-		{	$this->fk_statut=3; }
+        // Check parameters
+        // Put here code to add control on parameters values
+        if ($this->progress==0)
+        {
+        	if ($this->duration_planned == 0)
+        	{	$this->fk_statut=0; }
+        	else
+        	{	$this->fk_statut=1; }
+        }
+        elseif ($this->progress!=100)
+        {	$this->fk_statut=2; }
+        else
+        {	$this->fk_statut=3; }
 
 
 		// Insert request

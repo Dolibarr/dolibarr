@@ -3528,31 +3528,31 @@ class FactureLigne
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql.= " description='".$this->db->escape($this->desc)."'";
-		$sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
-		$sql.= ",subprice=".price2num($this->subprice)."";
-		$sql.= ",remise_percent=".price2num($this->remise_percent)."";
-		if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
-		else $sql.= ",fk_remise_except=null";
-		$sql.= ",tva_tx=".price2num($this->tva_tx)."";
-		$sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
-		$sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
-		$sql.= ",qty=".price2num($this->qty)."";
-		$sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
-		$sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
-		$sql.= ",product_type=".$this->product_type;
-		$sql.= ",info_bits='".$this->info_bits."'";
-		$sql.= ",special_code='".$this->special_code."'";
-		if (empty($this->skip_update_total))
-		{
-			$sql.= ",total_ht=".price2num($this->total_ht)."";
-			$sql.= ",total_tva=".price2num($this->total_tva)."";
-			$sql.= ",total_ttc=".price2num($this->total_ttc)."";
-			$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
-			$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
-		}
+        // Mise a jour ligne en base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+        $sql.= " description='".$this->db->escape($this->desc)."'";
+        $sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
+        $sql.= ",subprice=".price2num($this->subprice)."";
+        $sql.= ",remise_percent=".price2num($this->remise_percent)."";
+        if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
+        else $sql.= ",fk_remise_except=null";
+        $sql.= ",tva_tx=".price2num($this->tva_tx)."";
+        $sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
+        $sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
+        $sql.= ",qty=".price2num($this->qty)."";
+        $sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+        $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
+        $sql.= ",product_type=".$this->product_type;
+        $sql.= ",info_bits='".$this->info_bits."'";
+        $sql.= ",special_code='".$this->special_code."'";
+        if (empty($this->skip_update_total))
+        {
+        	$sql.= ",total_ht=".price2num($this->total_ht)."";
+        	$sql.= ",total_tva=".price2num($this->total_tva)."";
+        	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
+        	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
+        	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
+        }
 		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
 		$sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");

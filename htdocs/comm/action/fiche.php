@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -663,7 +663,6 @@ if ($id > 0)
 	 */
 
 	$head=actions_prepare_head($act);
-	dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
 
 	$now=dol_now();
 	$delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
@@ -711,6 +710,8 @@ if ($id > 0)
 		print '<input type="hidden" name="ref_ext" value="'.$act->ref_ext.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1'? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
+		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
+		
 		print '<table class="border" width="100%">';
 
 		// Ref
@@ -836,7 +837,9 @@ if ($id > 0)
 
 		print '</table>';
 
-		print '<center><br><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
+		dol_fiche_end();
+		
+		print '<center><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</center>';
 
@@ -844,6 +847,8 @@ if ($id > 0)
 	}
 	else
 	{
+		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
+		
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
@@ -1021,14 +1026,13 @@ if ($id > 0)
 			}
 			print '</table><br><br>';
 		}
-	}
 
-	print "</div>\n";
+		dol_fiche_end();
+	}
 
 
 	/*
 	 * Barre d'actions
-	 *
 	 */
 
 	print '<div class="tabsAction">';

@@ -1347,7 +1347,7 @@ else
             	require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
             	$notify=new Notify($db);
             	$text.='<br>';
-            	$text.=$notify->confirmMessage('NOTIFY_VAL_FAC_SUP',$object->socid);
+            	$text.=$notify->confirmMessage('BILL_SUPPLIER_VALIDATE',$object->socid);
             }*/
             $formquestion=array();
 

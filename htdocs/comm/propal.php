@@ -1534,7 +1534,7 @@ else
 			require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 			$notify=new Notify($db);
 			$text.='<br>';
-			$text.=$notify->confirmMessage('NOTIFY_VAL_PROPAL',$object->socid);
+			$text.=$notify->confirmMessage('PROPAL_VALIDATE',$object->socid);
 		}
 
 		if (! $error) $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProp'), $text, 'confirm_validate','',0,1);

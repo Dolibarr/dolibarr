@@ -344,7 +344,7 @@ class Form
      *	Show a text and picto with tooltip on text or picto
      *
      *	@param	string		$text				Text to show
-     *	@param	string		$htmltext			Content html of tooltip. Must be HTML/UTF8 encoded.
+     *	@param	string		$htmltext			HTML content of tooltip. Must be HTML/UTF8 encoded.
      *	@param	int			$tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
      *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
@@ -383,7 +383,7 @@ class Form
         //if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
         $paramfortooltiptd.= (($direction < 0)?' style="padding-left: 3px !important;"':'');
         $paramfortooltiptd.= (($direction > 0)?' style="padding-right: 3px !important;"':'');
-        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
+        if ((string) $text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
         if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
         if (empty($notabs))	$s.='</tr></table>';
 
