@@ -452,13 +452,16 @@ IMG;
 		 
 		if( $name == "" ) $name = md5(uniqid());
 
-		//dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
+		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
 		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-		 
+		
 		$name=str_replace('.odt', '', $name);
 		$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name;
+		
+		//$dirname=dirname($name);
+		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
 		
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
 		if ($execmethod == 1)
@@ -471,7 +474,7 @@ IMG;
 			$handle = fopen($outputfile, 'w');
 			if ($handle)
 			{
-				dol_syslog("Run command ".$command);
+				dol_syslog(get_class($this)."Run command ".$command,LOG_DEBUG);
 				$handlein = popen($command, 'r');
 				while (!feof($handlein))
 				{
@@ -492,19 +495,25 @@ IMG;
 				throw new OdfException("headers already sent ($filename at $linenum)");
 			}
 
-			/*if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				header('Content-type: application/pdf');
 				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
 				readfile("$name.pdf");
-			}*/
+			}
 			unlink("$name.odt");
 		} else {
-			//dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			//dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
-			echo "Error occured:<br>";
-			foreach($output_arr as $line)
-				echo $line."<br>";
-			//dol_syslog(get_class($this).'::exportAsAttachedPDF ERROR $line='.$line, LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
+			
+			if ($retval==126) {
+				throw new OdfException('Permission execute convert script : ' . $command);
+			}
+			else {
+				foreach($output_arr as $line) {
+					$errors.= $line."<br>";
+				}
+				throw new OdfException('ODT to PDF convert fail : ' . $errors);
+			}
 		}
 	}
 
