@@ -64,12 +64,12 @@ If you want to build/test package locally:
 # To update Dolibarr into launchpad (when repository for sources already exists)
 #----------------------------------
 	cd bzr
-	bzr branch lp:~yourlogin/+junk/debian-[dev|beta|stable]
+	bzr branch lp:~yourlogin/dolibarr/[dev|beta|stable]
+    cd dolibarr-[dev|beta|stable]
     bzr status
 	-- Update files here --
     bzr commit -m "Description of change"
-    bzr push lp:~yourlogin/+junk/debian-[dev|beta|stable]
-
+    bzr push
 
 
 # Init debian dir repository into launchpad (when repository for sources does not exist)
@@ -96,6 +96,7 @@ If you want to build/test package locally:
 #----------------------------------
 	cd bzr
 	bzr branch lp:~yourlogin/+junk/debian-[dev|beta|stable]
+    cd debian-[dev|beta|stable]
     bzr status
 	-- Update files here --
     bzr commit -m "Description of change"
