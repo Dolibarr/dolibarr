@@ -2689,18 +2689,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
-		if ($local == 1) 
+		if ($local == 1)
 		{
 			if ($thirdparty_seller->id==$mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax1_assuj) return 0;
 			}
-			else 
+			else
 			{
 				if (! $thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
-		
+
 		if ($local == 2 && ! $thirdparty_buyer->localtax2_assuj) return 0;
 	}
 	else
@@ -3599,6 +3599,38 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 
 	return $out;
 }
+
+
+/**
+ * Return firstname and lastname in correct order
+ *
+ * @param	string	$firstname		Firstname
+ * @param	string	$lastname		Lastname
+ * @param	int		$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname
+ * @return	string					Firstname + lastname or Lastname + firstname
+ */
+function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
+{
+	global $conf;
+
+	$ret='';
+	// If order not defined, we use the setup
+	if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION));
+	if ($nameorder)
+	{
+		$ret.=$firstname;
+		if ($firstname && $lastname) $ret.=' ';
+		$ret.=$lastname;
+	}
+	else
+	{
+		$ret.=$lastname;
+		if ($firstname && $lastname) $ret.=' ';
+		$ret.=$firstname;
+	}
+	return $ret;
+}
+
 
 /**
  *	Set event message in dol_events session
