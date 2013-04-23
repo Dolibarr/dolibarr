@@ -112,6 +112,9 @@ clean:
 	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
 	rm -fr htdocs/includes/tcpdf/fonts/utils
 
+	# clean from files to avoid warning of missing dependencies
+	rm -fr htdocs/includes/jquery/plugins/jqueryFileTree/connectors/jqueryFileTree.py
+
 	# Licence files are included into copyright file.
 	rm -fr htdocs/includes/phpexcel/license.txt
 	rm -f  htdocs/includes/tcpdf/LICENSE.TXT

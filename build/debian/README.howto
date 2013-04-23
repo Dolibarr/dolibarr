@@ -13,7 +13,7 @@ with format .DEB (for Debian, Ubuntu, ...).
 
 # This is standard command to work on Debian packaging:
 #
-# gpg --gen-key                          Generate a GPG key
+# gpg --gen-key                          Generate a GPG key (-> pubring.gpg + secring.gpg)
 #
 # debconf-updatepo					     		To run into po dir to regenate templates.pot
 # podebconf-report-po --from email@email.com	To send email to ask translations
