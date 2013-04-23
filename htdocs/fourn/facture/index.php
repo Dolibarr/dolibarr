@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,12 +156,12 @@ if (GETPOST("search_societe"))
 
 if (GETPOST("search_montant_ht"))
 {
-	$sql .= " AND fac.total_ht = '".$db->escape(GETPOST("search_montant_ht"))."'";
+	$sql .= " AND fac.total_ht = '".$db->escape(price2num(GETPOST("search_montant_ht")))."'";
 }
 
 if (GETPOST("search_montant_ttc"))
 {
-	$sql .= " AND fac.total_ttc = '".$db->escape(GETPOST("search_montant_ttc"))."'";
+	$sql .= " AND fac.total_ttc = '".$db->escape(price2num(GETPOST("search_montant_ttc")))."'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);

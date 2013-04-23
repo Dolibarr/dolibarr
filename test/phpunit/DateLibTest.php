@@ -304,19 +304,5 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         return $result;
     }
 
-    /**
-	 *	testDolGetFirstDay
-	 *
-	 *	@return	void
-     */
-    public function testDolGetFirstDay()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-    }
 }
 ?>

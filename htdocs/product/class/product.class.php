@@ -1799,8 +1799,16 @@ class Product extends CommonObject
 	 */
 	function add_sousproduit($id_pere, $id_fils,$qty)
 	{
-		$sql = 'DELETE from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = "'.$id_pere.'" AND fk_product_fils = "'.$id_fils.'"';
+		// Clean parameters
+		if (! is_numeric($id_pere)) $id_pere=0;
+		if (! is_numeric($id_fils)) $id_fils=0;
+
+		$result=$this->del_sousproduit($id_pere, $id_fils);
+		if ($result < 0) return $result;
+
+		// Check not already father of id_pere (to avoid father -> child -> father links)
+		$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
+		$sql .= ' WHERE fk_product_pere  = '.$id_fils.' AND fk_product_fils = '.$id_pere;
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -1808,37 +1816,27 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
-			$sql .= ' WHERE fk_product_pere  = "'.$id_fils.'" AND fk_product_fils = "'.$id_pere.'"';
-			if (! $this->db->query($sql))
+			$result = $this->db->query($sql);
+			if ($result)
 			{
-				dol_print_error($this->db);
-				return -1;
-			}
-			else
-			{
-				$result = $this->db->query($sql);
-				if ($result)
+				$num = $this->db->num_rows($result);
+				if($num > 0)
 				{
-					$num = $this->db->num_rows($result);
-					if($num > 0)
+					$this->error="isFatherOfThis";
+					return -1;
+				}
+				else
+				{
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
+					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.')';
+					if (! $this->db->query($sql))
 					{
-						$this->error="isFatherOfThis";
+						dol_print_error($this->db);
 						return -1;
 					}
 					else
 					{
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty)';
-						$sql .= ' VALUES ("'.$id_pere.'","'.$id_fils.'","'.$qty.'")';
-						if (! $this->db->query($sql))
-						{
-							dol_print_error($this->db);
-							return -1;
-						}
-						else
-						{
-							return 1;
-						}
+						return 1;
 					}
 				}
 			}
@@ -1850,14 +1848,18 @@ class Product extends CommonObject
 	 *
 	 *  @param      int	$fk_parent		Id du produit auquel ne sera plus lie le produit lie
 	 *  @param      int	$fk_child		Id du produit a ne plus lie
-	 *  @return     int			    	< 0 si erreur, > 0 si ok
+	 *  @return     int			    	< 0 if KO, > 0 if OK
 	 */
 	function del_sousproduit($fk_parent, $fk_child)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
-		$sql.= " WHERE fk_product_pere  = '".$fk_parent."'";
-		$sql.= " AND fk_product_fils = '".$fk_child."'";
+		if (! is_numeric($fk_parent)) $fk_parent=0;
+		if (! is_numeric($fk_child)) $fk_child=0;
 
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
+		$sql.= " WHERE fk_product_pere  = ".$fk_parent;
+		$sql.= " AND fk_product_fils = ".$fk_child;
+
+		dol_syslog(get_class($this).'::del_sousproduit sql='.$sql);
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -2122,7 +2124,7 @@ class Product extends CommonObject
 	 * 	Define value of this->res
 	 *
 	 *	@param		array	$prod			Products array
-	 *	@param		string	$compl_path		Directory path
+	 *	@param		string	$compl_path		Directory path of parents to add before
 	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
 	 *	@param		int		$level			Init level
 	 *  @return 	void
@@ -2132,65 +2134,36 @@ class Product extends CommonObject
 		global $conf,$langs;
 
 		$product = new Product($this->db);
-		foreach($prod as $nom_pere => $desc_pere)
+		//var_dump($prod);
+		foreach($prod as $id_product => $desc_pere)	// nom_pere is 0 or id of sub_product
 		{
 			if (is_array($desc_pere))	// If this parent desc is an array, this is an array of childs
 			{
 				$id=(! empty($desc_pere[0]) ? $desc_pere[0] :'');
 				$nb=(! empty($desc_pere[1]) ? $desc_pere[1] :'');
 				$type=(! empty($desc_pere[2]) ? $desc_pere[2] :'');
+				$label=(! empty($desc_pere[3]) ? $desc_pere[3] :'');
+				if ($multiply < 1) $multiply=1;
 
-				if ($multiply)
-				{
-					//print "XXX ".$desc_pere[1]." multiply=".$multiply;
-					$img="";
-					$this->fetch($id);
-					$this->load_stock();
-					if ($this->stock_warehouse[1]->real < $this->seuil_stock_alerte)
-					{
-						$img=img_warning($langs->trans("StockTooLow"));
-					}
-					$this->res[]= array(
-/*								"<tr><td>&nbsp; &nbsp; &nbsp; ->
-                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$desc_pere[0]."\">".$compl_path.stripslashes($nom_pere)."
-                                </a> (".$desc_pere[1].")</td><td align=\"center\"> ".($desc_pere[1]*$multiply)."</td><td>&nbsp</td><td>&nbsp</td>
-                                <td align=\"center\">".$this->stock_entrepot[1]." ".$img."</td></tr>",
-								$desc_pere[0],							// Id product
-*/								'id'=>$id,					// Id product
-								'nb'=>$nb,					// Nb of units that compose parent product
-								'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
-								'stock'=>$this->stock_warehouse[1]->real,		// Stock
-								'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
-								'fullpath' => $compl_path.$nom_pere,	// Label
-								'type'=>$type					// Nb of units that compose parent product
-								);
-				}
-				else
-				{
-					$this->fetch($desc_pere[0]);
-					$this->load_stock();
-					$this->res[]= array(
-/*					$compl_path.$nom_pere." (".$desc_pere[1].")",
-					$desc_pere[0],							// Id product
-*/					'id'=>$id,					// Id product
+				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
+				$this->fetch($id);
+				$this->load_stock();
+				$this->res[]= array(
+					'id'=>$id,					// Id product
 					'nb'=>$nb,					// Nb of units that compose parent product
-					'nb_total'=>$nb,				// Nb of units for all nb of product
-					'stock'=>$this->stock_warehouse[1]->real,		// Stock
+					'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
+					'stock'=>$this->stock_warehouse[1]->real,	// Stock
 					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
-					'fullpath' => $compl_path.$nom_pere,	// Label
-					'type'=>$type					// Nb of units that compose parent product
-					);
-				}
-			}
-			else if($nom_pere != "0" && $nom_pere != "1")
-			{
-				$this->res[]= array($compl_path.$nom_pere,$desc_pere);
+					'fullpath' => $compl_path.$label,			// Label
+					'type'=>$type				// Nb of units that compose parent product
+				);
 			}
 
 			// Recursive call if child is an array
-			if (is_array($desc_pere[0]))
+			if (is_array($desc_pere['childs']))
 			{
-				$this ->fetch_prod_arbo($desc_pere[0], $nom_pere." -> ", $desc_pere[1]*$multiply, $level+1);
+				//print 'YYY We go down for '.$desc_pere[3]." -> \n";
+				$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
 			}
 		}
 	}
@@ -2227,11 +2200,12 @@ class Product extends CommonObject
 		$this->res = array();
 		if (isset($this->sousprods) && is_array($this->sousprods))
 		{
-			foreach($this->sousprods as $nom_pere => $desc_pere)
+			foreach($this->sousprods as $prod_name => $desc_product)
 			{
-				if (is_array($desc_pere)) $this->fetch_prod_arbo($desc_pere,"",$multiply);
+				if (is_array($desc_product)) $this->fetch_prod_arbo($desc_product,"",$multiply);
 			}
 		}
+		//var_dump($this->res);
 		return $this->res;
 	}
 
@@ -2292,7 +2266,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Return all parent products fo current product
+	 *  Return all direct parent products fo current product
 	 *
 	 *  @return 	array prod
 	 */
@@ -2323,31 +2297,34 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  Return childs of prodcut with if fk_parent
+	 *  Return childs of product $id
 	 *
-	 * 	@param		int		$fk_parent	Id of product to search childs of
+	 * 	@param		int		$id			Id of product to search childs of
 	 *  @return     array       		Prod
 	 */
-	function getChildsArbo($fk_parent)
+	function getChildsArbo($id)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
 		$sql.= " WHERE p.rowid = pa.fk_product_fils";
-		$sql.= " AND pa.fk_product_pere = ".$fk_parent;
+		$sql.= " AND pa.fk_product_pere = ".$id;
+		$sql.= " AND pa.fk_product_fils != ".$id;	// This should not happens, it is to avoid infinite loop if it happens
 
+		dol_syslog(get_class($this).'::getChildsArbo sql='.$sql);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
+				$prods[$rec['rowid']]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type'],3=>$this->db->escape($rec['label']));
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
-				$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
+				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				$listofchilds=$this->getChildsArbo($rec['id']);
 				foreach($listofchilds as $keyChild => $valueChild)
 				{
-					$prods[$this->db->escape($rec['label'])][$keyChild] = $valueChild;
+					$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
 				}
 			}
 
@@ -2369,14 +2346,14 @@ class Product extends CommonObject
 	function get_sousproduits_arbo()
 	{
 		$parent = $this->getParent();
-		foreach($parent as $key => $value)
+		foreach($parent as $key => $value)		// key=label, value[0]=id
 		{
 			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)
 			{
 				$parent[$key][$keyChild] = $valueChild;
 			}
 		}
-		foreach($parent as $key => $value)
+		foreach($parent as $key => $value)		// key=label, value is array of childs
 		{
 			$this->sousprods[$key] = $value;
 		}

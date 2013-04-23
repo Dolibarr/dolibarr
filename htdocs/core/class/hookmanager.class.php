@@ -138,8 +138,6 @@ class HookManager
             {
                 foreach($modules as $module => $actionclassinstance)
                 {
-					//var_dump(get_class($actionclassinstance).'->'.$method);
-
                 	// jump to next class if method does not exists
                     if (! method_exists($actionclassinstance,$method)) continue;
                 	// test to avoid to run twice a hook, when a module implements several active contexts
@@ -164,13 +162,13 @@ class HookManager
                     }
                     // Generic hooks that return a string (printSearchForm, printLeftBlock, printTopRightMenu, formAddObjectLine, formBuilddocOptions, ...)
                     else
-					{
+                    {
                     	// TODO. this should be done into the method by returning nothing
                     	if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
 
                     	$result = $actionclassinstance->$method($parameters, $object, $action, $this);
 
-                    	if (is_array($actionclassinstance->results))  $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
+                    	if (! empty($actionclassinstance->results) && is_array($actionclassinstance->results)) $this->resArray =array_merge($this->resArray, $actionclassinstance->results);
                     	if (! empty($actionclassinstance->resprints)) $this->resPrint.=$actionclassinstance->resprints;
 
                     	// TODO. remove this. array result must be set into $actionclassinstance->results

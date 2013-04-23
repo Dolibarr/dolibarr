@@ -79,7 +79,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 if ($action == 'delete')
 {
 	$file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
+	$ret=dol_delete_file($file,0,0,0,$object);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 }
@@ -172,7 +172,7 @@ if ($object->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-   	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer);
+   	$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id,'',0,0,$user->rights->tax->charges->creer,50,$object);
 
 
    	// List of document

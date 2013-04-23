@@ -2,3 +2,4 @@
 CHARSET=UTF-8
 ExternalSiteSetup=Configuration du lien vers le site externe
 ExternalSiteURL=URL du site externe
+ExternalSiteModuleNotComplete=La configuration du module "Lien externe" est incomplète.

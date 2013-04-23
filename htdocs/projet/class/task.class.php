@@ -171,6 +171,7 @@ class Task extends CommonObject
         $sql.= " t.label,";
         $sql.= " t.description,";
         $sql.= " t.duration_effective,";
+        $sql.= " t.datec,";
         $sql.= " t.dateo,";
         $sql.= " t.datee,";
         $sql.= " t.fk_user_creat,";

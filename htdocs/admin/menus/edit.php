@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 
 $langs->load("admin");
+$langs->load('other');
 
 if (! $user->admin) accessforbidden();
 

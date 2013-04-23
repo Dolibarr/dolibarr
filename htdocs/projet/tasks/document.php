@@ -93,7 +93,11 @@ if ($id > 0 || ! empty($ref))
 	{
 		$projectstatic->fetch($object->fk_project);
 
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+		if (! empty($projectstatic->socid)) {
+			$projectstatic->fetch_thirdparty();
+		}
+
+		$object->project = dol_clone($projectstatic);
 
 		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 	}
@@ -114,7 +118,7 @@ if ($action=='delete')
 {
     $langs->load("other");
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
+	$ret=dol_delete_file($file,0,0,0,$object);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
