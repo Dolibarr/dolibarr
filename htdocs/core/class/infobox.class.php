@@ -27,6 +27,9 @@
  */
 class InfoBox
 {
+	static $listOfPages = array(0=>'Home');       // Nom des positions 0=Home, 1=...
+
+
     /**
      *  Return array of boxes qualified for area and user
      *
@@ -57,17 +60,16 @@ class InfoBox
             $sql.= " ORDER BY b.box_order";
         }
         else
-        {
+		{
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
-
+            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+            {
             	$sql.= " WHERE entity IN (1,".$conf->entity.")"; // TODO add method for define another master entity
-
-            } else {
-
+            }
+            else
+			{
             	$sql.= " WHERE entity = ".$conf->entity;
-
             }
         }
 
@@ -95,18 +97,24 @@ class InfoBox
                         $relsourcefile = "/core/boxes/".$boxname.".php";
                     }
 
+                    // TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
+                    // the "enabled" condition for modules forbidden for external users and the depends condition can be done.
+                    // Goal is to avoid making a new instance for each boxes returned by select.
+
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
-                        $box=new $boxname($db,$obj->note);
+                        $box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+                        //$box=new stdClass();
 
                         // box properties
                         $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
                         $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
-                        $box->position	= (empty($obj->position) ? '' : $obj->position);
+                        $box->position	= ($obj->position == '' ? '' : $obj->position);		// '0' must staty '0'
                         $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
                         $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
-                        $box->sourcefile=$relsourcefile;
+                        $box->sourcefile= $relsourcefile;
+                    	$box->class     = $boxname;
                         if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
                         {
                             if (is_numeric($box->box_order))
@@ -119,6 +127,8 @@ class InfoBox
                         $box->box_id	= (empty($obj->box_id) ? '' : $obj->box_id);
                         $box->note		= (empty($obj->note) ? '' : $obj->note);
 
+                        // Filter on box->enabled (fused for example by box_comptes) and box->depends
+                        //$enabled=1;
                         $enabled=$box->enabled;
                         if (isset($box->depends) && count($box->depends) > 0)
                         {
@@ -131,6 +141,7 @@ class InfoBox
 
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
+                        else unset($box);
                     }
                 }
                 $j++;
