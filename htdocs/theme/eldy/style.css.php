@@ -1369,7 +1369,7 @@ a.tab#active {
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active
 {
     color: #<?php echo $colortextmain; ?>;
-	font-weight: normal !important;
+	/* font-weight: normal !important; */
 }
 
 a.tabimage {

@@ -50,6 +50,7 @@ $mode=$argv[1];
 require($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
+$langs->load('main');
 
 
 /*
@@ -62,7 +63,7 @@ $duration_value=$argv[2];
 $error = 0;
 print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
 
-$sql = "SELECT f.facnumber, f.total_ttc, s.nom as name, u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
+$sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -110,7 +111,7 @@ if ($resql)
             if (dol_strlen($oldemail))
             {
             	$message .= $langs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->name."\n";
-				print "Invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", linked to company ".$obj->name." with sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname)." qualified.\n";
+				print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.") qualified.\n";
             	dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
             }
 
@@ -129,7 +130,7 @@ if ($resql)
     }
     else
     {
-        print "No unpaid invoices to companies linked to a particular commercial dolibarr user\n";
+        print "No unpaid invoices (for companies linked to a particular commercial dolibarr user) found\n";
     }
 }
 else
@@ -213,6 +214,8 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang)
     }
     else
     {
+    	print "No email sent (test mode)\n";
+    	dol_syslog("No email sent (test mode)");
     	$mail->dump_mail();
     	$result=1;
     }

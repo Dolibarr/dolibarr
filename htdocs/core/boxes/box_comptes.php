@@ -39,22 +39,23 @@ class box_comptes extends ModeleBoxes
 	var $db;
 	var $param;
 	var $enabled = 1;
-	
+
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	
+
 	/**
-	 *   Constructor
+	 *  Constructor
 	 *
-	 *   @param      DoliDB		$db      Database handler
+	 *  @param  DoliDB	$db      	Database handler
+     *  @param	string	$param		More parameters
 	 */
-	function __construct($db)
+	function __construct($db,$param='')
 	{
 		global $conf, $user;
-		
+
 		$this->db = $db;
-		
+
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users

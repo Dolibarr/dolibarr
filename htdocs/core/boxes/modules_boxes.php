@@ -40,6 +40,7 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	var $box_order;
 	var $fk_user;
 	var $sourcefile;
+	var $class;
 	var $box_id;
 	var $note;
 
@@ -47,9 +48,10 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB		$db		Database handler
+	 *	@param	DoliDB	$db			Database handler
+     *  @param	string	$param		More parameters
 	 */
-	function __construct($db)
+	function __construct($db,$param='')
 	{
 		$this->db=$db;
 	}
