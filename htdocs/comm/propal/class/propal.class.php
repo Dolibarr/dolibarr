@@ -2631,10 +2631,13 @@ class PropaleLigne
 
         // Insert line into database
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
-        $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
+        $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type,'; 
+		$sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
-        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang)';
+        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2,'; 
+        $sql.= ' total_ttc, fk_product_fournisseur_price, buy_price_ht,'; 
+        $sql.= ' special_code, rang)';
         $sql.= " VALUES (".$this->fk_propal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
@@ -2648,13 +2651,13 @@ class PropaleLigne
         $sql.= " ".price2num($this->localtax2_tx).",";
         $sql.= " ".($this->subprice?price2num($this->subprice):'null').",";
         $sql.= " ".price2num($this->remise_percent).",";
-        $sql.= " '".$this->info_bits."',";
+        $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";
         $sql.= " ".price2num($this->total_localtax1).",";
         $sql.= " ".price2num($this->total_localtax2).",";
         $sql.= " ".price2num($this->total_ttc).",";
-        $sql.= " ".(isset($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
+        $sql.= " ".(!empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
         $sql.= " ".(isset($this->pa_ht)?"'".price2num($this->pa_ht)."'":"null").",";
         $sql.= ' '.$this->special_code.',';
         $sql.= ' '.$this->rang;
