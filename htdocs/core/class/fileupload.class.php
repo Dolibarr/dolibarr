@@ -56,6 +56,8 @@ class FileUpload
 			$filename = $regs[2];
 		}
 
+		$parentForeignKey = '';
+
 		// For compatibility
 		if ($element == 'propal') {
 			$pathname = 'comm/propal';
@@ -69,6 +71,14 @@ class FileUpload
 			$element = $pathname = 'projet';
 			$dir_output=$conf->$element->dir_output;
 		}
+		elseif ($element == 'project_task') {
+			$pathname = 'projet'; $filename='task';
+			$dir_output=$conf->projet->dir_output;
+			$parentForeignKey = 'fk_project';
+			$parentClass = 'Project';
+			$parentElement = 'projet';
+			$parentObject = 'project';
+		}
 		elseif ($element == 'fichinter') {
 			$element='ficheinter';
 			$dir_output=$conf->$element->dir_output;
@@ -80,6 +90,17 @@ class FileUpload
 		elseif ($element == 'invoice_supplier') {
 			$pathname = 'fourn'; $filename='fournisseur.facture';
 			$dir_output=$conf->fournisseur->facture->dir_output;
+		}
+		elseif ($element == 'product') {
+			$dir_output = $conf->product->multidir_output[$conf->entity];
+		}
+		elseif ($element == 'action') {
+			$pathname = 'comm/action'; $filename='actioncomm';
+			$dir_output=$conf->agenda->dir_output;
+		}
+		elseif ($element == 'chargesociales') {
+			$pathname = 'compta/sociales'; $filename='chargesociales';
+			$dir_output=$conf->tax->dir_output;
 		} else {
 			$dir_output=$conf->$element->dir_output;
 		}
@@ -97,11 +118,23 @@ class FileUpload
 		$object = new $classname($db);
 
 		$object->fetch($fk_element);
-		$object->fetch_thirdparty();
+		if (!empty($parentForeignKey)) {
+			dol_include_once('/'.$parentElement.'/class/'.$parentObject.'.class.php');
+			$parent = new $parentClass($db);
+			$parent->fetch($object->$parentForeignKey);
+			if (!empty($parent->socid)) {
+				$parent->fetch_thirdparty();
+			}
+			$object->$parentObject = dol_clone($parent);
+		} else {
+			$object->fetch_thirdparty();
+		}
 
 		$object_ref = dol_sanitizeFileName($object->ref);
 		if ($element == 'invoice_supplier') {
 			$object_ref = get_exdir($object->id, 2) . $object_ref;
+		} else if ($element == 'project_task') {
+			$object_ref = $object->project->ref . '/' . $object_ref;
 		}
 
 		$this->options = array(
