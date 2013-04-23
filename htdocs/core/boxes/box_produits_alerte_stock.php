@@ -82,6 +82,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql.= " AND p.tosell = 1";
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
+			$sql.= " GROUP BY p.rowid, p.seuil_stock_alerte, s.reel";
 			$sql.= " HAVING s.reel < p.seuil_stock_alerte";
 			$sql.= $db->order('s.reel', 'DESC');
 			$sql.= $db->plimit($max, 0);
