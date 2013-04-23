@@ -347,3 +347,6 @@ ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_users (id_users);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_nom (nom);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
+
+ALTER TABLE llx_boxes ADD COLUMN params varchar(255);
+
