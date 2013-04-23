@@ -310,7 +310,7 @@ class Propal extends CommonObject
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='')
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='')
     {
         global $conf;
 
@@ -466,7 +466,7 @@ class Propal extends CommonObject
      *  @param		int			$type				0/1=Product/service
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $type=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0)
     {
         global $conf,$user,$langs;
 
@@ -2615,6 +2615,7 @@ class PropaleLigne
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+        if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2755,6 +2756,7 @@ class PropaleLigne
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+        if (empty($this->fk_parent_line)) $this->fk_fournprice=0;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2787,13 +2789,13 @@ class PropaleLigne
             $sql.= " , total_localtax1=".price2num($this->total_localtax1)."";
             $sql.= " , total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
-		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null");
+		$sql.= " , buy_price_ht=".price2num($this->pa_ht);
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " WHERE rowid = ".$this->rowid;
-
+        
         dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
