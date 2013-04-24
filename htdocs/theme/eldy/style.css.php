@@ -224,7 +224,9 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
+a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #4A4A4A; text-decoration: none;  }
+
+a:hover { text-decoration: underline; color: #000000;}
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -1662,7 +1664,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 	<?php } ?>
     color: #<?php echo $colortextmain; ?>;
     font-family: <?php print $fontlist ?>;
-    font-weight: normal;
+    font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
@@ -1670,7 +1672,7 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
 {
     font-family: <?php print $fontlist ?>;
-    font-weight: normal;
+    /*font-weight: normal;*/
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 }
@@ -1793,7 +1795,7 @@ tr.box_titre {
 	<?php } ?>
     color: #<?php echo $colortextmain; ?>;
     font-family: <?php print $fontlist ?>, sans-serif;
-    font-weight: normal;
+    font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
     white-space: nowrap;
 }
