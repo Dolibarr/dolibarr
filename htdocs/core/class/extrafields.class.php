@@ -688,9 +688,10 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out='<select name="options_'.$key.'">';
-
-			$InfoFieldList = explode(":", $param);
-
+			
+			$InfoFieldList = explode(":", array_keys($param['options'])[0]);
+			
+			var_export($param['options']);
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
@@ -703,6 +704,7 @@ class ExtraFields
 			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 
+			dol_syslog(get_class($this).':showInputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 
 			if ($resql)
@@ -828,15 +830,16 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$InfoFieldList = explode(":", $params);
+			$InfoFieldList = explode(":", array_keys($params['options'])[0]);
 			$keyList='rowid';
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2];
 
+			
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' where '.$keyList.'="'.$value.'"';
-
+			$sql.= ' where '.$keyList.'="'.$this->db->escape($value).'"';
+			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
