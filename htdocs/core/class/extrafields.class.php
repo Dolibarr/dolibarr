@@ -691,7 +691,6 @@ class ExtraFields
 			$param_list=array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 			
-			var_export($param['options']);
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
