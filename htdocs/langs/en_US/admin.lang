@@ -359,6 +359,7 @@ ExtrafieldPhone = Phone
 ExtrafieldPrice = Price
 ExtrafieldMail = Email
 ExtrafieldSelect = Select list
+ExtrafieldSelectList = Select from table
 ExtrafieldSeparator=Separator
 ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio button
