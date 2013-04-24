@@ -2443,6 +2443,7 @@ abstract class CommonObject
     			'SE',	// Sweden
     			'SK',	// Slovakia
     			'SI',	// Slovenia
+    			'UK',	// United Kingdom
         //'CH',	// Switzerland - No. Swizerland in not in EEC
         );
         //print "dd".$this->country_code;

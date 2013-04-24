@@ -699,7 +699,7 @@ function dol_bc($var,$moreclass='')
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK');
 
 	// Address
 	$ret .= $object->address;
@@ -713,7 +713,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 		}
 		if ($object->zip) $ret .= ', '.$object->zip;
 	}
-	else if (in_array($object->country_code,array('GB'))) // UK: title firstname name \n address lines \n town state \n zip \n country
+	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
