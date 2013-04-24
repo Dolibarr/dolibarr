@@ -19,10 +19,10 @@ $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
 
 // Value to overwrite path to use shared libraries/fonts instead of embedded one
-$force_dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
+//$force_dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
 //$force_dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 //$force_dolibarr_lib_GEOIP_PATH='';
-$force_dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
+//$force_dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
 //$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
 $force_dolibarr_lib_PHPEXCEL_PATH='';
 $force_dolibarr_lib_TCPDF_PATH='';
