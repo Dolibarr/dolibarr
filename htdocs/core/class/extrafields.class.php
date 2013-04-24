@@ -545,7 +545,7 @@ class ExtraFields
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
