@@ -150,6 +150,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
  */
 if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
+	$langs->load("donations");
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -167,6 +168,7 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
  */
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
+	$langs->load("trips");
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
