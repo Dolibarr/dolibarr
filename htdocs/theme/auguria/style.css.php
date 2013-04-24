@@ -2212,6 +2212,21 @@ div.ecmjqft {
 	text-shadow: none;
 }
 
+div.tabsElem a.ui-btn-corner-all {
+	-webkit-border-bottom-left-radius: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	border-bottom-left-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
 
 <?php
 if (is_object($db)) $db->close();

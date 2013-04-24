@@ -2257,6 +2257,34 @@ div.ecmjqft {
 	text-shadow: none;
 }
 
+div.ui-controlgroup
+{
+	height: auto;
+	background-image: none;
+}
+
+div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+{
+	height: auto;
+}
+
+a.tab span.ui-btn-inner
+{
+	border: none;
+	padding: 0;
+}
+div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
+	background-image: none;
+	color: #D45416;
+	height: auto;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
 
 <?php
 if (is_object($db)) $db->close();

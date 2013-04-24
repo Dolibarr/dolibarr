@@ -2071,6 +2071,12 @@ div.tabsElem a.ui-btn-corner-all {
 	border-bottom-right-radius: 0px;
 }
 
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
 
 <?php
 if (is_object($db)) $db->close();
