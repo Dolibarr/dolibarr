@@ -67,7 +67,8 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 		}
 	}
 }elseif ($type== 'sellist') {
-	$param_chain = array_keys($param['options'])[0];
+	$paramlist=array_keys($param['options']);
+	$param_chain = $paramlist[0];
 }
 ?>
 <!-- Position -->
