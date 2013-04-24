@@ -2047,7 +2047,6 @@ div.ui-controlgroup-controls div.tabsElem a
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	border: none;
 }
-div.ui-controlgroup-horizontal
 
 a.tab span.ui-btn-inner, a.tab span.ui-btn-inner span.ui-btn-text
 {
@@ -2071,6 +2070,7 @@ div.tabsElem a.ui-btn-corner-all {
 	-moz-border-radius-bottomright: 0px;
 	border-bottom-right-radius: 0px;
 }
+
 
 <?php
 if (is_object($db)) $db->close();
