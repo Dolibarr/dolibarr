@@ -1107,7 +1107,6 @@ div.tabs a.tab {
     color: #FFFFFF;
     text-decoration: none;
     position: relative;
-    float: left;
     padding: 0px 10px 0px 10px;
 }
 
@@ -2418,6 +2417,38 @@ div.ecmjqft {
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+}
+
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+.ui-btn-inner {
+	padding-left: 10px;
+	padding-right: 10px;
+	white-space: normal;
+}
+
+div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+{
+	height: 22px;
+}
+
+a.tab span.ui-btn-inner
+{
+	border: none;
+	padding: 0;
+}
+div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
+	background-image: none;
+	color: #D45416;
+	height: 22px
+}
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
 }
 
 

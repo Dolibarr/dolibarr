@@ -96,17 +96,9 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	/**
 	 * Return the parsed logfile path
 	 *
-<<<<<<< HEAD
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	string
-=======
-<<<<<<< OURS
 	 * @return string
-=======
-	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
-	 * @return	string
->>>>>>> THEIRS
->>>>>>> refs/remotes/origin/3.3
 	 */
 	private function getFilename($suffixinfilename='')
 	{
