@@ -1848,6 +1848,7 @@ else
                 {
                     print $langs->trans("ThisUserIsNot");
                 }
+                print ' ('.$langs->trans("UseTypeFieldToChange").')';
                 print '</td>';
                 print "</tr>\n";
             }

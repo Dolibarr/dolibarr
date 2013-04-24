@@ -116,3 +116,4 @@ NbOfUsers=Nb d'utilisateurs
 DontDowngradeSuperAdmin=Seul un superadmin peut rétrograder un superadmin
 HierarchicalResponsible=Responsable hierarchique
 HierarchicView=Vue hiérarchique
+UseTypeFieldToChange=Modifier le champ Type pour changer
