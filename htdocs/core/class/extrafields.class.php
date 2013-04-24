@@ -702,7 +702,7 @@ class ExtraFields
 
 			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' WHERE entity = '.$conf->entity;
+			//$sql.= ' WHERE entity = '.$conf->entity;
 
 			dol_syslog(get_class($this).':showInputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
@@ -840,7 +840,7 @@ class ExtraFields
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			$sql.= ' WHERE '.$keyList.'="'.$this->db->escape($value).'"';
-			$sql.= ' AND entity = '.$conf->entity;
+			//$sql.= ' AND entity = '.$conf->entity;
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
