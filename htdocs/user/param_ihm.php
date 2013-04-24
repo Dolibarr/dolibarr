@@ -119,6 +119,16 @@ llxHeader();
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
+
+if ($action == 'edit')
+{
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
+}
+
+
 dol_fiche_head($head, 'guisetup', $title, 0, 'user');
 
 
@@ -158,11 +168,6 @@ if ($action == 'edit')
 	});
 	</script>';
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.$id.'">';
-
     clearstatcache();
     $var=true;
 
@@ -198,13 +203,15 @@ if ($action == 'edit')
     // Theme
     show_theme($fuser,(($user->admin || empty($dolibarr_main_demo))?1:0),true);
 
-    print '</div>';
+    dol_fiche_end();
+
 
     print '<center>';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print ' &nbsp; &nbsp; ';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</center>';
+
     print '</form>';
 
 }
@@ -241,7 +248,8 @@ else
     // Skin
     show_theme($fuser,0,true);
 
-    print '</div>';
+    dol_fiche_end();
+
 
     print '<div class="tabsAction">';
     if (empty($user->admin) && ! empty($dolibarr_main_demo))
