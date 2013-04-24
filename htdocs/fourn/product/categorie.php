@@ -49,14 +49,14 @@ llxHeader("","",$langs->trans("CardProduct0"));
  */
 if ($_GET["id"])
 {
-  //on veut supprimer une cat�gorie
+  //on veut supprimer une catégorie
   if ($_REQUEST["cat"])
     {
       $cat = new Categorie($db,$_REQUEST["cat"]);
       $cat->del_product($product);
     }
 
-  //on veut ajouter une cat�gorie
+  //on veut ajouter une catégorie
   if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0)
     {
       $cat = new Categorie($db,$_REQUEST["add_cat"]);
@@ -99,7 +99,7 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans('Statistics');
       $h++;
 
-      //affichage onglet cat�gorie
+      //affichage onglet catégorie
       if (! empty($conf->categorie->enabled)){
 	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
 	$head[$h][1] = $langs->trans('Categories');
@@ -123,7 +123,7 @@ if ($_GET["id"])
 
       if (count($cats) > 0)
 	{
-	  print "Vous avez stock� le produit dans les cat�gorie suivantes:<br/><br/>";
+	  print "Vous avez stocké le produit dans les catégorie suivantes:<br/><br/>";
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllWays").'</td></tr>';
 

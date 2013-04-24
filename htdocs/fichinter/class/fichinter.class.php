@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012		Charles-François BENKE	<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -46,6 +47,8 @@ class Fichinter extends CommonObject
 	var $datec;
 	var $datev;
 	var $datem;
+	var $datee;
+	var $dateo;
 	var $duree;
 	var $statut;		// 0=draft, 1=validated, 2=invoiced
 	var $description;
@@ -53,7 +56,14 @@ class Fichinter extends CommonObject
 	var $note_public;
 	var $fk_project;
 	var $modelpdf;
+	var $fulldayevent;
 	var $extraparams=array();
+
+	// on ajoute le total HT
+	var $total_ht;
+
+	// pour gerer les deux type d'infos sur l'agenda
+	var $type_code;
 
 	var $lines = array();
 
@@ -64,7 +74,7 @@ class Fichinter extends CommonObject
 	 */
 	function __construct($db)
 	{
-		$this->db = $db;
+		$this->db = $db ;
 		$this->products = array();
 		$this->fk_project = 0;
 		$this->statut = 0;
@@ -132,7 +142,11 @@ class Fichinter extends CommonObject
 		$sql.= ", fk_user_author";
 		$sql.= ", description";
 		$sql.= ", model_pdf";
+		$sql.= ", datee";
+		$sql.= ", dateo";
+		$sql.= ", fulldayevent";
 		$sql.= ", fk_projet";
+		$sql.= ", fk_contrat";
 		$sql.= ", fk_statut";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
@@ -145,7 +159,11 @@ class Fichinter extends CommonObject
 		$sql.= ", ".$this->author;
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
 		$sql.= ", '".$this->modelpdf."'";
+		$sql.= ", ".($this->datee!=''?"'".$this->db->idate($this->datee)."'":'null');
+		$sql.= ", ".($this->dateo!=''?"'".$this->db->idate($this->dateo)."'":'null');
+		$sql.= ", ".($this->fulldayevent!=''?"'".$this->fulldayevent."'":'0');
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
+		$sql.= ", ".($this->fk_contrat ? $this->fk_contrat : 0);
 		$sql.= ", ".$this->statut;
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
@@ -181,14 +199,14 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
-
+			
 			if (! $error)
 			{
-				$this->db->commit();
-				return $this->id;
-			}
-			else
-			{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
 				$this->db->rollback();
 				$this->error=join(',',$this->errors);
 				dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
@@ -236,7 +254,7 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
-
+			
 			$this->db->commit();
 			return 1;
 		}
@@ -259,9 +277,9 @@ class Fichinter extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-		$sql.= " f.datec,";
+		$sql.= " fk_contrat,f.datec,f.datee,f.dateo,";
 		$sql.= " f.date_valid as datev,";
-		$sql.= " f.tms as datem,";
+		$sql.= " f.tms as datem, f.fulldayevent, f.total_ht,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
@@ -281,14 +299,19 @@ class Fichinter extends CommonObject
 				$this->socid        = $obj->fk_soc;
 				$this->statut       = $obj->fk_statut;
 				$this->duree        = $obj->duree;
+				$this->dateo		= $this->db->jdate($obj->dateo);
+				$this->datee		= $this->db->jdate($obj->datee);
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
 				$this->fk_project   = $obj->fk_projet;
+				$this->fk_contrat   = $obj->fk_contrat;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;
-
+				$this->fulldayevent = $obj->fulldayevent;
+				$this->total_ht = $obj->total_ht;
+				
 				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
@@ -332,7 +355,7 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("Fichinter::setDraft sql=".$sql);
+			dol_syslog(get_class($this).":setDraft sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -343,7 +366,7 @@ class Fichinter extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dol_syslog("Fichinter::setDraft ".$this->error,LOG_ERR);
+				dol_syslog(get_class($this).":setDraft ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -353,9 +376,10 @@ class Fichinter extends CommonObject
 	 *	Validate a intervention
 	 *
 	 *	@param		User		$user		User that validate
+	 *	@param		string		$outputdir	Output directory
 	 *	@return		int			<0 if KO, >0 if OK
 	 */
-	function setValid($user)
+	function setValid($user, $outputdir)
 	{
 		global $langs, $conf;
 
@@ -629,7 +653,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Delete intervetnion
+	 *	Delete intervention
 	 *
 	 *	@param      User	$user	Object user who delete
 	 *	@return		int				<0 if KO, >0 if OK
@@ -664,14 +688,14 @@ class Fichinter extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter = ".$this->id;
 
-		dol_syslog("Fichinter::delete sql=".$sql);
+		dol_syslog(get_class($this).":delete sql=".$sql);
 		if ( $this->db->query($sql) )
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("Fichinter::delete sql=".$sql);
+			dol_syslog(get_class($this).":delete sql=".$sql);
 			if ( $this->db->query($sql) )
 			{
 
@@ -700,7 +724,7 @@ class Fichinter extends CommonObject
 						}
 					}
 				}
-
+				
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
@@ -755,12 +779,90 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Fichinter::set_date_delivery Erreur SQL");
+				dol_syslog(get_class($this).":set_date_delivery Erreur SQL");
 				return -1;
 			}
 		}
 	}
+	function set_datee($user, $datee)
+	{
+		global $conf;
 
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET datee = ".$this->db->idate($datee);
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
+
+			if ($this->db->query($sql))
+			{
+				$this->datee= $datee;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this).":set_datee Erreur SQL");
+				return -1;
+			}
+		}
+	}
+	
+	function set_dateo($user, $dateo)
+	{
+		global $conf;
+
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET dateo = ".$this->db->idate($dateo);
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
+
+			if ($this->db->query($sql))
+			{
+				$this->dateo = $dateo;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this).":set_dateo Erreur SQL");
+				return -1;
+			}
+		}
+	}
+	
+	function set_fullday($user, $fullday)
+	{
+		global $conf;
+
+		if ($user->rights->ficheinter->creer)
+		{
+			if (!$fullday) $fullday=0;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET fulldayevent = ".$fullday;
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
+
+			if ($this->db->query($sql))
+			{
+				$this->fulldayevent= $fullday;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this).":set_datee Erreur SQL");
+				return -1;
+			}
+		}
+	}
+	
 	/**
 	 *	Define the label of the intervention
 	 *
@@ -788,11 +890,45 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Fichinter::set_description Erreur SQL");
+				dol_syslog(get_class($this).":set_description Erreur SQL");
 				return -1;
 			}
 		}
 	}
+
+	/**
+	 *	Define the label of the contract
+	 *
+	 *	@param      User	$user			Object user who modify
+	 *	@param      string	$description    description
+	 *	@return     int						<0 if ko, >0 if ok
+	 */
+	function set_contrat($user, $contratid)
+	{
+		global $conf;
+
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET fk_contrat = '".$contratid."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			//$sql.= " AND fk_statut = 0";
+
+			if ($this->db->query($sql))
+			{
+				$this->fk_contrat = $contratid;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this).":set_contrat Erreur SQL");
+				return -1;
+			}
+		}
+	}
+
 
 	/**
 	 *	Adding a line of intervention into data base
@@ -801,11 +937,13 @@ class Fichinter extends CommonObject
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
+	 *	@param      int		$subprice            	SubPrice
+	 *	@param      int		$total_ht            	Total HT
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($fichinterid, $desc, $date_intervention, $duration)
+	function addline($fichinterid, $desc, $date_intervention, $duration, $subprice=0, $total_ht=0)
 	{
-		dol_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
+		dol_syslog(get_class($this).":Addline $fichinterid, $desc, $date_intervention, $duration, $subprice, $total_ht ");
 
 		if ($this->statut == 0)
 		{
@@ -818,6 +956,12 @@ class Fichinter extends CommonObject
 			$line->desc         = $desc;
 			$line->datei        = $date_intervention;
 			$line->duration     = $duration;
+			$line->subprice     = $subprice;
+			if ($subprice!=0 && $duration!=0)
+				$line->total_ht     = $subprice*($duration/3600);
+			else
+				$line->total_ht     = $total_ht;
+			$line->subprice     = $subprice;
 
 			$result=$line->insert();
 			if ($result > 0)
@@ -881,7 +1025,7 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT rowid, description, duree, date, rang';
+		$sql = 'SELECT rowid, description, duree, date, rang, total_ht, subprice';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.= ' WHERE fk_fichinter = '.$this->id;
 
@@ -899,8 +1043,22 @@ class Fichinter extends CommonObject
 				$line->id = $objp->rowid;
 				$line->desc = $objp->description;
 				//For invoicing we calculing hours
-				$line->qty = round($objp->duree/3600,2);
-				$line->date	= $this->db->jdate($objp->date);
+				if ($objp->subprice == 0) 
+				{
+					// if no subprice we use the total ht
+					$line->qty = 1;
+					$line->subprice= $objp->total_ht;
+					$line->total_ht= $objp->total_ht;
+				}
+				else
+				{
+					$line->qty = round($objp->duree/3600,2);
+					$line->subprice= $objp->subprice;
+					$line->total_ht= $objp->total_ht;
+				}
+				
+				$line->datei	= $this->db->jdate($objp->date);
+				$line->date_start = $this->db->jdate($objp->date);
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
 
@@ -933,8 +1091,11 @@ class FichinterLigne
 	var $fk_fichinter;
 	var $desc;          	// Description ligne
 	var $datei;           // Date intervention
+	var $date_start; 
 	var $duration;        // Duree de l'intervention
 	var $rang = 0;
+	var $total_ht=0;	//montant total de l'intervention
+	var $subprice=0;	//Prix unitaire de l'intervention
 
 
 	/**
@@ -956,11 +1117,11 @@ class FichinterLigne
 	function fetch($rowid)
 	{
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang,';
-		$sql.= ' ft.date as datei';
+		$sql.= ' ft.date as datei, subprice';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql.= ' WHERE ft.rowid = '.$rowid;
 
-		dol_syslog("FichinterLigne::fetch sql=".$sql);
+		dol_syslog(get_class($this).":fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -968,6 +1129,8 @@ class FichinterLigne
 			$this->rowid          	= $objp->rowid;
 			$this->fk_fichinter   	= $objp->fk_fichinter;
 			$this->datei			= $this->db->jdate($objp->datei);
+			$this->total_ht			= price2num($objp->subprice*$objp->duree);
+			$this->subprice			= price2num($objp->subprice);
 			$this->desc           	= $objp->description;
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
@@ -990,7 +1153,7 @@ class FichinterLigne
 	 */
 	function insert()
 	{
-		dol_syslog("FichinterLigne::insert rang=".$this->rang);
+		dol_syslog(get_class($this).":insert rang=".$this->rang);
 
 		$this->db->begin();
 
@@ -1016,15 +1179,28 @@ class FichinterLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql.= ' (fk_fichinter, description, date, duree, rang)';
+		$sql.= ' (fk_fichinter, description, date, duree, rang, subprice)';
 		$sql.= " VALUES (".$this->fk_fichinter.",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
 		$sql.= " ".$this->db->idate($this->datei).",";
 		$sql.= " ".$this->duration.",";
-		$sql.= ' '.$rangToUse;
+		$sql.= ' '.$rangToUse.",";
+		if ($this->subprice!=0)
+		{
+			if ($this->duration!=0)
+				$sql.= ' '.price2num($this->subprice*($this->duration/3600)).",";
+			else
+				$sql.= " 0,";
+			$sql.= ' '.price2num($this->subprice);
+		}
+		else
+		{
+				$sql.= " 0,0";
+		}
+
 		$sql.= ')';
 
-		dol_syslog("FichinterLigne::insert sql=".$sql);
+		dol_syslog(get_class($this).":insert sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1044,7 +1220,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dol_syslog("FichinterLigne::insert Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this).":insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1066,9 +1242,19 @@ class FichinterLigne
 		$sql.= ",date=".$this->db->idate($this->datei);
 		$sql.= ",duree=".$this->duration;
 		$sql.= ",rang='".$this->rang."'";
+		if ($this->subprice!=0 && $this->duration!=0)
+		{
+			$sql.= ",subprice=".price2num($this->subprice);
+		}
+		else
+		{
+			$sql.= ",subprice=0";
+		}
+		
+		
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog("FichinterLigne::update sql=".$sql);
+		dol_syslog(get_class($this).":update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1081,7 +1267,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this).":update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1089,7 +1275,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this).":update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1106,11 +1292,11 @@ class FichinterLigne
 
 		$this->db->begin();
 
-		$sql = "SELECT SUM(duree) as total_duration";
+		$sql = "SELECT SUM(duree) as total_duration, SUM(total_ht) as total_Interdet";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter=".$this->fk_fichinter;
 
-		dol_syslog("FichinterLigne::update_total sql=".$sql);
+		dol_syslog(get_class($this).":update_total sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1118,12 +1304,16 @@ class FichinterLigne
 			$total_duration=0;
 			if (!empty($obj->total_duration)) $total_duration = $obj->total_duration;
 
+			$total_Interdet=0;
+			if (!empty($obj->total_Interdet)) $total_Interdet = $obj->total_Interdet;
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
+			$sql.= " , total_ht = ".$total_Interdet;
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("FichinterLigne::update_total sql=".$sql);
+			dol_syslog(get_class($this).":update_total sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1133,7 +1323,7 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("FichinterLigne::update_total Error ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this).":update_total Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -1141,7 +1331,7 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this).":update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}

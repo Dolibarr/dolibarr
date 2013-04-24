@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+* Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@
  *       \brief      Main project home page
  */
 
-require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
+require "../main.inc.php";
+require_once DOL_DOCUMENT_ROOT."/projet/class/project.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 $langs->load("projects");
 $langs->load("companies");
@@ -67,7 +68,6 @@ else
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
-
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -131,7 +131,6 @@ else
 	dol_print_error($db);
 }
 print "</table>";
-
 
 print '</div></div></div>';
 

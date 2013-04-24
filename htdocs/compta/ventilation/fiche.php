@@ -76,7 +76,7 @@ if ($result)
 }
 
 /*
- * Cr�ation
+ * Création
  *
  */
 $form = new Form($db);

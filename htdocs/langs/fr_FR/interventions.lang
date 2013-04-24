@@ -18,7 +18,7 @@ ValidateIntervention=Valider intervention
 ModifyIntervention=Modifier intervention
 DeleteInterventionLine=Supprimer ligne d'intervention
 ConfirmDeleteIntervention=Êtes-vous sûr de vouloir effacer cette intervention ?
-ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention sous la référence <b>%s</b> ?
+ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention ?
 ConfirmModifyIntervention=Êtes-vous sûr de vouloir modifier cette intervention ?
 ConfirmDeleteInterventionLine=Êtes-vous sûr de vouloir effacer cette ligne ?
 NameAndSignatureOfInternalContact=Nom et signature de l'intervenant :
@@ -40,6 +40,8 @@ ClassifyBilled=Classer "Facturée"
 StatusInterInvoiced=Facturée
 RelatedInterventions=Interventions rattachées
 ShowIntervention=Afficher intervention
+ContratId=Id Contrat
+ProjetId=Id Projet
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant
@@ -52,3 +54,18 @@ PacificNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est 
 PacificNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimez la ou renommez la pour activer ce module.
 SendInterventionByMail=Envoi de la fiche d'intervention par mail
 SendInterventionRef=Envoi Intervention %s
+##Export Addin
+DateOpen=Date début
+FullDayEvent=Jour entier
+InterLineTotalHT=Total Détail HT
+DoneAndToDoInters=Liste des Interventions réalisées ou à faire
+FichInterAskedBy=Interventions enregistrées par
+FichInterDoneBy=Interventions validées par
+InterTotalHT=Total HT
+# Stat FICHINTER
+fichInterStatistics=Statistiques des interventions
+NbOfFichInters=Nombre d'interventions
+NbOfFichIntersByMonth=Nombre d'interventions Mensuelles
+AmountOfFichIntersByMonthHT=Montant HT des interventions Mensuelles
+AgendaShowFichInterEvents=Visualiser les Interventions
+AgendaShowInterDetailEvents=Visualiser le détail des Interventions

@@ -43,7 +43,7 @@ $month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
 
 
-/* Le compte de r�sultat est un document officiel requis par l'administration selon le status ou activit� */
+/* Le compte de résultat est un document officiel requis par l'administration selon le status ou activité */
 
 print_titre("Bilan".($year?" annee $year":""));
 

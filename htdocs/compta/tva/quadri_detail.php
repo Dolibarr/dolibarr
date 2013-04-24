@@ -462,7 +462,7 @@ else
 	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 
 	//print table headers for this quadri - expenses now
-	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
+	//imprime les en-tete de tables pour ce quadri - maintenant les dépenses
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';

@@ -447,7 +447,7 @@ if ($id > 0)
 	}
 	else
 	{
-		/* Charge non trouv� */
+		/* Charge non trouvé */
 		dol_print_error('',$object->error);
 	}
 }

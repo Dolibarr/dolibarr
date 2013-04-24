@@ -26,7 +26,7 @@ require '../../main.inc.php';
 $langs->load("companies");
 $langs->load("banks");
 
-// S�curit� acc�s client
+// Sécurité accés client
 if ($user->societe_id > 0)
 {
 	$action = '';

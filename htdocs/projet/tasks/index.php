@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2010	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2013	Charles-Fr BENKE		<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,8 @@ $langs->load('users');
 
 $id=GETPOST('id','int');
 $search_project=GETPOST('search_project');
-
-
+$viewstatut=$_POST['viewstatut'];
+$viewstatut = is_numeric($viewstatut) ? $viewstatut : -1;
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -48,8 +49,6 @@ $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
-
-
 
 /*
  * View
@@ -85,7 +84,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $viewstatut);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
@@ -101,17 +100,32 @@ print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("Progress").'</td>';
+print '<td align="right">'.$langs->trans("UnitPrice").'</td>';
+print '<td align="right">'.$langs->trans("DurationPlanned").'</td>';
+print '<td align="right">'.$langs->trans("Total_ht").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+print '<td align="right">'.$langs->trans("Status").'</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_project" value="'.$search_project.'" size="8">';
 print '</td>';
-print '<td class="liste_titre" colspan="5">';
+print '<td class="liste_titre" colspan="9">';
 print '&nbsp;';
 print '</td>';
-print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+print '<td class="liste_titre" align="right">';
+print '<select class="flat" name="viewstatut">';
+	print '<option value="-1">&nbsp;</option>';
+	for ($i=0; $i <=4; $i++)
+	{
+		print '<option ';
+		if ($viewstatut == $i) print ' selected ';
+		print ' value="'.$i.'">'.$taskstatic->LibStatut($i,1).'</option>';
+	}
+print '</select>';
+print '<input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '</td>';
 print "</tr>\n";
 
 // Show all lines in taskarray (recursive function to go down on tree)

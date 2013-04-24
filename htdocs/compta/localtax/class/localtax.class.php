@@ -507,7 +507,7 @@ class Localtax extends CommonObject
 
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 
-                    // Mise a jour fk_bank dans llx_localtax. On connait ainsi la ligne de localtax qui a g�n�r� l'�criture bancaire
+                    // Mise a jour fk_bank dans llx_localtax. On connait ainsi la ligne de localtax qui a généré l'écriture bancaire
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);

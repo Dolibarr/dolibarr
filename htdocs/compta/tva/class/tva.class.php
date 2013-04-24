@@ -380,7 +380,7 @@ class Tva extends CommonObject
     }
 
     /*
-     *      \brief      Tva pay�e
+     *      \brief      Tva payée
      *
      */
 
@@ -420,8 +420,8 @@ class Tva extends CommonObject
 
 
     /*
-     *      \brief      Tva r�gl�e
-     *                  Total de la TVA r�glee aupres de qui de droit
+     *      \brief      Tva réglée
+     *                  Total de la TVA réglee aupres de qui de droit
      *
      */
 
@@ -536,7 +536,7 @@ class Tva extends CommonObject
 
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 
-                    // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a g�n�r� l'�criture bancaire
+                    // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
@@ -583,7 +583,7 @@ class Tva extends CommonObject
     }
 
     /**
-     *  Mise a jour du lien entre le paiement tva et la ligne g�n�r�e dans llx_bank
+     *  Mise a jour du lien entre le paiement tva et la ligne générée dans llx_bank
      *
      *  @param	int		$id_bank    Id compte bancaire
 	 *	@return	int					<0 if KO, >0 if OK

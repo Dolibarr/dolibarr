@@ -1,21 +1,22 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005      	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2013	Charles-Fr Benke		<charles.fr@benke.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/projet/tasks.php
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("users");
 $langs->load("projects");
+$langs->load("companies");
 
 $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
@@ -48,8 +50,8 @@ $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 if ($ref)
 {
-	$object->fetch(0,$ref);
-	$id=$object->id;
+    $object->fetch(0,$ref);
+    $id=$object->id;
 }
 
 // fetch optionals attributes and labels
@@ -71,20 +73,25 @@ $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
 $description=GETPOST('description');
 
+$duration_plannedhour = GETPOST('duration_plannedhour');
+$duration_plannedmin = GETPOST('duration_plannedmin');
+$subprice = GETPOST('subprice');
+$total_ht = GETPOST('total_ht');
+
 $userAccess=0;
 
 
 
 /*
  * Actions
-*/
+ */
 
 if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
 	$date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-	$date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+    $date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 
 	if (empty($_POST["cancel"]))
 	{
@@ -114,12 +121,22 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->fk_project = $projectid;
 			$task->label = $label;
 			$task->description = $description;
+
+			$task->duration_planned = $duration_plannedhour*60*60;	// We store duration in seconds
+			$task->duration_planned+= $duration_plannedmin*60;		// We store duration in seconds
+			
+			$task->subprice = $subprice;
+			if ($subprice)
+				$task->total_ht = $subprice*($task->duration_planned/3600);
+			else
+				$task->total_ht = $total_ht ;
+
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
-				
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task,$task);
 
@@ -133,7 +150,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 		if (! $error)
 		{
-			if (! empty($backtopage))
+		    if (! empty($backtopage))
 			{
 				header("Location: ".$backtopage);
 				exit;
@@ -152,18 +169,24 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			header("Location: ".$backtopage);
 			exit;
 		}
-		else if (empty($id))
-		{
-			// We go back on task list
+	    else if (empty($id))
+        {
+            // We go back on task list
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
-			exit;
-		}
+            exit;
+        }
 	}
+}
+
+if ($action == 'confirm_TaskToInter' && $_REQUEST['confirm'] == 'yes')
+{
+	// on transfert toute les taches d'un meme projet dans une unique fiche d'inter
+	Projet_Transfer_FichInter($db, $conf, $langs, $user, GETPOST("id"));
 }
 
 /*
  * View
-*/
+ */
 
 $form=new Form($db);
 $formother=new FormOther($db);
@@ -179,54 +202,53 @@ if ($id > 0 || ! empty($ref))
 	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 	$res=$object->fetch_optionals($object->id,$extralabels_projet);
 
-
-	// To verify role of users
+    // To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite  = $object->restrictedProjectArea($user,'write');
+    $userWrite  = $object->restrictedProjectArea($user,'write');
 	//$userDelete = $object->restrictedProjectArea($user,'delete');
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 
-	$tab=GETPOST('tab')?GETPOST('tab'):'tasks';
+    $tab=GETPOST('tab')?GETPOST('tab'):'tasks';
 
-	$head=project_prepare_head($object);
-	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+    $head=project_prepare_head($object);
+    dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
-	$param=($mode=='mine'?'&mode=mine':'');
+    $param=($mode=='mine'?'&mode=mine':'');
 
-	print '<table class="border" width="100%">';
+    print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
 
-	// Ref
-	print '<tr><td width="30%">';
-	print $langs->trans("Ref");
-	print '</td><td>';
-	// Define a complementary filter for search of next/prev ref.
-	if (! $user->rights->projet->all->lire)
-	{
-		$projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
-		$object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
-	print '</td></tr>';
+    // Ref
+    print '<tr><td width="30%">';
+    print $langs->trans("Ref");
+    print '</td><td>';
+    // Define a complementary filter for search of next/prev ref.
+    if (! $user->rights->projet->all->lire)
+    {
+        $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    }
+    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
+    print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
-	else print '&nbsp;';
-	print '</td>';
-	print '</tr>';
+    print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
+    else print '&nbsp;';
+    print '</td>';
+    print '</tr>';
 
-	// Visibility
-	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
+    // Visibility
+    print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+    if ($object->public) print $langs->trans('SharedProject');
+    else print $langs->trans('PrivateProject');
+    print '</td></tr>';
 
-	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+    // Statut
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -246,15 +268,18 @@ if ($id > 0 || ! empty($ref))
 		print $object->showOptionals($extrafields_project);
 	}
 
-	print '</table>';
+    print '</table>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
 
 
 if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
 {
-	if ($id > 0 || ! empty($ref)) print '<br>';
+    if ($id > 0 || ! empty($ref)) print '<br>';
+
+	// add for default date sent on query (calendar mode)
+	$date_start = dol_mktime(12,0,0,GETPOST('dateomonth'),GETPOST('dateoday'),GETPOST('dateoyear'));
 
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -297,6 +322,26 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print $formother->select_percent($progress,'progress');
 	print '</td></tr>';
 
+	//planned time
+	$duration_planned = $_POST["duration_plannedhour"]*60*60;	
+	$duration_planned+= $_POST["duration_plannedmin"]*60;		
+
+	//unit Amount of the Task
+	print '<td >'.$langs->trans("Subprice").'</td><td colspan="3">';
+	print '<input type="text" size="5" name="subprice" class="flat" value="'.$_POST["subprice"].'">';
+	print '</td></tr>';
+
+	// duration of the tash
+	print '<tr><td >'.$langs->trans("DurationPlanned").'</td><td colspan="3">';
+	print $form->select_duration('duration_planned',$duration_planned);
+	print '</td></tr>';
+	
+	//Amount Task
+	print '<td >'.$langs->trans("Total_ht").'</td><td colspan="3">';
+	print '<input type="text" size="5" name="total_ht" class="flat" value="'.$_POST["total_ht"].'">';
+	print '</td></tr>';
+
+
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print '<td>';
@@ -310,6 +355,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	{
 		print $object->showOptionals($extrafields_task,'edit');
 	}
+
 
 	print '</table>';
 
@@ -326,16 +372,16 @@ else
 {
 	/*
 	 * Fiche projet en mode visu
-	*/
+	 */
 
 	/*
 	 * Actions
-	*/
+	 */
 	print '<div class="tabsAction">';
 
 	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 	{
-		if ($object->public || $userWrite > 0)
+		if ($object->statut != 2 && ($object->public || $userWrite > 0))
 		{
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
 		}
@@ -348,6 +394,10 @@ else
 	{
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
 	}
+
+	// Transfert Intervention
+	print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.'Transfert Intervention'.'</a>';
+	
 
 	print '</div>';
 
@@ -392,7 +442,11 @@ else
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
+	print '<td align="right">'.$langs->trans("Subprice").'</td>';
+	print '<td align="right">'.$langs->trans("DurationPlanned").'</td>';
+	print '<td align="right">'.$langs->trans("Total_ht").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+	print '<td align="right">'.$langs->trans("Status").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 	if (count($tasksarray) > 0)
@@ -403,10 +457,9 @@ else
 	}
 	else
 	{
-		print '<tr><td colspan="'.(! empty($object->id) ? "5" : "4").'">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr><td colspan="'.(! empty($object->id) ? "10" : "9").'">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 	print "</table>";
-
 
 	// Test if database is clean. If not we clean it.
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
@@ -419,8 +472,6 @@ else
 		if ($nboftaskshown < count($tasksarray)) clean_orphelins($db);
 	}
 }
-
 llxFooter();
-
 $db->close();
 ?>
