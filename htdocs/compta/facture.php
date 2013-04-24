@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
+$langs->load('banks');
 $langs->load('main');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 
@@ -878,17 +879,17 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					if ($_POST['type'] == 3) {
 						$typeamount=GETPOST('typedeposit','alpha');
 						$valuedeposit=GETPOST('valuedeposit','int');
-						
+
 						if ($typeamount=='amount') {
 							$amountdeposit=$valuedeposit;
 						}else {
 							$amountdeposit=0;
-							
+
 							dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-							
+
 							$classname = ucfirst($subelement);
 							$srcobject = new $classname($db);
-							
+
 							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add deposit line");
 							$result=$srcobject->fetch($object->origin_id);
 							if ($result > 0)
@@ -900,7 +901,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								{
 									$totalamount=+$lines[$i]->subprice;
 								}
-								
+
 								if ($totalamount!=0) {
 									$amountdeposit=($totalamount*$valuedeposit)/100;
 								}
@@ -910,9 +911,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$mesgs[]=$srcobject->error;
 								$error++;
 							}
-							
+
 						}
-						
+
 						$result = $object->addline(
 							$id,
 							$langs->trans('Deposit'),
@@ -940,7 +941,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							0,
 							$langs->trans('Deposit')
 						);
-						
+
 
 					}else {
 
@@ -2117,7 +2118,7 @@ if ($action == 'create')
 		// Deposit
 		print '<tr height="18"><td width="16px" valign="middle">';
 		print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
-		print '</td><td valign="middle" nowrap="nowrap">';
+		print '</td><td valign="middle" class="nowrap">';
 		$desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 		print '<table class="nobordernopadding"><tr><td>'.$desc.'</td>';
 		if (($origin=='propal') ) {
@@ -2340,21 +2341,21 @@ if ($action == 'create')
 					$form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-				print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
+				print '<td class="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
 				print '<td>&nbsp;</td>';
 				// Si le module service est actif, on propose des dates de debut et fin a la ligne
 				if (! empty($conf->service->enabled))
 				{
-					print '<td nowrap="nowrap">';
+					print '<td class="nowrap">';
 					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-					print '<td class="nobordernopadding" nowrap="nowrap">';
+					print '<td class="nobordernopadding nowrap">';
 					print $langs->trans('From').' ';
-					print '</td><td class="nobordernopadding" nowrap="nowrap">';
+					print '</td><td class="nobordernopadding nowrap">';
 					print $form->select_date('','date_start'.$i,$usehm,$usehm,1,"add");
 					print '</td></tr>';
-					print '<td class="nobordernopadding" nowrap="nowrap">';
+					print '<td class="nobordernopadding nowrap">';
 					print $langs->trans('to').' ';
-					print '</td><td class="nobordernopadding" nowrap="nowrap">';
+					print '</td><td class="nobordernopadding nowrap">';
 					print $form->select_date('','date_end'.$i,$usehm,$usehm,1,"add");
 					print '</td></tr></table>';
 					print '</td>';
@@ -3090,7 +3091,7 @@ else if ($id > 0 || ! empty($ref))
 				else print $langs->trans('ExcessReceived');
 				print ' :</td>';
 				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
-				print '<td nowrap="nowrap">&nbsp;</td></tr>';
+				print '<td class="nowrap">&nbsp;</td></tr>';
 			}
 			else	// Credit note
 			{
@@ -3108,7 +3109,7 @@ else if ($id > 0 || ! empty($ref))
 				else print $langs->trans('ExcessPaydBack');
 				print ' :</td>';
 				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign * $resteapayeraffiche).'</b></td>';
-				print '<td nowrap="nowrap">&nbsp;</td></tr>';
+				print '<td class="nowrap">&nbsp;</td></tr>';
 
 				// Sold credit note
 				//print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';

@@ -1565,7 +1565,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print "</td></tr>";
 
 	// Conditions de reglement
-	print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$form->select_conditions_paiements($cond_reglement_id,'cond_reglement_id',-1,1);
 	print '</td></tr>';
 
@@ -1907,7 +1907,7 @@ else
 
 		// Ref commande client
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans('RefCustomer').'</td><td align="left">';
 		print '</td>';
 		if ($action != 'refcustomer' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refcustomer&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';

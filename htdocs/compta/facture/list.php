@@ -322,7 +322,7 @@ if ($resql)
             $datelimit=$db->jdate($objp->datelimite);
 
             print '<tr '.$bc[$var].'>';
-            print '<td nowrap="nowrap">';
+            print '<td class="nowrap">';
 
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
@@ -332,7 +332,7 @@ if ($resql)
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
-            print '<td class="nobordernopadding" nowrap="nowrap">';
+            print '<td class="nobordernopadding nowrap">';
             print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
@@ -377,7 +377,7 @@ if ($resql)
             print '<td align="right">'.(! empty($paiement)?price($paiement).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
 
             // Affiche statut de la facture
-            print '<td align="right" nowrap="nowrap">';
+            print '<td align="right" class="nowrap">';
             print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$paiement,$objp->type);
             print "</td>";
             //print "<td>&nbsp;</td>";

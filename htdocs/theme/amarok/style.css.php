@@ -310,6 +310,9 @@ th .button {
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 .blockvmenubookmarks .menu_contenu {
@@ -991,7 +994,7 @@ div.ficheaddleft {
 div.divButAction { margin-bottom: 1.4em; }
 
 .button, .butAction {background: #999; border: solid 1px #888; font-weight: normal; }
-.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;	cursor: not-allowed; }
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal !important;	cursor: not-allowed; }
 .butActionDelete {background: #b33c37; border:solid 1px #8d2f2b; font-weight: normal;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {
@@ -1195,20 +1198,18 @@ div.liste_titre, tr.liste_titre, tr.box_titre {
 		color-stop(1, rgba(0,0,0,.3))
 	);
 	height: 22px;
+	text-align: <?php echo $left; ?>;
 }
 
 tr.box_titre td.boxclose {
 	width: 36px;
 }
 
-tr.liste_titre td {
+tr.liste_titre td, tr.liste_titre th {
 	padding:2px;
 	padding-left:2px !important;
 	white-space:nowrap;
-}
-
-tr.liste_titre td input.flat {
-    width:70%;
+	text-shadow:1px 1px 1px #ffffff;
 }
 
 td.liste_titre_sel {

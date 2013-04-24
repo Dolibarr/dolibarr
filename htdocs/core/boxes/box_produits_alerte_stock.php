@@ -127,7 +127,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $price);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left" nowrap="nowrap"',
+					$this->info_box_contents[$i][3] = array('td' => 'align="left" class="nowrap"',
                     'text' => $price_base_type);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="center"',

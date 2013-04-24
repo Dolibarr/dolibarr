@@ -238,10 +238,10 @@ if ($resql)
     print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td align="right" width="60" nowrap="nowrap">'.$langs->trans("Debit").'</td>';
-    print '<td align="right" width="60" nowrap="nowrap">'.$langs->trans("Credit").'</td>';
+    print '<td align="right" width="60" class="nowrap">'.$langs->trans("Debit").'</td>';
+    print '<td align="right" width="60" class="nowrap">'.$langs->trans("Credit").'</td>';
     print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-    print '<td align="center" width="60" nowrap="nowrap">'.$langs->trans("ToConciliate").'</td>';
+    print '<td align="center" width="60" class="nowrap">'.$langs->trans("ToConciliate").'</td>';
     print "</tr>\n";
 
 
@@ -258,12 +258,12 @@ if ($resql)
 //         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
         // Date op
-        print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
+        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
 
         // Date value
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
-			print '<td align="center" nowrap="nowrap">';
+			print '<td align="center" class="nowrap">';
 			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv),"day")."</span>";
 			print ' <span>&nbsp; ';
 			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$acct->id.'&amp;rowid='.$objp->rowid.'">';
@@ -282,7 +282,7 @@ if ($resql)
 		// Type + Number
 		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
 		if ($label=='SOLD') $label='';
-		print '<td nowrap="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
@@ -390,7 +390,7 @@ if ($resql)
             // If not already reconciliated
             if ($user->rights->banque->modifier)
             {
-                print '<td align="center" width="30" nowrap="nowrap">';
+                print '<td align="center" width="30" class="nowrap">';
 
                 print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
                 print img_edit();
@@ -418,7 +418,7 @@ if ($resql)
         if ($db->jdate($objp->do) <= $now)
         {
 
-            print '<td align="center" nowrap="nowrap">';
+            print '<td align="center" class="nowrap">';
             print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked="checked"':'').'>';
 //             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
 //             print ' &nbsp; ';

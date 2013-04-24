@@ -204,7 +204,7 @@ if ($resql)
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
-			print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
+			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
 
 			print '</tr>';
 			$i++;

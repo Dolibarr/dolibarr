@@ -304,17 +304,17 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 
 		$generic_commande->id=$objp->rowid;
 		$generic_commande->ref=$objp->ref;
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding" nowrap="nowrap">';
+		print '<td class="nobordernopadding nowrap">';
 		print $generic_commande->getNomUrl(1,($viewstatut != 2?0:$objp->fk_statut));
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+		print '<td width="20" class="nobordernopadding nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
@@ -375,10 +375,10 @@ if ($resql)
 		print '</td>';
 
 		// Amount HT
-		print '<td align="right" nowrap="nowrap">'.price($objp->total_ht).'</td>';
+		print '<td align="right" class="nowrap">'.price($objp->total_ht).'</td>';
 
 		// Statut
-		print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
+		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
 		print '</tr>';
 
@@ -391,10 +391,10 @@ if ($resql)
 	{
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td nowrap="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
+		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
 		// Total HT
-		print '<td align="right" nowrap="nowrap">'.price($total).'</td>';
-		print '<td nowrap="nowrap">&nbsp;</td>';
+		print '<td align="right" class="nowrap">'.price($total).'</td>';
+		print '<td class="nowrap">&nbsp;</td>';
 		print '</tr>';
 	}
 

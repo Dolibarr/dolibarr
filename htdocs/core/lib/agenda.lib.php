@@ -60,40 +60,40 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 		print '<table class="nobordernopadding" width="100%">';
 		if ($canedit || ! empty($conf->projet->enabled))
 		{
-			print '<tr><td nowrap="nowrap">';
+			print '<tr><td class="nowrap">';
 
 			print '<table class="nobordernopadding">';
 
 			if ($canedit)
 			{
 				print '<tr>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				print $langs->trans("ActionsAskedBy");
-				print ' &nbsp;</td><td nowrap="nowrap">';
+				print ' &nbsp;</td><td class="nowrap">';
 				print $form->select_dolusers($filtera,'userasked',1,'',!$canedit);
 				print '</td>';
 				print '</tr>';
 
 				print '<tr>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				print $langs->trans("or").' '.$langs->trans("ActionsToDoBy");
-				print ' &nbsp;</td><td nowrap="nowrap">';
+				print ' &nbsp;</td><td class="nowrap">';
 				print $form->select_dolusers($filtert,'usertodo',1,'',!$canedit);
 				print '</td></tr>';
 
 				print '<tr>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				print $langs->trans("or").' '.$langs->trans("ActionsDoneBy");
-				print ' &nbsp;</td><td nowrap="nowrap">';
+				print ' &nbsp;</td><td class="nowrap">';
 				print $form->select_dolusers($filterd,'userdone',1,'',!$canedit);
 				print '</td></tr>';
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 				$formactions=new FormActions($db);
 				print '<tr>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				print $langs->trans("Type");
-				print ' &nbsp;</td><td nowrap="nowrap">';
+				print ' &nbsp;</td><td class="nowrap">';
 
 				print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
 
@@ -103,9 +103,9 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 			if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 			{
 				print '<tr>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				print $langs->trans("Project").' &nbsp; ';
-				print '</td><td nowrap="nowrap">';
+				print '</td><td class="nowrap">';
 				select_projects($socid?$socid:-1, $pid, 'projectid', 64);
 				print '</td></tr>';
 			}
@@ -114,7 +114,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 			print '</td>';
 
 			// Buttons
-			print '<td align="center" valign="middle" nowrap="nowrap">';
+			print '<td align="center" valign="middle" class="nowrap">';
 			print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" class="button" style="width:120px" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 			print '<br>';
 			print img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" class="button" style="width:120px" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
@@ -127,7 +127,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 			// Legend
 			if ($conf->use_javascript_ajax && is_array($showextcals))
 			{
-    			print '<td align="center" valign="middle" nowrap="nowrap">';
+    			print '<td align="center" valign="middle" class="nowrap">';
                 print '<script type="text/javascript">'."\n";
                 print 'jQuery(document).ready(function () {'."\n";
                 print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });'."\n";

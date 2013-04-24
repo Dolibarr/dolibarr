@@ -90,7 +90,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td><?php echo $langs->trans("Country"); ?></td>
-	<td colspan="3" nowrap="nowrap"><?php echo $this->control->tpl['country']; ?></td>
+	<td colspan="3" class="nowrap"><?php echo $this->control->tpl['country']; ?></td>
 </tr>
 
 <tr>
@@ -136,7 +136,7 @@ for ($i=1; $i<=4; $i++) {
 <tr>
 	<td><?php echo $langs->trans('VATIsUsed'); ?></td>
 	<td><?php echo $this->control->tpl['tva_assuj']; ?></td>
-	<td nowrap="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
+	<td class="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
 	<td><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
 

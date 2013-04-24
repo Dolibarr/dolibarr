@@ -60,7 +60,7 @@ $userstatic=new User($db);
 	<input type="hidden" name="source" value="internal" />
 
 	<tr <?php echo $bc[$var]; ?>>
-		<td nowrap="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
+		<td class="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
 		<td><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></td>
 		<td><?php echo $form->select_users($user->id,'userid',0,(! empty($userAlreadySelected)?$userAlreadySelected:'')); ?></td>
 		<td><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></td>
@@ -77,7 +77,7 @@ $userstatic=new User($db);
 	<?php $var=!$var; ?>
 
 	<tr <?php echo $bc[$var]; ?>>
-		<td nowrap="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
+		<td class="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
 		<?php if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) { ?>
 		<td>
 			<?php
@@ -176,7 +176,7 @@ $userstatic=new User($db);
 			<?php echo $contactstatic->LibStatut($tab[$i]['status'],3); ?>
 			<?php if ($object->statut >= 0) echo '</a>'; ?>
 		</td>
-		<td align="center" nowrap="nowrap" colspan="2">
+		<td align="center" class="nowrap" colspan="2">
 			<?php if ($permission) { ?>
 				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
 			<?php } ?>

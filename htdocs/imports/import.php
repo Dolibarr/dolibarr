@@ -511,7 +511,7 @@ if ($step == 3 && $datatoimport)
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
-    print '</td><td align="right" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+    print '</td><td align="right" class="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
 
@@ -847,7 +847,7 @@ if ($step == 4 && $datatoimport)
 		$entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
 		$entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-		print '<td nowrap="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowrap" style="font-weight: normal">=>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td style="font-weight: normal">';
 		$newlabel=preg_replace('/\*$/','',$label);
 		$text=$langs->trans($newlabel);

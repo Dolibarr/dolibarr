@@ -91,7 +91,7 @@ class FormFile
 
             if (! empty($options)) print '<td>'.$options.'</td>';
 
-            print '<td valign="middle" nowrap="nowrap">';
+            print '<td valign="middle" class="nowrap">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
@@ -479,7 +479,7 @@ class FormFile
 					$out.= "<tr ".$bc[$var].">";
 
 					// Show file name with link to download
-					$out.= '<td nowrap="nowrap">';
+					$out.= '<td class="nowrap">';
 					$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
@@ -490,11 +490,11 @@ class FormFile
 
 					// Show file size
 					$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
-					$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
+					$out.= '<td align="right" class="nowrap">'.dol_print_size($size).'</td>';
 
 					// Show file date
 					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-					$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
+					$out.= '<td align="right" class="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
 
 					if ($delallowed)
 					{

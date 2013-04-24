@@ -161,10 +161,10 @@ if ($result)
 			print '</td>';
 		}
 		// Last send
-		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->date_envoi),'day').'</td>';
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_envoi),'day').'</td>';
 		print '</td>';
 		// Status
-		print '<td align="right" nowrap="nowrap">';
+		print '<td align="right" class="nowrap">';
 		if ($filteremail)
 		{
 			if ($obj->sendstatut==-1) print $langs->trans("MailingStatusError").' '.img_error();

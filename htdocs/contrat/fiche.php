@@ -1171,10 +1171,10 @@ else
                     }
 
 					if ($conf->margin->enabled)
-						print '<td align="right" nowrap="nowrap">'.price($objp->pa_ht).'</td>';
+						print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
 
                     // Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
-                    print '<td align="right" nowrap="nowrap">';
+                    print '<td align="right" class="nowrap">';
                     if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
                     {
                         print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
@@ -1272,7 +1272,7 @@ else
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
-                    print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+                    print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 					if ($conf->margin->enabled) {
 					    print '<td align="right">';
 					    if ($objp->fk_product)

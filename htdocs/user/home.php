@@ -239,7 +239,7 @@ if ($canreadperms)
 	        	print $mc->label;
 	        	print '</td>';
 			}
-			print '<td nowrap="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
+			print '<td class="nowrap" align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
 			print "</tr>";
 			$i++;
 		}

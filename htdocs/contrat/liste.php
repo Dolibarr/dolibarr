@@ -133,7 +133,7 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td nowrap="nowrap"><a href="fiche.php?id='.$obj->cid.'">';
+        print '<td class="nowrap"><a href="fiche.php?id='.$obj->cid.'">';
         print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->cid) .'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';

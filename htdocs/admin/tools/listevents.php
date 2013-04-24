@@ -206,18 +206,18 @@ if ($result)
 		print '<tr '.$bc[$var].'>';
 
 		// Date
-		print '<td align="left" nowrap="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Code
 		print '<td>'.$obj->type.'</td>';
 
 		// IP
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print dol_print_ip($obj->ip);
 		print '</td>';
 
 		// Login
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		if ($obj->fk_user)
 		{
 			$userstatic->id=$obj->fk_user;

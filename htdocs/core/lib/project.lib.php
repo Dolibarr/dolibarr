@@ -467,7 +467,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
-		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td>';
 		print '</tr>';
 	}
 
@@ -576,7 +576,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 				$disabledtask=1;
 			}
 
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 			$s =$form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
 			$s.='&nbsp;&nbsp;&nbsp;';
 			$s.=$form->select_duration($lines[$i]->id,'',$disabledtask);
@@ -772,7 +772,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 			{
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
 				print ' - '.$objp->title.'</td>';

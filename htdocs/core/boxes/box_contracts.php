@@ -114,7 +114,7 @@ class box_contracts extends ModeleBoxes
     				$this->info_box_contents[$i][4] = array('td' => 'align="right"',
     				'text' => dol_print_date($datec,'day'));
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right" nowrap="nowrap"',
+    				$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
     				'text' => $contractstatic->getLibStatut(6),
     				'asis'=>1
     				);

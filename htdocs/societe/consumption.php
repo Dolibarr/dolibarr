@@ -265,7 +265,7 @@ if ($sql_select)
 	{
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print '<td class="nobordernopadding" nowrap="nowrap" width="100">';
+		print '<td class="nobordernopadding nowrap" width="100">';
 		$documentstatic->id=$objp->doc_id;
 		$documentstatic->ref=$objp->doc_number;
 		$documentstatic->type=$objp->type;

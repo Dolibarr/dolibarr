@@ -195,6 +195,9 @@ div.inline-block
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 /* ============================================================================== */

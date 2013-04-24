@@ -807,7 +807,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     $out.="<tr ".$bc[$var].">";
 
-                    $out.='<td width="120" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
+                    $out.='<td width="120" align="left" class="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
                     // Picto warning
                     $out.='<td width="16">';
@@ -840,14 +840,14 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                         $out.='<td>&nbsp;</td>';
                     }
 
-                    $out.='<td width="80" nowrap="nowrap">';
+                    $out.='<td width="80" class="nowrap">';
                     $userstatic->id=$obj->fk_user_author;
                     $userstatic->login=$obj->login;
                     $out.=$userstatic->getLoginUrl(1);
                     $out.='</td>';
 
                     // Statut
-                    $out.='<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+                    $out.='<td class="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 
                     $out.="</tr>\n";
                     $i++;
@@ -1050,7 +1050,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.="<tr ".$bc[$var].">";
 
             // Champ date
-            $out.='<td width="120" nowrap="nowrap">';
+            $out.='<td width="120" class="nowrap">';
             if ($histo[$key]['date']) $out.=dol_print_date($histo[$key]['date'],'dayhour');
             else if ($histo[$key]['datestart']) $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
             $out.="</td>\n";
@@ -1125,14 +1125,14 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             }
 
             // Auteur
-            $out.='<td nowrap="nowrap" width="80">';
+            $out.='<td class="nowrap" width="80">';
             $userstatic->id=$histo[$key]['userid'];
             $userstatic->login=$histo[$key]['login'];
             $out.=$userstatic->getLoginUrl(1);
             $out.='</td>';
 
             // Statut
-            $out.='<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
+            $out.='<td class="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
 
             $out.="</tr>\n";
             $i++;

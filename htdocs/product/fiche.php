@@ -1367,7 +1367,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addinpropal">';
                     print "<tr ".$bc[$var].">";
-                    print '<td nowrap="nowrap">';
+                    print '<td class="nowrap">';
                     print "<a href=\"../comm/propal.php?id=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dol_trunc($objp->nom,18)."</a></td>\n";
                     print "<td nowrap=\"nowrap\">".dol_print_date($objp->dp,"%d %b")."</td>\n";
@@ -1412,7 +1412,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                 print $langs->trans("OtherPropals").'</td><td>';
                 print $form->selectarray("propalid", $otherprop);
                 print '</td></tr>';
-                print '<tr '.$bc[$var].'><td nowrap="nowrap" colspan="2">'.$langs->trans("Qty");
+                print '<tr '.$bc[$var].'><td class="nowrap" colspan="2">'.$langs->trans("Qty");
                 print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                 print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
                 print '</td><td align="right">';
@@ -1484,7 +1484,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addincommande">';
                     print "<tr ".$bc[$var].">";
-                    print '<td nowrap="nowrap">';
+                    print '<td class="nowrap">';
                     print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
                     print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dol_trunc($objc->nom,18)."</a></td>\n";
                     print "<td nowrap=\"nowrap\">".dol_print_date($db->jdate($objc->dc),"%d %b")."</td>\n";

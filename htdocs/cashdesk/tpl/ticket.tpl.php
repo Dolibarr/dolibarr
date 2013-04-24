@@ -140,9 +140,9 @@ print $object->ref;
 
 <table class="totaux">
 <?php
-echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalHT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prixTotalHt(),'MT')." ".$conf->currency."</td></tr>\n";
-echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalVAT").'</th><td nowrap="nowrap">'.price2num($obj_facturation->montantTva(),'MT')." ".$conf->currency."</td></tr>\n";
-echo '<tr><th nowrap="nowrap">'.$langs->trans("TotalTTC").'</th><td nowrap="nowrap">'.price2num($obj_facturation->prixTotalTtc(),'MT')." ".$conf->currency."</td></tr>\n";
+echo '<tr><th class="nowrap">'.$langs->trans("TotalHT").'</th><td class="nowrap">'.price2num($obj_facturation->prixTotalHt(),'MT')." ".$conf->currency."</td></tr>\n";
+echo '<tr><th class="nowrap">'.$langs->trans("TotalVAT").'</th><td class="nowrap">'.price2num($obj_facturation->montantTva(),'MT')." ".$conf->currency."</td></tr>\n";
+echo '<tr><th class="nowrap">'.$langs->trans("TotalTTC").'</th><td class="nowrap">'.price2num($obj_facturation->prixTotalTtc(),'MT')." ".$conf->currency."</td></tr>\n";
 ?>
 </table>
 

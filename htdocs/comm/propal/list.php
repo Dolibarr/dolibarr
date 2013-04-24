@@ -301,17 +301,17 @@ if ($result)
 		$now = dol_now();
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 
 		$objectstatic->id=$objp->propalid;
 		$objectstatic->ref=$objp->ref;
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding" nowrap="nowrap">';
+		print '<td class="nobordernopadding nowrap">';
 		print $objectstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+		print '<td width="20" class="nobordernopadding nowrap">';
 		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		print '</td>';
 
@@ -333,7 +333,7 @@ if ($result)
 		print '</td>';
 
 		// Customer ref
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print $objp->ref_client;
 		print '</td>';
 

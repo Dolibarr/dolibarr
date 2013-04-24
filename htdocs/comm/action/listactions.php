@@ -276,7 +276,7 @@ if ($resql)
 		//print dol_trunc($obj->label,12);
 		//print '</td>';
 
-		print '<td align="center" nowrap="nowrap">';
+		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"day");
 		$late=0;
 		if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -286,7 +286,7 @@ if ($resql)
 		if ($late) print img_warning($langs->trans("Late")).' ';
 		print '</td>';
 
-		print '<td align="center" nowrap="nowrap">';
+		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp2),"day");
 		print '</td>';
 
@@ -354,7 +354,7 @@ if ($resql)
 		print '</td>';
 
 		// Status/Percent
-		print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
+		print '<td align="right" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
 
 		print "</tr>\n";
 		$i++;

@@ -134,7 +134,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEPAIR2='255,255,255';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
-    $conf->global->THEME_ELDY_TEXT='50,50,160';
+    $conf->global->THEME_ELDY_TEXT='50,50,130';
 	if ($dol_use_jmobile)
 	{
     	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';    // topmenu
@@ -177,7 +177,7 @@ $tmpval+=(! empty($tmppart[2]) ? $tmppart[2] : '');
 $tmpval+=(! empty($tmppart[3]) ? $tmppart[3] : '');
 //print $tmpval;
 if ($tmpval < 340) $colortextmain='FFFFFF';
-else $colortextmain='101010';
+else $colortextmain='444444';
 
 $usecss3=true;
 if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
@@ -353,7 +353,9 @@ th .button {
 .right {
 	text-align: <?php print $right; ?>;
 }
-
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 /* ============================================================================== */
@@ -510,6 +512,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	white-space: nowrap;
 	/*	text-shadow: 1px 1px 1px #000000; */
 	color: #<?php echo $colortexttopmenu; ?>;
+    text-decoration: none;
 }
 a.tmenu:link, a.tmenu:visited {
 	color: #<?php echo $colortexttopmenu; ?>;
@@ -589,7 +592,6 @@ div.tmenucenter
 	padding-right: 4px;
 	text-shadow: 1px 1px 1px #DDD;
 }
-
 
 div.mainmenu {
 	position : relative;
@@ -1372,8 +1374,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
     background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-
-	background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 <?php } else { ?>
 	background: #dee7ec;
 <?php } ?>
@@ -1395,7 +1395,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active
 }
 a.tab:hover
 {
-	background: #EEEEEE url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
+	background: rgb(<?php echo $colorbacktabcard2; ?>)  url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x;
 }
 a.tabimage {
     color: #434956;
@@ -1675,6 +1675,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre
     /*font-weight: normal;*/
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
+	text-shadow:1px 0px 1px #ffffff;
 }
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel
 {
@@ -1683,6 +1684,7 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
     border-bottom: 1px solid #FDFFFF;
     white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-decoration: underline;
+	text-shadow:1px 1px 1px #ffffff;
 }
 input.liste_titre {
     background: transparent;
@@ -1794,6 +1796,9 @@ tr.box_titre {
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktitle1; ?>) 15%, rgb(<?php echo $colorbacktitle2; ?>) 100%);
 	<?php } ?>
     color: #<?php echo $colortextmain; ?>;
+	text-shadow:1px 1px 1px #FFFFFF;
+	/* color: #FFFFFF;
+	text-shadow:1px 1px 1px #444444; */
     font-family: <?php print $fontlist ?>, sans-serif;
     font-weight: bold;
     border-bottom: 1px solid #FDFFFF;
@@ -2574,6 +2579,9 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
+a.ui-link, a.ui-link:hover {
+	text-decoration: none;
+}
 .ui-btn-inner {
 	padding-left: 10px;
 	padding-right: 10px;
@@ -2611,6 +2619,9 @@ a.tab span.ui-btn-inner
 	color: rgb(<?php print $colortext; ?>) !important;
 }
 
+a.ui-link {
+	word-wrap: break-word;
+}
 
 /* Warning: setting this make screen not beeing refreshed after a combo selection */
 /*.ui-body-c {

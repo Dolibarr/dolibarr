@@ -106,7 +106,7 @@ if ( $resql )
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		if ($obj->socid)
 		{
 			$socstatic->id=$obj->socid;

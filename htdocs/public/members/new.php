@@ -576,7 +576,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
     // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
-    print '<tr><td>'.$langs->trans("Subscription").'</td><td nowrap="nowrap">';
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {
         print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
