@@ -71,7 +71,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		$text = $langs->trans("BoxInvoicesPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
-				'limit'=> dol_strlen($text)
+				'limit'=> dol_strlen($text),
+				'graph'=> 1
 		);
 
 		if ($user->rights->facture->lire)

@@ -957,7 +957,7 @@ class FormOther
 	        		var boxid=self.id.substring(8);
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
 	        		jQuery(\'#boxto_\'+boxid).remove();
-	        		// TODO Add id, label into combo list
+	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
 	        		updateBoxOrder(1);
 	        	});
 
