@@ -169,7 +169,7 @@ else
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
-    dol_syslog("sql=".$sql);
+    dol_syslog("product:list.php: sql=".$sql);
     $resql = $db->query($sql);
     if ($resql)
     {
