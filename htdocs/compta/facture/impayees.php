@@ -227,7 +227,7 @@ if ($search_societe)     $sql .= " AND s.nom LIKE '%".$search_societe."%'";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$search_montant_ht."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
 if (GETPOST('sf_ref')) $sql .= " AND f.facnumber LIKE '%".GETPOST('sf_ref') . "%'";
-$sql.= " GROUP BY f.facnumber,f.increment,f.total,f.total_ttc,f.datef, f.date_lim_reglement,f.paye, f.rowid, f.fk_statut, f.type,s.nom, s.rowid";
+$sql.= " GROUP BY s.nom,s.rowid,f.facnumber, f.increment, f.total, f.tva, f.total_ttc,f.datef, f.date_lim_reglement, f.rowid,f.fk_statut,f.type ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
