@@ -28,6 +28,7 @@ with format RPM (for Redhat, OpenSuse, Mandriva, ...).
 # On OpenSuse
 # yast --install dolibarr-...rpm    To install package and dependencies
 # yast --remove  dolibarr           To remove package
+# Log of Yast available into /var/log/YaST2/y2log
 #
 # On Mageia (after su - root)
 # urpmi dolibarr-...rpm             To install package and dependencies
