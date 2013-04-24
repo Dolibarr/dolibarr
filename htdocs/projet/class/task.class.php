@@ -119,7 +119,6 @@ class Task extends CommonObject
 		$sql.= ", dateo";
 		$sql.= ", datee";
 		$sql.= ", progress";
-		$sql.= ", total_ht";
 		$sql.= ", subprice";
 		$sql.= ", duration_planned";
 		$sql.= ", fk_statut";
@@ -133,7 +132,6 @@ class Task extends CommonObject
 		$sql.= ", ".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null');
 		$sql.= ", ".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null');
 		$sql.= ", ".($this->progress!=''?$this->progress:0);
-		$sql.= ", ".($this->total_ht!=''?price2num($this->total_ht):'null');
 		$sql.= ", ".($this->subprice!=''?price2num($this->subprice):'null');
 		$sql.= ", ".($this->duration_planned!=''?$this->duration_planned:'null');
 		$sql.= ", ".$this->fk_statut;
@@ -209,7 +207,6 @@ class Task extends CommonObject
 		$sql.= " t.description,";
 		$sql.= " t.duration_effective,";
 		$sql.= " t.duration_planned,";
-		$sql.= " t.total_ht,";
 		$sql.= " t.subprice,";
 		$sql.= " t.dateo,";
 		$sql.= " t.datee,";
@@ -239,7 +236,6 @@ class Task extends CommonObject
 				$this->description			= $obj->description;
 				$this->duration_effective	= $obj->duration_effective;
 				$this->duration_planned		= $obj->duration_planned;
-				$this->total_ht				= $obj->total_ht;
 				$this->subprice				= $obj->subprice;
 				$this->date_c				= $this->db->jdate($obj->datec);
 				$this->date_start			= $this->db->jdate($obj->dateo);
@@ -315,7 +311,6 @@ class Task extends CommonObject
 		$sql.= " duration_effective=".(isset($this->duration_effective)?$this->duration_effective:"null").",";
 		$sql.= " duration_planned=".(isset($this->duration_planned)?$this->duration_planned:"null").",";
 		$sql.= " subprice=".($this->subprice!=''?price2num($this->subprice):"null").",";
-		$sql.= " total_ht=".($this->total_ht!=''?price2num($this->total_ht):"null").",";
 		$sql.= " dateo=".($this->date_start!=''?$this->db->idate($this->date_start):'null').",";
 		$sql.= " datee=".($this->date_end!=''?$this->db->idate($this->date_end):'null').",";
 		$sql.= " progress=".$this->progress.",";
