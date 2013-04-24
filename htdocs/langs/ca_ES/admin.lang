@@ -354,6 +354,7 @@ ExtrafieldPhone=Telèfon
 ExtrafieldPrice=Preu
 ExtrafieldMail=Correu
 ExtrafieldSelect=Llista de selecció
+ExtrafieldSelectList=Llista de selecció de table
 ExtrafieldSeparator=Separador
 ExtrafieldCheckBox=Casella de verificació
 ExtrafieldRadio=Botó de selecció excloent

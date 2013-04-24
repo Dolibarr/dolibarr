@@ -356,6 +356,7 @@ ExtrafieldPhone = Téléphone
 ExtrafieldPrice = Prix
 ExtrafieldMail = Email
 ExtrafieldSelect = Liste de sélection
+ExtrafieldSelectList = Liste issue d'une table
 ExtrafieldSeparator = Séparateur de champ
 ExtrafieldCheckBox=Case à cocher
 ExtrafieldRadio=Case d'option
