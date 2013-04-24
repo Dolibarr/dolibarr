@@ -1,28 +1,28 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2013	Charles-Fr BENKE		<charles.fr@benke.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+* Copyright (C) 2012-2013	Charles-Fr BENKE		<charles.fr@benke.fr>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *	\file       htdocs/projet/tasks/task.php
  *	\ingroup    project
- *	\brief      Page of a project task
- */
+*	\brief      Page of a project task
+*/
 
 require( "../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -55,14 +55,16 @@ if (! $user->rights->projet->lire) accessforbidden();
 $hookmanager->initHooks(array('projecttaskcard'));
 
 $object = new Task($db);
-$extrafields = new ExtraFields($db);
+$extrafieldsTask = new ExtraFields($db);
+$extrafieldsProject = new ExtraFields($db);
 $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('projet_task');
+$extralabelstask=$extrafieldsTask->fetch_name_optionals_label('projet_task');
+$extralabelsproject=$extrafieldsProject->fetch_name_optionals_label('projet');
 /*
  * Actions
- */
+*/
 
 if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
@@ -97,8 +99,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 			$object->total_ht = $_POST['total_ht'];
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		
+		$ret = $extrafieldsTask->setOptionalsFromPost($extralabelstask,$object);
+
 		$result=$object->update($user);
 	}
 	else
@@ -154,7 +156,7 @@ if (! empty($project_ref) && ! empty($withproject))
 
 /*
  * View
- */
+*/
 
 $langs->load('projects');
 
@@ -169,9 +171,11 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id) > 0)
 	{
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals($object->id,$extralabelstask);
+		
 
 		$result=$projectstatic->fetch($object->fk_project);
+		$res=$projectstatic->fetch_optionals($projectstatic->id,$extralabelsproject);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
@@ -216,6 +220,24 @@ if ($id > 0 || ! empty($ref))
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
+				
+			// Date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print dol_print_date($projectstatic->date_start,'day');
+			print '</td></tr>';
+
+			// Date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print dol_print_date($projectstatic->date_end,'day');
+			print '</td></tr>';
+			 
+			// Other options
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$projectstatic,$action); // Note that $action and $object may have been modified by hook
+			if (empty($reshook) && ! empty($extrafieldsProject->attribute_label))
+			{
+				print $projectstatic->showOptionals($extrafieldsProject);
+			}
 
 			print '</table>';
 
@@ -282,7 +304,7 @@ if ($id > 0 || ! empty($ref))
 			print $formother->select_percent($object->progress,'progress');
 			print '</td></tr>';
 
-			//unit price 
+			//unit price
 			print '<tr><td >'.$langs->trans("Subprice").'</td><td colspan="3">';
 			print '<input size="5" name="subprice" value="'.price2num($object->subprice, 'MU').'">';
 			print '</td></tr>';
@@ -315,11 +337,11 @@ if ($id > 0 || ! empty($ref))
 			// Other options
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			if (empty($reshook) && ! empty($extrafieldsTask->attribute_label))
 			{
-				print $object->showOptionals($extrafields,'edit');
+				print $object->showOptionals($extrafieldsTask,'edit');
 			}
-			
+				
 			print '</table>';
 
 			print '<center><br>';
@@ -333,7 +355,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Fiche tache en mode visu
-			 */
+			*/
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
@@ -402,7 +424,7 @@ if ($id > 0 || ! empty($ref))
 			print price2num($object->subprice,'MU').'</td></tr>';
 
 			//planned time
-			print '<tr><td >'.$langs->trans("DurationPlanned").' / '.$langs->trans("TimesSpent").' / '.$langs->trans("DurationRemain").'</td><td>';  
+			print '<tr><td >'.$langs->trans("DurationPlanned").' / '.$langs->trans("TimesSpent").' / '.$langs->trans("DurationRemain").'</td><td>';
 			print ConvertSecondToTime($object->duration_planned,'all').'</td>';
 			$TaskTimeSpent=$object->getTaskTimeSpent($taskid);
 			print '<td >'.ConvertSecondToTime($TaskTimeSpent).'</td>';
@@ -430,9 +452,9 @@ if ($id > 0 || ! empty($ref))
 			// Other options
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			if (empty($reshook) && ! empty($extrafieldsTask->attribute_label))
 			{
-				print $object->showOptionals($extrafields);
+				print $object->showOptionals($extrafieldsTask);
 			}
 
 			print '</table>';
@@ -445,7 +467,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Actions
-			 */
+			*/
 			print '<div class="tabsAction">';
 
 			// Modify
@@ -467,7 +489,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 			}
-			
+				
 			// trasnfert autorisé ssi date de fin tache saisie, tache terminé à 100% et pas déjà transférée
 			if ($user->rights->projet->creer && $object->date_end && $object->progress==100 && $object->fk_statut!=4)
 			{

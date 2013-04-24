@@ -1040,7 +1040,7 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 		$result = $object->create();
 		if ($result > 0)
 		{
-			$sql = "SELECT t.rowid, t.dateo, t.duration_planned, label, subprice, total_ht";
+			$sql = "SELECT t.rowid, t.dateo, t.duration_planned, label, subprice";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
 			$sql .= " WHERE t.rowid =".$taskid;
 			$sql .= " ORDER BY t.dateo DESC";
@@ -1059,8 +1059,7 @@ function Task_Transfer_FichInter($db, $conf, $langs, $user, $taskid)
 						$objp->label,
 						$db->jdate($objp->dateo),
 						$objp->duration_planned,
-						$objp->subprice,
-						$objp->total_ht
+						$objp->subprice
 					);
 					$i++;
 				}
