@@ -577,7 +577,7 @@ div.vmenu {
 .blockvmenupair .menu_titre, .blockvmenuimpair .menu_titre {
 	height:22px;
 	line-height:22px;
-	text-align:center;
+	/* text-align:center; */
 	background-color:rgba(0,0,0,.08);
 	background-image:linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image:-o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -591,7 +591,7 @@ div.vmenu {
 		color-stop(0, rgba(255,255,255,.3)),
 		color-stop(1, rgba(0,0,0,.3))
 	);
-	padding-left:3px;
+	padding-left:5px;
 	border-top:solid 1px rgba(255,255,255,.5);
 	border-bottom:solid 1px rgba(0,0,0,.5);
 }
