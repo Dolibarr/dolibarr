@@ -289,10 +289,10 @@ class Contrat extends CommonObject
 		// Definition du nom de module de numerotation de commande
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
-		
+
 		// Class of company linked to order
 		$result=$soc->set_as_client();
-		
+
 		// Define new ref
 		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 		{
@@ -565,8 +565,8 @@ class Contrat extends CommonObject
 				$line->libelle        = $objp->description;
 				$line->desc           = $objp->description;
 				$line->qty            = $objp->qty;
-				$line->statut 		   = $objp->statut;
-				$line->ref            = $objp->ref;
+				$line->statut 		  = $objp->statut;
+				$line->ref            = '';
 				$line->tva_tx         = $objp->tva_tx;
 				$line->localtax1_tx   = $objp->localtax1_tx;
 				$line->localtax2_tx   = $objp->localtax2_tx;

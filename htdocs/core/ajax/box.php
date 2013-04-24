@@ -68,7 +68,6 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
 	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
-	//$infobox=new InfoBox($db);
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 }
 

@@ -96,8 +96,17 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	/**
 	 * Return the parsed logfile path
 	 *
-	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename. 	
+<<<<<<< HEAD
+	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	string
+=======
+<<<<<<< OURS
+	 * @return string
+=======
+	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
+	 * @return	string
+>>>>>>> THEIRS
+>>>>>>> refs/remotes/origin/3.3
 	 */
 	private function getFilename($suffixinfilename='')
 	{
@@ -109,11 +118,13 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 * Export the message
 	 *
 	 * @param  	array 	$content 			Array containing the info about the message
-	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename. 	
+	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
 	 */
 	public function export($content, $suffixinfilename='')
 	{
+		global $conf;
+
 		$logfile = $this->getFilename($suffixinfilename);
 
 		if (defined("SYSLOG_FILE_NO_ERROR")) $filefd = @fopen($logfile, 'a+');
@@ -145,6 +156,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
+			@chmod($logfile, octdec($conf->global->MAIN_UMASK));
 		}
 	}
 }

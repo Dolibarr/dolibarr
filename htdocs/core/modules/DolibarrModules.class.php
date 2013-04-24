@@ -502,7 +502,9 @@ abstract class DolibarrModules
      */
     function insert_boxes()
     {
-        global $conf;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+
+    	global $conf;
 
         $err=0;
 
@@ -510,9 +512,12 @@ abstract class DolibarrModules
         {
             foreach ($this->boxes as $key => $value)
             {
-                //$titre = $this->boxes[$key][0];
-                $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';
-                $note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';
+                $file  = isset($this->boxes[$key]['file'])?$this->boxes[$key]['file']:'';
+                $note  = isset($this->boxes[$key]['note'])?$this->boxes[$key]['note']:'';
+                $enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton'])?$this->boxes[$key]['enabledbydefaulton']:'Home';
+
+            	if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
+                if (empty($note)) $note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';	// For backward compatibility
 
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."boxes_def";
                 $sql.= " WHERE file = '".$this->db->escape($file)."'";
@@ -544,12 +549,19 @@ abstract class DolibarrModules
                         {
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
-                            $sql.= " VALUES (".$lastid.", 0, '0', 0, ".$conf->entity.")";
+                            $pos_name = getStaticMember('InfoBox','listOfPages');
+                            foreach ($pos_name as $key2 => $val2)
+                            {
+                            	//print 'key2='.$key2.'-val2='.$val2."<br>\n";
+                            	if ($enabledbydefaulton && $val2 != $enabledbydefaulton) continue;		// Not enabled by default onto this page.
 
-                            dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
-                            $resql=$this->db->query($sql);
-                            if (! $resql) $err++;
+	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
+    	                        $sql.= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
+
+    	                        dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2." sql=".$sql);
+                            	$resql=$this->db->query($sql);
+                            	if (! $resql) $err++;
+                            }
                         }
 
                         if (! $err)
@@ -563,9 +575,10 @@ abstract class DolibarrModules
                             $this->db->rollback();
                         }
                     }
+                    // else box already registered into database
                 }
                 else
-                {
+              {
                     $this->error=$this->db->lasterror();
                     dol_syslog(get_class($this)."::insert_boxes ".$this->error, LOG_ERR);
                     $err++;

@@ -590,7 +590,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 {
 	global $conf;
 
-	$out="\n".'<div class="tabs">'."\n";
+	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	// Show title
 	$showtitle=1;
@@ -615,15 +615,16 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// Show tabs
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
+		$out.='<div class="inline-block tabsElem">';
 		if (isset($links[$i][2]) && $links[$i][2] == 'image')
 		{
 			if (!empty($links[$i][0]))
 			{
-				$out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+				$out.='<span data-role="button" class="tabspan">'.$links[$i][1].'</span>'."\n";
 			}
 		}
 		else if (! empty($links[$i][1]))
@@ -632,13 +633,14 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			if ((is_numeric($active) && $i == $active)
 			|| (! is_numeric($active) && $active == $links[$i][2]))
 			{
-				$out.='<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
+		$out.='</div>';
 	}
 
 	$out.="</div>\n";
@@ -815,7 +817,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 	if (! $format) $format='daytextshort';
 	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','hour')))?1:0;
-	
+
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
 	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
@@ -840,7 +842,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		$format=str_replace('%Y','%y',$format);
 		$format=str_replace('yyyy','yy',$format);
 	}
-	
+
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
@@ -1081,9 +1083,9 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {
 	global $conf,$langs;
 	$level=1024;
-	
+
 	if (! empty($conf->dol_optimize_smallscreen)) $shortunit=1;
-	
+
 	// Set value text
 	if (empty($shortvalue) || $size < ($level*10))
 	{

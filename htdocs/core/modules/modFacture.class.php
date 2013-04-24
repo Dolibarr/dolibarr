@@ -97,12 +97,8 @@ class modFacture extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r=0;
-		$this->boxes[$r][1] = "box_factures_imp.php";
-		$r++;
-		$this->boxes[$r][1] = "box_factures.php";
-		$r++;
+		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
+		$this->boxes = array(0=>array('file'=>'box_factures_imp.php','enabledbydefaulton'=>'Home'),1=>array('file'=>'box_factures.php','enabledbydefaulton'=>'Home'),2=>array('file'=>'box_graph_invoices_permonth.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions
 		$this->rights = array();

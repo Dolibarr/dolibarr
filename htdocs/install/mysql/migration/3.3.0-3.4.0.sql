@@ -357,3 +357,5 @@ ALTER TABLE llx_fichinter ADD fulldayevent integer NULL DEFAULT NULL;
 ALTER TABLE llx_fichinter ADD total_ht DOUBLE(24,8) NULL DEFAULT NULL;
 ALTER TABLE llx_fichinterdet ADD subprice DOUBLE(24,8) NULL DEFAULT NULL;
 ALTER TABLE llx_fichinterdet MODIFY COLUMN duree real;
+
+ALTER TABLE llx_boxes ADD COLUMN params varchar(255);
