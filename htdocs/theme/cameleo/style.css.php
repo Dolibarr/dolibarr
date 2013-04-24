@@ -130,7 +130,6 @@ input.button[type=submit] {
 	/*border: 2px solid #063953;*/
 	color: #FFF;
 	padding: 0px 10px 0px 10px;
-	margin: 0px 10px 0px 10px;
 	text-decoration: none;
 	white-space: nowrap;
     /*display: block;
