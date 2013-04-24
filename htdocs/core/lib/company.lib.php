@@ -491,7 +491,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
  */
 function show_contacts($conf,$langs,$db,$object,$backtopage='')
 {
-    global $user;
+    global $user,$conf;
     global $bc;
 
     $i=-1;
@@ -507,7 +507,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact.' '.img_picto($addcontact,'filenew').'</a>'."\n";
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($addcontact,'filenew');
+		$buttoncreate.='</a>'."\n";
     }
 
     print "\n";
