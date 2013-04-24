@@ -688,8 +688,8 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out='<select name="options_'.$key.'">';
-			
-			$InfoFieldList = explode(":", array_keys($param['options'])[0]);
+			$param_list=array_keys($param['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
 			
 			var_export($param['options']);
 			// 0 1 : tableName
@@ -830,7 +830,8 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$InfoFieldList = explode(":", array_keys($params['options'])[0]);
+			$param_list=array_keys($params['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
 			$keyList='rowid';
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2];
