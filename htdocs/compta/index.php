@@ -941,7 +941,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
-	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.rowid";
+	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc, ff.paye,";
+	$sql.= " s.nom, s.rowid";
 
 	$resql=$db->query($sql);
 	if ($resql)
