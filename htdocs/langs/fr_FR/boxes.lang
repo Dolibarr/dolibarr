@@ -81,3 +81,4 @@ NoSupplierOrder=Pas de commandes fournisseur enregistrées
 BoxInvoicesPerMonth=Factures par mois
 BoxOrdersPerMonth=Commandes par mois
 BoxProposalsPerMonth=Proposition par mois
+NoTooLowStockProducts=Pas de produits sous le seuil de stock minimal

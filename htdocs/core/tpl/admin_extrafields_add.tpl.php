@@ -47,8 +47,8 @@
     		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); }
     		else if (type == 'boolean') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
-    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
-    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
+    		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
+    		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();}
     		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
     		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
@@ -87,7 +87,8 @@
 <table class="nobordernopadding">
 <tr><td width="30%">
 	<textarea name="param" id="param"><?php echo GETPOST('param'); ?></textarea>
-</td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
+</td><td id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></td>
+<td id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></td></tr>
 </table>
 </td>
 

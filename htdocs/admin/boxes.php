@@ -346,7 +346,9 @@ foreach($boxtoadd as $box)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr '.$bc[$var].'>';
-    print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel).'</td>';
+    print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+    if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
+    print '</td>';
     print '<td>';
     if ($box->note == '(WarningUsingThisBoxSlowDown)')
     {
@@ -406,7 +408,7 @@ foreach($boxactivated as $key => $box)
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
-	//if (! empty($box->graph)) print ' ('.$langs->trans("Graph").')';
+	if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
 	print '</td>';
 	print '<td>';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)')
