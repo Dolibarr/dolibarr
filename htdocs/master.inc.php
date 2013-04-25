@@ -143,7 +143,10 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = DOLENTITY;
 	}
-	// TODO Multicompany Remove this.
+	else if (!empty($_COOKIE['DOLENTITY']))							// For other application with MultiCompany module
+	{
+		$conf->entity = $_COOKIE['DOLENTITY'];
+	}
 	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
 	{
 		$conf->entity = $conf->multicompany->force_entity;
