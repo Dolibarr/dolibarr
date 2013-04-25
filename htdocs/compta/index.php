@@ -383,7 +383,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($obj->fk_statut == 1 && ! $obj->paye && $db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
-				print '<td width="16" align="right" class="nobordernopadding">';
+				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
@@ -775,7 +775,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				print '<td width="20" class="nobordernopadding nowrap">';
 				print '&nbsp;';
 				print '</td>';
-				print '<td width="16" align="right" class="nobordernopadding">';
+				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -875,7 +875,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
-				print '<td width="16" align="right" class="nobordernopadding">';
+				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;

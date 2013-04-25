@@ -185,7 +185,7 @@ if ($resql)
             print dolGetFirstLastname($obj->nom,$obj->firstname);
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding">';
+            print '<td align="right" class="nobordernopadding">';
             print price($obj->amount,1);
             print '</td>';
 

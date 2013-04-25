@@ -816,7 +816,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 	if (! $format) $format='daytextshort';
-	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','hour')))?1:0;
+	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','dayhour')))?1:0;
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);

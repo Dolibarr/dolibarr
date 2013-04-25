@@ -1317,7 +1317,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
-    if (empty($_SESSION['dol_hide_topmenu']) && ! GETPOST('dol_hide_topmenu'))
+    if (empty($conf->dol_hide_topmenu))
     {
 	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
@@ -1418,9 +1418,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     print "<!-- End top horizontal menu -->\n";
 
-    if (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
-
-
+	//XXX if (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+    if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
 }
 
 
@@ -1448,10 +1447,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('searchform','leftblock'));
 
-    if (empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu'))
+    if (empty($conf->dol_hide_leftmenu))
     {
 	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-	    else print '<td class="vmenu" valign="top">';
+		//XXX else print '<td class="vmenu" valign="top">';
+		else print '<div id="id-left">';
 
 	    print "\n";
 
@@ -1613,7 +1613,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    print $leftblock;
 
 	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
-	    else print '</td>';
+		//XXX	    else print '</td>';
+	    else print '</div>';	// End div id="id-left"
     }
 
     print "\n";
@@ -1637,10 +1638,10 @@ function main_area($title='')
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
     {
         print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-        print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
+        //print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
     }
-
-    print '<td valign="top">'."\n";
+	//XXX print '<td valign="top">'."\n";
+	if (empty($conf->dol_hide_leftmenu)) print '<div id="id-right">';
 
     print "\n";
 
@@ -1765,14 +1766,17 @@ if (! function_exists("llxFooter"))
         print '</div> <!-- end div class="fiche" -->'."\n";
 
 
-        print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-        if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
+		//XXX print "\n".'</td></tr></table> <!-- end right area -->'."\n";
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
+		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
 
         print "\n";
         if ($foot) print '<!-- '.$foot.' -->'."\n";
 
         printCommonFooter();
 
+        if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
+        
         print "</body>\n";
         print "</html>\n";
     }

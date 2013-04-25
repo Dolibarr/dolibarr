@@ -33,7 +33,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 <tr class="liste_titre nodrag nodrop">
 	<td
 	<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><div
-			id="add"></div> <?php echo $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone"); ?>
+			id="add"></div> <span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine').' - ' ?></span><?php echo $langs->trans("FreeZone"); ?>
 	</td>
 	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>

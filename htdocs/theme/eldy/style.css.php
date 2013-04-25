@@ -389,9 +389,23 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
+}
+
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'4')); ?>px;
+	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 }
 
 div.fichecenter {
@@ -857,7 +871,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-td.vmenu {
+div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -888,7 +902,6 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 {
-    width:174px;
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
 	text-align: <?php print $left; ?>;
@@ -924,7 +937,6 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 
 div.blockvmenusearch
 {
-    width:174px;
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
 	text-align: <?php print $left; ?>;
@@ -956,7 +968,6 @@ div.blockvmenusearch
 
 div.blockvmenubookmarksold
 {
-    width:174px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
     font-family: <?php print $fontlist ?>;
@@ -991,7 +1002,6 @@ div.blockvmenubookmarksold
 div.blockvmenuhelp
 {
 <?php if (empty($conf->dol_optimize_smallscreen)) { ?>
-    width:174px;
 	font-family: <?php print $fontlist ?>;
 	color: #000000;
 	text-align: center;
@@ -2585,7 +2595,7 @@ a.ui-link, a.ui-link:hover {
 .ui-btn-inner {
 	padding-left: 10px;
 	padding-right: 10px;
-	white-space: normal;
+	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 36px;
@@ -2623,34 +2633,19 @@ a.ui-link {
 	word-wrap: break-word;
 }
 
+/* force wrap possible onto field overflow does not works */
+.formdoc .ui-btn-inner
+{
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: hidden;
+}
+
 /* Warning: setting this make screen not beeing refreshed after a combo selection */
 /*.ui-body-c {
 	background: #fff;
 }*/
-/*
-.ui-li-divider {
-	background: #eee !important;
-}
-.ui-bar-b {
-	border: 1px solid #CCC !important;
-	background: #aaa !important;
-	font-weight: bold !important;
-	color: #444 !important;
-	text-shadow: 0 1px 1px #fff !important;
-	background-image: -webkit-gradient(linear,left top,left bottom,from(#fdfdfd),to(#aaa)) !important;
-	background-image: -webkit-linear-gradient(top,#fdfdfd,#aaa) !important;
-	background-image: -moz-linear-gradient(top,#fdfdfd,#aaa) !important;
-	background-image: -ms-linear-gradient(top,#fdfdfd,#aaa) !important;
-	background-image: -o-linear-gradient(top,#fdfdfd,#aaa) !important;
-	background-image: linear-gradient(top,#fdfdfd,#aaa) !important;
-}
-.ui-bar-b .ui-link {
-	border: none;
-	font-weight: bold !important;
-	color: #444 !important;
-	text-shadow: 0 1px 1px #fff !important;
-}
-*/
+
 
 <?php
 if (is_object($db)) $db->close();

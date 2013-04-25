@@ -230,6 +230,19 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
+}
+
 div.fiche {
 	margin-<?php print $left; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'10':'2'; ?>px;
 	margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'8':''; ?>px;
@@ -596,7 +609,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-td.vmenu {
+div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;

@@ -261,7 +261,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -330,7 +330,7 @@ if (! empty($conf->commande->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding">';
+				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -401,7 +401,7 @@ if (! empty($conf->commande->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding">';
+				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;

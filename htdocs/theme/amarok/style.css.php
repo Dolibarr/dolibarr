@@ -566,6 +566,15 @@ div.login_main_home {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
+td.vmenu {
+	<?php if (GETPOST("optioncss") != 'print') {?>
+    margin-right:2px;
+    padding:0px;
+    width:170px;
+    /* border-right: 1px solid #666666; */
+    <?php } ?>
+}
+
 div.vmenu {
 	<?php if (GETPOST("optioncss") == 'print') {?>
 	display:none;
@@ -943,13 +952,17 @@ a.tab:hover {color:#333333;}
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-td.vmenu {
-	<?php if (GETPOST("optioncss") != 'print') {?>
-    margin-right:2px;
-    padding:0px;
-    width:170px;
-    /* border-right: 1px solid #666666; */
-    <?php } ?>
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
 }
 
 div.fiche {
