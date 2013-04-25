@@ -203,7 +203,8 @@ if ($object->id > 0)
 
 	// List of document
 	$param='&facid='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'facture_fournisseur',$param,0,get_exdir($object->id,2,0).$object->id.'/');
+	$ref=dol_sanitizeFileName($object->ref);
+	$formfile->list_of_documents($filearray,$object,'facture_fournisseur',$param,0,get_exdir($object->id,2,0).$ref.'/');
 
 }
 else
