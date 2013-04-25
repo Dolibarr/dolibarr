@@ -192,7 +192,7 @@ function getDocument($authentication, $modulepart, $file)
 	$error=0;
 
 	// Properties of doc
-	$original_file = $file;	
+	$original_file = $file;
 	$type=dol_mimetype($original_file);
 	$relativefilepath = $ref . "/";
 	$relativepath = $relativefilepath . $ref.'.pdf';
@@ -221,10 +221,10 @@ function getDocument($authentication, $modulepart, $file)
 		$refname=basename(dirname($original_file)."/");
 
 		// Security check
-		$accessallowed=0;
-		$check_access = dol_check_secure_access_document($modulepart,$original_file);
-		$accessallowed=$check_access['accessallowed'];
+		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity);
+		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+		$original_file              = $check_access['original_file'];
 
 		// Basic protection (against external users only)
 		if ($fuser->societe_id > 0)
@@ -277,27 +277,27 @@ function getDocument($authentication, $modulepart, $file)
 			if(file_exists($original_file))
 			{
 				dol_syslog("Function: getDocument $original_file $filename content-type=$type");
-				
+
 				$file=$fileparams['fullname'];
 				$filename = basename($file);
-	
+
 				$f = fopen($original_file,'r');
 				$content_file = fread($f,filesize($original_file));
-	
+
 				$objectret = array(
 					'filename' => basename($original_file),
 					'mimetype' => dol_mimetype($original_file),
 					'content' => base64_encode($content_file),
 					'length' => filesize($original_file)
 				);
-			
+
 				// Create return object
 				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'document'=>$objectret
 				);
 			}
-			else 
+			else
 			{
 				dol_syslog("File doesn't exist ".$original_file);
 				$errorcode='NOT_FOUND';

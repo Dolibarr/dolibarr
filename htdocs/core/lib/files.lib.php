@@ -1233,13 +1233,15 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
  *
  * @param	string	$modulepart			Module of document
  * @param	string	$original_file		Relative path with filename
+ * @param	string	$entity				Restrict onto entity
  * @return	mixed						Array with access information : accessallowed & sqlprotectagainstexternals & original_file (as full path name)
  */
-function dol_check_secure_access_document($modulepart,$original_file)
+function dol_check_secure_access_document($modulepart,$original_file,$entity)
 {
 	global $user, $conf;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
+	if (empty($entity)) $entity=0;
 
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
