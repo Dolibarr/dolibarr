@@ -47,7 +47,7 @@ if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="name";
 
 // Category
-$selected_cat = (int)GETPOST('search_categ', 'int');
+$selected_cat = (int) GETPOST('search_categ', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
     $subcat = true;
