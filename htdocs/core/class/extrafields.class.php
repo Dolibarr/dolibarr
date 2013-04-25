@@ -545,7 +545,7 @@ class ExtraFields
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
@@ -688,9 +688,9 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out='<select name="options_'.$key.'">';
-
-			$InfoFieldList = explode(":", $param);
-
+			$param_list=array_keys($param['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
+			
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
@@ -702,7 +702,9 @@ class ExtraFields
 
 			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
+			//$sql.= ' WHERE entity = '.$conf->entity;
 
+			dol_syslog(get_class($this).':showInputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 
 			if ($resql)
@@ -828,15 +830,18 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$InfoFieldList = explode(":", $params);
+			$param_list=array_keys($params['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
 			$keyList='rowid';
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2];
 
+			
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' where '.$keyList.'="'.$value.'"';
-
+			$sql.= ' WHERE '.$keyList.'="'.$this->db->escape($value).'"';
+			//$sql.= ' AND entity = '.$conf->entity;
+			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
