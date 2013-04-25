@@ -473,7 +473,7 @@ if ($action == 'create')
 	// Date start
 	$datep=$actioncomm->datep;
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
-	print '<tr><td width="30%" nowrap="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
+	print '<tr><td width="30%" class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
 	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
@@ -514,12 +514,12 @@ if ($action == 'create')
 
 	// Assigned to
 	$var=false;
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($actioncomm->usertodo->id) && $actioncomm->usertodo->id > 0 ? $actioncomm->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
 	// Busy
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Busy").'</td><td>';
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
 	print '<input id="transparency" type="checkbox" name="transparency" value="'.$actioncomm->transparency.'">';
 	print '</td></tr>';
 
@@ -536,7 +536,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Societe, contact
-	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
+	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if (GETPOST('socid','int') > 0)
 	{
 		$societe = new Societe($db);
@@ -711,7 +711,7 @@ if ($id > 0)
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1'? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
-		
+
 		print '<table class="border" width="100%">';
 
 		// Ref
@@ -732,7 +732,7 @@ if ($id > 0)
         print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="checked"':'').'></td></tr>';
 
 		// Date start
-		print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) $form->select_date($act->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
 		else if (GETPOST("afaire") == 2) $form->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		else $form->select_date($act->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
@@ -745,7 +745,7 @@ if ($id > 0)
 		print '</td></tr>';
 
 		// Status
-		print '<tr><td nowrap="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
 		print $htmlactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
@@ -756,19 +756,19 @@ if ($id > 0)
 		print '</table><br><br><table class="border" width="100%">';
 
 		// Assigned to
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($act->usertodo->id>0?$act->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
 		// Busy
-		print '<tr><td nowrap="nowrap">'.$langs->trans("Busy").'</td><td>';
+		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td>';
 		print '<input id="transparency" type="checkbox" name="transparency"'.($act->transparency?' checked="checked"':'').'">';
 		print '</td></tr>';
 
 		// Realised by
 		if ($conf->global->AGENDA_ENABLE_DONEBY)
 		{
-			print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 			print $form->select_dolusers($act->userdone->id> 0?$act->userdone->id:-1,'doneby',1);
 			print '</td></tr>';
 		}
@@ -838,7 +838,7 @@ if ($id > 0)
 		print '</table>';
 
 		dol_fiche_end();
-		
+
 		print '<center><input type="submit" class="button" name="edit" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</center>';
@@ -848,7 +848,7 @@ if ($id > 0)
 	else
 	{
 		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
-		
+
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
@@ -916,7 +916,7 @@ if ($id > 0)
 		print '</td></tr>';
 
 		// Status
-		print '<tr><td nowrap="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
 		print $act->getLibStatut(4);
 		print '</td></tr>';
 
@@ -926,19 +926,19 @@ if ($id > 0)
 		print '</table><br><br><table class="border" width="100%">';
 
 		// Assigned to
-		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
 		// Busy
-		print '<tr><td nowrap="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
 		print yn(($act->transparency > 0)?1:0);
 		print '</td></tr>';
 
 		// Done by
 		if ($conf->global->AGENDA_ENABLE_DONEBY)
 		{
-			print '<tr><td nowrap="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
 			if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
 			print '</td></tr>';
 		}

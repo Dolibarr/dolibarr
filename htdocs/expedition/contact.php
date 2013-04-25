@@ -263,7 +263,7 @@ if ($id > 0 || ! empty($ref))
 		// Ligne ajout pour contact interne
 		print '<tr '.$bc[$var].'>';
 
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print img_object('','user').' '.$langs->trans("Users");
 		print '</td>';
 
@@ -292,7 +292,7 @@ if ($id > 0 || ! empty($ref))
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
 		print '</td>';
 
@@ -397,7 +397,7 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			// Icon update et delete
-			print '<td align="center" nowrap="nowrap" colspan="2">';
+			print '<td align="center" class="nowrap" colspan="2">';
 			if ($object->statut < 5 && $user->rights->expedition->creer)
 			{
 				print '&nbsp;';

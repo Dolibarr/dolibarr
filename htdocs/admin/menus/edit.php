@@ -305,7 +305,7 @@ if ($action == 'create')
     print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
     //User
-    print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
+    print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
     print '<td><select class="flat" name="user">';
     print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
     print '<option value="0">'.$langs->trans('Internal').'</option>';
@@ -406,7 +406,7 @@ elseif ($action == 'edit')
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td><td>'.$handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
     // User
-    print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
+    print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
     print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("AllMenus").'</option>';
     print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
     print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';

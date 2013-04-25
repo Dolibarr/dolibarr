@@ -13,7 +13,7 @@ with format .DEB (for Debian, Ubuntu, ...).
 
 # This is standard command to work on Debian packaging:
 #
-# gpg --gen-key                          Generate a GPG key
+# gpg --gen-key                          Generate a GPG key (-> pubring.gpg + secring.gpg)
 #
 # debconf-updatepo					     		To run into po dir to regenate templates.pot
 # podebconf-report-po --from email@email.com	To send email to ask translations
@@ -43,10 +43,11 @@ To submit a package to Debian:
 See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests contents.
 
 - Wait until you received bug number.
-For first ITP submission of Dolibarr, bug id was 634783.
+  For first ITP submission of Dolibarr, bug id was 634783.
 
-- Check bug is into database by searching with id on http://www.debian.org/Bugs/
- 
+- Check bug is into database by searching with id on 
+  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=634783
+  
 - Add a line for upstream into file changelog with bug number
 
 - Call for a mentor on ML debian-mentors to upload packages

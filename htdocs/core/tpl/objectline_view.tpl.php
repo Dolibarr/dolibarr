@@ -95,15 +95,15 @@
 	?>
 	</td>
 
-	<td align="right" nowrap="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
+	<td align="right" class="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
-	<td align="right" nowrap="nowrap"><?php echo price($line->subprice); ?></td>
+	<td align="right" class="nowrap"><?php echo price($line->subprice); ?></td>
 
 	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
-	<td align="right" nowrap="nowrap">&nbsp;</td>
+	<td align="right" class="nowrap">&nbsp;</td>
 	<?php } ?>
 
-	<td align="right" nowrap="nowrap">
+	<td align="right" class="nowrap">
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 			// I comment this because it shows info even when not required
 			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
@@ -121,19 +121,19 @@
 
   if (! empty($conf->margin->enabled)) {
   ?>
-  	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
+  	<td align="right" class="nowrap"><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
-  	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
+  	  <td align="right" class="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
   	<?php
   }
   if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
-  	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
+  	  <td align="right" class="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
   <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td align="right" nowrap="nowrap"><?php echo $langs->trans('Option'); ?></td>
+	<td align="right" class="nowrap"><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" nowrap="nowrap"><?php echo price($line->total_ht); ?></td>
+	<td align="right" class="nowrap"><?php echo price($line->total_ht); ?></td>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && $user->rights->$element->creer) { ?>

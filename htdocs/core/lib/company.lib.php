@@ -491,7 +491,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
  */
 function show_contacts($conf,$langs,$db,$object,$backtopage='')
 {
-    global $user;
+    global $user,$conf;
     global $bc;
 
     $i=-1;
@@ -507,7 +507,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact.' '.img_picto($addcontact,'filenew').'</a>'."\n";
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($addcontact,'filenew');
+		$buttoncreate.='</a>'."\n";
     }
 
     print "\n";
@@ -805,7 +807,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
                     $out.="<tr ".$bc[$var].">";
 
-                    $out.='<td width="120" align="left" nowrap="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
+                    $out.='<td width="120" align="left" class="nowrap">'.dol_print_date($datep,'dayhour')."</td>\n";
 
                     // Picto warning
                     $out.='<td width="16">';
@@ -838,14 +840,14 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
                         $out.='<td>&nbsp;</td>';
                     }
 
-                    $out.='<td width="80" nowrap="nowrap">';
+                    $out.='<td width="80" class="nowrap">';
                     $userstatic->id=$obj->fk_user_author;
                     $userstatic->login=$obj->login;
                     $out.=$userstatic->getLoginUrl(1);
                     $out.='</td>';
 
                     // Statut
-                    $out.='<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+                    $out.='<td class="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 
                     $out.="</tr>\n";
                     $i++;
@@ -1048,7 +1050,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             $out.="<tr ".$bc[$var].">";
 
             // Champ date
-            $out.='<td width="120" nowrap="nowrap">';
+            $out.='<td width="120" class="nowrap">';
             if ($histo[$key]['date']) $out.=dol_print_date($histo[$key]['date'],'dayhour');
             else if ($histo[$key]['datestart']) $out.=dol_print_date($histo[$key]['datestart'],'dayhour');
             $out.="</td>\n";
@@ -1123,14 +1125,14 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             }
 
             // Auteur
-            $out.='<td nowrap="nowrap" width="80">';
+            $out.='<td class="nowrap" width="80">';
             $userstatic->id=$histo[$key]['userid'];
             $userstatic->login=$histo[$key]['login'];
             $out.=$userstatic->getLoginUrl(1);
             $out.='</td>';
 
             // Statut
-            $out.='<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
+            $out.='<td class="nowrap" width="20">'.$actionstatic->LibStatut($histo[$key]['percent'],3).'</td>';
 
             $out.="</tr>\n";
             $i++;

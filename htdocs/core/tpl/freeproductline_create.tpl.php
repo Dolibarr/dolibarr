@@ -100,7 +100,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 		<td align="right"><input type="text" size="5" name="price_ht" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 		</td>
 		<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-		<td align="right" nowrap="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
+		<td align="right" class="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
 		<?php
 		$colspan = 4;
 		if (! empty($usemargins))

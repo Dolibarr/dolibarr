@@ -114,7 +114,7 @@ class box_actions extends ModeleBoxes
 					'text' => dol_trunc($objp->nom,24),
 					'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][4] = array('td' => 'align="left" nowrap="nowrap"',
+					$this->info_box_contents[$i][4] = array('td' => 'align="left" class="nowrap"',
 					'text' => dol_print_date($datelimite, "dayhour"));
 
 					$this->info_box_contents[$i][5] = array('td' => 'align="right"',

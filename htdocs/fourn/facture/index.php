@@ -246,15 +246,15 @@ if ($resql)
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		$facturestatic->id=$obj->facid;
 		$facturestatic->ref=$obj->ref;
 		$facturestatic->ref_supplier=$obj->ref_supplier;
 		print $facturestatic->getNomUrl(1);
 		print "</td>\n";
-		print '<td nowrap="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
-		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
-		print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
+		print '<td class="nowrap">'.dol_trunc($obj->ref_supplier,10)."</td>";
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datef),'day').'</td>';
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->date_echeance),'day');
 		if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance && $db->jdate($obj->date_echeance) < ($now - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		print '<td>'.dol_trunc($obj->libelle,36).'</td>';
@@ -268,7 +268,7 @@ if ($resql)
 		$total_ttc+=$obj->total_ttc;
 
 		// Affiche statut de la facture
-		print '<td align="right" nowrap="nowrap">';
+		print '<td align="right" class="nowrap">';
 		// TODO  le montant deja paye objp->am n'est pas definie
 		//print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
 		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5);

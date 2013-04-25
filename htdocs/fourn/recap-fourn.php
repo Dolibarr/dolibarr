@@ -149,7 +149,7 @@ if ($socid > 0)
                 print '<td align="right">'.price($solde)."</td>\n";
 
                 // Author
-                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
+                print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
 
                 print "</tr>\n";
 
@@ -184,7 +184,7 @@ if ($socid > 0)
                         print '<td align="right">'.price($solde)."</td>\n";
 
                         // Auteur
-                        print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
+                        print '<td class="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
 
                         print '</tr>';
 

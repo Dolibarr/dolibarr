@@ -103,7 +103,7 @@ class Form
         }
         else
         {
-            $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+            $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
             $ret.=$langs->trans($text);
             $ret.='</td>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -2878,7 +2878,7 @@ class Form
             print '<input type="hidden" name="action" value="setabsolutediscount">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td nowrap="nowrap">';
+            print '<tr><td class="nowrap">';
             if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
             {
                 if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
@@ -2893,7 +2893,7 @@ class Form
             if ($filter) $newfilter.=' AND ('.$filter.')';
             $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
-            print '<td nowrap="nowrap">';
+            print '<td class="nowrap">';
             if ($nbqualifiedlines > 0)
             {
                 print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
@@ -3775,14 +3775,16 @@ class Form
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='')
     {
+    	global $langs,$conf;
+
         $ret='';
         if (empty($fieldid))  $fieldid='rowid';
         if (empty($fieldref)) $fieldref='ref';
 
         //print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
         $object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid);
-        $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.img_previous().'</a>':'';
-        $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.img_next().'</a>':'';
+        $previous_ref = $object->ref_previous?'<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Previous"),'previous.png'):'&nbsp;').'</a>':'';
+        $next_ref     = $object->ref_next?'<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'">'.(empty($conf->dol_use_jmobile)?img_picto($langs->trans("Next"),'next.png'):'&nbsp;').'</a>':'';
 
         //print "xx".$previous_ref."x".$next_ref;
         if ($previous_ref || $next_ref || $morehtml) {

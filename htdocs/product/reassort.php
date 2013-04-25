@@ -299,7 +299,7 @@ if ($resql)
 		}
 
 		$var=!$var;
-		print '<tr '.$bc[$var].'><td nowrap="nowrap">';
+		print '<tr '.$bc[$var].'><td class="nowrap">';
 		$product_static->ref=$objp->ref;
 		$product_static->id=$objp->rowid;
 		$product_static->type=$objp->fk_product_type;
@@ -324,8 +324,8 @@ if ($resql)
 		print $objp->stock_physique;
 		print '</td>';
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product_static->id.'">'.$langs->trans("Movements").'</a></td>';
-		print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5,0).'</td>';
-        print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+		print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->statut,5,0).'</td>';
+        print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 		print "</tr>\n";
 		$i++;
 	}

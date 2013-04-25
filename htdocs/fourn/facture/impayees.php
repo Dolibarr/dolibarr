@@ -260,7 +260,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<td align=\"right\">".price($objp->am)."</td>";
 
 				// Affiche statut de la facture
-				print '<td align="right" nowrap="nowrap">';
+				print '<td align="right" class="nowrap">';
 				print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 				print '</td>';
 

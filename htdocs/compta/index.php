@@ -150,6 +150,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
  */
 if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
+	$langs->load("donations");
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -167,6 +168,7 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
  */
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
+	$langs->load("trips");
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -217,19 +219,19 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td nowrap="nowrap">';
+				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=1;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td>';
+				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
@@ -369,16 +371,16 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$obj = $db->fetch_object($resql);
 
 				print '<tr '.$bc[$var].'>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($obj->fk_statut == 1 && ! $obj->paye && $db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
@@ -761,16 +763,16 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				$obj = $db->fetch_object($resql);
 
 				print "<tr $bc[$var]>";
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
-				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="20" class="nobordernopadding nowrap">';
 				print '&nbsp;';
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';
@@ -861,16 +863,16 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$obj = $db->fetch_object($resql);
 
 				print '<tr '.$bc[$var].'>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="110" class="nobordernopadding nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($db->jdate($obj->datelimite) < ($now - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
 				print '<td width="16" align="right" class="nobordernopadding">';

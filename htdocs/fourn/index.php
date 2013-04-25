@@ -134,18 +134,18 @@ if (! empty($conf->fournisseur->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td  nowrap="nowrap">';
+				print '<tr '.$bc[$var].'><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 				print $commandestatic->getNomUrl(1,'',16);
 				print '</td>';
-				print '<td  nowrap="nowrap">';
+				print '<td  class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
@@ -191,13 +191,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'><td nowrap="nowrap">';
+				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;

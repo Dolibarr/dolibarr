@@ -197,7 +197,7 @@ if ($result)
             $var=!$var;
             print "<tr $bc[$var]>";
             // Name
-            print '<td nowrap="nowrap">';
+            print '<td class="nowrap">';
             $thirdparty_static->id=$objp->rowid;
             $thirdparty_static->name=$objp->name;
             $thirdparty_static->client=$objp->client;
@@ -231,7 +231,7 @@ if ($result)
             print '<td align="right">';
             print dol_print_date($thirdparty_static->datem,'day');
             print "</td>";
-            print '<td align="right" nowrap="nowrap">';
+            print '<td align="right" class="nowrap">';
             print $thirdparty_static->getLibStatut(3);
             print "</td>";
             print "</tr>\n";

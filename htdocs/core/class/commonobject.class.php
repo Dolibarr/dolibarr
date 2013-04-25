@@ -2443,6 +2443,7 @@ abstract class CommonObject
     			'SE',	// Sweden
     			'SK',	// Slovakia
     			'SI',	// Slovenia
+    			'UK',	// United Kingdom
         //'CH',	// Switzerland - No. Swizerland in not in EEC
         );
         //print "dd".$this->country_code;
@@ -2743,7 +2744,7 @@ abstract class CommonObject
 
 		print '<td width="10"></td>';
 
-		print '<td nowrap="nowrap"></td>'; // No width to allow autodim
+		print '<td class="nowrap"></td>'; // No width to allow autodim
 
 		print "</tr>\n";
 

@@ -195,6 +195,9 @@ div.inline-block
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 /* ============================================================================== */
@@ -253,7 +256,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 
@@ -2186,7 +2189,7 @@ div.ecmjqft {
 	bottom: 4px !important;
 <?php } ?>
 	text-align: center;
-	min-width: 500px;
+	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
@@ -2200,6 +2203,32 @@ div.ecmjqft {
     -moz-box-shadow: 0px 0px 10px #AAA;
     -webkit-box-shadow: 0px 0px 10px #AAA;
     box-shadow: 0px 0px 10px #AAA;
+}
+
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
+}
+
+div.tabsElem a.ui-btn-corner-all {
+	-webkit-border-bottom-left-radius: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	border-bottom-left-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
 }
 
 <?php

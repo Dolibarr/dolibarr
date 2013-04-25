@@ -870,8 +870,8 @@ else
         print '<td>';
         print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
-        print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
-        print '<td nowrap="nowrap">';
+        print '<td class="nowrap">'.$langs->trans('VATIntra').'</td>';
+        print '<td class="nowrap">';
         $s = '<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
         if (empty($conf->global->MAIN_DISABLEVATCHECK))
@@ -887,7 +887,7 @@ else
                 print "}\n";
                 print '</script>';
                 print "\n";
-                $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
                 $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
             }
             else
@@ -923,7 +923,8 @@ else
         print '</td></tr>';
 
         // Capital
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> ';
+        print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 
         // Local Taxes
         //TODO: Place into a function to control showing by country or study better option
@@ -982,7 +983,7 @@ else
         }
 
         // Ajout du logo
-        print '<tr>';
+        print '<tr class="hideonsmartphone">';
         print '<td>'.$langs->trans("Logo").'</td>';
         print '<td colspan="3">';
         print '<input class="flat" type="file" name="photo" id="photoinput" />';
@@ -1295,8 +1296,8 @@ else
             print '</td>';
 
             // VAT Code
-            print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
-            print '<td nowrap="nowrap">';
+            print '<td class="nowrap">'.$langs->trans('VATIntra').'</td>';
+            print '<td class="nowrap">';
             $s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK))
@@ -1548,7 +1549,7 @@ else
         print '</tr>';
 
         // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" nowrap="nowrap">';
+        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
         $img=picto_from_langcode($object->country_code);
         if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
         else print ($img?$img.' ':'').$object->country;
@@ -1603,7 +1604,7 @@ else
         print '</td>';
 
         // VAT Code
-        print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td><td>';
+        print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
         if ($object->tva_intra)
         {
             $s='';

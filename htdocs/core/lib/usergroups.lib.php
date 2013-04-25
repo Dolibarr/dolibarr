@@ -257,7 +257,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<tr '.$bc[$var].'>';
 	    print '<td>'.$langs->trans("DefaultSkin").'</td>';
 	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
-	    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	    print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
 	    print '<td>&nbsp;</td>';
 	    print '</tr>';
     }

@@ -334,7 +334,7 @@ if ($result)
 		$var=!$var;
 
 		print '<tr '.$bc[$var].'>';
-		print '<td width="110" nowrap="nowrap">';
+		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
 		$staticcontrat->id=$obj->cid;
 		print $staticcontrat->getNomUrl(1,16);
@@ -400,7 +400,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td width="110" nowrap="nowrap">';
+		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
@@ -426,7 +426,7 @@ if ($resql)
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
-		print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td class="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		$dateend=$db->jdate($obj->date_fin_validite);
 		print $staticcontratligne->LibStatut($obj->statut, 3, ($dateend && $dateend < $now)?1:0);
 		print '</a></td>';
@@ -481,12 +481,12 @@ if ($resql)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 
-		print '<td width="110" nowrap="nowrap">';
+		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
 		print '</td>';
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
 		{
     		$productstatic->id=$obj->fk_product;
@@ -561,12 +561,12 @@ if ($resql)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 
-		print '<td width="110" nowrap="nowrap">';
+		print '<td width="110" class="nowrap">';
 		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
 		$staticcontrat->id=$obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1,16);
 		print '</td>';
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		if ($obj->fk_product > 0)
 		{
     		$productstatic->id=$obj->fk_product;

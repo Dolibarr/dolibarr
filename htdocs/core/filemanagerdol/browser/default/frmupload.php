@@ -124,12 +124,12 @@ window.onload = function()
 		<form id="frmUpload" action="" target="frmUploadWorker" method="post" enctype="multipart/form-data" onsubmit="return OnSubmit();">
 			<table class="fullHeight" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
-					<td nowrap="nowrap">
+					<td class="nowrap">
 						<span id="eUploadMessage">Upload a new file in this folder</span><br>
 						<table cellspacing="0" cellpadding="0" width="100%" border="0">
 							<tr>
 								<td width="100%"><input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file"></td>
-								<td nowrap="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload"></td>
+								<td class="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload"></td>
 							</tr>
 						</table>
 					</td>

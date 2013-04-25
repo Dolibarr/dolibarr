@@ -780,7 +780,7 @@ if (empty($action) || $action == 'show_month')      // View by month
             {
                 $style='cal_other_month cal_past';
         		if ($iter_day == 6) $style.=' cal_other_month_right';
-                echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+                echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
@@ -796,7 +796,7 @@ if (empty($action) || $action == 'show_month')      // View by month
                 if ($today) $style='cal_today';
                 if ($curtime < $todaytms) $style.=' cal_past';
 
-                echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+                echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
             }
@@ -805,7 +805,7 @@ if (empty($action) || $action == 'show_month')      // View by month
             {
                 $style='cal_other_month';
                 if ($iter_day == 6) $style.=' cal_other_month_right';
-                echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+                echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "</td>\n";
             }
@@ -855,7 +855,7 @@ elseif ($action == 'show_week') // View by week
             if ($todayarray['mday']==$tmpday && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;
             if ($today) $style='cal_today';
 
-            echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+            echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
             show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
             echo "  </td>\n";
         }
@@ -863,7 +863,7 @@ elseif ($action == 'show_week') // View by week
         {
             $style='cal_current_month';
         	if ($iter_day == 6) $style.=' cal_other_month_right';
-            echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+            echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
             show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
             echo "</td>\n";
         }
@@ -892,7 +892,7 @@ else    // View by day
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </tr>\n";
     echo " <tr>\n";
-    echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+    echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
     $maxnbofchar=80;
     show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
     echo "</td>\n";
@@ -947,7 +947,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
-    print '<tr><td align="left" nowrap="nowrap">';
+    print '<tr><td align="left" class="nowrap">';
     print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?';
     print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
     print $newparam;
@@ -956,7 +956,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     if ($showinfo) print dol_print_date($curtime,'daytext');
     else print dol_print_date($curtime,'%d');
     print '</a>';
-    print '</td><td align="right" nowrap="nowrap">';
+    print '</td><td align="right" class="nowrap">';
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
         //$param='month='.$monthshown.'&year='.$year;
@@ -966,7 +966,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         print '</a>';
     }
     print '</td></tr>';
-    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" nowrap="nowrap" style="padding-bottom: 2px;">';
+    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="nowrap" style="padding-bottom: 2px;">';
 
     //$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
@@ -1034,7 +1034,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
                     print '<ul class="cal_event"><li class="cal_event">';
                     print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).')); " width="100%"><tr>';
-                    print '<td nowrap="nowrap" class="cal_event">';
+                    print '<td class="nowrap cal_event">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
                         print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
@@ -1155,7 +1155,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     print '</td>';
                     // Status - Percent
-                    print '<td align="right" nowrap="nowrap">';
+                    print '<td align="right" class="nowrap">';
                     if ($event->type_code != 'BIRTHDAY' && $event->type_code != 'ICALEVENT') print $event->getLibStatut(3,1);
                     else print '&nbsp;';
                     print '</td></tr></table>';

@@ -1549,7 +1549,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
 	    print $appli;
-	    if ($doliurlx) print '</a>';
+	    if ($doliurl) print '</a>';
 	    print '</div>';
 
 	    // Link to Dolibarr wiki pages

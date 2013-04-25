@@ -192,7 +192,7 @@ foreach ($syslogModules as $moduleName)
 	print $module->getName();
 	print '</td>';
 
-	print '<td nowrap="nowrap">';
+	print '<td class="nowrap">';
 	$setuparray=$module->configure();
 	if ($setuparray)
 	{

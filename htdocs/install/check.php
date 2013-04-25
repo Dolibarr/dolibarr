@@ -339,7 +339,7 @@ else
 		print '<table width="100%" class="listofchoices">';
 
 		// Show first install line
-		print '<tr class="listofchoices"><td class="listofchoices" nowrap="nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
+		print '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
 		print '</td>';
 		print '<td class="listofchoices">';
 		print $langs->trans("FreshInstallDesc");
@@ -400,7 +400,7 @@ else
             $version=preg_split('/[\.-]/',DOL_VERSION);
             $newversionfrombis='';
             if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis=' '.$langs->trans("or").' '.$versionto;
-			print '<tr class="listofchoices"><td class="listofchoices" nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
+			print '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
 			print '<td class="listofchoices">';
 			print $langs->trans("UpgradeDesc");
 			if ($ok)

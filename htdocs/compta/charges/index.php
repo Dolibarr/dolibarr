@@ -205,7 +205,7 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 	    $total = 0 ;
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre">';
-	    print '<td width="120" nowrap="nowrap">'.$langs->trans("PeriodEndDate").'</td>';
+	    print '<td width="120" class="nowrap">'.$langs->trans("PeriodEndDate").'</td>';
 	    print "<td>".$langs->trans("Label")."</td>";
 	    print '<td align="right" width="10%">'.$langs->trans("ExpectedToPay")."</td>";
 	    print '<td align="right" width="10%">'.$langs->trans("RefPayment")."</td>";

@@ -26,8 +26,9 @@ with format RPM (for Redhat, OpenSuse, Mandriva, ...).
 # restorecon -R -v /file			Restore values into files (cancel chcon, validate semanage)    
 #
 # On OpenSuse
-# yast --install dolibarr-...rpm    To install package and dependencies
-# yast --remove  dolibarr           To remove package
+# zypper install dolibarr-...rpm    To install package and dependencies
+# zypper remove  dolibarr           To remove package
+# zypper search  xxx                To search a package
 #
 # On Mageia (after su - root)
 # urpmi dolibarr-...rpm             To install package and dependencies

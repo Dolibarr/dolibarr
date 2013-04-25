@@ -103,7 +103,7 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->connected == 1)
 {
-    print '<tr><td nowrap="nowrap">';
+    print '<tr><td class="nowrap">';
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
     $ok = 1;
@@ -119,7 +119,7 @@ if ($ok)
 {
     if($db->database_selected == 1)
     {
-        print '<tr><td nowrap="nowrap">';
+        print '<tr><td class="nowrap">';
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
         dolibarr_install_syslog("repair: Database connection successfull : $dolibarr_main_db_name");
         $ok=1;

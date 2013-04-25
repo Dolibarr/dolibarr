@@ -281,10 +281,10 @@ else
 			print "<tr $bc[$var]>";
 
 			// Date operation
-			print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
+			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
 
 			// Date de valeur
-			print '<td align="center" valign="center" nowrap="nowrap">';
+			print '<td align="center" valign="center" class="nowrap">';
 			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_previous().'</a> ';
 			print dol_print_date($db->jdate($objp->dv),"day") .' ';
@@ -293,7 +293,7 @@ else
 			print "</td>\n";
 
 			// Num cheque
-			print '<td nowrap="nowrap">'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
+			print '<td class="nowrap">'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 
 			// Libelle
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';

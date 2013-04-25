@@ -121,7 +121,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
     if ($db->connected == 1)
     {
-        print '<tr><td nowrap="nowrap">';
+        print '<tr><td class="nowrap">';
         print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
         $ok = 1;
@@ -137,7 +137,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     {
         if($db->database_selected == 1)
         {
-            print '<tr><td nowrap="nowrap">';
+            print '<tr><td class="nowrap">';
             print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
             dolibarr_install_syslog("upgrade: Database connection successfull : $dolibarr_main_db_name");
             $ok=1;

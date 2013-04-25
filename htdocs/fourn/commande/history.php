@@ -157,14 +157,14 @@ if ($id > 0 || ! empty($ref))
 				print '<td width="20%">'.dol_print_date($db->jdate($obj->dl),"dayhour")."</td>\n";
 
 				// Statut
-				print '<td nowrap="nowrap">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
+				print '<td class="nowrap">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";
 
 				// User
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
 				print img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 				// Comment
-				print '<td nowrap="nowrap" title="'.dol_escape_htmltag($obj->comment).'">'.dol_trunc($obj->comment,48)."</td>\n";
+				print '<td class="nowrap" title="'.dol_escape_htmltag($obj->comment).'">'.dol_trunc($obj->comment,48)."</td>\n";
 
 				print '</tr>';
 

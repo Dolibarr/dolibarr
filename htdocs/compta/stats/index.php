@@ -352,7 +352,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
 	{
-		print '<td align="right" nowrap="nowrap">'.($total[$annee]?price($total[$annee]):"0")."</td>";
+		print '<td align="right" class="nowrap">'.($total[$annee]?price($total[$annee]):"0")."</td>";
 	}
 	else
 	{
@@ -364,7 +364,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		if ($total[$annee-1] && $total[$annee]) {
 			$percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
-			print '<td align="right" nowrap="nowrap">'.($percent>=0?"+$percent":"$percent").'%</td>';
+			print '<td align="right" class="nowrap">'.($percent>=0?"+$percent":"$percent").'%</td>';
 		}
 		if ($total[$annee-1] && ! $total[$annee])
 		{

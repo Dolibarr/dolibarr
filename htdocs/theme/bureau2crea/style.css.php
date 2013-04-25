@@ -224,6 +224,9 @@ div.inline-block
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 /* ============================================================================== */
@@ -298,7 +301,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 
@@ -1107,7 +1110,6 @@ div.tabs a.tab {
     color: #FFFFFF;
     text-decoration: none;
     position: relative;
-    float: left;
     padding: 0px 10px 0px 10px;
 }
 
@@ -2414,12 +2416,56 @@ div.ecmjqft {
 	bottom: 4px !important;
 <?php } ?>
 	text-align: center;
-	min-width: 500px;
+	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
 }
 
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+.ui-btn-inner {
+	padding-left: 10px;
+	padding-right: 10px;
+	white-space: normal;
+}
+
+div.ui-controlgroup
+{
+	height: auto;
+	background-image: none;
+}
+
+div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+{
+	height: auto;
+}
+
+a.tab span.ui-btn-inner
+{
+	border: none;
+	padding: 0;
+}
+div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
+	background-image: none;
+	color: #D45416;
+	height: auto;
+}
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
 
 <?php
 if (is_object($db)) $db->close();

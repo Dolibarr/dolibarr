@@ -116,6 +116,66 @@ $colortext='40,40,40';
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
 
+$colorback1          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$conf->global->THEME_ELDY_TOPMENU_BACK1)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorback2          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$conf->global->THEME_ELDY_TOPMENU_BACK2)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
+$colorbacktab1       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbacktab1:$conf->global->THEME_ELDY_VERMENU_BACK1)     :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbacktab1:$user->conf->THEME_ELDY_VERMENU_BACK1);
+$colorbacktab1b      =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1b)?$colorbacktab1:$conf->global->THEME_ELDY_VERMENU_BACK1b)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1b)?$colorbacktab1b:$user->conf->THEME_ELDY_VERMENU_BACK1b);
+$colorbacktab2       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK2)?$colorbacktab2:$conf->global->THEME_ELDY_VERMENU_BACK2)     :(empty($user->conf->THEME_ELDY_VERMENU_BACK2)?$colorbacktab2:$user->conf->THEME_ELDY_VERMENU_BACK2);
+$colorbacktitle1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE1)   ?$colorbacktitle1:$conf->global->THEME_ELDY_BACKTITLE1)      :(empty($user->conf->THEME_ELDY_BACKTITLE1)?$colorbacktitle1:$user->conf->THEME_ELDY_BACKTITLE1);
+$colorbacktitle2     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE2)   ?$colorbacktitle2:$conf->global->THEME_ELDY_BACKTITLE2)      :(empty($user->conf->THEME_ELDY_BACKTITLE2)?$colorbacktitle2:$user->conf->THEME_ELDY_BACKTITLE2);
+$colorbacktabcard1   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD1) ?$colorbacktabcard1:$conf->global->THEME_ELDY_BACKTABCARD1)  :(empty($user->conf->THEME_ELDY_BACKTABCARD1)?$colorbacktabcard1:$user->conf->THEME_ELDY_BACKTABCARD1);
+$colorbacktabcard2   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD2) ?$colorbacktabcard2:$conf->global->THEME_ELDY_BACKTABCARD2)  :(empty($user->conf->THEME_ELDY_BACKTABCARD2)?$colorbacktabcard2:$user->conf->THEME_ELDY_BACKTABCARD2);
+$colorbacktabactive  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$conf->global->THEME_ELDY_BACKTABACTIVE):(empty($user->conf->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$user->conf->THEME_ELDY_BACKTABACTIVE);
+$colorbacklineimpair1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR1)  ?$colorbacklineimpair1:$conf->global->THEME_ELDY_LINEIMPAIR1):(empty($user->conf->THEME_ELDY_LINEIMPAIR1)?$colorbacklineimpair1:$user->conf->THEME_ELDY_LINEIMPAIR1);
+$colorbacklineimpair2=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIR2)  ?$colorbacklineimpair2:$conf->global->THEME_ELDY_LINEIMPAIR2):(empty($user->conf->THEME_ELDY_LINEIMPAIR2)?$colorbacklineimpair2:$user->conf->THEME_ELDY_LINEIMPAIR2);
+$colorbacklineimpairhover=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEIMPAIRHOVER)  ?$colorbacklineimpairhover:$conf->global->THEME_ELDY_LINEIMPAIRHOVER):(empty($user->conf->THEME_ELDY_LINEIMPAIRHOVER)?$colorbacklineimpairhover:$user->conf->THEME_ELDY_LINEIMPAIRHOVER);
+$colorbacklinepair1  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR1)    ?$colorbacklinepair1:$conf->global->THEME_ELDY_LINEPAIR1)    :(empty($user->conf->THEME_ELDY_LINEPAIR1)?$colorbacklinepair1:$user->conf->THEME_ELDY_LINEPAIR1);
+$colorbacklinepair2  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIR2)    ?$colorbacklinepair2:$conf->global->THEME_ELDY_LINEPAIR2)    :(empty($user->conf->THEME_ELDY_LINEPAIR2)?$colorbacklinepair2:$user->conf->THEME_ELDY_LINEPAIR2);
+$colorbacklinepairhover  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_LINEPAIRHOVER)    ?$colorbacklinepairhover:$conf->global->THEME_ELDY_LINEPAIRHOVER)    :(empty($user->conf->THEME_ELDY_LINEPAIRHOVER)?$colorbacklinepairhover:$user->conf->THEME_ELDY_LINEPAIRHOVER);
+$colorbackbody       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKBODY)     ?$colorbackbody:$conf->global->THEME_ELDY_BACKBODY)          :(empty($user->conf->THEME_ELDY_BACKBODY)?$colorbackbody:$user->conf->THEME_ELDY_BACKBODY);
+$colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXT)         ?$colortext:$conf->global->THEME_ELDY_TEXT)                  :(empty($user->conf->THEME_ELDY_TEXT)?$colortext:$user->conf->THEME_ELDY_TEXT);
+$fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
+$fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
+// No hover by default, we keep only if we set var THEME_ELDY_USE_HOVER
+if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->THEME_ELDY_USE_HOVER))
+	|| (empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($conf->global->THEME_ELDY_USE_HOVER)))
+{
+	$colorbacklineimpairhover='';
+	$colorbacklinepairhover='';
+}
+
+// Set text color to black or white
+$tmppart=explode(',',$colorback1);
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '');
+$tmpval+=(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval+=(! empty($tmppart[3]) ? $tmppart[3] : '');
+//print $tmpval;
+if ($tmpval < 340) $colortextmain='FFFFFF';
+else $colortextmain='101010';
+
+$usecss3=true;
+if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
+elseif ($conf->browser->name == 'iceweasel') $usecss3=false;
+elseif ($conf->browser->name == 'epiphany')  $usecss3=false;
+
+print '/*'."\n";
+print 'colred='.$colred.' colgreen='.$colgreen.' colblue='.$colblue."\n";
+print 'isred='.$isred.' isgreen='.$isgreen.' isblue='.$isblue."\n";
+print 'colorbacklineimpair1='.$colorbacklineimpair1."\n";
+print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
+print 'colorbacklineimpairhover='.$colorbacklineimpairhover."\n";
+print 'colorbacklinepair1='.$colorbacklinepair1."\n";
+print 'colorbacklinepair2='.$colorbacklinepair2."\n";
+print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
+print 'usecss3='.$usecss3."\n";
+print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
+print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
+print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
+print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
+print 'dol_use_jmobile='.$dol_use_jmobile."\n";
+print '*/'."\n";
+
+if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
 ?>
 
 
@@ -250,6 +310,9 @@ th .button {
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 .blockvmenubookmarks .menu_contenu {
@@ -352,7 +415,6 @@ div.tmenu ul li a.tmenusel {/* texte du menu principal sélectionné */
 body.body center { color:white; margin-top: 100px; }
 
 form#login {
-	display:block;
 	border:solid 1px rgba(0,0,0,.4);
 	border-top:solid 1px #ffffff;
 	background-color:#c7d0db;
@@ -372,7 +434,7 @@ form#login {
 	margin-right:auto;
 	margin-bottom:25px;
 	padding:20px 20px 10px;
-	width:500px;
+	max-width:500px;
 	border-radius:12px;
 	box-shadow:0 0 16px rgba(0,0,0,.8);
 }
@@ -509,16 +571,16 @@ div.vmenu {
 	display:none;
 	<?php } else {?>
 	width:170px;
-	-moz-box-shadow: 4px 4px 4px #CCC;
-	-webkit-box-shadow: 4px 4px 4px #CCC;
-	box-shadow: 4px 4px 4px #CCC;
+	-moz-box-shadow: 3px 0px 6px #CCC;
+	-webkit-box-shadow: 3px 0px 6px #CCC;
+	box-shadow: 3px 0px 6px #CCC;
 	<?php } ?>
 }
 
 .blockvmenupair .menu_titre, .blockvmenuimpair .menu_titre {
 	height:22px;
 	line-height:22px;
-	text-align:center;
+	/* text-align:center; */
 	background-color:rgba(0,0,0,.08);
 	background-image:linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image:-o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -532,7 +594,7 @@ div.vmenu {
 		color-stop(0, rgba(255,255,255,.3)),
 		color-stop(1, rgba(0,0,0,.3))
 	);
-	padding-left:3px;
+	padding-left:5px;
 	border-top:solid 1px rgba(255,255,255,.5);
 	border-bottom:solid 1px rgba(0,0,0,.5);
 }
@@ -541,7 +603,7 @@ div.vmenu {
 
 .menu_contenu {
 	background-color:#ffffff;
-	padding-left:12px;
+	padding-left:6px;
 	border-top:solid 1px rgba(0,0,0,.05);
 }
 
@@ -561,7 +623,7 @@ div.vmenu {
 .blockvmenusearch .menu_titre {
 	margin-top:6px;
 	text-align:left;
-	padding-left:18px;
+	padding-left:0px;
 }
 
 #blockvmenuhelp {
@@ -818,13 +880,17 @@ a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print
 /* ============================================================================== */
 
 div.tabs {
-    margin-top:8px;
+	margin: 0px 0px 0px 6px;
+	padding: 0px 6px 3px 0px;
+	clear:both;
+	height:100%;
 }
+div.tabsElem { margin-top: 10px; }		/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
     background-color:#ffffff;
     padding:6px;
-    margin:3px 0px 14px 0px;
+    margin:0px 0px 14px 0px;
     border:1px solid #bbbbbb;
     -moz-box-shadow: 4px 4px 4px #DDD;
 	-webkit-box-shadow: 4px 4px 4px #DDD;
@@ -849,16 +915,12 @@ a.tabTitle {
 }
 
 a.tabTitle img {
-	vertical-align:top;
-	margin-top:-1px;
+	vertical-align:middle;
 }
 
-.tab {
-	margin-left:2px;
-	margin-right:2px;
-	padding:3px 0px 4px;
-	padding-left:8px;
-	padding-right:8px;
+a.tab {
+	padding: 5px 12px 5px;
+	margin: 0em 0.2em;
 	background-color:rgba(0,0,0,.2);
 	color:#666666;
 	border:solid 1px rgba(0,0,0,.3);
@@ -867,14 +929,14 @@ a.tabTitle img {
 	-webkit-border-top-right-radius:6px;
 }
 
-.tab#active {
+a.tab#active {
 	color:#232323;
 	font-weight:bold;
 	background-color:#ffffff;
-	border-bottom:solid 1px #ffffff;
+	<?php echo $dol_use_jmobile?'':'border-bottom:solid 1px #ffffff;'; ?>
 }
 
-.tab:hover {color:#333333;}
+a.tab:hover {color:#333333;}
 
 
 /* ============================================================================== */
@@ -892,8 +954,8 @@ td.vmenu {
 
 div.fiche {
 	padding:8px 6px 10px;
-	margin-<?php print $left; ?>: <?php print (empty($conf->dol_optimize_smallscreen) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?'16':'24'; ?>px;
-	margin-<?php print $right; ?>: <?php print empty($conf->dol_optimize_smallscreen)?'12':'6'; ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'16'):'24')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'4')); ?>px;
 }
 
 div.fichecenter {
@@ -932,7 +994,7 @@ div.ficheaddleft {
 div.divButAction { margin-bottom: 1.4em; }
 
 .button, .butAction {background: #999; border: solid 1px #888; font-weight: normal; }
-.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal;	cursor: not-allowed; }
+.butActionRefused {background: #eaeaea; color:rgba(0,0,0,0.6); font-weight: normal !important;	cursor: not-allowed; }
 .butActionDelete {background: #b33c37; border:solid 1px #8d2f2b; font-weight: normal;}
 
 .button, .butAction, .butActionRefused, .butActionDelete {
@@ -1136,20 +1198,18 @@ div.liste_titre, tr.liste_titre, tr.box_titre {
 		color-stop(1, rgba(0,0,0,.3))
 	);
 	height: 22px;
+	text-align: <?php echo $left; ?>;
 }
 
 tr.box_titre td.boxclose {
 	width: 36px;
 }
 
-tr.liste_titre td {
+tr.liste_titre td, tr.liste_titre th {
 	padding:2px;
 	padding-left:2px !important;
 	white-space:nowrap;
-}
-
-tr.liste_titre td input.flat {
-    width:70%;
+	text-shadow:1px 1px 1px #ffffff;
 }
 
 td.liste_titre_sel {
@@ -1942,7 +2002,7 @@ div.ecmjqft {
 	bottom: 4px !important;
 <?php } ?>
 	text-align: center;
-	min-width: 500px;
+	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
@@ -1956,3 +2016,69 @@ div.jnotify-background {
     box-shadow: 4px 4px 4px #AAA !important;
 }
 
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+li.ui-li-divider .ui-link {
+	color: #FFF !important;
+}
+.ui-btn-inner {
+	padding-left: 10px;
+	padding-right: 10px;
+	white-space: normal;
+}
+.ui-select .ui-btn-icon-right .ui-btn-inner {
+	padding-right: 36px;
+}
+.fiche .ui-controlgroup {
+	margin: 0px;
+	padding-bottom: 0px;
+}
+div.ui-controlgroup-controls div.tabsElem
+{
+	margin-top: 2px;
+	margin-right: 8px;
+}
+div.ui-controlgroup-controls div.tabsElem a
+{
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	border: none;
+}
+
+a.tab span.ui-btn-inner, a.tab span.ui-btn-inner span.ui-btn-text
+{
+	border: none;
+	padding: 0;
+}
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
+}
+.ui-link {
+	color: rgb(<?php print $colortext; ?>) !important;
+}
+
+div.tabsElem a.ui-btn-corner-all {
+	-webkit-border-bottom-left-radius: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	border-bottom-left-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
+
+<?php
+if (is_object($db)) $db->close();
+?>

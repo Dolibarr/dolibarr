@@ -540,7 +540,7 @@ if ($rowid > 0)
 		        print "<td>".$objp->login."</td>\n";
 
 		        // Type
-		        /*print '<td nowrap="nowrap">';
+		        /*print '<td class="nowrap">';
 		        $membertypestatic->id=$objp->type_id;
 		        $membertypestatic->libelle=$objp->type;
 		        print $membertypestatic->getNomUrl(1,12);
@@ -554,14 +554,14 @@ if ($rowid > 0)
 		        print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
 
 		        // Statut
-		        print '<td nowrap="nowrap">';
+		        print '<td class="nowrap">';
 		        print $adh->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 		        print "</td>";
 
 		        // Date fin cotisation
 		        if ($datefin)
 		        {
-			        print '<td align="center" nowrap="nowrap">';
+			        print '<td align="center" class="nowrap">';
 		            if ($datefin < time() && $objp->statut > 0)
 		            {
 		                print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
@@ -574,7 +574,7 @@ if ($rowid > 0)
 		        }
 		        else
 		        {
-			        print '<td align="left" nowrap="nowrap">';
+			        print '<td align="left" class="nowrap">';
 			        if ($objp->cotisation == 'yes')
 			        {
 		                print $langs->trans("SubscriptionNotReceived");

@@ -332,7 +332,7 @@ if ($resql)
 			print "<tr ".$bc[$var].">";
 			$classname = "impayee";
 
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
@@ -341,12 +341,12 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
 			// Ref
-			print '<td class="nobordernopadding" nowrap="nowrap">';
+			print '<td class="nobordernopadding nowrap">';
 			print $facturestatic->getNomUrl(1);
 			print '</td>';
 
 			// Warning picto
-			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+			print '<td width="20" class="nobordernopadding nowrap">';
 			if ($date_limit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 			print '</td>';
 
@@ -385,7 +385,7 @@ if ($resql)
 			//print '<td align="right">'.((! empty($objp->am) || ! empty($cn))?price($objp->total_ttc-$objp->am-$cn):'&nbsp;').'</td>';
 
 			// Status of invoice
-			print '<td align="right" nowrap="nowrap">';
+			print '<td align="right" class="nowrap">';
 			print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 			print '</td>';
 

@@ -1403,7 +1403,7 @@ else
 		print '</td></tr>';
 
 		// Zip / Town
-		print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td></tr>';
+		print '<tr><td class="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td></tr>';
 
 		// Country
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">';

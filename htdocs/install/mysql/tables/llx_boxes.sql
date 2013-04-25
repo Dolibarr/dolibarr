@@ -19,7 +19,7 @@
 -- ===========================================================================
 
 --
--- position  : 0=index.php
+-- position  : 0=Home page index.php
 -- box_order : Box sort order
 --
 
@@ -31,6 +31,6 @@ create table llx_boxes
   position		smallint NOT NULL,
   box_order		varchar(3) NOT NULL,
   fk_user		integer default 0 NOT NULL,
-  maxline		integer NULL
-  
+  maxline		integer NULL,
+  params		varchar(255)
 )ENGINE=innodb;

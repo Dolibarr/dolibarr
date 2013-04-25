@@ -231,7 +231,7 @@ if (! empty($conf->fournisseur->enabled))
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
-                print '<td nowrap="nowrap">';
+                print '<td class="nowrap">';
                 print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
                 print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
                 $i++;
@@ -330,17 +330,17 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             print "<tr $bc[$var]>";
-            print '<td width="20%" nowrap="nowrap">';
+            print '<td width="20%" class="nowrap">';
 
             $commandestatic->id=$obj->rowid;
             $commandestatic->ref=$obj->ref;
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-            print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
+            print '<td width="96" class="nobordernopadding nowrap">';
             print $commandestatic->getNomUrl(1);
             print '</td>';
 
-            print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+            print '<td width="16" class="nobordernopadding nowrap">';
             print '&nbsp;';
             print '</td>';
 
@@ -398,17 +398,17 @@ while ($i < $num)
 $var=!$var;
 $obj = $db->fetch_object($resql);
 print "<tr $bc[$var]>";
-print '<td nowrap="nowrap">';
+print '<td class="nowrap">';
 
 $commandestatic->id=$obj->rowid;
 $commandestatic->ref=$obj->ref;
 
 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
+print '<td width="96" class="nobordernopadding nowrap">';
 print $commandestatic->getNomUrl(1);
 print '</td>';
 
-print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+print '<td width="16" class="nobordernopadding nowrap">';
 print '&nbsp;';
 print '</td>';
 

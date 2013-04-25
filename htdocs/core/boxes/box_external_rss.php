@@ -39,10 +39,11 @@ class box_external_rss extends ModeleBoxes
     var $depends = array("externalrss");
 
 	var $db;
-	var $param;
+	var $paramdef;	// Params of box definition (not user params)
 
     var $info_box_head = array();
     var $info_box_contents = array();
+
 
     /**
      *  Constructor
@@ -53,7 +54,7 @@ class box_external_rss extends ModeleBoxes
     function __construct($db,$param)
     {
 		$this->db=$db;
-		$this->param=$param;
+		$this->paramdef=$param;
     }
 
     /**
@@ -71,7 +72,7 @@ class box_external_rss extends ModeleBoxes
 		$this->max=$max;
 
 		// On recupere numero de param de la boite
-		preg_match('/^([0-9]+) /',$this->param,$reg);
+		preg_match('/^([0-9]+) /',$this->paramdef,$reg);
 		$site=$reg[1];
 
 		// Create dir nor required

@@ -540,7 +540,7 @@ if ($step == 2 && $datatoexport)
         $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
-        print '<td nowrap="nowrap">';
+        print '<td class="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
         $tmparray=explode(':',$entityicon);
         if (count($tmparray) >=2)
@@ -704,7 +704,7 @@ if ($step == 3 && $datatoexport)
 		$entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
 		$entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		// If value of entityicon=entitylang='icon:Label'
 		$tmparray=explode(':',$entityicon);
 		if (count($tmparray) >=2)
@@ -871,7 +871,7 @@ if ($step == 4 && $datatoexport)
         $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
-        print '<td nowrap="nowrap">';
+        print '<td class="nowrap">';
         // If value of entityicon=entitylang='icon:Label'
         $tmparray=explode(':',$entityicon);
         if (count($tmparray) >=2)

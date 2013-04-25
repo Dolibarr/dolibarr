@@ -153,7 +153,7 @@ if ($result)
 		$i++;
 	}
 	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
+	print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
 	print '</tr>';
 
 	print '</table>';

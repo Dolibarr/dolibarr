@@ -220,7 +220,7 @@ if ($result)
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 			$product_static->id=$objp->rowid;
 			$product_static->ref=$objp->ref;
 			$product_static->type=$objp->fk_product_type;
@@ -238,10 +238,10 @@ if ($result)
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td align="right" nowrap="nowrap">';
+			print '<td align="right" class="nowrap">';
 			print $product_static->LibStatut($objp->tosell,5,0);
 			print "</td>";
-            print '<td align="right" nowrap="nowrap">';
+            print '<td align="right" class="nowrap">';
             print $product_static->LibStatut($objp->tobuy,5,1);
             print "</td>";
 			print "</tr>\n";

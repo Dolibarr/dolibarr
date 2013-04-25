@@ -472,10 +472,10 @@ if (empty($action))
             print '<tr '.$bc[$var].'>';
 
             // Ref payment
-            print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
+            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 
             // Date
-            print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+            print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 
             print '<td>';
             if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dol_trunc($objp->nom,32).'</a>';
@@ -494,7 +494,7 @@ if (empty($action))
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;
             $invoicesupplierstatic->id=$objp->facid;
-            print '<td nowrap="nowrap">';
+            print '<td class="nowrap">';
             print $invoicesupplierstatic->getNomUrl(1);
             print '</td>';*/
 

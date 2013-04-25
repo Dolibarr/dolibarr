@@ -336,9 +336,9 @@ if ($result)
         	{
         		// On affiche ligne pour modifier droits
         		print '<tr '. $bc[$var].'>';
-        		print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
+        		print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
         		print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-        		print '<td align="center" nowrap="nowrap">';
+        		print '<td align="center" class="nowrap">';
         		print '<a title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
         		print '/';
         		print '<a title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
@@ -360,7 +360,7 @@ if ($result)
         	{
         		print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
         	}
-        	print '<td align="center" nowrap="nowrap">';
+        	print '<td align="center" class="nowrap">';
         	print img_picto($langs->trans("Active"),'tick');
         	print '</td>';
         }
@@ -370,7 +370,7 @@ if ($result)
         	{
         		print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
         	}
-        	print '<td align="center" nowrap="nowrap">';
+        	print '<td align="center" class="nowrap">';
         	print img_picto($langs->trans("Active"),'tick');
         	print '</td>';
         }
@@ -385,7 +385,7 @@ if ($result)
 	        		print $form->textwithtooltip($langs->trans("Inherited"),$langs->trans("PermissionInheritedFromAGroup"));
 	        		print '</td>';
 	        	}
-	        	print '<td align="center" nowrap="nowrap">';
+	        	print '<td align="center" class="nowrap">';
 	        	print img_picto($langs->trans("Active"),'tick');
 	        	print '</td>';
 	        }

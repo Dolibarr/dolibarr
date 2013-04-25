@@ -236,7 +236,7 @@ if ($id > 0)
 	print "</td></tr>";
 
 	// Zip / Town
-	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td>';
+	print '<tr><td class="nowrap">'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td>';
 	print '<td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town."</td>";
 	print '</tr>';
 
@@ -261,7 +261,7 @@ if ($id > 0)
 
 	// Assujeti a TVA ou pas
 	print '<tr>';
-	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -271,10 +271,10 @@ if ($id > 0)
 	{
 		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 		{
-			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
 			print yn($object->localtax1_assuj);
 			print '</td></tr>';
-			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
 			print yn($object->localtax2_assuj);
 			print '</td></tr>';
 		}
@@ -503,14 +503,14 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				print "<tr ".$bc[$var].">";
-				print '<td nowrap="nowrap"><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
+				print '<td class="nowrap"><a href="propal.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a>'."\n";
 				if ( ($db->jdate($objp->dp) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == 1 )
 				{
 					print " ".img_warning();
 				}
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
-				print '<td align="right" style="min-width: 60px" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
+				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
 				$var=!$var;
 				$i++;
 			}
@@ -579,10 +579,10 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
+				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
-				print '<td align="right" style="min-width: 60px" nowrap="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
+				print '<td align="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -631,14 +631,14 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr $bc[$var]>";
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
 				print $contrat->getNomUrl(1,12);
 				print "</td>\n";
 				print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
-				print '<td align="right" nowrap="nowrap">';
+				print '<td align="right" class="nowrap">';
 				$contrat->fetch_lines();
 				print $contrat->getLibStatut(4);
 				print "</td>\n";
@@ -692,7 +692,7 @@ if ($id > 0)
                 $fichinter_static->statut=$objp->fk_statut;
 
 				print "<tr ".$bc[$var].">";
-				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
+				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
                 //print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td align="right" width="120">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td align="right" width="100">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
@@ -753,7 +753,7 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr $bc[$var]>";
-				print '<td nowrap="nowrap">';
+				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->facnumber;
 				$facturestatic->type=$objp->type;
@@ -769,7 +769,7 @@ if ($id > 0)
 				}
 				print '<td align="right" width="120">'.price($objp->total_ttc).'</td>';
 
-				print '<td align="right" nowrap="nowrap" width="100" >'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
+				print '<td align="right" class="nowrap" width="100" >'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
 				print "</tr>\n";
 				$i++;
 			}

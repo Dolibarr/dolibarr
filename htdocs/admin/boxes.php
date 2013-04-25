@@ -36,9 +36,8 @@ $rowid = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
 $errmesg='';
 
-// Definition des positions possibles pour les boites
-$pos_array = array(0);                             // Positions possibles pour une boite (0,1,2,...)
-$pos_name = array(0=>$langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
+// Define possible position of boxes
+$pos_name = getStaticMember('InfoBox','listOfPages');
 $boxes = array();
 
 
@@ -360,7 +359,7 @@ foreach($boxtoadd as $box)
 
     // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
     print '<td>';
-    print $form->selectarray("pos",$pos_name);
+    print $form->selectarray("pos",$pos_name,0,0,0,0,'',1);
     print '<input type="hidden" name="action" value="add">';
     print '<input type="hidden" name="boxid" value="'.$box->box_id.'">';
     print ' <input type="submit" class="button" name="button" value="'.$langs->trans("Activate").'">';
@@ -406,7 +405,9 @@ foreach($boxactivated as $key => $box)
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel).'</td>';
+	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+	//if (! empty($box->graph)) print ' ('.$langs->trans("Graph").')';
+	print '</td>';
 	print '<td>';
 	if ($box->note == '(WarningUsingThisBoxSlowDown)')
 	{
@@ -415,7 +416,7 @@ foreach($boxactivated as $key => $box)
 	}
 	else print ($box->note?$box->note:'&nbsp;');
 	print '</td>';
-	print '<td align="center">' . (isset($pos_name[$box->position])?$pos_name[$box->position]:'') . '</td>';
+	print '<td align="center">' . (empty($pos_name[$box->position])?'':$langs->trans($pos_name[$box->position])) . '</td>';
 	$hasnext=($key < (count($boxactivated)-1));
 	$hasprevious=($key != 0);
 	print '<td align="center">'.($key+1).'</td>';
