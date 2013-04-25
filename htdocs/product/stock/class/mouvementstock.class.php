@@ -208,12 +208,12 @@ class MouvementStock
 				}
 			}
 		}
-
+//		No subproduct movement need on build mode, allready made on build
 		// Add movement for sub products (recursive call)
-		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
-		{
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// we use 0 as price, because pmp is not changed for subproduct
-		}
+//		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
+//		{
+//			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// we use 0 as price, because pmp is not changed for subproduct
+//		}
 
 		if ($movestock && ! $error)
 		{
