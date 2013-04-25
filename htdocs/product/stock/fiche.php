@@ -67,7 +67,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->zip         = $_POST["zipcode"];
 	$object->town        = $_POST["town"];
 	$object->country_id  = $_POST["country_id"];
-
+	$object->email		 = $_POST["email"];
 	if ($object->libelle) {
 		$id = $object->create($user);
 		if ($id > 0)
@@ -113,6 +113,7 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		$object->description = $_POST["desc"];
 		$object->statut      = $_POST["statut"];
 		$object->lieu        = $_POST["lieu"];
+		$object->email     = $_POST["email"];
 		$object->address     = $_POST["address"];
 		$object->zip         = $_POST["zipcode"];
 		$object->town        = $_POST["town"];
@@ -202,6 +203,9 @@ if ($action == 'create')
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	print '</td></tr>';
 
+	// email
+	print '<tr><td >'.$langs->trans("Email").'</td><td colspan="3"><input name="email" size="40" value="'.$object->email.'"></td></tr>';
+
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	print '<select name="statut" class="flat">';
 	print '<option value="0">'.$langs->trans("WarehouseClosed").'</option>';
@@ -275,6 +279,9 @@ else
 			print $object->country;
 			print '</td></tr>';
 
+			// email
+			print '<td width="25%">'.$langs->trans('Email').'</td><td width="25%">'.$object->email.'</td></tr>';
+			
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
@@ -424,21 +431,21 @@ else
 					print '<td align="right">'.price(price2num($objp->pmp*$objp->value,'MT')).'</td>';
 					$totalvalue+=price2num($objp->pmp*$objp->value,'MT');
 
-                    // Price sell min
-                    if (empty($conf->global->PRODUIT_MULTIPRICES))
-                    {
-                        $pricemin=$objp->price;
-                        print '<td align="right">';
-                        print price(price2num($pricemin,'MU'));
-                        print '</td>';
-                        // Total sell min
-                        print '<td align="right">';
-                        print price(price2num($pricemin*$objp->value,'MT'));
-                        print '</td>';
-                    }
-                    $totalvaluesell+=price2num($pricemin*$objp->value,'MT');
-
-                    if ($user->rights->stock->mouvement->creer)
+					// Price sell min
+					if (empty($conf->global->PRODUIT_MULTIPRICES))
+					{
+						$pricemin=$objp->price;
+						print '<td align="right">';
+						print price(price2num($pricemin,'MU'));
+						print '</td>';
+						// Total sell min
+						print '<td align="right">';
+						print price(price2num($pricemin*$objp->value,'MT'));
+						print '</td>';
+					}
+					$totalvaluesell+=price2num($pricemin*$objp->value,'MT');
+					
+					if ($user->rights->stock->mouvement->creer)
 					{
 						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
 						print img_picto($langs->trans("StockMovement"),'uparrow.png').' '.$langs->trans("StockMovement");
@@ -460,12 +467,12 @@ else
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total" align="right">'.$totalunit.'</td>';
 				print '<td class="liste_total">&nbsp;</td>';
-                print '<td class="liste_total" align="right">'.price(price2num($totalvalue,'MT')).'</td>';
-                if (empty($conf->global->PRODUIT_MULTIPRICES))
-                {
-                    print '<td class="liste_total">&nbsp;</td>';
-                    print '<td class="liste_total" align="right">'.price(price2num($totalvaluesell,'MT')).'</td>';
-                }
+				print '<td class="liste_total" align="right">'.price(price2num($totalvalue,'MT')).'</td>';
+				if (empty($conf->global->PRODUIT_MULTIPRICES))
+				{
+					print '<td class="liste_total">&nbsp;</td>';
+					print '<td class="liste_total" align="right">'.price(price2num($totalvaluesell,'MT')).'</td>';
+				}
                 print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
@@ -523,6 +530,9 @@ else
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 			print '</td></tr>';
 
+			// Email
+			print '<tr><td width="20%">'.$langs->trans("email").'</td><td colspan="3"><input name="email" size="40" value="'.$object->email.'"></td></tr>';
+			
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
 			print '<option value="0" '.($object->statut == 0?'selected="selected"':'').'>'.$langs->trans("WarehouseClosed").'</option>';

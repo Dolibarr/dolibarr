@@ -163,6 +163,7 @@ ListProductByPopularity=Liste des produits par popularité
 ListServiceByPopularity=Liste des services par popularité
 Finished=Produit manufacturé
 RowMaterial=Matière première
+Composed=Produit composé
 CloneProduct=Cloner produit/service
 ConfirmCloneProduct=Êtes-vous sûr de vouloir cloner le produit ou service <b>%s</b> ?
 CloneContentProduct=Cloner les informations générales du produit/service uniquement
