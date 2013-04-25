@@ -2817,7 +2817,7 @@ class Product extends CommonObject
     					if ($nbmax && $nbphoto >= $nbmax) break;
     				}
     			}
-            }
+			}
 
 			if ($nbbyrow && $size==1)
 			{
@@ -2969,50 +2969,98 @@ class Product extends CommonObject
 		}
 	}
 
-    /**
-     * Return if object is a product
-     *
-     * @return  boolean     True if it's a product
-     */
+	/**
+	 * Return if object is a product
+	 *
+	 * @return  boolean     True if it's a product
+	 */
 	function isproduct()
 	{
 		return ($this->type != 1 ? true : false);
 	}
 
-    /**
-     * Return if object is a product
-     *
-     * @return  boolean     True if it's a service
-     */
+	/**
+	 * Return if object is a product
+	 *
+	 * @return  boolean     True if it's a service
+	 */
 	function isservice()
 	{
 		return ($this->type == 1 ? true : false);
 	}
 
-    /**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
-     */
-    function initAsSpecimen()
-    {
-        global $user,$langs,$conf,$mysoc;
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+	    global $user,$langs,$conf,$mysoc;
+	
+	    $now=dol_now();
+	
+	    // Initialize parameters
+	    $this->id=0;
+	    $this->ref = 'PRODUCT_SPEC';
+	    $this->libelle = 'PRODUCT SPECIMEN';
+	    $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
+	    $this->specimen=1;
+	    $this->country_id=1;
+	    $this->tosell=1;
+	    $this->tobuy=1;
+	    $this->type=0;
+	    $this->note='This is a comment (private)';
+	}
 
-        $now=dol_now();
-
-        // Initialize parameters
-        $this->id=0;
-        $this->ref = 'PRODUCT_SPEC';
-        $this->libelle = 'PRODUCT SPECIMEN';
-        $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
-        $this->specimen=1;
-        $this->country_id=1;
-        $this->tosell=1;
-        $this->tobuy=1;
-        $this->type=0;
-        $this->note='This is a comment (private)';
-    }
+	/**
+	 *	Return number of product buildable in entrepot 
+	  *
+	 * 	@param	int		$entrepotid		id of the entrepot
+	 * 	@param	int		$productid		id of the product to build
+	 *  @return	int						number of product buildable
+	 */
+	function getNbProductBuildable($entrepotid, $productid)
+	{
+		global $db;
+	
+		
+		$this->id=$productid;
+		$this->fetch($productid);
+		
+		$fabricable=0;
+		$this->get_sousproduits_arbo();
+		$prods_arbo = $this->get_arbo_each_prod();
+		if (count($prods_arbo) > 0)
+		{
+			$fabricable=-1;
+			foreach($prods_arbo as $value)
+			{
+				$productstatic = new Product($db);
+				$productstatic->id=$value['id'];
+				$productstatic->fetch($value['id']);
+				if ($value['type']==0)
+				{
+					$productstatic->load_stock();
+					// for the first loop, buildable is the stock divide by number need
+					if ($fabricable==-1)
+					{
+						$fabricable=$productstatic->stock_warehouse[$entrepotid]->real/$value['nb'];
+					}
+					else
+					{
+						// other loop, buildable changed only if the number is smaller
+						if ($fabricable >= $productstatic->stock_reel/$value['nb'])
+							$fabricable=$productstatic->stock_warehouse[$entrepotid]->real/$value['nb'];
+					}
+				}
+			}
+		}
+		// attention buildable product are always an integer
+		return (int) $fabricable;
+	}
+}
 }
 ?>
