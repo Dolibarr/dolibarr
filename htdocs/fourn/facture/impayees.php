@@ -144,6 +144,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$sql .= " AND f.facnumber LIKE '%".GETPOST('sf_re')."%'";
 	}
 	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.facnumber, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement,f.paye, f.rowid, f.fk_statut";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " ORDER BY ";
 	$listfield=explode(',',$sortfield);
 	foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
