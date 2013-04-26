@@ -64,7 +64,7 @@ $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
 
 //var_dump($_POST);
 

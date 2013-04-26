@@ -479,8 +479,6 @@ if ($rowid)
 {
     $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
-    //$res=$object->fetch_optionals($object->id,$extralabels);
-    //if ($res < 0) { dol_print_error($db); exit; }
 
     $adht->fetch($object->typeid);
 

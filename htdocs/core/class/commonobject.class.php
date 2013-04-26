@@ -2020,7 +2020,7 @@ abstract class CommonObject
             // optionsArray not already loaded, so we load it
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label();
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
         }
 
         // Request to get complementary values
@@ -2108,7 +2108,7 @@ abstract class CommonObject
             $langs->load('admin');
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label($this->elementType);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
 
             foreach($this->array_options as $key => $value)
             {

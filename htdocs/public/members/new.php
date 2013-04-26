@@ -361,7 +361,7 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
 $extrafields = new ExtraFields($db);
-$extrafields->fetch_name_optionals_label('member');    // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label('adherent');    // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewSubscription"));

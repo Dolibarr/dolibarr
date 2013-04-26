@@ -152,11 +152,6 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		// Special case for not normalized table names
-		if ($elementtype == 'member')  $table='adherent_extrafields';
-		elseif ($elementtype == 'company') $table='societe_extrafields';
-		elseif ($elementtype == 'contact') $table='socpeople_extrafields';
-
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			if ($type=='boolean') {
@@ -283,11 +278,6 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		// Special case for not normalized table names
-		if ($elementtype == 'member')  $table='adherent_extrafields';
-		elseif ($elementtype == 'company') $table='societe_extrafields';
-		elseif ($elementtype == 'contact') $table='socpeople_extrafields';
-
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
@@ -362,10 +352,6 @@ class ExtraFields
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='')
 	{
 		$table=$elementtype.'_extrafields';
-		// Special case for not normalized table names
-		if ($elementtype == 'member')  $table='adherent_extrafields';
-		elseif ($elementtype == 'company') $table='societe_extrafields';
-		elseif ($elementtype == 'contact') $table='socpeople_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -533,7 +519,7 @@ class ExtraFields
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='member',$forceload=false)
+	function fetch_name_optionals_label($elementtype='adherent',$forceload=false)
 	{
 		global $conf;
 
