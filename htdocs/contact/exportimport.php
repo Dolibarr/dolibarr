@@ -29,26 +29,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 $langs->load("companies");
 
 // Security check
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
 /*
  *	View
  */
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+
+llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
 $contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
+$contact->fetch($id, $user);
 
 
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'exportimport', $langs->trans("ContactsAddresses"), 0, 'contact');
+dol_fiche_head($head, 'exportimport', $title, 0, 'contact');
 
 
 /*
@@ -97,7 +99,7 @@ print '</div>';
 print '<br>';
 
 print $langs->trans("ExportCardToFormat").': ';
-print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"].'">';
+print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$contact->id.'">';
 print img_picto($langs->trans("VCard"),'vcard.png').' ';
 print $langs->trans("VCard");
 print '</a>';

@@ -35,6 +35,7 @@ class Contact extends CommonObject
 {
 	public $element='contact';
 	public $table_element='socpeople';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 	var $civilite_id;  // In fact we stor civility_code
@@ -745,7 +746,7 @@ class Contact extends CommonObject
 				$this->error=$this->db->error().' sql='.$sql;
 			}
 		}
-		
+
 		// Removed extrafields
 		 if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) { // For avoid conflicts if trigger used
 			$result=$this->deleteExtraFields($this);
