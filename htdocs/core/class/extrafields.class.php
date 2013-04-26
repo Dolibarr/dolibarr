@@ -543,7 +543,6 @@ class ExtraFields
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
-
 					// we can add this attribute to adherent object
 					if ($tab->type != 'separate')
 					{
@@ -560,6 +559,7 @@ class ExtraFields
 					$this->attribute_pos[$tab->name]=$tab->pos;
 				}
 			}
+			
 			return $array_name_label;
 		}
 		else
@@ -882,7 +882,7 @@ class ExtraFields
 	function setOptionalsFromPost($extralabels,&$object)
 	{
 		global $_POST;
-			
+		
 		if (is_array($extralabels))
 		{
 			// Get extra fields

@@ -2023,6 +2023,7 @@ abstract class CommonObject
             $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
         }
 
+        
         // Request to get complementary values
         if (count($optionsArray) > 0)
         {
@@ -2044,13 +2045,15 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member')
+                    	//Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
                             // we can add this attribute to adherent object
                             $this->array_options["options_$key"]=$value;
                         }
                     }
                 }
+               
                 $this->db->free($resql);
             }
             else
