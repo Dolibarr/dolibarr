@@ -2,6 +2,7 @@
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013   Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,8 +112,20 @@ if ($action == 'create')
         exit;
     }
 
+    // Liste des utiliseurs du groupes choisi dans la config
+    $idGroupValid = $cp->getConfCP('userGroup');
+    
+    $validator = new UserGroup($db);
+    $validator->fetch($idGroupValid);
+    
+    // Get just members ID
+    foreach ($validator->members as $member)
+    {
+        $valideurarray[] = $member->id;
+    }
+
     // Si pas de validateur choisi
-    if ($valideur < 1)
+    if (($valideur < 1) || (!in_array($valideur, $valideurarray)))
     {
         header('Location: fiche.php?action=request&error=Valideur');
         exit;
@@ -706,12 +719,18 @@ if (empty($id) || $action == 'add' || $action == 'request')
         print '<td class="fieldrequired">'.$langs->trans("ValidateByCP").'</td>';
         // Liste des utiliseurs du groupes choisi dans la config
         $idGroupValid = $cp->getConfCP('userGroup');
-
-        $validator = new UserGroup($db, $idGroupValid);
-        $valideurarray = $validator->listUsersForGroup();
+        
+        $validator = new UserGroup($db);
+        $validator->fetch($idGroupValid);
+        
+        // Get just members ID
+        foreach ($validator->members as $member)
+        {
+            $valideurarray[] = $member->id;
+        }
 
         print '<td>';
-        print $form->select_dolusers($validator->id, "valideur", 1, "", 0, $valideurarray);
+        print $form->select_dolusers(0, "valideur", 1, "", 0, $valideurarray);
         print '</td>';
         print '</tr>';
         print '<tr>';
