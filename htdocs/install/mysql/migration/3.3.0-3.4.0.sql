@@ -350,3 +350,7 @@ ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
 
 ALTER TABLE llx_boxes ADD COLUMN params varchar(255);
 
+UPDATE llx_extrafields SET elementtype='socpeople' WHERE elementtype='contact';
+UPDATE llx_extrafields SET elementtype='actioncomm' WHERE elementtype='action';
+UPDATE llx_extrafields SET elementtype='adherent' WHERE elementtype='member';
+UPDATE llx_extrafields SET elementtype='societe' WHERE elementtype='company';

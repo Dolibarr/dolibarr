@@ -193,7 +193,10 @@ if ($ok)
 
 // Search list of fields declared and list of fields created into databases and create fields missing
 $extrafields=new ExtraFields($db);
-$listofmodulesextra=array('societe'=>'company','adherent'=>'member','product'=>'product');
+$listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
+			'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
+			'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
+			'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
 foreach($listofmodulesextra as $tablename => $elementtype)
 {
     // Get list of fields

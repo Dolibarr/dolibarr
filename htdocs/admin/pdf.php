@@ -51,18 +51,17 @@ if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+	
     dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT",    $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'',$conf->entity);
 
-//	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-//	{
-		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
-//	}
+	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS",    $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -223,27 +222,31 @@ if ($action == 'edit')	// Edit
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
+    
+    // Hide Tva Intra on adress
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
+    print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
+    print '</td></tr>';
 
-//    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-//    {
-    	//Desc
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
-    	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC:0,1);
-    	print '</td></tr>';
+    //Desc
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC:0,1);
+    print '</td></tr>';
 
-    	//Ref
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
-    	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF:0,1);
-    	print '</td></tr>';
+    //Ref
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF:0,1);
+    print '</td></tr>';
 
-    	//Details
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
-    	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
-    	print '</td></tr>';
-//    }
+    //Details
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
+    print '</td></tr>';
+
 
 	print '</table>';
 
@@ -418,26 +421,30 @@ else	// Show
 	print "</td>";
 	print '</tr>';
 	
-//    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-//    {
-    	//Desc
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
-    	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
-    	print '</td></tr>';
+	// Hide Tva Intra on adress
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS,1);
+	print '</td></tr>';
+	
+	//Desc
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC,1);
+	print '</td></tr>';
 
-    	//Ref
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td colspan="2">';
-    	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
-    	print '</td></tr>';
+	//Ref
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF,1);
+	print '</td></tr>';
 
-    	//Details
-    	$var=!$var;
-    	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
-    	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
-    	print '</td></tr>';
-//    }
+	//Details
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS,1);
+	print '</td></tr>';
+
 
 	print '</table>';
 
