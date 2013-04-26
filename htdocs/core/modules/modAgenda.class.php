@@ -43,6 +43,8 @@ class modAgenda extends DolibarrModules
 	 */
 	function __construct($db)
 	{
+		global $conf;
+		
 		$this->db = $db;
 		$this->numero = 2400;
 

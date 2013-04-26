@@ -297,7 +297,11 @@ if (! empty($_SESSION["disablemodules"]))
     $disabled_modules=explode(',',$_SESSION["disablemodules"]);
     foreach($disabled_modules as $module)
     {
-        if ($module) $conf->$module->enabled=false;
+        if ($module) 
+        {
+        	if (empty($conf->$module)) $conf->$module=new stdClass();
+        	$conf->$module->enabled=false;
+        }
     }
 }
 

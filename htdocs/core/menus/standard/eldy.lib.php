@@ -40,8 +40,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
-	$mainmenu=$_SESSION["mainmenu"];
-	$leftmenu=$_SESSION["leftmenu"];
+	$mainmenu=(empty($_SESSION["mainmenu"])?'':$_SESSION["mainmenu"]);
+	$leftmenu=(empty($_SESSION["leftmenu"])?'':$_SESSION["leftmenu"]);
 
 	$id='mainmenu';
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);

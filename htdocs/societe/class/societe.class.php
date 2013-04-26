@@ -2766,7 +2766,7 @@ class Societe extends CommonObject
 	 */
 	function getLibCustProspStatut()
 	{
-		return $this->LibCustProspStatut($this->client,$mode);
+		return $this->LibCustProspStatut($this->client);
 	}
 
 	/**
