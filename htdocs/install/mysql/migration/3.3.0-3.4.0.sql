@@ -350,3 +350,4 @@ ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
 
 ALTER TABLE llx_boxes ADD COLUMN params varchar(255);
 
+ALTER TABLE llx_entrepot ADD COLUMN email after fk_pays	varchar(255);

@@ -45,7 +45,7 @@ class Entrepot extends CommonObject
 	//! Code Postal
 	var $zip;
 	var $town;
-
+	var $email;
 	var $country;
 	var $country_id;
 	var $country_code;
@@ -139,7 +139,7 @@ class Entrepot extends CommonObject
 		$this->description=$this->db->escape(trim($this->description));
 
 		$this->lieu=$this->db->escape(trim($this->lieu));
-
+		$this->email=$this->db->escape(trim($this->email));
 		$this->address=$this->db->escape(trim($this->address));
         $this->zip=$this->zip?trim($this->zip):trim($this->zip);
         $this->town=$this->town?trim($this->town):trim($this->town);
@@ -151,6 +151,7 @@ class Entrepot extends CommonObject
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
 		$sql .= ", address = '" . $this->db->escape($this->address) ."'";
+		$sql .= ", email = '" . $this->db->escape($this->email) ."'";
 		$sql .= ", zip = '" . $this->db->escape($this->zip) ."'";
 		$sql .= ", town = '" . $this->db->escape($this->town) ."'";
 		$sql .= ", fk_pays = " . $this->country_id;
@@ -244,7 +245,7 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 			
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, label, description, statut, lieu, address, email, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 	
 		if ($id) 
@@ -273,6 +274,7 @@ class Entrepot extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
+				$this->email        = $obj->email;
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
