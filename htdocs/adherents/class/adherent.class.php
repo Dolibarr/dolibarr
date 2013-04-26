@@ -1103,7 +1103,7 @@ class Adherent extends CommonObject
                 if (count($extralabels)>0) {
                 	$this->fetch_optionals($this->id,$extralabels);
                 }
-                $result=$this->fetch_optionals($this->id);
+                
                 // Load other properties
                 $result=$this->fetch_subscriptions();
 
