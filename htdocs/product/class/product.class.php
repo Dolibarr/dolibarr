@@ -47,6 +47,7 @@ class Product extends CommonObject
 	var $libelle;            // TODO deprecated
 	var $label;
 	var $description;
+	var $note;
 	//! Type 0 for regular product, 1 for service (Advanced feature: 2 for assembly kit, 3 for stock kit)
 	var $type;
 	//! Selling price
