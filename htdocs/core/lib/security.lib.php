@@ -171,7 +171,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
         	foreach($feature2 as $subfeature)
         	{
         		if (empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) $readok=0;
-        		else $readok=1;
+        		else { $readok=1; break; } // For bypass the second test if the first is ok
         	}
         }
         else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
@@ -220,7 +220,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             	foreach($feature2 as $subfeature)
             	{
             		if (empty($user->rights->$feature->$subfeature->creer) && empty($user->rights->$feature->$subfeature->write)) $createok=0;
-            		else $createok=1;
+            		else { $createok=1; break; } // For bypass the second test if the first is ok
             	}
             }
             else if (! empty($feature))		// This is for old permissions
@@ -284,7 +284,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             	foreach($feature2 as $subfeature)
             	{
             		if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
-            		else $deleteok=1;
+            		else { $deleteok=1; break; } // For bypass the second test if the first is ok
             	}
             }
             else if (! empty($feature))		// This is for old permissions
