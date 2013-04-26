@@ -3062,5 +3062,4 @@ class Product extends CommonObject
 		return (int) $fabricable;
 	}
 }
-}
 ?>
