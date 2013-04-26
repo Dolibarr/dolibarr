@@ -323,7 +323,7 @@ class ExtraFields
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql.= " WHERE name = '".$attrname."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity IN  (0,".$conf->entity.')';
 			$sql.= " AND elementtype = '".$elementtype."'";
 
 			dol_syslog(get_class($this)."::delete_label sql=".$sql);
