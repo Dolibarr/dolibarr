@@ -51,6 +51,8 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
+$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions&allactions', '', 'id');
+
 $act = new ActionComm($db);
 
 if ($objectid > 0)
