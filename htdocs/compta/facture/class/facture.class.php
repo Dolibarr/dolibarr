@@ -879,13 +879,9 @@ class Facture extends CommonInvoice
 				if(!class_exists('Extrafields'))
 					require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label('facture',true);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 				if (count($extralabels)>0) {
-					$this->array_options = array();
-				}
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$this->array_options['options_'.$key]=$label;
+					$this->fetch_optionals($this->id,$extralabels);
 				}
 
 				/*

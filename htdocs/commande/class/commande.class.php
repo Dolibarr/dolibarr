@@ -1339,6 +1339,16 @@ class Commande extends CommonOrder
                 $this->lines				= array();
 
                 if ($this->statut == 0) $this->brouillon = 1;
+                
+                // Retreive all extrafield for invoice
+                // fetch optionals attributes and labels
+                if(!class_exists('Extrafields'))
+                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                if (count($extralabels)>0) {
+                	$this->fetch_optionals($this->id,$extralabels);
+                }
 
                 $this->db->free();
 
@@ -2382,6 +2392,17 @@ class Commande extends CommonOrder
         	// Delete linked contacts
         	$res = $this->delete_linked_contact();
         	if ($res < 0) $error++;
+        	
+        	// Remove extrafields
+        	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        	{
+        		$result=$this->deleteExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        		}
+        	}
 
         	// On efface le repertoire de pdf provisoire
         	$comref = dol_sanitizeFileName($this->ref);
@@ -2409,6 +2430,8 @@ class Commande extends CommonOrder
         			}
         		}
         	}
+        	
+        	
         }
 
         if (! $error)

@@ -69,7 +69,7 @@ $extrafields = new ExtraFields($db);
 llxHeaderVierge($langs->trans("MemberCard"));
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('member');
+$extralabels=$extrafields->fetch_name_optionals_label('adherent');
 if ($id > 0)
 {
 	$res=$object->fetch($id);
