@@ -655,15 +655,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	$db->begin();
 
 	$error=0;
-
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=GETPOST($key);
-		}
-	}
+	
+	// Fill array 'array_options' with data from add form
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	
 
 	// Replacement invoice
 	if ($_POST['type'] == 1)
