@@ -259,17 +259,22 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
+}
+
 div.leftContent {
 	margin-left: 20px !important;
     width: 220px !important;
-}
-
-div.vmenu {
-	position: relative;
-    float: left;
-    margin: 0px;
-    width: 180px;
-    margin-left: 10px;
 }
 
 div.fiche {
@@ -647,16 +652,25 @@ img.login, img.printer, img.entity {
 /* ============================================================================== */
 /* Menu gauche                                                                    */
 /* ============================================================================== */
-.vmenu{
-margin: 0;
-position: relative;
-width: 180px;
+
+.vmenu {
+	margin: 0;
+	position: relative;
+	width: 180px;
 }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
 	display: none;
 }
 <?php } ?>
+
+div.vmenu {
+	position: relative;
+    float: left;
+    margin: 0px;
+    width: 180px;
+    margin-left: 10px;
+}
 
 a.vmenu:link        { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
 a.vmenu:visited     { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
@@ -738,7 +752,6 @@ div.blockvmenusearch
 {
 	margin: 3px 0px 15px 0px;
 	padding: 25px 0px 2px 2px;
-	width: 180px;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;

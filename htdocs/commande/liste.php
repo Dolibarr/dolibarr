@@ -318,12 +318,13 @@ if ($resql)
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 
-		print '<td width="16" align="right" class="nobordernopadding">';
+		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
 		print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
-		print '</td></tr></table>';
+		print '</td>';
+		print '</tr></table>';
 
 		print '</td>';
 
@@ -333,18 +334,16 @@ if ($resql)
 		$companystatic->client=$objp->client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
-		print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
 
 		// If module invoices enabled and user with invoice creation permissions
-		if (! empty($conf->facture->enabled))
+		if (! empty($conf->facture->enabled) && ! empty($conf->global->ORDER_BILLING_ALL_CUSTOMER))
 		{
 			if ($user->rights->facture->creer)
 			{
-
 				if (($objp->fk_statut > 0 && $objp->fk_statut < 3) || ($objp->fk_statut == 3 && $objp->facturee == 0))
 				{
-
-					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
+					print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
+					print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom, 'object_bill', 'hideonsmrtphone').'</a>';
 				}
 			}
 		}

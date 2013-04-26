@@ -1897,7 +1897,6 @@ $now=dol_now();
 llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
-
 /*********************************************************************
  *
 * Mode creation
@@ -2450,7 +2449,6 @@ else if ($id > 0 || ! empty($ref))
 
 		$objectidnext=$object->getIdReplacingInvoice();
 
-
 		$head = facture_prepare_head($object);
 
 		dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), 0, 'bill');
@@ -2692,6 +2690,8 @@ else if ($id > 0 || ! empty($ref))
 		print $formconfirm;
 
 
+
+
 		// Invoice content
 
 		print '<table class="border" width="100%">';
@@ -2879,13 +2879,13 @@ else if ($id > 0 || ! empty($ref))
 			if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
 			else print '. ';
 		}
-		/*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
-		 {
-		if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
+		//if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+		// {
+		//if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
 		//print ' &nbsp; - &nbsp; ';
-		print $addabsolutediscount;
+		//print $addabsolutediscount;
 		//print ' &nbsp; - &nbsp; '.$addcreditnote;      // We disbale link to credit note
-		}*/
+		//}
 		print '</td></tr>';
 
 		// Date invoice
@@ -2915,9 +2915,7 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 
 
-		/*
-		 * List of payments
-		*/
+		// List of payments
 
 		$sign=1;
 		if ($object->type == 2) $sign=-1;
@@ -3359,9 +3357,7 @@ else if ($id > 0 || ! empty($ref))
 				include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 			}
 
-			/*
-			 * Lines
-			*/
+			// Lines
 			$result = $object->getLinesArray();
 
 			if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
@@ -3375,9 +3371,7 @@ else if ($id > 0 || ! empty($ref))
 			if (! empty($object->lines))
 				$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
-			/*
-			 * Form to add new line
-			*/
+			// Form to add new line
 			if ($object->statut == 0 && $user->rights->facture->creer && $action <> 'valid' && $action <> 'editline')
 			{
 				$var=true;
@@ -3409,9 +3403,7 @@ else if ($id > 0 || ! empty($ref))
 			print "</div>\n";
 
 
-			/*
-			 * Boutons actions
-			*/
+			// Boutons actions
 
 			if ($action != 'prerelance' && $action != 'presend')
 			{
@@ -3624,24 +3616,19 @@ else if ($id > 0 || ! empty($ref))
 			if ($action != 'prerelance' && $action != 'presend')
 			{
 				print '<div class="fichecenter"><div class="fichehalfleft">';
-				//print '<table width="100%"><tr><td width="50%" valign="top">';
-				//print '<a name="builddoc"></a>'; // ancre
+				print '<a name="builddoc"></a>'; // ancre
 
-				/*
-				 * Documents generes
-				*/
+				// Documents generes
 				$filename=dol_sanitizeFileName($object->ref);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$object->id;
 				$genallowed=$user->rights->facture->creer;
 				$delallowed=$user->rights->facture->supprimer;
-
+				
 				print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 				$somethingshown=$formfile->numoffiles;
 
-				/*
-				 * Linked object block
-				*/
+				// Linked object block
 				$somethingshown=$object->showLinkedObjectBlock();
 
 				// Link for paypal payment
@@ -3652,14 +3639,12 @@ else if ($id > 0 || ! empty($ref))
 				}
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-				//print '</td><td valign="top" width="50%">';
 
 				// List of actions on element
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 				$formactions=new FormActions($db);
 				$somethingshown=$formactions->showactions($object,'invoice',$socid);
 
-				//print '</td></tr></table>';
 				print '</div></div></div>';
 			}
 			else

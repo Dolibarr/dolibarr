@@ -621,7 +621,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 			if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;

@@ -2223,11 +2223,11 @@ class Propal extends CommonObject
         }
         if ($mode == 5)
         {
-            if ($statut==0) return $this->labelstatut_short[$statut].' '.img_picto($langs->trans('PropalStatusDraftShort'),'statut0');
-            if ($statut==1) return $this->labelstatut_short[$statut].' '.img_picto($langs->trans('PropalStatusOpenedShort'),'statut1');
-            if ($statut==2) return $this->labelstatut_short[$statut].' '.img_picto($langs->trans('PropalStatusSignedShort'),'statut3');
-            if ($statut==3) return $this->labelstatut_short[$statut].' '.img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5');
-            if ($statut==4) return $this->labelstatut_short[$statut].' '.img_picto($langs->trans('PropalStatusBilledShort'),'statut6');
+            if ($statut==0) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusDraftShort'),'statut0');
+            if ($statut==1) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusOpenedShort'),'statut1');
+            if ($statut==2) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusSignedShort'),'statut3');
+            if ($statut==3) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5');
+            if ($statut==4) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusBilledShort'),'statut6');
         }
     }
 

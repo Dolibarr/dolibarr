@@ -1307,13 +1307,19 @@ if ($step == 5 && $datatoimport)
         $result=$obj->import_open_file($pathfile,$langs);
         if ($result > 0)
         {
-            $sourcelinenb=0;
+            $sourcelinenb=0; $endoffile=0;
             // Loop on each input file record
-            while ($sourcelinenb < $nboflines)
+            while ($sourcelinenb < $nboflines && ! $endoffile)
             {
                 $sourcelinenb++;
                 // Read line and stor it into $arrayrecord
                 $arrayrecord=$obj->import_read_record();
+                if ($arrayrecord === false)
+                {
+					$arrayofwarnings[$sourcelinenb][0]=array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines.','type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+                	$endoffile++;
+                	continue;
+                }
                 if ($excludefirstline && $sourcelinenb == 1) continue;
 
                 //
@@ -1615,11 +1621,17 @@ if ($step == 6 && $datatoimport)
 	$result=$obj->import_open_file($pathfile,$langs);
 	if ($result > 0)
 	{
-		$sourcelinenb=0;
-		while ($sourcelinenb < $nboflines)
+		$sourcelinenb=0; $endoffile=0;
+		while ($sourcelinenb < $nboflines && ! $endoffile)
 		{
 			$sourcelinenb++;
 			$arrayrecord=$obj->import_read_record();
+			if ($arrayrecord === false)
+			{
+				$arrayofwarnings[$sourcelinenb][0]=array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines.','type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+				$endoffile++;
+				continue;
+			}
 			if ($excludefirstline && $sourcelinenb == 1) continue;
 
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);

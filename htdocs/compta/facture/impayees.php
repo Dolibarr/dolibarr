@@ -351,7 +351,7 @@ if ($resql)
 			print '</td>';
 
 			// PDF Picto
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
             $filename=dol_sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);

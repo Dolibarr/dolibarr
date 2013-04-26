@@ -233,9 +233,22 @@ td.showDragHandle {
 /* ============================================================================== */
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
+
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
+}
+
 div.leftContent {
 	margin-left: 0px !important;
-        width: 200px !important;
         background-color: #FFF;
 }
 
@@ -651,7 +664,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-td.vmenu {
+div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -754,7 +767,6 @@ div.blockvmenusearch
 {
     margin: 3px 0px 15px 0px;
     padding: 25px 0px 2px 2px;
-    width: 200px;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;

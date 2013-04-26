@@ -337,7 +337,7 @@ if ($resql)
             print $objp->increment;
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding">';
+            print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
             $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
