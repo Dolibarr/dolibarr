@@ -35,12 +35,12 @@ $langs->load("admin");
 $action=GETPOST('action');
 
 // Security check
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid, 'socpeople&societe');
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
+$contact->fetch($id, $user);
 
 
 /*
@@ -79,13 +79,15 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+
+llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
 $head = contact_prepare_head($contact);
 
-dol_fiche_head($head, 'ldap', $langs->trans("ContactsAddresses"), 0, 'contact');
+dol_fiche_head($head, 'ldap', $title, 0, 'contact');
 
 
 print '<table class="border" width="100%">';
