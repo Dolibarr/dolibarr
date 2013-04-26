@@ -36,6 +36,7 @@ class Contact extends CommonObject
 {
 	public $element='contact';
 	public $table_element='socpeople';
+	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
 	var $civilite_id;  // In fact we store civility_code
