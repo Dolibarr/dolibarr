@@ -118,7 +118,8 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     $features = explode("&", $features);
 
     // More subfeatures to check
-    $feature2 = explode("&", $feature2);
+    if (!empty($feature2))
+    	$feature2 = explode("&", $feature2);
 
     // More parameters
     $params = explode('&', $dbtablename);
