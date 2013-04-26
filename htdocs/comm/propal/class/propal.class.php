@@ -2005,6 +2005,21 @@ class Propal extends CommonObject
                         }
                     }
 
+                    // Removed extrafields
+                    if (! $error)
+                    {
+                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    	{
+                    		$result=$this->deleteExtraFields();
+                    		if ($result < 0)
+                    		{
+                    			$error++;
+                    			$errorflag=-4;
+                    			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    		}
+                    	}
+                    }
+                    
                     if (! $error)
                     {
                         dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);

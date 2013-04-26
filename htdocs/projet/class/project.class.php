@@ -474,6 +474,12 @@ class Project extends CommonObject
             }
         }
 
+        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
+        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+        
+        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
@@ -485,6 +491,13 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        
+        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
+        $sql.= " WHERE fk_object=" . $this->id;
+        
+        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        
         if ($resql)
         {
             // We remove directory
