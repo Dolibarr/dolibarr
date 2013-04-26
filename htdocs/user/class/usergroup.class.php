@@ -174,7 +174,7 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 * 	Return array of users id for group
+	 * 	Return array of users id for group this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
 	 * 	@return	array 						Array of users
@@ -214,8 +214,10 @@ class UserGroup extends CommonObject
 					$newuser->fetch($obj->rowid);
 					$ret[$obj->rowid]=$newuser;
 				}
-
-				$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
+				if (! empty($obj->usergroup_entity))
+				{
+					$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
+				}
 			}
 
 			$this->db->free($resql);
