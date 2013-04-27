@@ -4134,7 +4134,7 @@ function verifCond($strRights)
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string	$s				String to evaluate
- * @param	int		$returnvalue	0=No return (used to execute $a=something). 1=Value of eval is returned (used to eval $something).
+ * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @return	mixed					Nothing or return of eval
  */
 function dol_eval($s,$returnvalue=0)
@@ -4145,16 +4145,16 @@ function dol_eval($s,$returnvalue=0)
 	global $rights;
 
 	//print $s."<br>\n";
-	if ($returnvalue) return eval('return '.$s.';');
-	else eval($s);
+	if ($returnvalue) return @eval('return '.$s.';');
+	else @eval($s);
 }
 
 /**
-* Return if var element is ok
-*
-* @param   string      $element    Variable to check
-* @return  boolean                 Return true of variable is not empty
-*/
+ * Return if var element is ok
+ *
+ * @param   string      $element    Variable to check
+ * @return  boolean                 Return true of variable is not empty
+ */
 function dol_validElement($element)
 {
 	return (trim($element) != '');

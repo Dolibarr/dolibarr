@@ -53,7 +53,7 @@ $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('contact');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -67,7 +67,7 @@ if (! empty($canvas))
 }
 
 // Security check
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('contactcard'));

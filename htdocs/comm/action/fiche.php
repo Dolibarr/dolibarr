@@ -53,7 +53,7 @@ $contactid=GETPOST('contactid','int');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-//$result = restrictedArea($user, 'agenda', $id, 'actioncomm', 'actions', '', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', '', 'id');
 
 $error=GETPOST("error");
 $mesg='';
@@ -64,7 +64,7 @@ $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm');
+$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
 
 //var_dump($_POST);
 

@@ -338,7 +338,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		}
 
 		// Intra VAT
-		if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))
+		{
+			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		}
 
 		// Professionnal Ids
 		if (! empty($conf->global->MAIN_PROFID1_IN_ADDRESS) && ! empty($targetcompany->idprof1))

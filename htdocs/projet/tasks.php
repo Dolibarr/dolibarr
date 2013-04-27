@@ -44,6 +44,7 @@ $mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
+$taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 if ($ref)
@@ -54,8 +55,8 @@ if ($ref)
 
 // fetch optionals attributes and labels
 if (!empty($id)) {
-	$extralabels_projet=$extrafields_project->fetch_name_optionals_label('projet');
-	$extralabels_task=$extrafields_task->fetch_name_optionals_label('projet_task');
+	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
+	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
 	
 }
 
@@ -167,7 +168,6 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 $form=new Form($db);
 $formother=new FormOther($db);
-$taskstatic = new Task($db);
 $userstatic=new User($db);
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";

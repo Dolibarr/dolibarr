@@ -474,6 +474,12 @@ class Project extends CommonObject
             }
         }
 
+        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
+        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+        
+        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
@@ -485,6 +491,13 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        
+        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
+        $sql.= " WHERE fk_object=" . $this->id;
+        
+        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        
         if ($resql)
         {
             // We remove directory
@@ -820,11 +833,11 @@ class Project extends CommonObject
     {
         // To verify role of users
         $userAccess = 0;
-        if (($mode == 'read' && $user->rights->projet->all->lire) || ($mode == 'write' && $user->rights->projet->all->creer) || ($mode == 'delete' && $user->rights->projet->all->supprimer))
+        if (($mode == 'read' && ! empty($user->rights->projet->all->lire)) || ($mode == 'write' && ! empty($user->rights->projet->all->creer)) || ($mode == 'delete' && ! empty($user->rights->projet->all->supprimer)))
         {
             $userAccess = 1;
         }
-        else if ($this->public && (($mode == 'read' && $user->rights->projet->lire) || ($mode == 'write' && $user->rights->projet->creer) || ($mode == 'delete' && $user->rights->projet->supprimer)))
+        else if ($this->public && (($mode == 'read' && ! empty($user->rights->projet->lire)) || ($mode == 'write' && ! empty($user->rights->projet->creer)) || ($mode == 'delete' && ! empty($user->rights->projet->supprimer))))
         {
             $userAccess = 1;
         }

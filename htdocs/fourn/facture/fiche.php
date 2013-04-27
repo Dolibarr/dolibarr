@@ -270,16 +270,18 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     {
         $db->begin();
 
+        $tmpproject = GETPOST('projectid', 'int');
+
         // Creation facture
         $object->ref           = $_POST['ref'];
 		$object->ref_supplier  = $_POST['ref_supplier'];
-		$object->fk_project    = GETPOST('projectid');
         $object->socid         = $_POST['socid'];
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
         $object->date_echeance = $datedue;
         $object->note_public   = GETPOST('note_public');
         $object->note_private  = GETPOST('note_private');
+        $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
 
         // If creation from another object of another module
         if ($_POST['origin'] && $_POST['originid'])

@@ -118,7 +118,7 @@ $contact_fields = array(
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
 if (count($extrafields)>0) {
 	$extrafield_array = array();
 }
@@ -306,7 +306,7 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
             	//Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
-            	$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+            	$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
             	//Get extrafield values
             	$contact->fetch_optionals($contact->id,$extralabels);
             	
@@ -413,7 +413,7 @@ function createContact($authentication,$contact)
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+		$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
 			$key='options_'.$key;
@@ -657,7 +657,7 @@ function updateContact($authentication,$contact)
 			//Retreive all extrafield for contact
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('contact',true);
+			$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				$key='options_'.$key;

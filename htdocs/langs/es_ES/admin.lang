@@ -942,6 +942,7 @@ YourPHPDoesNotHaveSSLSupport=Funciones SSL no disponibles en su PHP
 DownloadMoreSkins=Más temas para descargar
 SimpleNumRefModelDesc=Devuelve el número bajo el formato %syymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0
 ShowProfIdInAddress=Mostrar el identificador profesional en las direcciones de los documentos
+ShowVATIntaInAddress=Ocultar el IVA identificador en las direcciones de los documentos
 TranslationUncomplete=Traducción parcial
 SomeTranslationAreUncomplete=Algunos idiomas están traducidos en parte o pueden contener errores. Si lo encuentra, puede corregir los archivos de texto <b>.lang</b> del directorio <b>htdocs/langs</b> y enviarlos al foro <a href="http://www.dolibarr.fr/forum" target="_blank">http://www.dolibarr.fr</a>. 
 MenuUseLayout=Hacer el menú izquierdo ocultable (la opción javascript no debería deshabilitarse)

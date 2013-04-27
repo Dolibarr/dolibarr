@@ -1099,6 +1099,16 @@ class Propal extends CommonObject
                     $this->brouillon = 1;
                 }
 
+                // Retreive all extrafield for invoice
+                // fetch optionals attributes and labels
+                if(!class_exists('Extrafields'))
+                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                if (count($extralabels)>0) {
+                	$this->fetch_optionals($this->id,$extralabels);
+                }
+
                 $this->db->free($resql);
 
                 $this->lines = array();
@@ -1187,14 +1197,9 @@ class Propal extends CommonObject
                 if(!class_exists('Extrafields'))
                 	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label('propal',true);
-                //$this->fetch_optionals($this->id,$extralabels);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 if (count($extralabels)>0) {
-                	$this->array_options = array();
-                }
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-                	$this->array_options['options_'.$key]=$label;
+                	$this->fetch_optionals($this->id,$extralabels);
                 }
                 return 1;
             }
@@ -2010,6 +2015,21 @@ class Propal extends CommonObject
                                 }
                             }
                         }
+                    }
+
+                    // Removed extrafields
+                    if (! $error)
+                    {
+                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    	{
+                    		$result=$this->deleteExtraFields();
+                    		if ($result < 0)
+                    		{
+                    			$error++;
+                    			$errorflag=-4;
+                    			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    		}
+                    	}
                     }
 
                     if (! $error)

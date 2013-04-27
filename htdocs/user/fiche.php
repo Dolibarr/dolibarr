@@ -561,7 +561,7 @@ if ($action == 'adduserldap')
  */
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('user');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 llxHeader('',$langs->trans("UserCard"));
 

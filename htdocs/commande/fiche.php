@@ -82,7 +82,7 @@ $extrafields = new ExtraFields($db);
 
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('commande');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -1127,7 +1127,7 @@ else if ($action == 'print_file' AND $user->rights->printipp->use)
 else if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from update form
-	$extralabels=$extrafields->fetch_name_optionals_label('commande');
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	// Actions on extra fields (by external module or standard code)
