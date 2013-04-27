@@ -10,7 +10,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2013 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
@@ -28,14 +28,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  *	\file       htdocs/core/class/html.form.class.php
  *  \ingroup    core
  *	\brief      File of class with all html predefined components
  */
 
 
-/**
+/*
  *	Class to manage generation of HTML components
  *	Only common components must be here.
  */
@@ -58,7 +58,7 @@ class Form
     var $tva_taux_libelle;
 
 
-    /**
+    /*
      * Constructor
      *
      * @param		DoliDB		$db      Database handler
@@ -68,7 +68,7 @@ class Form
         $this->db = $db;
     }
 
-    /**
+    /*
      * Output key field for an editable field
      *
      * @param   string	$text			Text of label or key to translate
@@ -113,7 +113,7 @@ class Form
         return $ret;
     }
 
-    /**
+    /*
      * Output val field for an editable field
      *
      * @param	string	$text			Text of label (not used in this function)
@@ -223,7 +223,7 @@ class Form
         return $ret;
     }
 
-    /**
+    /*
      * Output edit in place form
      *
      * @param	object	$object			Object
@@ -340,7 +340,7 @@ class Form
         return $out;
     }
 
-    /**
+    /*
      *	Show a text and picto with tooltip on text or picto
      *
      *	@param	string		$text				Text to show
@@ -390,7 +390,7 @@ class Form
         return $s;
     }
 
-    /**
+    /*
      *	Show a text with a picto and a tooltip on picto
      *
      *	@param	string	$text				Text to show
@@ -437,7 +437,7 @@ class Form
         return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
 
-    /**
+    /*
      *  Return combo list of activated countries, into language of user
      *
      *  @param	string	$selected       Id or Code or Label of preselected country
@@ -450,7 +450,7 @@ class Form
         print $this->select_country($selected,$htmlname,$htmloption);
     }
 
-    /**
+    /*
      *  Return combo list of activated countries, into language of user
      *
      *  @param	string	$selected       Id or Code or Label of preselected country
@@ -524,7 +524,7 @@ class Form
         return $out;
     }
 
-    /**
+    /*
      *	Return list of types of lines (product or service)
      * 	Example: 0=product, 1=service, 9=other (for external module)
      *
@@ -574,7 +574,7 @@ class Form
 
     }
 
-    /**
+    /*
      *	Load into cache cache_types_fees, array of types of fees
      *
      *	@return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
@@ -617,7 +617,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Return list of types of notes
      *
      *	@param	string		$selected		Preselected type
@@ -654,7 +654,7 @@ class Form
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
-    /**
+    /*
      *  Output html form to select a third party
      *
      *	@param	string	$selected       Preselected type
@@ -746,7 +746,7 @@ class Form
     }
 
 
-    /**
+    /*
      *    	Return HTML combo list of absolute discounts
      *
      *    	@param	string	$selected       Id remise fixe pre-selectionnee
@@ -812,7 +812,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Return list of all contacts (for a third party or all)
      *
      *	@param	int		$socid      	Id ot third party or 0 for all
@@ -832,7 +832,7 @@ class Form
     	return $this->num;
     }
 
-    /**
+    /*
      *	Return list of all contacts (for a third party or all)
      *
      *	@param	int		$socid      	Id ot third party or 0 for all
@@ -950,7 +950,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Return select list of users
      *
      *  @param	string	$selected       Id user preselected
@@ -968,7 +968,7 @@ class Form
         print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
     }
 
-    /**
+    /*
      *	Return select list of users
      *
      *  @param	string	$selected       User id or user object of user preselected. If -1, we use id of current user.
@@ -1092,7 +1092,7 @@ class Form
     }
 
 
-    /**
+    /*
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
      *
      *  @param		int			$selected				Preselected products
@@ -1146,7 +1146,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Return list of products for a customer
      *
      *	@param      int		$selected       Preselected product
@@ -1474,7 +1474,7 @@ class Form
 		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount);
 	}
 
-    /**
+    /*
      *	Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_do)
      *
      *	@param	int		$socid			Id third party
@@ -1504,7 +1504,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Return list of suppliers products
      *
      *	@param	int		$socid   		Id societe fournisseur (0 pour aucun filtre)
@@ -1684,7 +1684,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Return list of suppliers prices for a product
      *
      *  @param		int		$productid       Id of product
@@ -1773,7 +1773,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *    Return list of delivery address
      *
      *    @param    string	$selected          	Id contact pre-selectionn
@@ -1825,7 +1825,7 @@ class Form
     }
 
 
-    /**
+    /*
      *      Charge dans cache la liste des conditions de paiements possibles
      *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
@@ -1864,7 +1864,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *      Charge dans cache la liste des délais de livraison possibles
      *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
@@ -1903,7 +1903,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *      Retourne la liste des types de delais de livraison possibles
      *
      *      @param	int		$selected        Id du type de delais pre-selectionne
@@ -1937,7 +1937,7 @@ class Form
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
-    /**
+    /*
      *      Load into cache cache_demand_reason, array of input reasons
      *
      *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
@@ -1981,7 +1981,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *      Return list of events that triggered an object creation
      *
      *      @param	int		$selected        Id or code of type origin to select by default
@@ -2017,7 +2017,7 @@ class Form
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
-    /**
+    /*
      *      Charge dans cache la liste des types de paiements possibles
      *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
@@ -2059,7 +2059,7 @@ class Form
     }
 
 
-    /**
+    /*
      *      Retourne la liste des types de paiements possibles
      *
      *      @param	string	$selected        Id du type de paiement pre-selectionne
@@ -2094,7 +2094,7 @@ class Form
     }
 
 
-    /**
+    /*
      *      Return list of payment methods
      *
      *      @param	string	$selected       Id du mode de paiement pre-selectionne
@@ -2149,7 +2149,7 @@ class Form
     }
 
 
-    /**
+    /*
      *      Selection HT or TTC
      *
      *      @param	string	$selected        Id pre-selectionne
@@ -2162,7 +2162,7 @@ class Form
     }
 
 
-    /**
+    /*
      *      Selection HT or TTC
      *
      *      @param	string	$selected        Id pre-selectionne
@@ -2197,7 +2197,7 @@ class Form
         return $return;
     }
 
-    /**
+    /*
      *  Return a HTML select list of bank accounts
      *
      *  @param	string	$selected          Id account pre-selected
@@ -2262,7 +2262,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *    Return list of categories having choosed type
      *
      *    @param	int		$type				Type de categories (0=product, 1=supplier, 2=customer, 3=member)
@@ -2306,7 +2306,7 @@ class Form
         return $output;
     }
 
-    /**
+    /*
      *     Show a confirmation HTML form or AJAX popup
      *
      *     @param	string		$page        	   	Url of page to call if confirmation is OK
@@ -2325,7 +2325,7 @@ class Form
         print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
     }
 
-    /**
+    /*
      *     Show a confirmation HTML form or AJAX popup
      *
      *     @param  	string		$page        	   	Url of page to call if confirmation is OK
@@ -2564,7 +2564,7 @@ class Form
     }
 
 
-    /**
+    /*
      *    Show a form to select a project
      *
      *    @param	int		$page        Page
@@ -2609,7 +2609,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *	Show a form to select payment conditions
      *
      *  @param	int		$page        	Page
@@ -2645,7 +2645,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *  Show a form to select a delivery delay
      *
      *  @param  int		$page        	Page
@@ -2681,7 +2681,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *  Show a select form to select origin
      *
      *  @param  string	$page        	Page
@@ -2724,7 +2724,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *    Show a form to select a date
      *
      *    @param	string		$page        Page
@@ -2763,7 +2763,7 @@ class Form
     }
 
 
-    /**
+    /*
      *  Show a select form to choose a user
      *
      *  @param	string	$page        	Page
@@ -2806,7 +2806,7 @@ class Form
     }
 
 
-    /**
+    /*
      *    Affiche formulaire de selection des modes de reglement
      *
      *    @param	string	$page        Page
@@ -2842,7 +2842,7 @@ class Form
     }
 
 
-    /**
+    /*
      *	Show a select box with available absolute discounts
      *
      *  @param  string	$page        	Page URL where form is shown
@@ -2904,7 +2904,7 @@ class Form
     }
 
 
-    /**
+    /*
      *    Affiche formulaire de selection des contacts
      *
      *    @param	string	$page        	Page
@@ -2951,7 +2951,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *  Output html select to select thirdparty
      *
      *  @param	string	$page       	Page
@@ -2996,7 +2996,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *    Retourne la liste des devises, dans la langue de l'utilisateur
      *
      *    @param	string	$selected    preselected currency code
@@ -3008,7 +3008,7 @@ class Form
         print $this->selectcurrency($selected,$htmlname);
     }
 
-    /**
+    /*
      *      Load into the cache all currencies
      *
      *      @return     int             Nb of loaded lines, 0 if already loaded, <0 if KO
@@ -3054,7 +3054,7 @@ class Form
     	}
     }
 
-    /**
+    /*
      *  Retourne la liste des devises, dans la langue de l'utilisateur
      *
      *  @param	string	$selected    preselected currency code
@@ -3094,7 +3094,7 @@ class Form
     }
 
 
-    /**
+    /*
      *	Load into the cache vat rates of a country
      *
      *	@param	string	$country_code		Country code
@@ -3143,7 +3143,7 @@ class Form
     	}
     }
 
-    /**
+    /*
      *  Output an HTML select vat rate
      *
      *  @param	string	$htmlname           Nom champ html
@@ -3291,7 +3291,7 @@ class Form
     }
 
 
-    /**
+    /*
      *	Show a HTML widget to input a date or combo list for day, month, years and optionnaly hours and minutes
      *  Fields are preselected with :
      *            	- set_time date (Local PHP server timestamps or date format YYYY-MM-DD or YYYY-MM-DD HH:MM)
@@ -3395,7 +3395,7 @@ class Form
             }
 
             // Show date with combo selects
-            if (empty($conf->use_javascript_ajax) || $conf->global->MAIN_POPUP_CALENDAR == "none")
+            if (empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_POPUP_CALENDAR) && $conf->global->MAIN_POPUP_CALENDAR == "none"))
             {
                 // Day
                 $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'day">';
@@ -3558,7 +3558,7 @@ class Form
         return;
     }
 
-    /**
+    /*
      *	Function to show a form to select a duration on a page
      *
      *	@param	string	$prefix   	prefix
@@ -3600,7 +3600,7 @@ class Form
     }
 
 
-    /**
+    /*
      *	Show a select form from an array
      *
      *	@param	string	$htmlname       Name of html select area
@@ -3662,7 +3662,7 @@ class Form
         return $out;
     }
 
-    /**
+    /*
      *	Show a multiselect form from an array.
      *
      *	@param	string	$htmlname		Name of select
@@ -3738,7 +3738,7 @@ class Form
     }
 
 
-    /**
+    /*
      *	Return an html string with a select combo box to choose yes or no
      *
      *	@param	string	$htmlname		Name of html select field
@@ -3778,7 +3778,7 @@ class Form
 
 
 
-    /**
+    /*
      *  Return list of export templates
      *
      *  @param	string	$selected          Id modele pre-selectionne
@@ -3827,7 +3827,7 @@ class Form
         }
     }
 
-    /**
+    /*
      *    Return a HTML area with the reference of object and a navigation bar for a business object
      *    To add a particular filter on select, you must set $object->next_prev_filter to SQL criteria.
      *
@@ -3880,7 +3880,7 @@ class Form
     }
 
 
-    /**
+    /*
      *    	Return HTML code to output a barcode
      *
      *     	@param	Object	&$object		Object containing data to retrieve file name
@@ -3909,7 +3909,7 @@ class Form
         return $out;
     }
 
-    /**
+    /*
      *    	Return HTML code to output a photo
      *
      *    	@param	string		$modulepart		Key to define module concerned ('societe', 'userphoto', 'memberphoto')
@@ -3983,7 +3983,7 @@ class Form
         return $ret;
     }
 
-    /**
+    /*
      *	Return select list of groups
      *
      *  @param	string	$selected        Id group preselected
