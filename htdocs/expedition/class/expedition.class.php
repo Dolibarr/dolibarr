@@ -857,7 +857,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice";
+		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units";
