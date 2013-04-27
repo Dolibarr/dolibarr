@@ -1804,7 +1804,8 @@ else
 
         if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
         {
-            print '<table width="100%"><tr><td valign="top" width="50%">';
+			print '<div class="fichecenter"><div class="fichethirdleft">';
+        	//print '<table width="100%"><tr><td valign="top" width="50%">';
             print '<a name="builddoc"></a>'; // ancre
 
             /*
@@ -1819,10 +1820,10 @@ else
 
             $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
-            print '</td>';
-            print '<td></td>';
-            print '</tr>';
-            print '</table>';
+			print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+
+			print '</div></div></div>';
 
             print '<br>';
         }
