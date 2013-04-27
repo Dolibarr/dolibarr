@@ -207,7 +207,7 @@ class MenuManager
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
         			print '<ul>'."\n";
-        			if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
+        			if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
         				|| (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/index.php') !== false))
 					{
 						// We add sub entry
