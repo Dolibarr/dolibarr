@@ -99,7 +99,7 @@ $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);
 if (empty($reshook)) $searchform.=$hookmanager->resPrint;
 else $searchform=$hookmanager->resPrint;
 
-print '<style>.menu_titre { padding-top: 10px; }</style>';
+print '<style>.menu_titre { padding-top: 6px; }</style>';
 
 print "\n";
 print "<!-- Begin SearchForm -->\n";

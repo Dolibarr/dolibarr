@@ -1149,7 +1149,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 
 	if (! empty($addlink))
 	{
-		$newemail='<a href="';
+		$newemail='<a style="text-overflow: ellipsis;" href="';
 		if (! preg_match('/^mailto:/i',$email)) $newemail.='mailto:';
 		$newemail.=$email;
 		$newemail.='">';

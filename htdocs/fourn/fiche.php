@@ -134,17 +134,17 @@ if ($object->fetch($id))
 	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
 
+    // EMail
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
+
+	// Web
+	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url).'</td></tr>';
+
 	// Phone
 	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
 
 	// Fax
 	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
-
-    // EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
-
-	// Web
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\">".dol_print_url($object->url)."</td></tr>";
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
@@ -178,14 +178,14 @@ if ($object->fetch($id))
 			print yn($object->localtax2_assuj);
 			print '</td></tr>';
 		}
-		
+
 		if ($mysoc->localtax2_assuj!="1")
 		{
 			print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
 			print yn($object->localtax2_assuj);
 			print '</td><tr>';
 		}
-		
+
 	}
 
     // TVA Intra
@@ -217,11 +217,11 @@ if ($object->fetch($id))
 
 	print '</table>';
 
-	
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	//print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
 
-	
+
 	$var=true;
 
 	$MAXLIST=5;
@@ -376,7 +376,7 @@ if ($object->fetch($id))
 	print '<div style="clear:both"></div>';
 	//print '</td></tr>';
 	//print '</table>' . "\n";
-	
+
 	dol_fiche_end();
 
 

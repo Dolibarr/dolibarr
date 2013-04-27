@@ -137,8 +137,9 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_TEXT='50,50,130';
 	if ($dol_use_jmobile)
 	{
-    	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';    // topmenu
-		$conf->global->THEME_ELDY_BACKTABCARD2='255,255,255';
+    	$conf->global->THEME_ELDY_BACKTABCARD1='245,245,245';    // topmenu
+		$conf->global->THEME_ELDY_BACKTABCARD2='245,245,245';
+		$conf->global->THEME_ELDY_BACKTABACTIVE='245,245,245';
 	}
 }
 
@@ -236,8 +237,10 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
+    <?php if (empty($dol_use_jmobile)) { ?>
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
+    <?php } ?>
 }
 input, textarea, select {
 	border-radius:4px;
@@ -767,7 +770,7 @@ foreach($mainmenuusedarray as $val)
 /* Login */
 
 form#login {
-	margin-top: 60px;
+	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
 	font-size: 13px;
 	vertical-align: middle;
@@ -1311,7 +1314,7 @@ div.tabBar {
     border-bottom: 1px solid #CCCCCC;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-
+	width: auto;
 <?php if ($usecss3) { ?>
 	background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
 	background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
@@ -2581,9 +2584,10 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
-a.ui-link, a.ui-link:hover {
-	text-decoration: none;
+a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
+	text-decoration: none !important;
 }
+
 .ui-btn-inner {
 	padding-left: 10px;
 	padding-right: 10px;
@@ -2634,9 +2638,9 @@ a.ui-link {
 }
 
 /* Warning: setting this make screen not beeing refreshed after a combo selection */
-/*.ui-body-c {
+.ui-body-c {
 	background: #fff;
-}*/
+}
 
 
 <?php

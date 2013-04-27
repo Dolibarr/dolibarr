@@ -832,12 +832,13 @@ else
             print '</td></tr>';
         }
 
+        // Email web
+        print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
+
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
-
-        print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
-        print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
         // Prof ids
         $i=1; $j=0;
@@ -1257,13 +1258,13 @@ else
                 print '</td></tr>';
             }
 
+            // EMail / Web
+            print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
+            print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
+
             // Phone / Fax
             print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
-
-            // EMail / Web
-            print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
-            print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
             // Prof ids
             $i=1; $j=0;
@@ -1558,18 +1559,19 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
-
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td width="25%">';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
-        print '</td>';
+        print '</td></tr>';
 
         // Web
-        print '<td>'.$langs->trans('Web').'</td><td>';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
         print dol_print_url($object->url);
         print '</td></tr>';
+
+        // Phone / Fax
+        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
         // Prof ids
         $i=1; $j=0;
@@ -1794,7 +1796,7 @@ else
                 print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
             }
             else
-            {
+			{
                 print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
             }
         }
