@@ -297,7 +297,7 @@ if (! empty($_SESSION["disablemodules"]))
     $disabled_modules=explode(',',$_SESSION["disablemodules"]);
     foreach($disabled_modules as $module)
     {
-        if ($module) 
+        if ($module)
         {
         	if (empty($conf->$module)) $conf->$module=new stdClass();
         	$conf->$module->enabled=false;
@@ -427,6 +427,7 @@ if (! defined('NOLOGIN'))
                 $dol_optimize_smallscreen=$_POST['dol_optimize_smallscreen'];
                 $dol_no_mouse_hover=$_POST['dol_no_mouse_hover'];
                 $dol_use_jmobile=$_POST['dol_use_jmobile'];
+                //dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
             }
 
             if (! $login)
@@ -577,7 +578,7 @@ if (! defined('NOLOGIN'))
         if (! empty($dol_no_mouse_hover))       $_SESSION['dol_no_mouse_hover']=$dol_no_mouse_hover;
         if (! empty($dol_use_jmobile))          $_SESSION['dol_use_jmobile']=$dol_use_jmobile;
 
-        dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
+        dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
 
         $db->begin();
 
@@ -923,6 +924,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
+
         // Displays title
         $appli='Dolibarr';
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -1023,10 +1028,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '">'."\n";
             }
         }
-
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
         $ext='.js';
 
@@ -1780,7 +1781,7 @@ if (! function_exists("llxFooter"))
         printCommonFooter();
 
         if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
-        
+
         print "</body>\n";
         print "</html>\n";
     }
