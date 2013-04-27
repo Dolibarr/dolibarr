@@ -112,10 +112,14 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
         if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
     }
 
-    if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
+    if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
     // More features to check
     $features = explode("&", $features);
+
+    // More subfeatures to check
+    if (!empty($feature2))
+    	$feature2 = explode("&", $feature2);
 
     // More parameters
     $params = explode('&', $dbtablename);
@@ -164,8 +168,11 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
         }
         else if (! empty($feature2))	// This should be used for future changes
         {
-            if (empty($user->rights->$feature->$feature2->lire)
-            && empty($user->rights->$feature->$feature2->read)) $readok=0;
+        	foreach($feature2 as $subfeature)
+        	{
+        		if (empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) $readok=0;
+        		else { $readok=1; break; } // For bypass the second test if the first is ok
+        	}
         }
         else if (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
         {
@@ -210,8 +217,11 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             }
             else if (! empty($feature2))	// This should be used for future changes
             {
-                if (empty($user->rights->$feature->$feature2->creer)
-                && empty($user->rights->$feature->$feature2->write)) $createok=0;
+            	foreach($feature2 as $subfeature)
+            	{
+            		if (empty($user->rights->$feature->$subfeature->creer) && empty($user->rights->$feature->$subfeature->write)) $createok=0;
+            		else { $createok=1; break; } // For bypass the second test if the first is ok
+            	}
             }
             else if (! empty($feature))		// This is for old permissions
             {
@@ -271,8 +281,11 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             }
             else if (! empty($feature2))	// This should be used for future changes
             {
-                if (empty($user->rights->$feature->$feature2->supprimer)
-                && empty($user->rights->$feature->$feature2->delete)) $deleteok=0;
+            	foreach($feature2 as $subfeature)
+            	{
+            		if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
+            		else { $deleteok=1; break; } // For bypass the second test if the first is ok
+            	}
             }
             else if (! empty($feature))		// This is for old permissions
             {

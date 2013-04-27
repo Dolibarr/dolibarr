@@ -69,7 +69,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 
 $now=dol_now();
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+
+llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
@@ -77,7 +79,7 @@ $object->fetch($id, $user);
 
 $head = contact_prepare_head($object);
 
-dol_fiche_head($head, 'perso', $langs->trans("ContactsAddresses"), 0, 'contact');
+dol_fiche_head($head, 'perso', $title, 0, 'contact');
 
 if ($action == 'edit')
 {
