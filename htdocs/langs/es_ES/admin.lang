@@ -1269,6 +1269,7 @@ BarcodeDescISBN=Códigos de barras tipo ISBN
 BarcodeDescC39=Códigos de barras tipo C39
 BarcodeDescC128=Códigos de barras tipo C128
 GenbarcodeLocation=Herramienta de generación de códigos de barras en líneas de pedidos (utilizado por el motor phpbar para determinados tipos de códigos de barras)
+BarcodeInternalEngine=Motor interno
 ##### Prelevements #####
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
