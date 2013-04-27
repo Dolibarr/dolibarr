@@ -699,7 +699,7 @@ class Holiday extends CommonObject
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
 			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApproveCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
@@ -719,7 +719,7 @@ class Holiday extends CommonObject
         global $langs;
 
         // Liste des statuts
-        $name = array('DraftCP','ToReviewCP','ApproveCP','CancelCP','RefuseCP');
+        $name = array('DraftCP','ToReviewCP','ApprovedCP','CancelCP','RefuseCP');
         $nb = count($name)+1;
 
         // Select HTML
