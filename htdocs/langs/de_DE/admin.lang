@@ -1151,6 +1151,7 @@ BarcodeDescUPC=Barcode vom Typ UPC
 BarcodeDescISBN=Barcode vom Typ ISBN
 BarcodeDescC39=Barcode vom Typ C39
 BarcodeDescC128=Barcode vom Typ C128
+GenbarcodeLocation=Kommandozeilen-Tool zur Barcode-Generierung (von phpbarcode-Engine verwendet)
 ##### Prelevements #####
 WithdrawalsSetup=Abbuchungseinstellungen
 ##### ExternalRSS #####

@@ -1127,6 +1127,7 @@ BarcodeDescUPC=Vonalkód típusú UPC
 BarcodeDescISBN=Vonalkód típusú ISBN
 BarcodeDescC39=Vonalkód típusú C39
 BarcodeDescC128=Vonalkód típusú C128
+GenbarcodeLocation=Vonalkód generáló parancssori eszköz (phpbarcode motor használja egyes vonalkód típusokhoz)
 WithdrawalsSetup=Felmondás modul beállítás
 ExternalRSSSetup=Külső RSS import setup
 NewRSS=Új RSS Feed

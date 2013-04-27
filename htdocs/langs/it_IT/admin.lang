@@ -65,6 +65,7 @@ BarcodeDescISBN								   =Codice a barre di tipo ISBN
 BarcodeDescUPC								   =Codice a barre di tipo UPC
 BarcodeEncodeModule							   =Tipo di codifica dei codici a barre
 BarcodeSetup								   =Impostazioni per codici a barre
+GenbarcodeLocation				    =Programma a riga di comando per generare i codici a barre (utilizzato dal modulo phpbarcode per alcuni tipi di codici a barre) 
 BillsDate								   =Data fatture
 BillsNumberingModule							   =Numerazione modulo fatture e note di credito
 BillsPDFModules								   =Modelli fattura in pdf

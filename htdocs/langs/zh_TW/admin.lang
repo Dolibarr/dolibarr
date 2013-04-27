@@ -1030,6 +1030,7 @@ BarcodeDescUPC=通用產品條碼(UPC)
 BarcodeDescISBN=書籍條碼類型
 BarcodeDescC39=Code 39 條碼
 BarcodeDescC128=Code 128 條碼
+GenbarcodeLocation=條碼生成命令行工具（由phpbarcode引擎用於某些類型的條形碼）
 WithdrawalsSetup=提款模組設置
 ExternalRSSSetup=外部的RSS進口格局
 NewRSS=新的RSS飼料

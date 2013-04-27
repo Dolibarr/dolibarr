@@ -103,7 +103,6 @@ PriceRemoved = Prijs verwijderd
 BarCode = Streepjescode
 BarcodeType = Type streepjescode
 BarcodeValue = Waarde streepjescode
-GenbarcodeLocation = Opdrachtregelprogramma voor streepjescodegeneratie (gebruikt door phpbarcode voor enkele streepjescode typen)
 SetDefaultBarcodeType = Stel type streepjescode in
 NoteNotVisibleOnBill = Notitie (niet zichtbaar op facturen, offertes, etc)
 CreateCopy = Creëer kopie

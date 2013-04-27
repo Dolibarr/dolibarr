@@ -855,6 +855,7 @@ BarcodeDescUPC=Штрих-код типа СКП
 BarcodeDescISBN=Штрих-код типа ISBN
 BarcodeDescC39=Штрих-код типа C39
 BarcodeDescC128=Штрих-код типа C128
+GenbarcodeLocation=Штрих-код поколения утилиту командной строки (используется phpbarcode двигателя для некоторых типов штрих-кодов)
 WithdrawalsSetup=Снятие модуля настройки
 ExternalRSSSetup=Внешние RSS импорт установки
 NewRSS=Новые RSS Feed

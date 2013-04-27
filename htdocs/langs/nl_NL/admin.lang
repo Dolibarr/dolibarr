@@ -1085,6 +1085,7 @@ BarcodeDescUPC = Streepjescodetype UPC
 BarcodeDescISBN = Streepjescodetype ISBN
 BarcodeDescC39 = Streepjescodetype C39
 BarcodeDescC128 = Streepjescodetype C128
+GenbarcodeLocation = Opdrachtregelprogramma voor streepjescodegeneratie (gebruikt door phpbarcode voor enkele streepjescode typen)
 ##### Prelevements ##### = 
 WithdrawalsSetup = Terugnamemoduleinstellingen
 ##### ExternalRSS ##### = 

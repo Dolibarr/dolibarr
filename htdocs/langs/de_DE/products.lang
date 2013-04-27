@@ -111,7 +111,6 @@ BarCode=Barcode
 BarcodeType=Barcode-Typ
 SetDefaultBarcodeType=Wählen Sie den standardmäßigen Barcode-Typ
 BarcodeValue=Barcode-Wert
-GenbarcodeLocation=Kommandozeilen-Tool zur Barcode-Generierung (von phpbarcode-Engine verwendet)
 NoteNotVisibleOnBill=Anmerkung (nicht sichtbar auf Rechnungen, Angeboten,...)
 CreateCopy=Kopie erstellen
 ServiceLimitedDuration=Ist die Leistungserbringung eines Service zeitlich beschränkt:
