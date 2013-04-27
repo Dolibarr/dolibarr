@@ -2084,6 +2084,7 @@ if ($action == 'create')
         $newclassname=$classname;
         if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
         elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        elseif ($newclassname == 'Expedition') $newclassname = 'Sending';
 
         print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
