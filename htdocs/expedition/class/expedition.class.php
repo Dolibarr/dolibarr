@@ -4,6 +4,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -857,7 +858,7 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice";
+		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent, cd.info_bits";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units";
@@ -917,14 +918,14 @@ class Expedition extends CommonObject
 				$line->total_localtax2 	= $obj->total_localtax2;
 				$line->total_ttc	 	= $obj->total_ttc;
 				$line->total_tva	 	= $obj->total_tva;
-				$line->tva_tx 		 	= $obj->tva_tx;
-				$line->localtax1_tx 	= $obj->localtax1_tx;
-				$line->localtax2_tx 	= $obj->localtax2_tx;
+				$line->tva_tx 		 	= price2num($obj->tva_tx);
+				$line->localtax1_tx 	= price2num($obj->localtax1_tx);
+				$line->localtax2_tx 	= price2num($obj->localtax2_tx);
 				$line->price			= $obj->price;
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
-
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
+				$line->info_bits		= $obj->info_bits;
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type);	// We force type to 0
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];
