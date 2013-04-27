@@ -690,7 +690,7 @@ class Form
             {
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
                 $out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
-				/*              
+				/*
 				if ($selected && empty($selected_input_value))
                 {
                 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -3395,7 +3395,7 @@ class Form
             }
 
             // Show date with combo selects
-            if (empty($conf->use_javascript_ajax) || $conf->global->MAIN_POPUP_CALENDAR == "none")
+            if (empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_POPUP_CALENDAR) && $conf->global->MAIN_POPUP_CALENDAR == "none"))
             {
                 // Day
                 $retstring.='<select'.($disabled?' disabled="disabled"':'').' class="flat" name="'.$prefix.'day">';
