@@ -98,7 +98,6 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 *
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	string
-	 * @return string
 	 */
 	private function getFilename($suffixinfilename='')
 	{

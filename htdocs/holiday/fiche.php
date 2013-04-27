@@ -397,7 +397,7 @@ if($action == 'confirm_valid')
             // Content
             $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
-            $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($cp->date_debut,'day'),dol_print_date($cp->date_fin,'day'))."\n"; 
+            $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($cp->date_debut,'day'),dol_print_date($cp->date_fin,'day'))."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
@@ -699,7 +699,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
 
         // Approved by
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("ValidateByCP").'</td>';
+        print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
         // Liste des utiliseurs du groupe choisi dans la config
         $validator = new UserGroup($db);
         $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
@@ -952,12 +952,12 @@ else
 
                 if(!$edit) {
                     print '<tr>';
-                    print '<td width="50%">'.$langs->trans('ValidateByCP').'</td>';
+                    print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>'.$valideur->getNomUrl(1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';
-                    print '<td width="50%">'.$langs->trans('ValidateByCP').'</td>';
+                    print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
                     // Liste des utiliseurs du groupes choisi dans la config
                     $idGroupValid = $cp->getConfCP('userGroup');
 

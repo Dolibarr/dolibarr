@@ -692,6 +692,7 @@ class Form
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
                 $out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 				/*
+<<<<<<< HEAD
 				if ($selected && empty($selected_input_value))
                 {
                 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -699,6 +700,15 @@ class Form
                 	$product->fetch($selected);
                 	$selected_input_value=$product->ref;
                 }
+=======
+				if ($selected && empty($selected_input_value))
+                {
+                	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+                	$product = new Product($this->db);
+                	$product->fetch($selected);
+                	$selected_input_value=$product->ref;
+                }
+>>>>>>> refs/remotes/origin/3.3
                 // mode=1 means customers products
                 $ajaxoptions=array();
                 $urloption='htmlname='.$htmlname.'&outjson=1&filter='.urlencode($filter).'&showtype='.$showtype;

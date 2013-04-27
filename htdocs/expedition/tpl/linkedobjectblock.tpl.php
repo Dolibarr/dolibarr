@@ -33,7 +33,7 @@ print_titre($langs->trans('RelatedShippings'));
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="center"><?php echo $langs->trans("DateSendingShort"); ?></td>
+	<td align="center"><?php echo $langs->trans("DateDeliveryPlanned"); ?></td>
 	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
 	<td align="right"><?php echo $langs->trans("Status"); ?></td>
 </tr>

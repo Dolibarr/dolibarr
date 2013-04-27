@@ -655,11 +655,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	$db->begin();
 
 	$error=0;
-	
+
 	// Fill array 'array_options' with data from add form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-	
+
 
 	// Replacement invoice
 	if ($_POST['type'] == 1)
@@ -2289,8 +2289,9 @@ if ($action == 'create')
 		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
 		$newclassname=$classname;
-		if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
-		elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+        elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        elseif ($newclassname == 'Expedition') $newclassname = 'Sending';
 
 		print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
@@ -3620,7 +3621,7 @@ else if ($id > 0 || ! empty($ref))
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$object->id;
 				$genallowed=$user->rights->facture->creer;
 				$delallowed=$user->rights->facture->supprimer;
-				
+
 				print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 				$somethingshown=$formfile->numoffiles;
 
