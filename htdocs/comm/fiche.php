@@ -441,12 +441,12 @@ if ($id > 0)
 
 	print "</table>";
 
-	
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	//print "</td>\n";
 	//print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
-	
+
 	// Nbre max d'elements des petites listes
 	$MAXLIST=4;
 	$tableaushown=1;
@@ -468,10 +468,6 @@ if ($id > 0)
 	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		$propal_static = new Propal($db);
-
-		$proposals = $propal_static->liste_array(0, 0, 0, $object->id, $MAXLIST);
-
-		//var_dump($proposals);
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite";

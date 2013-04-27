@@ -542,8 +542,6 @@ class FormFile
             {
                 if (empty($noform)) $out.= '</form>'."\n";
             }
-            
-$out.='</div>';            
         }
         $out.= '<!-- End show_document -->'."\n";
         //return ($i?$i:$headershown);

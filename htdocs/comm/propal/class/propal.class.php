@@ -307,8 +307,8 @@ class Propal extends CommonObject
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
-     *		@param      timestamp	$date_start       	Start date of the line 
-     *		@param      timestamp	$date_end         	End date of the line 
+     *		@param      timestamp	$date_start       	Start date of the line
+     *		@param      timestamp	$date_end         	End date of the line
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
@@ -403,7 +403,7 @@ class Propal extends CommonObject
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
-            
+
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
@@ -470,8 +470,8 @@ class Propal extends CommonObject
      *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
-     *	@param      timestamp	$date_start       	Start date of the line 
-     *	@param      timestamp	$date_end         	End date of the line 
+     *	@param      timestamp	$date_start       	Start date of the line
+     *	@param      timestamp	$date_end         	End date of the line
      *  @return     int     		        		0 if OK, <0 if KO
      */
 	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='')
@@ -552,7 +552,7 @@ class Propal extends CommonObject
             // infos marge
             $this->line->fk_fournprice = $fk_fournprice;
             $this->line->pa_ht = $pa_ht;
-            
+
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
@@ -830,7 +830,7 @@ class Propal extends CommonObject
                     		}
                     	}
                     	else if ($reshook < 0) $error++;
-                    	
+
                         if (! $notrigger)
                         {
                             // Appel des triggers
@@ -1164,7 +1164,7 @@ class Propal extends CommonObject
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
-                        
+
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
 
@@ -1195,7 +1195,7 @@ class Propal extends CommonObject
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
                 	$this->array_options['options_'.$key]=$label;
-                }   
+                }
                 return 1;
             }
 
@@ -1209,7 +1209,7 @@ class Propal extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      *	Update value of extrafields on the proposal
      *
@@ -1235,7 +1235,7 @@ class Propal extends CommonObject
     		}
     	}
     	else if ($reshook < 0) $error++;
-    	
+
 		if (!$error)
 	    {
 	    	return 1;
@@ -1244,7 +1244,7 @@ class Propal extends CommonObject
 	    {
 	    	return -1;
 	    }
-    	
+
     }
 
     /**
@@ -1262,16 +1262,16 @@ class Propal extends CommonObject
         $now=dol_now();
 
         if ($user->rights->propale->valider)
-        {	
+        {
             $this->db->begin();
-            
+
             // Numbering module definition
             $soc = new Societe($this->db);
             $soc->fetch($this->socid);
-            
+
             // Class of company linked to propal
             $result=$soc->set_as_client();
-            
+
             // Define new ref
             if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
             {
@@ -1648,7 +1648,7 @@ class Propal extends CommonObject
                     $this->db->rollback();
                     return -2;
                 }
-                
+
                 if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                 {
                 	// Define output language
@@ -1674,7 +1674,7 @@ class Propal extends CommonObject
             }
             else
             {
-            	
+
             	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
             	{
             		// Define output language
@@ -1688,7 +1688,7 @@ class Propal extends CommonObject
             		//$ret=$object->fetch($id);    // Reload to get new records
             		propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	}
-            	
+
                 // Appel des triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
@@ -1769,9 +1769,9 @@ class Propal extends CommonObject
     /**
      *    Return list of proposal (eventually filtered on user) into an array
      *
-     *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
+     *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
      *    @param	int		$draft				0=not draft, 1=draft
-     *    @param	int		$notcurrentuser		0=current user, 1=not current user
+     *    @param	int		$notcurrentuser		0=all user, 1=not current user
      *    @param    int		$socid				Id third pary
      *    @param    int		$limit				For pagination
      *    @param    int		$offset				For pagination
@@ -1785,15 +1785,22 @@ class Propal extends CommonObject
 
         $ga = array();
 
-        $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
+        $sql = "SELECT s.rowid, s.nom as name, s.client,";
+        $sql.= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
         $sql.= " p.datep as dp, p.fin_validite as datelimite";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE p.entity = ".$conf->entity;
         $sql.= " AND p.fk_soc = s.rowid";
         $sql.= " AND p.fk_statut = c.id";
+        if (! $user->rights->societe->client->voir && ! $socid) //restriction
+        {
+        	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        }
         if ($socid) $sql.= " AND s.rowid = ".$socid;
         if ($draft)	$sql.= " AND p.fk_statut = 0";
-        if ($notcurrentuser) $sql.= " AND p.fk_user_author <> ".$user->id;
+        if ($notcurrentuser > 0) $sql.= " AND p.fk_user_author <> ".$user->id;
         $sql.= $this->db->order($sortfield,$sortorder);
         $sql.= $this->db->plimit($limit,$offset);
 
@@ -1808,14 +1815,19 @@ class Propal extends CommonObject
                 {
                     $obj = $this->db->fetch_object($result);
 
-                    if ($shortlist)
+                    if ($shortlist == 1)
                     {
                         $ga[$obj->propalid] = $obj->ref;
                     }
-                    else
+                    else if ($shortlist == 2)
                     {
+                        $ga[$obj->propalid] = $obj->ref.' ('.$obj->name.')';
+                    }
+                    else
+					{
                         $ga[$i]['id']	= $obj->propalid;
                         $ga[$i]['ref'] 	= $obj->ref;
+                        $ga[$i]['name'] = $obj->name;
                     }
 
                     $i++;
@@ -2640,7 +2652,7 @@ class PropaleLigne
     var $localtax2_tx;
     var $total_localtax1;
     var $total_localtax2;
-    
+
     var $date_start;
     var $date_end;
 
@@ -2713,7 +2725,7 @@ class PropaleLigne
 			$this->libelle			= $objp->product_label;  // deprecated
 			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
-			
+
 			$this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
 

@@ -761,7 +761,7 @@ class Commande extends CommonOrder
                         	}
                         }
                     }
-                    
+
                     if (! $error)
                     {
 	                    // Actions on extra fields (by external module or standard code)
@@ -933,7 +933,7 @@ class Commande extends CommonOrder
                 $line->rang              = $object->lines[$i]->rang;
                 $line->special_code      = $object->lines[$i]->special_code;
                 $line->fk_parent_line    = $object->lines[$i]->fk_parent_line;
-                
+
                 $line->date_start      	= $object->lines[$i]->date_start;
                 $line->date_end    		= $object->lines[$i]->date_end;
 
@@ -1972,23 +1972,38 @@ class Commande extends CommonOrder
     /**
      *  Return list of orders (eventuelly filtered on a user) into an array
      *
-     *  @param      int		$brouillon      0=non brouillon, 1=brouillon
-     *  @param      User	$user           Objet user de filtre
+     *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
+     *  @param      int		$draft      	0=not draft, 1=draft
+     *  @param      User	$excluser      	Objet user to exclude
+     *  @param    	int		$socid			Id third pary
+     *  @param    	int		$limit			For pagination
+     *  @param    	int		$offset			For pagination
+     *  @param    	string	$sortfield		Sort criteria
+     *  @param    	string	$sortorder		Sort order
      *  @return     int             		-1 if KO, array with result if OK
      */
-    function liste_array($brouillon=0, $user='')
+    function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
     {
-        global $conf;
+        global $conf,$user;
 
         $ga = array();
 
-        $sql = "SELECT s.nom, s.rowid, c.rowid, c.ref";
+        $sql = "SELECT s.rowid, s.nom as name, s.client,";
+        $sql.= " c.rowid as cid, c.ref";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE c.entity = ".$conf->entity;
         $sql.= " AND c.fk_soc = s.rowid";
-        if ($brouillon) $sql.= " AND c.fk_statut = 0";
-        if ($user) $sql.= " AND c.fk_user_author <> ".$user->id;
-        $sql .= " ORDER BY c.date_commande DESC";
+        if (! $user->rights->societe->client->voir && ! $socid) //restriction
+        {
+        	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        }
+        if ($socid) $sql.= " AND s.rowid = ".$socid;
+        if ($draft) $sql.= " AND c.fk_statut = 0";
+        if (is_object($excluser)) $sql.= " AND c.fk_user_author <> ".$excluser->id;
+        $sql.= $this->db->order($sortfield,$sortorder);
+        $sql.= $this->db->plimit($limit,$offset);
 
         $result=$this->db->query($sql);
         if ($result)
@@ -2001,7 +2016,20 @@ class Commande extends CommonOrder
                 {
                     $obj = $this->db->fetch_object($result);
 
-                    $ga[$obj->rowid] = $obj->ref;
+                    if ($shortlist == 1)
+                    {
+                    	$ga[$obj->cid] = $obj->ref;
+                    }
+                    else if ($shortlist == 2)
+                    {
+                    	$ga[$obj->cid] = $obj->ref.' ('.$obj->name.')';
+                    }
+                    else
+					{
+                    	$ga[$i]['id']	= $obj->cid;
+                    	$ga[$i]['ref'] 	= $obj->ref;
+                    	$ga[$i]['name'] = $obj->name;
+                    }
                     $i++;
                 }
             }
@@ -2781,7 +2809,7 @@ class Commande extends CommonOrder
             return -1;
         }
     }
-    
+
     /**
      *	Update value of extrafields on the proposal
      *
@@ -2807,7 +2835,7 @@ class Commande extends CommonOrder
     		}
     	}
     	else if ($reshook < 0) $error++;
-    	 
+
     	if (!$error)
     	{
     		return 1;
@@ -2816,7 +2844,7 @@ class Commande extends CommonOrder
     	{
     		return -1;
     	}
-    	 
+
     }
 
     /**
