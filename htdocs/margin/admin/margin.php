@@ -126,7 +126,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
 print '<td colspan="2" align="center">'.$langs->trans("Value").'</td>'."\n";
-print '<td align="left">'.$langs->trans("Details").'</td>'."\n";
+print '<td align="left">'.$langs->trans("Description").'</td>'."\n";
 print '</tr>';
 
 $var=true;

@@ -56,7 +56,10 @@ class modPhpbarcode extends ModeleBarCode
 	{
 		global $langs;
 
-		return 'Internal engine';
+		$key = 'BarcodeInternalEngine';
+		$trans = $langs->trans('BarcodeInternalEngine');
+
+		return ($trans != $key) ? $trans : 'Internal engine';
 	}
 
 	/**

@@ -852,6 +852,7 @@ BarcodeDescUPC=Viivakoodi tyypin UPC
 BarcodeDescISBN=Viivakoodi tyypin ISBN
 BarcodeDescC39=Viivakoodi tyypin C39
 BarcodeDescC128=Viivakoodi tyypin C128
+GenbarcodeLocation=Viivakoodi sukupolven komentoriviksi työkalu (käyttää phpbarcode moottorin joidenkin viivakoodi tyypit)
 WithdrawalsSetup=Purku-moduulin asetukset
 ExternalRSSSetup=Ulkopuolinen RSS tuonnin setup
 NewRSS=Uusi RSS Feed

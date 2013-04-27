@@ -89,7 +89,6 @@ BarCode=Strekkode
 BarcodeType=Strekkodetype
 SetDefaultBarcodeType=Angi strekkodetype
 BarcodeValue=Strekkodeverdi
-GenbarcodeLocation=Kommandolinjeverktøy for generering av strekkode (brukes av phpbarcode til noen strekkodetyper)
 NoteNotVisibleOnBill=Notat (vises ikke på fakturaer, tilbud...)
 CreateCopy=Lag kopi
 ServiceLimitedDuration=Hvis varen er en tjeneste med begrenset varighet:

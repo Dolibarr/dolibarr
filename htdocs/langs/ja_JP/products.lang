@@ -112,7 +112,6 @@ BarCode=バーコード
 BarcodeType=バーコードの種類
 SetDefaultBarcodeType=バーコードの種類を設定します。
 BarcodeValue=バーコードの値
-GenbarcodeLocation=バーコードを生成するコマンドラインツール（一部のバーコードタイプのphpbarcodeエンジンで使用されます）
 NoteNotVisibleOnBill=注意してください（請求書、提案...上に表示されません）
 CreateCopy=コピーを作成します。
 ServiceLimitedDuration=製品は、限られた期間を持つサービスの場合：

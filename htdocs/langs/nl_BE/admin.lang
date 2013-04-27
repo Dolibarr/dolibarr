@@ -1147,6 +1147,7 @@ BarcodeDescUPC = Barcode van het type UPC
 BarcodeDescISBN = Barcode van het type ISBN
 BarcodeDescC39 = Barcode van het type C39
 BarcodeDescC128 = Barcode van het type C128
+GenbarcodeLocation=Bar code generatie command-line tool (gebruikt door phpbarcode motor voor enkele streepjescode typen)
 ##### Prelevements ##### = 
 WithdrawalsSetup = Intrekking module setup
 ##### ExternalRSS ##### = 

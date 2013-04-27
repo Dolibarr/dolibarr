@@ -97,7 +97,6 @@ BarCode=Viivakoodi
 BarcodeType=Viivakoodi tyyppi
 SetDefaultBarcodeType=Aseta viivakoodi tyyppi
 BarcodeValue=Viivakoodi-arvo
-GenbarcodeLocation=Viivakoodi sukupolven komentoriviksi työkalu (käyttää phpbarcode moottorin joidenkin viivakoodi tyypit)
 NoteNotVisibleOnBill=Huomautus (ei näy laskuissa ehdotuksia ...)
 CreateCopy=Luo kopio
 ServiceLimitedDuration=Jos tuote on palvelu, rajoitettu kesto:

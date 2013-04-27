@@ -99,7 +99,6 @@ BarCode=Kody kreskowe
 BarcodeType=Kod kreskowy typu
 SetDefaultBarcodeType=Ustaw typ kodów kreskowych
 BarcodeValue=Barcode wartości
-GenbarcodeLocation=Kod kreskowy generowania narzędzie wiersza polecenia (używanego przez phpbarcode silników dla niektórych typów kodów kreskowych)
 NoteNotVisibleOnBill=Uwaga (nie widoczne na fakturach, propozycje ...)
 CreateCopy=Tworzenie kopii
 ServiceLimitedDuration=Jeśli produkt jest usługą o ograniczonym okresie obowiązywania:

@@ -858,6 +858,7 @@ BarcodeDescUPC=Kod kreskowy typu UPC
 BarcodeDescISBN=Kod kreskowy typu ISBN
 BarcodeDescC39=Kod kreskowy typu C39
 BarcodeDescC128=Kod kreskowy typu C128
+GenbarcodeLocation=Kod kreskowy generowania narzędzie wiersza polecenia (używanego przez phpbarcode silników dla niektórych typów kodów kreskowych)
 WithdrawalsSetup=Wycofanie konfiguracji modułu
 ExternalRSSSetup=Zewnętrzne RSS przywóz konfiguracji
 NewRSS=Nowy kanał RSS
