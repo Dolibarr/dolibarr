@@ -703,7 +703,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
         print '</td>';
         print '</tr>';
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("ValidateByCP").'</td>';
+        print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
         // Liste des utiliseurs du groupes choisi dans la config
         $idGroupValid = $cp->getConfCP('userGroup');
 
@@ -956,12 +956,12 @@ else
 
                 if(!$edit) {
                     print '<tr>';
-                    print '<td width="50%">'.$langs->trans('ValidateByCP').'</td>';
+                    print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>'.$valideur->getNomUrl(1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';
-                    print '<td width="50%">'.$langs->trans('ValidateByCP').'</td>';
+                    print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
                     // Liste des utiliseurs du groupes choisi dans la config
                     $idGroupValid = $cp->getConfCP('userGroup');
 
