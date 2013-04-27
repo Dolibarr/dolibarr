@@ -1127,6 +1127,7 @@ BarcodeDescUPC=Vöötkoodi tüüpi UPC
 BarcodeDescISBN=Vöötkoodi tüüpi ISBN
 BarcodeDescC39=Vöötkoodi tüüpi C39
 BarcodeDescC128=Vöötkoodi tüüpi C128
+GenbarcodeLocation=Triipkoodi põlvkonna käsureatööriist (mida phpbarcode mootor mõned triipkoodi liigid)
 WithdrawalsSetup=Väljaastumine moodul setup
 ExternalRSSSetup=Väline RSS impordi setup
 NewRSS=New RSS Feed

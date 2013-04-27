@@ -91,7 +91,6 @@ BarCode=Barcode
 BarcodeType=Barcode type
 SetDefaultBarcodeType=Stel barcode type
 BarcodeValue=Barcode waarde
-GenbarcodeLocation=Bar code generatie command-line tool (gebruikt door phpbarcode motor voor enkele streepjescode typen)
 NoteNotVisibleOnBill=Nota (niet zichtbaar op facturen, voorstellen ...)
 CreateCopy=Maak kopie
 ServiceLimitedDuration=Dienst beperkte duur:

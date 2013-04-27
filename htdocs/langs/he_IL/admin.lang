@@ -1129,6 +1129,7 @@ BarcodeDescUPC=ברקוד מסוג UPC
 BarcodeDescISBN=ברקוד מסוג ISBN
 BarcodeDescC39=ברקוד מסוג C39
 BarcodeDescC128=ברקוד מסוג C128
+GenbarcodeLocation=הברקוד הדור הפקודה כלי הקו (בשימוש על ידי מנוע phpbarcode עבור סוגים מסוימים ברקוד)
 WithdrawalsSetup=מודול הנסיגה ההתקנה
 ExternalRSSSetup=ההתקנה RSS חיצוני יבוא
 NewRSS=חדש באתר עדכוני RSS

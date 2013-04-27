@@ -1118,6 +1118,7 @@ BarcodeDescUPC = Črtna koda tipa UPC
 BarcodeDescISBN = Črtna koda tipa ISBN
 BarcodeDescC39 = Črtna koda tipa C39
 BarcodeDescC128 = Črtna koda tipa C128
+GenbarcodeLocation = Orodje za generiranje črtne kode preko komandne vrstice (uporablja ga 'phpbarcode engine' za nekatere tipe črtnih kod)
 ##### Prelevements ##### = 
 WithdrawalsSetup = Nastavitev modula za dvige
 ##### ExternalRSS ##### = 

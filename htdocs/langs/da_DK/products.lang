@@ -100,7 +100,6 @@ BarCode=Barcode
 BarcodeType=Barcode type
 SetDefaultBarcodeType=Indstil stregkode type
 BarcodeValue=Barcode værdi
-GenbarcodeLocation=Stregkode generation kommando linje værktøj (der benyttes af phpbarcode motor for nogle stregkode typer)
 NoteNotVisibleOnBill=Note (ikke synlig på fakturaer, forslag ...)
 CreateCopy=Opret kopi
 ServiceLimitedDuration=Hvis produktet er en tjeneste med begrænset varighed:

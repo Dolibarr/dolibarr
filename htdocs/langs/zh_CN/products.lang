@@ -105,7 +105,6 @@ BarCode=条码
 BarcodeType=条码类型
 SetDefaultBarcodeType=设置条码类型
 BarcodeValue=条码的价值
-GenbarcodeLocation=条码生成命令行工具（由phpbarcode引擎用于某些类型的条形码）
 NoteNotVisibleOnBill=注（不是发票上可见，建议...）
 CreateCopy=创建副本
 ServiceLimitedDuration=如果产品是一种有限的时间服务：

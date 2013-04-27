@@ -944,6 +944,7 @@ BarcodeDescUPC=الباركود نوع من اتحاد الوطنيين الكو
 BarcodeDescISBN=الباركود من نوع ردمك
 BarcodeDescC39=الباركود من نوع C39
 BarcodeDescC128=الباركود من نوع C128
+GenbarcodeLocation=باركود الجيل سطر أداة تستخدمها phpbarcode المحرك لبعض أنواع باركود)
 WithdrawalsSetup=انسحاب وحدة الإعداد
 ExternalRSSSetup=RSS الواردات الخارجية الإعداد <textarea></textarea>
 NewRSS=الجديد تغذية RSS

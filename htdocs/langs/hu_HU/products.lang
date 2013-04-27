@@ -99,7 +99,6 @@ BarCode=Vonalkód
 BarcodeType=Vonalkód típus
 SetDefaultBarcodeType=Vonalkód típusának beállítása
 BarcodeValue=Vonalkód érték
-GenbarcodeLocation=Vonalkód generáló parancssori eszköz (phpbarcode motor használja egyes vonalkód típusokhoz)
 NoteNotVisibleOnBill=Megjegyzés (nem látszik a számlákon, ajánlatokon...)
 CreateCopy=Másolat létrehozása
 ServiceLimitedDuration=Ha a termék vagy szolgáltatás időkorlátos:

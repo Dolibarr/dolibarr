@@ -102,7 +102,6 @@ BarCode=Barcode
 BarcodeType=Barcode type
 SetDefaultBarcodeType=Set barcode type
 BarcodeValue=Barcode value
-GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types)
 NoteNotVisibleOnBill=Note (not visible on invoices, proposals...)
 CreateCopy=Create copy
 ServiceLimitedDuration=If product is a service with limited duration:
