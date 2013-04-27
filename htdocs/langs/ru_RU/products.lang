@@ -97,7 +97,6 @@ BarCode=Штрих-код
 BarcodeType=Штрих-код типа
 SetDefaultBarcodeType=Установить тип штрих-кода
 BarcodeValue=Баркод стоимости
-GenbarcodeLocation=Штрих-код поколения утилиту командной строки (используется phpbarcode двигателя для некоторых типов штрих-кодов)
 NoteNotVisibleOnBill=Примечание (не видимые на счетах-фактурах, предложения ...)
 CreateCopy=Создать копию
 ServiceLimitedDuration=Если продукт является услугой с ограниченной длительности:

@@ -301,6 +301,7 @@ CashDesk=Σημείο Πωλήσεων
 
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
+GenbarcodeLocation=Μπαρ παραγωγή κώδικα εντολών εργαλείο γραμμής (που χρησιμοποιείται από τη μηχανή phpbarcode για ορισμένους τύπους γραμμωτού κώδικα)
 ActivityStateToSelectCompany=Προσθέστε μια επιλογή φίλτρου για εμφάνιση / απόκρυψη τρίτα μέρη τα οποία βρίσκονται σε λειτουργία ή έχει παύσει
 SearchFilter=Αναζήτηση επιλογές φίλτρων
 DaylingSavingTime=Η θερινή ώρα (χρήστη)

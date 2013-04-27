@@ -104,7 +104,6 @@ BarCode = Črtna koda
 BarcodeType = Tip črtne kode
 SetDefaultBarcodeType = Nastavi tip črtne kode
 BarcodeValue = Vrednost črtne kode
-GenbarcodeLocation = Orodje za generiranje črtne kode preko komandne vrstice (uporablja ga 'phpbarcode engine' za nekatere tipe črtnih kod)
 NoteNotVisibleOnBill = Opomba (ni vidna na računih, ponudbah...)
 CreateCopy = Kreiraj kopijo
 ServiceLimitedDuration = Če ima proizvod storitev z omejenim trajanjem:

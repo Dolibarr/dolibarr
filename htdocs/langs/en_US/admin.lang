@@ -1268,6 +1268,8 @@ BarcodeDescUPC=Barcode of type UPC
 BarcodeDescISBN=Barcode of type ISBN
 BarcodeDescC39=Barcode of type C39
 BarcodeDescC128=Barcode of type C128
+GenbarcodeLocation=Bar code generation command line tool (used by internal engine for some bar code types)
+BarcodeInternalEngine=Internal engine
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####

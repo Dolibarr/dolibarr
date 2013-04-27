@@ -112,7 +112,6 @@ BarCode=Баркод
 BarcodeType=Баркод тип
 SetDefaultBarcodeType=Тип баркод
 BarcodeValue=Баркод стойност
-GenbarcodeLocation=Бар код поколение инструмент за командния ред (използва се от двигател с вътрешно за някои видове баркод)
 NoteNotVisibleOnBill=Забележка (не се вижда на фактури, предложения ...)
 CreateCopy=Създаване на копие
 ServiceLimitedDuration=Ако продуктът е услуга с ограничен срок на действие:

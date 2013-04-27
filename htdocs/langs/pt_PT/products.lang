@@ -89,7 +89,6 @@ BarCode=Código de barras
 BarcodeType=Tipo de código de barras
 SetDefaultBarcodeType=Defina o tipo de código de barras
 BarcodeValue=Valor do código de barras
-GenbarcodeLocation=Ferramenta de geração de código de barras em linha de pedido (utilizado por o motor phpbar para determinados tipos de códigos barra)
 NoteNotVisibleOnBill=Nota (Não é visivel as facturas, orçamentos, etc.)
 CreateCopy=Criar Cópia
 ServiceLimitedDuration=Sim o serviço é de Duração limitada :

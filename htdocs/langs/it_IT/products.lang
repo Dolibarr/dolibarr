@@ -59,7 +59,6 @@ ErrorProductBadRefOrLabel			    =Il valore di riferimento o l'etichetta è sbagl
 ExportDataset_produit_1				    =Prodotti e servizi
 ExportDataset_service_1				    =Servizi
 Finished					    =Prodotto creato
-GenbarcodeLocation				    =Programma a riga di comando per generare i codici a barre (utilizzato dal modulo phpbarcode per alcuni tipi di codici a barre) 
 GenerateThumb					    =Genera miniatura
 HiddenIntoCombo					    =Nascosti nelle tendine di selezione
 ImportDataset_produit_1				    =Prodotti
