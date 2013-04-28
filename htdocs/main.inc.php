@@ -162,6 +162,11 @@ if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT
 // Include the conf.php and functions.lib.php
 require_once 'filefunc.inc.php';
 
+/*var_dump("Define dolgetprefix ".$_SERVER["SERVER_NAME"]." - ".$_SERVER["DOCUMENT_ROOT"]." - ".DOL_DOCUMENT_ROOT." - ".DOL_URL_ROOT);
+var_dump("Cookie ".join($_COOKIE,','));
+var_dump("Cookie ".$_SERVER["HTTP_COOKIE"]);
+var_dump("Cookie ".$_SERVER["HTTP_USER_AGENT"]);*/
+
 // Init session. Name of session is specific to Dolibarr instance.
 $prefix=dol_getprefix();
 $sessionname='DOLSESSID_'.$prefix;
@@ -992,11 +997,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         }
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))           $themeparam.='&amp;dol_hide_topmenu=1';
-        if (GETPOST('dol_hide_leftmenu'))          $themeparam.='&amp;dol_hide_leftmenu=1';
-        if (GETPOST('dol_optimize_smallscreen'))   $themeparam.='&amp;dol_optimize_smallscreen=1';
-        if (GETPOST('dol_no_mouse_hover'))         $themeparam.='&amp;dol_no_mouse_hover=1';
-        if (GETPOST('dol_use_jmobile'))            $themeparam.='&amp;dol_use_jmobile=1';
+        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu'); }
+        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu'); }
+        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen'); }
+        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover'); }
+        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile'); }
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
@@ -1132,7 +1137,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
+            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
             }
