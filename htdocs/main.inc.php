@@ -1500,7 +1500,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    // Execute hook printSearchForm
 	    $parameters=array();
-	    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+			$searchform.=$hookmanager->resPrint;
+		}
+		else $searchform=$hookmanager->resPrint;
 
 	    // Define $bookmarks
 	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
