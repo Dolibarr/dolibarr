@@ -977,6 +977,7 @@ ClassNotFoundIntoPathWarning=Class %s not found into PHP path
 YesInSummer=Yes in summer
 OnlyFollowingModulesAreOpenedToExternalUsers=Note, only following modules are opened to external users (whatever are permission of such users):
 SuhosinSessionEncrypt=Session storage encrypted by Suhosin
+ConditionIsCurrently=Condition is currently %s
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
