@@ -1345,9 +1345,12 @@ table.liste td {
 	padding-right: 2px;
 }
 
-div.liste_titre, tr.liste_titre
+tr.liste_titre, tr.liste_titre_sel
 {
     height: 24px;
+}
+div.liste_titre, tr.liste_titre
+{
     background: #7699A9;
     background-image: url(<?php echo $img_liste_titre ?>);
     background-repeat: repeat-x;

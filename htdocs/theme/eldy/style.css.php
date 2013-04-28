@@ -1655,9 +1655,12 @@ table.liste td {
 	padding-right: 2px;
 }
 
+tr.liste_titre, tr.liste_titre_sel
+{
+	height: 20px !important;
+}
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
-    height: 20px !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>

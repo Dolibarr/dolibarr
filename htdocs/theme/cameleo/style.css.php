@@ -1430,8 +1430,11 @@ table.liste td {
     padding-right: 2px;
 }
 
-div.liste_titre, tr.liste_titre {
+tr.liste_titre, tr.liste_titre_sel
+{
     height: 20px;
+}
+div.liste_titre, tr.liste_titre {
     color: #842F00;
     font-weight: bold;
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
