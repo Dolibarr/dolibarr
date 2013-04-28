@@ -274,6 +274,7 @@ textarea:disabled {
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+
 .button {
     font-family: <?php print $fontlist ?>;
 	background-image: url(<?php echo $img_button ?>);
@@ -2640,11 +2641,21 @@ a.ui-link {
 	text-overflow: hidden;
 }
 
-/* Warning: setting this make screen not beeing refreshed after a combo selection */
+/* Warning: setting this may make screen not beeing refreshed after a combo selection */
 .ui-body-c {
 	background: #fff;
 }
 
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
+}
 
 <?php
 if (is_object($db)) $db->close();

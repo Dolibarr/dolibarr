@@ -2303,6 +2303,17 @@ div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text,
 	right: 8px;
 }
 
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
+}
+
 <?php
 if (is_object($db)) $db->close();
 ?>

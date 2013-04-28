@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
@@ -699,6 +699,7 @@ else
             print '</script>'."\n";
 
             print "<br>\n";
+            print '<div id="selectthirdpartytype">';
             print $langs->trans("ThirdPartyType").': &nbsp; ';
             print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.($private?'':' checked="checked"');
             print '> '.$langs->trans("Company/Fundation");
@@ -706,7 +707,7 @@ else
             print '<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked="checked"':'');
             print '> '.$langs->trans("Individual");
             print ' ('.$langs->trans("ToCreateContactWithSameName").')';
-            print "<br>\n";
+            print '</div>';
             print "<br>\n";
         }
 
