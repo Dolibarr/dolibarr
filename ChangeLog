@@ -26,6 +26,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionnary
 - Fix: [ bug #828 ] Error when code_region is not a number in llx_c_regions (with postgres)
 - Fix: [ bug #857 ] Invoice created from shipment does not have the order discount
+- Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
 
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****

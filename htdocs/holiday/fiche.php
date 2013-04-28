@@ -276,6 +276,12 @@ if ($action == 'confirm_send')
             $destinataire->fetch($cp->fk_validator);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_user);
@@ -385,6 +391,12 @@ if($action == 'confirm_valid')
             $destinataire->fetch($cp->fk_user);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_validator);
@@ -452,6 +464,12 @@ if ($action == 'confirm_refuse')
                 $destinataire = new User($db);
                 $destinataire->fetch($cp->fk_user);
                 $emailTo = $destinataire->email;
+
+                if (!$emailTo)
+                {
+                    header('Location: fiche.php?id='.$_GET['id']);
+                    exit;
+                }
 
                 // From
                 $expediteur = new User($db);
@@ -523,6 +541,12 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
             $destinataire = new User($db);
             $destinataire->fetch($cp->fk_user);
             $emailTo = $destinataire->email;
+
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
 
             // From
             $expediteur = new User($db);
