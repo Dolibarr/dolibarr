@@ -18,6 +18,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_menu MODIFY COLUMN leftmenu varchar(100);
+
 create table llx_adherent_type_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
