@@ -29,8 +29,13 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
 
+$id = GETPOST('id', 'int');
+
+// Security check
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
 $contact = new Contact($db);
-$result=$contact->fetch($_GET["id"]);
+$result=$contact->fetch($id);
 
 $physicalperson=1;
 

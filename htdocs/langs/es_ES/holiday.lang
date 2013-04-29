@@ -15,13 +15,13 @@ DateDebCP=Fecha inicio
 DateFinCP=Fecha fin
 DateCreateCP=Fecha de creación
 DraftCP=Borrador
-ToValidateCP=En espera de validación
-ValidateCP=Validada
+ToApproveCP=En espera de aprobación
+ApprovedCP=Aprobada
 CancelCP=Anulada
 RefuseCP=Rechazada
 ValidatorCP=Validador
 ListeCP=Lista de vacaciones
-ValidateByCP=Será validada por
+ReviewedByCP=Será revisada por
 DescCP=Descripción
 SendRequestCP=Enviar la petición de vacaciones
 DelayToRequestCP=Las peticiones de vacaciones deben realizarse al menos <b>%s días</b> antes.
@@ -132,6 +132,20 @@ NoCPforMonth=Sin vacaciones este mes.
 Jours=días
 nbJours=Número de días
 TitleAdminCP=Configuración de las vacaciones
+
+#Messages
+Hello=Hola
+HolidaysToValidate=Días retribuidos a validar
+HolidaysToValidateBody=A continuación encontrará una solicitud de días retribuidos para validar
+HolidaysToValidateDelay=Esta solicitud de días retribuidos tendrá lugar en un plazo de menos de %s días.
+HolidaysToValidateAlertSolde=El usuario que ha realizado la solicitud de días retribuidos no dispone de suficientes días disponibles.
+HolidaysValidated=Días retribuidos validados
+HolidaysValidatedBody=Su solicitud de días retribuidos desde el %s al %s ha sido validada.
+HolidaysRefused=Días retribuidos denegados
+HolidaysRefusedBody=Su solicitud de días retribuidos desde el %s al %s ha sido denegada por el siguiente motivo :
+HolidaysCanceled=Días retribuidos cancelados
+HolidaysCanceledBody=Su solicitud de días retribuidos desde el %s al %s ha sido cancelada.
+
 Permission20001=Consultar/crear/modificar sus vacaciones
 Permission20002=Consultar/modificar todas las solicitudes de permisos retribuídos
 Permission20003=Eliminar las solicitudes de permisos retribuídos

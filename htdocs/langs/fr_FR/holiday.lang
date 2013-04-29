@@ -15,13 +15,13 @@ DateDebCP=Date Début
 DateFinCP=Date Fin
 DateCreateCP=Date de création
 DraftCP=Brouillon
-ToValidateCP=En attente d'approbation
-ValidateCP=Approuvé
+ToApproveCP=En attente d'approbation
+ApprovedCP=Approuvé
 CancelCP=Annulée
 RefuseCP=Refusée
 ValidatorCP=Approbateur
 ListeCP=Liste des congés
-ValidateByCP=Sera approuvé par
+ReviewedByCP=Sera approuvé par
 DescCP=Description
 SendRequestCP=Envoyer la demande de congés
 DelayToRequestCP=Les demandes de congés doivent être faites au moins <b>%s jours</b> avant la date</b> de ceux-ci.
@@ -130,6 +130,20 @@ NoCPforMonth=Aucun congé ce mois-ci.
 Jours=jours
 nbJours=Nombre jours
 TitleAdminCP=Configuration des Congés
+
+#Messages
+Hello=Bonjour
+HolidaysToValidate=Congés payés à valider
+HolidaysToValidateBody=Veuillez trouver ci-dessous une demande de congés payés à valider.
+HolidaysToValidateDelay=Cette demande de congés payés à été effectué dans un délai de moins de %s jours avant ceux-ci.
+HolidaysToValidateAlertSolde=L'utilisateur ayant fait cette demande de congés payés n'a pas le solde requis.
+HolidaysValidated=Congés payés validée
+HolidaysValidatedBody=Votre demande de congés payés du %s au %s vient d'être validée!
+HolidaysRefused=Congés payés refusée
+HolidaysRefusedBody=Votre demande de congés payés %s à %s vient d'être refusée pour le motif suivant :
+HolidaysCanceled=Congés payés annulée
+HolidaysCanceledBody=Votre demande de congés %s à %s va été annulée.
+
 Permission20001=Lire / Créer / modifier ses congès
 Permission20002=Lire / Modifier toutes les demandes de congés payés
 Permission20003=Supprimer des demandes de congés payés

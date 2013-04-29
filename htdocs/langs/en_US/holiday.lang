@@ -15,13 +15,13 @@ DateDebCP=Start date
 DateFinCP=End date
 DateCreateCP=Creation date
 DraftCP=Draft
-ToValidateCP=Awaiting approval
-ValidateCP=Approved
+ToApproveCP=Awaiting approval
+ApprovedCP=Approved
 CancelCP=Canceled
 RefuseCP=Refused
 ValidatorCP=Approbator
 ListeCP=List of holidays
-ValidateByCP=Will be approved by
+ReviewedByCP=Will be reviewed by
 DescCP=Description
 SendRequestCP=Creating demand for holidays
 DelayToRequestCP=Applications for holidays must be made at least <b>%s day(s)</b> before them.
@@ -131,6 +131,20 @@ NoCPforMonth=No leave this month.
 Jours=days
 nbJours=Number days
 TitleAdminCP=Configuration of Holidays
+
+#Messages
+Hello=Hello
+HolidaysToValidate=Validate holidays
+HolidaysToValidateBody=Below is a request for holidays to validate
+HolidaysToValidateDelay=This request for holidays will take place within a period of less than %s days.
+HolidaysToValidateAlertSolde=The user who made this request for holidays do not have enough available days.
+HolidaysValidated=Validated holidays
+HolidaysValidatedBody=Your request for holidays for %s to %s has been validated.
+HolidaysRefused=Denied holidays
+HolidaysRefusedBody=Your request for holidays for %s to %s has been denied for the following reason :
+HolidaysCanceled=Canceled holidays
+HolidaysCanceledBody=Your request for holidays for %s to %s has been canceled.
+
 Permission20001=Read/create/modify their holidays
 Permission20002=Read/modify all requests of holidays
 Permission20003=Delete their holidays requests
