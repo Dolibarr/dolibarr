@@ -1151,7 +1151,7 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->rowid;
-                        $tab_result[$i]['name'] = $obj->name;
+                        $tab_result[$i]['name'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
 
                         $i++;
@@ -1191,7 +1191,7 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->fk_user;
-                        $tab_result[$i]['name'] = $obj->name;
+                        $tab_result[$i]['name'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
 
                         $i++;

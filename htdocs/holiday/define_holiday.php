@@ -159,7 +159,7 @@ foreach($listUsers as $users)
     print '<td>'.$users['rowid'].'</td>';
     print '<td>';
     $userstatic->id=$users['rowid'];
-    $userstatic->lastname=$users['lastname'];
+    $userstatic->lastname=$users['name'];
     $userstatic->firstname=$users['firstname'];
     print $userstatic->getNomUrl(1);
     print '</td>';
