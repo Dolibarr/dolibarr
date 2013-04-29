@@ -2,6 +2,7 @@
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,6 +277,12 @@ if ($action == 'confirm_send')
             $destinataire->fetch($cp->fk_validator);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_user);
@@ -383,6 +390,12 @@ if($action == 'confirm_valid')
             $destinataire->fetch($cp->fk_user);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_validator);
@@ -398,7 +411,9 @@ if($action == 'confirm_valid')
             $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
             $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($cp->date_debut,'day'),dol_print_date($cp->date_fin,'day'))."\n";
+
             $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
+
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
 
@@ -449,6 +464,12 @@ if ($action == 'confirm_refuse')
                 $destinataire->fetch($cp->fk_user);
                 $emailTo = $destinataire->email;
 
+                if (!$emailTo)
+                {
+                    header('Location: fiche.php?id='.$_GET['id']);
+                    exit;
+                }
+
                 // From
                 $expediteur = new User($db);
                 $expediteur->fetch($cp->fk_validator);
@@ -465,8 +486,10 @@ if ($action == 'confirm_refuse')
 	            $message.= "\n";
                 $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($cp->date_debut,'day'), dol_print_date($cp->date_fin,'day'))."\n";
                 $message.= GETPOST('detail_refuse','alpha')."\n\n";
+
 	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-    	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
+
+	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
                 $message.= "\n";
 
                 $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -518,6 +541,12 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $destinataire->fetch($cp->fk_user);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_validator);
@@ -532,9 +561,11 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             // Content
            	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
+
             $message.= $langs->transnoentities("HolidaysCanceledBody", dol_print_date($cp->date_debut,'day'), dol_print_date($cp->date_fin,'day'))."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-   	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
+
+            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
 
             $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
