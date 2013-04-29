@@ -43,7 +43,8 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 
 $cp = new Holiday($db);
-$log_holiday = $cp->fetchLog('','');
+//Recent changes are more important than old changes
+$log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC','');
 
 print_fiche_titre($langs->trans('LogCP'));
 
