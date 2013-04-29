@@ -488,7 +488,7 @@ if ($action == 'confirm_refuse')
 	            $message.= "\n";
                 $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($cp->date_debut,'day'), dol_print_date($cp->date_fin,'day'))."\n";
                 $message.= GETPOST('detail_refuse','alpha')."\n\n";
-	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
+	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".$expediteur->prenom." ".$expediteur->nom."\n"; 
     	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
                 $message.= "\n";
 
