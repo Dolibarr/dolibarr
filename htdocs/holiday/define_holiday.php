@@ -145,8 +145,8 @@ print '<input type="hidden" name="action" value="update" />';
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print '<td width="5%">'.$langs->trans('ID').'</td>';
-print '<td width="20%">'.$langs->trans('UserName').'</td>';
-print '<td width="10%">'.$langs->trans('Available').'</td>';
+print '<td width="60%">'.$langs->trans('UserName').'</td>';
+print '<td width="20%" style="text-align:center">'.$langs->trans('Available').'</td>';
 print '<td>'.$langs->trans('UpdateButtonCP').'</td>';
 print '</tr>';
 
@@ -163,7 +163,7 @@ foreach($listUsers as $users)
     $userstatic->firstname=$users['firstname'];
     print $userstatic->getNomUrl(1);
     print '</td>';
-    print '<td>';
+    print '<td style="text-align:center">';
     print '<input type="text" value="'.$holiday->getCPforUser($users['rowid']).'" name="nb_holiday['.$users['rowid'].']" size="5" style="text-align: center;"/>';
     print ' '.$langs->trans('days').'</td>'."\n";
     print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
