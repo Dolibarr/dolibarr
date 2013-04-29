@@ -79,7 +79,6 @@ MenuLogCP=Ver los logs de vacaciones
 LogCP=Logs de actualizaciones de vacaciones
 ActionByCP=Realizado por
 UserUpdateCP=Para el usuario
-ActionTypeCP=Tipo
 PrevSoldeCP=Saldo anterior
 NewSoldeCP=Nuevo saldo
 alreadyCPexist=Ya se ha efectuado una petición de vacaciones para este periodo.

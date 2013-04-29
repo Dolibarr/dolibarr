@@ -55,7 +55,7 @@ print '<td class="liste_titre">'.$langs->trans('ID').'</td>';
 print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
 print '<td class="liste_titre">'.$langs->trans('ActionByCP').'</td>';
 print '<td class="liste_titre">'.$langs->trans('UserUpdateCP').'</td>';
-print '<td class="liste_titre">'.$langs->trans('ActionTypeCP').'</td>';
+print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
 print '<td class="liste_titre" align="right">'.$langs->trans('PrevSoldeCP').'</td>';
 print '<td class="liste_titre" align="right">'.$langs->trans('NewSoldeCP').'</td>';
 

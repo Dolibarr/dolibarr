@@ -67,7 +67,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     }
 
     // On ajoute la modification dans le LOG
-    $holiday->addLogCP($user->id,$userID, $langs->trans('Event').': '.$langs->trans('ManualUpdate'),$userValue);
+    $holiday->addLogCP($user->id,$userID, $langs->trans('ManualUpdate'),$userValue);
 
     // Mise à jour des congés de l'utilisateur
     $holiday->updateSoldeCP($userID,$userValue);
@@ -107,7 +107,7 @@ elseif($action == 'add_event')
         $new_holiday = $nb_holiday + $add_holiday;
 
         // On ajoute la modification dans le LOG
-        $holiday->addLogCP($user->id,$userCP, $langs->trans('Event').': '.$holiday->getNameEventCp($event),$new_holiday);
+        $holiday->addLogCP($user->id,$userCP, $holiday->getNameEventCp($event),$new_holiday);
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 

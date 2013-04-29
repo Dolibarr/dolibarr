@@ -79,7 +79,6 @@ MenuLogCP=Voir les logs des congés
 LogCP=Logs des mises à jours des congés
 ActionByCP=Réalisée par
 UserUpdateCP=Pour l'utilisateur
-ActionTypeCP=Type
 PrevSoldeCP=Précédent Solde
 NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.

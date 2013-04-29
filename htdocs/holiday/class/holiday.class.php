@@ -913,7 +913,7 @@ class Holiday extends CommonObject
                     $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
 
                     // On ajoute la modification dans le LOG
-                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('Event').': '.$langs->trans('HolidaysMonthlyUpdate'),$new_solde);
+                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('HolidaysMonthlyUpdate'),$new_solde);
 
                     $i++;
                 }
