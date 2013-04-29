@@ -1660,43 +1660,43 @@ class Holiday extends CommonObject
         $resql=$this->db->query($sql);
 
         // Si pas d'erreur SQL
-      		if ($resql) {
+  		if ($resql) {
 
-      		    $i = 0;
-      		    $tab_result = $this->logs;
-      		    $num = $this->db->num_rows($resql);
+  		    $i = 0;
+  		    $tab_result = $this->logs;
+  		    $num = $this->db->num_rows($resql);
 
-      		    // Si pas d'enregistrement
-      		    if(!$num) {
+  		    // Si pas d'enregistrement
+  		    if(!$num) {
                 return 2;
-      		    }
+  		    }
 
-      		    // On liste les résultats et on les ajoutent dans le tableau
-      		    while($i < $num) {
+  		    // On liste les résultats et on les ajoutent dans le tableau
+  		    while($i < $num) {
 
-      		        $obj = $this->db->fetch_object($resql);
+  		        $obj = $this->db->fetch_object($resql);
 
-      		        $tab_result[$i]['rowid'] = $obj->rowid;
-      		        $tab_result[$i]['date_action'] = $obj->date_action;
-      		        $tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
-      		        $tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
-      		        $tab_result[$i]['type_action'] = $obj->type_action;
-      		        $tab_result[$i]['prev_solde'] = $obj->prev_solde;
-      		        $tab_result[$i]['new_solde'] = $obj->new_solde;
+  		        $tab_result[$i]['rowid'] = $obj->rowid;
+  		        $tab_result[$i]['date_action'] = $obj->date_action;
+  		        $tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
+  		        $tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
+  		        $tab_result[$i]['type_action'] = $obj->type_action;
+  		        $tab_result[$i]['prev_solde'] = $obj->prev_solde;
+  		        $tab_result[$i]['new_solde'] = $obj->new_solde;
 
-      		        $i++;
-      		    }
-      		    // Retourne 1 et ajoute le tableau à la variable
-      		    $this->logs = $tab_result;
-      		    return 1;
-      		}
-      		else
-      		{
-      		    // Erreur SQL
-      		    $this->error="Error ".$this->db->lasterror();
-      		    dol_syslog(get_class($this)."::fetchLog ".$this->error, LOG_ERR);
-      		    return -1;
-      		}
+  		        $i++;
+  		    }
+  		    // Retourne 1 et ajoute le tableau à la variable
+  		    $this->logs = $tab_result;
+  		    return 1;
+  		}
+  		else
+  		{
+  		    // Erreur SQL
+  		    $this->error="Error ".$this->db->lasterror();
+  		    dol_syslog(get_class($this)."::fetchLog ".$this->error, LOG_ERR);
+  		    return -1;
+  		}
     }
 
     /**
