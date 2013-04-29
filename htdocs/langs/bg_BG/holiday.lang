@@ -127,7 +127,6 @@ DeleteEventOptionCP=Изтриване
 UpdateEventOptionCP=Актуализация
 ErrorMailNotSend=Възникна грешка при изпращане на електронна поща:
 NoCPforMonth=Не оставяйте този месец.
-Jours=ден
 nbJours=Брой дни
 TitleAdminCP=Конфигурация на празници
 Permission20001=/ Промяна на всички искания празници

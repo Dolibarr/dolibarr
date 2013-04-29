@@ -128,7 +128,6 @@ DeleteEventOptionCP=Delete
 UpdateEventOptionCP=Update
 ErrorMailNotSend=An error occurred while sending email:
 NoCPforMonth=No leave this month.
-Jours=days
 nbJours=Number days
 TitleAdminCP=Configuration of Holidays
 
