@@ -329,7 +329,9 @@ print $cp->getConfCP('nbUser')."<br>\n";
 
 $var=!$var;
 print $langs->trans('LastUpdateCP').': '."\n";
-print dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser')."<br>\n";
+if ($cp->getConfCP('lastUpdate')) print dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser');
+else print $langs->trans('None');
+print "<br>\n";
 
 print '<br>';
 
