@@ -135,58 +135,89 @@ $listofreferent=array(
 'propal'=>array(
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
+	'table'=>'propal',
 	'test'=>$conf->propal->enabled),
 'order'=>array(
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
+	'table'=>'commande',
 	'test'=>$conf->commande->enabled),
 'invoice'=>array(
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
+	'table'=>'facture',
 	'test'=>$conf->facture->enabled),
 'invoice_predefined'=>array(
 	'title'=>"ListPredefinedInvoicesAssociatedProject",
 	'class'=>'FactureRec',
+	'table'=>'facture_rec',
 	'test'=>$conf->facture->enabled),
 'order_supplier'=>array(
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
+	'table'=>'commande_fournisseur',
 	'test'=>$conf->fournisseur->enabled),
 'invoice_supplier'=>array(
 	'title'=>"ListSupplierInvoicesAssociatedProject",
 	'class'=>'FactureFournisseur',
+	'table'=>'facture_fourn',
 	'test'=>$conf->fournisseur->enabled),
 'contract'=>array(
 	'title'=>"ListContractAssociatedProject",
 	'class'=>'Contrat',
+	'table'=>'contrat',
 	'test'=>$conf->contrat->enabled),
 'intervention'=>array(
 	'title'=>"ListFichinterAssociatedProject",
 	'class'=>'Fichinter',
+	'table'=>'fichinter',
 	'disableamount'=>1,
 	'test'=>$conf->ficheinter->enabled),
 'trip'=>array(
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
+	'table'=>'deplacement',
 	'disableamount'=>1,
 	'test'=>$conf->deplacement->enabled),
 'agenda'=>array(
 	'title'=>"ListActionsAssociatedProject",
 	'class'=>'ActionComm',
-    'disableamount'=>1,
+	'table'=>'actioncomm',
+	'disableamount'=>1,
 	'test'=>$conf->agenda->enabled)
 );
+
+if ($action=="addelement")
+{
+	$tablename = GETPOST("tablename");
+	$elementselectid = GETPOST("elementselect");
+	$project->update_element($tablename, $elementselectid);
+}
 
 foreach ($listofreferent as $key => $value)
 {
 	$title=$value['title'];
 	$classname=$value['class'];
+	$tablename=$value['table'];
 	$qualified=$value['test'];
 	if ($qualified)
 	{
 		print '<br>';
 
 		print_titre($langs->trans($title));
+		
+		$selectList=$project->select_element($tablename);
+		if ($selectList)
+		{
+			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+			print '<input type="hidden" name="action" value="addelement">';
+			print '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+			print '<td>'.$selectList.'</td>';
+			print '<td><input type="submit" class="button" value="'.$langs->trans("AddElement").'"></td>';
+			print '</tr></table>';
+			print '</form>';
+		}
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
