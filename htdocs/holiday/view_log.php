@@ -39,6 +39,8 @@ if(!$user->rights->holiday->view_log) accessforbidden();
  * View
 */
 
+$langs->load('users');
+
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 

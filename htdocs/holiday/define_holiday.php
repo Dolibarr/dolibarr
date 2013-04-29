@@ -121,6 +121,7 @@ elseif($action == 'add_event')
     dol_htmloutput_mesg($message);
 }
 
+$langs->load('users');
 $var=true;
 $i = 0;
 
