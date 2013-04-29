@@ -174,7 +174,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 
 
 	        // Define format of output PDF
-	        $formatarray=pdf_getFormat();
+	        $formatarray=pdf_getFormat($langs);
 	        $page_largeur = $formatarray['width'];
 	        $page_hauteur = $formatarray['height'];
 	        $format = array($page_largeur,$page_hauteur);
