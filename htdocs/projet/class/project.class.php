@@ -1275,7 +1275,86 @@ class Project extends CommonObject
 	    }
 	    return $result;
 	}
+	
+	 /**
+	  *    Build Select List of element associable to a project
+	  *
+	  *    @param	TableName		Table of the element to update
+	  *    @return	string			The HTML select list of element
+	  */
+	function select_element($Tablename)
+	{
+		global $db;
 
+		$projectkey="fk_projet";
+		switch ($Tablename)
+		{
+			case "facture":
+			case "facture_fourn":
+				$sql = "SELECT rowid, facnumber as ref";
+				break;
+			case "facture_rec":
+				$sql = "SELECT rowid, titre as ref";
+				break;
+			case "actioncomm":
+				$sql = "SELECT id as rowid, label as ref";
+				$projectkey="fk_project";
+				break;
+			default:
+				$sql = "SELECT rowid, ref";
+				break;
+		}
+
+		$sql.= " FROM ".MAIN_DB_PREFIX.$Tablename;
+		$sql.= " WHERE ".$projectkey." is null";
+		$sql.= " AND fk_soc=".$this->societe->id; 
+		$sql.= " ORDER BY ref DESC";
+
+		dol_syslog("Project.Lib::select_element sql=".$sql);
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			if ($num > 0)
+			{
+				$sellist = '<select class="flat" name="elementselect">';
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
+					$i++;
+				}
+				$sellist .='</select>';
+			}
+			return $sellist ;
+		}
+	}
+	
+	 /**
+	  *    Associate element to a project
+	  *
+	  *    @param	TableName		Table of the element to update
+	  *    @param	ElementSelectId		Key-rowid of the line of the element to update
+	  *    @return	int				1 if OK or < 0 if KO
+	  */
+	function update_element($TableName, $ElementSelectId)
+	{
+		global $db;
+		$sql="update ".MAIN_DB_PREFIX.$TableName;
+		if ($TableName=="actioncomm")
+		{
+			$sql.= " SET fk_project=".$this->id;
+			$sql.= " WHERE id=".$ElementSelectId;
+		}
+		else
+		{
+			$sql.= " SET fk_projet=".$this->id;
+			$sql.= " WHERE rowid=".$ElementSelectId;
+		}
+		$resql=$db->query($sql);
+	}
 }
 
 ?>
