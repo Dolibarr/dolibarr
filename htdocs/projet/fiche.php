@@ -43,12 +43,6 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-
-// Security check
-$socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
-
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
@@ -60,6 +54,11 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 }
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
+$result = restrictedArea($user, 'projet', $object->id);
 
 $date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
 $date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
@@ -720,10 +719,13 @@ else
 
         print '</td><td valign="top" width="50%">';
 
-        // List of actions on element
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-        $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'project',$socid);
+        if (!empty($object->id)) 
+        {
+	        // List of actions on element
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	        $formactions=new FormActions($db);
+	        $somethingshown=$formactions->showactions($object,'project',$socid);
+        }
 
         print '</td></tr></table>';
     }
