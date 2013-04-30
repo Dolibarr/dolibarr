@@ -176,7 +176,7 @@ class ImportCsv extends ModeleImports
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
 	{
-		$s.=join($this->separator,array_map('cleansep',$headerlinefields));
+		$s=join($this->separator,array_map('cleansep',$headerlinefields));
 		return $s."\n";
 	}
 
@@ -636,12 +636,12 @@ class ImportCsv extends ModeleImports
 /**
  *	Clean a string from separator
  *
- *	@param	string	$value	Remove separator
- *	@return	string			String without separator
+ *	@param	string	$value	Remove standard separators
+ *	@return	string			String without separators
  */
 function cleansep($value)
 {
-	return str_replace(',','/',$value);
+	return str_replace(array(',',';'),'/',$value);
 };
 
 /**
