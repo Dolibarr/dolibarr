@@ -1483,7 +1483,6 @@ tr.liste_titre {
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
 }
 
 tr.liste_titre {
@@ -1512,8 +1511,8 @@ div.liste_titre, tr.liste_titre {
 }
 
 div.liste_titre a, tr.liste_titre a {
-color: #333333;
-margin: 0px 5px;
+	color: #333333;
+	margin: 0px 5px;
 }
 
 div.liste_titre td, tr.liste_titre td {
@@ -1528,7 +1527,6 @@ div.liste_titre, th.liste_titre, td.liste_titre
     color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
-    white-space: nowrap;
     background-image: none;
     background: none;
 }
@@ -1548,7 +1546,6 @@ th.liste_titre_sel, td.liste_titre_sel
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
 }
 
 input.liste_titre {
@@ -1564,7 +1561,6 @@ background: #F0F0F0;
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
-white-space: nowrap;
 padding: 5px;
 }
 
@@ -1629,7 +1625,6 @@ tr.box_titre {
 	font-family: <?php print $fontlist ?>, sans-serif;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
 }
@@ -2478,6 +2473,17 @@ div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text,
 }
 .ui-btn-icon-right .ui-icon {
 	right: 8px;
+}
+
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
 }
 
 <?php

@@ -96,7 +96,7 @@ CatSupLinks=Links between suppliers and categories
 CatCusLinks=Links between customers/prospects and categories
 CatProdLinks=Links between products/services and categories
 CatMemberLinks=Links between members and categories
-# Imports
 CatProdLinks=Products
 CatCusLinks=Customer/Prospects
 CatSupLinks=Suppliers
+DeleteFromCat=Remove from category

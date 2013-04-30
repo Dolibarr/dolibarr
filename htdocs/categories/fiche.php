@@ -108,7 +108,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object = new Categorie($db);
 
 	$object->label			= $label;
-	$object->description	= $description;
+	$object->description	= dol_htmlcleanlastbr($description);
 	$object->socid			= ($socid ? $socid : 'null');
 	$object->visible		= $visible;
 	$object->type			= $type;
@@ -192,7 +192,7 @@ if ($user->rights->categorie->creer)
 	if ($action == 'create' || $_POST["addcat"] == 'addcat')
 	{
 		dol_set_focus('#label');
-		
+
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$type.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';

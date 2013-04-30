@@ -261,19 +261,19 @@ if ($socid)
 		print '</td></tr>';
 	}
 
+	// EMail
+	print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
+	print dol_print_email($soc->email,0,$soc->id,'AC_EMAIL');
+	print '</td></tr>';
+
+	// Web
+	print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+	print dol_print_url($soc->url);
+	print '</td></tr>';
+
 	// Phone
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->tel,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
-
-	// EMail
-	print '<tr><td>'.$langs->trans('EMail').'</td><td>';
-	print dol_print_email($soc->email,0,$soc->id,'AC_EMAIL');
-	print '</td>';
-
-	// Web
-	print '<td>'.$langs->trans('Web').'</td><td>';
-	print dol_print_url($soc->url);
-	print '</td></tr>';
 
 	// Assujeti a TVA ou pas
 	print '<tr>';

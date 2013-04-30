@@ -78,3 +78,7 @@ NoContractedProducts=Sin productos/servicios contratados
 NoRecordedContracts=Sin contratos registrados
 BoxLatestSupplierOrders=Últimos pedidos a proveedores
 NoSupplierOrder=Sin pedidos a proveedores
+BoxInvoicesPerMonth=Facturas por mes
+BoxOrdersPerMonth=Pedidos por mes
+BoxProposalsPerMonth=Presupuestos por mes
+NoTooLowStockProducts=Sin productos por debajo del stock mínimo

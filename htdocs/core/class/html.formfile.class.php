@@ -391,11 +391,11 @@ class FormFile
 <option value="" data-placeholder="true">Choose One...</option>
 <option value="option1">Option #1</option>
 <option value="option2">Option #2</option>
-<option value="option3">Option #3 - This is a really really really really really long label.</option>
+<option value="option3">Option #3 - This is a really f fsd f gdfgdgd gd gd gd fgd gd gd fgd fgfdreally really really really long label.</option>
 </select>
 </form>
-';
-*/
+';*/
+
             if (empty($noform)) $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
             $out.= '<input type="hidden" name="action" value="builddoc">';
             $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -542,8 +542,6 @@ class FormFile
             {
                 if (empty($noform)) $out.= '</form>'."\n";
             }
-            
-$out.='</div>';            
         }
         $out.= '<!-- End show_document -->'."\n";
         //return ($i?$i:$headershown);

@@ -656,14 +656,10 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 	$error=0;
 
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=GETPOST($key);
-		}
-	}
+	// Fill array 'array_options' with data from add form
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
 
 	// Replacement invoice
 	if ($_POST['type'] == 1)
@@ -1860,7 +1856,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from add form
-	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	// Actions on extra fields (by external module or standard code)
@@ -1905,7 +1901,7 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 if ($action == 'create')
 {
 	$facturestatic=new Facture($db);
-	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+	$extralabels=$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
 	print_fiche_titre($langs->trans('NewBill'));
 
@@ -2293,8 +2289,9 @@ if ($action == 'create')
 		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
 		$newclassname=$classname;
-		if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
-		elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+        elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        elseif ($newclassname == 'Expedition') $newclassname = 'Sending';
 
 		print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
@@ -2399,7 +2396,7 @@ else if ($id > 0 || ! empty($ref))
 	$result=$object->fetch($id,$ref);
 
 	// fetch optionals attributes and labels
-	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 	if ($result > 0)
 	{
@@ -3624,7 +3621,7 @@ else if ($id > 0 || ! empty($ref))
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$object->id;
 				$genallowed=$user->rights->facture->creer;
 				$delallowed=$user->rights->facture->supprimer;
-				
+
 				print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 				$somethingshown=$formfile->numoffiles;
 

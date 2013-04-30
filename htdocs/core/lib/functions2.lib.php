@@ -105,14 +105,18 @@ function dolGetModulesDirs($subdir='')
 /**
  *  Try to guess default paper format according to language into $langs
  *
- *	@return		string		Defautl paper format code
+ *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@return		string							Default paper format code
  */
-function dol_getDefaultFormat()
+function dol_getDefaultFormat($outputlangs='')
 {
     global $langs;
+
     $selected='EUA4';
-    if ($langs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
-    if ($langs->defaultlang == 'en_US') $selected='USLetter';    // US
+    if (empty($outputlangs) || ! is_object($outputlangs)) $outputlangs=$langs;
+
+    if ($outputlangs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
+    if ($outputlangs->defaultlang == 'en_US') $selected='USLetter';    // US
     return $selected;
 }
 
@@ -739,7 +743,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),$counterpadded,$maskLike);
         if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
         if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
-        
+
         $ref='';
         $sql = "SELECT ".$field." as ref";
         $sql.= " FROM ".MAIN_DB_PREFIX.$table;
@@ -748,7 +752,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " AND entity IN (".getEntity($table, 1).")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
-        
+
         dol_syslog("functions2::get_next_value sql=".$sql);
         $resql=$db->query($sql);
         if ($resql)

@@ -2,6 +2,7 @@
 /* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,6 +277,12 @@ if ($action == 'confirm_send')
             $destinataire->fetch($cp->fk_validator);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_user);
@@ -290,7 +297,7 @@ if ($action == 'confirm_send')
             // Content
             $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
-            $message.= "Veuillez trouver ci-dessous une demande de congés payés à valider.\n";
+            $message.= $langs->transnoentities("HolidaysToValidateBody")."\n";
 
             $delayForRequest = $cp->getConfCP('delayForRequest');
             //$delayForRequest = $delayForRequest * (60*60*24);
@@ -303,7 +310,7 @@ if ($action == 'confirm_send')
                 if($cp->date_debut < $nextMonth)
                 {
                     $message.= "\n";
-                    $message.= "Cette demande de congés payés à été effectué dans un délai de moins de ".$cp->getConfCP('delayForRequest')." jours avant ceux-ci.\n";
+                    $message.= $langs->transnoentities("HolidaysToValidateDelay",$cp->getConfCP('delayForRequest'))."\n";
                 }
             }
 
@@ -314,7 +321,7 @@ if ($action == 'confirm_send')
                 if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
                 {
                     $message.= "\n";
-                    $message.= "L'utilisateur ayant fait cette demande de congés payés n'a pas le solde requis.\n";
+                    $message.= $langs->transnoentities("HolidaysToValidateAlertSolde")."\n";
                 }
             }
 
@@ -383,6 +390,12 @@ if($action == 'confirm_valid')
             $destinataire->fetch($cp->fk_user);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_validator);
@@ -397,8 +410,10 @@ if($action == 'confirm_valid')
             // Content
             $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
-            $message.= "Votre demande de congés payés du ".dol_print_date($cp->date_debut,'day')." au ".dol_print_date($cp->date_fin,'day')." vient d'être validée!\n";
+            $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($cp->date_debut,'day'),dol_print_date($cp->date_fin,'day'))."\n";
+
             $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
+
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
 
@@ -449,6 +464,12 @@ if ($action == 'confirm_refuse')
                 $destinataire->fetch($cp->fk_user);
                 $emailTo = $destinataire->email;
 
+                if (!$emailTo)
+                {
+                    header('Location: fiche.php?id='.$_GET['id']);
+                    exit;
+                }
+
                 // From
                 $expediteur = new User($db);
                 $expediteur->fetch($cp->fk_validator);
@@ -463,10 +484,12 @@ if ($action == 'confirm_refuse')
                 // Content
             	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
 	            $message.= "\n";
-                $message.= "Votre demande de congés payés ".dol_print_date($cp->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($cp->date_fin,'day')." vient d'être refusée pour le motif suivant :\n";
-                $message.= $_POST['detail_refuse']."\n\n";
+                $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($cp->date_debut,'day'), dol_print_date($cp->date_fin,'day'))."\n";
+                $message.= GETPOST('detail_refuse','alpha')."\n\n";
+
 	            $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-    	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
+
+	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
                 $message.= "\n";
 
                 $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -518,6 +541,12 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $destinataire->fetch($cp->fk_user);
             $emailTo = $destinataire->email;
 
+            if (!$emailTo)
+            {
+                header('Location: fiche.php?id='.$_GET['id']);
+                exit;
+            }
+
             // From
             $expediteur = new User($db);
             $expediteur->fetch($cp->fk_validator);
@@ -532,9 +561,11 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             // Content
            	$message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
             $message.= "\n";
-            $message.= "Votre demande de congés ".dol_print_date($cp->date_debut,'day')." ".$langs->transnoentitiesnoconv("To")." ".dol_print_date($cp->date_fin,'day')." va été annulée.\n";
+
+            $message.= $langs->transnoentities("HolidaysCanceledBody", dol_print_date($cp->date_debut,'day'), dol_print_date($cp->date_fin,'day'))."\n";
             $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-   	        $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
+
+            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/fiche.php?id=".$cp->rowid."\n\n";
             $message.= "\n";
 
             $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
@@ -699,7 +730,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
 
         // Approved by
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("ValidateByCP").'</td>';
+        print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
         // Liste des utiliseurs du groupe choisi dans la config
         $validator = new UserGroup($db);
         $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
@@ -952,12 +983,12 @@ else
 
                 if(!$edit) {
                     print '<tr>';
-                    print '<td width="50%">'.$langs->trans('ValidateByCP').'</td>';
+                    print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>'.$valideur->getNomUrl(1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';
-                    print '<td width="50%">'.$langs->trans('ValidateByCP').'</td>';
+                    print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
                     // Liste des utiliseurs du groupes choisi dans la config
                     $idGroupValid = $cp->getConfCP('userGroup');
 

@@ -112,7 +112,6 @@ BarCode=Triipkood
 BarcodeType=Vöötkoodi tüüpi
 SetDefaultBarcodeType=Määrata vöötkoodi tüüpi
 BarcodeValue=Vöötkoodi väärtus
-GenbarcodeLocation=Triipkoodi põlvkonna käsureatööriist (mida phpbarcode mootor mõned triipkoodi liigid)
 NoteNotVisibleOnBill=Märkus (ei ole nähtav arved, ettepanekuid ...)
 CreateCopy=Loo koopia
 ServiceLimitedDuration=Kui toode on teenus piiratud kestus:

@@ -39,7 +39,7 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 {
 	print "Usage: $script_file [test|confirm] [delay]\n";
 	print "\n";
-	print "Send an email to users to remind all unpaid invoices of customers they are sale representative for.\n";
+	print "Send an email to users to remind all unpaid customer invoices user is sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
 	exit;

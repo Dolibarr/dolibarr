@@ -137,8 +137,9 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_TEXT='50,50,130';
 	if ($dol_use_jmobile)
 	{
-    	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';    // topmenu
-		$conf->global->THEME_ELDY_BACKTABCARD2='255,255,255';
+    	$conf->global->THEME_ELDY_BACKTABCARD1='245,245,245';    // topmenu
+		$conf->global->THEME_ELDY_BACKTABCARD2='245,245,245';
+		$conf->global->THEME_ELDY_BACKTABACTIVE='245,245,245';
 	}
 }
 
@@ -236,8 +237,10 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
+    <?php if (empty($dol_use_jmobile)) { ?>
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
+    <?php } ?>
 }
 input, textarea, select {
 	border-radius:4px;
@@ -271,6 +274,7 @@ textarea:disabled {
 }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
+
 .button {
     font-family: <?php print $fontlist ?>;
 	background-image: url(<?php echo $img_button ?>);
@@ -486,20 +490,12 @@ div.tmenudiv {
     height: <?php print ($heightmenu+1); ?>px;
 
 <?php if ($usecss3) { ?>
-background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
-background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
-
-/*background-image: rgb(<?php echo $colorback1; ?>);
-
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 40%, rgb(<?php echo $colorback2; ?>) 60%, rgb(<?php echo $colorback1; ?>) 100%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(40,40,40,.3)) );
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
 <?php } else { ?>
 	background-image: rgb(<?php echo $colorback1; ?>);
@@ -775,7 +771,7 @@ foreach($mainmenuusedarray as $val)
 /* Login */
 
 form#login {
-	margin-top: 60px;
+	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
 	font-size: 13px;
 	vertical-align: middle;
@@ -1319,7 +1315,7 @@ div.tabBar {
     border-bottom: 1px solid #CCCCCC;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-
+	width: auto;
 <?php if ($usecss3) { ?>
 	background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
 	background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
@@ -1660,9 +1656,12 @@ table.liste td {
 	padding-right: 2px;
 }
 
+tr.liste_titre, tr.liste_titre_sel
+{
+	height: 20px !important;
+}
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
-    height: 20px !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>
@@ -2589,9 +2588,10 @@ div.dolEventError h1, div.dolEventError h2 {
 li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
-a.ui-link, a.ui-link:hover {
-	text-decoration: none;
+a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
+	text-decoration: none !important;
 }
+
 .ui-btn-inner {
 	padding-left: 10px;
 	padding-right: 10px;
@@ -2641,11 +2641,21 @@ a.ui-link {
 	text-overflow: hidden;
 }
 
-/* Warning: setting this make screen not beeing refreshed after a combo selection */
-/*.ui-body-c {
+/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+.ui-body-c {
 	background: #fff;
-}*/
+}
 
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
+}
 
 <?php
 if (is_object($db)) $db->close();

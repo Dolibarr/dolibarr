@@ -112,7 +112,6 @@ BarCode=ברקוד
 BarcodeType=סוג ברקוד
 SetDefaultBarcodeType=הגדרת סוג ברקוד
 BarcodeValue=ברקוד ערך
-GenbarcodeLocation=הברקוד הדור הפקודה כלי הקו (בשימוש על ידי מנוע phpbarcode עבור סוגים מסוימים ברקוד)
 NoteNotVisibleOnBill=הערה (לא ניתן לראות על חשבוניות, הצעות ...)
 CreateCopy=יצירת עותק
 ServiceLimitedDuration=אם המוצר הוא שירות עם זמן מוגבל:

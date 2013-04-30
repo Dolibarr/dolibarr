@@ -966,9 +966,9 @@ a.tab:hover {color:#333333;}
 }
 
 div.fiche {
-	padding:8px 6px 10px;
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'16'):'24')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'4')); ?>px;
+	padding: 8px 5px 10px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'3':'16'):'24')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'3')); ?>px;
 }
 
 div.fichecenter {
@@ -1195,6 +1195,10 @@ table.liste {
 
 table.liste td {padding:1px 2px 1px 0px;}
 
+tr.liste_titre, tr.liste_titre_sel
+{
+	height: 22px;
+}
 div.liste_titre, tr.liste_titre, tr.box_titre {
 	padding:4px;
 	background-color:rgba(0,0,0,.2);
@@ -1210,7 +1214,6 @@ div.liste_titre, tr.liste_titre, tr.box_titre {
 		color-stop(0, rgba(255,255,255,.3)),
 		color-stop(1, rgba(0,0,0,.3))
 	);
-	height: 22px;
 	text-align: <?php echo $left; ?>;
 }
 
@@ -2090,6 +2093,17 @@ div.tabsElem a.ui-btn-corner-all {
 }
 .ui-btn-icon-right .ui-icon {
 	right: 8px;
+}
+
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
 }
 
 <?php

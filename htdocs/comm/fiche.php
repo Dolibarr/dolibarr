@@ -247,17 +247,17 @@ if ($id > 0)
 	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
 
-	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-
-	// Fax
-	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
-
 	// EMail
 	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
 
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url,'_blank').'</td></tr>';
+
+	// Phone
+	print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+
+	// Fax
+	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
 	// Assujeti a TVA ou pas
 	print '<tr>';
@@ -441,12 +441,12 @@ if ($id > 0)
 
 	print "</table>";
 
-	
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	//print "</td>\n";
 	//print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
-	
+
 	// Nbre max d'elements des petites listes
 	$MAXLIST=4;
 	$tableaushown=1;
@@ -468,10 +468,6 @@ if ($id > 0)
 	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		$propal_static = new Propal($db);
-
-		$proposals = $propal_static->liste_array(0, 0, 0, $object->id, $MAXLIST);
-
-		//var_dump($proposals);
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite";

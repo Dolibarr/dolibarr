@@ -29,11 +29,12 @@
 
 
 /**
- *      Return array with format properties of default PDF format
-*
-*      @return     array		Array('width'=>w,'height'=>h,'unit'=>u);
-*/
-function pdf_getFormat()
+ *	Return array with format properties of default PDF format
+ *
+ *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
+ */
+function pdf_getFormat($outputlangs='')
 {
 	global $conf,$db;
 
@@ -43,7 +44,7 @@ function pdf_getFormat()
 	if (empty($conf->global->MAIN_PDF_FORMAT))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$pdfformat=dol_getDefaultFormat();
+		$pdfformat=dol_getDefaultFormat($outputlangs);
 	}
 	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
 
@@ -338,7 +339,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 		}
 
 		// Intra VAT
-		if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))
+		{
+			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+		}
 
 		// Professionnal Ids
 		if (! empty($conf->global->MAIN_PROFID1_IN_ADDRESS) && ! empty($targetcompany->idprof1))

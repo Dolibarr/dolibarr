@@ -307,13 +307,13 @@ class Propal extends CommonObject
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
-     *		@param      timestamp	$date_start       	Start date of the line 
-     *		@param      timestamp	$date_end         	End date of the line 
+     *		@param      timestamp	$date_start       	Start date of the line
+     *		@param      timestamp	$date_end         	End date of the line
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$date_start='', $date_end='')
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='')
     {
         global $conf;
 
@@ -403,7 +403,7 @@ class Propal extends CommonObject
             $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->fk_parent_line=$fk_parent_line;
-            
+
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
@@ -470,11 +470,11 @@ class Propal extends CommonObject
      *  @param		int			$pa_ht				Price (without tax) of product when it was bought
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
-     *	@param      timestamp	$date_start       	Start date of the line 
-     *	@param      timestamp	$date_end         	End date of the line 
+     *	@param      timestamp	$date_start       	Start date of the line
+     *	@param      timestamp	$date_end         	End date of the line
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='')
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='')
     {
         global $conf,$user,$langs;
 
@@ -552,7 +552,7 @@ class Propal extends CommonObject
             // infos marge
             $this->line->fk_fournprice = $fk_fournprice;
             $this->line->pa_ht = $pa_ht;
-            
+
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
@@ -830,7 +830,7 @@ class Propal extends CommonObject
                     		}
                     	}
                     	else if ($reshook < 0) $error++;
-                    	
+
                         if (! $notrigger)
                         {
                             // Appel des triggers
@@ -1099,6 +1099,16 @@ class Propal extends CommonObject
                     $this->brouillon = 1;
                 }
 
+                // Retreive all extrafield for invoice
+                // fetch optionals attributes and labels
+                if(!class_exists('Extrafields'))
+                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                $extrafields=new ExtraFields($this->db);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+                if (count($extralabels)>0) {
+                	$this->fetch_optionals($this->id,$extralabels);
+                }
+
                 $this->db->free($resql);
 
                 $this->lines = array();
@@ -1164,7 +1174,7 @@ class Propal extends CommonObject
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
-                        
+
                         $line->date_start  		= $objp->date_start;
                         $line->date_end  		= $objp->date_end;
 
@@ -1187,15 +1197,10 @@ class Propal extends CommonObject
                 if(!class_exists('Extrafields'))
                 	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label('propal',true);
-                //$this->fetch_optionals($this->id,$extralabels);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 if (count($extralabels)>0) {
-                	$this->array_options = array();
+                	$this->fetch_optionals($this->id,$extralabels);
                 }
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-                	$this->array_options['options_'.$key]=$label;
-                }   
                 return 1;
             }
 
@@ -1209,7 +1214,7 @@ class Propal extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      *	Update value of extrafields on the proposal
      *
@@ -1235,7 +1240,7 @@ class Propal extends CommonObject
     		}
     	}
     	else if ($reshook < 0) $error++;
-    	
+
 		if (!$error)
 	    {
 	    	return 1;
@@ -1244,7 +1249,7 @@ class Propal extends CommonObject
 	    {
 	    	return -1;
 	    }
-    	
+
     }
 
     /**
@@ -1262,16 +1267,16 @@ class Propal extends CommonObject
         $now=dol_now();
 
         if ($user->rights->propale->valider)
-        {	
+        {
             $this->db->begin();
-            
+
             // Numbering module definition
             $soc = new Societe($this->db);
             $soc->fetch($this->socid);
-            
+
             // Class of company linked to propal
             $result=$soc->set_as_client();
-            
+
             // Define new ref
             if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
             {
@@ -1648,7 +1653,7 @@ class Propal extends CommonObject
                     $this->db->rollback();
                     return -2;
                 }
-                
+
                 if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
                 {
                 	// Define output language
@@ -1674,7 +1679,7 @@ class Propal extends CommonObject
             }
             else
             {
-            	
+
             	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
             	{
             		// Define output language
@@ -1688,7 +1693,7 @@ class Propal extends CommonObject
             		//$ret=$object->fetch($id);    // Reload to get new records
             		propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	}
-            	
+
                 // Appel des triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
@@ -1769,9 +1774,9 @@ class Propal extends CommonObject
     /**
      *    Return list of proposal (eventually filtered on user) into an array
      *
-     *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref)
+     *    @param	int		$shortlist			0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
      *    @param	int		$draft				0=not draft, 1=draft
-     *    @param	int		$notcurrentuser		0=current user, 1=not current user
+     *    @param	int		$notcurrentuser		0=all user, 1=not current user
      *    @param    int		$socid				Id third pary
      *    @param    int		$limit				For pagination
      *    @param    int		$offset				For pagination
@@ -1785,15 +1790,22 @@ class Propal extends CommonObject
 
         $ga = array();
 
-        $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
+        $sql = "SELECT s.rowid, s.nom as name, s.client,";
+        $sql.= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
         $sql.= " p.datep as dp, p.fin_validite as datelimite";
+        if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE p.entity = ".$conf->entity;
         $sql.= " AND p.fk_soc = s.rowid";
         $sql.= " AND p.fk_statut = c.id";
+        if (! $user->rights->societe->client->voir && ! $socid) //restriction
+        {
+        	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        }
         if ($socid) $sql.= " AND s.rowid = ".$socid;
         if ($draft)	$sql.= " AND p.fk_statut = 0";
-        if ($notcurrentuser) $sql.= " AND p.fk_user_author <> ".$user->id;
+        if ($notcurrentuser > 0) $sql.= " AND p.fk_user_author <> ".$user->id;
         $sql.= $this->db->order($sortfield,$sortorder);
         $sql.= $this->db->plimit($limit,$offset);
 
@@ -1808,14 +1820,19 @@ class Propal extends CommonObject
                 {
                     $obj = $this->db->fetch_object($result);
 
-                    if ($shortlist)
+                    if ($shortlist == 1)
                     {
                         $ga[$obj->propalid] = $obj->ref;
                     }
-                    else
+                    else if ($shortlist == 2)
                     {
+                        $ga[$obj->propalid] = $obj->ref.' ('.$obj->name.')';
+                    }
+                    else
+					{
                         $ga[$i]['id']	= $obj->propalid;
                         $ga[$i]['ref'] 	= $obj->ref;
+                        $ga[$i]['name'] = $obj->name;
                     }
 
                     $i++;
@@ -1998,6 +2015,21 @@ class Propal extends CommonObject
                                 }
                             }
                         }
+                    }
+
+                    // Removed extrafields
+                    if (! $error)
+                    {
+                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                    	{
+                    		$result=$this->deleteExtraFields();
+                    		if ($result < 0)
+                    		{
+                    			$error++;
+                    			$errorflag=-4;
+                    			dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+                    		}
+                    	}
                     }
 
                     if (! $error)
@@ -2640,7 +2672,7 @@ class PropaleLigne
     var $localtax2_tx;
     var $total_localtax1;
     var $total_localtax2;
-    
+
     var $date_start;
     var $date_end;
 
@@ -2713,7 +2745,7 @@ class PropaleLigne
 			$this->libelle			= $objp->product_label;  // deprecated
 			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
-			
+
 			$this->date_start       = $this->db->jdate($objp->date_start);
             $this->date_end         = $this->db->jdate($objp->date_end);
 
@@ -2751,6 +2783,7 @@ class PropaleLigne
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+        if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2767,7 +2800,8 @@ class PropaleLigne
 
         // Insert line into database
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
-        $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
+        $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type,';
+		$sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
@@ -2785,13 +2819,13 @@ class PropaleLigne
         $sql.= " ".price2num($this->localtax2_tx).",";
         $sql.= " ".($this->subprice?price2num($this->subprice):'null').",";
         $sql.= " ".price2num($this->remise_percent).",";
-        $sql.= " '".$this->info_bits."',";
+        $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";
         $sql.= " ".price2num($this->total_localtax1).",";
         $sql.= " ".price2num($this->total_localtax2).",";
         $sql.= " ".price2num($this->total_ttc).",";
-        $sql.= " ".(isset($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
+        $sql.= " ".(!empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
         $sql.= " ".(isset($this->pa_ht)?"'".price2num($this->pa_ht)."'":"null").",";
         $sql.= ' '.$this->special_code.',';
         $sql.= ' '.$this->rang.',';
@@ -2891,6 +2925,7 @@ class PropaleLigne
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+        if (empty($this->fk_parent_line)) $this->fk_fournprice=0;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
@@ -2923,8 +2958,8 @@ class PropaleLigne
             $sql.= " , total_localtax1=".price2num($this->total_localtax1)."";
             $sql.= " , total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
-		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null");
+		$sql.= " , buy_price_ht=".price2num($this->pa_ht);
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;

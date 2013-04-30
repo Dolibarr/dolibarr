@@ -241,11 +241,8 @@ class Categorie
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-		$sql.= " SET label = '".$this->db->escape($this->label)."'";
-		if (! empty($this->description))
-		{
-			$sql .= ", description = '".$this->db->escape($this->description)."'";
-		}
+		$sql.= " SET label = '".$this->db->escape($this->label)."',";
+		$sql.= " description = '".$this->db->escape($this->description)."'";
 		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');

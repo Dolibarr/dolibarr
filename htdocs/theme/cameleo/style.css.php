@@ -1430,8 +1430,11 @@ table.liste td {
     padding-right: 2px;
 }
 
-div.liste_titre, tr.liste_titre {
+tr.liste_titre, tr.liste_titre_sel
+{
     height: 20px;
+}
+div.liste_titre, tr.liste_titre {
     color: #842F00;
     font-weight: bold;
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
@@ -2298,6 +2301,17 @@ div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text,
 }
 .ui-btn-icon-right .ui-icon {
 	right: 8px;
+}
+
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
 }
 
 <?php

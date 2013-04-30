@@ -359,7 +359,7 @@ if (! empty($holiday->holiday))
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut'], $infos_CP['date_fin'], 0, 1, $infos_CP['halfday']);
-		print $nbopenedday;
+		print $nbopenedday.' '.$langs->trans('DurationDays');
 		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 		print '</tr>'."\n";
 

@@ -38,48 +38,55 @@ global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('demo'));
+$res=$hookmanager->initHooks(array('demo'));
 
-$demoprofiles=array(
-	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,margin,prelevement,product,stock',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
-	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
-	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-	'disablemodules'=>'adherent,boutique,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
-	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
-	'disablemodules'=>'adherent,boutique,don,externalsite,mailmanspip',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
-	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
-	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
-);
-
+$demoprofiles=array();
+$alwayscheckedmodules=array();
+$alwaysuncheckedmodules=array();
+$alwayshiddencheckedmodules=array();
+$alwayshiddenuncheckedmodules=array();
 
 $tmpaction = 'view';
 $parameters=array();
 $object=new stdClass();
 $reshook=$hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
-
-// Visible
-$alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-$alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
-// Not visible
-$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
-								'mailmanspip','notification','syslog','user','webservices',
-                                // Extended modules
-                                'memcached','numberwords','zipautofillfr');
-$alwayshiddenuncheckedmodules=array('boutique','ftp',
-                                // Extended modules
-                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
-                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
+if (empty($reshook))
+{
+	$demoprofiles=array(
+		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
+		'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,margin,prelevement,product,stock',
+		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
+		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
+		'disablemodules'=>'adherent,boutique,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,product,stock',
+		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
+		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
+		'disablemodules'=>'adherent,boutique,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
+		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
+		array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
+		'disablemodules'=>'adherent,boutique,don,externalsite,mailmanspip',
+		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
+		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
+		'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
+		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
+		'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
+	);
+	
+	// Visible
+	$alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
+	$alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
+	// Not visible
+	$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
+									'mailmanspip','notification','syslog','user','webservices',
+	                                // Extended modules
+	                                'memcached','numberwords','zipautofillfr');
+	$alwayshiddenuncheckedmodules=array('boutique','ftp',
+	                                // Extended modules
+	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
+	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
+}
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;
@@ -151,8 +158,8 @@ foreach ($modulesdir as $dir)
 
                         // We discard modules according to features level (PS: if module is activated we always show it)
                         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-                        if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
-                        if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+                        if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) $modulequalified=0;
+                        if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) $modulequalified=0;
 
                         if ($modulequalified)
                         {

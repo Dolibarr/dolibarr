@@ -105,7 +105,6 @@ BarCode=Strikamerki
 BarcodeType=Strikamerki tegund
 SetDefaultBarcodeType=Setja barcode tegund
 BarcodeValue=Strikamerki gildi
-GenbarcodeLocation=Strikamerki kynslóð stjórn lína tól (notað af phpbarcode vél fyrir sumir merkjamál barnum tegund)
 NoteNotVisibleOnBill=Ath (ekki sýnilegt á reikningum, tillögur ...)
 CreateCopy=Búa til eftirlíking
 ServiceLimitedDuration=Ef varan er þjónusta við takmarkaðan tíma:

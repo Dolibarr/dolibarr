@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+$langs->load("categories");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
@@ -62,7 +63,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	$result=$categorie->fetch($id);
 
 	$categorie->label          = $nom;
-	$categorie->description    = $description;
+	$categorie->description    = dol_htmlcleanlastbr($description);
 	$categorie->socid          = ($socid ? $socid : 'null');
 	$categorie->visible        = $visible;
 

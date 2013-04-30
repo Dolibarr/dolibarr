@@ -112,7 +112,6 @@ BarCode=Barcode
 BarcodeType=Barcode typ
 SetDefaultBarcodeType=Ställ streckkodstypblock
 BarcodeValue=Barcode värde
-GenbarcodeLocation=Bar kodgenerering kommandoradsverktyg (som används av phpbarcode motor för vissa typer streckkod)
 NoteNotVisibleOnBill=Obs (ej synlig på fakturor, förslag ...)
 CreateCopy=Skapa kopia
 ServiceLimitedDuration=Om produkten är en tjänst med begränsad varaktighet:

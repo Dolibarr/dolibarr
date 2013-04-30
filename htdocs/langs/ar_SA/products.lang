@@ -100,7 +100,6 @@ BarCode=الباركود
 BarcodeType=نوع الباركود
 SetDefaultBarcodeType=حدد نوع الباركود
 BarcodeValue=قيمة الباركود
-GenbarcodeLocation=باركود الجيل سطر أداة تستخدمها phpbarcode المحرك لبعض أنواع باركود)
 NoteNotVisibleOnBill=علما) على الفواتير غير مرئي ، واقتراحات...)
 CreateCopy=خلق صورة
 ServiceLimitedDuration=إذا كان المنتج هو خدمة لفترة محدودة :

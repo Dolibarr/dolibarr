@@ -1018,6 +1018,7 @@ BarcodeDescUPC=刚果爱国者联盟类型的条码
 BarcodeDescISBN=书号条码类型
 BarcodeDescC39=条码类型C39座
 BarcodeDescC128=条码型C128
+GenbarcodeLocation=条码生成命令行工具（由phpbarcode引擎用于某些类型的条形码）
 WithdrawalsSetup=提款模块设置
 ExternalRSSSetup=外部的RSS进口格局
 NewRSS=新的RSS饲料

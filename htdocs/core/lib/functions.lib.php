@@ -1149,7 +1149,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 
 	if (! empty($addlink))
 	{
-		$newemail='<a href="';
+		$newemail='<a style="text-overflow: ellipsis;" href="';
 		if (! preg_match('/^mailto:/i',$email)) $newemail.='mailto:';
 		$newemail.=$email;
 		$newemail.='">';
@@ -2481,7 +2481,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		if ($totalnboflines)
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			print '</td>';
@@ -2518,7 +2518,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
@@ -2527,7 +2527,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 	else
 	{
-		if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+		if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
 	}
 
@@ -2562,14 +2562,17 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='')
 {
 	global $conf, $langs;
+
 	if ($page > 0)
 	{
-		print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
+		if (empty($conf->dol_use_jmobile)) print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
+		else print '<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a>';
 	}
 	if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
 	if ($nextpage > 0)
 	{
-		print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
+		if (empty($conf->dol_use_jmobile)) print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
+		else print '<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a>';
 	}
 }
 
@@ -4134,7 +4137,7 @@ function verifCond($strRights)
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string	$s				String to evaluate
- * @param	int		$returnvalue	0=No return (used to execute $a=something). 1=Value of eval is returned (used to eval $something).
+ * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @return	mixed					Nothing or return of eval
  */
 function dol_eval($s,$returnvalue=0)
@@ -4145,16 +4148,16 @@ function dol_eval($s,$returnvalue=0)
 	global $rights;
 
 	//print $s."<br>\n";
-	if ($returnvalue) return eval('return '.$s.';');
-	else eval($s);
+	if ($returnvalue) return @eval('return '.$s.';');
+	else @eval($s);
 }
 
 /**
-* Return if var element is ok
-*
-* @param   string      $element    Variable to check
-* @return  boolean                 Return true of variable is not empty
-*/
+ * Return if var element is ok
+ *
+ * @param   string      $element    Variable to check
+ * @return  boolean                 Return true of variable is not empty
+ */
 function dol_validElement($element)
 {
 	return (trim($element) != '');

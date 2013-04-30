@@ -1345,9 +1345,12 @@ table.liste td {
 	padding-right: 2px;
 }
 
-div.liste_titre, tr.liste_titre
+tr.liste_titre, tr.liste_titre_sel
 {
     height: 24px;
+}
+div.liste_titre, tr.liste_titre
+{
     background: #7699A9;
     background-image: url(<?php echo $img_liste_titre ?>);
     background-repeat: repeat-x;
@@ -2242,6 +2245,17 @@ div.tabsElem a.ui-btn-corner-all {
 }
 .ui-btn-icon-right .ui-icon {
 	right: 8px;
+}
+
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
 }
 
 <?php

@@ -867,6 +867,7 @@ BarcodeDescUPC=Barcode of type UPC
 BarcodeDescISBN=Barcode of type ISBN
 BarcodeDescC39=Barcode of type C39
 BarcodeDescC128=Barcode of type C128
+GenbarcodeLocation=Kommandolinjeverktøy for generering av strekkode (brukes av phpbarcode til noen strekkodetyper)
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####

@@ -856,6 +856,7 @@ BarcodeDescUPC=Coduri de bare de tip UPC
 BarcodeDescISBN=Coduri de bare de tip ISBN
 BarcodeDescC39=Coduri de bare de tip C39
 BarcodeDescC128=Coduri de bare de tip C128
+GenbarcodeLocation=Coduri de bare generaţie în linie de comandă (utilizat de către phpbarcode motor pentru anumite tipuri de coduri de bare)
 WithdrawalsSetup=Retragere de modul de configurare
 ExternalRSSSetup=Extern RSS importurile setup
 NewRSS=New RSS Feed

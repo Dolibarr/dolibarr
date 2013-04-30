@@ -98,7 +98,6 @@ BarCode=Coduri de bare
 BarcodeType=Coduri de bare de tip
 SetDefaultBarcodeType=Set cod de bare de tip
 BarcodeValue=Coduri de bare valoare
-GenbarcodeLocation=Coduri de bare generaţie în linie de comandă (utilizat de către phpbarcode motor pentru anumite tipuri de coduri de bare)
 NoteNotVisibleOnBill=Notă (nu este vizibil de pe facturi, propuneri ...)
 CreateCopy=Creaţi o copie
 ServiceLimitedDuration=Dacă produsul este un serviciu cu durată limitată:

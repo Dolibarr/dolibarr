@@ -29,7 +29,8 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 // Security check
 if (!$user->admin) accessforbidden();
 
-
+$langs->load("admin");
+$langs->load("other");
 
 
 /*
@@ -40,7 +41,9 @@ $langs->load("opensurvey");
 
 llxHeader();
 
-print_fiche_titre($langs->trans("OpenSurveyArea"));
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("OpenSurveyArea"),$linkback,'setup');
+print '<br>';
 
 echo $langs->trans("OpenSurveyNothingToSetup").'<br><br>'."\n";
 
