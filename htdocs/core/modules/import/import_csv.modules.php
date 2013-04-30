@@ -266,6 +266,9 @@ class ImportCsv extends ModeleImports
 			$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
 		}
 
+		// End of file
+		if ($arrayres === false) return false;
+
 		//var_dump($this->handle);
 		//var_dump($arrayres);exit;
 		$newarrayres=array();

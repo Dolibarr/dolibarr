@@ -55,6 +55,7 @@ $endyear=$year;
  */
 
 $langs->load("bills");
+$langs->load("companies");
 
 $form=new Form($db);
 

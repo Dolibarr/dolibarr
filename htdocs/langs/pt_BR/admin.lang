@@ -959,6 +959,7 @@ BarcodeDescUPC=Códigos de barra tipo UPC
 BarcodeDescISBN=Códigos de barra tipo ISBN
 BarcodeDescC39=Códigos de barra tipo C39
 BarcodeDescC128=Códigos de barra tipo C128
+GenbarcodeLocation=Ferramenta de geração de código de barras em linha de pedido (utilizado por o motor phpbar para determinados tipos de códigos barra)
 ##### Prelevements #####=
 WithdrawalsSetup=configuração do módulo Débitos Diretos
 ##### ExternalRSS #####=

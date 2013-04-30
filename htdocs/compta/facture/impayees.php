@@ -227,7 +227,7 @@ if ($search_societe)     $sql .= " AND s.nom LIKE '%".$search_societe."%'";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$search_montant_ht."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY f.facnumber,f.increment,f.total,f.total_ttc,f.datef, f.date_lim_reglement,f.paye, f.rowid, f.fk_statut, f.type,s.nom, s.rowid";
+$sql.= " GROUP BY s.nom, s.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.rowid, f.fk_statut, f.type ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
@@ -332,7 +332,7 @@ if ($resql)
 			print "<tr ".$bc[$var].">";
 			$classname = "impayee";
 
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 
 			$facturestatic->id=$objp->facid;
 			$facturestatic->ref=$objp->facnumber;
@@ -341,17 +341,17 @@ if ($resql)
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
 			// Ref
-			print '<td class="nobordernopadding" nowrap="nowrap">';
+			print '<td class="nobordernopadding nowrap">';
 			print $facturestatic->getNomUrl(1);
 			print '</td>';
 
 			// Warning picto
-			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+			print '<td width="20" class="nobordernopadding nowrap">';
 			if ($date_limit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 			print '</td>';
 
 			// PDF Picto
-			print '<td width="16" align="right" class="nobordernopadding">';
+			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
             $filename=dol_sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
 			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
@@ -380,12 +380,12 @@ if ($resql)
 			if (! empty($objp->am) && ! empty($cn)) print '+';
 			if (! empty($cn)) print price($cn);
 			print '</td>';
-			
+
 			// Remain to receive
 			//print '<td align="right">'.((! empty($objp->am) || ! empty($cn))?price($objp->total_ttc-$objp->am-$cn):'&nbsp;').'</td>';
 
 			// Status of invoice
-			print '<td align="right" nowrap="nowrap">';
+			print '<td align="right" class="nowrap">';
 			print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 			print '</td>';
 

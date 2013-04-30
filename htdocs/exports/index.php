@@ -135,7 +135,7 @@ foreach($liste as $key => $val)
 	$text=$model->getDriverDescForKey($key);
 	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td nowrap="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
 }
 

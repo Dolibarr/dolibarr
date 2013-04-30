@@ -1236,6 +1236,7 @@ BarcodeDescUPC=Barkod türü UPC
 BarcodeDescISBN=Barkod türü ISBN
 BarcodeDescC39=Barkod türü C39
 BarcodeDescC128=Barkod türü C128
+GenbarcodeLocation=Bar kod oluşturma komut satırı aracı (phpbarcode motoru tarafından bazı barkod tipleri için kullanılır)
 ##### Prelevements #####
 WithdrawalsSetup=Çekme modülü kurulumu
 ##### ExternalRSS #####

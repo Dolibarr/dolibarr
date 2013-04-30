@@ -886,7 +886,9 @@ class FormOther
         	foreach($boxactivated as $box)
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
-        		$arrayboxtoactivatelabel[$box->id]=$langs->transnoentitiesnoconv($box->boxlabel);			// We keep only boxes not shown for user, to show into combo list
+        		$label=$langs->transnoentitiesnoconv($box->boxlabel);
+        		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
 
         	$form=new Form($db);
@@ -897,7 +899,7 @@ class FormOther
         if (! empty($conf->use_javascript_ajax))
         {
 	        print '<script type="text/javascript" language="javascript">
-	        
+
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
 	        	var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
@@ -920,7 +922,7 @@ class FormOther
 	        		});
 	        	}
 	        }
-	        
+
 	        jQuery(document).ready(function() {
 	        	jQuery("#boxcombo").change(function() {
 	        	var boxid=jQuery("#boxcombo").val();
@@ -937,7 +939,7 @@ class FormOther
 	        	});';
 	        	if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
 	        	print  '
-	    	
+
 	        	jQuery("#left, #right").sortable({
 		        	/* placeholder: \'ui-state-highlight\', */
 	    	    	handle: \'.boxhandle\',
@@ -955,12 +957,12 @@ class FormOther
 	        		var boxid=self.id.substring(8);
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
 	        		jQuery(\'#boxto_\'+boxid).remove();
-	        		// TODO Add id, label into combo list
+	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
 	        		updateBoxOrder(1);
 	        	});
-	        
+
         	});'."\n";
-	        
+
 	        print '</script>'."\n";
         }
 

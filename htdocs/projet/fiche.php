@@ -44,12 +44,6 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-
-// Security check
-$socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
-
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('projectcard'));
 
@@ -61,8 +55,13 @@ if ($object->id > 0)
 	$object->fetch_thirdparty();
 }
 
+// Security check
+$socid=0;
+if ($user->societe_id > 0) $socid=$user->societe_id;
+$result = restrictedArea($user, 'projet', $object->id);
+
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('projet');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 $date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
 $date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
@@ -137,7 +136,7 @@ if ($action == 'add' && $user->rights->projet->creer)
         $object->datec=dol_now();
         $object->date_start=$date_start;
         $object->date_end=$date_end;
-        
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
@@ -209,7 +208,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
         $object->public       = GETPOST('public','alpha');
         $object->date_start   = empty($_POST["project"])?'':$date_start;
         $object->date_end     = empty($_POST["projectend"])?'':$date_end;
-        
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
@@ -560,7 +559,7 @@ else
         {
         	print $object->showOptionals($extrafields,'edit');
         }
-        
+
         print '</table>';
 
         print '<div align="center"><br>';
@@ -741,10 +740,13 @@ else
 
         print '</td><td valign="top" width="50%">';
 
-        // List of actions on element
-        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-        $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'project',$socid);
+        if (!empty($object->id))
+        {
+	        // List of actions on element
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	        $formactions=new FormActions($db);
+	        $somethingshown=$formactions->showactions($object,'project',$socid);
+        }
 
         print '</td></tr></table>';
     }

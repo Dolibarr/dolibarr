@@ -103,7 +103,7 @@ if ($object->fetch($id))
 	if ($object->fournisseur)
 	{
         print '<tr>';
-        print '<td nowrap="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
+        print '<td class="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td>';
@@ -124,7 +124,7 @@ if ($object->fetch($id))
 	print '</td></tr>';
 
 	// Zip / Town
-	print '<tr><td nowrap="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td>';
+	print '<tr><td class="nowrap">'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$object->town.'</td>';
 	print '</tr>';
 
 	// Country
@@ -134,21 +134,21 @@ if ($object->fetch($id))
 	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
 
+    // EMail
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
+
+	// Web
+	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url).'</td></tr>';
+
 	// Phone
 	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
 
 	// Fax
 	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
-    // EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
-
-	// Web
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\">".dol_print_url($object->url)."</td></tr>";
-
 	// Assujetti a TVA ou pas
 	print '<tr>';
-	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -159,10 +159,10 @@ if ($object->fetch($id))
 	{
 		if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
 		{
-			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans('LocalTax1IsUsedES').'</td><td colspan="3">';
 			print yn($object->localtax1_assuj);
 			print '</td></tr>';
-			print '<tr><td nowrap="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
+			print '<tr><td class="nowrap">'.$langs->trans('LocalTax2IsUsedES').'</td><td colspan="3">';
 			print yn($object->localtax2_assuj);
 			print '</td></tr>';
 		}
@@ -178,14 +178,14 @@ if ($object->fetch($id))
 			print yn($object->localtax2_assuj);
 			print '</td></tr>';
 		}
-		
+
 		if ($mysoc->localtax2_assuj!="1")
 		{
 			print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
 			print yn($object->localtax2_assuj);
 			print '</td><tr>';
 		}
-		
+
 	}
 
     // TVA Intra
@@ -217,11 +217,11 @@ if ($object->fetch($id))
 
 	print '</table>';
 
-	
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	//print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
 
-	
+
 	$var=true;
 
 	$MAXLIST=5;
@@ -299,7 +299,7 @@ if ($object->fetch($id))
 					print "-";
 				}
 				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.$orderstatic->LibStatut($obj->fk_statut,5).'</td>';
+				print '<td align="right" class="nowrap">'.$orderstatic->LibStatut($obj->fk_statut,5).'</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -355,9 +355,9 @@ if ($object->fetch($id))
 				print '<td>';
 				print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
 				print img_object($langs->trans('ShowBill'),'bill').' '.$obj->ref_supplier.'</a> '.dol_trunc($obj->libelle,14).'</td>';
-				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($obj->df),'day').'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($obj->amount).'</td>';
-				print '<td align="right" nowrap="nowrap">';
+				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->df),'day').'</td>';
+				print '<td align="right" class="nowrap">'.price($obj->amount).'</td>';
+				print '<td align="right" class="nowrap">';
 				print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$obj->am);
 				print '</td>';
 				print '</tr>';
@@ -376,7 +376,7 @@ if ($object->fetch($id))
 	print '<div style="clear:both"></div>';
 	//print '</td></tr>';
 	//print '</table>' . "\n";
-	
+
 	dol_fiche_end();
 
 

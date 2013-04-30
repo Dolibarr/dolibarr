@@ -456,11 +456,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	$ok=0;
         	$msg.= $langs->transnoentities('ErrorCodeCantContainZero').'<br>';
         }
-        if (!is_numeric($_POST['code']))
+        // FIXME regresion if code with not in numeric base
+        /*if (!is_numeric($_POST['code']))
     	{
 	    	$ok = 0;
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
-	    }
+	    }*/
     }
     if (isset($_POST["country"]) && $_POST["country"]=='0') {
         $ok=0;
@@ -1110,7 +1111,7 @@ if ($id)
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;';
 
                     // Active
-                    print '<td align="center" nowrap="nowrap">';
+                    print '<td align="center" class="nowrap">';
                     if ($iserasable) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else
                  	{

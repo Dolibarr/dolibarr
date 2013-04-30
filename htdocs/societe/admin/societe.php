@@ -314,7 +314,7 @@ foreach ($dirsociete as $dirroot)
     			print '<tr '.$bc[$var].'>'."\n";
     			print '<td width="140">'.$modCodeTiers->nom.'</td>'."\n";
     			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
-    			print '<td nowrap="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
+    			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
     			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
     			{
@@ -391,7 +391,7 @@ foreach ($dirsociete as $dirroot)
     			print '<td>'.$modCodeCompta->nom."</td><td>\n";
     			print $modCodeCompta->info($langs);
     			print '</td>';
-    			print '<td nowrap="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
+    			print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 
     			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
     			{
@@ -538,7 +538,7 @@ foreach ($dirsociete as $dirroot)
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
 
 
-					print '<td align="center" nowrap="nowrap">';
+					print '<td align="center" class="nowrap">';
 					if ($module->type == 'pdf')
 					{
 						$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
@@ -675,7 +675,7 @@ print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
 if (! $conf->use_javascript_ajax)
 {
-	print '<td nowrap="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap" align="right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
@@ -704,7 +704,7 @@ print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectContact").'</td>';
 if (! $conf->use_javascript_ajax)
 {
-	print '<td nowrap="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap" align="right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }

@@ -162,6 +162,11 @@ if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT
 // Include the conf.php and functions.lib.php
 require_once 'filefunc.inc.php';
 
+/*var_dump("Define dolgetprefix ".$_SERVER["SERVER_NAME"]." - ".$_SERVER["DOCUMENT_ROOT"]." - ".DOL_DOCUMENT_ROOT." - ".DOL_URL_ROOT);
+var_dump("Cookie ".join($_COOKIE,','));
+var_dump("Cookie ".$_SERVER["HTTP_COOKIE"]);
+var_dump("Cookie ".$_SERVER["HTTP_USER_AGENT"]);*/
+
 // Init session. Name of session is specific to Dolibarr instance.
 $prefix=dol_getprefix();
 $sessionname='DOLSESSID_'.$prefix;
@@ -297,7 +302,11 @@ if (! empty($_SESSION["disablemodules"]))
     $disabled_modules=explode(',',$_SESSION["disablemodules"]);
     foreach($disabled_modules as $module)
     {
-        if ($module) $conf->$module->enabled=false;
+        if ($module)
+        {
+        	if (empty($conf->$module)) $conf->$module=new stdClass();
+        	$conf->$module->enabled=false;
+        }
     }
 }
 
@@ -377,7 +386,7 @@ if (! defined('NOLOGIN'))
 
         $usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
         $passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : GETPOST('password'));
-        $entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : 1);
+        $entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
         // Validation of login/pass/entity
         // If ok, the variable login will be returned
@@ -423,6 +432,7 @@ if (! defined('NOLOGIN'))
                 $dol_optimize_smallscreen=$_POST['dol_optimize_smallscreen'];
                 $dol_no_mouse_hover=$_POST['dol_no_mouse_hover'];
                 $dol_use_jmobile=$_POST['dol_use_jmobile'];
+                //dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
             }
 
             if (! $login)
@@ -573,7 +583,7 @@ if (! defined('NOLOGIN'))
         if (! empty($dol_no_mouse_hover))       $_SESSION['dol_no_mouse_hover']=$dol_no_mouse_hover;
         if (! empty($dol_use_jmobile))          $_SESSION['dol_use_jmobile']=$dol_use_jmobile;
 
-        dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
+        dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
 
         $db->begin();
 
@@ -919,6 +929,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
         $favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
+
         // Displays title
         $appli='Dolibarr';
         if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
@@ -983,11 +997,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         }
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))           $themeparam.='&amp;dol_hide_topmenu=1';
-        if (GETPOST('dol_hide_leftmenu'))          $themeparam.='&amp;dol_hide_leftmenu=1';
-        if (GETPOST('dol_optimize_smallscreen'))   $themeparam.='&amp;dol_optimize_smallscreen=1';
-        if (GETPOST('dol_no_mouse_hover'))         $themeparam.='&amp;dol_no_mouse_hover=1';
-        if (GETPOST('dol_use_jmobile'))            $themeparam.='&amp;dol_use_jmobile=1';
+        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu'); }
+        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu'); }
+        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen'); }
+        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover'); }
+        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile'); }
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
@@ -1019,10 +1033,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '">'."\n";
             }
         }
-
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
         $ext='.js';
 
@@ -1127,7 +1137,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
+            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
             }
@@ -1317,7 +1327,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
-    if (empty($_SESSION['dol_hide_topmenu']) && ! GETPOST('dol_hide_topmenu'))
+    if (empty($conf->dol_hide_topmenu))
     {
 	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
 
@@ -1418,9 +1428,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     print "<!-- End top horizontal menu -->\n";
 
-    if (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
-
-
+	//XXX if (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
+    if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
 }
 
 
@@ -1448,10 +1457,11 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('searchform','leftblock'));
 
-    if (empty($_SESSION['dol_hide_leftmenu']) && ! GETPOST('dol_hide_leftmenu'))
+    if (empty($conf->dol_hide_leftmenu))
     {
 	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-	    else print '<td class="vmenu" valign="top">';
+		//XXX else print '<td class="vmenu" valign="top">';
+		else print '<div id="id-left">';
 
 	    print "\n";
 
@@ -1490,7 +1500,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 
 	    // Execute hook printSearchForm
 	    $parameters=array();
-	    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+			$searchform.=$hookmanager->resPrint;
+		}
+		else $searchform=$hookmanager->resPrint;
 
 	    // Define $bookmarks
 	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
@@ -1549,7 +1564,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
 	    if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
 	    print $appli;
-	    if ($doliurlx) print '</a>';
+	    if ($doliurl) print '</a>';
 	    print '</div>';
 
 	    // Link to Dolibarr wiki pages
@@ -1613,7 +1628,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    print $leftblock;
 
 	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
-	    else print '</td>';
+		//XXX	    else print '</td>';
+	    else print '</div>';	// End div id="id-left"
     }
 
     print "\n";
@@ -1637,10 +1653,10 @@ function main_area($title='')
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
     {
         print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-        print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
+        //print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
     }
-
-    print '<td valign="top">'."\n";
+	//XXX print '<td valign="top">'."\n";
+	if (empty($conf->dol_hide_leftmenu)) print '<div id="id-right">';
 
     print "\n";
 
@@ -1765,13 +1781,16 @@ if (! function_exists("llxFooter"))
         print '</div> <!-- end div class="fiche" -->'."\n";
 
 
-        print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-        if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
+		//XXX print "\n".'</td></tr></table> <!-- end right area -->'."\n";
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
+		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
 
         print "\n";
         if ($foot) print '<!-- '.$foot.' -->'."\n";
 
         printCommonFooter();
+
+        if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
 
         print "</body>\n";
         print "</html>\n";

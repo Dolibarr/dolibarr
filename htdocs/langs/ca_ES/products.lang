@@ -103,7 +103,6 @@ PriceRemoved=Preu eliminat
 BarCode=Codi de barra
 BarcodeType=Tipus de codi de barres
 BarcodeValue=Valor del codi de barres
-GenbarcodeLocation=Eina generació codi de barra en línia de comanda (utilitzat pel motor phpbar per a determinats tipus de codis barra)
 SetDefaultBarcodeType=Definiu el tipus de codi de barres
 NoteNotVisibleOnBill=Nota (no visible en les factures, pressupostos, etc.)
 CreateCopy=Crear còpia

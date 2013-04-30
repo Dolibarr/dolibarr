@@ -33,14 +33,14 @@
 <!-- Login -->
 <tr>
 <td valign="bottom"> &nbsp; <strong><label for="username">Login</label></strong>fds fs df sdf gdsfgsdf r &nbsp; </td>
-<td valign="bottom" nowrap="nowrap">
+<td valign="bottom" class="nowrap">
 <input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="" tabindex="1" />
 </td>
 </tr>
 
 <!-- Password -->
-<tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><label for="password">Mot de passe</label></strong> &nbsp; </td>
-<td valign="top" nowrap="nowrap">
+<tr><td valign="top" class="nowrap"> &nbsp; <strong><label for="password">Mot de passe</label></strong> &nbsp; </td>
+<td valign="top" class="nowrap">
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="" tabindex="2" />
 </td></tr>
 

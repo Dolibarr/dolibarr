@@ -77,7 +77,7 @@ ErrorContactEMail=A technical error occured. Please, contact administrator to fo
 ErrorWrongValueForField=Wrong value for field number <b>%s</b> (value '<b>%s</b>' does not match regex rule <b>%s</b>)
 ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
 ErrorFieldRefNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a <b>%s</b> existing ref)
-ErrorsOnXLines=Errors on <b>%s</b> source lines
+ErrorsOnXLines=Errors on <b>%s</b> source record(s)
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
 ErrorSpecialCharNotAllowedForField=Special characters are not allowed for field "%s"
 ErrorDatabaseParameterWrong=Database setup parameter '<b>%s</b>' has a value not compatible to use Dolibarr (must have value '<b>%s</b>').
@@ -121,6 +121,7 @@ ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP
 ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
 ErrorNewValueCantMatchOldValue=New value can't be equal to old one
 ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
@@ -130,7 +131,7 @@ WarningBuildScriptNotRunned=Script <b>%s</b> was not yet ran to build graphics, 
 WarningBookmarkAlreadyExists=A bookmark with this title or this target (URL) already exists.
 WarningPassIsEmpty=Warning, database password is empty. This is a security hole. You should add a password to your database and change your conf.php file to reflect this.
 WarningConfFileMustBeReadOnly=Warning, your config file (<b>htdocs/conf/conf.php</b>) can be overwritten by the web server. This is a serious security hole. Modify permissions on file to be in read only mode for operating system user used by Web server. If you use Windows and FAT format for your disk, you must know that this file system does not allow to add permissions on file, so can't be completely safe.
-WarningsOnXLines=Warnings on <b>%s</b> source lines
+WarningsOnXLines=Warnings on <b>%s</b> source record(s)
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be choosed by default until you check your module setup.
 WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole. 
 WarningUntilDirRemoved=All security warnings (visible by admin users only) will remain active as long as the vulnerability is present (or that constant MAIN_REMOVE_INSTALL_WARNING is added in Setup->Other setup).

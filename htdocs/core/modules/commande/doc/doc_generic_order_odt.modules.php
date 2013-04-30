@@ -313,12 +313,22 @@ class doc_generic_order_odt extends ModelePDFCommandes
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
-				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
+				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
 				$newfiletmp=$objectref.'_'.$newfiletmp;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
-				$file=$dir.'/'.$newfiletmp.'.odt';
+				// Get extension (ods or odt)
+				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
+				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
+				{
+					$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.'.$newfileformat;
+				}
+				else
+				{
+					$filename=$newfiletmp.'.'.$newfileformat;
+				}
+				$file=$dir.'/'.$filename;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -520,10 +530,20 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 				// Write new file
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
-					$odfHandler->exportAsAttachedPDF($file);
+					try {
+						$odfHandler->exportAsAttachedPDF($file);
+					}catch (Exception $e){
+						$this->error=$e->getMessage();
+						return -1;
+					}
 				}
 				else {
+					try {
 					$odfHandler->saveToDisk($file);
+					}catch (Exception $e){
+						$this->error=$e->getMessage();
+						return -1;
+					}
 				}	
 
 				if (! empty($conf->global->MAIN_UMASK))

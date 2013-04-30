@@ -277,9 +277,9 @@ if ($id)
                 if ($caneditperms)
                 {
                     print '<tr '. $bc[$var].'>';
-                    print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
+                    print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                     print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                    print '<td align="center" nowrap="nowrap">';
+                    print '<td align="center" class="nowrap">';
                     print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                     print '/';
                     print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
@@ -292,7 +292,7 @@ if ($id)
             print '<tr '. $bc[$var].'>';
 
             // Module
-            print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
+            print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
             if (in_array($obj->id, $permsgroup))
             {

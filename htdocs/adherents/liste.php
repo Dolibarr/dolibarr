@@ -304,7 +304,7 @@ if ($resql)
 		// Type
 		$membertypestatic->id=$objp->type_id;
 		$membertypestatic->libelle=$objp->type;
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print $membertypestatic->getNomUrl(1,32);
 		print '</td>';
 
@@ -315,21 +315,21 @@ if ($resql)
 		print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
 
 		// Statut
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
 		print "</td>";
 
 		// End of subscription date
 		if ($datefin)
 		{
-			print '<td align="center" nowrap="nowrap">';
+			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
 			if ($datefin < ($now -  $conf->adherent->cotisation->warning_delay) && $objp->statut > 0) print " ".img_warning($langs->trans("SubscriptionLate"));
 			print '</td>';
 		}
 		else
 		{
-			print '<td align="left" nowrap="nowrap">';
+			print '<td align="left" class="nowrap">';
 			if ($objp->cotisation == 'yes')
 			{
 				print $langs->trans("SubscriptionNotReceived");

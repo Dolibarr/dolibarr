@@ -879,13 +879,9 @@ class Facture extends CommonInvoice
 				if(!class_exists('Extrafields'))
 					require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label('facture',true);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 				if (count($extralabels)>0) {
-					$this->array_options = array();
-				}
-				foreach($extrafields->attribute_label as $key=>$label)
-				{
-					$this->array_options['options_'.$key]=$label;
+					$this->fetch_optionals($this->id,$extralabels);
 				}
 
 				/*
@@ -1302,7 +1298,7 @@ class Facture extends CommonInvoice
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
-			
+
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -2661,6 +2657,80 @@ class Facture extends CommonInvoice
 		}
 
 		return 0;
+	}
+
+
+	/**
+	 *  Return list of invoices (eventually filtered on a user) into an array
+	 *
+	 *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
+	 *  @param      int		$draft      	0=not draft, 1=draft
+	 *  @param      User	$excluser      	Objet user to exclude
+	 *  @param    	int		$socid			Id third pary
+	 *  @param    	int		$limit			For pagination
+	 *  @param    	int		$offset			For pagination
+	 *  @param    	string	$sortfield		Sort criteria
+	 *  @param    	string	$sortorder		Sort order
+	 *  @return     int             		-1 if KO, array with result if OK
+	 */
+	function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='f.datef,f.rowid', $sortorder='DESC')
+	{
+		global $conf,$user;
+
+		$ga = array();
+
+		$sql = "SELECT s.rowid, s.nom as name, s.client,";
+		$sql.= " f.rowid as fid, f.facnumber as ref, f.datef as df";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
+		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE f.entity = ".$conf->entity;
+		$sql.= " AND f.fk_soc = s.rowid";
+		if (! $user->rights->societe->client->voir && ! $socid) //restriction
+		{
+			$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		}
+		if ($socid) $sql.= " AND s.rowid = ".$socid;
+		if ($draft) $sql.= " AND f.fk_statut = 0";
+		if (is_object($excluser)) $sql.= " AND f.fk_user_author <> ".$excluser->id;
+		$sql.= $this->db->order($sortfield,$sortorder);
+		$sql.= $this->db->plimit($limit,$offset);
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$numc = $this->db->num_rows($result);
+			if ($numc)
+			{
+				$i = 0;
+				while ($i < $numc)
+				{
+					$obj = $this->db->fetch_object($result);
+
+					if ($shortlist == 1)
+					{
+						$ga[$obj->fid] = $obj->ref;
+					}
+					else if ($shortlist == 2)
+					{
+						$ga[$obj->fid] = $obj->ref.' ('.$obj->name.')';
+					}
+					else
+					{
+						$ga[$i]['id']	= $obj->fid;
+						$ga[$i]['ref'] 	= $obj->ref;
+						$ga[$i]['name'] = $obj->name;
+					}
+					$i++;
+				}
+			}
+			return $ga;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 

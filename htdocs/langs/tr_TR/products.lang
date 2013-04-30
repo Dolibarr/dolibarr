@@ -107,7 +107,6 @@ BarCode=Barkod
 BarcodeType=Barkod türü
 SetDefaultBarcodeType=Barkod türü oluştur
 BarcodeValue=Barkod değeri
-GenbarcodeLocation=Bar kod oluşturma komut satırı aracı (phpbarcode motoru tarafından bazı barkod tipleri için kullanılır)
 NoteNotVisibleOnBill=Not (faturalarda, tekliflerde ... görünmez) 
 CreateCopy=Kopya oluştur
 ServiceLimitedDuration=Eğer ürün sınırlı süreli bir hizmetse:

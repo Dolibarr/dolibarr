@@ -170,7 +170,7 @@ if ($resql)
         print '<td align="right">'.$obj->position."</td>";
 
         // Actions
-        print '<td align="right" nowrap="nowrap">';
+        print '<td align="right" class="nowrap">';
         if ($user->rights->bookmark->creer)
         {
         	print "<a href=\"".DOL_URL_ROOT."/bookmarks/fiche.php?action=edit&id=".$obj->bid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";

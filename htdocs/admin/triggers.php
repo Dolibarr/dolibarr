@@ -52,7 +52,27 @@ $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList(0,'priority');
 
-include $template_dir.'triggers.tpl.php';
+print '<table class="noborder">
+<tr class="liste_titre">
+<td colspan="2">'.$langs->trans("File").'</td>
+<td align="center">'.$langs->trans("Active").'</td>
+<td align="center">&nbsp;</td>
+</tr>
+';
+
+$var=True;
+foreach ($triggers as $trigger)
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
+	print '<td valign="top">'.$trigger['file'].'</td>';
+	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
+	print '<td valign="top">'.$form->textwithpicto('', $trigger['info']).'</td>';
+	print '</tr>';
+}
+
+print '</table>';
 
 llxFooter();
 

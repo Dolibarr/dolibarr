@@ -60,8 +60,8 @@ $(document).ready(function () {
 
 <!-- Login -->
 <tr>
-<td valign="bottom" class="loginfield" nowrap="nowrap"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
-<td valign="bottom" nowrap="nowrap">
+<td valign="bottom" class="loginfield nowrap"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
+<td valign="bottom" class="nowrap">
 <input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
 </td>
 </tr>
@@ -80,8 +80,8 @@ if (! empty($hookmanager->resArray['options'])) {
 
 <?php if ($captcha) { ?>
 	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield" nowrap="nowrap"><strong><label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label></strong></td>
-	<td valign="top" nowrap="nowrap" align="left" class="none">
+	<tr><td valign="middle" class="loginfield nowrap"><strong><label for="securitycode"><?php echo $langs->trans('SecurityCode'); ?></label></strong></td>
+	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
 	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>

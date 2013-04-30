@@ -32,7 +32,7 @@ This files describe steps made by Dolibarr packaging team to make a
 complete release of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in /ChangeLog and /filefunc.inc.php
+- Update version/info in ChangeLog
 - Update version number with x.x.x in htdocs/filefunc.inc.php
 - Update version number with x.x.x in build/makepack-dolibarr.pl
 - Update version number with x.x.x in build/debian/changelog

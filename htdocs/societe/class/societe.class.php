@@ -852,13 +852,9 @@ class Societe extends CommonObject
                 // fetch optionals attributes and labels
                 require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
                 $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label('company',true);
+                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                 if (count($extralabels)>0) {
-                	$this->array_options = array();
-                }
-                foreach($extrafields->attribute_label as $key=>$label)
-                {
-                	$this->array_options['options_'.$key]=$label;
+                	$this->fetch_optionals($this->id,$extralabels);
                 }
             }
             else
@@ -1463,7 +1459,7 @@ class Societe extends CommonObject
         {
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
-       
+
         // By default
         if (empty($lien))
         {
@@ -2228,7 +2224,7 @@ class Societe extends CommonObject
         $url='';
 
         if ($idprof == 1 && $soc->country_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->idprof1;
-        if ($idprof == 1 && $soc->country_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+        if ($idprof == 1 && ($soc->country_code == 'GB' || $soc->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
         if ($idprof == 1 && $soc->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
         if ($idprof == 1 && $soc->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$soc->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 
@@ -2770,7 +2766,7 @@ class Societe extends CommonObject
 	 */
 	function getLibCustProspStatut()
 	{
-		return $this->LibCustProspStatut($this->client,$mode);
+		return $this->LibCustProspStatut($this->client);
 	}
 
 	/**

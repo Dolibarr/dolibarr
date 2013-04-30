@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
+$langs->load('banks');
 $langs->load('main');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 
@@ -655,14 +656,10 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 	$error=0;
 
-	// Get extra fields
-	foreach($_POST as $key => $value)
-	{
-		if (preg_match("/^options_/",$key))
-		{
-			$object->array_options[$key]=GETPOST($key);
-		}
-	}
+	// Fill array 'array_options' with data from add form
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+
 
 	// Replacement invoice
 	if ($_POST['type'] == 1)
@@ -878,17 +875,17 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					if ($_POST['type'] == 3) {
 						$typeamount=GETPOST('typedeposit','alpha');
 						$valuedeposit=GETPOST('valuedeposit','int');
-						
+
 						if ($typeamount=='amount') {
 							$amountdeposit=$valuedeposit;
 						}else {
 							$amountdeposit=0;
-							
+
 							dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
-							
+
 							$classname = ucfirst($subelement);
 							$srcobject = new $classname($db);
-							
+
 							dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add deposit line");
 							$result=$srcobject->fetch($object->origin_id);
 							if ($result > 0)
@@ -900,7 +897,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								{
 									$totalamount=+$lines[$i]->subprice;
 								}
-								
+
 								if ($totalamount!=0) {
 									$amountdeposit=($totalamount*$valuedeposit)/100;
 								}
@@ -910,9 +907,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$mesgs[]=$srcobject->error;
 								$error++;
 							}
-							
+
 						}
-						
+
 						$result = $object->addline(
 							$id,
 							$langs->trans('Deposit'),
@@ -940,7 +937,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							0,
 							$langs->trans('Deposit')
 						);
-						
+
 
 					}else {
 
@@ -1859,7 +1856,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from add form
-	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	// Actions on extra fields (by external module or standard code)
@@ -1896,7 +1893,6 @@ $now=dol_now();
 llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
-
 /*********************************************************************
  *
 * Mode creation
@@ -1905,7 +1901,7 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 if ($action == 'create')
 {
 	$facturestatic=new Facture($db);
-	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+	$extralabels=$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
 	print_fiche_titre($langs->trans('NewBill'));
 
@@ -2117,7 +2113,7 @@ if ($action == 'create')
 		// Deposit
 		print '<tr height="18"><td width="16px" valign="middle">';
 		print '<input type="radio" name="type" value="3"'.(GETPOST('type')==3?' checked="checked"':'').'>';
-		print '</td><td valign="middle" nowrap="nowrap">';
+		print '</td><td valign="middle" class="nowrap">';
 		$desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
 		print '<table class="nobordernopadding"><tr><td>'.$desc.'</td>';
 		if (($origin=='propal') ) {
@@ -2293,8 +2289,9 @@ if ($action == 'create')
 		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
 		$newclassname=$classname;
-		if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
-		elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
+        elseif ($newclassname == 'Commande') $newclassname = 'Order';
+        elseif ($newclassname == 'Expedition') $newclassname = 'Sending';
 
 		print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
@@ -2340,21 +2337,21 @@ if ($action == 'create')
 					$form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-				print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
+				print '<td class="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
 				print '<td>&nbsp;</td>';
 				// Si le module service est actif, on propose des dates de debut et fin a la ligne
 				if (! empty($conf->service->enabled))
 				{
-					print '<td nowrap="nowrap">';
+					print '<td class="nowrap">';
 					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-					print '<td class="nobordernopadding" nowrap="nowrap">';
+					print '<td class="nobordernopadding nowrap">';
 					print $langs->trans('From').' ';
-					print '</td><td class="nobordernopadding" nowrap="nowrap">';
+					print '</td><td class="nobordernopadding nowrap">';
 					print $form->select_date('','date_start'.$i,$usehm,$usehm,1,"add");
 					print '</td></tr>';
-					print '<td class="nobordernopadding" nowrap="nowrap">';
+					print '<td class="nobordernopadding nowrap">';
 					print $langs->trans('to').' ';
-					print '</td><td class="nobordernopadding" nowrap="nowrap">';
+					print '</td><td class="nobordernopadding nowrap">';
 					print $form->select_date('','date_end'.$i,$usehm,$usehm,1,"add");
 					print '</td></tr></table>';
 					print '</td>';
@@ -2399,7 +2396,7 @@ else if ($id > 0 || ! empty($ref))
 	$result=$object->fetch($id,$ref);
 
 	// fetch optionals attributes and labels
-	$extralabels=$extrafields->fetch_name_optionals_label('facture');
+	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 	if ($result > 0)
 	{
@@ -2448,7 +2445,6 @@ else if ($id > 0 || ! empty($ref))
 		}
 
 		$objectidnext=$object->getIdReplacingInvoice();
-
 
 		$head = facture_prepare_head($object);
 
@@ -2691,6 +2687,8 @@ else if ($id > 0 || ! empty($ref))
 		print $formconfirm;
 
 
+
+
 		// Invoice content
 
 		print '<table class="border" width="100%">';
@@ -2878,13 +2876,13 @@ else if ($id > 0 || ! empty($ref))
 			if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
 			else print '. ';
 		}
-		/*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
-		 {
-		if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
+		//if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+		// {
+		//if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
 		//print ' &nbsp; - &nbsp; ';
-		print $addabsolutediscount;
+		//print $addabsolutediscount;
 		//print ' &nbsp; - &nbsp; '.$addcreditnote;      // We disbale link to credit note
-		}*/
+		//}
 		print '</td></tr>';
 
 		// Date invoice
@@ -2914,9 +2912,7 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 
 
-		/*
-		 * List of payments
-		*/
+		// List of payments
 
 		$sign=1;
 		if ($object->type == 2) $sign=-1;
@@ -3090,7 +3086,7 @@ else if ($id > 0 || ! empty($ref))
 				else print $langs->trans('ExcessReceived');
 				print ' :</td>';
 				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
-				print '<td nowrap="nowrap">&nbsp;</td></tr>';
+				print '<td class="nowrap">&nbsp;</td></tr>';
 			}
 			else	// Credit note
 			{
@@ -3108,7 +3104,7 @@ else if ($id > 0 || ! empty($ref))
 				else print $langs->trans('ExcessPaydBack');
 				print ' :</td>';
 				print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($sign * $resteapayeraffiche).'</b></td>';
-				print '<td nowrap="nowrap">&nbsp;</td></tr>';
+				print '<td class="nowrap">&nbsp;</td></tr>';
 
 				// Sold credit note
 				//print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
@@ -3358,9 +3354,7 @@ else if ($id > 0 || ! empty($ref))
 				include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 			}
 
-			/*
-			 * Lines
-			*/
+			// Lines
 			$result = $object->getLinesArray();
 
 			if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
@@ -3374,9 +3368,7 @@ else if ($id > 0 || ! empty($ref))
 			if (! empty($object->lines))
 				$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
-			/*
-			 * Form to add new line
-			*/
+			// Form to add new line
 			if ($object->statut == 0 && $user->rights->facture->creer && $action <> 'valid' && $action <> 'editline')
 			{
 				$var=true;
@@ -3408,9 +3400,7 @@ else if ($id > 0 || ! empty($ref))
 			print "</div>\n";
 
 
-			/*
-			 * Boutons actions
-			*/
+			// Boutons actions
 
 			if ($action != 'prerelance' && $action != 'presend')
 			{
@@ -3623,12 +3613,9 @@ else if ($id > 0 || ! empty($ref))
 			if ($action != 'prerelance' && $action != 'presend')
 			{
 				print '<div class="fichecenter"><div class="fichehalfleft">';
-				//print '<table width="100%"><tr><td width="50%" valign="top">';
-				//print '<a name="builddoc"></a>'; // ancre
+				print '<a name="builddoc"></a>'; // ancre
 
-				/*
-				 * Documents generes
-				*/
+				// Documents generes
 				$filename=dol_sanitizeFileName($object->ref);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$object->id;
@@ -3638,9 +3625,7 @@ else if ($id > 0 || ! empty($ref))
 				print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 				$somethingshown=$formfile->numoffiles;
 
-				/*
-				 * Linked object block
-				*/
+				// Linked object block
 				$somethingshown=$object->showLinkedObjectBlock();
 
 				// Link for paypal payment
@@ -3651,14 +3636,12 @@ else if ($id > 0 || ! empty($ref))
 				}
 
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-				//print '</td><td valign="top" width="50%">';
 
 				// List of actions on element
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 				$formactions=new FormActions($db);
 				$somethingshown=$formactions->showactions($object,'invoice',$socid);
 
-				//print '</td></tr></table>';
 				print '</div></div></div>';
 			}
 			else

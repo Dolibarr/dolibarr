@@ -75,6 +75,8 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
     exit;
 }
 
+$extrafields = new ExtraFields($db);
+
 
 /**
  * Show header for new member
@@ -245,11 +247,10 @@ if ($action == 'add')
         $adh->morphy      = $_POST["morphy"];
         $adh->birth       = $birthday;
 
-        foreach($_POST as $key => $value){
-            if (preg_match("/^options_/",$key)){
-                $adh->array_options[$key]=$_POST[$key];
-            }
-        }
+        
+        // Fill array 'array_options' with data from add form
+        $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
+        $ret = $extrafields->setOptionalsFromPost($extralabels,$adh);
 
         $result=$adh->create($user->id);
         if ($result > 0)
@@ -360,8 +361,7 @@ if ($action == 'added')
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
-$extrafields = new ExtraFields($db);
-$extrafields->fetch_name_optionals_label('member');    // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label('adherent');    // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewSubscription"));
@@ -576,7 +576,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;
     }
     // $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal' or 'paybox'
-    print '<tr><td>'.$langs->trans("Subscription").'</td><td nowrap="nowrap">';
+    print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
     if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT))
     {
         print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';

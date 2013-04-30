@@ -258,7 +258,7 @@ if ($object->type == 0)
 			{
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
-				print '<td nowrap="nowrap" valign="top">';
+				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1,'category');
 				print "</td>\n";
 				print '<td valign="top">'.$prod->libelle."</td>\n";
@@ -309,7 +309,7 @@ if ($object->type == 1)
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
 
-				print '<td nowrap="nowrap" valign="top">';
+				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1,'category_supplier');
 				print "</td>\n";
 				// Link to delete from category
@@ -361,7 +361,7 @@ if($object->type == 2)
 				$i++;
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
-				print '<td nowrap="nowrap" valign="top">';
+				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1,'category');
 				print "</td>\n";
 				// Link to delete from category
@@ -413,7 +413,7 @@ if ($object->type == 3)
 			{
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
-				print '<td nowrap="nowrap" valign="top">';
+				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
 				print $member->getNomUrl(1,0,'category');
 				print "</td>\n";

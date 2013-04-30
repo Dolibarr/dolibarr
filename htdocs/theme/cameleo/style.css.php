@@ -130,7 +130,6 @@ input.button[type=submit] {
 	/*border: 2px solid #063953;*/
 	color: #FFF;
 	padding: 0px 10px 0px 10px;
-	margin: 0px 10px 0px 10px;
 	text-decoration: none;
 	white-space: nowrap;
     /*display: block;
@@ -200,6 +199,9 @@ div.inline-block
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 /* ============================================================================== */
@@ -231,9 +233,22 @@ td.showDragHandle {
 /* ============================================================================== */
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
+
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
+}
+
 div.leftContent {
 	margin-left: 0px !important;
-        width: 200px !important;
         background-color: #FFF;
 }
 
@@ -263,7 +278,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 
@@ -649,7 +664,7 @@ img.login, img.printer, img.entity {
 /* Menu gauche                                                                    */
 /* ============================================================================== */
 
-td.vmenu {
+div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -752,7 +767,6 @@ div.blockvmenusearch
 {
     margin: 3px 0px 15px 0px;
     padding: 25px 0px 2px 2px;
-    width: 200px;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -1416,8 +1430,11 @@ table.liste td {
     padding-right: 2px;
 }
 
-div.liste_titre, tr.liste_titre {
+tr.liste_titre, tr.liste_titre_sel
+{
     height: 20px;
+}
+div.liste_titre, tr.liste_titre {
     color: #842F00;
     font-weight: bold;
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
@@ -2240,12 +2257,62 @@ div.ecmjqft {
 	bottom: 4px !important;
 <?php } ?>
 	text-align: center;
-	min-width: 500px;
+	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
 }
 
+
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
+}
+
+div.ui-controlgroup
+{
+	height: auto;
+	background-image: none;
+}
+
+div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+{
+	height: auto;
+}
+
+a.tab span.ui-btn-inner
+{
+	border: none;
+	padding: 0;
+}
+div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
+	background-image: none;
+	color: #D45416;
+	height: auto;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
+
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
+}
 
 <?php
 if (is_object($db)) $db->close();

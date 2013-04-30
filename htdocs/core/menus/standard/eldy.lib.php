@@ -40,8 +40,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
-	$mainmenu=$_SESSION["mainmenu"];
-	$leftmenu=$_SESSION["leftmenu"];
+	$mainmenu=(empty($_SESSION["mainmenu"])?'':$_SESSION["mainmenu"]);
+	$leftmenu=(empty($_SESSION["leftmenu"])?'':$_SESSION["leftmenu"]);
 
 	$id='mainmenu';
 	$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
@@ -658,7 +658,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
             {
                 $langs->load("orders");
                 $newmenu->add("/commande/index.php?leftmenu=orders", $langs->trans("CustomersOrders"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
-                $newmenu->add("/societe/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
+                $newmenu->add("/commande/fiche.php?action=create", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
                 $newmenu->add("/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);

@@ -173,8 +173,8 @@ for ($i=1; $i<=4; $i++) {
 <tr>
 	<td><?php echo $langs->trans('VATIsUsed'); ?></td>
 	<td><?php echo $this->control->tpl['yn_assujtva']; ?></td>
-	<td nowrap="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
-	<td nowrap="nowrap"><?php echo $this->control->tpl['tva_intra']; ?></td>
+	<td class="nowrap"><?php echo $langs->trans('VATIntra'); ?></td>
+	<td class="nowrap"><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
 
 <tr>

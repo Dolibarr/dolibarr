@@ -199,13 +199,13 @@ while ($i <= $MAXAGENDA)
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	// Nb
-	print '<td width="180" nowrap="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
+	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";
 	// Name
 	print '<td><input type="text" class="flat hideifnotset" name="agenda_ext_name'.$key.'" value="'. (GETPOST('agenda_ext_name'.$key)?GETPOST('agenda_ext_name'.$key):$conf->global->$name) . '" size="28"></td>';
 	// URL
 	print '<td><input type="url" class="flat hideifnotset" name="agenda_ext_src'.$key.'" value="'. (GETPOST('agenda_ext_src'.$key)?GETPOST('agenda_ext_src'.$key):$conf->global->$src) . '" size="60"></td>';
 	// Color (Possible colors are limited by Google)
-	print '<td nowrap="nowrap" align="right">';
+	print '<td class="nowrap" align="right">';
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
 	print $formother->selectColor((GETPOST("agenda_ext_color".$key)?GETPOST("agenda_ext_color".$key):$conf->global->$color), "agenda_ext_color".$key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';

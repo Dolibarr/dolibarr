@@ -195,7 +195,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				print "<tr $bc[$var]>";
 
 				// Sending id
-				print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
+				print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';
 
 				// Description
 				if ($objp->fk_product > 0)
@@ -267,10 +267,10 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				//print '<td align="center">'.$objp->qty_asked.'</td>';
 
 				// Date creation
-				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
+				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->date_creation),'day').'</td>';
 
 				// Date shipping creation
-				print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->date_delivery),'day').'</td>';
+				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->date_delivery),'day').'</td>';
 
 				// Qty shipped
 				print '<td align="center">'.$objp->qty_shipped.'</td>';

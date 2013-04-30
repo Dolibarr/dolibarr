@@ -137,6 +137,7 @@ class MenuManager
         {
         	$res=print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
 
+        	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
         		print '<ul data-role="listview" data-inset="true">';
@@ -160,11 +161,16 @@ class MenuManager
         			//var_dump($canonrelurl);
         			//var_dump($canonnexturl);
         			print '<ul>'."\n";
-        			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools'))
-        				|| strpos($canonrelurl,'/product/index.php') || strpos($canonrelurl,'/compta/bank/index.php'))
+        			if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
+        				|| (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/index.php') !== false))
 					{
         				// We add sub entry
-        				print str_pad('',1).'<li data-role="list-divider" class="lilevel1"><a href="'.$relurl.'">'.$langs->trans(ucfirst($val['mainmenu'])."Dashboard").'</a></li>'."\n";
+        				print str_pad('',1).'<li data-role="list-divider" class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
+        				print '<a href="'.$relurl.'">';
+        				print str_pad('',12,'&nbsp;');
+        				print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+        				print '</a>';
+        				print '</li>'."\n";
         			}
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
        				{
@@ -174,9 +180,10 @@ class MenuManager
         				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
         				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
         				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
-        				print str_pad('',$val2['level']+1).'<li'.($val2['level']==0?' data-role="list-divider"':'').' class="lilevel'.($val2['level']+1).'">';
+        				if ($val2['level']==0) print str_pad('',$val2['level']+1).'<li'.($val2['level']==0?' data-role="list-divider"':'').' class="lilevel'.($val2['level']+1).' ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
+        				else print str_pad('',$val2['level']+1).'<li class="lilevel'.($val2['level']+1).'">';	 // ui-btn to highlight on clic
         				if ($relurl2) print '<a href="'.$relurl2.'">';
-        				print str_pad('',($val2['level']+1)*12,'&nbsp;');
+						print str_pad('',($val2['level']+1)*12,'&nbsp;');
         				print $val2['titre'];
         				if ($relurl2) print '</a>';
         				print '</li>'."\n";

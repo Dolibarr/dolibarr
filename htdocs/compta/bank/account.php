@@ -351,10 +351,10 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		print '<tr '.$bc[false].'>';
-		print '<td nowrap="nowrap" colspan="2">';
+		print '<td class="nowrap" colspan="2">';
 		$form->select_date($dateop,'op',0,0,0,'transaction');
 		print '</td>';
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == 2 ? 'LIQ' : '')),'operation','1,2',2,1);
 		print '</td><td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
@@ -505,9 +505,9 @@ if ($id > 0 || ! empty($ref))
 
 				print '<tr '.$bc[$var].'>';
 
-				print '<td nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+				print '<td class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
-				print '<td nowrap="nowrap">'.dol_print_date($db->jdate($objp->dv),"day");
+				print '<td class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day");
 				print "</td>\n";
 
 				// Payment type
@@ -636,11 +636,11 @@ if ($id > 0 || ! empty($ref))
 				// Amount
 				if ($objp->amount < 0)
 				{
-					print '<td align="right" nowrap="nowrap">'.price($objp->amount * -1).'</td><td>&nbsp;</td>'."\n";
+					print '<td align="right" class="nowrap">'.price($objp->amount * -1).'</td><td>&nbsp;</td>'."\n";
 				}
 				else
 				{
-					print '<td>&nbsp;</td><td align="right" nowrap="nowrap">&nbsp;'.price($objp->amount).'</td>'."\n";
+					print '<td>&nbsp;</td><td align="right" class="nowrap">&nbsp;'.price($objp->amount).'</td>'."\n";
 				}
 
 				// Balance

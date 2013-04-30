@@ -117,7 +117,7 @@ class HookManager
      * 		@param		Object	&$object		Object to use hooks on
      * 	    @param		string	&$action		Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
      * 		@return		mixed					For doActions,formObjectOptions,pdf_xxx:    								Return 0 if we want to keep standard actions, >0 if if want to stop standard actions, <0 means KO.
-     * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Must always return an int and things to print into ->resprints.
+     * 											For printSearchForm,printLeftBlock,printTopRightMenu,formAddObjectLine,...: Return HTML string. TODO Deprecated. Must always return an int and things to print into ->resprints.
      *                                          Can also return some values into an array ->results.
      * 											$this->error or this->errors are also defined by class called by this function if error.
      */
@@ -131,7 +131,7 @@ class HookManager
         // Define type of hook ('output', 'returnvalue' or 'addreplace'). 'addreplace' should be type for all hooks. 'output' and 'returnvalue' are deprecated.
         $hooktype='output';
         if (preg_match('/^pdf_/',$method)) $hooktype='returnvalue';	// pdf_xxx except pdf_writelinedesc are returnvalue hooks. When there is 2 hooks of this type, only last one win.
-        if (in_array($method,array('doActions','formObjectOptions','moveUploadedFile','pdf_writelinedesc','paymentsupplierinvoices'))) $hooktype='addreplace';
+        if (in_array($method,array('doActions','formObjectOptions','moveUploadedFile','pdf_writelinedesc','paymentsupplierinvoices','printSearchForm'))) $hooktype='addreplace';
 
         // Loop on each hook to qualify modules that declared context
         $modulealreadyexecuted=array();

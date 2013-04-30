@@ -402,12 +402,12 @@ if ($resql)
 		print $prospectstatic->getLibProspLevel();
 		print "</td>";
 		// Statut
-		print '<td align="center" nowrap="nowrap">';
+		print '<td align="center" class="nowrap">';
 		print $prospectstatic->LibProspStatut($obj->fk_stcomm,2);
 		print "</td>";
 
 		//$sts = array(-1,0,1,2,3);
-		print '<td align="right" nowrap="nowrap">';
+		print '<td align="right" class="nowrap">';
 		foreach ($sts as $key => $value)
 		{
 			if ($value <> $obj->fk_stcomm)

@@ -80,9 +80,9 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
 print '<tr '.$bc[false].'>';
-print '<td nowrap="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
+print '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
 print '<tr '.$bc[true].'>';
-print '<td nowrap="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
+print '<td class="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
 if ($user->datepreviouslogin) print dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');
 else print $langs->trans("Unknown");
 print '</td>';
@@ -471,7 +471,7 @@ foreach($dashboardlines as $key => $board)
     if ($board->nbtodolate > 0) print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning");
     else print '&nbsp;';
     print '</td>';
-    print '<td nowrap="nowrap" align="right">';
+    print '<td class="nowrap" align="right">';
     print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
     print '</td>';
     if ($showweather)

@@ -133,7 +133,7 @@ class modMyModule extends DolibarrModules
         $this->tabs = array();
 
         // Dictionnaries
-	    if (! isset($conf->mymodule->enabled)) 
+	    if (! isset($conf->mymodule->enabled))
         {
         	$conf->mymodule=new stdClass();
         	$conf->mymodule->enabled=0;
@@ -158,14 +158,8 @@ class modMyModule extends DolibarrModules
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array();			// List of boxes
-		$r=0;
 		// Example:
-		/*
-		$this->boxes[$r][1] = "myboxa.php";
-		$r++;
-		$this->boxes[$r][1] = "myboxb.php";
-		$r++;
-		*/
+		//$this->boxes=array(array(0=>array('file'=>'myboxa.php','note'=>'','enabledbydefaulton'=>'Home'),1=>array('file'=>'myboxb.php','note'=>''),2=>array('file'=>'myboxc.php','note'=>'')););
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module

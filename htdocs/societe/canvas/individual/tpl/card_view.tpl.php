@@ -89,7 +89,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td><?php echo $langs->trans("Country"); ?></td>
-	<td colspan="3" nowrap="nowrap"><?php echo $this->control->tpl['country']; ?></td>
+	<td colspan="3" class="nowrap"><?php echo $this->control->tpl['country']; ?></td>
 </tr>
 
 <tr>

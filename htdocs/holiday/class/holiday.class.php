@@ -269,7 +269,7 @@ class Holiday extends CommonObject
         $sql.= " cp.date_cancel,";
         $sql.= " cp.fk_user_cancel,";
         $sql.= " cp.detail_refuse,";
-		
+
 		$sql.= " uu.lastname as user_lastname,";
         $sql.= " uu.firstname as user_firstname,";
 
@@ -665,7 +665,6 @@ class Holiday extends CommonObject
     	if ($withpicto && $withpicto != 2) $result.=' ';
     	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
     	return $result;
-
     }
 
 
@@ -695,8 +694,8 @@ class Holiday extends CommonObject
 		if ($mode == 0)
 		{
             if ($statut == 1) return $langs->trans('DraftCP');
-            if ($statut == 2) return $langs->trans('ToValidateCP');
-            if ($statut == 3) return $langs->trans('ValidateCP');
+            if ($statut == 2) return $langs->trans('ToReviewCP');
+            if ($statut == 3) return $langs->trans('ApprovedCP');
             if ($statut == 4) return $langs->trans('CancelCP');
             if ($statut == 5) return $langs->trans('RefuseCP');
 		}
@@ -705,8 +704,8 @@ class Holiday extends CommonObject
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
-			if ($statut == 2) return img_picto($langs->trans('ToValidateCP'),'statut1').' '.$langs->trans('ToValidateCP');		// Waiting approval
-			if ($statut == 3) return img_picto($langs->trans('ValidateCP'),$pictoapproved).' '.$langs->trans('ValidateCP');
+			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
+			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
 			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
 			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
@@ -715,8 +714,8 @@ class Holiday extends CommonObject
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
 			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToValidateCP').' '.img_picto($langs->trans('ToValidateCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ValidateCP').' '.img_picto($langs->trans('ValidateCP'),$pictoapproved);
+			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
 			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
 			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
@@ -736,7 +735,7 @@ class Holiday extends CommonObject
         global $langs;
 
         // Liste des statuts
-        $name = array('DraftCP','ToValidateCP','ValidateCP','CancelCP','RefuseCP');
+        $name = array('DraftCP','ToReviewCP','ApprovedCP','CancelCP','RefuseCP');
         $nb = count($name)+1;
 
         // Select HTML
@@ -914,7 +913,7 @@ class Holiday extends CommonObject
                     $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
 
                     // On ajoute la modification dans le LOG
-                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('Event').': '.$langs->trans('HolidaysMonthlyAssignment'),$new_solde);
+                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('Event').': '.$langs->trans('HolidaysMonthlyUpdate'),$new_solde);
 
                     $i++;
                 }
@@ -1152,7 +1151,7 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->rowid;
-                        $tab_result[$i]['name'] = $obj->name;
+                        $tab_result[$i]['name'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
 
                         $i++;
@@ -1192,7 +1191,7 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->fk_user;
-                        $tab_result[$i]['name'] = $obj->name;
+                        $tab_result[$i]['name'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
 
                         $i++;

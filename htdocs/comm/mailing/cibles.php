@@ -483,7 +483,7 @@ if ($object->fetch($id) >= 0)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
-					print '<td align="right" nowrap="nowrap">'.$langs->trans("MailingStatusNotSent");
+					print '<td align="right" class="nowrap">'.$langs->trans("MailingStatusNotSent");
 					if ($user->rights->mailing->creer) {
 						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient"));
 					}
@@ -492,7 +492,7 @@ if ($object->fetch($id) >= 0)
 				else
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
-					print '<td align="right" nowrap="nowrap">';
+					print '<td align="right" class="nowrap">';
 					if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
 					if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
 					if ($obj->statut==2) print $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');

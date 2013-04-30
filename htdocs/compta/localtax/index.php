@@ -59,7 +59,7 @@ function pt ($db, $sql, $date)
         $total = 0;
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td nowrap="nowrap" width="60%">'.$date.'</td>';
+        print '<td class="nowrap" width="60%">'.$date.'</td>';
         print '<td align="right">'.$langs->trans("Amount").'</td>';
         print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
@@ -69,10 +69,10 @@ function pt ($db, $sql, $date)
             $obj = $db->fetch_object($result);
             $var=!$var;
             print '<tr '.$bc[$var].'>';
-            print '<td nowrap="nowrap">'.$obj->dm."</td>\n";
+            print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
 
-            print '<td nowrap="nowrap" align="right">'.price($obj->mm)."</td><td >&nbsp;</td>\n";
+            print '<td class="nowrap" align="right">'.price($obj->mm)."</td><td >&nbsp;</td>\n";
             print "</tr>\n";
 
             $i++;
@@ -179,9 +179,9 @@ for ($m = 1 ; $m < 13 ; $m++ )
     if ($i > 2) {
         print '<tr class="liste_total">';
         print '<td align="right">'.$langs->trans("SubTotal").':</td>';
-        print '<td nowrap="nowrap" align="right">'.price($subtotalcoll).'</td>';
-        print '<td nowrap="nowrap" align="right">'.price($subtotalpaye).'</td>';
-        print '<td nowrap="nowrap" align="right">'.price($subtotalpaye).'</td>';
+        print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td>';
+        print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
+        print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
         print '<td>&nbsp;</td></tr>';
         $i = 0;
         $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;

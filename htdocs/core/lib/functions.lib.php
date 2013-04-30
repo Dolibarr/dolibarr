@@ -590,7 +590,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 {
 	global $conf;
 
-	$out="\n".'<div class="tabs">'."\n";
+	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	// Show title
 	$showtitle=1;
@@ -615,15 +615,16 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 	// Show tabs
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
+		$out.='<div class="inline-block tabsElem">';
 		if (isset($links[$i][2]) && $links[$i][2] == 'image')
 		{
 			if (!empty($links[$i][0]))
 			{
-				$out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+				$out.='<span data-role="button" class="tabspan">'.$links[$i][1].'</span>'."\n";
 			}
 		}
 		else if (! empty($links[$i][1]))
@@ -632,13 +633,14 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 			if ((is_numeric($active) && $i == $active)
 			|| (! is_numeric($active) && $active == $links[$i][2]))
 			{
-				$out.='<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button" id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 			else
 			{
-				$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+				$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 			}
 		}
+		$out.='</div>';
 	}
 
 	$out.="</div>\n";
@@ -697,7 +699,7 @@ function dol_bc($var,$moreclass='')
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK');
 
 	// Address
 	$ret .= $object->address;
@@ -711,7 +713,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n")
 		}
 		if ($object->zip) $ret .= ', '.$object->zip;
 	}
-	else if (in_array($object->country_code,array('GB'))) // UK: title firstname name \n address lines \n town state \n zip \n country
+	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
@@ -814,8 +816,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 	if (! $format) $format='daytextshort';
-	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','hour')))?1:0;
-	
+	$reduceformat=(! empty($conf->dol_optimize_smallscreen) && in_array($format,array('day','dayhour')))?1:0;
+
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
 	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
@@ -840,7 +842,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		$format=str_replace('%Y','%y',$format);
 		$format=str_replace('yyyy','yy',$format);
 	}
-	
+
 	// If date undefined or "", we return ""
 	if (dol_strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
 
@@ -1081,9 +1083,9 @@ function dol_print_size($size,$shortvalue=0,$shortunit=0)
 {
 	global $conf,$langs;
 	$level=1024;
-	
+
 	if (! empty($conf->dol_optimize_smallscreen)) $shortunit=1;
-	
+
 	// Set value text
 	if (empty($shortvalue) || $size < ($level*10))
 	{
@@ -1147,7 +1149,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 
 	if (! empty($addlink))
 	{
-		$newemail='<a href="';
+		$newemail='<a style="text-overflow: ellipsis;" href="';
 		if (! preg_match('/^mailto:/i',$email)) $newemail.='mailto:';
 		$newemail.=$email;
 		$newemail.='">';
@@ -2479,7 +2481,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		if ($totalnboflines)
 		{
-			if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			print '</td>';
@@ -2516,7 +2518,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 		else
 		{
-			if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 			print '<td class="nobordernopadding">';
 			print '<div class="titre">'.$titre.'</div>';
 			$pagelist.= $langs->trans('Page').' '.($page+1);
@@ -2525,7 +2527,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	}
 	else
 	{
-		if (empty($conf->dol_optimize_smallscreen) && $picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+		if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
 		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
 	}
 
@@ -2560,14 +2562,17 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 function print_fleche_navigation($page,$file,$options='',$nextpage=0,$betweenarrows='')
 {
 	global $conf, $langs;
+
 	if ($page > 0)
 	{
-		print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
+		if (empty($conf->dol_use_jmobile)) print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
+		else print '<a data-role="button" data-icon="arrow-l" data-iconpos="left" href="'.$file.'?page='.($page-1).$options.'">'.$langs->trans("Previous").'</a>';
 	}
 	if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
 	if ($nextpage > 0)
 	{
-		print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
+		if (empty($conf->dol_use_jmobile)) print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
+		else print '<a data-role="button" data-icon="arrow-r" data-iconpos="right" href="'.$file.'?page='.($page+1).$options.'">'.$langs->trans("Next").'</a>';
 	}
 }
 
@@ -4132,7 +4137,7 @@ function verifCond($strRights)
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string	$s				String to evaluate
- * @param	int		$returnvalue	0=No return (used to execute $a=something). 1=Value of eval is returned (used to eval $something).
+ * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @return	mixed					Nothing or return of eval
  */
 function dol_eval($s,$returnvalue=0)
@@ -4143,16 +4148,16 @@ function dol_eval($s,$returnvalue=0)
 	global $rights;
 
 	//print $s."<br>\n";
-	if ($returnvalue) return eval('return '.$s.';');
-	else eval($s);
+	if ($returnvalue) return @eval('return '.$s.';');
+	else @eval($s);
 }
 
 /**
-* Return if var element is ok
-*
-* @param   string      $element    Variable to check
-* @return  boolean                 Return true of variable is not empty
-*/
+ * Return if var element is ok
+ *
+ * @param   string      $element    Variable to check
+ * @return  boolean                 Return true of variable is not empty
+ */
 function dol_validElement($element)
 {
 	return (trim($element) != '');

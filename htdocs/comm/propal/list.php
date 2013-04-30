@@ -131,7 +131,7 @@ if (! $sortfield) $sortfield='p.datep';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
-$sql = 'SELECT s.nom, s.rowid, s.client, ';
+$sql = 'SELECT s.rowid, s.nom, s.client, ';
 $sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
@@ -301,17 +301,17 @@ if ($result)
 		$now = dol_now();
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 
 		$objectstatic->id=$objp->propalid;
 		$objectstatic->ref=$objp->ref;
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding" nowrap="nowrap">';
+		print '<td class="nobordernopadding nowrap">';
 		print $objectstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+		print '<td width="20" class="nobordernopadding nowrap">';
 		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		print '</td>';
 
@@ -333,7 +333,7 @@ if ($result)
 		print '</td>';
 
 		// Customer ref
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		print $objp->ref_client;
 		print '</td>';
 

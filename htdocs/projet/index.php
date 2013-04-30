@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 $langs->load("projects");
 $langs->load("companies");
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$mine = GETPOST('mode')=='mine' ? 1 : 0;
 
 // Security check
 $socid=0;
@@ -49,7 +49,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:(empty($user->rights->projet->all->lire)?0:2)),1);
 //var_dump($projectsListId);
 
 
@@ -64,7 +64,7 @@ print_fiche_titre($text);
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+	if (! empty($user->rights->projet->all->lire) && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
 
@@ -90,7 +90,7 @@ $sql.= ", s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
-if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
 
@@ -106,7 +106,7 @@ if ( $resql )
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td nowrap="nowrap">';
+		print '<td class="nowrap">';
 		if ($obj->socid)
 		{
 			$socstatic->id=$obj->socid;

@@ -247,7 +247,7 @@ if ($resql)
 		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
-		print '<td align="right" nowrap="nowrap">';
+		print '<td align="right" class="nowrap">';
 		if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
 		{
 			print $contractstatic->LibStatut(0,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));

@@ -1168,6 +1168,7 @@ BarcodeDescUPC=Баркод от тип UPC
 BarcodeDescISBN=Баркод от тип ISBN
 BarcodeDescC39=Баркод от типа С39
 BarcodeDescC128=Баркод от тип C128
+GenbarcodeLocation=Бар код поколение инструмент за командния ред (използва се от двигател с вътрешно за някои видове баркод)
 WithdrawalsSetup=Настройка Оттегляне модул
 ExternalRSSSetup=Външен RSS вноса настройка
 NewRSS=Ню RSS Feed

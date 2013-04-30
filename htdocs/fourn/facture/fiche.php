@@ -270,16 +270,18 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     {
         $db->begin();
 
+        $tmpproject = GETPOST('projectid', 'int');
+
         // Creation facture
         $object->ref           = $_POST['ref'];
 		$object->ref_supplier  = $_POST['ref_supplier'];
-		$object->fk_project    = GETPOST('projectid');
         $object->socid         = $_POST['socid'];
         $object->libelle       = $_POST['libelle'];
         $object->date          = $datefacture;
         $object->date_echeance = $datedue;
         $object->note_public   = GETPOST('note_public');
         $object->note_private  = GETPOST('note_private');
+        $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
 
         // If creation from another object of another module
         if ($_POST['origin'] && $_POST['originid'])
@@ -1390,7 +1392,7 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
+        print '<tr><td class="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
         print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td>';
         print "</tr>\n";
@@ -1504,7 +1506,7 @@ else
                     $objp = $db->fetch_object($result);
                     $var=!$var;
                     print '<tr '.$bc[$var].'>';
-                    print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
+                    print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
                     print '<td>';
                     print $form->form_modes_reglement(null, $objp->paiement_type,'none').' '.$objp->num_paiement;
                     print '</td>';
@@ -1752,17 +1754,17 @@ else
                 print '</td>';
 
                 // Unit price
-                print '<td align="right" nowrap="nowrap"><input size="4" name="puht" type="text" value="'.price($object->lines[$i]->pu_ht).'"></td>';
+                print '<td align="right" class="nowrap"><input size="4" name="puht" type="text" value="'.price($object->lines[$i]->pu_ht).'"></td>';
 
-                print '<td align="right" nowrap="nowrap"><input size="4" name="puttc" type="text" value=""></td>';
+                print '<td align="right" class="nowrap"><input size="4" name="puttc" type="text" value=""></td>';
 
                 print '<td align="right"><input size="1" name="qty" type="text" value="'.$object->lines[$i]->qty.'"></td>';
 
-                print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
+                print '<td align="right" class="nowrap"><input size="1" name="remise_percent" type="text" value="'.$object->lines[$i]->remise_percent.'"><span class="hideonsmartphone">%</span></td>';
 
-                print '<td align="right" nowrap="nowrap">&nbsp;</td>';
+                print '<td align="right" class="nowrap">&nbsp;</td>';
 
-                print '<td align="right" nowrap="nowrap">&nbsp;</td>';
+                print '<td align="right" class="nowrap">&nbsp;</td>';
 
                 print '<td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Save').'">';
                 print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
@@ -1816,17 +1818,17 @@ else
                 print '<td align="right">'.vatrate($object->lines[$i]->tva_tx, true, $object->lines[$i]->info_bits).'</td>';
 
                 // Unit price
-                print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
+                print '<td align="right" class="nowrap">'.price($object->lines[$i]->pu_ht,'MU').'</td>';
 
-                print '<td align="right" nowrap="nowrap">'.($object->lines[$i]->pu_ttc?price($object->lines[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
+                print '<td align="right" class="nowrap">'.($object->lines[$i]->pu_ttc?price($object->lines[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
 
                 print '<td align="right">'.$object->lines[$i]->qty.'</td>';
 
                 print '<td align="right">'.(($object->lines[$i]->remise_percent > 0)?$object->lines[$i]->remise_percent.'%':'').'</td>';
 
-                print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
+                print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ht).'</td>';
 
-                print '<td align="right" nowrap="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
+                print '<td align="right" class="nowrap">'.price($object->lines[$i]->total_ttc).'</td>';
 
                 print '<td align="center" width="16">';
                 if ($object->statut == 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;etat=0&amp;lineid='.$object->lines[$i]->rowid.'">'.img_edit().'</a>';
@@ -1903,7 +1905,7 @@ else
             print '<td align="right">';
             print '<input size="1" name="qty" type="text" value="1">';
             print '</td>';
-            print '<td align="right" nowrap="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
+            print '<td align="right" class="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
             print '<td>&nbsp;</td>';
             print '<td>&nbsp;</td>';
             print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
@@ -1970,7 +1972,7 @@ else
 
                 print '</td>';
                 print '<td align="right"><input type="text" id="pqty" name="qty" value="1" size="1"></td>';
-            	print '<td align="right" nowrap="nowrap"><input size="1" id="p_remise_percent" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
+            	print '<td align="right" class="nowrap"><input size="1" id="p_remise_percent" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'"></td>';

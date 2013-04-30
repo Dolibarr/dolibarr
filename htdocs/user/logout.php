@@ -27,7 +27,7 @@
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');	// We need company to get correct logo onto home page
 if (! defined('EVEN_IF_ONLY_LOGIN_ALLOWED'))  define('EVEN_IF_ONLY_LOGIN_ALLOWED','1');
 
 require_once '../main.inc.php';
@@ -64,7 +64,8 @@ if (! empty($conf->global->MAIN_LOGOUT_GOTO_URL)) $url=$conf->global->MAIN_LOGOU
 if (GETPOST('dol_hide_topmenu'))         $url.=(preg_match('/\?/',$url)?'&':'?').'dol_hide_topmenu=1';
 if (GETPOST('dol_hide_leftmenu'))        $url.=(preg_match('/\?/',$url)?'&':'?').'dol_hide_leftmenu=1';
 if (GETPOST('dol_optimize_smallscreen')) $url.=(preg_match('/\?/',$url)?'&':'?').'dol_optimize_smallscreen=1';
-if (GETPOST('dol_no_mouse_over'))        $url.=(preg_match('/\?/',$url)?'&':'?').'dol_no_mouse_over=1';
+if (GETPOST('dol_no_mouse_hover'))       $url.=(preg_match('/\?/',$url)?'&':'?').'dol_no_mouse_hover=1';
+if (GETPOST('dol_use_jmobile'))          $url.=(preg_match('/\?/',$url)?'&':'?').'dol_use_jmobile=1';
 
 // Destroy session
 $prefix=dol_getprefix();
@@ -79,6 +80,5 @@ dol_syslog("End of session ".$sessionname);
 unset($_SESSION['dol_login']);
 unset($_SESSION['dol_entity']);
 
-//print 'url='.$url;exit;
 header("Location: ".$url);
 ?>

@@ -1127,6 +1127,7 @@ BarcodeDescUPC=タイプUPCのバーコード
 BarcodeDescISBN=型商品のバーコード
 BarcodeDescC39=タイプC39のバーコード
 BarcodeDescC128=タイプC128のバーコード
+GenbarcodeLocation=バーコードを生成するコマンドラインツール（一部のバーコードタイプのphpbarcodeエンジンで使用されます）
 WithdrawalsSetup=撤退モジュールのセットアップ
 ExternalRSSSetup=外部のRSSをインポートセットアップ
 NewRSS=新しいRSSフィード

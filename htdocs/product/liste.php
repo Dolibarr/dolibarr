@@ -169,7 +169,7 @@ else
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
-    dol_syslog("sql=".$sql);
+    dol_syslog("product:list.php: sql=".$sql);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -363,7 +363,7 @@ else
     			print '<tr '.$bc[$var].'>';
 
     			// Ref
-    			print '<td nowrap="nowrap">';
+    			print '<td class="nowrap">';
     			$product_static->id = $objp->rowid;
     			$product_static->ref = $objp->ref;
     			$product_static->type = $objp->fk_product_type;
@@ -439,10 +439,10 @@ else
     			}
 
     			// Status (to buy)
-    			print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
+    			print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
 
                 // Status (to sell)
-                print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+                print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 
                 print "</tr>\n";
     			$i++;

@@ -2020,9 +2020,10 @@ abstract class CommonObject
             // optionsArray not already loaded, so we load it
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label();
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
         }
 
+        
         // Request to get complementary values
         if (count($optionsArray) > 0)
         {
@@ -2044,13 +2045,15 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member')
+                    	//Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                        if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
                             // we can add this attribute to adherent object
                             $this->array_options["options_$key"]=$value;
                         }
                     }
                 }
+               
                 $this->db->free($resql);
             }
             else
@@ -2108,7 +2111,7 @@ abstract class CommonObject
             $langs->load('admin');
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
-            $optionsArray = $extrafields->fetch_name_optionals_label($this->elementType);
+            $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
 
             foreach($this->array_options as $key => $value)
             {
@@ -2443,6 +2446,7 @@ abstract class CommonObject
     			'SE',	// Sweden
     			'SK',	// Slovakia
     			'SI',	// Slovenia
+    			'UK',	// United Kingdom
         //'CH',	// Switzerland - No. Swizerland in not in EEC
         );
         //print "dd".$this->country_code;
@@ -2743,7 +2747,7 @@ abstract class CommonObject
 
 		print '<td width="10"></td>';
 
-		print '<td nowrap="nowrap"></td>'; // No width to allow autodim
+		print '<td class="nowrap"></td>'; // No width to allow autodim
 
 		print "</tr>\n";
 

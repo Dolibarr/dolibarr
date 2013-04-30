@@ -165,7 +165,7 @@ while ($i < $nbofbank)
 	print '<td>'.$bankorder[$i][0]."</td><td>\n";
 	print $bankorder[$i][1];
 	print '</td>';
-	print '<td nowrap="nowrap">';
+	print '<td class="nowrap">';
 	$tmparray=explode(' ',$bankorder[$i][2]);
 	foreach($tmparray as $key => $val)
 	{

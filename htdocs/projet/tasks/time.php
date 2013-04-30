@@ -309,25 +309,25 @@ if ($id > 0 || ! empty($ref))
 			print '<tr '.$bc[false].'>';
 
 			// Date
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 			$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			print $form->select_date($newdate,'time','','','',"timespent_date");
 			print '</td>';
 
 			// Contributor
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 			$contactoftask=$object->getListContactId('internal');
 			print img_object('','user');
 			print $form->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
 			print '</td>';
 
 			// Note
-			print '<td nowrap="nowrap">';
+			print '<td class="nowrap">';
 			print '<textarea name="timespent_note" cols="80" rows="'.ROWS_3.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
 			print '</td>';
 
 			// Duration
-			print '<td nowrap="nowrap" align="right">';
+			print '<td class="nowrap" align="right">';
 			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
 			print '</td>';
 
@@ -470,7 +470,7 @@ if ($id > 0 || ! empty($ref))
 			$total += $task_time->task_duration;
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" nowrap="nowrap" class="liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
 		print '</tr>';
 
 		print "</table>";

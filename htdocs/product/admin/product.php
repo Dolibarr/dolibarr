@@ -227,7 +227,7 @@ foreach ($dirproduct as $dirroot)
     			print '<tr '.$bc[$var].'>'."\n";
     			print '<td width="140">'.$modCodeProduct->nom.'</td>'."\n";
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
-    			print '<td nowrap="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
+    			print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
 
     			if (! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file)
     			{
@@ -333,7 +333,7 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
 if (empty($conf->use_javascript_ajax))
 {
-	print '<td nowrap="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap" align="right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
 }

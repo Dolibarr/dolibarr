@@ -161,10 +161,10 @@ if ($result)
         print '</td>';
 
         // Date creation
-        print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
+        print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
 
         // Date last login
-        print '<td nowrap="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
+        print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
 
 		// Statut
 		$userstatic->statut=$obj->statut;

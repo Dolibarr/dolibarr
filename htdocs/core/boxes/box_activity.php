@@ -41,9 +41,23 @@ class box_activity extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
-	// FIXME: Removed number_format (not compatible with all languages)
-	// FIXME: Pb into some status
+
+	/**
+	 *  Constructor
+	 *
+	 * 	@param	DoliDB	$db			Database handler
+	 *  @param	string	$param		More parameters
+	 */
+	function __construct($db,$param)
+	{
+		global $conf;
+
+		$this->db=$db;
+		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
+		// FIXME: Removed number_format (not compatible with all languages)
+		// FIXME: Pb into some status
+		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;	// Not enabled by default due to bugs (see previous FIXME)
+	}
 
 	/**
 	 *  Charge les donnees en memoire pour affichage ulterieur

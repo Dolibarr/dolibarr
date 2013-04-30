@@ -18,6 +18,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_menu MODIFY COLUMN leftmenu varchar(100);
+
 create table llx_adherent_type_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -347,3 +349,10 @@ ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_users (id_users);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_nom (nom);
 ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
+
+ALTER TABLE llx_boxes ADD COLUMN params varchar(255);
+
+UPDATE llx_extrafields SET elementtype='socpeople' WHERE elementtype='contact';
+UPDATE llx_extrafields SET elementtype='actioncomm' WHERE elementtype='action';
+UPDATE llx_extrafields SET elementtype='adherent' WHERE elementtype='member';
+UPDATE llx_extrafields SET elementtype='societe' WHERE elementtype='company';

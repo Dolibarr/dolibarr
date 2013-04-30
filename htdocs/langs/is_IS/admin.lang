@@ -1021,6 +1021,7 @@ BarcodeDescUPC=Strikamerki af gerðinni UPC
 BarcodeDescISBN=Strikamerki af gerðinni ISBN
 BarcodeDescC39=Strikamerki á C39 tegund
 BarcodeDescC128=Strikamerki af gerðinni C128
+GenbarcodeLocation=Strikamerki kynslóð stjórn lína tól (notað af phpbarcode vél fyrir sumir merkjamál barnum tegund)
 WithdrawalsSetup=Uppsögn mát skipulag
 ExternalRSSSetup=Ytri RSS innflutnings skipulag
 NewRSS=New RSS Feed

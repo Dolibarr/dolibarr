@@ -1026,6 +1026,7 @@ BarcodeDescUPC=Barcode av typ UPC
 BarcodeDescISBN=Barcode av typ ISBN
 BarcodeDescC39=Streckkod av typen C39
 BarcodeDescC128=Barcode av typ C128
+GenbarcodeLocation=Bar kodgenerering kommandoradsverktyg (som används av phpbarcode motor för vissa typer streckkod)
 WithdrawalsSetup=Återkallelse modul setup
 ExternalRSSSetup=Externa RSS import setup
 NewRSS=Nytt RSS-flöde

@@ -50,7 +50,7 @@ $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('projet_task');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 /*
  * Actions
 */

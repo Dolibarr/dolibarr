@@ -152,11 +152,6 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		// Special case for not normalized table names
-		if ($elementtype == 'member')  $table='adherent_extrafields';
-		elseif ($elementtype == 'company') $table='societe_extrafields';
-		elseif ($elementtype == 'contact') $table='socpeople_extrafields';
-
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			if ($type=='boolean') {
@@ -283,11 +278,6 @@ class ExtraFields
 	{
 		$table=$elementtype.'_extrafields';
 
-		// Special case for not normalized table names
-		if ($elementtype == 'member')  $table='adherent_extrafields';
-		elseif ($elementtype == 'company') $table='societe_extrafields';
-		elseif ($elementtype == 'contact') $table='socpeople_extrafields';
-
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
@@ -323,7 +313,7 @@ class ExtraFields
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql.= " WHERE name = '".$attrname."'";
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity IN  (0,".$conf->entity.')';
 			$sql.= " AND elementtype = '".$elementtype."'";
 
 			dol_syslog(get_class($this)."::delete_label sql=".$sql);
@@ -362,10 +352,6 @@ class ExtraFields
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='')
 	{
 		$table=$elementtype.'_extrafields';
-		// Special case for not normalized table names
-		if ($elementtype == 'member')  $table='adherent_extrafields';
-		elseif ($elementtype == 'company') $table='societe_extrafields';
-		elseif ($elementtype == 'contact') $table='socpeople_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
@@ -533,7 +519,7 @@ class ExtraFields
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED
 	 * 	@return	array							Array of attributes for all extra fields
 	 */
-	function fetch_name_optionals_label($elementtype='member',$forceload=false)
+	function fetch_name_optionals_label($elementtype='adherent',$forceload=false)
 	{
 		global $conf;
 
@@ -545,7 +531,7 @@ class ExtraFields
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
@@ -557,7 +543,6 @@ class ExtraFields
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
-
 					// we can add this attribute to adherent object
 					if ($tab->type != 'separate')
 					{
@@ -574,6 +559,7 @@ class ExtraFields
 					$this->attribute_pos[$tab->name]=$tab->pos;
 				}
 			}
+			
 			return $array_name_label;
 		}
 		else
@@ -688,9 +674,9 @@ class ExtraFields
 		elseif ($type == 'sellist')
 		{
 			$out='<select name="options_'.$key.'">';
-
-			$InfoFieldList = explode(":", $param);
-
+			$param_list=array_keys($param['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
+			
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
@@ -702,7 +688,9 @@ class ExtraFields
 
 			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
+			//$sql.= ' WHERE entity = '.$conf->entity;
 
+			dol_syslog(get_class($this).':showInputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 
 			if ($resql)
@@ -828,15 +816,18 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$InfoFieldList = explode(":", $params);
+			$param_list=array_keys($params['options']);
+			$InfoFieldList = explode(":", $param_list[0]);
 			$keyList='rowid';
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2];
 
+			
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' where '.$keyList.'="'.$value.'"';
-
+			$sql.= ' WHERE '.$keyList.'="'.$this->db->escape($value).'"';
+			//$sql.= ' AND entity = '.$conf->entity;
+			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -891,7 +882,7 @@ class ExtraFields
 	function setOptionalsFromPost($extralabels,&$object)
 	{
 		global $_POST;
-			
+		
 		if (is_array($extralabels))
 		{
 			// Get extra fields

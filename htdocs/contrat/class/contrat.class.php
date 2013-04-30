@@ -284,14 +284,14 @@ class Contrat extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
-		
+
 		// Definition du nom de module de numerotation de commande
 		$soc = new Societe($this->db);
 		$soc->fetch($this->socid);
-		
+
 		// Class of company linked to order
 		$result=$soc->set_as_client();
-		
+
 		// Define new ref
 		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 		{
@@ -552,8 +552,8 @@ class Contrat extends CommonObject
 				$line->libelle        = $objp->description;
 				$line->desc           = $objp->description;
 				$line->qty            = $objp->qty;
-				$line->statut 		   = $objp->statut;
-				$line->ref            = $objp->ref;
+				$line->statut 		  = $objp->statut;
+				$line->ref            = '';
 				$line->tva_tx         = $objp->tva_tx;
 				$line->localtax1_tx   = $objp->localtax1_tx;
 				$line->localtax2_tx   = $objp->localtax2_tx;
@@ -667,7 +667,7 @@ class Contrat extends CommonObject
 			$error=0;
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
-			
+
 			// Mise a jour ref
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 			if ($this->db->query($sql))

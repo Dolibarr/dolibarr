@@ -209,15 +209,15 @@ if ($resql)
 			print "<tr $bc[$var]>";
 
 			// Ref
-			print '<td align="left" nowrap="nowrap">';
+			print '<td align="left" class="nowrap">';
 			print "<a href=\"ligne.php?rowid=".$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid."</a> &nbsp; ";
 			print '</td>';
 
 			// Date ope
-	        print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
+	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->do),"day")."</td>\n";
 
 	        // Date value
-	        print '<td align="center" nowrap="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
+	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
 	        // Payment type
 	        print "<td align=\"center\">";
@@ -266,7 +266,7 @@ if ($resql)
 			}
 
 			// Bank account
-			print '<td align="left" nowrap="nowrap">';
+			print '<td align="left" class="nowrap">';
 			$bankaccountstatic->id=$objp->bankid;
 			$bankaccountstatic->label=$objp->bankref;
 			print $bankaccountstatic->getNomUrl(1);

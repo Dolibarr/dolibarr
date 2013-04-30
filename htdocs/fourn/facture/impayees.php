@@ -143,8 +143,9 @@ if ($user->rights->fournisseur->facture->lire)
 	{
 		$sql .= " AND f.ref_supplier LIKE '%".GETPOST('sf_re')."%'";
 	}
-	$sql.= " GROUP BY f.ref_supplier, f.rowid, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
 
+	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " ORDER BY ";
 	$listfield=explode(',',$sortfield);
 	foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
@@ -260,7 +261,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<td align=\"right\">".price($objp->am)."</td>";
 
 				// Affiche statut de la facture
-				print '<td align="right" nowrap="nowrap">';
+				print '<td align="right" class="nowrap">';
 				print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
 				print '</td>';
 

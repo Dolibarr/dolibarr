@@ -103,7 +103,7 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->connected == 1)
 {
-    print '<tr><td nowrap="nowrap">';
+    print '<tr><td class="nowrap">';
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
     $ok = 1;
@@ -119,7 +119,7 @@ if ($ok)
 {
     if($db->database_selected == 1)
     {
-        print '<tr><td nowrap="nowrap">';
+        print '<tr><td class="nowrap">';
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
         dolibarr_install_syslog("repair: Database connection successfull : $dolibarr_main_db_name");
         $ok=1;
@@ -193,7 +193,10 @@ if ($ok)
 
 // Search list of fields declared and list of fields created into databases and create fields missing
 $extrafields=new ExtraFields($db);
-$listofmodulesextra=array('societe'=>'company','adherent'=>'member','product'=>'product');
+$listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
+			'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
+			'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
+			'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
 foreach($listofmodulesextra as $tablename => $elementtype)
 {
     // Get list of fields

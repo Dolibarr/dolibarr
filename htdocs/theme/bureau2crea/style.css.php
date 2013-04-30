@@ -224,6 +224,9 @@ div.inline-block
 .right {
 	text-align: <?php print $right; ?>;
 }
+.nowrap {
+	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
+}
 
 
 /* ============================================================================== */
@@ -256,17 +259,22 @@ td.showDragHandle {
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
+#id-container {
+  display: table;
+  table-layout: fixed;
+}
+#id-right, #id-left {
+  display: table-cell;
+  float: none;
+  vertical-align: top;
+}
+#id-<?php echo $right; ?> {
+	width: 100%;
+}
+
 div.leftContent {
 	margin-left: 20px !important;
     width: 220px !important;
-}
-
-div.vmenu {
-	position: relative;
-    float: left;
-    margin: 0px;
-    width: 180px;
-    margin-left: 10px;
 }
 
 div.fiche {
@@ -298,7 +306,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen)) { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; } 
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 
@@ -644,16 +652,25 @@ img.login, img.printer, img.entity {
 /* ============================================================================== */
 /* Menu gauche                                                                    */
 /* ============================================================================== */
-.vmenu{
-margin: 0;
-position: relative;
-width: 180px;
+
+.vmenu {
+	margin: 0;
+	position: relative;
+	width: 180px;
 }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .vmenu {
 	display: none;
 }
 <?php } ?>
+
+div.vmenu {
+	position: relative;
+    float: left;
+    margin: 0px;
+    width: 180px;
+    margin-left: 10px;
+}
 
 a.vmenu:link        { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
 a.vmenu:visited     { font-size:12px; text-align:left; font-weight: normal; color: #FFFFFF; margin: 1px 1px 1px 4px; }
@@ -735,7 +752,6 @@ div.blockvmenusearch
 {
 	margin: 3px 0px 15px 0px;
 	padding: 25px 0px 2px 2px;
-	width: 180px;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_leftMenu.jpg',1); ?>);
     background-position: top right;
     background-repeat: no-repeat;
@@ -1107,7 +1123,6 @@ div.tabs a.tab {
     color: #FFFFFF;
     text-decoration: none;
     position: relative;
-    float: left;
     padding: 0px 10px 0px 10px;
 }
 
@@ -1468,7 +1483,6 @@ tr.liste_titre {
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
 }
 
 tr.liste_titre {
@@ -1497,8 +1511,8 @@ div.liste_titre, tr.liste_titre {
 }
 
 div.liste_titre a, tr.liste_titre a {
-color: #333333;
-margin: 0px 5px;
+	color: #333333;
+	margin: 0px 5px;
 }
 
 div.liste_titre td, tr.liste_titre td {
@@ -1513,7 +1527,6 @@ div.liste_titre, th.liste_titre, td.liste_titre
     color: #333333;
     font-family: <?php print $fontlist ?>;
     font-weight: normal;
-    white-space: nowrap;
     background-image: none;
     background: none;
 }
@@ -1533,7 +1546,6 @@ th.liste_titre_sel, td.liste_titre_sel
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
-    white-space: nowrap;
 }
 
 input.liste_titre {
@@ -1549,7 +1561,6 @@ background: #F0F0F0;
 background-repeat: repeat-x;
 color: #332266;
 font-weight: normal;
-white-space: nowrap;
 padding: 5px;
 }
 
@@ -1614,7 +1625,6 @@ tr.box_titre {
 	font-family: <?php print $fontlist ?>, sans-serif;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
 }
@@ -2414,12 +2424,67 @@ div.ecmjqft {
 	bottom: 4px !important;
 <?php } ?>
 	text-align: center;
-	min-width: 500px;
+	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
 }
 
+
+/* ============================================================================== */
+/*  JMobile                                                                       */
+/* ============================================================================== */
+
+.ui-btn-inner {
+	padding-left: 10px;
+	padding-right: 10px;
+	white-space: normal;
+}
+
+div.ui-controlgroup
+{
+	height: auto;
+	background-image: none;
+}
+
+div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+{
+	height: auto;
+}
+
+a.tab span.ui-btn-inner
+{
+	border: none;
+	padding: 0;
+}
+div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
+	background-image: none;
+	color: #D45416;
+	height: auto;
+}
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
+}
+
+.ui-btn-icon-left .ui-icon {
+	left: 8px;
+}
+.ui-btn-icon-right .ui-icon {
+	right: 8px;
+}
+
+div.ui-radio
+{
+	display: inline-block;
+}
+.ui-radio input {
+	height: auto;
+	width: auto;
+	margin: 0;
+	position: static;
+}
 
 <?php
 if (is_object($db)) $db->close();

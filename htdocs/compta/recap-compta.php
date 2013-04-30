@@ -151,7 +151,7 @@ if ($socid > 0)
 				// Author
 				$userstatic->id=$objf->userid;
 				$userstatic->login=$objf->login;
-				print '<td nowrap="nowrap" align="right">';
+				print '<td class="nowrap" align="right">';
 				print $userstatic->getLoginUrl(1);
 				print '</td>';
 
@@ -191,7 +191,7 @@ if ($socid > 0)
 						// Author
 						$userstatic->id=$objp->userid;
 						$userstatic->login=$objp->login;
-						print '<td nowrap="nowrap" align="right">';
+						print '<td class="nowrap" align="right">';
 						print $userstatic->getLoginUrl(1);
 						print '</td>';
 

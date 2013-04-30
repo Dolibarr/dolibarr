@@ -209,7 +209,7 @@ if ($search_user > 0)
 }
 if (! $sall)
 {
-    $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
+    $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total,f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' s.nom, s.rowid';
@@ -322,7 +322,7 @@ if ($resql)
             $datelimit=$db->jdate($objp->datelimite);
 
             print '<tr '.$bc[$var].'>';
-            print '<td nowrap="nowrap">';
+            print '<td class="nowrap">';
 
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
@@ -332,12 +332,12 @@ if ($resql)
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
-            print '<td class="nobordernopadding" nowrap="nowrap">';
+            print '<td class="nobordernopadding nowrap">';
             print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding">';
+            print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
             $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
@@ -377,7 +377,7 @@ if ($resql)
             print '<td align="right">'.(! empty($paiement)?price($paiement).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
 
             // Affiche statut de la facture
-            print '<td align="right" nowrap="nowrap">';
+            print '<td align="right" class="nowrap">';
             print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$paiement,$objp->type);
             print "</td>";
             //print "<td>&nbsp;</td>";

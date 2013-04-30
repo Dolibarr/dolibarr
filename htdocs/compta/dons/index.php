@@ -175,7 +175,7 @@ if ($resql)
             $donation_static->id=$obj->rowid;
             $donation_static->ref=$obj->ref?$obj->ref:$obj->rowid;
 
-            print '<td width="96" class="nobordernopadding" nowrap="nowrap">';
+            print '<td width="96" class="nobordernopadding nowrap">';
             print $donation_static->getNomUrl(1);
             print '</td>';
 
@@ -185,7 +185,7 @@ if ($resql)
             print dolGetFirstLastname($obj->nom,$obj->firstname);
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding">';
+            print '<td align="right" class="nobordernopadding">';
             print price($obj->amount,1);
             print '</td>';
 

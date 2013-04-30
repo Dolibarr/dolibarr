@@ -293,13 +293,13 @@ if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
 	}
 	print '<tr class="liste_total">';
 	print '<td align="right">'.$langs->trans("Total").':</td>';
-	print '<td nowrap="nowrap" align="right">'.price($subtot_coll_total).'</td>';
-	print '<td nowrap="nowrap" align="right">'.price($subtot_coll_vat).'</td>';
+	print '<td class="nowrap" align="right">'.price($subtot_coll_total).'</td>';
+	print '<td class="nowrap" align="right">'.price($subtot_coll_vat).'</td>';
 	print '<td></td>';
-	print '<td nowrap="nowrap" align="right">'.price($subtot_paye_total).'</td>';
-	print '<td nowrap="nowrap" align="right">'.price($subtot_paye_vat).'</td>';
+	print '<td class="nowrap" align="right">'.price($subtot_paye_total).'</td>';
+	print '<td class="nowrap" align="right">'.price($subtot_paye_vat).'</td>';
 	print '<td></td>';
-	print '<td nowrap="nowrap" align="right"><b>'.price($total).'</b>';
+	print '<td class="nowrap" align="right"><b>'.price($total).'</b>';
 	print '</td>';
 	print '</tr>';
 

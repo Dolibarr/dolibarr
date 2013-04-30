@@ -45,7 +45,7 @@ if (! $sortfield) $sortfield="nom";
 $socid = GETPOST('socid','int');
 
 // Category
-$selected_cat = (int)GETPOST('search_categ', 'int');
+$selected_cat = (int) GETPOST('search_categ', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
     $subcat = true;
@@ -185,7 +185,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	if ($selected_cat && $selected_cat !== -2) {
 	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = ".$selected_cat;
-	    if (subcat) {
+	    if ($subcat) {
 		$sql.=" OR c.fk_parent = " . $selected_cat;
 	    }
 	     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON cs.fk_categorie = c.rowid";

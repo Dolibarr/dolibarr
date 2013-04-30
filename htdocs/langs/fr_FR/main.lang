@@ -648,6 +648,8 @@ ModulesSystemTools=Outils Modules
 View=Voir
 Test=Test
 Element=Élément
+NoPhotoYet=Pas de photo disponible pour l'instant
+HomeDashboard=Synthèse accueil
 
 # Week day
 Monday=Lundi

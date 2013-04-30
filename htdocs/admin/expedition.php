@@ -266,7 +266,7 @@ foreach ($dirmodels as $reldir)
 						print '</td>';
 
                         // Show example of numbering module
-                        print '<td nowrap="nowrap">';
+                        print '<td class="nowrap">';
                         $tmp=$module->getExample();
                         if (preg_match('/^Error/',$tmp)) { 
 							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; 
@@ -361,7 +361,7 @@ print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="80" nowrap="nowrap">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80" class="nowrap">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
