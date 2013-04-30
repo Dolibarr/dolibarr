@@ -356,3 +356,12 @@ UPDATE llx_extrafields SET elementtype='socpeople' WHERE elementtype='contact';
 UPDATE llx_extrafields SET elementtype='actioncomm' WHERE elementtype='action';
 UPDATE llx_extrafields SET elementtype='adherent' WHERE elementtype='member';
 UPDATE llx_extrafields SET elementtype='societe' WHERE elementtype='company';
+
+create table llx_commande_fournisseur_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)
+) ENGINE=innodb;
+ALTER TABLE llx_commande_fournisseur_extrafields ADD INDEX idx_commande_fournisseur_extrafields (fk_object);
