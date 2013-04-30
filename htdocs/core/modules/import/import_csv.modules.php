@@ -66,8 +66,7 @@ class ImportCsv extends ModeleImports
 		global $conf,$langs;
 		$this->db = $db;
 
-		$this->separator=',';	// Change also function cleansep
-		if (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)) $this->separator=$conf->global->IMPORT_CSV_SEPARATOR_TO_USE;
+		$this->separator=(GETPOST('separator')?GETPOST('separator'):(empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)?',':$conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
 		$this->enclosure='"';
 		$this->escape='"';
 
@@ -579,7 +578,7 @@ class ImportCsv extends ModeleImports
 					    //var_dump($objimport->array_import_convertvalue); exit;
 
 						// Build SQL request
-					if (! tablewithentity($tablename))
+						if (! tablewithentity($tablename))
 						{
 							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
 							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
@@ -651,25 +650,16 @@ function cleansep($value)
 function tablewithentity($table)
 {
 	global $db;
-	$sql = "SHOW COLUMNS FROM ".$table." LIKE 'entity'";
-
-	$resql=$db->query($sql);
+	
+	$resql=$db->DDLDescTable($table,'entity');
 	if ($resql)
 	{
-		$numrows=$db->num_rows($resql);
-		if ($numrows)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		$i=0;
+		$obj=$db->fetch_object($resql);
+		if ($obj) return 1;
+		else return 0;
 	}
-	else
-	{
-		return -1;
-	}
+	else return -1; 
 }
 
 ?>

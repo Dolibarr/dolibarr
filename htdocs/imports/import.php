@@ -1017,7 +1017,7 @@ if ($step == 4 && $datatoimport)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
 		}
 	}
 
@@ -1281,7 +1281,7 @@ if ($step == 5 && $datatoimport)
         }
         else
         {
-            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
         }
         print '</center>';
     }
