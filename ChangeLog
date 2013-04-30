@@ -26,7 +26,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #855 ] Holiday approval email in French
 - Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
 - Fix: [ bug #857 ] Invoice created from shipment does not have the order discount
-- Fix: [ bug #861 ] Erreur de droit groupe et utilisateur
+- Fix: [ bug #861 ] Impossible to create a new event in agenda
 - Fix: [ bug #827 ] AJAX search does not respect multiprice level
 - Fix: [ bug #865 ] Dolibarr navigation array in project/task do not work
 
