@@ -365,3 +365,12 @@ create table llx_commande_fournisseur_extrafields
   import_key                varchar(14)
 ) ENGINE=innodb;
 ALTER TABLE llx_commande_fournisseur_extrafields ADD INDEX idx_commande_fournisseur_extrafields (fk_object);
+
+create table llx_facture_fourn_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+ALTER TABLE llx_facture_fourn_extrafields ADD INDEX idx_facture_fourn_extrafields (fk_object);
