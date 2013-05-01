@@ -1081,7 +1081,7 @@ class AccountLine extends CommonObject
         $sql.= " b.fk_type, b.num_releve, b.num_chq, b.rappro, b.note,";
         $sql.= " b.fk_bordereau, b.banque, b.emetteur,";
         //$sql.= " b.author"; // Is this used ?
-        $sql.= " ba.label as bank_account_label";
+        $sql.= " ba.ref as bank_account_ref, ba.label as bank_account_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
         $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
@@ -1122,6 +1122,7 @@ class AccountLine extends CommonObject
                 $this->fk_bordereau		= $obj->fk_bordereau;
 
                 $this->fk_account		= $obj->fk_account;
+                $this->bank_account_ref   = $obj->bank_account_ref;
                 $this->bank_account_label = $obj->bank_account_label;
 
                 $ret=1;
