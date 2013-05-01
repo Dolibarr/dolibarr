@@ -18,7 +18,11 @@ Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, auto-entrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
+%if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
+License: GPLv3+
+%else
 License: GPL-3.0+
+%endif
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
