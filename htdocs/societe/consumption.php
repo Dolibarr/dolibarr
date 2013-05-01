@@ -70,6 +70,7 @@ if (GETPOST("button_removefilter"))
 $thirdTypeSelect = GETPOST("third_select_id");
 $type_element = GETPOST('type_element')?GETPOST('type_element'):'invoice';
 
+$langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("suppliers");
