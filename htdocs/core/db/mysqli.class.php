@@ -938,7 +938,7 @@ class DoliDBMysqli
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resource			Resource
+	 *	@return	resultset			Resultset x (x->Field, x->Type, ...)
      */
     function DDLDescTable($table,$field="")
     {

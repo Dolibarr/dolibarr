@@ -33,7 +33,7 @@
     		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); }
     		else size.val('').attr('disabled','disabled');
     	}
-    	init_typeoffields('');
+    	init_typeoffields('<?php echo GETPOST('type'); ?>');
     	jQuery("#type").change(function() {
     		init_typeoffields($(this).val());
     	});
