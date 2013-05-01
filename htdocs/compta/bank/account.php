@@ -133,6 +133,8 @@ $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
+$bankstatic=new Account($db);
+$banklinestatic=new AccountLine($db);
 
 $form = new Form($db);
 
@@ -426,7 +428,8 @@ if ($id > 0 || ! empty($ref))
      */
 
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
-	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
+	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
+	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 	if ($mode_search)
 	{
 		$sql.= ", s.rowid as socid, s.nom as thirdparty";
@@ -568,7 +571,34 @@ if ($id > 0 || ! empty($ref))
 					}
 					else if ($links[$key]['type']=='banktransfert')
 					{
-						// Do not show this link (avoid confusion). Can already be accessed from transaction detail
+						// Do not show link to transfer ince there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
+						if ($objp->amount > 0)
+						{
+							$banklinestatic->fetch($links[$key]['url_id']);
+							$bankstatic->id=$banklinestatic->fk_account;
+							$bankstatic->label=$banklinestatic->bank_account_label;
+							print ' ('.$langs->trans("From ");
+							print $bankstatic->getNomUrl(1,'transactions');
+							print ' '.$langs->trans("toward").' ';
+							$bankstatic->id=$objp->bankid;
+							$bankstatic->label=$objp->bankref;
+							print $bankstatic->getNomUrl(1,'');
+							print ')';
+						}
+						else
+						{
+							$bankstatic->id=$objp->bankid;
+							$bankstatic->label=$objp->bankref;
+							print ' ('.$langs->trans("From ");
+							print $bankstatic->getNomUrl(1,'');
+							print ' '.$langs->trans("toward").' ';
+							$banklinestatic->fetch($links[$key]['url_id']);
+							$bankstatic->id=$banklinestatic->fk_account;
+							$bankstatic->label=$banklinestatic->bank_account_label;
+							print $bankstatic->getNomUrl(1,'transactions');
+							print ')';
+						}
+						//var_dump($links);
 					}
 					else if ($links[$key]['type']=='member')
 					{
