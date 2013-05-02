@@ -1288,8 +1288,8 @@ else
             print '</td>';
 
             // VAT Code
-            print '<td class="nowrap">'.$langs->trans('VATIntra').'</td>';
-            print '<td class="nowrap">';
+            print '<td>'.$langs->trans('VATIntra').'</td>';
+            print '<td>';
             $s ='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK))
