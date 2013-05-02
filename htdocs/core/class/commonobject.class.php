@@ -2165,7 +2165,7 @@ abstract class CommonObject
             	{
 	                if ($this->array_options[$key] != '')
 	                {
-	                    $sql.=",'".$this->array_options[$key]."'";
+	                    $sql.=",'".$this->db->escape($this->array_options[$key])."'";
 	                }
 	                else
 	                {
