@@ -1096,21 +1096,11 @@ else
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
 
                 // We set country_id, and country_code label of the chosen country
-                // TODO move to DAO class
-                if ($object->country_id)
+                if ($object->country_id > 0)
                 {
-                    $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$object->country_id;
-                    $resql=$db->query($sql);
-                    if ($resql)
-                    {
-                        $obj = $db->fetch_object($resql);
-                    }
-                    else
-                    {
-                        dol_print_error($db);
-                    }
-                    $object->country_code	= $obj->code;
-                    $object->country		= $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+                	$tmparray=getCountry($object->country_id,'all');
+                    $object->country_code	= $tmparray['code'];
+                    $object->country		= $tmparray['label'];
                 }
             }
 

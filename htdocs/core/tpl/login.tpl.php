@@ -19,7 +19,7 @@
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-if (GETPOST('dol_hide_topmenu')) $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_topmenu')) $conf->dol_hide_topmenu=1;
 if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu=1;
 if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
