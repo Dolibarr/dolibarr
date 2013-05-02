@@ -767,9 +767,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 
 		// Margin
 		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-		dol_syslog('ssdfsd:: $fournprice:'.var_export($fournprice,true));
 		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
-		dol_syslog('ssdfsd:: $$buyingprice='.$buyingprice);
 
 		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
