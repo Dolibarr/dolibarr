@@ -43,6 +43,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 	var $prefixcustomer='CU';
 	var $prefixsupplier='SU';
+	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
 
 	/**
@@ -57,6 +58,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
 		$this->code_auto = 1;
+		$this->prefixIsRequired = 0;
 	}
 
 

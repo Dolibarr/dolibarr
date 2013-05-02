@@ -35,6 +35,7 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("companies");
 $langs->load('withdrawals');
+$langs->load('bills');
 
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();

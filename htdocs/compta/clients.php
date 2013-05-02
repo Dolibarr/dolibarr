@@ -140,6 +140,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$langs->load('commercial');
+	
 	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';

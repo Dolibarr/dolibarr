@@ -26,6 +26,7 @@
 
 require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -58,6 +59,7 @@ if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="p.datec";
 
 $rej = new RejetPrelevement($db, $user);
+$ligne = new LignePrelevement($db);
 
 /*
  * Liste des factures
@@ -86,7 +88,7 @@ if ($result)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Nb"),"rejets.php","p.ref",'',$urladd);
+	print_liste_field_titre($langs->trans("Line"),"rejets.php","p.ref",'',$urladd);
 	print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
 	print_liste_field_titre($langs->trans("Reason"),"rejets.php","pr.motif","",$urladd);
 	print '</tr>';
@@ -100,7 +102,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print "<tr $bc[$var]><td>";
-		print '<img border="0" src="./img/statut'.$obj->statut.'.png"></a>&nbsp;';
+		print $ligne->LibStatut($obj->statut,2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";

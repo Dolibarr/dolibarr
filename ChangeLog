@@ -111,6 +111,10 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #855 ] Holiday approval email in French
 - Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
 - Fix: [ bug #857 ] Invoice created from shipment does not have the order discount
+- Fix: [ bug #861 ] Impossible to create a new event in agenda
+- Fix: [ bug #827 ] AJAX search does not respect multiprice level
+- Fix: [ bug #865 ] Dolibarr navigation array in project/task do not work
+- Fix: [ bug #788 ] Date of linked interventions are not shown
 
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****

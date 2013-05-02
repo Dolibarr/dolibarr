@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
@@ -219,9 +219,10 @@ class Contact extends CommonObject
 		$this->phone_pro=trim($this->phone_pro);
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
+		$this->jabberid=trim($this->jabberid);
 		$this->fax=trim($this->fax);
-		$this->zip=($this->zip?$this->zip:$this->zip);
-		$this->town=($this->town?$this->town:$this->town);
+		$this->zip=(empty($this->zip)?'':$this->zip);
+		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 
@@ -248,8 +249,8 @@ class Contact extends CommonObject
 		$sql .= ", phone_mobile = '".$this->db->escape($this->phone_mobile)."'";
 		$sql .= ", jabberid = '".$this->db->escape($this->jabberid)."'";
 		$sql .= ", priv = '".$this->priv."'";
-		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
-		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
+		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"NULL");
+		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
 		$sql .= " WHERE rowid=".$id;
 
