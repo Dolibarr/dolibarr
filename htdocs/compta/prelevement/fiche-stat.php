@@ -33,6 +33,7 @@ if ($user->societe_id > 0) accessforbidden();
 
 $langs->load("withdrawals");
 $langs->load("categories");
+$langs->load('bills');
 
 // Get supervariables
 $prev_id = GETPOST('id','int');
