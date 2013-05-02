@@ -144,7 +144,7 @@ if ($socid > 0)
 		$sql .= " AND d.buy_price_ht IS NOT NULL";
 		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 			$sql .= " AND d.buy_price_ht <> 0";
-		$sql.= " GROUP BY f.rowid";
+		$sql.= " GROUP BY f.rowid, s.nom, s.rowid, s.code_client, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
