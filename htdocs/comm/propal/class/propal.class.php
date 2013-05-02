@@ -407,6 +407,7 @@ class Propal extends CommonObject
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
+            
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
@@ -2817,7 +2818,7 @@ class PropaleLigne
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
-        $sql.= " ".($this->subprice?price2num($this->subprice):'null').",";
+        $sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";

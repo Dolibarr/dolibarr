@@ -182,11 +182,11 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 if ($id > 0)
   $sql.= " GROUP BY f.rowid";
 else
-  $sql.= " GROUP BY d.fk_product";
+  $sql.= " GROUP BY d.fk_product, p.label, p.rowid, p.fk_product_type, p.ref, f.facnumber, f.total, f.datef, f.paye, f.fk_statut, f.rowid";
 $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
-
+dol_syslog('margin::productMargin.php sql='.$sql,LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
