@@ -1330,7 +1330,18 @@ class Form
         }
     }
 
-	function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected) {
+    /**
+     * _construct_product_list_option
+     * 
+     * @param 	resultset		&$objp			Resultset of fetch
+     * @param 	string		$opt			Option
+     * @param 	string		$optJson		Option
+     * @param 	int			$price_level	Price level
+     * @param 	string		$selected		Preselected value
+     * @return	
+     */
+	private function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected) 
+	{
 		global $langs,$conf,$user,$db;
 
         $outkey='';
@@ -1348,7 +1359,7 @@ class Form
 
         $label=$objp->label;
         if (! empty($objp->label_translated)) $label=$objp->label_translated;
-        if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
+        if (! empty($filterkey) && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
         $outkey=$objp->rowid;
         $outref=$objp->ref;
@@ -1368,7 +1379,7 @@ class Form
         $opt.= $objp->ref.' - '.dol_trunc($label,32).' - ';
 
         $objRef = $objp->ref;
-        if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
+        if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
         $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
 
         $found=0;
