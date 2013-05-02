@@ -186,7 +186,7 @@ if (! empty($usemargins))
 	        }
 	        options += '>'+this.label+'</option>';
 	      });
-	      options += '<option value=null><?php echo $langs->trans("InputPrice"); ?></option>';
+	      options += '<option value=""><?php echo $langs->trans("InputPrice"); ?></option>';
 	      $("#buying_price").hide();
 	      $("#fournprice").html(options).show();
 	      $("#fournprice").change(function() {
