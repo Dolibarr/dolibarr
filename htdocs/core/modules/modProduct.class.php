@@ -153,7 +153,27 @@ class modProduct extends DolibarrModules
 		    {
 		        $fieldname='extra.'.$obj->name;
 		        $fieldlabel=ucfirst($obj->label);
+			$typeFilter="Text";
+			switch($obj->type)
+			{
+				case 'int':
+				case 'double':
+				case 'price':
+					$typeFilter="Numeric";
+					break;
+				case 'date':
+				case 'datetime':
+					$typeFilter="Date";
+					break;
+				case 'boolean':
+					$typeFilter="Boolean";
+					break;
+				case 'sellist':
+					$typeFilter="List:".$obj->param;
+					break;
+			}
 		        $this->export_fields_array[$r][$fieldname]=$fieldlabel;
+			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
 		        $this->export_entities_array[$r][$fieldname]='product';
 		    }
 		}
@@ -161,7 +181,7 @@ class modProduct extends DolibarrModules
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity("product", 1).')';
 
 
