@@ -45,7 +45,7 @@ if (! $sortfield)
 	if ($agentid > 0)
 		$sortfield="s.nom";
 	else
-	    $sortfield="u.name";
+	    $sortfield="u.lastname";
 }
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
@@ -125,10 +125,10 @@ print "</table>";
 print '</form>';
 
 $sql = "SELECT s.nom, s.rowid as socid, s.code_client, s.client, u.rowid as agent,";
-$sql.= " u.login, u.name, u.firstname,";
+$sql.= " u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
 $sql.= $db->ifsql('f.type =2','sum(d.buy_price_ht * d.qty *-1)','sum(d.buy_price_ht * d.qty)')." as buying_price, ";
-$sql.= $db->ifsql('f.type =2','sum((d.price + d.buy_price_ht) * d.qty)','sum((d.price - d.buy_price_ht) * d.qty)')." as marge" ;
+$sql.= $db->ifsql('f.type =2','sum((d.subprice + d.buy_price_ht) * d.qty)','sum((d.subprice - d.buy_price_ht) * d.qty)')." as marge" ;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE)?-1:$conf->global->AGENT_CONTACT_TYPE);
@@ -160,11 +160,12 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 if ($agentid > 0)
   $sql.= " GROUP BY s.rowid";
 else
-  $sql.= " GROUP BY u.rowid";
+  $sql.= " GROUP BY u.rowid, s.nom, s.rowid, s.code_client, s.client, u.login, u.lastname, u.firstname, f.type ";
 $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
+dol_syslog('margin::agentMargins.php sql='.$sql,LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -180,7 +181,7 @@ if ($result)
 	if ($agentid > 0)
 		print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;agentid=".$agentid,'align="center"',$sortfield,$sortorder);
 	else
-		print_liste_field_titre($langs->trans("CommercialAgent"),$_SERVER["PHP_SELF"],"u.name","","&amp;agentid=".$agentid,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("CommercialAgent"),$_SERVER["PHP_SELF"],"u.lastname","","&amp;agentid=".$agentid,'align="center"',$sortfield,$sortorder);
 
 	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
