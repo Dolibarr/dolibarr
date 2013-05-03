@@ -219,7 +219,9 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             {
             	foreach($feature2 as $subfeature)
             	{
-            		if (empty($user->rights->$feature->$subfeature->creer) && empty($user->rights->$feature->$subfeature->write)) $createok=0;
+            		if (empty($user->rights->$feature->$subfeature->creer) 
+            		&& empty($user->rights->$feature->$subfeature->write)
+            		&& empty($user->rights->$feature->$subfeature->create)) $createok=0;
             		else { $createok=1; break; } // For bypass the second test if the first is ok
             	}
             }
