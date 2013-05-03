@@ -589,7 +589,8 @@ class BonPrelevement extends CommonObject
          * Renvoie toutes les factures presente
          * dans un bon de prelevement
          */
-        $sql = "SELECT fk_facture, SUM(pl.amount)";
+        $sql = "SELECT fk_facture";
+        if ($amounts) $sql .= ", SUM(pl.amount)";
         $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
         $sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
         $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -597,7 +598,7 @@ class BonPrelevement extends CommonObject
         $sql.= " AND pl.fk_prelevement_bons = p.rowid";
         $sql.= " AND p.rowid = ".$this->id;
         $sql.= " AND p.entity = ".$conf->entity;
-        $sql.= " GROUP BY fk_facture";
+        if ($amounts) $sql.= " GROUP BY fk_facture";
 
         $resql=$this->db->query($sql);
         if ($resql)
