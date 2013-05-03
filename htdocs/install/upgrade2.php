@@ -329,11 +329,16 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	migrate_categorie_association($db,$langs,$conf);
+        }
 
-        	// Reload modules
+        $afterversionarray=explode('.','3.3.9');
+        $beforeversionarray=explode('.','3.4.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	// Reload modules (this must be always and only into last targeted version)
         	migrate_reload_modules($db,$langs,$conf);
 
-        	// Reload menus
+        	// Reload menus (this must be always and only into last targeted version)
         	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
