@@ -39,7 +39,7 @@ create table llx_facturedet
   fk_remise_except				integer    NULL,					-- Lien vers table des remises fixes
   subprice						double(24,8),						-- P.U. HT (exemple 100)
   price							double(24,8),						-- P.U. HT apres remise % de ligne
-  total_ht						double(24,8),						-- Total HT de la ligne toute quantite et incluant remise ligne et globale
+  total_ht						double(24,8),						-- Deprecated (Do not use)
   total_tva						double(24,8),						-- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1				double(24,8)  	 DEFAULT 0,			-- Total LocalTax1 for total quantity of line
   total_localtax2				double(24,8)		 DEFAULT 0,		-- total LocalTax2 for total quantity of line
