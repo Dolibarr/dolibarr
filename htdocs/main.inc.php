@@ -345,13 +345,32 @@ if (! defined('NOLOGIN'))
         // It is not already authenticated and it requests the login / password
         include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+        $dol_dst_observed=GETPOST("dst_observed",3);
+        $dol_dst_first=GETPOST("dst_first",3);
+        $dol_dst_second=GETPOST("dst_second",3);
+        $dol_screenwidth=GETPOST("screenwidth",3);
+        $dol_screenheight=GETPOST("screenheight",3);
+        $dol_hide_topmenu=GETPOST('dol_hide_topmenu',3);
+        $dol_hide_leftmenu=GETPOST('dol_hide_leftmenu',3);
+        $dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen',3);
+        $dol_no_mouse_hover=GETPOST('dol_no_mouse_hover',3);
+        $dol_use_jmobile=GETPOST('dol_use_jmobile',3);
+        //dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
+
         // If in demo mode, we check we go to home page through the public/demo/index.php page
         if (! empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
         {
             if (! preg_match('/public/',$_SERVER['HTTP_REFERER']))
             {
                 dol_syslog("Call index page from another url than demo page");
-                header("Location: ".DOL_URL_ROOT.'/public/demo/index.php');
+				$url='';
+                $url.=($url?'&':'').($dol_hide_topmenu?'dol_hide_topmenu='.$dol_hide_topmenu:'');
+                $url.=($url?'&':'').($dol_hide_leftmenu?'dol_hide_leftmenu='.$dol_hide_leftmenu:'');
+                $url.=($url?'&':'').($dol_optimize_smallscreen?'dol_optimize_smallscreen='.$dol_optimize_smallscreen:'');
+                $url.=($url?'&':'').($dol_no_mouse_hover?'dol_no_mouse_hover='.$dol_no_mouse_hover:'');
+                $url.=($url?'&':'').($dol_use_jmobile?'dol_use_jmobile='.$dol_use_jmobile:'');
+                $url=DOL_URL_ROOT.'/public/demo/index.php'.($url?'?'.$url:'');
+                header("Location: ".$url);
                 exit;
             }
         }
@@ -422,17 +441,6 @@ if (! defined('NOLOGIN'))
                     if ($datenow >= $datefirst && $datenow < $datesecond) $dol_dst=1;
                 }
                 //print $datefirst.'-'.$datesecond.'-'.$datenow; exit;
-                $dol_dst_observed=$_POST["dst_observed"];
-                $dol_dst_first=$_POST["dst_first"];
-                $dol_dst_second=$_POST["dst_second"];
-                $dol_screenwidth=$_POST["screenwidth"];
-                $dol_screenheight=$_POST["screenheight"];
-                $dol_hide_topmenu=$_POST['dol_hide_topmenu'];
-                $dol_hide_leftmenu=$_POST['dol_hide_leftmenu'];
-                $dol_optimize_smallscreen=$_POST['dol_optimize_smallscreen'];
-                $dol_no_mouse_hover=$_POST['dol_no_mouse_hover'];
-                $dol_use_jmobile=$_POST['dol_use_jmobile'];
-                //dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
             }
 
             if (! $login)
@@ -1015,7 +1023,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         		foreach($filescss as $cssfile)
         		{
 	        		// cssfile is a relative path
-	        		print '<!-- Includes CSS added by module '.$modcss. '-->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+	        		print '<!-- Includes CSS added by module '.$modcss. ' -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
 	        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
 	        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
 	        		print '">'."\n";
@@ -1788,7 +1796,7 @@ if (! function_exists("llxFooter"))
         print "\n";
         if ($foot) print '<!-- '.$foot.' -->'."\n";
 
-        printCommonFooter();
+        printCommonFooter($foot);
 
         if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
 

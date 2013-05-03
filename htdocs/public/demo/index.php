@@ -33,6 +33,12 @@ $langs->load("main");
 $langs->load("install");
 $langs->load("other");
 
+$conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu');
+$conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu');
+$conf->dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen');
+$conf->dol_no_mouse_hover=GETPOST('dol_no_mouse_hover');
+$conf->dol_use_jmobile=GETPOST('dol_use_jmobile');
+
 // Security check
 global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
@@ -217,13 +223,19 @@ if (GETPOST("action") == 'gotodemo')
 	        $disablestring.=$modulekeyname.',';
 	        if ($modulekeyname=='propale') $disablestring.='propal,';
 	    }
-
 	}
 
     // Do redirect to login page
 	if ($disablestring)
 	{
-		$url=DOL_URL_ROOT.'/index.php?'.(GETPOST('urlfrom','alpha')?'urlfrom='.urlencode(GETPOST('urlfrom','alpha')).'&':'').'disablemodules='.$disablestring;
+		$url='';
+		$url.=($url?'&':'').($conf->dol_hide_topmenu?'dol_hide_topmenu='.$conf->dol_hide_topmenu:'');
+		$url.=($url?'&':'').($conf->dol_hide_leftmenu?'dol_hide_leftmenu='.$conf->dol_hide_leftmenu:'');
+		$url.=($url?'&':'').($conf->dol_optimize_smallscreen?'dol_optimize_smallscreen='.$conf->dol_optimize_smallscreen:'');
+		$url.=($url?'&':'').($conf->dol_no_mouse_hover?'dol_no_mouse_hover='.$conf->dol_no_mouse_hover:'');
+		$url.=($url?'&':'').($conf->dol_use_jmobile?'dol_use_jmobile='.$conf->dol_use_jmobile:'');
+		if (GETPOST('urlfrom')) $url.=($url?'&':'').'urlfrom='.urlencode(GETPOST('urlfrom','alpha'));
+		$url=DOL_URL_ROOT.'/index.php?'.($url?$url.'&':'').'disablemodules='.$disablestring;
 		header("Location: ".$url);
 		exit;
 	}
@@ -234,34 +246,64 @@ if (GETPOST("action") == 'gotodemo')
  * View
  */
 
-llxHeaderVierge($langs->trans("DolibarrDemo"));
+$head='';
+$head.='<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
+$head.='<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
+$head.='<style type="text/css">'."\n";
+$head.='.body { font: 12px arial,verdana,helvetica !important; }'."\n";
+$head.='.CTable {
+padding: 6px;
+font: 12px arial,verdana,helvetica;
+font-weight: normal;
+color: #444444 !important;
+ 
+margin: 8px 0px 8px 2px;
+ 
+border-left: 1px solid #DDD;
+border-right: 1px solid #DDD;
+border-bottom: 1px solid #EEE;
+border-radius: 8px;
+-moz-border-radius: 8px;
+ 
+-moz-box-shadow: 4px 4px 4px #EEE;
+-webkit-box-shadow: 4px 4px 4px #EEE;
+box-shadow: 4px 4px 4px #EEE;
+ 
+background-image: linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -o-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
+ 
+}
+</style>
 
-?>
 <script type="text/javascript">
-var openedId='';
+var openedId="";
 jQuery(document).ready(function () {
-    jQuery('tr.moduleline').hide();
-    // Enable this to allow personalized setup
-    jQuery('.modulelineshow').attr('href','#');
-    jQuery('.cursorpointer').css('cursor','pointer');
-    jQuery(".modulelineshow").click(function() {
-        var idstring=$(this).attr('id');
-        if (typeof idstring != "undefined")
-        {
-	        var currentId = idstring.substring(2);
-	        jQuery('tr.moduleline').hide();
-	        if (currentId != openedId)
-	        {
-	            openedId=currentId;
-	            jQuery("#tr1"+currentId).show();
-	            jQuery("#tr2"+currentId).show();
-	        }
-	        else openedId = '';
-        }
-    });
+jQuery("tr.moduleline").hide();
+// Enable this to allow personalized setup
+jQuery(".modulelineshow").attr("href","#");
+jQuery(".cursorpointer").css("cursor","pointer");
+jQuery(".modulelineshow").click(function() {
+var idstring=$(this).attr("id");
+if (typeof idstring != "undefined")
+{
+var currentId = idstring.substring(2);
+jQuery("tr.moduleline").hide();
+if (currentId != openedId)
+{
+openedId=currentId;
+jQuery("#tr1"+currentId).show();
+jQuery("#tr2"+currentId).show();
+}
+else openedId = "";
+}
 });
-</script>
-<?php
+});
+</script>';
+
+llxHeaderVierge($langs->trans("DolibarrDemo"), $head);
 
 
 print "\n";
@@ -305,6 +347,11 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
         print '<input type="hidden" name="username" value="demo">'."\n";
+        print '<input type="hidden" name="dol_hide_topmenu" value="'.$conf->dol_hide_topmenu.'">'."\n";
+        print '<input type="hidden" name="dol_hide_leftmenu" value="'.$conf->dol_hide_leftmenu.'">'."\n";
+        print '<input type="hidden" name="dol_optimize_smallscreen" value="'.$conf->dol_optimize_smallscreen.'">'."\n";
+        print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
+        print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
         print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 		// Title
         print '<tr>';
@@ -409,55 +456,10 @@ function llxHeaderVierge($title, $head = "")
 {
     global $user, $conf, $langs;
 
-    header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-    print "\n";
-    print "<html>\n";
-    print "<head>\n";
-    print '<meta name="robots" content="index,nofollow">'."\n";
-    print '<meta name="keywords" content="dolibarr,demo,online,demonstration,example,test,web,erp,crm,demos,online">'."\n";
-    print '<meta name="description" content="Dolibarr simple ERP/CRM demo. You can test here several profiles of Dolibarr ERP/CRM demos.">'."\n";
-    print "<title>".$title."</title>\n";
-    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php?lang='.$langs->defaultlang.'">'."\n";
-    print '<!-- Includes for JQuery -->'."\n";
-    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
-    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5.js"></script>'."\n";
-    if ($head) print $head."\n";
-    print '<style type="text/css">'."\n";
-    print '.body { font: 12px arial,verdana,helvetica !important; }'."\n";
-    print '.CTable {
-    	padding: 6px;
-    	font: 12px arial,verdana,helvetica;
-        font-weight: normal;
-        color: #444444 !important;
-        /* text-shadow: 1px 2px 3px #AFAFAF; */
-
-margin: 8px 0px 8px 2px;
-
-border-left: 1px solid #DDD;
-border-right: 1px solid #DDD;
-border-bottom: 1px solid #EEE;
-border-radius: 8px;
--moz-border-radius: 8px;
-
--moz-box-shadow: 4px 4px 4px #EEE;
--webkit-box-shadow: 4px 4px 4px #EEE;
-box-shadow: 4px 4px 4px #EEE;
-
-background-image: linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -o-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(246,248,250) 15%, rgb(235,235,238) 100%);
-
-    }';
-//    print '.CTableRow1      { background: #f0f0f0; color: #000000; }';
-//    print '.CTableRow0      { background: #fafafa; color: #000000; }';
-    print '</style>';
-    print "</head>\n";
+    top_httphead();
+    
+    top_htmlhead($head,$title);
+    
     print '<body style="margin: 20px;">'."\n";
 }
 

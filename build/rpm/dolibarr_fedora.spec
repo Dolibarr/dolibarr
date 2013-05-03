@@ -14,7 +14,7 @@ Summary(es): Software ERP y CRM para pequeñas y medianas empresas, asociaciones
 Summary(fr): Logiciel ERP & CRM de gestion de PME/PMI, auto-entrepreneurs ou associations
 Summary(it): Programmo gestionale per piccole imprese, fondazioni e liberi professionisti
 
-License: GPL-3.0+
+License: GPLv3+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
@@ -279,18 +279,11 @@ echo Set permission to $apacheuser:$apachegroup on /var/lib/dolibarr
 
 # Restart web server
 echo Restart web server
-if [ -f %{_sysconfdir}/init.d/httpd ]; then
-    %{_sysconfdir}/init.d/httpd restart
-fi
-if [ -f %{_sysconfdir}/init.d/apache2 ]; then
-    %{_sysconfdir}/init.d/apache2 restart
-fi
+/sbin/service httpd restart
 
-# Restart mysql
-echo Restart mysql
-if [ -f /etc/init.d/mysqld ]; then
-    /etc/init.d/mysqld restart
-fi
+# Restart mysql server
+echo Restart mysql server
+/sbin/service mysqld restart
 
 # Show result
 echo
@@ -323,12 +316,7 @@ if [ "x$status" = "xpurge" ] ;
 then
     # Restart web server
     echo Restart web server
-    if [ -f %{_sysconfdir}/init.d/httpd ]; then
-        %{_sysconfdir}/init.d/httpd restart
-    fi
-    if [ -f %{_sysconfdir}/init.d/apache2 ]; then
-        %{_sysconfdir}/init.d/apache2 restart
-    fi
+    /sbin/service httpd restart
 fi
 
 

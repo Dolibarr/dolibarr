@@ -157,7 +157,7 @@ else
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1)
 	{
-		$arrayresult=$form->select_produits_do("",$htmlname,$type,"",$pricelevel,$searchkey,$status,2,$outjson);
+		$arrayresult=$form->select_produits_do("",$htmlname,$type,"",$price_level,$searchkey,$status,2,$outjson);
 	}
 	elseif ($mode == 2)
 	{

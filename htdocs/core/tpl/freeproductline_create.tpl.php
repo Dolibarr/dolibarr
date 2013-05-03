@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -142,9 +142,9 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 		else
 		{			
 			echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-			echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+			echo $form->select_date('','date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
 			echo ' '.$langs->trans('to').' ';
-			echo $form->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+			echo $form->select_date('','date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
 		}
 		?>
 		</td>

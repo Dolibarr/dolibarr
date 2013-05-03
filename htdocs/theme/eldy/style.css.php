@@ -952,10 +952,11 @@ div.blockvmenusearch
     background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1b; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%);
 <?php } ?>
 
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #BBBBBB;
-    border-bottom: 1px solid #BBBBBB;
-	border-radius: 5px;
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #E8E8E8;
+    border-radius: 5px;
 	-moz-border-radius: 5px;
     -moz-box-shadow: 4px 4px 4px #DDD;
     -webkit-box-shadow: 4px 4px 4px #DDD;

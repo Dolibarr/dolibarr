@@ -239,7 +239,7 @@ if ($action == 'create')
 
 	// Ref
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$account->ref).'"></td></tr>';
+	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$account->ref).'" maxlength="12"></td></tr>';
 
 	// Label
 	print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';

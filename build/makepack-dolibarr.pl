@@ -672,7 +672,7 @@ if ($nboftargetok) {
             #$cmd="dpkg-source -b $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
             $cmd="dpkg-buildpackage -us -uc";
             print "Launch DEB build ($cmd)\n";
-            $ret=`$cmd`;
+            $ret=`$cmd 2>&1 3>&1`;
             print $ret."\n";
 
             chdir("$olddir");

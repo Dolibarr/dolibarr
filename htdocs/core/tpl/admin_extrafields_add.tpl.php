@@ -54,7 +54,7 @@
     		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else size.val('').attr('disabled','disabled');
     	}
-    	init_typeoffields('');
+    	init_typeoffields('<?php echo GETPOST('type'); ?>');
     	jQuery("#type").change(function() {
     		init_typeoffields($(this).val());
     	});

@@ -1264,6 +1264,8 @@ abstract class DolibarrModules
     	{
     		foreach($this->module_parts as $key => $value)
     		{
+    			if (is_array($value) && count($value) == 0) continue;	// Discard empty arrays
+
     			$newvalue = $value;
 
     			// Serialize array parameters
