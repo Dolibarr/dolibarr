@@ -159,7 +159,7 @@ $sql = "SELECT DISTINCT d.fk_product, p.label, p.rowid, p.fk_product_type, p.ref
 $sql.= " f.facnumber, f.total as total_ht,";
 $sql.= " sum(d.total_ht) as selling_price,";
 $sql.= $db->ifsql('f.type =2','sum(d.buy_price_ht * d.qty *-1)','sum(d.buy_price_ht * d.qty)')." as buying_price, ";
-$sql.= $db->ifsql('f.type =2','sum(((d.total_ht/d.qty) + d.buy_price_ht) * d.qty)','sum(((d.total_ht/d.qty) - d.buy_price_ht) * d.qty)')." as marge," ;
+$sql.= $db->ifsql('f.type =2','sum(d.total_ht + (d.buy_price_ht * d.qty))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge," ;
 $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
