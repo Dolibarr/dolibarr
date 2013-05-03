@@ -133,7 +133,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " d.total_ht as selling_price,";
         $sql.= $db->ifsql('f.type =2','(d.buy_price_ht * d.qty *-1)','(d.buy_price_ht * d.qty)')." as buying_price, ";
         $sql.= $db->ifsql('f.type =2','d.qty *-1','d.qty')." as qty,";
-        $sql.= $db->ifsql('f.type =2','((d.price + d.buy_price_ht) * d.qty)','((d.price - d.buy_price_ht) * d.qty)')." as marge," ;
+        $sql.= $db->ifsql('f.type =2','d.total_ht + (d.buy_price_ht * d.qty)','d.total_ht - (d.buy_price_ht * d.qty)')." as marge," ;
 		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -153,7 +153,8 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
-
+		
+		dol_syslog('margin:tabs:productMargins.php sql='.$sql,LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result)
 		{
