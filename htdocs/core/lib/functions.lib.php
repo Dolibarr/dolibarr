@@ -1229,7 +1229,7 @@ function dol_print_phone($phone,$country='',$cid=0,$socid=0,$addlink='',$separ="
 
 	if (! empty($addlink))	// Link on phone number + link to add action (if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
-		if (! empty($conf->browser))	// If phone, we use link of phone
+		if (! empty($conf->browser->phone))	// If phone, we use link of phone
 		{
 			$newphone ='<a href="tel:'.$phone.'"';
 			$newphone.='>'.$phone.'</a>';
