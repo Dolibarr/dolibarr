@@ -147,7 +147,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
-			@chmod($logfile, octdec($conf->global->MAIN_UMASK));
+			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));
 		}
 	}
 }
