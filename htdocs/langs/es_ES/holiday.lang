@@ -1,6 +1,7 @@
 # Dolibarr language file - es_ES - holiday
 CHARSET= UTF-8
 
+HRM=RRHH
 Holidays=Vacaciones
 CPTitreMenu=Vacaciones
 MenuReportMonth=Estado mensual

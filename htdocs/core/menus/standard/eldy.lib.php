@@ -192,6 +192,28 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		if (empty($noout)) print_end_menu_entry($showmode);
 		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $langs->trans("Projects"), 0, $showmode, $atarget, "project", '');
 	}
+	
+	// HRM
+	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled)),
+	'perms'=>(! empty($user->rights->holiday->write)),
+	'module'=>'holiday');
+	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+	{
+		$langs->load("holiday");
+	
+		$classname="";
+		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
+		else $classname = 'class="tmenu"';
+		$idsel='hrm';
+	
+		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
+		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/holiday/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
+		if (empty($noout)) print_end_menu_entry($showmode);
+		$menu->add('/holiday/index.php?mainmenu=holiday&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
+	}
+	
+	
 
 	// Tools
 	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
@@ -1075,6 +1097,25 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 				$newmenu->add("/projet/tasks/index.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 				$newmenu->add("/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
+			}
+		}
+		
+		/*
+		 * Menu HRM
+		*/
+		if ($mainmenu == 'hrm')
+		{
+			if (! empty($conf->holiday->enabled))
+			{
+				$langs->load("holiday");
+		
+				// Project affected to user
+				$newmenu->add("/holiday/index.php?&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->write, '', $mainmenu, 'hrm');
+				$newmenu->add("/holiday/fiche.php?&action=request", $langs->trans("MenuAddCP"), 1,$user->rights->holiday->write);
+				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->define_holiday);
+				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->view_log);
+				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->view_log);
+		
 			}
 		}
 
