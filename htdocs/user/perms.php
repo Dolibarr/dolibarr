@@ -63,6 +63,7 @@ if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user-
 	$feature2='';
 	$canreaduser=1;
 }
+
 $result = restrictedArea($user, 'user', $id, '&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
@@ -268,8 +269,7 @@ print '</table><br>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"), 0, 1).'<br>';
 // Show warning about external users
-print showModulesExludedForExternal($modules).'<br>'."\n";
-print "<br>\n";
+if (empty($user->societe_id)) print showModulesExludedForExternal($modules).'<br><br>'."\n";
 
 // For multicompany transversal mode
 if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
