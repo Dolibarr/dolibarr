@@ -7,27 +7,30 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 
 - Fix: Dutch (nl_NL) translation
-- Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
 - Generalize fix: file with a specific mask not found, again
 - Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
 - Fix: Can't reset payment due date
-- Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
-- Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
-- Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
-- Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
-- Fix: [ bug #816 ] Sales journal does not reflect localtaxes
-- Fix: [ bug #806 ] Margins module with orders2invoice does not respect cost price
 - Fix: Orderstoinvoice didn't act as expected when no order was checked
 - Fix: Bad link to all proposals into Third party card if customer is prospect
 - Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
+- Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
 - Fix: [ bug #789 ] VAT not being calculated in POS
-- Fix: [ bug #794 ] Lost filter on zipcode in prospect list
+- Fix: [ bug #790 ] Spanish localtax RE not being correctly calculated
+- Fix: [ bug #794 ] Lost filter on zipcode in prospect list 
+- Fix: [ bug #806 ] Margins module with orders2invoice does not respect cost price
 - Fix: [ bug #810 ] Cannot update ODT template path
+- Fix: [ bug #816 ] Sales journal does not reflect localtaxes
+- Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
 - Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionnary
 - Fix: [ bug #828 ] Error when code_region is not a number in llx_c_regions (with postgres)
-- Fix: [ bug #857 ] Invoice created from shipment does not have the order discount
-- Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
 - Fix: [ bug #855 ] Holiday approval email in French
+- Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
+- Fix: [ bug #857 ] Invoice created from shipment does not have the order discount
+- Fix: [ bug #861 ] Impossible to create a new event in agenda
+- Fix: [ bug #827 ] AJAX search does not respect multiprice level
+- Fix: [ bug #865 ] Dolibarr navigation array in project/task do not work
+- Fix: [ bug #866 ] Standing order from an invoice suggests invoice total amount instead of remaining to pay
+- Fix: [ bug #788 ] Date of linked interventions are not shown
 
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****

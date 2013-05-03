@@ -524,20 +524,20 @@ class Contrat extends CommonObject
 				$objp                  = $this->db->fetch_object($result);
 
 				$line                 = new ContratLigne($this->db);
-				$line->id 			   = $objp->rowid;
+				$line->id 			  = $objp->rowid;
 				$line->fk_contrat     = $objp->fk_contrat;
 				$line->libelle        = $objp->description;
 				$line->desc           = $objp->description;
 				$line->qty            = $objp->qty;
-				$line->statut 		   = $objp->statut;
-				$line->ref            = $objp->ref;
+				$line->statut 		  = $objp->statut;
+				$line->ref            = (isset($objp->ref)?$objp->ref:NULL);
 				$line->tva_tx         = $objp->tva_tx;
 				$line->localtax1_tx   = $objp->localtax1_tx;
 				$line->localtax2_tx   = $objp->localtax2_tx;
 				$line->subprice       = $objp->subprice;
 				$line->remise_percent = $objp->remise_percent;
 				$line->price_ht       = $objp->price_ht;
-				$line->price          = $objp->price;	// For backward compatibility
+				$line->price          = (isset($objp->price)?$objp->price:NULL);	// For backward compatibility
 				$line->total_ht       = $objp->total_ht;
 				$line->total_tva      = $objp->total_tva;
 				$line->total_localtax1= $objp->total_localtax1;

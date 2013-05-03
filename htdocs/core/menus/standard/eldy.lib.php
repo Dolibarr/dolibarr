@@ -48,7 +48,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 	// Home
 	$classname="";
-	if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home")
+	if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "home")
 	{
 		$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 	}
@@ -76,7 +76,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("suppliers");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "companies")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -117,7 +117,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("products");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -167,7 +167,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("commercial");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "commercial")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -209,7 +209,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("compta");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "accountancy")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -252,7 +252,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         $langs->load("banks");
 
         $classname="";
-        if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank")
+        if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "bank")
         {
             $classname='class="tmenusel"'; $_SESSION['idmenu']='';
         }
@@ -294,7 +294,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("projects");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "project")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -336,7 +336,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("other");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -378,7 +378,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$langs->load("shop");
 
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "shop")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}
@@ -406,7 +406,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	if ($showmode)
 	{
 		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
+		if (isset($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members")
 		{
 			$classname='class="tmenusel"'; $_SESSION['idmenu']='';
 		}

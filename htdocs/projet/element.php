@@ -223,6 +223,7 @@ foreach ($listofreferent as $key => $value)
 				$date=$element->date;
 				if (empty($date)) $date=$element->datep;
 				if (empty($date)) $date=$element->date_contrat;
+				if (empty($date)) $date=$element->datev; //Fiche inter
 				print '<td align="center">'.dol_print_date($date,'day').'</td>';
 
 				// Third party
