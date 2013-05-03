@@ -426,14 +426,14 @@ class BonPrelevement extends CommonObject
                         $facs = array();
                         $amounts = array();
 
-                        $facs = $this->getListInvoices();
+                        $facs = $this->getListInvoices(1);
 
                         $num=count($facs);
                         for ($i = 0; $i < $num; $i++)
                         {
                             $fac = new Facture($this->db);
-                            $fac->fetch($facs[$i]);
-                            $amounts[$fac->id] = $fac->total_ttc;
+                            $fac->fetch($facs[$i][0]);
+                            $amounts[$fac->id] = $facs[$i][1];
                             $result = $fac->set_paid($user);
                         }
                         $paiement = new Paiement($this->db);
@@ -576,9 +576,10 @@ class BonPrelevement extends CommonObject
     /**
      *	Get invoice list
      *
+     *  @param $amounts If you want to get the amount of the order for each invoice
      *	@return	array id of invoices
      */
-    private function getListInvoices()
+    private function getListInvoices($amounts=0)
     {
         global $conf;
 
@@ -589,6 +590,7 @@ class BonPrelevement extends CommonObject
          * dans un bon de prelevement
          */
         $sql = "SELECT fk_facture";
+        if ($amounts) $sql .= ", SUM(pl.amount)";
         $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
         $sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
         $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -596,6 +598,7 @@ class BonPrelevement extends CommonObject
         $sql.= " AND pl.fk_prelevement_bons = p.rowid";
         $sql.= " AND p.rowid = ".$this->id;
         $sql.= " AND p.entity = ".$conf->entity;
+        if ($amounts) $sql.= " GROUP BY fk_facture";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -608,7 +611,14 @@ class BonPrelevement extends CommonObject
                 while ($i < $num)
                 {
                     $row = $this->db->fetch_row($resql);
-                    $arr[$i] = $row[0];
+                    if (!$amounts) $arr[$i] = $row[0];
+                    else
+                    {
+                        $arr[$i] = array(
+                            $row[0],
+                            $row[1]
+                        );
+                    }
                     $i++;
                 }
             }
