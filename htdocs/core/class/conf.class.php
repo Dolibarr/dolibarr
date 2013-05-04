@@ -410,7 +410,7 @@ class Conf
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// Define list of limited modules
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='facture,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;

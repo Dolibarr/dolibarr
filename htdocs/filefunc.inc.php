@@ -150,11 +150,11 @@ if (! empty($dolibarr_main_document_root_alt))
 // Define DOL_MAIN_URL_ROOT and DOL_URL_ROOT
 $tmp='';
 $found=0;
-$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));
-$pathroot=$_SERVER["DOCUMENT_ROOT"];
-$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));
+$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Ex: C:/xxx/dolibarr/htdocs
+$pathroot=$_SERVER["DOCUMENT_ROOT"];															// B) Ex: C:/Program Files/wamp/www/
+$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 $concatpath='';
-foreach($paths as $tmppath)
+foreach($paths as $tmppath)	// We check to find (B+start of C)=A
 {
     if ($tmppath) $concatpath.='/'.$tmppath;
     //print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
