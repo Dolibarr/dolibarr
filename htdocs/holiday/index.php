@@ -262,6 +262,7 @@ print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Duration"));
 print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
+print '<td></td>';
 print "</tr>\n";
 
 // FILTRES
@@ -320,6 +321,9 @@ print '<td>&nbsp;</td>';
 // STATUT
 print '<td class="liste_titre" width="70px;" align="center">';
 $holiday->selectStatutCP($search_statut);
+print '</td>';
+// ACTION
+print '<td>';
 print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
 print "</td></tr>\n";
 
