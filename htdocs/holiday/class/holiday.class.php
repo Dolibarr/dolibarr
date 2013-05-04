@@ -1564,7 +1564,7 @@ class Holiday extends CommonObject
      */
     function addLogCP($fk_user_action,$fk_user_update,$type,$new_solde) {
 
-        global $conf, $langs, $db;
+        global $conf, $langs;
 
         $error=0;
 
@@ -1586,7 +1586,7 @@ class Holiday extends CommonObject
         $sql.= " NOW(), ";
         $sql.= " '".$fk_user_action."',";
         $sql.= " '".$fk_user_update."',";
-        $sql.= " '".$db->escape($type)."',";
+        $sql.= " '".$this->db->escape($type)."',";
         $sql.= " '".$prev_solde."',";
         $sql.= " '".$new_solde."'";
         $sql.= ")";
