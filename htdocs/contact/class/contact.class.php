@@ -246,11 +246,11 @@ class Contact extends CommonObject
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
-		$sql .= ", note='".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null")."'";
-		$sql .= ", phone = '".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null")."'";
-		$sql .= ", phone_perso = '".(isset($this->phone_perso)?"'".$this->db->escape($this->phone_perso)."'":"null")."'";
-		$sql .= ", phone_mobile = '".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null")."'";
-		$sql .= ", jabberid = '".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null")."'";
+		$sql .= ", note = ".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null");
+		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
+		$sql .= ", phone_perso = ".(isset($this->phone_perso)?"'".$this->db->escape($this->phone_perso)."'":"null");
+		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
+		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
