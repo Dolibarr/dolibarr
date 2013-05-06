@@ -124,7 +124,7 @@ class Holiday extends CommonObject
         // User
         $sql.= "'".$this->fk_user."',";
         $sql.= " '".$this->db->idate($now)."',";
-        $sql.= " '".addslashes($this->description)."',";
+        $sql.= " '".$this->db->escape($this->description)."',";
         $sql.= " '".$this->db->idate($this->date_debut)."',";
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " ".$this->halfday.",";
@@ -473,7 +473,7 @@ class Holiday extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
 
-        $sql.= " description= '".addslashes($this->description)."',";
+        $sql.= " description= '".$this->db->escape($this->description)."',";
 
         if(!empty($this->date_debut)) {
             $sql.= " date_debut = '".$this->db->idate($this->date_debut)."',";
@@ -527,7 +527,7 @@ class Holiday extends CommonObject
             $sql.= " fk_user_cancel = NULL,";
         }
         if(!empty($this->detail_refuse)) {
-            $sql.= " detail_refuse = '".addslashes($this->detail_refuse)."'";
+            $sql.= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
         } else {
             $sql.= " detail_refuse = NULL";
         }
@@ -1394,7 +1394,7 @@ class Holiday extends CommonObject
 
         $sql.= ") VALUES (";
 
-        $sql.= " '".addslashes($this->optName)."',";
+        $sql.= " '".$this->db->escape($this->optName)."',";
         $sql.= " '".$this->optValue."'";
         $sql.= ")";
 
@@ -1441,7 +1441,7 @@ class Holiday extends CommonObject
     function updateEventCP($rowid, $name, $value) {
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_events SET";
-        $sql.= " name = '".addslashes($name)."', value = '".$value."'";
+        $sql.= " name = '".$this->db->escape($name)."', value = '".$value."'";
         $sql.= " WHERE rowid = '".$rowid."'";
 
         $result = $this->db->query($sql);
@@ -1564,7 +1564,7 @@ class Holiday extends CommonObject
      */
     function addLogCP($fk_user_action,$fk_user_update,$type,$new_solde) {
 
-        global $conf, $langs, $db;
+        global $conf, $langs;
 
         $error=0;
 
@@ -1586,7 +1586,7 @@ class Holiday extends CommonObject
         $sql.= " NOW(), ";
         $sql.= " '".$fk_user_action."',";
         $sql.= " '".$fk_user_update."',";
-        $sql.= " '".addslashes($type)."',";
+        $sql.= " '".$this->db->escape($type)."',";
         $sql.= " '".$prev_solde."',";
         $sql.= " '".$new_solde."'";
         $sql.= ")";
