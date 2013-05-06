@@ -1739,14 +1739,11 @@ class User extends CommonObject
 		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($option == 'xxx')
+		if ($withpicto)
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
-			$lienfin='</a>';
+			$result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
+			if ($withpicto != 2) $result.=' ';
 		}
-
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowUser"),'user').$lienfin);
-		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->getFullName($langs).$lienfin;
 		return $result;
 	}
