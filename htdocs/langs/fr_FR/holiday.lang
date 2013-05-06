@@ -79,7 +79,6 @@ MenuLogCP=Voir les logs des congés
 LogCP=Logs des mises à jours des congés
 ActionByCP=Réalisée par
 UserUpdateCP=Pour l'utilisateur
-ActionTypeCP=Type
 PrevSoldeCP=Précédent Solde
 NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.
@@ -127,7 +126,6 @@ DeleteEventOptionCP=Supprimer
 UpdateEventOptionCP=Mettre à jour
 ErrorMailNotSend=Une erreur est survenue lors de l'envoi du mail :
 NoCPforMonth=Aucun congé ce mois-ci.
-Jours=jours
 nbJours=Nombre jours
 TitleAdminCP=Configuration des Congés
 
