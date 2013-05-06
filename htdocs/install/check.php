@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,7 +385,8 @@ else
 								array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
-								array('from'=>'3.3.0', 'to'=>'3.4.0')
+								array('from'=>'3.3.0', 'to'=>'3.4.0'),
+								array('from'=>'3.4.0', 'to'=>'3.5.0')
 						);
 
 		$count=0;

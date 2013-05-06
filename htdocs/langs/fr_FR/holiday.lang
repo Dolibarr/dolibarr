@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - holiday
 CHARSET= UTF-8
 
+HRM=GRH
 Holidays=Congés
 CPTitreMenu=Congés
 MenuReportMonth=Etat mensuel

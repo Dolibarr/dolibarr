@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - holiday
 CHARSET= UTF-8
 
+HRM=HRM
 Holidays=Holidays
 CPTitreMenu=Holidays
 MenuReportMonth=Monthly statement

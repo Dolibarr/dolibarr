@@ -404,6 +404,15 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
+	// We can also use bcadd to avoid pb with floating points
+    // For example print 239.2 - 229.3 - 9.9; does not return 0.
+    //$resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+    //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+    $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+
+    print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td align="right" colspan="2" nowrap>'.price($resteapayer).'</td>';
+    print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+
 	// Statut
 	print '<tr><td>'.$langs->trans('Status').'</td>';
 	print '<td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';

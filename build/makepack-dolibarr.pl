@@ -9,7 +9,7 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="3";
-$MINOR="4";
+$MINOR="5";
 $BUILD="0-alpha";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 

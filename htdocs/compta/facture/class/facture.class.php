@@ -2867,46 +2867,57 @@ class Facture extends CommonInvoice
 				{
 					$now=dol_now();
 
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-					$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
-					$sql .= ' VALUES ('.$this->id;
-					$sql .= ",'".price2num($this->total_ttc)."'";
-					$sql .= ",".$this->db->idate($now).",".$user->id;
-					$sql .= ",'".$soc->bank_account->code_banque."'";
-					$sql .= ",'".$soc->bank_account->code_guichet."'";
-					$sql .= ",'".$soc->bank_account->number."'";
-					$sql .= ",'".$soc->bank_account->cle_rib."')";
-					if ( $this->db->query($sql))
-					{
-						return 1;
-					}
-					else
-					{
-						$this->error=$this->db->error();
-						dol_syslog(get_class($this).'::demandeprelevement Erreur');
-						return -1;
-					}
-				}
-				else
-				{
-					$this->error="A request already exists";
-					dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
-				}
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
-				return -2;
-			}
-		}
-		else
-		{
-			$this->error="Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
-			return -3;
-		}
-	}
+                    $totalpaye  = $this->getSommePaiement();
+                    $totalcreditnotes = $this->getSumCreditNotesUsed();
+                    $totaldeposits = $this->getSumDepositsUsed();
+                    //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+
+                    // We can also use bcadd to avoid pb with floating points
+                    // For example print 239.2 - 229.3 - 9.9; does not return 0.
+                    //$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+                    //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+                    $resteapayer = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
+
+                    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
+                    $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
+                    $sql .= ' VALUES ('.$this->id;
+                    $sql .= ",'".price2num($resteapayer)."'";
+                    $sql .= ",".$this->db->idate($now).",".$user->id;
+                    $sql .= ",'".$soc->bank_account->code_banque."'";
+                    $sql .= ",'".$soc->bank_account->code_guichet."'";
+                    $sql .= ",'".$soc->bank_account->number."'";
+                    $sql .= ",'".$soc->bank_account->cle_rib."')";
+                    if ( $this->db->query($sql))
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        $this->error=$this->db->error();
+                        dol_syslog(get_class($this).'::demandeprelevement Erreur');
+                        return -1;
+                    }
+                }
+                else
+                {
+                    $this->error="A request already exists";
+                    dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
+                }
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
+                return -2;
+            }
+        }
+        else
+        {
+            $this->error="Status of invoice does not allow this";
+            dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+            return -3;
+        }
+    }
 
 	/**
 	 *  Supprime une demande de prelevement
