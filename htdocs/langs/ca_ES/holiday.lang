@@ -80,7 +80,6 @@ MenuLogCP=Veure els logs de vacances
 LogCP=Logs d'actualitzacions de vacances
 ActionByCP=Realitzat per
 UserUpdateCP=Per a l'usuari
-ActionTypeCP=Tipus
 PrevSoldeCP=Saldo anterior
 NewSoldeCP=Nou saldo
 alreadyCPexist=Ja s'ha efectuat una petició de vacances per a aquest període.
@@ -130,7 +129,6 @@ DeleteEventOptionCP=Eliminar
 UpdateEventOptionCP=Actualitzar
 ErrorMailNotSend=S'ha produït un error en l'enviament del correu electrònic:
 NoCPforMonth=Sense vacances aquest mes.
-Jours=dies
 nbJours=Número de dies
 TitleAdminCP=Configuració de les vacances
 

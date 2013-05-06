@@ -54,7 +54,7 @@ $month = GETPOST('month_start');
 $year = GETPOST('year_start');
 
 if(empty($month)) {
-	$month = date('m');
+	$month = date('n');
 }
 if(empty($year)) {
 	$year = date('Y');
@@ -65,7 +65,7 @@ $sql.= " FROM llx_holiday cp";
 $sql.= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
 $sql.= " WHERE cp.statut = 3";	// Approved
 // TODO Use BETWEEN instead of date_format
-$sql.= " AND (date_format(cp.date_debut, '%Y-%m') = '$year-$month' OR date_format(cp.date_fin, '%Y-%m') = '$year-$month')";
+$sql.= " AND (date_format(cp.date_debut, '%Y-%c') = '$year-$month' OR date_format(cp.date_fin, '%Y-%c') = '$year-$month')";
 $sql.= " ORDER BY u.lastname,cp.date_debut";
 
 $result  = $db->query($sql);
@@ -77,8 +77,9 @@ print '<div class="tabBar">';
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month.'">&nbsp;';
-$htmlother->select_year($year,'year_start',1,10,3);
+print $langs->trans('Month').': ';
+print $htmlother->select_month($month, 'month_start').' ';
+print $htmlother->select_year($year,'year_start',1,10,3);
 
 print '<input type="submit" value="'.$langs->trans("Refresh").'" class="button" />';
 
@@ -105,6 +106,8 @@ if($num == '0') {
 
 } else {
 
+	$langs->load('users');
+
 	while ($holiday = $db->fetch_array($result))
 	{
 		$user = new User($db);
@@ -126,7 +129,7 @@ if($num == '0') {
 
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
-		print '<td>'.$user->lastname.' '.$user->firstname.'</td>';
+		print '<td>'.$user->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($start_date,'day');
 		print '</td>';
 		print '<td>'.dol_print_date($end_date,'day');

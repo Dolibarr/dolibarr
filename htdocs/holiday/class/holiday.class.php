@@ -124,7 +124,7 @@ class Holiday extends CommonObject
         // User
         $sql.= "'".$this->fk_user."',";
         $sql.= " '".$this->db->idate($now)."',";
-        $sql.= " '".addslashes($this->description)."',";
+        $sql.= " '".$this->db->escape($this->description)."',";
         $sql.= " '".$this->db->idate($this->date_debut)."',";
         $sql.= " '".$this->db->idate($this->date_fin)."',";
         $sql.= " ".$this->halfday.",";
@@ -473,7 +473,7 @@ class Holiday extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
 
-        $sql.= " description= '".addslashes($this->description)."',";
+        $sql.= " description= '".$this->db->escape($this->description)."',";
 
         if(!empty($this->date_debut)) {
             $sql.= " date_debut = '".$this->db->idate($this->date_debut)."',";
@@ -527,7 +527,7 @@ class Holiday extends CommonObject
             $sql.= " fk_user_cancel = NULL,";
         }
         if(!empty($this->detail_refuse)) {
-            $sql.= " detail_refuse = '".addslashes($this->detail_refuse)."'";
+            $sql.= " detail_refuse = '".$this->db->escape($this->detail_refuse)."'";
         } else {
             $sql.= " detail_refuse = NULL";
         }
@@ -913,7 +913,7 @@ class Holiday extends CommonObject
                     $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
 
                     // On ajoute la modification dans le LOG
-                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('Event').': '.$langs->trans('HolidaysMonthlyUpdate'),$new_solde);
+                    $this->addLogCP($user->id,$users[$i]['rowid'], $langs->trans('HolidaysMonthlyUpdate'),$new_solde);
 
                     $i++;
                 }
@@ -1394,7 +1394,7 @@ class Holiday extends CommonObject
 
         $sql.= ") VALUES (";
 
-        $sql.= " '".addslashes($this->optName)."',";
+        $sql.= " '".$this->db->escape($this->optName)."',";
         $sql.= " '".$this->optValue."'";
         $sql.= ")";
 
@@ -1441,7 +1441,7 @@ class Holiday extends CommonObject
     function updateEventCP($rowid, $name, $value) {
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_events SET";
-        $sql.= " name = '".addslashes($name)."', value = '".$value."'";
+        $sql.= " name = '".$this->db->escape($name)."', value = '".$value."'";
         $sql.= " WHERE rowid = '".$rowid."'";
 
         $result = $this->db->query($sql);
@@ -1564,7 +1564,7 @@ class Holiday extends CommonObject
      */
     function addLogCP($fk_user_action,$fk_user_update,$type,$new_solde) {
 
-        global $conf, $langs, $db;
+        global $conf, $langs;
 
         $error=0;
 
@@ -1586,7 +1586,7 @@ class Holiday extends CommonObject
         $sql.= " NOW(), ";
         $sql.= " '".$fk_user_action."',";
         $sql.= " '".$fk_user_update."',";
-        $sql.= " '".addslashes($type)."',";
+        $sql.= " '".$this->db->escape($type)."',";
         $sql.= " '".$prev_solde."',";
         $sql.= " '".$new_solde."'";
         $sql.= ")";
@@ -1660,43 +1660,43 @@ class Holiday extends CommonObject
         $resql=$this->db->query($sql);
 
         // Si pas d'erreur SQL
-      		if ($resql) {
+  		if ($resql) {
 
-      		    $i = 0;
-      		    $tab_result = $this->logs;
-      		    $num = $this->db->num_rows($resql);
+  		    $i = 0;
+  		    $tab_result = $this->logs;
+  		    $num = $this->db->num_rows($resql);
 
-      		    // Si pas d'enregistrement
-      		    if(!$num) {
+  		    // Si pas d'enregistrement
+  		    if(!$num) {
                 return 2;
-      		    }
+  		    }
 
-      		    // On liste les résultats et on les ajoutent dans le tableau
-      		    while($i < $num) {
+  		    // On liste les résultats et on les ajoutent dans le tableau
+  		    while($i < $num) {
 
-      		        $obj = $this->db->fetch_object($resql);
+  		        $obj = $this->db->fetch_object($resql);
 
-      		        $tab_result[$i]['rowid'] = $obj->rowid;
-      		        $tab_result[$i]['date_action'] = $obj->date_action;
-      		        $tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
-      		        $tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
-      		        $tab_result[$i]['type_action'] = $obj->type_action;
-      		        $tab_result[$i]['prev_solde'] = $obj->prev_solde;
-      		        $tab_result[$i]['new_solde'] = $obj->new_solde;
+  		        $tab_result[$i]['rowid'] = $obj->rowid;
+  		        $tab_result[$i]['date_action'] = $obj->date_action;
+  		        $tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
+  		        $tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
+  		        $tab_result[$i]['type_action'] = $obj->type_action;
+  		        $tab_result[$i]['prev_solde'] = $obj->prev_solde;
+  		        $tab_result[$i]['new_solde'] = $obj->new_solde;
 
-      		        $i++;
-      		    }
-      		    // Retourne 1 et ajoute le tableau à la variable
-      		    $this->logs = $tab_result;
-      		    return 1;
-      		}
-      		else
-      		{
-      		    // Erreur SQL
-      		    $this->error="Error ".$this->db->lasterror();
-      		    dol_syslog(get_class($this)."::fetchLog ".$this->error, LOG_ERR);
-      		    return -1;
-      		}
+  		        $i++;
+  		    }
+  		    // Retourne 1 et ajoute le tableau à la variable
+  		    $this->logs = $tab_result;
+  		    return 1;
+  		}
+  		else
+  		{
+  		    // Erreur SQL
+  		    $this->error="Error ".$this->db->lasterror();
+  		    dol_syslog(get_class($this)."::fetchLog ".$this->error, LOG_ERR);
+  		    return -1;
+  		}
     }
 
     /**
