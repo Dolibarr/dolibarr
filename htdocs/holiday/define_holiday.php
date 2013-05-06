@@ -71,7 +71,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $comment = (isset($_POST['note_holiday'][$userID]) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
     // We add the modification to the log
-    $holiday->addLogCP($user->id,$userID, $langs->trans('Event').': '.$langs->trans('ManualUpdate').$comment,$userValue);
+    $holiday->addLogCP($user->id,$userID, $langs->trans('ManualUpdate').$comment,$userValue);
 
     // Update of the days of the employee
     $holiday->updateSoldeCP($userID,$userValue);
@@ -111,7 +111,7 @@ elseif($action == 'add_event')
         $new_holiday = $nb_holiday + $add_holiday;
 
         // On ajoute la modification dans le LOG
-        $holiday->addLogCP($user->id,$userCP, $langs->trans('Event').': '.$holiday->getNameEventCp($event),$new_holiday);
+        $holiday->addLogCP($user->id,$userCP, $holiday->getNameEventCp($event),$new_holiday);
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 

@@ -43,7 +43,8 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 
 $cp = new Holiday($db);
-$log_holiday = $cp->fetchLog('','');
+//Recent changes are more important than old changes
+$log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC','');
 
 print_fiche_titre($langs->trans('LogCP'));
 
@@ -55,7 +56,7 @@ print '<td class="liste_titre">'.$langs->trans('ID').'</td>';
 print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
 print '<td class="liste_titre">'.$langs->trans('ActionByCP').'</td>';
 print '<td class="liste_titre">'.$langs->trans('UserUpdateCP').'</td>';
-print '<td class="liste_titre">'.$langs->trans('ActionTypeCP').'</td>';
+print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
 print '<td class="liste_titre" align="right">'.$langs->trans('PrevSoldeCP').'</td>';
 print '<td class="liste_titre" align="right">'.$langs->trans('NewSoldeCP').'</td>';
 
@@ -75,8 +76,8 @@ foreach($cp->logs as $logs_CP)
    	print '<tr '.$bc[$var].'>';
    	print '<td>'.$logs_CP['rowid'].'</td>';
    	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-   	print '<td>'.$user_action->getFullName($langs).'</td>';
-   	print '<td>'.$user_update->getFullName($langs).'</td>';
+   	print '<td>'.$user_action->getNomUrl(1).'</td>';
+   	print '<td>'.$user_update->getNomUrl(1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
    	print '<td style="text-align: right;">'.$logs_CP['prev_solde'].' '.$langs->trans('days').'</td>';
    	print '<td style="text-align: right;">'.$logs_CP['new_solde'].' '.$langs->trans('days').'</td>';

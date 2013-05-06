@@ -78,7 +78,6 @@ MenuLogCP=Tatil kayıtlarını gör
 LogCP=Tatil güncellemeleri kayıtı
 ActionByCP=Uygulayan
 UserUpdateCP=Bu kullanıcı için
-ActionTypeCP=Türü
 PrevSoldeCP=Önceki Bakiye
 NewSoldeCP=Yeni Bakiye
 alreadyCPexist=Bu dönem için bir tatil isteği zaten yapılmış.
