@@ -128,7 +128,7 @@ $sql = "SELECT s.nom, s.rowid as socid, s.code_client, s.client, u.rowid as agen
 $sql.= " u.login, u.name, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
 $sql.= $db->ifsql('f.type =2','sum(d.buy_price_ht * d.qty *-1)','sum(d.buy_price_ht * d.qty)')." as buying_price, ";
-$sql.= $db->ifsql('f.type =2','sum((d.price + d.buy_price_ht) * d.qty)','sum((d.price - d.buy_price_ht) * d.qty)')." as marge" ;
+$sql.= $db->ifsql('f.type =2','sum(d.total_ht + (d.buy_price_ht * d.qty))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge" ;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE)?-1:$conf->global->AGENT_CONTACT_TYPE);
@@ -160,11 +160,12 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 if ($agentid > 0)
   $sql.= " GROUP BY s.rowid";
 else
-  $sql.= " GROUP BY u.rowid";
+  $sql.= " GROUP BY u.rowid, s.nom, s.rowid, s.code_client, s.client, u.login, u.name, u.firstname, f.type ";
 $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
+dol_syslog('margin::agentMargins.php sql='.$sql,LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
