@@ -49,6 +49,7 @@ abstract class CommonDocGenerator
         return array(
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
+            'myuser_fullname'=>$user->getFullName($outputlangs,1),
             'myuser_login'=>$user->login,
             'myuser_phone'=>$user->office_phone,
        		'myuser_address'=>$user->address,
@@ -61,6 +62,7 @@ abstract class CommonDocGenerator
         	'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
+        	'myuser_logo'=>$logotouse,
             'myuser_web'=>''	// url not exist in $user object
         );
     }
