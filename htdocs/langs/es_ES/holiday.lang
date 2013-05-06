@@ -129,7 +129,6 @@ DeleteEventOptionCP=Eliminar
 UpdateEventOptionCP=Actualizar
 ErrorMailNotSend=Se ha producido un error en el envío del e-mail :
 NoCPforMonth=Sin vacaciones este mes.
-Jours=días
 nbJours=Número de días
 TitleAdminCP=Configuración de las vacaciones
 

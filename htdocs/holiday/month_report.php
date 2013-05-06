@@ -105,6 +105,8 @@ if($num == '0') {
 
 } else {
 
+	$langs->load('users');
+
 	while ($holiday = $db->fetch_array($result))
 	{
 		$user = new User($db);

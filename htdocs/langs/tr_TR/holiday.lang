@@ -126,7 +126,6 @@ DeleteEventOptionCP=Sil
 UpdateEventOptionCP=Güncelle
 ErrorMailNotSend=Eposta gönderilirken bir hata oluştu:
 NoCPforMonth=Bu ay hiç izin yok.
-Jours=gün
 nbJours=Gün sayısı
 TitleAdminCP=Tatillerin Yapılandırması
 Permission20001=Bütün tatil isteklerini Oku / Değiştir
