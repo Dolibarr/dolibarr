@@ -167,7 +167,9 @@ class Fichinter extends CommonObject
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHINTER_CREATE',$this,$user,$langs,$conf);
+			$tmpuser=new User($this->db);
+			$tmpuser->fetch($this->author);
+			$result=$interface->run_triggers('FICHINTER_CREATE',$this,$tmpuser,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}

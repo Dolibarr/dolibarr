@@ -906,7 +906,9 @@ abstract class DolibarrModules
                                 dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
                                 $tmpuser=new User($this->db);
                                 $tmpuser->fetch($obj2->rowid);
-                                $tmpuser->addrights($r_id);
+                                if (!empty($tmpuser->id)) {
+                                	$tmpuser->addrights($r_id);
+                                }
                                 $i++;
                             }
                             if (! empty($user->admin))  // Reload permission for current user if defined
