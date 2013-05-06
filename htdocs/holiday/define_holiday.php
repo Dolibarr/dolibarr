@@ -1,17 +1,18 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard <dmouillard@teclib.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
+ * Copyright (C) 2013      Marcos García <marcosgdf@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
 
-// Si l'utilisateur n'a pas le droit de lire cette page
+// If the user does not have perm to read the page
 if(!$user->rights->holiday->define_holiday) accessforbidden();
 
 $action=GETPOST('action');
@@ -66,13 +67,16 @@ if ($action == 'update' && isset($_POST['update_cp']))
         $userValue = 0;
     }
 
-    // On ajoute la modification dans le LOG
-    $holiday->addLogCP($user->id,$userID, $langs->trans('Event').': '.$langs->trans('ManualUpdate'),$userValue);
+    //If the user set a comment, we add it to the log comment
+    $comment = (isset($_POST['note_holiday'][$userID]) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
-    // Mise à jour des congés de l'utilisateur
+    // We add the modification to the log
+    $holiday->addLogCP($user->id,$userID, $langs->trans('Event').': '.$langs->trans('ManualUpdate').$comment,$userValue);
+
+    // Update of the days of the employee
     $holiday->updateSoldeCP($userID,$userValue);
 
-    // If it first update of sold, we set date to havoid to have sold incremented by new month
+    // If it first update of sold, we set date to avoid to have sold incremented by new month
 	$now=dol_now();
     $sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
     $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
@@ -145,8 +149,9 @@ print '<input type="hidden" name="action" value="update" />';
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print '<td width="5%">'.$langs->trans('ID').'</td>';
-print '<td width="60%">'.$langs->trans('UserName').'</td>';
+print '<td width="50%">'.$langs->trans('UserName').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Available').'</td>';
+print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
 print '<td>'.$langs->trans('UpdateButtonCP').'</td>';
 print '</tr>';
 
@@ -166,6 +171,7 @@ foreach($listUsers as $users)
     print '<td style="text-align:center">';
     print '<input type="text" value="'.$holiday->getCPforUser($users['rowid']).'" name="nb_holiday['.$users['rowid'].']" size="5" style="text-align: center;"/>';
     print ' '.$langs->trans('days').'</td>'."\n";
+    print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
     print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
     print '</tr>';
 
