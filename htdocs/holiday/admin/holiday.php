@@ -286,7 +286,7 @@ print '</tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('DelayForSubmitCP').'</td>'."\n";
-print '<td style="padding:5px;"><input class="flat" type="text" name="delayForRequest" value="'.$cp->getConfCP('delayForRequest').'" size="2" /> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="delayForRequest" value="'.$cp->getConfCP('delayForRequest').'" size="2" /> '.$langs->trans('DurationDays').'</td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
@@ -304,13 +304,13 @@ print '</tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('nbHolidayEveryMonthCP').'</td>'."\n";
-print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayEveryMonth" value="'.$cp->getConfCP('nbHolidayEveryMonth').'" size="5"/> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayEveryMonth" value="'.$cp->getConfCP('nbHolidayEveryMonth').'" size="5"/> '.$langs->trans('DurationDays').'</td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('nbHolidayDeductedCP').'</td>'."\n";
-print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayDeducted" value="'.$cp->getConfCP('nbHolidayDeducted').'" size="2"/> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayDeducted" value="'.$cp->getConfCP('nbHolidayDeducted').'" size="2"/> '.$langs->trans('DurationDays').'</td>'."\n";
 print '</tr>'."\n";
 
 print '</tbody>'."\n";
@@ -367,7 +367,7 @@ if($cp_events == 1) {
 
         print '<tr '.$bc[$var].'>'."\n";
         print '<td><input class="flat" type="text" size="40" name="optName['.$infos_event['rowid'].']" value="'.$infos_event['name'].'" /></td>'."\n";
-        print '<td><input class="flat" type="text" size="2" name="optValue['.$infos_event['rowid'].']" value="'.$infos_event['value'].'" /> '.$langs->trans('Jours').'</td>'."\n";
+        print '<td><input class="flat" type="text" size="2" name="optValue['.$infos_event['rowid'].']" value="'.$infos_event['value'].'" /> '.$langs->trans('DurationDays').'</td>'."\n";
         print '<td><input type="submit" class="button" name="update_event['.$infos_event['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></td>'."\n";
         print '<td width="20px" align="right"><input type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" name="delete_event['.$infos_event['rowid'].']" style="border:0;"/></td>'."\n";
         print '</tr>';
@@ -400,7 +400,7 @@ print '</tr>';
 
 print '<tr class="pair">';
 print '<td><input class="flat" type="text" size="40" name="optName" value="'.(is_array($optName)?'':$optName).'" /></td>'."\n";
-print '<td><input class="flat" type="text" size="2" name="optValue" value="'.(is_array($optValue)?'':$optValue).'" /> '.$langs->trans('Jours').'</td>'."\n";
+print '<td><input class="flat" type="text" size="2" name="optValue" value="'.(is_array($optValue)?'':$optValue).'" /> '.$langs->trans('DurationDays').'</td>'."\n";
 print '<td><input type="submit" class="button" name="button" value="'.$langs->trans('CreateEventCP').'" /></td>'."\n";
 print '</tr>'."\n";
 
