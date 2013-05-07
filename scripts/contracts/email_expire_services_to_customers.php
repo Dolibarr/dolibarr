@@ -183,7 +183,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$dura
     	$title= $newlangs->transnoentities("ListOfServicesToExpire");
 
     $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$title;
-    $sendto = "jmenent@2byte.es";//$oldemail;
+    $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = 0;
