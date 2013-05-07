@@ -1292,8 +1292,10 @@ class Project extends CommonObject
 		switch ($Tablename)
 		{
 			case "facture":
-			case "facture_fourn":
 				$sql = "SELECT rowid, facnumber as ref";
+				break;
+			case "facture_fourn":
+				$sql = "SELECT rowid, ref";
 				break;
 			case "facture_rec":
 				$sql = "SELECT rowid, titre as ref";
@@ -1309,7 +1311,9 @@ class Project extends CommonObject
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$Tablename;
 		$sql.= " WHERE ".$projectkey." is null";
-		$sql.= " AND fk_soc=".$this->societe->id; 
+		if (!empty($this->societe->id)) {
+			$sql.= " AND fk_soc=".$this->societe->id;
+		} 
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog("Project.Lib::select_element sql=".$sql);
