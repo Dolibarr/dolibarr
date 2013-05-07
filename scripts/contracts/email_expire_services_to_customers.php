@@ -20,9 +20,9 @@
  */
 
 /**
- *      \file       scripts/invoices/email_unpaid_invoices_to_customers.php
+ *      \file       scripts/contracts/email_expire_services_to_customers.php
  *      \ingroup    facture
- *      \brief      Script to send a mail to customers with unpaid invoices
+ *      \brief      Script to send a mail to customers with services to expire
  */
 
 $sapi_type = php_sapi_name();
@@ -40,7 +40,7 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 {
 	print "Usage: $script_file [test|confirm] [delay]\n";
 	print "\n";
-	print "Send an email to customers to remind all unpaid customer invoices.\n";
+	print "Send an email to customers to remind all all contracts services to expire.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
 	exit;
@@ -52,6 +52,7 @@ require($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 $langs->load('main');
+$langs->load('contracts');
 
 
 /*
@@ -64,24 +65,27 @@ $duration_value=$argv[2];
 $error = 0;
 print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
 
-$sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE f.fk_statut != 0 AND f.paye = 0";
-$sql .= " AND f.fk_soc = s.rowid";
-if ($duration_value) $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
-$sql .= " ORDER BY s.email ASC, s.rowid ASC";	// Order by email to allow one message per email
+$sql  = "SELECT DISTINCT s.nom as name, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, s.email, s.default_lang";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe AS s";
+$sql .= ", ".MAIN_DB_PREFIX."contrat AS c"; 
+$sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd"; 
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product";
+$sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
 
-//print $sql;
+if ($duration_value) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+
+$sql .= " ORDER BY s.email ASC, s.rowid ASC";
+
+print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-    $oldemail = 'none'; $olduid = 0; $oldlang='';
+    $oldemail = 'none'; $oldlang='';
     $total = 0; $foundtoprocess = 0;
-	print "We found ".$num." couples (unpayed validated invoice - customer) qualified\n";
-    dol_syslog("We found ".$num." couples (unpayed validated invoice - customer) qualified");
+	print "We found ".$num." couples (services to expire - customer) qualified\n";
+    dol_syslog("We found ".$num." couples (services to expire - customer) qualified");
 	$message='';
 
     if ($num)
@@ -90,19 +94,18 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
 
-            if (($obj->email <> $oldemail || $obj->uid <> $olduid) || $oldemail == 'none')
+            if (($obj->email <> $oldemail) || $oldemail == 'none')
             {
                 // Break onto sales representative (new email or uid)
                 if (dol_strlen($oldemail) && $oldemail != 'none')
                 {
-                   	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldcustomer);
+                   	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldcustomer,$duration_value);
                 }
                 else
 				{
                 	if ($oldemail != 'none') print "- No email sent for ".$oldcustomer.", total: ".$total."\n";
                 }
                 $oldemail = $obj->email;
-                $olduid = $obj->uid;
                 $oldlang = $obj->lang;
                 $oldcustomer=$obj->name;
                 $message = '';
@@ -114,14 +117,14 @@ if ($resql)
 
             if (dol_strlen($oldemail))
             {
-            	$message .= $langs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->name."\n";
-            	dol_syslog("email_unpaid_invoices_to_customers.php: ".$obj->email);
+            	$message .= $langs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".$obj->label." (".price($obj->total_ttc)."), ".$langs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
+            	dol_syslog("email_expire_services_to_customers.php: ".$obj->email);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." customer ".$obj->name.", email ".$obj->email.": ";
+            print "Service to expire ".$obj->ref.", label ".$obj->label.", due date ".dol_print_date($db->jdate($obj->date_fin_validite),'day')." (linked to company ".$obj->nom.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email."): ";
             if (dol_strlen($obj->email)) print "qualified.";
             else print "disqualified (no email).";
-            print "\n";
+			print "\n";
 
             $total += $obj->total_ttc;
 
@@ -133,7 +136,7 @@ if ($resql)
         {
             if (dol_strlen($oldemail) && $oldemail != 'none')	// Break onto email (new email)
             {
-       			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldcustomer);
+       			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldcustomer,$duration_value);
             }
             else
 			{
@@ -149,7 +152,7 @@ if ($resql)
 else
 {
     dol_print_error($db);
-    dol_syslog("email_unpaid_invoices_to_customers.php: Error");
+    dol_syslog("email_expire_services_to_customers.php: Error");
 }
 
 
@@ -162,47 +165,53 @@ else
  * 	@param	string	$total			Total amount of unpayed invoices
  *  @param	string	$userlang		Code lang to use for email output.
  *  @param	string	$oldcustomer	Old customer
+ *  @param  int		$duration_value	duration value
  * 	@return	int						<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer)
+function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$duration_value)
 {
     global $conf,$langs;
 
     $newlangs=new Translate('',$conf);
     $newlangs->setDefaultLang($userlang);
     $newlangs->load("main");
-    $newlangs->load("bills");
+    $newlangs->load("contracts");
+    
+    if ($duration_value)
+    	$title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
+    else
+    	$title= $newlangs->transnoentities("ListOfServicesToExpire");
 
-    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->trans("ListOfYourUnpaidInvoices");
+    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$title;
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = 0;
 
     print "- Send email for ".$oldcustomer."(".$oldemail."), total: ".$total."\n";
-    dol_syslog("email_unpaid_invoices_to_customers.php: send mail to ".$oldemail);
+    dol_syslog("email_expire_services_to_customers.php: send mail to ".$oldemail);
 
     $usehtml=0;
-    if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_FOOTER)) $usehtml+=1;
-    if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER)) $usehtml+=1;
+    if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) $usehtml+=1;
+    if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER)) $usehtml+=1;
 
     $allmessage='';
-    if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER))
+    if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER))
     {
-    	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER;
+    	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
     }
     else
     {
     	$allmessage.= "Dear customer".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
-    	$allmessage.= "Please, find a summary of the bills with pending payments from you, with an attachment of invoices.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
-    	$allmessage.= "Note: This list contains only unpaid invoices.".($usehtml?"<br>\n":"\n");
+    	$allmessage.= "Please, find a summary of the services contracted by you that are about to expire.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
+    	$allmessage.= "Note: This list contains only services to expire.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
     $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
-    if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
+    if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER))
     {
-    	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER;
-    	if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER)) $usehtml+=1;
+    	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;
+    	if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) $usehtml+=1;
     }
 
     $mail = new CMailFile(

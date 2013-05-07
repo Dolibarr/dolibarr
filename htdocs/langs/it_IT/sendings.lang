@@ -35,6 +35,7 @@ Carriers				    =Vettori
 Carrier					    =Vettore 
 CarriersArea				    =Sezione vettori 
 NewCarrier				    =Nuovo vettore
+DateDeliveryPlanned   =Data di consegna prevista
 
 
 // Date 2009-01-18 19:41:54
@@ -70,10 +71,9 @@ Shipments=Spedizioni
 StatusSendingCanceled=Annullato
 StatusSendingCanceledShort=Annullato
 DocumentModelMerou=Merou modello A5
-DateDeliveryPlanned=data di consegna piallato
+// DateDeliveryPlanned=Data di consegna piallato
 DateReceived=Data di consegna ricevuto
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:45).
-
 
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
 // Reference language: en_US -> it_IT

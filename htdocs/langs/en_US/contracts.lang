@@ -86,6 +86,9 @@ PaymentRenewContractId=Renew contract line (number %s)
 ExpiredSince=Expiration date
 RelatedContracts=Related contracts
 NoExpiredServices=No expired active services
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpire=List of Services to expire
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract
 TypeContact_contrat_internal_SALESREPFOLL=Sales representative following-up contract
