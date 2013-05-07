@@ -1,8 +1,9 @@
 #!/usr/bin/php
 <?php
 /*
- * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,12 +159,12 @@ else
 /**
  * 	Send email
  *
- * 	@param	string	$mode			Mode (test | confirm)
- *  @param	string	$oldemail		Old email
- * 	@param	string	$message		Message to send
- * 	@param	string	$total			Total amount of unpayed invoices
- *  @param	string	$userlang		Code lang to use for email output.
- *  @param	string	$oldcustomer	Old customer
+ * 	@param	string	$mode					Mode (test | confirm)
+ *  @param	string	$oldemail				Old email
+ * 	@param	string	$message				Message to send
+ * 	@param	string	$total					Total amount of unpayed invoices
+ *  @param	string	$userlang				Code lang to use for email output.
+ *  @param	string	$oldsalerepresentative	Old sale representative
  * 	@return	int						<0 if KO, >0 if OK
  */
 function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresentative)
@@ -177,7 +178,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
 
     $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->trans("ListOfYourUnpaidInvoices");
     $sendto = $oldemail;
-    $from = $conf->global->MAIN_EMAIL_FROM;
+    $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
 	$msgishtml = 0;
 
