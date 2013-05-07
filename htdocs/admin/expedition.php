@@ -362,6 +362,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="80" class="nowrap">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80" class="nowrap">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -428,8 +429,13 @@ foreach ($dirmodels as $reldir)
 	    			$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 	    			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 	    			print '<td align="center">';
+	    			print $form->textwithpicto('',$htmltooltip,-1,0);
+	    			print '</td>';
+
+	    			// Preview
 	    			$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"),'sending').'</a>';
-	    			print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
+	    			print '<td align="center">';
+	    			print $link;
 	    			print '</td>';
 
 	    			print '</tr>';
