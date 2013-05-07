@@ -40,9 +40,9 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 {
 	print "Usage: $script_file [test|confirm] [delay]\n";
 	print "\n";
-	print "Send an email to users to remind all contracts services to expire user is sale representative for.\n";
+	print "Send an email to remind all contracts services to expire, to users that are sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
-	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
+	print "If you add a delay (nb of days), only services with expired date < today + delay are included.\n";
 	exit;
 }
 $mode=$argv[1];
@@ -192,13 +192,13 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
 
     $usehtml=0;
-    if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_FOOTER)) $usehtml+=1;
-    if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER)) $usehtml+=1;
+    if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) $usehtml+=1;
+    if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER)) $usehtml+=1;
 
     $allmessage='';
-    if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER))
+    if (! empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER))
     {
-    	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_HEADER;
+    	$allmessage.=$conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER;
     }
     else
     {
