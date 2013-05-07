@@ -85,6 +85,10 @@ PaymentRenewContractId=Renovación servicio (número %s)
 ExpiredSince=Expirado desde el
 RelatedContracts=Contratos asociados
 NoExpiredServices=Sin servicios activos expirados
+ListOfServicesToExpireWithDuration=Listado de servicios activos a expirar en %s días
+ListOfServicesToExpire=Listado de servicios activos a expirar
+ListOfServicesToExpireNote=Nota: Este listado contiene solamente los servicios de los contratos con terceros de los que usted es comercial.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato
