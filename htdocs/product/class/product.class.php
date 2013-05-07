@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -586,8 +587,12 @@ class Product extends CommonObject
 
 		$error=0;
 
-		if ($user->rights->produit->supprimer)
+		if (($this->type==0 && !$user->rights->produit->supprimer) || ($this->type==1 && !$user->rights->service->supprimer))
 		{
+			$this->error = "ErrorForbidden";
+			return 0;
+		}
+
 			$objectisused = $this->isObjectUsed($id);
 			if (empty($objectisused))
 			{
@@ -686,8 +691,6 @@ class Product extends CommonObject
 				return 0;
 			}
 		}
-		return 0;
-	}
 
 	/**
 	 *	Update ou cree les traductions des infos produits
