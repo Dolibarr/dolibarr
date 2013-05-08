@@ -278,7 +278,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
+print '  <td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 $var = true;
@@ -360,7 +360,7 @@ print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">&nbsp;</td>';
+print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 foreach ($dirsociete as $dirroot)
@@ -452,7 +452,7 @@ print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
