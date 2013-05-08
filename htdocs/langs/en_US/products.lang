@@ -184,6 +184,8 @@ AlwaysUseFixedPrice=Use the fixed price
 PriceByQuantity=Price by quantity
 PriceByQuantityRange=Quantity range
 ProductsDashboard=Products/Services summary
+UpdateOriginalProductLabel=Modify original label
+HelpUpdateOriginalProductLabel=Allows to edit the name of the product
 ### composition fabrication
 Building=Production and items dispatchment
 Build=Produce

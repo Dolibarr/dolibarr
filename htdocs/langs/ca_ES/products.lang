@@ -181,3 +181,16 @@ HelpAddThisServiceCard=Aquesta opció permet crear o clonar una fitxa de servei 
 CurrentProductPrice=Preu actual
 AlwaysUseNewPrice=Utilitzar sempre el preu actual
 AlwaysUseFixedPrice=Utilitzar el preu fixat
+PriceByQuantity=Preu per quantitat
+PriceByQuantityRange=Rang quantitat
+ProductsDashboard=Resum Productes/Serveis
+UpdateOriginalProductLabel=Canviar etiqueta original
+HelpUpdateOriginalProductLabel=Permet editar el nom del producte
+### composition fabrication
+Building=Fabricació
+Build=Fabricar
+BuildIt=Llançar la fabricació
+BuildindListInfo=Cantitat disponible per magatzem, si indica zero no es fabricaran.
+QtyNeed=Cantitat
+UnitPmp=Preu de compra unitari
+CostPmpHT=Cost de compra sense IVA
