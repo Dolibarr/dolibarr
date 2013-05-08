@@ -181,3 +181,16 @@ HelpAddThisServiceCard=Esta opción permite crear o clonar una ficha de servicio
 CurrentProductPrice=Precio actual
 AlwaysUseNewPrice=Usar siempre el precio actual
 AlwaysUseFixedPrice=Usar el precio fijado
+PriceByQuantity=Precio por cantidad
+PriceByQuantityRange=Rango cantidad
+ProductsDashboard=Resumen Productos/Servicios
+UpdateOriginalProductLabel=Modificar etiqueta original
+HelpUpdateOriginalProductLabel=Permite editar el nombre del producto
+### composition fabrication
+Building=Fabricación
+Build=Fabricar
+BuildIt=Lanzar la fabricación
+BuildindListInfo=Cantidad disponible por almacén, si indica cero no se fabricarán.
+QtyNeed=Cantidad
+UnitPmp=Precio de compra unitario
+CostPmpHT=Coste de compra sin IVA
