@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copytight (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -804,7 +805,7 @@ class Account extends CommonObject
         $sql = "SELECT sum(amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank";
         $sql.= " WHERE fk_account = ".$this->id;
-        if ($option == 1) $sql.= " AND dateo <= ".$this->db->idate(time());
+        if ($option == 1) $sql.= " AND dateo <= '".$this->db->idate(dol_now())."'";
 
         $resql = $this->db->query($sql);
         if ($resql)

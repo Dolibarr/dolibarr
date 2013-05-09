@@ -346,9 +346,9 @@ ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_comment (id_comment);
 ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_sondage (id_sondage);
 ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_id_sondage_admin (id_sondage_admin);
 ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_date_fin (date_fin);
-ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_users (id_users);
-ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_nom (nom);
-ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_opensurvey_user_studs_id_users (id_users);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_opensurvey_user_studs_nom (nom);
+ALTER TABLE llx_opensurvey_user_studs ADD INDEX idx_opensurvey_user_studs_id_sondage (id_sondage);
 
 ALTER TABLE llx_boxes ADD COLUMN params varchar(255);
 
