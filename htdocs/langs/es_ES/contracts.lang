@@ -87,6 +87,7 @@ RelatedContracts=Contratos asociados
 NoExpiredServices=Sin servicios activos expirados
 ListOfServicesToExpireWithDuration=Listado de servicios activos a expirar en %s días
 ListOfServicesToExpire=Listado de servicios activos a expirar
+Service=Servicio
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato

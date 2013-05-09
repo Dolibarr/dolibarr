@@ -74,7 +74,7 @@ $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 
 if ($duration_value) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 
 $sql .= " AND sc.fk_soc = s.rowid AND sc.fk_user = u.rowid";
-$sql .= " ORDER BY u.email ASC, s.rowid ASC";
+$sql .= " ORDER BY cd.date_fin_validite ASC, s.rowid ASC";
 
 //print $sql;
 $resql=$db->query($sql);
