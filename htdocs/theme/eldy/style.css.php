@@ -514,6 +514,7 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	cursor: not-allowed;
     font-weight: normal;
 	white-space: nowrap;
+	text-decoration: none;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
