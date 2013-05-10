@@ -44,6 +44,9 @@ abstract class CommonObject
     public $civility_id;
 
     public $array_options=array();
+    
+    public $linkedObjectsIds;
+    public $linkedObjects;
 
     // No constructor as it is an abstract class
 
