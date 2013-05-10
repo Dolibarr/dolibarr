@@ -1711,6 +1711,7 @@ abstract class CommonObject
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
+        $sql = ' ORDER BY sourcetype';
         //print $sql;
 
         dol_syslog(get_class($this)."::fetchObjectLink sql=".$sql);
