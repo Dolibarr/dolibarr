@@ -958,10 +958,11 @@ else
 		$adht = new AdherentType($db);
 		$adht->fetch($object->typeid);
 
+		$country=GETPOST('pays','int');
 		// We set country_id, and country_code, country of the chosen country
-		if (isset($_POST["pays"]) || $object->country_id)
+		if (!empty($country) || $object->country_id)
 		{
-			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["pays"])?$_POST["pays"]:$object->country_id);
+			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(!empty($country)?$country:$object->country_id);
 			$resql=$db->query($sql);
 			if ($resql)
 			{
