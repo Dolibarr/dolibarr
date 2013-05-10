@@ -139,6 +139,7 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
 	);
 
     print_fiche_titre($langs->trans('SPIPTitle'), $lien, '');
+	print '<br>';
     form_constantes($constantes);
     print '<br>';
 }

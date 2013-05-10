@@ -1004,11 +1004,13 @@ class FormOther
                 }
             }
 
-            $emptybox->box_id='A';
-            $emptybox->info_box_head=array();
-            $emptybox->info_box_contents=array();
-            $emptybox->showBox(array(),array());
-
+            if (empty($conf->browser->phone))
+            {	
+            	$emptybox->box_id='A';
+            	$emptybox->info_box_head=array();
+            	$emptybox->info_box_contents=array();
+            	$emptybox->showBox(array(),array());
+            }
             print "</div>\n";
             print "<!-- End box container -->\n";
 
@@ -1033,11 +1035,13 @@ class FormOther
                 }
             }
 
-            $emptybox->box_id='B';
-            $emptybox->info_box_head=array();
-            $emptybox->info_box_contents=array();
-            $emptybox->showBox(array(),array());
-
+            if (empty($conf->browser->phone))
+            {	
+            	$emptybox->box_id='B';
+            	$emptybox->info_box_head=array();
+            	$emptybox->info_box_contents=array();
+            	$emptybox->showBox(array(),array());
+            }
             print "</div>\n";
             print "<!-- End box container -->\n";
 
