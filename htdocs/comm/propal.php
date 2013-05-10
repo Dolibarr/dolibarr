@@ -1857,7 +1857,7 @@ else
 				// Convert date into timestamp format
 				if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 				{
-					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 				}
 
 				if ($action == 'edit_extras' && $user->rights->propal->creer)
