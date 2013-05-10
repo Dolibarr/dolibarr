@@ -211,7 +211,7 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" name="label" size="25" value="'.$label.'">';
+		print '<td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
