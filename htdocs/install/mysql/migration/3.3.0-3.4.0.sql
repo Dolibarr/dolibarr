@@ -374,3 +374,5 @@ create table llx_facture_fourn_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 ALTER TABLE llx_facture_fourn_extrafields ADD INDEX idx_facture_fourn_extrafields (fk_object);
+
+ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255) AFTER fk_user;
