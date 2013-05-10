@@ -1652,7 +1652,7 @@ abstract class CommonObject
 	}
 
     /**
-     *	Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
+     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array.
      *
      *	@param	int		$sourceid		Object source id
      *	@param  string	$sourcetype		Object source type
