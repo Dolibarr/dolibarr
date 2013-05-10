@@ -1834,33 +1834,58 @@ else
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
-
 		if ($action == 'edit_extras')
 		{
-			print '</table>';
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 			print '<input type="hidden" name="action" value="update_extras">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print '<table class="border" width="100%">';
 		}
 
-		print $object->showOptionals($extrafields,'edit');
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+			if ($extrafields->attribute_type[$key] == 'separate')
+			{
+				print $extrafields->showSeparator($key);
+			}
+			else
+			{
+				print '<tr><td';
+				if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+				print '>'.$label.'</td><td colspan="5">';
+				// Convert date into timestamp format
+				if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+				{
+					$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+				}
+
+				if ($action == 'edit_extras' && $user->rights->propal->creer)
+				{
+					print $extrafields->showInputField($key,$value);
+				}
+				else
+				{
+					print $extrafields->showOutputField($key,$value);
+				}
+				print '</td></tr>'."\n";
+			}
+		}
 
 		if(count($extrafields->attribute_label) > 0) {
 
 			if ($action == 'edit_extras' && $user->rights->propal->creer)
 			{
-				print '<tr><td width="25%"></td><td>';
+				print '<tr><td></td><td colspan="5">';
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
 				print '</td></tr>';
-				print '</table></form>';
-				print '<table class="border" width="100%">';
+
 			}
 			else {
 				if ($object->statut == 0 && $user->rights->propal->creer)
 				{
-					print '<tr><td width="25%"></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
+					print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
 				}
 			}
 		}
@@ -1922,6 +1947,7 @@ else
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
+
 
 	/*
 	 * Lines
