@@ -947,7 +947,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", '".$this->note_public."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
-        $sql.= ", ".$this->db->idate($now);
+        $sql.= ", '".$this->db->idate($now)."'";
 		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";

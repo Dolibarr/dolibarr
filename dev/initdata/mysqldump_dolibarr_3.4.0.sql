@@ -30,7 +30,7 @@ CREATE TABLE `llx_accounting_system` (
   `active` smallint(6) DEFAULT '0',
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_accounting_system_pcg_version` (`pcg_version`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,7 +62,7 @@ CREATE TABLE `llx_accountingaccount` (
   PRIMARY KEY (`rowid`),
   KEY `idx_accountingaccount_fk_pcg_version` (`fk_pcg_version`),
   CONSTRAINT `fk_accountingaccount_fk_pcg_version` FOREIGN KEY (`fk_pcg_version`) REFERENCES `llx_accounting_system` (`pcg_version`)
-) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -198,7 +198,7 @@ CREATE TABLE `llx_actioncomm_extrafields` (
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_actioncomm_extrafields` (`fk_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -402,7 +402,7 @@ CREATE TABLE `llx_adherent_type_extrafields` (
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_adherent_type_extrafields` (`fk_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -826,7 +826,7 @@ CREATE TABLE `llx_c_action_trigger` (
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_action_trigger_code` (`code`),
   KEY `idx_action_trigger_rang` (`rang`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -996,7 +996,7 @@ CREATE TABLE `llx_c_currencies` (
   `unicode` varchar(32) DEFAULT NULL,
   `active` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`code_iso`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1470,7 +1470,7 @@ CREATE TABLE `llx_c_revenuestamp` (
   `accountancy_code_sell` varchar(15) DEFAULT NULL,
   `accountancy_code_buy` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2583,7 +2583,7 @@ CREATE TABLE `llx_cronjob` (
   `fk_user_mod` int(11) DEFAULT NULL,
   `note` text,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2704,7 +2704,7 @@ CREATE TABLE `llx_dolicloud_emailstemplates` (
   `content` text NOT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_dolicloud_emailstemplates` (`emailtype`,`lang`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3006,7 +3006,7 @@ CREATE TABLE `llx_element_tag` (
   `element` varchar(64) NOT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_element_tag` (`entity`,`lang`,`tag`,`fk_element`,`element`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3418,7 +3418,7 @@ CREATE TABLE `llx_facture_extrafields` (
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_facture_extrafields` (`fk_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3864,7 +3864,7 @@ CREATE TABLE `llx_holiday` (
   KEY `idx_holiday_fk_user` (`fk_user`),
   KEY `idx_holiday_date_debut` (`date_debut`),
   KEY `idx_holiday_date_fin` (`date_fin`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3890,7 +3890,7 @@ CREATE TABLE `llx_holiday_config` (
   `value` text,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3917,7 +3917,7 @@ CREATE TABLE `llx_holiday_events` (
   `value` text NOT NULL,
   PRIMARY KEY (`rowid`),
   UNIQUE KEY `uk_holiday_name` (`name`,`entity`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3945,7 +3945,7 @@ CREATE TABLE `llx_holiday_logs` (
   `prev_solde` varchar(255) NOT NULL,
   `new_solde` varchar(255) NOT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3969,7 +3969,7 @@ CREATE TABLE `llx_holiday_users` (
   `fk_user` int(11) NOT NULL,
   `nb_holiday` double NOT NULL DEFAULT '0',
   PRIMARY KEY (`fk_user`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4269,7 +4269,7 @@ CREATE TABLE `llx_milestone` (
   UNIQUE KEY `uk_milestone_fk_element` (`fk_element`,`elementtype`),
   KEY `idx_milestone_fk_user_modif` (`fk_user_modif`),
   CONSTRAINT `fk_milestone_fk_user_modif` FOREIGN KEY (`fk_user_modif`) REFERENCES `llx_user` (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4391,7 +4391,7 @@ CREATE TABLE `llx_opensurvey_comments` (
   `comment` text NOT NULL,
   `usercomment` text,
   PRIMARY KEY (`id_comment`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4425,7 +4425,7 @@ CREATE TABLE `llx_opensurvey_sondage` (
   `origin` varchar(64) DEFAULT NULL,
   `tms` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id_sondage`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4448,7 +4448,7 @@ DROP TABLE IF EXISTS `llx_opensurvey_sujet_studs`;
 CREATE TABLE `llx_opensurvey_sujet_studs` (
   `id_sondage` char(16) NOT NULL,
   `sujet` text
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4477,7 +4477,7 @@ CREATE TABLE `llx_opensurvey_user_studs` (
   KEY `idx_id_users` (`id_users`),
   KEY `idx_nom` (`nom`),
   KEY `idx_id_sondage` (`id_sondage`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4679,7 +4679,7 @@ CREATE TABLE `llx_pos_cash` (
   `datea` datetime DEFAULT NULL,
   `is_closed` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4714,7 +4714,7 @@ CREATE TABLE `llx_pos_control_cash` (
   `amount_next_day` double(24,8) DEFAULT NULL,
   `comment` text,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4739,7 +4739,7 @@ CREATE TABLE `llx_pos_facture` (
   `fk_facture` int(11) NOT NULL,
   `fk_control_cash` int(11) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4769,7 +4769,7 @@ CREATE TABLE `llx_pos_moviments` (
   `type` tinyint(4) DEFAULT NULL,
   `comment` text,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4794,7 +4794,7 @@ CREATE TABLE `llx_pos_paiement_ticket` (
   `fk_ticket` int(11) DEFAULT NULL,
   `amount` double(24,8) DEFAULT '0.00000000',
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4852,7 +4852,7 @@ CREATE TABLE `llx_pos_ticket` (
   KEY `idx_ticket_fk_ticket_source` (`fk_ticket_source`),
   CONSTRAINT `fk_ticket_fk_soc` FOREIGN KEY (`fk_soc`) REFERENCES `llx_societe` (`rowid`),
   CONSTRAINT `fk_ticket_fk_user_author` FOREIGN KEY (`fk_user_author`) REFERENCES `llx_user` (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4903,7 +4903,7 @@ CREATE TABLE `llx_pos_ticketdet` (
   UNIQUE KEY `uk_fk_remise_except` (`fk_remise_except`,`fk_ticket`),
   KEY `idx_ticketdet_fk_ticket` (`fk_ticket`),
   KEY `idx_ticketdet_fk_product` (`fk_product`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5365,7 +5365,7 @@ CREATE TABLE `llx_product_price_by_qty` (
   UNIQUE KEY `uk_product_price_by_qty_level` (`fk_product_price`,`qty_min`),
   KEY `idx_product_price_by_qty_fk_product_price` (`fk_product_price`),
   CONSTRAINT `fk_product_price_by_qty_fk_product_price` FOREIGN KEY (`fk_product_price`) REFERENCES `llx_product_price` (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5639,7 +5639,7 @@ CREATE TABLE `llx_propal_extrafields` (
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_propal_extrafields` (`fk_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6146,7 +6146,7 @@ CREATE TABLE `llx_socpeople_extrafields` (
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_socpeople_extrafields` (`fk_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6226,7 +6226,7 @@ CREATE TABLE `llx_submitew_message` (
   `joined_file3` varchar(255) DEFAULT NULL,
   `joined_file4` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6498,7 +6498,7 @@ CREATE TABLE `llx_user_extrafields` (
   `import_key` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`rowid`),
   KEY `idx_user_extrafields` (`fk_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -6665,7 +6665,7 @@ CREATE TABLE `llx_ventilation_achat` (
   `ventilation` varchar(255) DEFAULT NULL,
   `qty` double DEFAULT NULL,
   PRIMARY KEY (`rowid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

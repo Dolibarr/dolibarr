@@ -32,6 +32,21 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 
 <!-- BEGIN PHP TEMPLATE predefinedproductline_create.tpl.php -->
 
+<form name="addpredefinedproduct" id="addpredefinedproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="action" value="addline">
+<input type="hidden" name="mode" value="predefined">
+<input type="hidden" name="id" value="<?php echo $this->id; ?>">
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	jQuery('#idprod').change(function() {
+		  if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
+	});
+});
+</script>
+
+
 <tr class="liste_titre nodrag nodrop">
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
@@ -64,20 +79,6 @@ if (! empty($usemargins))
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
-<form name="addpredefinedproduct" id="addpredefinedproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
-<input type="hidden" name="action" value="addline">
-<input type="hidden" name="mode" value="predefined">
-<input type="hidden" name="id" value="<?php echo $this->id; ?>">
-
-<script type="text/javascript">
-jQuery(document).ready(function() {
-	jQuery('#idprod').change(function() {
-		  if (jQuery('#idprod').val() > 0) jQuery('#np_desc').focus();
-	});
-});
-</script>
-
 <tr <?php echo $bcnd[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
@@ -105,8 +106,8 @@ jQuery(document).ready(function() {
 	$doleditor->Create();
 	?>
 	</td>
-	<td align="right"><input type="text" size="2" name="qty" value="1"></td>
-	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>"><span class="hideonsmartphone">%</span></td>
+	<td align="right"><input type="text" size="2" name="qty" class="flat" value="1"></td>
+	<td align="right" nowrap><input type="text" size="1" class="flat" name="remise_percent" value="<?php echo $buyer->remise_client; ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	$colspan = 4;
 	if (! empty($usemargins)) 
@@ -115,8 +116,8 @@ jQuery(document).ready(function() {
 		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 		?>
 		<td align="right">
-			<select id="fournprice" name="fournprice" style="display: none;"></select>
-			<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
+			<select id="fournprice" name="fournprice" class="flat" style="display: none;"></select>
+			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
 		<?php
 	}
@@ -138,6 +139,7 @@ if (! empty($conf->service->enabled) && $dateSelector)
 		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 	}
 ?>
+
 <tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan; ?>">
 	<?php

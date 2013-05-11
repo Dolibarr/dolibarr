@@ -931,9 +931,10 @@ else
 		$adht->fetch($object->typeid);
 
 		// We set country_id, and country_code, country of the chosen country
-		if (isset($_POST["country"]) || $object->country_id)
+		$country=GETPOST('country','int');
+		if (!empty($country) || $object->country_id)
 		{
-			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(isset($_POST["country"])?$_POST["country"]:$object->country_id);
+			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(!empty($country)?$country:$object->country_id);
 			$resql=$db->query($sql);
 			if ($resql)
 			{

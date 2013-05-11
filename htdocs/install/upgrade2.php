@@ -329,11 +329,16 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	migrate_categorie_association($db,$langs,$conf);
+        }
 
-        	// Reload modules
+        $afterversionarray=explode('.','3.3.9');
+        $beforeversionarray=explode('.','3.4.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	// Reload modules (this must be always and only into last targeted version)
         	migrate_reload_modules($db,$langs,$conf);
 
-        	// Reload menus
+        	// Reload menus (this must be always and only into last targeted version)
         	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
@@ -3521,6 +3526,10 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone.lib.php',
     DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_backoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',

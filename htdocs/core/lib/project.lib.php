@@ -721,7 +721,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("NbOpenTasks"),"","","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -775,7 +775,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 				print '<td class="nowrap">';
 				$projectstatic->ref=$objp->ref;
 				print $projectstatic->getNomUrl(1);
-				print ' - '.$objp->title.'</td>';
+				print ' - '.dol_trunc($objp->title,24).'</td>';
 				print '<td align="right">'.$objp->nb.'</td>';
 				$projectstatic->statut = $objp->fk_statut;
 				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';

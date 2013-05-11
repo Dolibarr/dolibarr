@@ -1001,20 +1001,22 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
  *	Show array with constants to edit
  *
  *	@param	array	$tableau		Array of constants
+ *	@param	int		$strictw3c		Respect W3C (no form into table)
  *	@return	void
  */
-function form_constantes($tableau)
+function form_constantes($tableau,$strictw3c=0)
 {
     global $db,$bc,$langs,$conf,$_Avery_Labels;
 
     $form = new Form($db);
 
+    if (! empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    	
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Description").'</td>';
     print '<td>'.$langs->trans("Value").'*</td>';
-    print '<td>&nbsp;</td>';
-    print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+    if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
     $var=true;
 
@@ -1044,17 +1046,17 @@ function form_constantes($tableau)
             	$obj = (object) array('rowid'=>'','name'=>'','value'=>'','type'=>'','note'=>'');
             }
 
-            print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+            if (empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
             print "<tr ".$bc[$var].">";
 
-            // Affiche nom constante
+            // Show constant
             print '<td>';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
-            print '<input type="hidden" name="constname" value="'.$const.'">';
-            print '<input type="hidden" name="constnote" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+            print '<input type="hidden" name="rowid'.(empty($strictw3c)?'':'[]').'" value="'.$obj->rowid.'">';
+            print '<input type="hidden" name="constname'.(empty($strictw3c)?'':'[]').'" value="'.$const.'">';
+            print '<input type="hidden" name="constnote'.(empty($strictw3c)?'':'[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 
             print $langs->trans('Desc'.$const);
 
@@ -1077,6 +1079,7 @@ function form_constantes($tableau)
 
             print "</td>\n";
 
+            // Value
             if ($const == 'ADHERENT_CARD_TYPE' || $const == 'ADHERENT_ETIQUETTE_TYPE')
             {
                 print '<td>';
@@ -1087,55 +1090,57 @@ function form_constantes($tableau)
                 {
                     $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
                 }
-                print $form->selectarray('constvalue',$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
-                print '</td><td>';
+                print $form->selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
                 print '<input type="hidden" name="consttype" value="yesno">';
                 print '</td>';
             }
             else
             {
                 print '<td>';
-                //print 'aa'.$const;
                 if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT','ADHERENT_ETIQUETTE_TEXT')))
                 {
-                    print '<textarea class="flat" name="constvalue" cols="50" rows="5" wrap="soft">'."\n";
+                    print '<textarea class="flat" name="constvalue'.(empty($strictw3c)?'':'[]').'" cols="50" rows="5" wrap="soft">'."\n";
                     print $obj->value;
                     print "</textarea>\n";
-                    print '</td><td>';
                     print '<input type="hidden" name="consttype" value="texte">';
                 }
                 else if (in_array($const,array('ADHERENT_AUTOREGISTER_NOTIF_MAIL','ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-                    $doleditor=new DolEditor('constvalue_'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+                    $doleditor=new DolEditor('constvalue_'.$const.(empty($strictw3c)?'':'[]'),$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
                     $doleditor->Create();
-
-                    print '</td><td>';
-                    print '<input type="hidden" name="consttype" value="texte">';
+                    print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="texte">';
                 }
                 else if ($obj->type == 'yesno')
                 {
-                    print $form->selectyesno('constvalue',$obj->value,1);
-                    print '</td><td>';
-                    print '<input type="hidden" name="consttype" value="yesno">';
+                    print $form->selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
+                    print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="yesno">';
                 }
                 else
                 {
-                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.dol_escape_htmltag($obj->value).'">';
-                    print '</td><td>';
-                    print '<input type="hidden" name="consttype" value="chaine">';
+                    print '<input type="text" class="flat" size="48" name="constvalue'.(empty($strictw3c)?'':'[]').'" value="'.dol_escape_htmltag($obj->value).'">';
+                    print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="chaine">';
                 }
                 print '</td>';
             }
-            print '<td align="center">';
-            print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
-            // print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
-            print "</td>";
-            print "</tr>\n";
-            print "</form>\n";
+            // Submit
+            if (empty($strictw3c))
+            {
+            	print '<td align="center">';
+            	print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+	            print "</td>";
+            }    
+    	    print "</tr>\n";
+            if (empty($strictw3c)) print "</form>\n";
         }
     }
     print '</table>';
+
+    if (! empty($strictw3c)) 
+    {
+    	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+    	print "</form>\n";
+    }
 }
 
 
