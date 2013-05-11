@@ -351,7 +351,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
 		if ($id > 0)
 		{
 			// Insertion contact par defaut si defini
-			if (GETPOST('contactidp'))
+			if (GETPOST('contactidp') > 0)
 			{
 				$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
 				if ($result < 0)
@@ -1347,6 +1347,7 @@ if ($action == 'create')
 		$numprojet=select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
+			$langs->load("projects");
 			print ' &nbsp; <a href="../projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		}
 		print '</td>';

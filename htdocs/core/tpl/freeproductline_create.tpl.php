@@ -30,6 +30,13 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 ?>
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
+
+<form name="addproduct" id="addproduct"	action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
+<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="action" value="addline">
+<input type="hidden" name="mode" value="libre">
+<input type="hidden" name="id" value="<?php echo $this->id; ?>">
+
 <tr class="liste_titre nodrag nodrop">
 	<td
 	<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><div
@@ -60,15 +67,9 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
-<form name="addproduct" id="addproduct"	action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
-<input type="hidden" name="action" value="addline">
-<input type="hidden" name="mode" value="libre">
-<input type="hidden" name="id" value="<?php echo $this->id; ?>">
-
-	<tr <?php echo $bcnd[$var]; ?>>
-		<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
-			<?php
+<tr <?php echo $bcnd[$var]; ?>>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+		<?php
 
 			echo '<span>';
 			echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
@@ -90,66 +91,69 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 			$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,70);
 			$doleditor->Create();
 			?>
-		</td>
+	</td>
 
-		<td align="right"><?php
-		if ($seller->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
-		?>
-		</td>
-		<td align="right"><input type="text" size="5" name="price_ht" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
-		</td>
-		<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-		<td align="right" class="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
-		<?php
-		$colspan = 4;
-		if (! empty($usemargins))
-		{
-			?>
-			<td align="right"><input type="text" size="5" name="buying_price"
-				value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
-			</td>
-			<?php
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-			if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-		}
-		?>
-		<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
-	</tr>
-
-	<?php 
-	if (! empty($conf->service->enabled) && $dateSelector) 
-	{
-		if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
-		else $colspan = 9;
-		
-		if (! empty($usemargins)) 
-		{
-			$colspan++; // For the buying price
-			if($conf->global->DISPLAY_MARGIN_RATES)	$colspan++;
-			if($conf->global->DISPLAY_MARK_RATES)	$colspan++;
-		}
+	<td align="right"><?php
+	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
-	<tr <?php echo $bcnd[$var]; ?>>
-		<td colspan="<?php echo $colspan; ?>"><?php
-		if (! empty($object->element) && $object->element == 'contrat')
-		{
-			print $langs->trans("DateStartPlanned").' ';
-			$form->select_date('',"date_start_sl",$usehm,$usehm,1,"addline_sl");
-			print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-			$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addline_sl");
-		}
-		else
-		{			
-			echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-			echo $form->select_date('','date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
-			echo ' '.$langs->trans('to').' ';
-			echo $form->select_date('','date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
-		}
+	</td>
+	<td align="right"><input type="text" size="5" name="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
+	</td>
+	<td align="right"><input type="text" size="2" name="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
+	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo $buyer->remise_client; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
+	<?php
+	$colspan = 4;
+	if (! empty($usemargins))
+	{
 		?>
+		<td align="right"><input type="text" size="5" name="buying_price" class="flat"
+			value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
-	</tr>
-	<?php } ?>
+		<?php
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+	}
+	?>
+	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
+</tr>
+
+<?php 
+if (! empty($conf->service->enabled) && $dateSelector) 
+{
+	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
+	else $colspan = 9;
+	
+	if (! empty($usemargins)) 
+	{
+		$colspan++; // For the buying price
+		if($conf->global->DISPLAY_MARGIN_RATES)	$colspan++;
+		if($conf->global->DISPLAY_MARK_RATES)	$colspan++;
+	}
+?>
+
+<tr <?php echo $bcnd[$var]; ?>>
+	<td colspan="<?php echo $colspan; ?>"><?php
+	if (! empty($object->element) && $object->element == 'contrat')
+	{
+		print $langs->trans("DateStartPlanned").' ';
+		$form->select_date('',"date_start_sl",$usehm,$usehm,1,"addline_sl");
+		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
+		$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addline_sl");
+	}
+	else
+	{			
+		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		echo $form->select_date('','date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
+		echo ' '.$langs->trans('to').' ';
+		echo $form->select_date('','date_end',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
+	}
+	?>
+	</td>
+</tr>
+<?php 
+}
+?>
 
 </form>
 <!-- END PHP TEMPLATE freeproductline_create.tpl.php -->

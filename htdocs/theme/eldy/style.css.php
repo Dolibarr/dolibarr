@@ -238,7 +238,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	background: #FDFDFD;
     border: 1px solid #C0C0C0;
     <?php if (empty($dol_use_jmobile)) { ?>
-    padding: 1px 1px 1px 1px;
+    /*padding: 1px 1px 1px 1px; */
     margin: 0px 0px 0px 0px;
     <?php } ?>
 }
