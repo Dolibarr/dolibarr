@@ -648,8 +648,7 @@ class Propal extends CommonObject
         dol_syslog(get_class($this)."::create");
 
         // Check parameters
-        $soc = new Societe($this->db);
-        $result=$soc->fetch($this->socid);
+        $result=$this->fetch_thirdparty();
         if ($result < 0)
         {
             $this->error="Failed to fetch company";
@@ -669,8 +668,6 @@ class Propal extends CommonObject
 
 
         $this->db->begin();
-
-        $this->fetch_thirdparty();
 
         // Insert into database
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (";
