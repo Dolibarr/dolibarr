@@ -74,11 +74,11 @@ function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png")
     dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
     $bars=barcode_encode($code,$encoding);
-
-    if (! $bars)
+    if (! $bars || ! empty($bars['error']))
     {
         // DOLCHANGE LDR Return error message instead of array
-        $error='Bad Value '.$code.' for encoding '.$encoding;
+        if (empty($bars['error'])) $error='Bad Value '.$code.' for encoding '.$encoding;
+        else $error=$bars['error'];
         dol_syslog('barcode.lib.php::barcode_print '.$error, LOG_ERR);
         return $error;
     }
@@ -133,7 +133,7 @@ function barcode_encode($code,$encoding)
         dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
         $bars=barcode_encode_ean($code, $encoding);
     }
-    else if (file_exists($genbarcode_loc))
+    else if (file_exists($genbarcode_loc))	// For example C39
     {
         /* use genbarcode */
         dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
@@ -252,10 +252,11 @@ function barcode_encode_genbarcode($code,$encoding)
     $code=preg_replace("/[\\\|]/", "_", $code);
 
     $command=escapeshellarg($genbarcode_loc);
-    $paramclear=" \"".str_replace("\"", "\\\"",$code)."\" \"".str_replace("\"", "\\\"",strtoupper($encoding))."\"";
-
+    //$paramclear=" \"".str_replace("\"", "\\\"",$code)."\" \"".str_replace("\"", "\\\"",strtoupper($encoding))."\"";
+    $paramclear=" ".escapeshellarg($code)." ".escapeshellarg(strtoupper($encoding));
+    
     $fullcommandclear=$command." ".$paramclear." 2>&1";
-    //print $fullcommandclear."<br>\n";
+    //print $fullcommandclear."<br>\n";exit;
 
     dol_syslog("Run command ".$fullcommandclear);
     $fp=popen($fullcommandclear, "r");
@@ -273,14 +274,20 @@ function barcode_encode_genbarcode($code,$encoding)
     }
     //var_dump($bars);
     $ret=array(
-		"encoding" => trim($encoding),
 		"bars" => trim($bars),
-		"text" => trim($text)
+		"text" => trim($text),
+		"encoding" => trim($encoding),
+    	"error" => ""
     );
     //var_dump($ret);
-    if (!$ret['encoding']) return false;
+    if (preg_match('/permission denied/i',$ret['bars'])) 
+    { 
+    	$ret['error']=$ret['bars']; $ret['bars']='';
+    	return $ret;
+    }
     if (!$ret['bars']) return false;
     if (!$ret['text']) return false;
+    if (!$ret['encoding']) return false;
     return $ret;
 }
 
