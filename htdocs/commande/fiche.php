@@ -1,34 +1,34 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+* Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+* Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+* Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+* Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+* Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+* Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+* Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *	\file       htdocs/commande/fiche.php
- *	\ingroup    commande
- *	\brief      Page to show customer order
- */
+*	\ingroup    commande
+*	\brief      Page to show customer order
+*/
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -2135,34 +2135,56 @@ else
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
+			if ($action == 'edit_extras')
+			{
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+				print '<input type="hidden" name="action" value="update_extras">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="id" value="'.$object->id.'">';
+			}
+
+			foreach($extrafields->attribute_label as $key=>$label)
+			{
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+				if ($extrafields->attribute_type[$key] == 'separate')
+				{
+					print $extrafields->showSeparator($key);
+				}
+				else
+				{
+					print '<tr><td';
+					if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+					print '>'.$label.'</td><td colspan="5">';
+					// Convert date into timestamp format
+					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+					{
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$object->array_options['options_'.$key];
+					}
+
+					if ($action == 'edit_extras' && $user->rights->commande->creer)
+					{
+						print $extrafields->showInputField($key,$value);
+					}
+					else
+					{
+						print $extrafields->showOutputField($key,$value);
+					}
+					print '</td></tr>'."\n";
+				}
+			}
+
 			if(count($extrafields->attribute_label) > 0) {
 
-				if ($action == 'edit_extras')
+				if ($action == 'edit_extras' && $user->rights->commande->creer)
 				{
-					print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
-					print '<input type="hidden" name="action" value="update_extras">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
-				}
-
-
-				if ($action == 'edit_extras' &&  $user->rights->propal->creer) {
-					print $object->showOptionals($extrafields,'edit');
-				}
-				else {
-					print $object->showOptionals($extrafields);
-				}
-
-				if ($action == 'edit_extras' && $user->rights->propal->creer)
-				{
-					print '<tr><td></td><td>';
+					print '<tr><td></td><td colspan="5">';
 					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 					print '</form>';
 					print '</td></tr>';
 
 				}
 				else {
-					if ($object->statut == 0 && $user->rights->propal->creer)
+					if ($object->statut == 0 && $user->rights->commande->creer)
 					{
 						print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
 					}
@@ -2320,7 +2342,7 @@ else
 					if ($object->statut > 0 && $object->statut < 3 && $object->getNbOfProductsLines() > 0)
 					{
 						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer)
-							|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer))
+						|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer))
 						{
 							if ($user->rights->expedition->creer)
 							{
