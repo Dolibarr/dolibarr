@@ -33,16 +33,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit;
 }
 
-if (! isset($argv[2]) || ! $argv[2]) {
-	print "Usage: $script_file bank_receipt_number (csv|tsv|excel|excel2007)\n";
-	exit;
-}
-$num=$argv[1];
-$model=$argv[2];
-
-// Recupere env dolibarr
-$version='1.10';
-
 require_once($path."../../htdocs/master.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -54,6 +44,24 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
+
+// -------------------- START OF YOUR CODE HERE --------------------
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
+
+if (! isset($argv[3]) || ! $argv[3]) {
+	print "Usage: $script_file bank_ref bank_receipt_number (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+	exit;
+}
+$bankref=$argv[1];
+$num=$argv[2];
+$model=$argv[3];
+$newlangid='en_EN';	// To force a new lang id
 
 
 $societestatic=new Societe($db);
@@ -66,9 +74,42 @@ $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 
 
-$dirname = $conf->banque->dir_temp;
-$filename = 'export-bank-receipts-'.$num.'.xls';
+// Parse parameters
+foreach ($argv as $key => $value)
+{
+	$found=false;
 
+	// Define options
+	if (preg_match('/^lang=/i',$value))
+	{
+		$found=true;
+		$valarray=explode('=',$value);
+		$newlangid=$valarray[1];
+		print 'Use language '.$newlangid.".\n";
+	}
+}
+$outputlangs = $langs;
+if (! empty($newlangid))
+{
+	if ($outputlangs->defaultlang != $newlangid)
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlangid);
+	}
+}
+$outputlangs->load("main");
+$outputlangs->load("bills");
+$outputlangs->load("companies");
+$outputlangs->load("banks");
+
+
+$acct=new Account($db);
+$result=$acct->fetch('',$bankref);
+if ($result <= 0)
+{
+	print "Failed to find bank account with ref ".$bankref."\n";
+	exit;
+}
 
 // Creation de la classe d'export du model ExportXXX
 $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
@@ -83,18 +124,44 @@ require_once $dir.$file;
 $objmodel = new $classname($db);
 
 
+// Define target path
+$dirname = $conf->banque->dir_temp;
+$filename = 'export-bank-receipts-'.$bankref.'-'.$num.'.'.$objmodel->extension;
+
+
 // Open file
 print 'Create file '.$filename.' into directory '.$dirname."\n";
 dol_mkdir($dirname);
-$result=$objmodel->open_file($dirname."/".$filename, $langs);
+$result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 if ($result >= 0)
 {
+	$numrows=0;
+
+	$array_fields=array(
+		'bankreceipt'=>$outputlangs->transnoentitiesnoconv("AccountStatementShort"), 'bankaccount'=>$outputlangs->transnoentitiesnoconv("BankAccount"),
+		'dateop'=>$outputlangs->transnoentitiesnoconv("DateOperationShort"),'dateval'=>$outputlangs->transnoentitiesnoconv("DateValueShort"),'type'=>$outputlangs->transnoentitiesnoconv("Type"),
+		'description'=>$outputlangs->transnoentitiesnoconv("Description"), 'thirdparty'=>$outputlangs->transnoentitiesnoconv("Tiers"), 'invoices'=>$outputlangs->transnoentitiesnoconv("Invoices"),
+		'debit'=>$outputlangs->transnoentitiesnoconv("Debit"), 'credit'=>$outputlangs->transnoentitiesnoconv("Credit"), 'sold'=>$outputlangs->transnoentitiesnoconv("Solde"), 'comment'=>$outputlangs->transnoentitiesnoconv("Comment")
+	);
+	$array_selected=array(
+		'bankreceipt'=>'bankreceipt', 'bankaccount'=>'bankaccount',
+		'dateop'=>'dateop','dateval'=>'dateval','type'=>'type',
+		'description'=>'description', 'thirdparty'=>'thirdparty', 'invoices'=>'invoices',
+		'debit'=>'debit', 'credit'=>'credit', 'sold'=>'sold', 'comment'=>'comment'
+	);
+	$array_export_TypeFields=array(
+		'bankreceipt'=>'Text', 'bankaccount'=>'Text',
+		'dateop'=>'Date','dateval'=>'Date','type'=>'Text',
+		'description'=>'Text', 'thirdparty'=>'Text', 'invoices'=>'Text',
+		'debit'=>'Number', 'credit'=>'Number', 'sold'=>'Number', 'comment'=>'Text'
+	);
+
 	// Genere en-tete
 	$objmodel->write_header($outputlangs);
 
 	// Genere ligne de titre
-	$objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs);
+	$objmodel->write_title($array_fields,$array_selected,$outputlangs);
 
 
 	// Recherche les ecritures pour le releve
@@ -105,51 +172,43 @@ if ($result >= 0)
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
 	if (!isset($num))	$sql.= " OR b.num_releve is null";
-	$sql.= " AND b.fk_account = ".$acct->id;
+	//$sql.= " AND b.fk_account = ".$acct->id;
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$num = $db->num_rows($resql);
+		$numrows = $db->num_rows($resql);
 
-		print "Lines ".$num."\n";
-
+		$i=0;
 		while ($i < $numrows)
 		{
+			print "Lines ".$i."\n";
+
 			$objp = $db->fetch_object($result);
 			$total = $total + $objp->amount;
 
 			$var=!$var;
-			print "<tr $bc[$var]>";
 
 			// Date operation
-			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
+			$dateop=$db->jdate($objp->do);
 
 			// Date de valeur
-			print '<td align="center" valign="center" class="nowrap">';
-			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
-			print img_previous().'</a> ';
-			print dol_print_date($db->jdate($objp->dv),"day") .' ';
-			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
-			print img_next().'</a>';
-			print "</td>\n";
+			$datevalue=$db->jdate($objp->dv);
 
 			// Num cheque
-			print '<td class="nowrap">'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
+			$numchq=($objp->num_chq?$objp->num_chq:'');
 
 			// Libelle
-			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 			$reg=array();
 			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
-			else print $objp->label;
-			print '</a>';
+			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) $desc=$langs->trans($reg[1]);
+			else $desc=$objp->label;
 
 			/*
 			 * Ajout les liens (societe, company...)
-			*/
+ 			 */
 			$newline=1;
 			$links = $acct->get_url($objp->rowid);
 			foreach($links as $key=>$val)
@@ -246,35 +305,24 @@ if ($result >= 0)
 			if ($objp->amount < 0)
 			{
 				$totald = $totald + abs($objp->amount);
-				print '<td align="right" nowrap=\"nowrap\">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+				$debit=price($objp->amount * -1);
 			}
 			else
 			{
 				$totalc = $totalc + abs($objp->amount);
-				print "<td>&nbsp;</td><td align=\"right\" nowrap=\"nowrap\">".price($objp->amount)."</td>\n";
+				$credit=price($objp->amount);
 			}
 
-			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
-
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
-			{
-				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
-				print img_edit();
-				print "</a></td>";
-			}
-			else
-			{
-			print "<td align=\"center\">&nbsp;</td>";
-			}
-			print "</tr>";
 			$i++;
 
 			// end of special operation processing
-			$objmodel->write_record($array_selected,$objp,$outputlangs,$this->array_export_TypeFields[$indice]);
+			$objmodel->write_record($array_selected,$objp,$outputlangs,$array_export_TypeFields);
 		}
 
 	}
+	else dol_print_error($db);
 
+	print "Found ".$numrows." records\n";
 
 	// Genere en-tete
 	$objmodel->write_footer($outputlangs);
