@@ -372,7 +372,7 @@ class Fichinter extends CommonObject
 			// Define new ref
 			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 			{
-				$num = $this->getNextNumRef($soc);
+				$num = $this->getNextNumRef($this->thirdparty);
 			}
 			else
 			{
