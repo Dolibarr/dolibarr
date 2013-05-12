@@ -874,9 +874,9 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *    Return label of a civility contact
+	 *    Return civility label of contact
 	 *
-	 *    @return     string      Translated name of civility
+	 *    @return	string      			Translated name of civility
 	 */
 	function getCivilityLabel()
 	{
@@ -884,7 +884,7 @@ class Contact extends CommonObject
 		$langs->load("dict");
 
 		$code=$this->civilite_id;
-        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : '';
+        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
 	}
 
 	/**
