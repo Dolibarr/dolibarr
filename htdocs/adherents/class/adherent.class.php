@@ -690,6 +690,9 @@ class Adherent extends CommonObject
 		$error=0;
 		$errorflag=0;
 
+		// Check parameters
+		if (empty($rowid)) $rowid=$this->id;
+
         $this->db->begin();
 
         // Remove category
@@ -1103,7 +1106,7 @@ class Adherent extends CommonObject
                 if (count($extralabels)>0) {
                 	$this->fetch_optionals($this->id,$extralabels);
                 }
-                
+
                 // Load other properties
                 $result=$this->fetch_subscriptions();
 
@@ -1534,7 +1537,7 @@ class Adherent extends CommonObject
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
         	$lienfin='</a>';
         }
-        
+
         $picto='user';
         $label=$langs->trans("ShowMember");
 
