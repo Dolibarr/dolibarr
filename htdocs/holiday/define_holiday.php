@@ -68,7 +68,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     }
 
     //If the user set a comment, we add it to the log comment
-    $comment = (isset($_POST['note_holiday'][$userID]) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+    $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
     // We add the modification to the log
     $holiday->addLogCP($user->id,$userID, $langs->trans('ManualUpdate').$comment,$userValue);
@@ -150,10 +150,10 @@ print '<input type="hidden" name="action" value="update" />';
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print '<td width="5%">'.$langs->trans('ID').'</td>';
-print '<td width="50%">'.$langs->trans('UserName').'</td>';
+print '<td width="50%">'.$langs->trans('Employee').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Available').'</td>';
 print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
-print '<td>'.$langs->trans('UpdateButtonCP').'</td>';
+print '<td style="text-align:center">'.$langs->trans('UpdateButtonCP').'</td>';
 print '</tr>';
 
 foreach($listUsers as $users)
