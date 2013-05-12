@@ -55,12 +55,24 @@ if ($action == 'confirm_rejet')
 	{
 		$daterej = mktime(2, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
+		if (empty($daterej))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
+		}
+		
+		if (GETPOST('motif','alpha') == 0)
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefusedReason")),'errors');
+		}
+		
 		$lipre = new LignePrelevement($db, $user);
 
 		if ($lipre->fetch($id) == 0)
 		{
 
-			if (GETPOST('motif','alpha') > 0 && $daterej < time())
+			if ( ! $error && $daterej < time())
 			{
 				$rej = new RejetPrelevement($db, $user);
 
@@ -73,8 +85,8 @@ if ($action == 'confirm_rejet')
 			{
 				dol_syslog("Motif : ".GETPOST('motif','alpha'));
 				dol_syslog("$daterej $time ");
-				header("Location: ligne.php?id=".$id."&action=rejet");
-				exit;
+
+				$action="rejet";
 			}
 		}
 	}
@@ -305,9 +317,11 @@ if ($id)
 	{
 		dol_print_error($db);
 	}
-
-	$db->close();
 }
 
+dol_htmloutput_mesg($mesg);
+
 llxFooter();
+
+$db->close();
 ?>
