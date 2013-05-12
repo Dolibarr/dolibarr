@@ -141,6 +141,7 @@ ConfirmClone=Veuillez choisir votre option de clonage :
 NoCloneOptionsSpecified=Aucun option de clonage n'a été spécifiée.
 Of=du
 Go=Aller
+Run=Lancer
 CopyOf=Copie de
 Show=Voir
 ShowCardHere=Voir la fiche ici
@@ -652,6 +653,8 @@ Element=Élément
 NoPhotoYet=Pas de photo disponible pour l'instant
 HomeDashboard=Synthèse accueil
 Deductible=Déductible
+from=de
+toward=vers
 
 # Week day
 Monday=Lundi

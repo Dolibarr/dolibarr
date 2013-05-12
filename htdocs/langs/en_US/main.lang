@@ -140,6 +140,7 @@ ConfirmClone=Choose data you want to clone :
 NoCloneOptionsSpecified=No data to clone defined.
 Of=of
 Go=Go
+Run=Run
 CopyOf=Copy of
 Show=Show
 ShowCardHere=Show card
@@ -648,6 +649,8 @@ Element=Element
 NoPhotoYet=No pictures available yet
 HomeDashboard=Home summary
 Deductible=Deductible
+from=from
+toward=toward
 
 # Week day
 Monday=Monday
