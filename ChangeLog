@@ -4,8 +4,12 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.5 compared to 3.4 *****
 For users:
-- New: [ task #877 ] Reorganize menus
-- New: [ task #858 ] Holiday module: note on manual holiday assignation
+- New: [ task #877 ] Reorganize some menus.
+- New: [ task #858 ] Holiday module: note on manual holiday assignation.
+- New: Add graph of bank account input/output into input-output report page.
+
+For developers:
+- New: DolGraph can build graph with three lines.
 
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
