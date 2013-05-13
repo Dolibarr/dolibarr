@@ -440,6 +440,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'type') $fieldnamekey = 'Type';
             if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
+            if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
 
             $msg.=$langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)).'<br>';
         }

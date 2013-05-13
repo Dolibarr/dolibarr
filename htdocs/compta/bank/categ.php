@@ -36,7 +36,7 @@ if (!$user->rights->banque->configurer)
 
 
 /*
-* Actions ajout cat�gorie
+* Actions ajout catégorie
 */
 if ($_POST["action"] == 'add')
 {
@@ -101,7 +101,7 @@ if ( $_REQUEST['action'] == 'delete' )
 
 
 /*
- * Affichage liste des cat�éories
+ * Affichage liste des catégories
  */
 
 llxHeader();

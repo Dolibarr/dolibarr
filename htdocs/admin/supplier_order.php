@@ -213,7 +213,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -344,7 +344,8 @@ print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Description").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
-print '<td align="center" width="40" colspan="2">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();

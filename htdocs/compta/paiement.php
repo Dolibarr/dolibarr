@@ -473,6 +473,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             $sql .= ' AND type = 2';		// If paying back a credit note, we show all credit notes
         }
 
+        // Sort invoices by date and serial number: the older one comes first
+        $sql.=' ORDER BY f.datef ASC, f.facnumber ASC';
+
         $resql = $db->query($sql);
         if ($resql)
         {

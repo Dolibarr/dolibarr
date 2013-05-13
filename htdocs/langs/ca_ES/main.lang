@@ -328,6 +328,7 @@ FullList=Llista completa
 Statistics=Estadístiques
 OtherStatistics=Altres estadístiques
 Status=Estat
+ShortInfo=Info.
 Ref=Ref.
 RefSupplier=Ref. proveïdor
 RefPayment=Ref. pagament
@@ -646,6 +647,7 @@ ModulesSystemTools=Mòduls utilitats
 View=Veure
 Test=Prova
 Element=Element
+Deductible=Deduïble
 
 # Week day
 Monday=Dilluns

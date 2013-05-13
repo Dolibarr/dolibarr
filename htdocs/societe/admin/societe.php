@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("admin");
+$langs->load('other');
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
@@ -278,7 +279,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
+print '  <td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 $var = true;
@@ -360,7 +361,7 @@ print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">&nbsp;</td>';
+print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 foreach ($dirsociete as $dirroot)
@@ -452,7 +453,8 @@ print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 foreach ($dirsociete as $dirroot)
@@ -536,8 +538,12 @@ foreach ($dirsociete as $dirroot)
 					}
 					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
+					
+					print '<td align="center" class="nowrap">';
+					print $form->textwithpicto('',$htmltooltip,1,0);
+					print '</td>';
 
-
+					// Preview
 					print '<td align="center" class="nowrap">';
 					if ($module->type == 'pdf')
 					{
@@ -547,7 +553,7 @@ foreach ($dirsociete as $dirroot)
 					{
 						$linkspec=img_object($langs->trans("PreviewNotAvailable"),'generic');
 					}
-					print $form->textwithpicto(' &nbsp; '.$linkspec,$htmltooltip,1,0);
+					print $linkspec;
 					print '</td>';
 
 					print "</tr>\n";

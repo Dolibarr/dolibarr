@@ -1432,7 +1432,7 @@ table.liste td {
 
 tr.liste_titre, tr.liste_titre_sel
 {
-    height: 20px;
+    height: 20px !important;
 }
 div.liste_titre, tr.liste_titre {
     color: #842F00;
@@ -1440,24 +1440,23 @@ div.liste_titre, tr.liste_titre {
     font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
     /*border-bottom: 1px solid #FDFFFF;*/
     border-radius: 8px;
-    line-height: 18px;
     padding-left: 10px;
     padding-right: 10px;
-    white-space: nowrap;
+    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
     text-align: <?php echo $left; ?>;
 }
 th.liste_titre, td.liste_titre
 {
 	padding-left: 6px;
 	padding-right: 6px;
-    	/*vertical-align: text-top;*/
+    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 }
 th.liste_titre_sel, td.liste_titre_sel
 {
     background-position: top right;
     color: #A51B00;
     font-weight: bold;
-    white-space: nowrap;
+    white-space: <?php echo $dol_optimize_smallscreen?'normal':'nowrap'; ?>;
 }
 
 input.liste_titre {

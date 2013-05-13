@@ -183,6 +183,7 @@ $sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
+dol_syslog('margin::customerMargins.php sql='.$sql,LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

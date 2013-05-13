@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class RejetPrelevement
 		$this->motifs = array();
 		$this->facturer = array();
 
-		$this->motifs[0] = $langs->trans("StatusMotif0");
+		$this->motifs[0] = "";//$langs->trans("StatusMotif0");
     	$this->motifs[1] = $langs->trans("StatusMotif1");
     	$this->motifs[2] = $langs->trans("StatusMotif2");
     	$this->motifs[3] = $langs->trans("StatusMotif3");
@@ -174,7 +174,8 @@ class RejetPrelevement
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 			$fac->set_unpaid($fac->id, $user);
-
+			
+			//TODO: Must be managed by notifications module
 			// Send email to sender of the standing order request
 			$this->_send_email($fac);
 		}

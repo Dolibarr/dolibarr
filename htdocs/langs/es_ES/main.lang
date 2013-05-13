@@ -328,6 +328,7 @@ FullList=Listado completo
 Statistics=Estadísticas
 OtherStatistics=Otras estadísticas
 Status=Estado
+ShortInfo=Info.
 Ref=Ref.
 RefSupplier=Ref. proveedor
 RefPayment=Ref. pago
@@ -646,6 +647,7 @@ ModulesSystemTools=Módulos utilidades
 View=Ver
 Test=Prueba
 Element=Elemento
+Deductible=Deducible
 
 # Week day
 Monday=Lunes

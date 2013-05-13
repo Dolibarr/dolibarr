@@ -1244,7 +1244,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
-
+	dol_syslog('$modulepart='.$modulepart.' $original_file= '.$original_file);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
@@ -1365,8 +1365,11 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	// Wrapping pour les prelevements
 	elseif ($modulepart == 'prelevement')
 	{
-		if ($user->rights->prelevement->bons->lire) $accessallowed=1;
-		$original_file=$conf->prelevement->dir_output.'/receipts/'.$original_file;
+		if ($user->rights->prelevement->bons->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->prelevement->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les graph energie
 	elseif ($modulepart == 'graph_stock')
@@ -1466,17 +1469,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 		$original_file=$conf->deplacement->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
-
-	// Wrapping pour les prelevements
-	else if ($modulepart == 'prelevement')
-	{
-		if ($user->rights->prelevement->bons->lire || preg_match('/^specimen/i',$original_file))
-		{
-			$accessallowed=1;
-		}
-		$original_file=$conf->prelevement->dir_output.'/'.$original_file;
-	}
-
 	// Wrapping pour les propales
 	else if ($modulepart == 'propal')
 	{
@@ -1767,7 +1759,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
 		}
 	}
-
+	
 	$ret = array(
 		'accessallowed' => $accessallowed,
 		'sqlprotectagainstexternals'=>$sqlprotectagainstexternals,

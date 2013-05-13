@@ -103,6 +103,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: Can't reset payment due date
 - Fix: Orderstoinvoice didn't act as expected when no order was checked
 - Fix: Bad link to all proposals into Third party card if customer is prospect
+- Fix: Some bugs on withdrawal rejects
 - Fix: [ bug #774 ] Bug on creating event with box "all day" crossed
 - Fix: [ bug #787 ] Invoice supplier box incorrect tooltip when delay on payment
 - Fix: [ bug #789 ] VAT not being calculated in POS

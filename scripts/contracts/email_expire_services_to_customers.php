@@ -42,7 +42,7 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 	print "\n";
 	print "Send an email to customers to remind all all contracts services to expire.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
-	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
+	print "If you add a delay (nb of days), only services with expired date < today + delay are included.\n";
 	exit;
 }
 $mode=$argv[1];
@@ -74,7 +74,7 @@ $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 
 
 if ($duration_value) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 
-$sql .= " ORDER BY s.email ASC, s.rowid ASC";
+$sql .= " ORDER BY cd.date_fin_validite ASC, s.rowid ASC";
 
 print $sql;
 $resql=$db->query($sql);

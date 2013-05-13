@@ -46,7 +46,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice2.lib.php');
 $langs->load("main");
 
 // Global variables
-$version='1.24';
+$version=DOL_VERSION;
 $error=0;
 
 

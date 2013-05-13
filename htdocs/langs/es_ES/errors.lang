@@ -122,6 +122,7 @@ ErrorFailedToAddToMailmanList=Ha ocurrido un error al intentar añadir un regist
 ErrorFailedToRemoveToMailmanList=Error en la eliminación de %s de la lista Mailmain %s o base SPIP
 ErrorNewValueCantMatchOldValue=El nuevo valor no puede ser igual al antiguo
 ErrorFailedToValidatePasswordReset=No se ha podido restablecer la contraseña. Es posible que este enlace ya se haya utilizado (este enlace sólo puede usarse una vez). Si no es el caso, trate de reiniciar el proceso de restablecimiento de contraseña desde el principio.
+ErrorDateMustBeBeforeToday=La fecha no puede ser superior a hoy
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

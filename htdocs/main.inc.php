@@ -823,9 +823,9 @@ if (! defined('NOREQUIREMENU'))
 		foreach($dirmenus as $dirmenu)
 		{
 			$menufound=dol_include_once($dirmenu."standard/".$file_menu);
-			if ($menufound) break;
+			if (class_exists('MenuManager')) break;
 		}
-		if (! $menufound)	// If failed to include, we try with standard
+		if (! class_exists('MenuManager'))	// If failed to include, we try with standard eldy_menu.php
 		{
 			dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
 			$file_menu='eldy_menu.php';
@@ -984,7 +984,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
+            	//$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.css" />'."\n";
             }
+
         }
 
         print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1148,6 +1151,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
+            	//$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js"></script>'."\n";
             }
         }
 
