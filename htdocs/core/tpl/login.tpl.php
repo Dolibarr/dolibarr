@@ -134,7 +134,7 @@ if ($forgetpasslink || $helpcenterlink)
 	echo '<br>';
 	echo '<div align="center" style="margin-top: 4px;">';
 	if ($forgetpasslink) {
-		echo '<a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
+		echo '<a class="alogin" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam.'">(';
 		echo $langs->trans('PasswordForgotten');
 		if (! $helpcenterlink) {
 			echo ')';
@@ -145,7 +145,7 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($helpcenterlink) {
 		$url=DOL_URL_ROOT.'/support/index.php'.$moreparam;
 		if (! empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) $url=$conf->global->MAIN_HELPCENTER_LINKTOUSE;
-		echo '<a style="color: #888888; font-size: 10px" href="'.dol_escape_htmltag($url).'" target="_blank">';
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
 		if ($forgetpasslink) {
 			echo '&nbsp;-&nbsp;';
 		} else {
