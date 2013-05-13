@@ -6,7 +6,8 @@ English Dolibarr ChangeLog
 For users:
 - New: [ task #877 ] Reorganize menus
 - New: [ task #858 ] Holiday module: note on manual holiday assignation
-- New : [ task #892 ] Add option in thridparty customer/supplier admin to hide non active in select_company method
+- New: [ task #892 ] Add option in thridparty customer/supplier admin to hide non active in select_company method
+- New: [ task #531 ] Add a duration on tasks
 
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****

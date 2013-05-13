@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *       \file       htdocs/projet/index.php
@@ -44,7 +44,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 
 /*
  * View
- */
+*/
 
 $socstatic=new Societe($db);
 $projectstatic=new Project($db);
@@ -132,8 +132,80 @@ else
 }
 print "</table>";
 
+print '</td></tr></table>';
 
 print '</div></div></div>';
+
+
+print '<div class="fichecenter">';
+print '<BR>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
+print '<th>'.$langs->trans('Projects').'</th>';
+print '<th>'.$langs->trans('Task').'</th>';
+print '<th>'.$langs->trans('DateStart').'</th>';
+print '<th>'.$langs->trans('DateEnd').'</th>';
+print '<th>'.$langs->trans('TaskRessourceLinks').' %</th>';
+print '</tr>';
+
+
+$sql = "SELECT p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.duration_planned, t.dateo, t.datee, (tasktime.task_duration/3600) as totaltime";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task_time as tasktime on tasktime.fk_task = t.rowid";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
+$sql.= " WHERE p.entity = ".$conf->entity;
+if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+$sql.= " ORDER BY u.rowid, t.dateo, t.datee";
+
+$userstatic=new User($db);
+
+$resql = $db->query($sql);
+if ( $resql )
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
+
+		$username='';
+		$userstatic->fetch($obj->userid);
+		if (!empty($userstatic->id)) {
+			$username = $userstatic->getNomUrl(0,0);
+		}
+
+		print "<tr $bc[$var]>";
+		print '<td>'.$username.'</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id="'.$obj->projectid.'">'.$obj->title.'</a></td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
+		print '<td>'.dol_print_date($db->jdate($obj->dateo)).'</td>';
+		print '<td>'.dol_print_date($db->jdate($obj->datee)).'</td>';
+		if (empty($obj->duration_planned)) {
+			$percentcompletion = '0';
+		} else {
+			$percentcompletion = intval(($obj->totaltime*100)/$obj->duration_planned);
+		}
+		print '<td>'.$percentcompletion.' %</td>';
+		print "</tr>\n";
+
+		$i++;
+	}
+
+	$db->free($resql);
+}
+else
+{
+	dol_print_error($db);
+}
+print "</table></div>";
+
+
 
 
 llxFooter();

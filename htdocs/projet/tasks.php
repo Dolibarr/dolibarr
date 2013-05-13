@@ -71,6 +71,7 @@ $hookmanager->initHooks(array('projecttaskcard'));
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
 $description=GETPOST('description');
+$duration_planned=GETPOST('duration_planned');
 
 $userAccess=0;
 
@@ -115,6 +116,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->fk_project = $projectid;
 			$task->label = $label;
 			$task->description = $description;
+			$task->duration_planned = $duration_planned;
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
 			$task->date_start = $date_start;
@@ -292,6 +294,11 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print $form->select_date(($date_end?$date_end:-1),'datee',0,0,0,'',1,1);
 	print '</td></tr>';
 
+	// Duration planned
+	print '<tr><td>'.$langs->trans("Duration").'</td><td>';
+	print '<input type="text" size="7" name="duration_planned" class="flat" value="'.$duration_planned.'"> '.$langs->trans('Hours');
+	print '</td></tr>';
+
 	// Progress
 	print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
 	print $formother->select_percent($progress,'progress');
@@ -391,6 +398,7 @@ else
 	print '<td>'.$langs->trans("LabelTask").'</td>';
 	print '<td align="center">'.$langs->trans("DateStart").'</td>';
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+	print '<td align="right">'.$langs->trans("Duration").'</td>';
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 	print '<td>&nbsp;</td>';

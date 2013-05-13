@@ -264,6 +264,9 @@ if ($id > 0 || ! empty($ref))
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
+		// Duration planned
+		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">'.$object->duration_planned.' '.$langs->trans('Hours').'</td></tr>';
+		
 		// Project
 		if (empty($withproject))
 		{

@@ -420,6 +420,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'day');
 				print '</td>';
 
+                // Duration
+                print '<td align="center">';
+                print $lines[$i]->duration_planned.' '.$langs->trans('Hours');
+                print '</td>';
+
 				// Progress
 				print '<td align="right">';
 				print $lines[$i]->progress.' %';
@@ -438,7 +443,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-					print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
+                	print '<td align="center" class="tdlineupdown">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
@@ -462,6 +467,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) print '<td></td>';
+		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -548,6 +554,11 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			print '<td align="center">';
 			print dol_print_date($lines[$i]->date_end,'day');
 			print '</td>';
+
+            // Duration
+            print '<td align="center">';
+            print $lines[$i]->duration_planned.' '.$langs->trans('Hours');
+            print '</td>';
 
 			// Progress
 			print '<td align="right">';

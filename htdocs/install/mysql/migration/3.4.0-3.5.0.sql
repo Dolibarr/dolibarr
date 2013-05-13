@@ -19,3 +19,7 @@
 
 
 DELETE FROM llx_menu where module='holiday';
+
+ALTER TABLE llx_projet_task ADD COLUMN duration_planned	real DEFAULT 0 NOT NULL AFTER duration_effective;
+
+

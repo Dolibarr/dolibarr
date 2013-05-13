@@ -36,6 +36,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
+$duration_planned=GETPOST('duration_planned');
 
 // Security check
 $socid=0;
@@ -75,6 +76,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
+		$object->duration_planned = $duration_planned;
 		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$object->progress = $_POST['progress'];
@@ -283,6 +285,11 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
 			print '</td></tr>';
 
+			// Duration planned
+			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
+			print '<input type="text" size="7" name="duration_planned" class="flat" value="'.$object->duration_planned.'"> '.$langs->trans('Hours');
+			print '</td></tr>';
+
 			// Progress
 			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
 			print $formother->select_percent($object->progress,'progress');
@@ -366,6 +373,11 @@ if ($id > 0 || ! empty($ref))
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 			print dol_print_date($object->date_end,'day');
+			print '</td></tr>';
+
+			// Duration planned
+			print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+			print $object->duration_planned.' '.$langs->trans('Hours');
 			print '</td></tr>';
 
 			// Progress
