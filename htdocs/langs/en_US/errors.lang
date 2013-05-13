@@ -123,6 +123,7 @@ ErrorNewValueCantMatchOldValue=New value can't be equal to old one
 ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
 ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Failed to add contact
+ErrorDateMustBeBeforeToday=The date can not be greater than today
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
