@@ -854,8 +854,8 @@ else
                 // Si refus de la demande
                 if ($action == 'refuse' && $cp->statut == 2 && $user->id == $cp->fk_validator)
                 {
-                    $array_input = array(array('type'=>"text",'label'=>"Entrez ci-dessous un motif de refus :",'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), "", "confirm_refuse", $array_input, 1, 0);
+                    $array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
                     if ($ret == 'html') print '<br />';
                 }
 
