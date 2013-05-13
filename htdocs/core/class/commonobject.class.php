@@ -44,6 +44,9 @@ abstract class CommonObject
     public $civility_id;
 
     public $array_options=array();
+    
+    public $linkedObjectsIds;
+    public $linkedObjects;
 
     // No constructor as it is an abstract class
 
@@ -1649,7 +1652,7 @@ abstract class CommonObject
 	}
 
     /**
-     *	Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
+     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array.
      *
      *	@param	int		$sourceid		Object source id
      *	@param  string	$sourcetype		Object source type
@@ -1708,6 +1711,7 @@ abstract class CommonObject
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
+        $sql .= ' ORDER BY sourcetype';
         //print $sql;
 
         dol_syslog(get_class($this)."::fetchObjectLink sql=".$sql);
@@ -2236,7 +2240,7 @@ abstract class CommonObject
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
-						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->array_options['options_'.$key];
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					$out .= '<td>'.$label.'</td>';
 					$out .='<td colspan="'.$colspan.'">';
