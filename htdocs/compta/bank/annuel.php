@@ -21,12 +21,13 @@
 /**
  *		\file        htdocs/compta/bank/annuel.php
  *		\ingroup     banque
- *		\brief       Page reporting mensuel Entrees/Sorties d'un compte bancaire
+ *		\brief       Page to report input-output of a bank account
  */
 
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -368,7 +369,7 @@ else
 	$data_year_0 = array();
 	$data_year_1 = array();
 	$data_year_2 = array();
-	
+
 	for ($i = 0 ; $i < 12 ; $i++)
 	{
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1),-2)]) ? $tblyear[0][substr("0".($i+1),-2)] : 0;
@@ -456,7 +457,7 @@ else
 	$data_year_0 = array();
 	$data_year_1 = array();
 	$data_year_2 = array();
-	
+
 	for ($i = 0 ; $i < 12 ; $i++)
 	{
 		$data_year_0[$i] = isset($tblyear[0][substr("0".($i+1),-2)]) ? $tblyear[0][substr("0".($i+1),-2)] : 0;
