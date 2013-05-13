@@ -877,6 +877,8 @@ img.login, img.printer, img.entity {
 
 div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
+    position: relative;
+    float: left;
     padding: 0px;
     padding-bottom: 0px;
     padding-top: 1px;
