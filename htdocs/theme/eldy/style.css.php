@@ -854,7 +854,14 @@ div.login a:hover {
 	color: #<?php echo $colortextmain; ?>;
 	text-decoration:underline;
 }
-
+.alogin, .alogin:hover {
+	color: #888 !important;
+	font-weight: normal !important;
+	font-size: <?php echo $fontsizesmaller; ?>px !important;
+}
+.alogin:hover {
+	text-decoration:underline !important;
+}
 img.login, img.printer, img.entity {
 	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
