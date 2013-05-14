@@ -932,7 +932,7 @@ if ($id > 0)
 
 		// Busy
 		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
-		print yn(($act->transparency > 0)?1:0);
+		if ($act->usertodo->id > 0) print yn(($act->transparency > 0)?1:0);	// We show nothing if event is assigned to nobody
 		print '</td></tr>';
 
 		// Done by
