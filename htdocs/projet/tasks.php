@@ -116,7 +116,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->fk_project = $projectid;
 			$task->label = $label;
 			$task->description = $description;
-			$task->planned_workload = $planned_workload * 3600;//We set the planned workload into minutes
+			$task->planned_workload = $planned_workload * 3600;//We set the planned workload into seconds
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
 			$task->date_start = $date_start;
