@@ -443,7 +443,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-                	print '<td align="center" class="tdlineupdown">&nbsp;</td>';
+                	print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
