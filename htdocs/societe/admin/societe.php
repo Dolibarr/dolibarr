@@ -745,7 +745,7 @@ else
 }
 print '</tr>';
 
-
+/*
 // COMPANY_USE_SEARCH_TO_SELECT
 $var=!$var;
 print "<tr ".$bc[$var].">";
@@ -763,7 +763,7 @@ else
 	print '</a></td>';
 }
 print '</tr>';
-
+*/
 
 print '</table>';
 

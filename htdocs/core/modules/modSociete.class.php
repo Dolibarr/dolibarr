@@ -116,12 +116,14 @@ class modSociete extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		/*
 		$this->const[$r][0] = "COMPANY_HIDE_INACTIVE_IN_COMBOBOX";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "0";
 		$this->const[$r][3] = "hide thirdparty customer inative in combobox";
-		$this->const[$r][4] = 0;
+		$this->const[$r][4] = 1;
 		$r++;
+		*/
 
 		// Boxes
 		$this->boxes = array();
