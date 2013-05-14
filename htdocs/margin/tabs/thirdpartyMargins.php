@@ -131,7 +131,7 @@ if ($socid > 0)
 		$sql.= " sum(d.total_ht) as selling_price,";
 
         $sql.= $db->ifsql('f.type =2','sum(d.buy_price_ht * d.qty *-1)','sum(d.buy_price_ht * d.qty)')." as buying_price, ";
-        $sql.= $db->ifsql('f.type =2','sum((d.price + d.buy_price_ht) * d.qty)','sum((d.price - d.buy_price_ht) * d.qty)')." as marge," ;
+        $sql.= $db->ifsql('f.type =2','sum(d.total_ht + (d.buy_price_ht * d.qty))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge," ;
 		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -144,11 +144,12 @@ if ($socid > 0)
 		$sql .= " AND d.buy_price_ht IS NOT NULL";
 		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 			$sql .= " AND d.buy_price_ht <> 0";
-		$sql.= " GROUP BY f.rowid";
+		$sql.= " GROUP BY f.rowid, s.nom, s.rowid, s.code_client, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
+		dol_syslog('margin:tabs:thirdpartyMargins.php sql='.$sql,LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result)
 		{

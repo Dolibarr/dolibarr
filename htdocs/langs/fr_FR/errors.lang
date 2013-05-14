@@ -117,6 +117,7 @@ ErrorPhpCurlNotInstalled=L'extension PHP CURL n'est pas installée, ceci est ind
 ErrorFailedToAddToMailmanList=Echec de l'ajout à une liste Mailman ou base SPIP
 ErrorNewVaueCantMatchOldValue=La nouvelle valeur ne peut être égale à l'ancienne
 ErrorFailedToValidatePasswordReset=Echec de la réinitialisation du mot de passe. Il est possible que ce lien ait déjà été utilisé (l'utilisation de ce lien ne fonctionne qu'une fois). Si ce n'est pas le cas, essayer de recommencer le processus de réinit de mot de passe depuis le début.
+ErrorDateMustBeBeforeToday=La date ne peut pas être supérieure à aujourd'hui
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées
