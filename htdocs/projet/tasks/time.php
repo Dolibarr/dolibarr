@@ -1,28 +1,28 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+* Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  *	\file       htdocs/projet/tasks/time.php
  *	\ingroup    project
  *	\brief      Page to add new time spent on a task
- */
+*/
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -50,7 +50,7 @@ $projectstatic = new Project($db);
 
 /*
  * Actions
- */
+*/
 
 if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
@@ -165,7 +165,7 @@ if (! empty($project_ref) && ! empty($withproject))
 
 /*
  * View
- */
+*/
 
 llxHeader("",$langs->trans("Task"));
 
@@ -176,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
-	 */
+	*/
 	if ($object->fetch($id) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
@@ -186,50 +186,50 @@ if ($id > 0 || ! empty($ref))
 
 		if ($withproject)
 		{
-    		// Tabs for project
-    		$tab='tasks';
-    		$head=project_prepare_head($projectstatic);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+			// Tabs for project
+			$tab='tasks';
+			$head=project_prepare_head($projectstatic);
+			dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
 
-    		$param=($mode=='mine'?'&mode=mine':'');
+			$param=($mode=='mine'?'&mode=mine':'');
 
-    		print '<table class="border" width="100%">';
+			print '<table class="border" width="100%">';
 
-    		// Ref
-    		print '<tr><td width="30%">';
-    		print $langs->trans("Ref");
-    		print '</td><td>';
-    		// Define a complementary filter for search of next/prev ref.
-    		if (! $user->rights->projet->all->lire)
-    		{
-    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
-    		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-    		}
-    		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
-    		print '</td></tr>';
+			// Ref
+			print '<tr><td width="30%">';
+			print $langs->trans("Ref");
+			print '</td><td>';
+			// Define a complementary filter for search of next/prev ref.
+			if (! $user->rights->projet->all->lire)
+			{
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+			}
+			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+			print '</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-    		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td>';
-    		print '</tr>';
+			print '<tr><td>'.$langs->trans("Company").'</td><td>';
+			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+			else print '&nbsp;';
+			print '</td>';
+			print '</tr>';
 
-    		// Visibility
-    		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-    		if ($projectstatic->public) print $langs->trans('SharedProject');
-    		else print $langs->trans('PrivateProject');
-    		print '</td></tr>';
+			// Visibility
+			print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+			if ($projectstatic->public) print $langs->trans('SharedProject');
+			else print $langs->trans('PrivateProject');
+			print '</td></tr>';
 
-    		// Statut
-    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
+			// Statut
+			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
-    		print '</table>';
+			print '</table>';
 
-    		dol_fiche_end();
+			dol_fiche_end();
 
-    		print '<br>';
+			print '<br>';
 		}
 
 		$head=task_prepare_head($object);
@@ -254,31 +254,36 @@ if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 		// Duration planned
-		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">'.$object->duration_planned.' '.$langs->trans('Hours').'</td></tr>';
-		
+		if (!empty($object->planned_workload)) {
+			$planned_workload_hours = intval($object->planned_workload / 3600);
+		}else {
+			$planned_workload_hours = 0;
+		}
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.$planned_workload_hours.' '.$langs->trans('Hours').'</td></tr>';
+
 		// Project
 		if (empty($withproject))
 		{
-    		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-    		print $projectstatic->getNomUrl(1);
-    		print '</td></tr>';
+			print '<tr><td>'.$langs->trans("Project").'</td><td>';
+			print $projectstatic->getNomUrl(1);
+			print '</td></tr>';
 
-    		// Third party
-    		print '<td>'.$langs->trans("Company").'</td><td>';
-    		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td></tr>';
+			// Third party
+			print '<td>'.$langs->trans("Company").'</td><td>';
+			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+			else print '&nbsp;';
+			print '</td></tr>';
 		}
 
 		print '</table>';
@@ -288,7 +293,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Add time spent
-		 */
+		*/
 		if ($user->rights->projet->creer)
 		{
 			print '<br>';
@@ -345,7 +350,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 *  List of time spent
-		 */
+		*/
 		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -392,21 +397,21 @@ if ($id > 0 || ! empty($ref))
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
-  		    print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var].">";
 
-  		    // Date
-  		    print '<td>';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print $form->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
-  		    }
-  		    else
-  		    {
-  		    	print dol_print_date($db->jdate($task_time->task_date),'day');
-  		    }
-  		    print '</td>';
+			// Date
+			print '<td>';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print $form->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
+			}
+			else
+			{
+				print dol_print_date($db->jdate($task_time->task_date),'day');
+			}
+			print '</td>';
 
-  		    // User
+			// User
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
@@ -419,43 +424,43 @@ if ($id > 0 || ! empty($ref))
 				$userstatic->firstname 	= $task_time->firstname;
 				print $userstatic->getNomUrl(1);
 			}
-		    print '</td>';
+			print '</td>';
 
- 		    // Note
-  		    print '<td align="left">';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_3.'">'.$task_time->note.'</textarea>';
-  		    }
-  		    else
-  		    {
-  		    	print dol_nl2br($task_time->note);
-  		    }
-  		    print '</td>';
+			// Note
+			print '<td align="left">';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_3.'">'.$task_time->note.'</textarea>';
+			}
+			else
+			{
+				print dol_nl2br($task_time->note);
+			}
+			print '</td>';
 
-  		    // Time spent
-  		    print '<td align="right">';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-  		    	print $form->select_duration('new_duration',$task_time->task_duration);
-  		    }
-  		    else
-  		    {
+			// Time spent
+			print '<td align="right">';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
+				print $form->select_duration('new_duration',$task_time->task_duration);
+			}
+			else
+			{
 				print convertSecondToTime($task_time->task_duration,'all');
-  		    }
-  		    print '</td>';
+			}
+			print '</td>';
 
 			// Edit and delete icon
 			print '<td align="center" valign="middle" width="80">';
 			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
-  		    	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-  		    	print '<br>';
-  		    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-  		    }
-  		    else if ($user->rights->projet->creer)
+			{
+				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
+				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+				print '<br>';
+				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			}
+			else if ($user->rights->projet->creer)
 			{
 				print '&nbsp;';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';

@@ -146,11 +146,11 @@ print '<th>'.$langs->trans('Projects').'</th>';
 print '<th>'.$langs->trans('Task').'</th>';
 print '<th>'.$langs->trans('DateStart').'</th>';
 print '<th>'.$langs->trans('DateEnd').'</th>';
-print '<th>'.$langs->trans('TaskRessourceLinks').' %</th>';
+print '<th>'.$langs->trans('WorkloadOccupation').'</th>';
 print '</tr>';
 
 
-$sql = "SELECT p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.duration_planned, t.dateo, t.datee, (tasktime.task_duration/3600) as totaltime";
+$sql = "SELECT p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.planned_workload, t.dateo, t.datee, tasktime.task_duration";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
@@ -159,6 +159,7 @@ $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u on tasktime.fk_user = u.rowid";
 $sql.= " WHERE p.entity = ".$conf->entity;
 if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
 if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+$sql.= " AND p.fk_statut=1";
 $sql.= " ORDER BY u.rowid, t.dateo, t.datee";
 
 $userstatic=new User($db);
@@ -186,10 +187,10 @@ if ( $resql )
 		print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$obj->taskid.'&withproject=1">'.$obj->label.'</a></td>';
 		print '<td>'.dol_print_date($db->jdate($obj->dateo)).'</td>';
 		print '<td>'.dol_print_date($db->jdate($obj->datee)).'</td>';
-		if (empty($obj->duration_planned)) {
+		if (empty($obj->planned_workload)) {
 			$percentcompletion = '0';
 		} else {
-			$percentcompletion = intval(($obj->totaltime*100)/$obj->duration_planned);
+			$percentcompletion = intval(($obj->task_duration*100)/$obj->planned_workload);
 		}
 		print '<td>'.$percentcompletion.' %</td>';
 		print "</tr>\n";

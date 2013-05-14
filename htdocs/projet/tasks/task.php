@@ -36,7 +36,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
-$duration_planned=GETPOST('duration_planned');
+$planned_workload=GETPOST('planned_workload');
 
 // Security check
 $socid=0;
@@ -76,7 +76,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
-		$object->duration_planned = $duration_planned;
+		$object->planned_workload = $planned_workload*3600; //We set the planned workload into minutes
 		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$object->progress = $_POST['progress'];
@@ -286,8 +286,13 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Duration planned
-			print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-			print '<input type="text" size="7" name="duration_planned" class="flat" value="'.$object->duration_planned.'"> '.$langs->trans('Hours');
+			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+			if (!empty($object->planned_workload)) {
+				$planned_workload_hours = intval($object->planned_workload / 3600);
+			}else {
+				$planned_workload_hours = 0;
+			}
+			print '<input type="text" size="7" name="planned_workload" class="flat" value="'.$planned_workload_hours.'"> '.$langs->trans('Hours');
 			print '</td></tr>';
 
 			// Progress
@@ -376,8 +381,13 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Duration planned
-			print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-			print $object->duration_planned.' '.$langs->trans('Hours');
+			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
+			if (!empty($object->planned_workload)) {
+				$planned_workload_hours = intval($object->planned_workload / 3600);
+			}else {
+				$planned_workload_hours = 0;
+			}
+			print $planned_workload_hours.' '.$langs->trans('Hours');
 			print '</td></tr>';
 
 			// Progress

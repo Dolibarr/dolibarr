@@ -107,3 +107,5 @@ TypeContact_project_task_external_CONTRIBUTOR=Intervenant
 DocumentModelBaleine=Modèle de rapport de projet complet (logo...)
 SelectElement=Eléments associable au projet :
 AddElement=Associer
+PlannedWorkload = Charge de travail prévue
+WorkloadOccupation= Pourcentage affectation

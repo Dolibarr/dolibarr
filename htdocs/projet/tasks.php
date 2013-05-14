@@ -71,7 +71,7 @@ $hookmanager->initHooks(array('projecttaskcard'));
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
 $description=GETPOST('description');
-$duration_planned=GETPOST('duration_planned');
+$planned_workload=GETPOST('planned_workload');
 
 $userAccess=0;
 
@@ -116,7 +116,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->fk_project = $projectid;
 			$task->label = $label;
 			$task->description = $description;
-			$task->duration_planned = $duration_planned;
+			$task->planned_workload = $planned_workload * 3600;//We set the planned workload into minutes
 			$task->fk_task_parent = $task_parent;
 			$task->date_c = dol_now();
 			$task->date_start = $date_start;
@@ -295,8 +295,13 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	print '</td></tr>';
 
 	// Duration planned
-	print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-	print '<input type="text" size="7" name="duration_planned" class="flat" value="'.$duration_planned.'"> '.$langs->trans('Hours');
+	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+	if (!empty($object->planned_workload)) {
+		$planned_workload_hours = intval($object->planned_workload / 3600);
+	}else {
+		$planned_workload_hours = 0;
+	}
+	print '<input type="text" size="7" name="planned_workload" class="flat" value="'.$planned_workload.'"> '.$langs->trans('Hours');
 	print '</td></tr>';
 
 	// Progress

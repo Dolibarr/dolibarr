@@ -422,7 +422,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
                 // Duration
                 print '<td align="center">';
-                print $lines[$i]->duration_planned.' '.$langs->trans('Hours');
+                print $lines[$i]->planned_workload.' '.$langs->trans('Hours');
                 print '</td>';
 
 				// Progress
@@ -557,7 +557,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
             // Duration
             print '<td align="center">';
-            print $lines[$i]->duration_planned.' '.$langs->trans('Hours');
+            print $lines[$i]->planned_workload.' '.$langs->trans('Hours');
             print '</td>';
 
 			// Progress
