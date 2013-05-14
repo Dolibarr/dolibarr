@@ -49,8 +49,8 @@ function project_prepare_head($object)
 	$h++;
 
 	if (! empty($conf->fournisseur->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)
-		|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
-		|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
+	|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
+	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -420,10 +420,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'day');
 				print '</td>';
 
-                // Duration
-                print '<td align="center">';
-                print $lines[$i]->planned_workload.' '.$langs->trans('Hours');
-                print '</td>';
+				// Planned Workload
+				print '<td align="center">';
+				if (!empty($lines[$i]->planned_workload)) {
+					$planned_workload_hours = intval($lines[$i]->planned_workload / 3600);
+				}else {
+					$planned_workload_hours = 0;
+				}
+				print $planned_workload_hours.' '.$langs->trans('Hours');
+				print '</td>';
 
 				// Progress
 				print '<td align="right">';
@@ -443,7 +448,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-                	print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
+					print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
@@ -555,10 +560,15 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			print dol_print_date($lines[$i]->date_end,'day');
 			print '</td>';
 
-            // Duration
-            print '<td align="center">';
-            print $lines[$i]->planned_workload.' '.$langs->trans('Hours');
-            print '</td>';
+			// Planned Workload
+			print '<td align="center">';
+			if (!empty($lines[$i]->planned_workload)) {
+				$planned_workload_hours = intval($lines[$i]->planned_workload / 3600);
+			}else {
+				$planned_workload_hours = 0;
+			}
+			print $planned_workload_hours.' '.$langs->trans('Hours');
+			print '</td>';
 
 			// Progress
 			print '<td align="right">';

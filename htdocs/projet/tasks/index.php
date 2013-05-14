@@ -100,7 +100,7 @@ print '<td width="80">'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
 print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-print '<td align="center">'.$langs->trans("Duration").'</td>';
+print '<td align="center">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right">'.$langs->trans("Progress").'</td>';
 print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print "</tr>\n";
