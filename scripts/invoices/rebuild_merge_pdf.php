@@ -122,6 +122,11 @@ foreach ($argv as $key => $value)
 
 		$paymentdateafter=dol_stringtotime($argv[$key+1]);
 		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
+		if (empty($paymentdateafter) || empty($paymentdatebefore))
+		{
+			print 'Error: Bad date format'."\n";
+			exit;
+		}
 		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
 	}
 
@@ -137,7 +142,7 @@ foreach ($argv as $key => $value)
 	if ($value == 'filter=bank')
 	{
 		$found=true;
-		$option.=(empty($option)?'':'_').'bank_'.$argv[$key+1].'_'.$argv[$key+2];
+		$option.=(empty($option)?'':'_').'bank_'.$argv[$key+1];
 		$filter[]='bank';
 
 		$paymentonbankref=$argv[$key+1];
