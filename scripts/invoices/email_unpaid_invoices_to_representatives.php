@@ -82,7 +82,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($duration_value>=0) $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
-$sql .= " ORDER BY u.email ASC, s.rowid ASC";	// Order by email to allow one message per email
+$sql .= " ORDER BY u.email ASC, s.rowid ASC, f.facnumber ASC";	// Order by email to allow one message per email
 
 //print $sql;
 $resql=$db->query($sql);

@@ -84,7 +84,7 @@ if ($duration_value>=0) $sql.= " AND f.date_lim_reglement < '".$db->idate(dol_ti
 if ($targettype == 'contacts') $sql.= " AND s.rowid = sp.fk_soc";
 $sql.= " ORDER BY";
 if ($targettype == 'contacts') $sql.= " sp.email, sp.rowid,";
-$sql.= " s.email ASC, s.rowid ASC";	// Order by email to allow one message per email
+$sql.= " s.email ASC, s.rowid ASC, f.facnumber ASC";	// Order by email to allow one message per email
 
 //print $sql;
 $resql=$db->query($sql);
@@ -94,6 +94,8 @@ if ($resql)
     $i = 0;
     $oldemail = 'none'; $oldsid = 0; $oldcid = 0; $oldlang='';
     $total = 0; $foundtoprocess = 0;
+    $trackthirdpartiessent = array();
+
 	print "We found ".$num." couples (unpayed validated invoices-".$targettype.") qualified\n";
     dol_syslog("We found ".$num." couples (unpayed validated invoices-".$targettype.") qualified");
 	$message='';
@@ -115,13 +117,18 @@ if ($resql)
             if ($startbreak)
             {
                 // Break onto sales representative (new email or cid)
-                if (dol_strlen($oldemail) && $oldemail != 'none')
+                if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
                 {
                    	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget);
+                   	$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
                 }
                 else
 				{
-                	if ($oldemail != 'none') print "- No email sent for '".$oldtarget."', total: ".$total."\n";
+                	if ($oldemail != 'none')
+                	{
+                		if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) print "- No email sent for '".$oldtarget."', total: ".$total."\n";
+                		else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+                	}
                 }
                 $oldemail = $newemail;
                 $oldsid  = $obj->sid;
@@ -141,7 +148,7 @@ if ($resql)
             	dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." customer ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.",":"")." email ".$newemail.": ";
+            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.",":"")." email ".$newemail.": ";
             if (dol_strlen($newemail)) print "qualified.";
             else print "disqualified (no email).";
             print "\n";
@@ -154,13 +161,18 @@ if ($resql)
         // Si il reste des envois en buffer
         if ($foundtoprocess)
         {
-            if (dol_strlen($oldemail) && $oldemail != 'none')	// Break onto email (new email)
+            if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))	// Break onto email (new email)
             {
        			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget);
+       			$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
             }
             else
 			{
-            	if ($oldemail != 'none') print "- No email sent for '".$oldtarget."', total: ".$total."\n";
+            	if ($oldemail != 'none')
+            	{
+            		if (empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) print "- No email sent for '".$oldtarget."', total: ".$total."\n";
+            		else print "- No email sent for '".$oldtarget."', total: ".$total." (already sent to ".$trackthirdpartiessent[$oldsid.'|'.$oldemail].")\n";
+            	}
             }
         }
     }
