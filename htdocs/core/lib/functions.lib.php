@@ -3323,7 +3323,7 @@ function picto_required()
  *
  *	@param	string	$StringHtml			String to clean
  *	@param	string	$removelinefeed		Replace also all lines feeds by a space
- *  @param  string	$pagecodeto      	Encoding of input string
+ *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  */
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
