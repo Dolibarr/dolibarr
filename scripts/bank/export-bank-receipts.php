@@ -176,7 +176,7 @@ if ($result >= 0)
 	$objmodel->write_header($outputlangs);
 
 	// Genere ligne de titre
-	$objmodel->write_title($array_fields,$array_selected,$outputlangs);
+	$objmodel->write_title($array_fields,$array_selected,$outputlangs,$array_export_TypeFields);
 
 
 	// Recherche les ecritures pour le releve
@@ -221,7 +221,7 @@ if ($result >= 0)
 			// Libelle
 			$reg=array();
 			preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) $description=$langs->trans($reg[1]);
+			if ($reg[1] && $langs->transnoentitiesnoconv($reg[1])!=$reg[1]) $description=$langs->transnoentitiesnoconv($reg[1]);
 			else $description=$objp->label;
 
 			/*
@@ -256,13 +256,13 @@ if ($result >= 0)
 				{
 					$paymentsocialcontributionstatic->fetch($links[$key]['url_id']);
 					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$langs->trans("SocialContribution").' '.$paymentsocialcontributionstatic->ref;
+					$accountelem.=$langs->transnoentitiesnoconv("SocialContribution").' '.$paymentsocialcontributionstatic->ref;
 				}
 				elseif ($links[$key]['type']=='payment_vat')
 				{
 					$paymentvatstatic->fetch($links[$key]['url_id']);
 					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$langs->trans("VATPayments").' '.$paymentvatstatic->ref;
+					$accountelem.=$langs->transnoentitiesnoconv("VATPayments").' '.$paymentvatstatic->ref;
 				}
 				elseif ($links[$key]['type']=='banktransfert')
 				{
@@ -273,9 +273,9 @@ if ($result >= 0)
 						$banklinestatic->fetch($links[$key]['url_id']);
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
-						$comment.= ' ('.$langs->trans("from").' ';
+						$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
 						$comment.= $bankstatic->getNomUrl(1,'transactions');
-						$comment.= ' '.$langs->trans("toward").' ';
+						$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
 						$comment.= $bankstatic->getNomUrl(1,'');
@@ -286,9 +286,9 @@ if ($result >= 0)
 						if ($comment) $comment.= ' ';
 						$bankstatic->id=$objp->bankid;
 						$bankstatic->label=$objp->bankref;
-						$comment.= ' ('.$langs->trans("from").' ';
+						$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
 						$comment.= $bankstatic->getNomUrl(1,'');
-						$comment.= ' '.$langs->trans("toward").' ';
+						$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
 						$banklinestatic->fetch($links[$key]['url_id']);
 						$bankstatic->id=$banklinestatic->fk_account;
 						$bankstatic->label=$banklinestatic->bank_account_label;
@@ -312,8 +312,8 @@ if ($result >= 0)
 				{
 					if ($accountelem) $accountelem.= ', ';
 					//$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
-					//$accountelem.= img_object($langs->trans('ShowBill'),'bill').' ';
-					$accountelem.= $langs->trans("SocialContribution");
+					//$accountelem.= img_object($langs->transnoentitiesnoconv('ShowBill'),'bill').' ';
+					$accountelem.= $langs->transnoentitiesnoconv("SocialContribution");
 					//$accountelem.= '</a>';
 					$newline=0;
 				}
