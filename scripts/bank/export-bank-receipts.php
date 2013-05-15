@@ -185,7 +185,7 @@ if ($result >= 0)
 	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
+	$sql.= " WHERE b.num_releve IN (".$db->escape($num).")";
 	if (!isset($num))	$sql.= " OR b.num_releve is null";
 	//$sql.= " AND b.fk_account = ".$acct->id;
 	$sql.= " AND b.fk_account = ba.rowid";
