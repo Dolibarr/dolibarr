@@ -78,30 +78,29 @@ IV - CE QUE DOLIBARR PEUT FAIRE
 -------------------------------
 
 Modules principaux:
+- Annuaires des prospects et/ou client et/ou fournisseurs
 - Gestion de catalogue de produits et services
 - Gestion de stock
 - Gestion des comptes bancaires
-- Annuaires des prospects et/ou client et/ou fournisseurs
-- Annuaires des contacts
-- Gestion des actions/taches avec un agenda intégré (ou lien avec webcalendar)
+- Agenda partagé
 - Gestion des commandes
-- Gestion des propositions commerciales
-- Gestion de contrats de services
+- Gestion des devis, propositions commerciales
 - Gestion des factures clients et fournisseurs
+- Gestion de contrats de services
 - Gestion des paiements
 - Gestion des virements bancaires
 - Gestion des expéditions
+- GED (Gestion Electronique de Documents)
+- EMailings de masse
+- Réalisation de sondages
+- Point de vente/Caisse enregistreuse
 
 Autres modules:
-- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
-- Gestion des adhérents d'association
-- Gestion des dons
 - Gestion de marque-pages
-- Agenda
-- Point de vente/Caisse enregistreuse
-- Fonctions d'EMailing de masses vers les clients, prospect ou utilisateurs Dolibarr
+- Gestion des promesses de dons
+- Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
 - Rapports
-- Fonctions d'exports
+- Imports/Exports des données
 - Connectivité LDAP
 - Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 - De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
@@ -122,7 +121,7 @@ V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
 Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
 - Pas de compta analytique (uniquement gestion de trésorerie).
 - Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
-- Dolibarr ne gère en standard qu'une société/institution/association (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MultiCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
+- Dolibarr ne gère en standard qu'une société/institution/association mère (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MultiCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
 - Ne gère pas la double tva (Fédérale / provinciale) du canada.
 - Dolibarr ne contient pas de module de Gestion de la paie.
 - Les taches du module de gestion de projets n'ont pas de dépendance entre elle.
