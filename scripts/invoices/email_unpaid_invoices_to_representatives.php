@@ -175,7 +175,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     $newlangs->load("main");
     $newlangs->load("bills");
 
-    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->trans("ListOfYourUnpaidInvoices");
+    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->transnoentities("ListOfYourUnpaidInvoices");
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -195,7 +195,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     }
     else
     {
-    	$allmessage.= "List of unpaid invoices".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
+    	$allmessage.= $newlangs->transnoentities("ListOfYourUnpaidInvoices").($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     	$allmessage.= "Note: This list contains only invoices for third parties you are linked to as a sale representative.".($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
