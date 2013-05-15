@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -36,7 +37,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
-$planned_workload=GETPOST('planned_workload');
+$planned_workload=GETPOST('planned_workloadhour');
 
 // Security check
 $socid=0;
@@ -285,14 +286,9 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
 			print '</td></tr>';
 
-			// Duration planned
+			// workload planned
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-			if (!empty($object->planned_workload)) {
-				$planned_workload_hours = intval($object->planned_workload / 3600);
-			}else {
-				$planned_workload_hours = 0;
-			}
-			print '<input type="text" size="7" name="planned_workload" class="flat" value="'.$planned_workload_hours.'"> '.$langs->trans('Hours');
+			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
 			print '</td></tr>';
 
 			// Progress
@@ -380,14 +376,9 @@ if ($id > 0 || ! empty($ref))
 			print dol_print_date($object->date_end,'day');
 			print '</td></tr>';
 
-			// Duration planned
+			// planned Workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
-			if (!empty($object->planned_workload)) {
-				$planned_workload_hours = intval($object->planned_workload / 3600);
-			}else {
-				$planned_workload_hours = 0;
-			}
-			print $planned_workload_hours.' '.$langs->trans('Hours');
+			print convertSecondToTime($object->planned_workload,'all');
 			print '</td></tr>';
 
 			// Progress

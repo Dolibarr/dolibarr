@@ -56,7 +56,9 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	if (empty($_POST["timespent_durationhour"]) && empty($_POST["timespent_durationmin"]))
+	$timespent_durationhour = GETPOST('timespent_durationhour','int');
+	$timespent_durationmin = GETPOST('timespent_durationmin','int');
+	if (empty($timespent_durationhour) && empty($timespent_durationmin))
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
 		$error++;
@@ -264,13 +266,8 @@ if ($id > 0 || ! empty($ref))
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
-		// Duration planned
-		if (!empty($object->planned_workload)) {
-			$planned_workload_hours = intval($object->planned_workload / 3600);
-		}else {
-			$planned_workload_hours = 0;
-		}
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.$planned_workload_hours.' '.$langs->trans('Hours').'</td></tr>';
+		// planned workload 
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'all').'</td></tr>';
 
 		// Project
 		if (empty($withproject))
@@ -336,7 +333,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Duration
 			print '<td class="nowrap" align="right">';
-			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
+			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''),0,'text');
 			print '</td>';
 
 			print '<td align="center">';
@@ -443,7 +440,7 @@ if ($id > 0 || ! empty($ref))
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-				print $form->select_duration('new_duration',$task_time->task_duration);
+				print $form->select_duration('new_duration',$task_time->task_duration,0,'text');
 			}
 			else
 			{

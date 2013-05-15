@@ -164,6 +164,7 @@ $sql.= " ORDER BY u.rowid, t.dateo, t.datee";
 
 $userstatic=new User($db);
 
+dol_syslog('projet:index.php: affectationpercent sql='.$sql,LOG_DEBUG);
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -192,7 +193,7 @@ if ( $resql )
 		} else {
 			$percentcompletion = intval(($obj->task_duration*100)/$obj->planned_workload);
 		}
-		print '<td>'.$percentcompletion.' %</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">'.$percentcompletion.' %</a></td>';
 		print "</tr>\n";
 
 		$i++;

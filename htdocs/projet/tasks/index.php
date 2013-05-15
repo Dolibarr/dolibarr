@@ -109,7 +109,7 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_project" value="'.$search_project.'" size="8">';
 print '</td>';
-print '<td class="liste_titre" colspan="5">';
+print '<td class="liste_titre" colspan="6">';
 print '&nbsp;';
 print '</td>';
 print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';

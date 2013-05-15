@@ -422,12 +422,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Planned Workload
 				print '<td align="center">';
-				if (!empty($lines[$i]->planned_workload)) {
-					$planned_workload_hours = intval($lines[$i]->planned_workload / 3600);
-				}else {
-					$planned_workload_hours = 0;
-				}
-				print $planned_workload_hours.' '.$langs->trans('Hours');
+				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'all');
+				else print '--:--';
 				print '</td>';
 
 				// Progress
