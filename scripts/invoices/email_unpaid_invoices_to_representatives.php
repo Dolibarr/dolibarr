@@ -47,7 +47,7 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 $mode=$argv[1];
 
 
-require($path."../../httpdocs/master.inc.php");
+require($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 $langs->load('main');
