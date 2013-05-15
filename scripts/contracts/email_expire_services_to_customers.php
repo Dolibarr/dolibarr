@@ -180,7 +180,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$dura
     global $conf,$langs;
 
     $newlangs=new Translate('',$conf);
-    $newlangs->setDefaultLang($userlang);
+    $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang); 
     $newlangs->load("main");
     $newlangs->load("contracts");
 
