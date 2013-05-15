@@ -54,14 +54,22 @@ require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 $langs->load('main');
 
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
+
 /*
  * Main
  */
 
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
+
 $now=dol_now('tzserver');
 $duration_value=$argv[2];
 
-$error = 0;
 print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
 
 $sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";

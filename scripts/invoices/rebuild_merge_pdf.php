@@ -50,7 +50,11 @@ $version=DOL_VERSION;
 $error=0;
 
 
-// -------------------- START OF YOUR CODE HERE --------------------
+
+/*
+ * Main
+ */
+
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") *****\n";
 

@@ -34,16 +34,23 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit;
 }
 
-// Recupere env dolibarr
-$version='1.6';
-
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
-$error = 0;
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 $datetimeprev = time();
 

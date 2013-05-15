@@ -34,16 +34,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-
-
-
-// Main
-
-$version='1.14';
-@set_time_limit(0);
-$error=0;
-$forcecommit=0;
-
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
@@ -51,6 +41,20 @@ require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
 $langs->load("main");
 $langs->load("errors");
+
+
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+$forcecommit=0;
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -178,7 +182,7 @@ if ($result >= 0)
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			$fuser = new User($db);
-			
+
 			if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
 				$fuser->fetch('','',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
 			} else if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
@@ -226,11 +230,11 @@ if ($result >= 0)
 			//if ($fuser->statut > 1) $fuser->statut=1;
 
 			//print_r($ldapuser);
-			
+
 			if($fuser->id > 0) { // User update
 				print $langs->transnoentities("UserUpdate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
 				$res=$fuser->update($user);
-				
+
 				if ($res < 0)
 				{
 					$error++;
@@ -243,7 +247,7 @@ if ($result >= 0)
 			} else { // User creation
 				print $langs->transnoentities("UserCreate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
 				$res=$fuser->create($user);
-				
+
 				if ($res > 0)
 				{
 					print ' --> Created user id='.$fuser->id.' login='.$fuser->login;
@@ -256,7 +260,7 @@ if ($result >= 0)
 			}
 			print "\n";
 			//print_r($fuser);
-			
+
 			// Gestion des groupes
 			// TODO : revoir la gestion des groupes (ou script de sync groupes)
 			/*if(!$error) {

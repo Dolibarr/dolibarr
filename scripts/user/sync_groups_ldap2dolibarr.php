@@ -35,16 +35,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-
-
-
-// Main
-
-$version='1.14';
-@set_time_limit(0);
-$error=0;
-$forcecommit=0;
-
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
@@ -53,6 +43,21 @@ require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 
 $langs->load("main");
 $langs->load("errors");
+
+
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+$forcecommit=0;
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
+
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -136,11 +141,11 @@ if ($result >= 0)
 			$group->entity = $conf->entity;
 
 			//print_r($ldapgroup);
-			
+
 			if($group->id > 0) { // Group update
 				print $langs->transnoentities("GroupUpdate").' # '.$key.': name='.$group->nom;
 				$res=$group->update();
-				
+
 				if ($res > 0)
 				{
 					print ' --> Updated group id='.$group->id.' name='.$group->nom;
@@ -154,7 +159,7 @@ if ($result >= 0)
 			} else { // Group creation
 				print $langs->transnoentities("GroupCreate").' # '.$key.': name='.$group->nom;
 				$res=$group->create();
-				
+
 				if ($res > 0)
 				{
 					print ' --> Created group id='.$group->id.' name='.$group->nom;
@@ -168,7 +173,7 @@ if ($result >= 0)
 			}
 
 			//print_r($group);
-			
+
 			// Gestion des utilisateurs associés au groupe
 			// 1 - Association des utilisateurs du groupe LDAP au groupe Dolibarr
 			$userList = array();
@@ -179,29 +184,29 @@ if ($result >= 0)
 					$userFilter = explode(',', $userdn);
 					$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
 					if(!is_array($userKey)) continue;
-					
+
 					$fuser = new User($db);
-					
+
 					if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
 						$fuser->fetch('','',$userKey[0]); // Chargement du user concerné par le SID
 					} else if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
 						$fuser->fetch('',$userKey[0]); // Chargement du user concerné par le login
 					}
-					
+
 					$userList[$userdn] = $fuser;
 				} else {
 					$fuser = &$userList[$userdn];
 				}
-				
+
 				$userIdList[$userdn] = $fuser->id;
-				
+
 				// Ajout de l'utilisateur dans le groupe
 				if(!in_array($fuser->id, array_keys($group->members))) {
 					$fuser->SetInGroup($group->id, $group->entity);
 					echo $fuser->login.' added'."\n";
 				}
 			}
-			
+
 			// 2 - Suppression des utilisateurs du groupe Dolibarr qui ne sont plus dans le groupe LDAP
 			foreach ($group->members as $guser) {
 				if(!in_array($guser->id, $userIdList)) {

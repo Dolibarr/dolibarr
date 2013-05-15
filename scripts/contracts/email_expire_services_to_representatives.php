@@ -55,14 +55,21 @@ $langs->load('main');
 $langs->load('contracts');
 
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
 /*
  * Main
  */
 
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
+
 $now=dol_now('tzserver');
 $duration_value=$argv[2];
 
-$error = 0;
 print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
 
 $sql  = "SELECT DISTINCT s.nom, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, c.fk_soc,u.rowid AS uid, u.lastname, u.firstname, u.email, u.lang";
@@ -181,7 +188,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     	$title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
     else
     	$title= $newlangs->transnoentities("ListOfServicesToExpire");
-    
+
     $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$title;
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;

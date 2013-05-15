@@ -53,10 +53,18 @@ require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 $langs->load('main');
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
 
 /*
  * Main
  */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 $now=dol_now('tzserver');
 $duration_value=$argv[2];

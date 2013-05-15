@@ -40,18 +40,23 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $now=$argv[1];
 
-// Recupere env dolibarr
-$version='1.25';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
+// Global variables
+$version=DOL_VERSION;
 $error=0;
 
 
-print "***** $script_file ($version) *****\n";
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
