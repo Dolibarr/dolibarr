@@ -40,8 +40,6 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $now=$argv[1];
 
-// Recupere env dolibarr
-$version='1.10';
 
 require_once($path."../../htdocs/master.inc.php");
 //require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
@@ -51,7 +49,17 @@ require_once(PHPEXCEL_PATH."/PHPExcel.php");
 //require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php");
 require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php");
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
 
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 

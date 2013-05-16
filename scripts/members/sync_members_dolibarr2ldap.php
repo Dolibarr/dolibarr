@@ -34,21 +34,24 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-// Main
-$version='1.11';
-$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
-@set_time_limit(0);
-$error=0;
-
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
-
 $langs->load("main");
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
 
-print "***** $script_file ($version) *****\n";
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now\n";

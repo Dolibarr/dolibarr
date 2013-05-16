@@ -59,10 +59,17 @@ require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
 require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
 require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
 
 /*
  * Main
  */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
 
 // Check security key
 if ($key != $conf->global->CRON_KEY)

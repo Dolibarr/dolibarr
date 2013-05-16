@@ -158,7 +158,7 @@ class ExportExcel extends ModeleExports
 		    $outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
 		}
 
-		dol_syslog("ExportExcel::open_file file=".$file);
+		dol_syslog(get_class($this)."::open_file file=".$file);
         $this->file=$file;
 
 		$ret=1;
@@ -187,7 +187,7 @@ class ExportExcel extends ModeleExports
 
             $this->workbook->setActiveSheetIndex(0);
             $this->workbook->getActiveSheet()->setTitle($outputlangs->trans("Sheet"));
-            $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(15);
+            $this->workbook->getActiveSheet()->getDefaultRowDimension()->setRowHeight(16);
 		}
 		return $ret;
 	}
@@ -212,9 +212,10 @@ class ExportExcel extends ModeleExports
      *  @param      array		$array_export_fields_label   	Array with list of label of fields
      *  @param      array		$array_selected_sorted       	Array with list of field to export
      *  @param      Translate	$outputlangs    				Object lang to translate values
+     *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
+	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
@@ -231,7 +232,7 @@ class ExportExcel extends ModeleExports
 		else
 		{
             $this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
-		    $this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		    $this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 		}
 
 		$this->col=0;
@@ -247,6 +248,10 @@ class ExportExcel extends ModeleExports
     		else
     		{
                 $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $outputlangs->transnoentities($alias));
+    		    if (! empty($array_types[$code]) && in_array($array_types[$code],array('Date','Number','TextAuto')))		// Set autowidth for some types
+                {
+                	$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
+                }
     		}
 			$this->col++;
 		}
@@ -341,18 +346,17 @@ class ExportExcel extends ModeleExports
 			        $this->worksheet->write($this->row, $this->col, $newvalue);
     		    }
     		    else
-    		    {
-    		    	if ($typefield == 'Text')
+				{
+    		    	if ($typefield == 'Text' || $typefield == 'TextAuto')
     		    	{
     		    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
 						$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, (string) $newvalue);
     		    		$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
     		    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
+    		    		$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
     		    	}
     		    	else
     		    	{
-    		    		//$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
-    		    		//if ($typefield == 'Text') $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
     		    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
     		    	}
     		    }
@@ -411,6 +415,29 @@ class ExportExcel extends ModeleExports
     	$newvalue=dol_string_nohtmltag($newvalue);
 
     	return $newvalue;
+    }
+
+
+    /**
+     * Convert a column to letter (1->A, 0->B, 27->AA, ...)
+     *
+     * @param 	int		$c		Column position
+     * @return 	string			Letter
+     */
+    function column2Letter($c)
+    {
+
+    	$c = intval($c);
+    	if ($c <= 0) return '';
+
+    	while ($c != 0)
+    	{
+    		$p = ($c - 1) % 26;
+    		$c = intval(($c - $p) / 26);
+    		$letter = chr(65 + $p) . $letter;
+    	}
+
+    	return $letter;
     }
 }
 
