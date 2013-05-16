@@ -194,7 +194,7 @@ class Translate
 
 		// Redefine alt
 		$langarray=explode('_',$langofdir);
-		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
+		if ($alt < 1 && isset($langarray[1]) && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
 		foreach($this->dir as $keydir => $searchdir)
