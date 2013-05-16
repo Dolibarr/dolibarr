@@ -1221,7 +1221,7 @@ function dol_uncompress($inputfile,$outputdir)
  * @param 	string	$dir			Directory to scan
  * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	int		$nohook			Disable all hooks
+ * @param	int		$nohook			Disable all hooks
  * @return	string					Full path to most recent file
  */
 function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
@@ -1236,11 +1236,12 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
  * @param	string	$modulepart			Module of document
  * @param	string	$original_file		Relative path with filename
  * @param	string	$entity				Restrict onto entity
+ * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
  * @return	mixed						Array with access information : accessallowed & sqlprotectagainstexternals & original_file (as full path name)
  */
-function dol_check_secure_access_document($modulepart,$original_file,$entity)
+function dol_check_secure_access_document($modulepart,$original_file,$entity,$refname='')
 {
-	global $user, $conf;
+	global $user, $conf, $db;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
@@ -1250,6 +1251,9 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 	$sqlprotectagainstexternals='';
 	$ret=array();
 
+	// find the subdirectory name as the reference
+	if (empty($refname)) $refname=basename(dirname($original_file)."/");
+	
 	// Wrapping for some images
 	if ($modulepart == 'companylogo')
 	{
@@ -1425,7 +1429,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->societe->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity IN (".getEntity('societe', 1).")";
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe', 1).")";
 	}
 
 	// Wrapping for invoices
@@ -1436,7 +1440,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	else if ($modulepart == 'unpaid')
@@ -1456,7 +1460,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les deplacements et notes de frais
@@ -1467,7 +1471,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->deplacement->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les propales
 	else if ($modulepart == 'propal')
@@ -1478,7 +1482,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 		}
 
 		$original_file=$conf->propal->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les commandes
@@ -1489,7 +1493,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les projets
@@ -1500,7 +1504,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les commandes fournisseurs
@@ -1511,7 +1515,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les factures fournisseurs
@@ -1522,7 +1526,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les rapport de paiements
@@ -1755,7 +1759,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity)
 		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
 		if (! empty($conf->global->$sqlProtectConstName))	// If module want to define its own $sqlprotectagainstexternals
 		{
-			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$refname."' AND entity=".$conf->entity;
+			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
 		}
 	}
