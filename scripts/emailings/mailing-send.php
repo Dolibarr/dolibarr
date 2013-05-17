@@ -45,7 +45,19 @@ require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 
-$error = 0;
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
+
 
 
 // We get list of emailing to process

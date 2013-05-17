@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,26 +53,36 @@ if ($action == 'confirm_rejet')
 {
 	if ( GETPOST("confirm") == 'yes')
 	{
-		$daterej = mktime(2, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+		if (GETPOST('remonth','int'))
+		{
+			$daterej = mktime(2, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+		}
 
 		if (empty($daterej))
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
 		}
-		
+
+		elseif ($daterej > dol_now())
+		{
+			$error++;
+			$langs->load("error");
+			setEventMessage($langs->transnoentities("ErrorDateMustBeBeforeToday"),'errors');
+		}
+
 		if (GETPOST('motif','alpha') == 0)
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefusedReason")),'errors');
 		}
-		
-		$lipre = new LignePrelevement($db, $user);
 
-		if ($lipre->fetch($id) == 0)
+		if ( ! $error )
 		{
+			$lipre = new LignePrelevement($db, $user);
 
-			if ( ! $error && $daterej < time())
+			if ($lipre->fetch($id) == 0)
+
 			{
 				$rej = new RejetPrelevement($db, $user);
 
@@ -81,13 +91,11 @@ if ($action == 'confirm_rejet')
 				header("Location: ligne.php?id=".$id);
 				exit;
 			}
-			else
-			{
-				dol_syslog("Motif : ".GETPOST('motif','alpha'));
-				dol_syslog("$daterej $time ");
 
-				$action="rejet";
-			}
+		}
+		else
+		{
+			$action="rejet";
 		}
 	}
 	else
@@ -188,13 +196,13 @@ if ($id)
 		print '</td></tr>';
 
 		//Date
-		print '<tr><td class="valid">'.$langs->trans("RefusedData").'</td>';
+		print '<tr><td class="fieldrequired" class="valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
 		print $form->select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
-		print '<tr><td class="valid">'.$langs->trans("RefusedReason").'</td>';
+		print '<tr><td class="fieldrequired" class="valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
 		print $form->selectarray("motif", $rej->motifs);
 		print '</td></tr>';
@@ -318,8 +326,6 @@ if ($id)
 		dol_print_error($db);
 	}
 }
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

@@ -690,6 +690,9 @@ class Adherent extends CommonObject
 		$error=0;
 		$errorflag=0;
 
+		// Check parameters
+		if (empty($rowid)) $rowid=$this->id;
+
         $this->db->begin();
 
         // Remove category
@@ -1103,7 +1106,7 @@ class Adherent extends CommonObject
                 if (count($extralabels)>0) {
                 	$this->fetch_optionals($this->id,$extralabels);
                 }
-                
+
                 // Load other properties
                 $result=$this->fetch_subscriptions();
 
@@ -1490,19 +1493,17 @@ class Adherent extends CommonObject
 
 
     /**
-     *    Return civility label of a contact
+     *    Return civility label of a member
      *
-     *    @param	int		$nohtmlentities     0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation
-     *    @return   string              		Name translated of civility
+     *    @return   string              	Translated name of civility
      */
-    function getCivilityLabel($nohtmlentities=0)
+    function getCivilityLabel()
     {
         global $langs;
         $langs->load("dict");
 
         $code=$this->civilite_id;
-        if ($nohtmlentities) return $langs->transnoentities("Civility".$code)!="Civility".$code ? $langs->transnoentities("Civility".$code) : $code;
-        else return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;
+        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
     }
 
     /**
@@ -1534,7 +1535,7 @@ class Adherent extends CommonObject
         	$lien = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=3">';
         	$lienfin='</a>';
         }
-        
+
         $picto='user';
         $label=$langs->trans("ShowMember");
 

@@ -3323,7 +3323,7 @@ function picto_required()
  *
  *	@param	string	$StringHtml			String to clean
  *	@param	string	$removelinefeed		Replace also all lines feeds by a space
- *  @param  string	$pagecodeto      	Encoding of input string
+ *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  */
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
@@ -4071,6 +4071,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey	Field for code
  * 		@param	string	$fieldid	Field for id
  *      @return int					Id of code
+ *      @see getLabelFromKey
  */
 function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 {

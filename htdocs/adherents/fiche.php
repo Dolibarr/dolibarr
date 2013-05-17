@@ -246,9 +246,22 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 	{
 		$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 	}
+	$lastname=$_POST["lastname"];
+	$firstname=$_POST["firstname"];
+	$morphy=$morphy=$_POST["morphy"];;
+	if ($morphy != 'mor' && empty($lastname)) {
+		$error++;
+		$langs->load("errors");
+		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
+	}
+	if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
+		$error++;
+		$langs->load("errors");
+		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+	}
 
 	// Create new object
-	if ($result > 0)
+	if ($result > 0 && ! $error)
 	{
 		$object->oldcopy=dol_clone($object);
 
@@ -389,6 +402,10 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 			$action='';
 		}
 	}
+	else
+	{
+		$action='edit';
+	}
 }
 
 if ($action == 'add' && $user->rights->adherent->creer)
@@ -489,7 +506,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
 		}
 	}
-	if (empty($lastname)) {
+	if ($morphy != 'mor' && empty($lastname)) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";

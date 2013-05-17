@@ -124,6 +124,7 @@ ErrorNewValueCantMatchOldValue=La nouvelle valeur ne peut être égale à l'anci
 ErrorFailedToValidatePasswordReset=Echec de la réinitialisation du mot de passe. Il est possible que ce lien ait déjà été utilisé (l'utilisation de ce lien ne fonctionne qu'une fois). Si ce n'est pas le cas, essayer de recommencer le processus de réinit de mot de passe depuis le début.
 ErrorToConnectToMysqlCheckInstance=Echec de la connection au serveur de base de donnée. Vérifier que Mysql est bien lancé (dans la plupart des cas, vous pouvez le lancer depuis la ligne de commande par la commande 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Echec à l'ajout du contact
+ErrorDateMustBeBeforeToday=La date ne peut pas être supérieure à aujourd'hui
 
 # Warnings
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

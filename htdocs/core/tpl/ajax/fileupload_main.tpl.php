@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ $(function () {
 
 	// Events
 	$('#fileupload').fileupload({
-		completed: function (e, data) {
+		stop: function (e, data) {
 			location.href='<?php echo $_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"]; ?>';
 		},
 		destroy: function (e, data) {

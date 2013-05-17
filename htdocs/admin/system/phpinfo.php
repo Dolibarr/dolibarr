@@ -24,6 +24,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");
 
@@ -44,6 +45,23 @@ if (isset($title))
 {
 	print_fiche_titre($langs->trans($title), '', 'setup');
 }
+
+
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print "\n";
+
+$var=false;
+
+// Recupere la version de l'OS
+$phpversion=version_php();
+print "<tr ".$bc[$var].'><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
+
+print '</table>';
+print '<br>';
+
+
 
 // Get php_info array
 $phparray=phpinfo_array();
@@ -68,7 +86,12 @@ foreach($phparray as $key => $value)
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
 			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
-			print '<td colspan="2">'.$valtoshow.'</td>';
+			print '<td colspan="2">';
+			if ($keyparam == 'Path') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == 'PATH') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == '_SERVER["PATH"]') $valtoshow=join('; ',explode(';',trim($valtoshow)));
+			print $valtoshow;
+			print '</td>';
 			print '</tr>';
 		}
 		else
@@ -82,7 +105,7 @@ foreach($phparray as $key => $value)
 				print '<td>';
 				$valtoshow=$keyvalue2;
 				if ($keyparam == 'disable_functions') $valtoshow=join(', ',explode(',',trim($valtoshow)));
-				//print $keyparam2.' = ';
+				//print $keyparam;
 				print $valtoshow;
 				$i++;
 				print '</td>';

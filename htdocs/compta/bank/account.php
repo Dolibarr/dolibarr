@@ -543,41 +543,37 @@ if ($id > 0 || ! empty($ref))
 					if ($links[$key]['type']=='payment')
 					{
 						$paymentstatic->id=$links[$key]['url_id'];
+						$paymentstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentstatic->getNomUrl(2);
 					}
-					else if ($links[$key]['type']=='payment_supplier')
+					elseif ($links[$key]['type']=='payment_supplier')
 					{
 						$paymentsupplierstatic->id=$links[$key]['url_id'];
 						$paymentsupplierstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentsupplierstatic->getNomUrl(2);
 					}
-					else if ($links[$key]['type']=='company')
+					elseif ($links[$key]['type']=='payment_sc')
 					{
-
-					}
-					else if ($links[$key]['type']=='payment_sc')
-					{
-						//print ' - ';
 						print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
 						print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
 						//print $langs->trans("SocialContributionPayment");
 						print '</a>';
 					}
-					else if ($links[$key]['type']=='payment_vat')
+					elseif ($links[$key]['type']=='payment_vat')
 					{
 						$paymentvatstatic->id=$links[$key]['url_id'];
 						$paymentvatstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentvatstatic->getNomUrl(2);
 					}
-					else if ($links[$key]['type']=='banktransfert')
+					elseif ($links[$key]['type']=='banktransfert')
 					{
-						// Do not show link to transfer ince there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
+						// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
 						if ($objp->amount > 0)
 						{
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
 							$bankstatic->label=$banklinestatic->bank_account_label;
-							print ' ('.$langs->trans("From ");
+							print ' ('.$langs->trans("from").' ';
 							print $bankstatic->getNomUrl(1,'transactions');
 							print ' '.$langs->trans("toward").' ';
 							$bankstatic->id=$objp->bankid;
@@ -589,7 +585,7 @@ if ($id > 0 || ! empty($ref))
 						{
 							$bankstatic->id=$objp->bankid;
 							$bankstatic->label=$objp->bankref;
-							print ' ('.$langs->trans("From ");
+							print ' ('.$langs->trans("from").' ';
 							print $bankstatic->getNomUrl(1,'');
 							print ' '.$langs->trans("toward").' ';
 							$banklinestatic->fetch($links[$key]['url_id']);
@@ -600,11 +596,15 @@ if ($id > 0 || ! empty($ref))
 						}
 						//var_dump($links);
 					}
-					else if ($links[$key]['type']=='member')
+					elseif ($links[$key]['type']=='company')
 					{
 
 					}
-					else if ($links[$key]['type']=='sc')
+					elseif ($links[$key]['type']=='member')
+					{
+
+					}
+					elseif ($links[$key]['type']=='sc')
 					{
 
 					}

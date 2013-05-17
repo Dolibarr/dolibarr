@@ -55,20 +55,27 @@ $langs->load('main');
 $langs->load('contracts');
 
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
 /*
  * Main
  */
 
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") *****\n";
+
 $now=dol_now('tzserver');
 $duration_value=$argv[2];
 
-$error = 0;
 print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
 
 $sql  = "SELECT DISTINCT s.nom as name, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, s.email, s.default_lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s";
-$sql .= ", ".MAIN_DB_PREFIX."contrat AS c"; 
-$sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd"; 
+$sql .= ", ".MAIN_DB_PREFIX."contrat AS c";
+$sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product";
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
 
@@ -173,10 +180,10 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$dura
     global $conf,$langs;
 
     $newlangs=new Translate('',$conf);
-    $newlangs->setDefaultLang($userlang);
+    $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang); 
     $newlangs->load("main");
     $newlangs->load("contracts");
-    
+
     if ($duration_value)
     	$title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
     else

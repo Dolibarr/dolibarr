@@ -823,9 +823,9 @@ if (! defined('NOREQUIREMENU'))
 		foreach($dirmenus as $dirmenu)
 		{
 			$menufound=dol_include_once($dirmenu."standard/".$file_menu);
-			if ($menufound) break;
+			if (class_exists('MenuManager')) break;
 		}
-		if (! $menufound)	// If failed to include, we try with standard
+		if (! class_exists('MenuManager'))	// If failed to include, we try with standard eldy_menu.php
 		{
 			dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
 			$file_menu='eldy_menu.php';
@@ -987,7 +987,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	//$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.css" />'."\n";
             }
-            
+
         }
 
         print '<!-- Includes CSS for Dolibarr theme -->'."\n";
