@@ -196,7 +196,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     else
     {
     	$allmessage.= $newlangs->transnoentities("ListOfYourUnpaidInvoices").($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
-    	$allmessage.= "Note: This list contains only invoices for third parties you are linked to as a sale representative.".($usehtml?"<br>\n":"\n");
+    	$allmessage.= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
     $allmessage.= $langs->trans("Total")." = ".price($total).($usehtml?"<br>\n":"\n");
