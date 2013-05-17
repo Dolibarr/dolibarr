@@ -685,8 +685,14 @@ class ExtraFields
 
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2].' as rowid';
+			
+			$fields_label = explode('|',$InfoFieldList[1]);
+			if(is_array($fields_label)) {
+				$keyList .=', ';
+				$keyList .= implode(', ', $fields_label);
+			}
 
-			$sql = 'SELECT '.$keyList.', '.$InfoFieldList[1];
+			$sql = 'SELECT '.$keyList;
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			//$sql.= ' WHERE entity = '.$conf->entity;
 
@@ -702,8 +708,24 @@ class ExtraFields
 				{
 					while ($i < $num)
 					{
+						$labeltoshow='';
 						$obj = $this->db->fetch_object($resql);
-						$labeltoshow=dol_trunc($obj->$InfoFieldList[1],18);
+						
+						// Several field into label (eq table:code|libelle:rowid)
+						$fields_label = explode('|',$InfoFieldList[1]);
+						if(is_array($fields_label))
+						{
+							foreach ($fields_label as $field_toshow)
+							{
+								$labeltoshow.= $obj->$field_toshow.' ';
+							}
+						}
+						else 
+						{
+							$labeltoshow=$obj->$InfoFieldList[1];
+						}
+						$labeltoshow=dol_trunc($labeltoshow,45);
+						
 						if ($value==$obj->rowid)
 						{
 							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
@@ -818,21 +840,50 @@ class ExtraFields
 		{
 			$param_list=array_keys($params['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
-			$keyList='rowid';
-			if (count($InfoFieldList)==3)
-				$keyList=$InfoFieldList[2];
-
 			
-			$sql = 'SELECT '.$InfoFieldList[1];
+			$selectkey="rowid";
+			$keyList='rowid';
+			
+			if (count($InfoFieldList)==3)
+			{
+				$selectkey = $InfoFieldList[2];
+				$keyList=$InfoFieldList[2].' as rowid';
+			}
+				
+			$fields_label = explode('|',$InfoFieldList[1]);
+			if(is_array($fields_label)) {
+				$keyList .=', ';
+				$keyList .= implode(', ', $fields_label);
+			}
+			
+			$sql = 'SELECT '.$keyList;
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
+			$sql.= ' WHERE '.$selectkey.'=\''.$this->db->escape($value).'\'';
 			//$sql.= ' AND entity = '.$conf->entity;
+			print $sql;
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$value=$obj->$InfoFieldList[1];
+				// Several field into label (eq table:code|libelle:rowid)
+				$fields_label = explode('|',$InfoFieldList[1]);
+				
+				if(is_array($fields_label))
+				{
+					$valuetmp='';
+					foreach ($fields_label as $field_toshow)
+					{
+						$valuetmp.= $obj->$field_toshow.' ';
+					}
+					$value=$valuetmp;
+				}
+				else
+				{
+					$value=$obj->$InfoFieldList[1];
+				}
+				
+				
 			}
 		}
 		elseif ($type == 'radio')
