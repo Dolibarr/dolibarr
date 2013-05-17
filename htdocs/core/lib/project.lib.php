@@ -49,8 +49,8 @@ function project_prepare_head($object)
 	$h++;
 
 	if (! empty($conf->fournisseur->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)
-		|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
-		|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
+	|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
+	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -420,6 +420,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'day');
 				print '</td>';
 
+				// Planned Workload
+				print '<td align="center">';
+				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'all');
+				else print '--:--';
+				print '</td>';
+
 				// Progress
 				print '<td align="right">';
 				print $lines[$i]->progress.' %';
@@ -462,6 +468,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		if ($showproject) print '<td></td>';
+		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -547,6 +554,12 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			// Date end
 			print '<td align="center">';
 			print dol_print_date($lines[$i]->date_end,'day');
+			print '</td>';
+
+			// Planned Workload
+			print '<td align="center">';
+			if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'all');
+			else print '--:--';
 			print '</td>';
 
 			// Progress

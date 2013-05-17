@@ -681,6 +681,7 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
         if ($filter) $sql.= " AND (".$filter.")";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status<>0 ";
         $sql.= " ORDER BY nom ASC";
 
         dol_syslog(get_class($this)."::select_company sql=".$sql);
@@ -3517,10 +3518,13 @@ class Form
      *	@param	string	$prefix   	prefix
      *	@param  int		$iSecond  	Default preselected duration (number of seconds)
      * 	@param	int		$disabled	Disable the combo box
+     * 	@param	string	$typehour	if select then hour in select if text input in text
      *  @return	void
      */
-    function select_duration($prefix,$iSecond='',$disabled=0)
+    function select_duration($prefix,$iSecond='',$disabled=0,$typehour='select')
     {
+    	global $langs;
+    	
         if ($iSecond)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -3528,19 +3532,27 @@ class Form
             $hourSelected = convertSecondToTime($iSecond,'hour');
             $minSelected = convertSecondToTime($iSecond,'min');
         }
-
-        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
-        for ($hour = 0; $hour < 24; $hour++)
+		
+        if ($typehour=='select') 
         {
-            print '<option value="'.$hour.'"';
-            if ($hourSelected == $hour)
-            {
-                print " selected=\"true\"";
-            }
-            print ">".$hour."</option>";
+	        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
+	        for ($hour = 0; $hour < 24; $hour++)
+	        {
+	            print '<option value="'.$hour.'"';
+	            if ($hourSelected == $hour)
+	            {
+	                print " selected=\"true\"";
+	            }
+	            print ">".$hour."</option>";
+	        }
+	        print "</select>";
         }
-        print "</select>";
-        print "H &nbsp;";
+        elseif ($typehour=='text') 
+        {
+        	$fullhours=convertSecondToTime($iSecond,'fullhour');
+        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.$fullhours.'">';
+        }
+        print $langs->trans('Hours'). "&nbsp;";
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
         for ($min = 0; $min <= 55; $min=$min+5)
         {
@@ -3549,7 +3561,7 @@ class Form
             print '>'.$min.'</option>';
         }
         print "</select>";
-        print "M&nbsp;";
+        print $langs->trans('Minutes'). "&nbsp;";
     }
 
 

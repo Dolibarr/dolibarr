@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -36,6 +37,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
+$planned_workload=GETPOST('planned_workloadhour');
 
 // Security check
 $socid=0;
@@ -75,6 +77,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
+		$object->planned_workload = $planned_workload*3600; //We set the planned workload into seconds
 		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$object->progress = $_POST['progress'];
@@ -283,6 +286,11 @@ if ($id > 0 || ! empty($ref))
 			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
 			print '</td></tr>';
 
+			// workload planned
+			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
+			print '</td></tr>';
+
 			// Progress
 			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
 			print $formother->select_percent($object->progress,'progress');
@@ -366,6 +374,11 @@ if ($id > 0 || ! empty($ref))
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 			print dol_print_date($object->date_end,'day');
+			print '</td></tr>';
+
+			// planned Workload
+			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
+			print convertSecondToTime($object->planned_workload,'all');
 			print '</td></tr>';
 
 			// Progress
