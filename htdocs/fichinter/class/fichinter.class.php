@@ -1021,7 +1021,7 @@ class FichinterLigne
 		$sql.= ' (fk_fichinter, description, date, duree, rang)';
 		$sql.= " VALUES (".$this->fk_fichinter.",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
-		$sql.= " ".$this->db->idate($this->datei).",";
+		$sql.= " '".$this->db->idate($this->datei)."',";
 		$sql.= " ".$this->duration.",";
 		$sql.= ' '.$rangToUse;
 		$sql.= ')';
