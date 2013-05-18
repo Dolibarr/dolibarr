@@ -2517,6 +2517,9 @@ abstract class CommonObject
         if ($objecttype == 'cabinetmed_cons') {
             $classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
         }
+        if ($objecttype == 'ficheinter') {
+        	$classpath = 'fichinter/class'; $module='ficheinter'; $subelement='fichinter';
+        }
 
         //print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 

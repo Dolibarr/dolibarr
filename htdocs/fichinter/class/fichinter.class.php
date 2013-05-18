@@ -526,7 +526,7 @@ class Fichinter extends CommonObject
 	  *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	  *	@return		string						String with URL
 	  */
-	 function getNomUrl($withpicto=0)
+	 function getNomUrl($withpicto=0,$option='')
 	 {
 	 	global $langs;
 
