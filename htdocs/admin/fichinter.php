@@ -30,6 +30,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("admin");
@@ -204,15 +205,9 @@ print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
 
 print "<br>";
 
-$h = 0;
+$head=fichinter_admin_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
-$head[$h][1] = $langs->trans("Interventions");
-$head[$h][2] = 'Ficheinter';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'ficheinter', $langs->trans("ModuleSetup"));
 
 // Interventions numbering model
 
