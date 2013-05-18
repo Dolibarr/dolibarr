@@ -641,8 +641,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 {
     $langs->load('mails');
 
-    if ($object->fetch($id) > 0)
-    {
+	if ($object->fetch($id) > 0) {
 
             $object->fetch_thirdparty();
 
