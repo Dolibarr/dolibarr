@@ -1216,6 +1216,8 @@ class FichinterLigne
 	 */
 	function deleteline($user,$notrigger=0)
 	{
+		global $langs,$conf;
+		
 		if ($this->statut == 0)
 		{
 			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
