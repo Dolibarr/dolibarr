@@ -99,6 +99,7 @@ if ($action == 'contact')
     if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
           $conf->global->AGENT_CONTACT_TYPE = $_POST['AGENT_CONTACT_TYPE'];
+          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
     {
