@@ -243,6 +243,7 @@ if ($action == 'add_action')
 				$db->rollback();
 				$langs->load("errors");
 				$error=$langs->trans($actioncomm->error);
+				setEventMessage($error,'errors');
 				$action = 'create';
 			}
 		}
@@ -251,6 +252,7 @@ if ($action == 'add_action')
 			$db->rollback();
 			$langs->load("errors");
 			$error=$langs->trans($actioncomm->error);
+			setEventMessage($error,'errors');
 			$action = 'create';
 		}
 	}
@@ -277,6 +279,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 		else
 		{
 			$mesg=$actioncomm->error;
+			setEventMessage($mesg,'errors');
 		}
 	}
 }

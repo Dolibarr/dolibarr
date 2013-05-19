@@ -445,7 +445,7 @@ class ExtraFields
 
 			if(is_array($param) && count($param) > 0)
 			{
-				$param = serialize($param);
+				$param = $this->db->escape(serialize($param));
 			}
 
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
