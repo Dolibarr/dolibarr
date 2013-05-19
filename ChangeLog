@@ -54,6 +54,7 @@ For users:
 - New: [ task #741 ] Add intervention box.
 - New: [ task #826 ] Optionnal increase stock when deleting an invoice already validated.
 - New: [ task #823 ] Shipping_validate email notification.
+- New: [ task #900 ] Review code of ficheinter.class.php
 
 For translators:
 - Update language files.

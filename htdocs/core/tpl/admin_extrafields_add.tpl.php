@@ -49,8 +49,8 @@
     		else if (type == 'price') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else if (type == 'select') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
     		else if (type == 'sellist') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();}
-    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
-    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();}
+    		else if (type == 'checkbox') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
+    		else if (type == 'radio') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();}
     		else if (type == 'separate') { size.val('').attr('disabled','disabled'); unique.attr('disabled','disabled');  required.val('').attr('disabled','disabled'); default_value.val('').attr('disabled','disabled'); jQuery("#value_choice").hide();}
     		else size.val('').attr('disabled','disabled');
     	}
