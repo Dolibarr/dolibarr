@@ -93,7 +93,9 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
 		// Check parameters
-		if (! is_numeric($this->duree)) { $this->duree = 0; }
+		if (! is_numeric($this->duree)) {
+			$this->duree = 0;
+		}
 		if ($this->socid <= 0)
 		{
 			$this->error='ErrorBadParameterForFunc';
@@ -218,8 +220,12 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
-		if (! is_numeric($this->duree)) { $this->duree = 0; }
-		if (! dol_strlen($this->fk_project)) { $this->fk_project = 0; }
+	 	if (! is_numeric($this->duree)) {
+	 		$this->duree = 0;
+	 	}
+	 	if (! dol_strlen($this->fk_project)) {
+	 		$this->fk_project = 0;
+	 	}
 
 		$this->db->begin();
 
@@ -240,7 +246,7 @@ class Fichinter extends CommonObject
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHINTER_MODIFY',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('FICHINTER_UPDATE',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
@@ -411,7 +417,9 @@ class Fichinter extends CommonObject
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('FICHINTER_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	 			if ($result < 0) {
+	 				$error++; $this->errors=$interface->errors;
+	 			}
 				// Fin appel triggers
 
 				if (! $error)
@@ -525,7 +533,7 @@ class Fichinter extends CommonObject
 	 *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	 *	@return		string						String with URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
 
@@ -651,9 +659,9 @@ class Fichinter extends CommonObject
 	 *	@param      User	$user	Object user who delete
 	 *	@return		int				<0 if KO, >0 if OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
-		global $conf;
+		global $conf,$langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
@@ -718,15 +726,17 @@ class Fichinter extends CommonObject
 					}
 				}
 
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('FICHINTER_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('FICHINTER_DELETE',$this,$user,$langs,$conf);
+					if ($result < 0) {
+						$error++; $this->errors=$interface->errors;
+					}
 				// Fin appel triggers
-
+				}
 				$this->db->commit();
 				return 1;
 			}
@@ -814,13 +824,14 @@ class Fichinter extends CommonObject
 	/**
 	 *	Adding a line of intervention into data base
 	 *
+	 *  @param      user	$user					User that do the action
 	 *	@param    	int		$fichinterid			Id of intervention
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($fichinterid, $desc, $date_intervention, $duration)
+	function addline($user,$fichinterid, $desc, $date_intervention, $duration)
 	{
 		dol_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -836,7 +847,7 @@ class Fichinter extends CommonObject
 			$line->datei        = $date_intervention;
 			$line->duration     = $duration;
 
-			$result=$line->insert();
+			$result=$line->insert($user);
 			if ($result > 0)
 			{
 				$this->db->commit();
@@ -1003,10 +1014,14 @@ class FichinterLigne
 	/**
 	 *	Insert the line into database
 	 *
+	 *	@param		User	$user 		Objet user that make creation
+     *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
-	function insert()
+	function insert($user, $notrigger=0)
 	{
+		global $langs,$conf;
+		
 		dol_syslog("FichinterLigne::insert rang=".$this->rang);
 
 		$this->db->begin();
@@ -1049,6 +1064,21 @@ class FichinterLigne
 			if ($result > 0)
 			{
 				$this->rang=$rangToUse;
+				
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+					$interface=new Interfaces($this->db);
+					$resulttrigger=$interface->run_triggers('FICHINTERDET_CREATE',$this,$user,$langs,$conf);
+					if ($resulttrigger < 0) {
+						$error++; $this->errors=$interface->errors;
+					}
+					// Fin appel triggers
+				}
+			}
+			
+			if (!$error) {
 				$this->db->commit();
 				return $result;
 			}
@@ -1071,10 +1101,14 @@ class FichinterLigne
 	/**
 	 *	Update intervention into database
 	 *
+	 *	@param		User	$user 		Objet user that make creation
+     *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
-	function update()
+	function update($user,$notrigger=0)
 	{
+		global $langs,$conf;
+		
 		$this->db->begin();
 
 		// Mise a jour ligne en base
@@ -1092,6 +1126,22 @@ class FichinterLigne
 			$result=$this->update_total();
 			if ($result > 0)
 			{
+				
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+					$interface=new Interfaces($this->db);
+					$resulttrigger=$interface->run_triggers('FICHINTERDET_UPDATE',$this,$user,$langs,$conf);
+					if ($resulttrigger < 0) {
+						$error++; $this->errors=$interface->errors;
+					}
+					// Fin appel triggers
+				}
+			}
+			
+			if (!$error)
+			{	
 				$this->db->commit();
 				return $result;
 			}
@@ -1167,10 +1217,14 @@ class FichinterLigne
 	/**
 	 *	Delete a intervention line
 	 *
+	 *	@param		User	$user 		Objet user that make creation
+     *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */
-	function deleteline()
+	function deleteline($user,$notrigger=0)
 	{
+		global $langs,$conf;
+		
 		if ($this->statut == 0)
 		{
 			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
@@ -1186,6 +1240,19 @@ class FichinterLigne
 				if ($result > 0)
 				{
 					$this->db->commit();
+					
+					if (! $notrigger)
+					{
+						// Appel des triggers
+						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+						$interface=new Interfaces($this->db);
+						$resulttrigger=$interface->run_triggers('FICHINTERDET_DELETE',$this,$user,$langs,$conf);
+						if ($resulttrigger < 0) {
+							$error++; $this->errors=$interface->errors;
+						}
+						// Fin appel triggers
+					}
+					
 					return $result;
 				}
 				else
