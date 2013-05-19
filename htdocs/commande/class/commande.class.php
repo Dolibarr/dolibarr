@@ -2834,7 +2834,7 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Update value of extrafields on the proposal
+     *	Update value of extrafields on order
      *
      *	@param      User	$user       Object user that modify
      *	@return     int         		<0 if ko, >0 if ok

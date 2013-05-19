@@ -1845,7 +1845,11 @@ else
 
 		foreach($extrafields->attribute_label as $key=>$label)
 		{
-			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+			if ($action == 'edit_extras') {
+				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+			} else {
+				$value=$object->array_options["options_".$key];
+			}
 			if ($extrafields->attribute_type[$key] == 'separate')
 			{
 				print $extrafields->showSeparator($key);
