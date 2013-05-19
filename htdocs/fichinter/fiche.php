@@ -374,7 +374,10 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$object->delete($user);
+	$result=$object->delete($user);
+	if ($result<0) {
+		setEventMessage($object->error,'errors');
+	}
 
 	header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
 	exit;
