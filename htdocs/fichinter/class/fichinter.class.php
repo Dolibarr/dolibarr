@@ -82,9 +82,11 @@ class Fichinter extends CommonObject
 	/**
 	 *	Create an intervention into data base
 	 *
+	 *  @param		User	$user 		Objet user that make creation
+     *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function create()
+	function create($user, $notrigger=0)
 	{
 		global $conf, $user, $langs;
 
@@ -142,7 +144,7 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '".$this->ref."'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".$this->author;
+		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
 		$sql.= ", '".$this->modelpdf."'";
 		$sql.= ", ".($this->fk_project ? $this->fk_project : 0);
@@ -173,16 +175,16 @@ class Fichinter extends CommonObject
                 if (! $ret)	dol_print_error($this->db);
             }
 
+            if (! $notrigger)
+            {
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
-			$tmpuser=new User($this->db);
-			$tmpuser->fetch($this->author);
-			$result=$interface->run_triggers('FICHINTER_CREATE',$this,$tmpuser,$langs,$conf);
+				$result=$interface->run_triggers('FICHINTER_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
-			// Fin appel triggers
+            }
 
 			if (! $error)
 			{
@@ -210,9 +212,11 @@ class Fichinter extends CommonObject
 	/**
 	 *	Update an intervention
 	 *
+	 *	@param		User	$user 		Objet user that make creation
+     *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update()
+	function update($user, $notrigger=0)
 	{
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
 		if (! dol_strlen($this->fk_project)) { $this->fk_project = 0; }
@@ -230,6 +234,9 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			
+			if (! $notrigger)
+			{
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
@@ -238,6 +245,7 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
+			}
 
 			$this->db->commit();
 			return 1;
@@ -294,6 +302,13 @@ class Fichinter extends CommonObject
 				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
+
+				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+				$extrafields=new ExtraFields($this->db);
+				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+				if (count($extralabels)>0) {
+					$this->fetch_optionals($this->id,$extralabels);
+				}
 
 				/*
 				 * Lines
@@ -1021,7 +1036,7 @@ class FichinterLigne
 		$sql.= ' (fk_fichinter, description, date, duree, rang)';
 		$sql.= " VALUES (".$this->fk_fichinter.",";
 		$sql.= " '".$this->db->escape($this->desc)."',";
-		$sql.= " ".$this->db->idate($this->datei).",";
+		$sql.= " '".$this->db->idate($this->datei)."',";
 		$sql.= " ".$this->duration.",";
 		$sql.= ' '.$rangToUse;
 		$sql.= ')';
