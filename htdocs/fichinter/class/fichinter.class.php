@@ -160,7 +160,7 @@ class Fichinter extends CommonObject
 		if ($result)
 		{
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-				
+
 			if ($this->id)
 			{
 				$this->ref='(PROV'.$this->id.')';
@@ -218,506 +218,506 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	 function update($user, $notrigger=0)
-	 {
-	 	if (! is_numeric($this->duree)) {
-	 		$this->duree = 0;
-	 	}
-	 	if (! dol_strlen($this->fk_project)) {
-	 		$this->fk_project = 0;
-	 	}
+	function update($user, $notrigger=0)
+	{
+		if (! is_numeric($this->duree)) {
+			$this->duree = 0;
+		}
+		if (! dol_strlen($this->fk_project)) {
+			$this->fk_project = 0;
+		}
 
-	 	$this->db->begin();
+		$this->db->begin();
 
-	 	$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-	 	$sql.= ", description  = '".$this->db->escape($this->description)."'";
-	 	$sql.= ", duree = ".$this->duree;
-	 	$sql.= ", fk_projet = ".$this->fk_project;
-	 	$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
-	 	$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
-	 	$sql.= " WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
+		$sql.= ", description  = '".$this->db->escape($this->description)."'";
+		$sql.= ", duree = ".$this->duree;
+		$sql.= ", fk_projet = ".$this->fk_project;
+		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
+		$sql.= " WHERE rowid = ".$this->id;
 
-	 	dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
-	 	if ($this->db->query($sql))
-	 	{
-	 			
-	 		if (! $notrigger)
-	 		{
-	 			// Appel des triggers
-	 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	 			$interface=new Interfaces($this->db);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+				
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('FICHINTER_UPDATE',$this,$user,$langs,$conf);
-	 			if ($result < 0) {
-	 				$error++; $this->errors=$interface->errors;
-	 			}
-	 			// Fin appel triggers
-	 		}
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
+			}
 
-	 		$this->db->commit();
-	 		return 1;
-	 	}
-	 	else
-	 	{
-	 		$this->error=$this->db->error();
-	 		dol_syslog(get_class($this)."::update error ".$this->error, LOG_ERR);
-	 		$this->db->rollback();
-	 		return -1;
-	 	}
-	 }
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog(get_class($this)."::update error ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-	 /**
-	  *	Fetch a intervention
-	  *
-	  *	@param		int		$rowid		Id of intervention
-	  *	@param		string	$ref		Ref of intervention
-	  *	@return		int					<0 if KO, >0 if OK
-	  */
-	 function fetch($rowid,$ref='')
-	 {
-	 	$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
-	 	$sql.= " f.datec,";
-	 	$sql.= " f.date_valid as datev,";
-	 	$sql.= " f.tms as datem,";
-	 	$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams";
-	 	$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-	 	if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
-	 	else $sql.= " WHERE f.rowid=".$rowid;
+	/**
+	 *	Fetch a intervention
+	 *
+	 *	@param		int		$rowid		Id of intervention
+	 *	@param		string	$ref		Ref of intervention
+	 *	@return		int					<0 if KO, >0 if OK
+	 */
+	function fetch($rowid,$ref='')
+	{
+		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
+		$sql.= " f.datec,";
+		$sql.= " f.date_valid as datev,";
+		$sql.= " f.tms as datem,";
+		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
+		else $sql.= " WHERE f.rowid=".$rowid;
 
-	 	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-	 	$resql=$this->db->query($sql);
-	 	if ($resql)
-	 	{
-	 		if ($this->db->num_rows($resql))
-	 		{
-	 			$obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-	 			$this->id           = $obj->rowid;
-	 			$this->ref          = $obj->ref;
-	 			$this->description  = $obj->description;
-	 			$this->socid        = $obj->fk_soc;
-	 			$this->statut       = $obj->fk_statut;
-	 			$this->duree        = $obj->duree;
-	 			$this->datec        = $this->db->jdate($obj->datec);
-	 			$this->datev        = $this->db->jdate($obj->datev);
-	 			$this->datem        = $this->db->jdate($obj->datem);
-	 			$this->fk_project   = $obj->fk_projet;
-	 			$this->note_public  = $obj->note_public;
-	 			$this->note_private = $obj->note_private;
-	 			$this->modelpdf     = $obj->model_pdf;
+				$this->id           = $obj->rowid;
+				$this->ref          = $obj->ref;
+				$this->description  = $obj->description;
+				$this->socid        = $obj->fk_soc;
+				$this->statut       = $obj->fk_statut;
+				$this->duree        = $obj->duree;
+				$this->datec        = $this->db->jdate($obj->datec);
+				$this->datev        = $this->db->jdate($obj->datev);
+				$this->datem        = $this->db->jdate($obj->datem);
+				$this->fk_project   = $obj->fk_projet;
+				$this->note_public  = $obj->note_public;
+				$this->note_private = $obj->note_private;
+				$this->modelpdf     = $obj->model_pdf;
 
-	 			$this->extraparams	= (array) json_decode($obj->extraparams, true);
+				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
-	 			if ($this->statut == 0) $this->brouillon = 1;
+				if ($this->statut == 0) $this->brouillon = 1;
 
-	 			/*
-	 			 * Lines
-				 */
-	 			$result=$this->fetch_lines();
-	 			if ($result < 0)
-	 			{
-	 				return -3;
-	 			}
-	 			$this->db->free($resql);
-	 			return 1;
-	 		}
-	 	}
-	 	else
-	 	{
-	 		$this->error=$this->db->error();
-	 		dol_syslog(get_class($this)."::fetch ".$this->error,LOG_ERR);
-	 		return -1;
-	 	}
-	 }
+				/*
+				 * Lines
+				*/
+				$result=$this->fetch_lines();
+				if ($result < 0)
+				{
+					return -3;
+				}
+				$this->db->free($resql);
+				return 1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog(get_class($this)."::fetch ".$this->error,LOG_ERR);
+			return -1;
+		}
+	}
 
-	 /**
-	  *	Set status to draft
-	  *
-	  *	@param		User	$user	User that set draft
-	  *	@return		int			<0 if KO, >0 if OK
-	  */
-	 function setDraft($user)
-	 {
-	 	global $langs, $conf;
+	/**
+	 *	Set status to draft
+	 *
+	 *	@param		User	$user	User that set draft
+	 *	@return		int			<0 if KO, >0 if OK
+	 */
+	function setDraft($user)
+	{
+		global $langs, $conf;
 
-	 	if ($this->statut != 0)
-	 	{
-	 		$this->db->begin();
+		if ($this->statut != 0)
+		{
+			$this->db->begin();
 
-	 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-	 		$sql.= " SET fk_statut = 0";
-	 		$sql.= " WHERE rowid = ".$this->id;
-	 		$sql.= " AND entity = ".$conf->entity;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql.= " SET fk_statut = 0";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
 
-	 		dol_syslog("Fichinter::setDraft sql=".$sql);
-	 		$resql=$this->db->query($sql);
-	 		if ($resql)
-	 		{
-	 			$this->db->commit();
-	 			return 1;
-	 		}
-	 		else
-	 		{
-	 			$this->db->rollback();
-	 			$this->error=$this->db->lasterror();
-	 			dol_syslog("Fichinter::setDraft ".$this->error,LOG_ERR);
-	 			return -1;
-	 		}
-	 	}
-	 }
+			dol_syslog("Fichinter::setDraft sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog("Fichinter::setDraft ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+	}
 
-	 /**
-	  *	Validate a intervention
-	  *
-	  *	@param		User		$user		User that validate
-	  *	@return		int			<0 if KO, >0 if OK
-	  */
-	 function setValid($user)
-	 {
-	 	global $langs, $conf;
+	/**
+	 *	Validate a intervention
+	 *
+	 *	@param		User		$user		User that validate
+	 *	@return		int			<0 if KO, >0 if OK
+	 */
+	function setValid($user)
+	{
+		global $langs, $conf;
 
-	 	$error=0;
+		$error=0;
 
-	 	if ($this->statut != 1)
-	 	{
-	 		$this->db->begin();
+		if ($this->statut != 1)
+		{
+			$this->db->begin();
 
-	 		$now=dol_now();
-	 			
-	 		// Define new ref
-	 		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
-	 		{
-	 			$num = $this->getNextNumRef($this->thirdparty);
-	 		}
-	 		else
-	 		{
-	 			$num = $this->ref;
-	 		}
+			$now=dol_now();
+				
+			// Define new ref
+			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
+			{
+				$num = $this->getNextNumRef($this->thirdparty);
+			}
+			else
+			{
+				$num = $this->ref;
+			}
 
-	 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-	 		$sql.= " SET fk_statut = 1";
-	 		$sql.= ", ref = '".$num."'";
-	 		$sql.= ", date_valid = ".$this->db->idate($now);
-	 		$sql.= ", fk_user_valid = ".$user->id;
-	 		$sql.= " WHERE rowid = ".$this->id;
-	 		$sql.= " AND entity = ".$conf->entity;
-	 		$sql.= " AND fk_statut = 0";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql.= " SET fk_statut = 1";
+			$sql.= ", ref = '".$num."'";
+			$sql.= ", date_valid = ".$this->db->idate($now);
+			$sql.= ", fk_user_valid = ".$user->id;
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
 
-	 		dol_syslog(get_class($this)."::setValid sql=".$sql);
-	 		$resql=$this->db->query($sql);
-	 		if ($resql)
-	 		{
-	 			// Appel des triggers
-	 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	 			$interface=new Interfaces($this->db);
-	 			$result=$interface->run_triggers('FICHINTER_VALIDATE',$this,$user,$langs,$conf);
-	 			if ($result < 0) {
-	 				$error++; $this->errors=$interface->errors;
-	 			}
-	 			// Fin appel triggers
+			dol_syslog(get_class($this)."::setValid sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				// Appel des triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('FICHINTER_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
 
-	 			if (! $error)
-	 			{
-	 				$this->db->commit();
-	 				return 1;
-	 			}
-	 			else
-	 			{
-	 				$this->db->rollback();
-	 				$this->error=join(',',$this->errors);
-	 				dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
-	 				return -1;
-	 			}
-	 		}
-	 		else
-	 		{
-	 			$this->db->rollback();
-	 			$this->error=$this->db->lasterror();
-	 			dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
-	 			return -1;
-	 		}
-	 	}
-	 }
+				if (! $error)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=join(',',$this->errors);
+					dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this)."::setValid ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+	}
 
-	 /**
-	  * 	Set intervetnion as billed
-	  *
-	  *  @return int     <0 si ko, >0 si ok
-	  */
-	 function setBilled()
-	 {
-	 	global $conf;
+	/**
+	 * 	Set intervetnion as billed
+	 *
+	 *  @return int     <0 si ko, >0 si ok
+	 */
+	function setBilled()
+	{
+		global $conf;
 
-	 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_statut = 2';
-	 	$sql.= ' WHERE rowid = '.$this->id;
-	 	$sql.= " AND entity = ".$conf->entity;
-	 	$sql.= " AND fk_statut = 1";
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_statut = 2';
+		$sql.= ' WHERE rowid = '.$this->id;
+		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND fk_statut = 1";
 
-	 	if ($this->db->query($sql) )
-	 	{
-	 		return 1;
-	 	}
-	 	else
-	 	{
-	 		dol_print_error($this->db);
-	 		return -1;
-	 	}
-	 }
-
-
-	 /**
-	  *	Returns the label status
-	  *
-	  *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	  *	@return     string      		Label
-	  */
-	 function getLibStatut($mode=0)
-	 {
-	 	return $this->LibStatut($this->statut,$mode);
-	 }
-
-	 /**
-	  *	Returns the label of a statut
-	  *
-	  *	@param      int		$statut     id statut
-	  *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	  *	@return     string      		Label
-	  */
-	 function LibStatut($statut,$mode=0)
-	 {
-	 	global $langs;
-
-	 	if ($mode == 0)
-	 	{
-	 		return $langs->trans($this->statuts[$statut]);
-	 	}
-	 	if ($mode == 1)
-	 	{
-	 		return $langs->trans($this->statuts_short[$statut]);
-	 	}
-	 	if ($mode == 2)
-	 	{
-	 		if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
-	 		if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-	 		if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
-	 	}
-	 	if ($mode == 3)
-	 	{
-	 		if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-	 		if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-	 		if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-	 	}
-	 	if ($mode == 4)
-	 	{
-	 		if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
-	 		if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-	 		if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
-	 	}
-	 	if ($mode == 5)
-	 	{
-	 		if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
-	 		if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-	 		if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
-	 	}
-	 }
-
-	 /**
-	  *	Return clicable name (with picto eventually)
-	  *
-	  *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
-	  *	@return		string						String with URL
-	  */
-	 function getNomUrl($withpicto=0,$option='')
-	 {
-	 	global $langs;
-
-	 	$result='';
-
-	 	$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">';
-	 	$lienfin='</a>';
-
-	 	$picto='intervention';
-
-	 	$label=$langs->trans("Show").': '.$this->ref;
-
-	 	if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-	 	if ($withpicto && $withpicto != 2) $result.=' ';
-	 	if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-	 	return $result;
-	 }
+		if ($this->db->query($sql) )
+		{
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
 
-	 /**
-	  *	Returns the next non used reference of intervention
-	  *	depending on the module numbering assets within FICHEINTER_ADDON
-	  *
-	  *	@param	    Societe		$soc		Object society
-	  *	@return     string					Free reference for intervention
-	  */
-	 function getNextNumRef($soc)
-	 {
-	 	global $conf, $db, $langs;
-	 	$langs->load("interventions");
+	/**
+	 *	Returns the label status
+	 *
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      		Label
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
 
-	 	$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
+	/**
+	 *	Returns the label of a statut
+	 *
+	 *	@param      int		$statut     id statut
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      		Label
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		global $langs;
 
-	 	if (! empty($conf->global->FICHEINTER_ADDON))
-	 	{
-	 		$file = $conf->global->FICHEINTER_ADDON.".php";
-	 		$classname = $conf->global->FICHEINTER_ADDON;
-	 		if (! file_exists($dir.$file))
-	 		{
-	 			$file='mod_'.$file;
-	 			$classname='mod_'.$classname;
-	 		}
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+		}
+	}
 
-	 		// Chargement de la classe de numerotation
-	 		require_once $dir.$file;
+	/**
+	 *	Return clicable name (with picto eventually)
+	 *
+	 *	@param		int			$withpicto		0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
+	 *	@return		string						String with URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
 
-	 		$obj = new $classname();
+		$result='';
 
-	 		$numref = "";
-	 		$numref = $obj->getNumRef($soc,$this);
+		$lien = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
 
-	 		if ( $numref != "")
-	 		{
-	 			return $numref;
-	 		}
-	 		else
-	 		{
-	 			dol_print_error($db,"Fichinter::getNextNumRef ".$obj->error);
-	 			return "";
-	 		}
-	 	}
-	 	else
-	 	{
-	 		print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
-	 		return "";
-	 	}
-	 }
+		$picto='intervention';
 
-	 /**
-	  * 	Information sur l'objet fiche intervention
-	  *
-	  *	@param	int		$id      Id de la fiche d'intervention
-	  *	@return	void
-	  */
-	 function info($id)
-	 {
-	 	global $conf;
+		$label=$langs->trans("Show").': '.$this->ref;
 
-	 	$sql = "SELECT f.rowid,";
-	 	$sql.= " datec,";
-	 	$sql.= " f.date_valid as datev,";
-	 	$sql.= " f.fk_user_author,";
-	 	$sql.= " f.fk_user_valid";
-	 	$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-	 	$sql.= " WHERE f.rowid = ".$id;
-	 	$sql.= " AND f.entity = ".$conf->entity;
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
 
-	 	$result = $this->db->query($sql);
 
-	 	if ($result)
-	 	{
-	 		if ($this->db->num_rows($result))
-	 		{
-	 			$obj = $this->db->fetch_object($result);
+	/**
+	 *	Returns the next non used reference of intervention
+	 *	depending on the module numbering assets within FICHEINTER_ADDON
+	 *
+	 *	@param	    Societe		$soc		Object society
+	 *	@return     string					Free reference for intervention
+	 */
+	function getNextNumRef($soc)
+	{
+		global $conf, $db, $langs;
+		$langs->load("interventions");
 
-	 			$this->id                = $obj->rowid;
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/fichinter/";
 
-	 			$this->date_creation     = $this->db->jdate($obj->datec);
-	 			$this->date_validation   = $this->db->jdate($obj->datev);
+		if (! empty($conf->global->FICHEINTER_ADDON))
+		{
+			$file = $conf->global->FICHEINTER_ADDON.".php";
+			$classname = $conf->global->FICHEINTER_ADDON;
+			if (! file_exists($dir.$file))
+			{
+				$file='mod_'.$file;
+				$classname='mod_'.$classname;
+			}
 
-	 			$cuser = new User($this->db);
-	 			$cuser->fetch($obj->fk_user_author);
-	 			$this->user_creation     = $cuser;
+			// Chargement de la classe de numerotation
+			require_once $dir.$file;
 
-	 			if ($obj->fk_user_valid)
-	 			{
-	 				$vuser = new User($this->db);
-	 				$vuser->fetch($obj->fk_user_valid);
-	 				$this->user_validation     = $vuser;
-	 			}
-	 		}
-	 		$this->db->free($result);
-	 	}
-	 	else
-	 	{
-	 		dol_print_error($this->db);
-	 	}
-	 }
+			$obj = new $classname();
 
-	 /**
-	  *	Delete intervetnion
-	  *
-	  *	@param      User	$user	Object user who delete
-	  *	@return		int				<0 if KO, >0 if OK
-	  */
+			$numref = "";
+			$numref = $obj->getNumRef($soc,$this);
+
+			if ( $numref != "")
+			{
+				return $numref;
+			}
+			else
+			{
+				dol_print_error($db,"Fichinter::getNextNumRef ".$obj->error);
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
+			return "";
+		}
+	}
+
+	/**
+	 * 	Information sur l'objet fiche intervention
+	 *
+	 *	@param	int		$id      Id de la fiche d'intervention
+	 *	@return	void
+	 */
+	function info($id)
+	{
+		global $conf;
+
+		$sql = "SELECT f.rowid,";
+		$sql.= " datec,";
+		$sql.= " f.date_valid as datev,";
+		$sql.= " f.fk_user_author,";
+		$sql.= " f.fk_user_valid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql.= " WHERE f.rowid = ".$id;
+		$sql.= " AND f.entity = ".$conf->entity;
+
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$this->id                = $obj->rowid;
+
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_validation   = $this->db->jdate($obj->datev);
+
+				$cuser = new User($this->db);
+				$cuser->fetch($obj->fk_user_author);
+				$this->user_creation     = $cuser;
+
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation     = $vuser;
+				}
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 *	Delete intervetnion
+	 *
+	 *	@param      User	$user	Object user who delete
+	 *	@return		int				<0 if KO, >0 if OK
+	 */
 	function delete($user, $notrigger=0)
-	 {
-	 	global $conf;
-	 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	{
+		global $conf;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	 	$error=0;
+		$error=0;
 
-	 	$this->db->begin();
+		$this->db->begin();
 
-	 	// Delete linked object
-	 	$res = $this->deleteObjectLinked();
-	 	if ($res < 0) $error++;
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) $error++;
 
-	 	// Delete linked contacts
-	 	$res = $this->delete_linked_contact();
-	 	if ($res < 0)
-	 	{
-	 		$this->error='ErrorFailToDeleteLinkedContact';
-	 		$error++;
-	 	}
+		// Delete linked contacts
+		$res = $this->delete_linked_contact();
+		if ($res < 0)
+		{
+			$this->error='ErrorFailToDeleteLinkedContact';
+			$error++;
+		}
 
-	 	if ($error)
-	 	{
-	 		$this->db->rollback();
-	 		return -1;
-	 	}
+		if ($error)
+		{
+			$this->db->rollback();
+			return -1;
+		}
 
-	 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
-	 	$sql.= " WHERE fk_fichinter = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql.= " WHERE fk_fichinter = ".$this->id;
 
-	 	dol_syslog("Fichinter::delete sql=".$sql);
-	 	if ( $this->db->query($sql) )
-	 	{
-	 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
-	 		$sql.= " WHERE rowid = ".$this->id;
-	 		$sql.= " AND entity = ".$conf->entity;
+		dol_syslog("Fichinter::delete sql=".$sql);
+		if ( $this->db->query($sql) )
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
 
-	 		dol_syslog("Fichinter::delete sql=".$sql);
-	 		if ( $this->db->query($sql) )
-	 		{
+			dol_syslog("Fichinter::delete sql=".$sql);
+			if ( $this->db->query($sql) )
+			{
 
-	 			// Remove directory with files
-	 			$fichinterref = dol_sanitizeFileName($this->ref);
-	 			if ($conf->ficheinter->dir_output)
-	 			{
-	 				$dir = $conf->ficheinter->dir_output . "/" . $fichinterref ;
-	 				$file = $conf->ficheinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
-	 				if (file_exists($file))
-	 				{
-	 					dol_delete_preview($this);
+				// Remove directory with files
+				$fichinterref = dol_sanitizeFileName($this->ref);
+				if ($conf->ficheinter->dir_output)
+				{
+					$dir = $conf->ficheinter->dir_output . "/" . $fichinterref ;
+					$file = $conf->ficheinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
+					if (file_exists($file))
+					{
+						dol_delete_preview($this);
 
-	 					if (! dol_delete_file($file,0,0,0,$this)) // For triggers
-	 					{
-	 						$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-	 						return 0;
-	 					}
-	 				}
-	 				if (file_exists($dir))
-	 				{
-	 					if (! dol_delete_dir_recursive($dir))
-	 					{
-	 						$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-	 						return 0;
-	 					}
-	 				}
-	 			}
+						if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+							return 0;
+						}
+					}
+					if (file_exists($dir))
+					{
+						if (! dol_delete_dir_recursive($dir))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+							return 0;
+						}
+					}
+				}
 
 				if (! $notrigger)
 				{
@@ -730,215 +730,215 @@ class Fichinter extends CommonObject
 	 			}
 	 			// Fin appel triggers
 				}
-	 			$this->db->commit();
-	 			return 1;
-	 		}
-	 		else
-	 		{
-	 			$this->error=$this->db->lasterror();
-	 			$this->db->rollback();
-	 			return -2;
-	 		}
-	 	}
-	 	else
-	 	{
-	 		$this->error=$this->db->lasterror();
-	 		$this->db->rollback();
-	 		return -1;
-	 	}
-	 }
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-	 /**
-	  *	Defines a delivery date of intervention
-	  *
-	  *	@param      User	$user				Object user who define
-	  *	@param      date	$date_delivery   	date of delivery
-	  *	@return     int							<0 if ko, >0 if ok
-	  */
-	 function set_date_delivery($user, $date_delivery)
-	 {
-	 	global $conf;
+	/**
+	 *	Defines a delivery date of intervention
+	 *
+	 *	@param      User	$user				Object user who define
+	 *	@param      date	$date_delivery   	date of delivery
+	 *	@return     int							<0 if ko, >0 if ok
+	 */
+	function set_date_delivery($user, $date_delivery)
+	{
+		global $conf;
 
-	 	if ($user->rights->ficheinter->creer)
-	 	{
-	 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-	 		$sql.= " SET datei = ".$this->db->idate($date_delivery);
-	 		$sql.= " WHERE rowid = ".$this->id;
-	 		$sql.= " AND entity = ".$conf->entity;
-	 		$sql.= " AND fk_statut = 0";
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET datei = ".$this->db->idate($date_delivery);
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
 
-	 		if ($this->db->query($sql))
-	 		{
-	 			$this->date_delivery = $date_delivery;
-	 			return 1;
-	 		}
-	 		else
-	 		{
-	 			$this->error=$this->db->error();
-	 			dol_syslog("Fichinter::set_date_delivery Erreur SQL");
-	 			return -1;
-	 		}
-	 	}
-	 }
+			if ($this->db->query($sql))
+			{
+				$this->date_delivery = $date_delivery;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Fichinter::set_date_delivery Erreur SQL");
+				return -1;
+			}
+		}
+	}
 
-	 /**
-	  *	Define the label of the intervention
-	  *
-	  *	@param      User	$user			Object user who modify
-	  *	@param      string	$description    description
-	  *	@return     int						<0 if ko, >0 if ok
-	  */
-	 function set_description($user, $description)
-	 {
-	 	global $conf;
+	/**
+	 *	Define the label of the intervention
+	 *
+	 *	@param      User	$user			Object user who modify
+	 *	@param      string	$description    description
+	 *	@return     int						<0 if ko, >0 if ok
+	 */
+	function set_description($user, $description)
+	{
+		global $conf;
 
-	 	if ($user->rights->ficheinter->creer)
-	 	{
-	 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-	 		$sql.= " SET description = '".$this->db->escape($description)."'";
-	 		$sql.= " WHERE rowid = ".$this->id;
-	 		$sql.= " AND entity = ".$conf->entity;
-	 		$sql.= " AND fk_statut = 0";
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET description = '".$this->db->escape($description)."'";
+			$sql.= " WHERE rowid = ".$this->id;
+			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND fk_statut = 0";
 
-	 		if ($this->db->query($sql))
-	 		{
-	 			$this->description = $description;
-	 			return 1;
-	 		}
-	 		else
-	 		{
-	 			$this->error=$this->db->error();
-	 			dol_syslog("Fichinter::set_description Erreur SQL");
-	 			return -1;
-	 		}
-	 	}
-	 }
+			if ($this->db->query($sql))
+			{
+				$this->description = $description;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Fichinter::set_description Erreur SQL");
+				return -1;
+			}
+		}
+	}
 
-	 /**
-	  *	Adding a line of intervention into data base
-	  *
+	/**
+	 *	Adding a line of intervention into data base
+	 *
 	 *  @param      user	$user					User that do the action
-	  *	@param    	int		$fichinterid			Id of intervention
-	  *	@param    	string	$desc					Line description
-	  *	@param      date	$date_intervention  	Intervention date
-	  *	@param      int		$duration            	Intervention duration
-	  *	@return    	int             				>0 if ok, <0 if ko
-	  */
+	 *	@param    	int		$fichinterid			Id of intervention
+	 *	@param    	string	$desc					Line description
+	 *	@param      date	$date_intervention  	Intervention date
+	 *	@param      int		$duration            	Intervention duration
+	 *	@return    	int             				>0 if ok, <0 if ko
+	 */
 	function addline($user,$fichinterid, $desc, $date_intervention, $duration)
-	 {
-	 	dol_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
+	{
+		dol_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
 
-	 	if ($this->statut == 0)
-	 	{
-	 		$this->db->begin();
+		if ($this->statut == 0)
+		{
+			$this->db->begin();
 
-	 		// Insertion ligne
-	 		$line=new FichinterLigne($this->db);
+			// Insertion ligne
+			$line=new FichinterLigne($this->db);
 
-	 		$line->fk_fichinter = $fichinterid;
-	 		$line->desc         = $desc;
-	 		$line->datei        = $date_intervention;
-	 		$line->duration     = $duration;
+			$line->fk_fichinter = $fichinterid;
+			$line->desc         = $desc;
+			$line->datei        = $date_intervention;
+			$line->duration     = $duration;
 
 			$result=$line->insert($user);
-	 		if ($result > 0)
-	 		{
-	 			$this->db->commit();
-	 			return 1;
-	 		}
-	 		else
-	 		{
-	 			$this->error=$this->db->error();
-	 			dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
-	 			$this->db->rollback();
-	 			return -1;
-	 		}
-	 	}
-	 }
+			if ($result > 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
 
 
-	 /**
-	  *  Initialise an instance with random values.
-	  *  Used to build previews or test instances.
-	  *	id must be 0 if object instance is a specimen.
-	  *
-	  *  @return	void
-	  */
-	 function initAsSpecimen()
-	 {
-	 	global $user,$langs,$conf;
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs,$conf;
 
-	 	$now=dol_now();
+		$now=dol_now();
 
-	 	// Initialise parametres
-	 	$this->id=0;
-	 	$this->ref = 'SPECIMEN';
-	 	$this->specimen=1;
-	 	$this->socid = 1;
-	 	$this->datec = $now;
-	 	$this->note_private='Private note';
-	 	$this->note_public='SPECIMEN';
-	 	$this->duree = 0;
-	 	$nbp = 20;
-	 	$xnbp = 0;
-	 	while ($xnbp < $nbp)
-	 	{
-	 		$line=new FichinterLigne($this->db);
-	 		$line->desc=$langs->trans("Description")." ".$xnbp;
-	 		$line->datei=($now-3600*(1+$xnbp));
-	 		$line->duration=600;
-	 		$line->fk_fichinter=0;
-	 		$this->lines[$xnbp]=$line;
-	 		$xnbp++;
+		// Initialise parametres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$this->socid = 1;
+		$this->datec = $now;
+		$this->note_private='Private note';
+		$this->note_public='SPECIMEN';
+		$this->duree = 0;
+		$nbp = 20;
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$line=new FichinterLigne($this->db);
+			$line->desc=$langs->trans("Description")." ".$xnbp;
+			$line->datei=($now-3600*(1+$xnbp));
+			$line->duration=600;
+			$line->fk_fichinter=0;
+			$this->lines[$xnbp]=$line;
+			$xnbp++;
 
-	 		$this->duree+=$line->duration;
-	 	}
-	 }
+			$this->duree+=$line->duration;
+		}
+	}
 
-	 /**
-	  *	Load array lines
-	  *
-	  *	@return		int		<0 if Ko,	>0 if OK
-	  */
-	 function fetch_lines()
-	 {
-	 	$sql = 'SELECT rowid, description, duree, date, rang';
-	 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-	 	$sql.= ' WHERE fk_fichinter = '.$this->id;
+	/**
+	 *	Load array lines
+	 *
+	 *	@return		int		<0 if Ko,	>0 if OK
+	 */
+	function fetch_lines()
+	{
+		$sql = 'SELECT rowid, description, duree, date, rang';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql.= ' WHERE fk_fichinter = '.$this->id;
 
-	 	dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
-	 	$resql=$this->db->query($sql);
-	 	if ($resql)
-	 	{
-	 		$num = $this->db->num_rows($resql);
-	 		$i = 0;
-	 		while ($i < $num)
-	 		{
-	 			$objp = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$objp = $this->db->fetch_object($resql);
 
-	 			$line = new FichinterLigne($this->db);
-	 			$line->id = $objp->rowid;
-	 			$line->desc = $objp->description;
-	 			//For invoicing we calculing hours
-	 			$line->qty = round($objp->duree/3600,2);
-	 			$line->date	= $this->db->jdate($objp->date);
-	 			$line->rang	= $objp->rang;
-	 			$line->product_type = 1;
+				$line = new FichinterLigne($this->db);
+				$line->id = $objp->rowid;
+				$line->desc = $objp->description;
+				//For invoicing we calculing hours
+				$line->qty = round($objp->duree/3600,2);
+				$line->date	= $this->db->jdate($objp->date);
+				$line->rang	= $objp->rang;
+				$line->product_type = 1;
 
-	 			$this->lines[$i] = $line;
+				$this->lines[$i] = $line;
 
-	 			$i++;
-	 		}
-	 		$this->db->free($resql);
+				$i++;
+			}
+			$this->db->free($resql);
 
-	 		return 1;
-	 	}
-	 	else
-	 	{
-	 		$this->error=$this->db->error();
-	 		return -1;
-	 	}
-	 }
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 }
 
 /**
@@ -1007,10 +1007,14 @@ class FichinterLigne
 	/**
 	 *	Insert the line into database
 	 *
+	 *	@param		User	$user 		Objet user that make creation
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function insert($user, $notrigger=0)
 	{
+		global $langs,$conf;
+
 		dol_syslog("FichinterLigne::insert rang=".$this->rang);
 
 		$this->db->begin();
@@ -1053,19 +1057,21 @@ class FichinterLigne
 			if ($result > 0)
 			{
 				$this->rang=$rangToUse;
-				
+
 				if (! $notrigger)
 				{
 					// Appel des triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('FICHINTERDET_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) {
+					$resulttrigger=$interface->run_triggers('FICHINTERDET_CREATE',$this,$user,$langs,$conf);
+					if ($resulttrigger < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
 					// Fin appel triggers
 				}
+			}
 
+			if (!$error) {
 				$this->db->commit();
 				return $result;
 			}
@@ -1089,11 +1095,13 @@ class FichinterLigne
 	 *	Update intervention into database
 	 *
 	 *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
 	function update($user,$notrigger=0)
 	{
+		global $langs,$conf;
+
 		$this->db->begin();
 
 		// Mise a jour ligne en base
@@ -1111,20 +1119,22 @@ class FichinterLigne
 			$result=$this->update_total();
 			if ($result > 0)
 			{
-				
+
 				if (! $notrigger)
 				{
 					// Appel des triggers
 					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('FICHINTERDET_UPDATE',$this,$user,$langs,$conf);
-					if ($result < 0) {
+					$resulttrigger=$interface->run_triggers('FICHINTERDET_UPDATE',$this,$user,$langs,$conf);
+					if ($resulttrigger < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
 					// Fin appel triggers
 				}
-				
-				
+			}
+
+			if (!$error)
+			{
 				$this->db->commit();
 				return $result;
 			}
@@ -1201,7 +1211,7 @@ class FichinterLigne
 	 *	Delete a intervention line
 	 *
 	 *	@param		User	$user 		Objet user that make creation
-     *	@param		int		$notrigger	Disable all triggers
+	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */
 	function deleteline($user,$notrigger=0)
@@ -1221,19 +1231,19 @@ class FichinterLigne
 				if ($result > 0)
 				{
 					$this->db->commit();
-					
+						
 					if (! $notrigger)
 					{
 						// Appel des triggers
 						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 						$interface=new Interfaces($this->db);
-						$result=$interface->run_triggers('FICHINTERDET_DELETE',$this,$user,$langs,$conf);
-						if ($result < 0) {
+						$resulttrigger=$interface->run_triggers('FICHINTERDET_DELETE',$this,$user,$langs,$conf);
+						if ($resulttrigger < 0) {
 							$error++; $this->errors=$interface->errors;
 						}
 						// Fin appel triggers
 					}
-					
+						
 					return $result;
 				}
 				else
