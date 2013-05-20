@@ -248,6 +248,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$duration = 3600;
 
 		                    $result = $object->addline(
+								$user,
 		                        $id,
 		                        $desc,
 					            $date_intervention,
@@ -376,7 +377,10 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$object->delete($user);
+	$result=$object->delete($user);
+	if ($result<0) {
+		setEventMessage($object->error,'errors');
+	}
 
     header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
     exit;
@@ -426,6 +430,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
         $duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
         $result=$object->addline(
+			$user,
             $id,
             $desc,
             $date_intervention,
@@ -501,7 +506,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     $objectline->datei		= $date_inter;
     $objectline->desc		= $desc;
     $objectline->duration	= $duration;
-    $result = $objectline->update();
+	$result = $objectline->update($user);
     if ($result < 0)
     {
         dol_print_error($db);
@@ -535,7 +540,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		dol_print_error($db);
 		exit;
 	}
-	$result=$objectline->deleteline();
+	$result=$objectline->deleteline($user);
 
 	if ($object->fetch($objectline->fk_fichinter) <= 0)
 	{
