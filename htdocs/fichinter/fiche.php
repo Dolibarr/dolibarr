@@ -134,6 +134,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	$object->socid			= $socid;
 	$object->duree			= GETPOST('duree','int');
 	$object->fk_project		= GETPOST('projectid','int');
+    $object->author			= $user->id;
 	$object->description	= GETPOST('description');
 	$object->ref			= $ref;
 	$object->modelpdf		= GETPOST('model','alpha');
@@ -174,7 +175,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 			}
 
-			$id = $object->create($user);
+			$id = $object->create();
 
 			if ($id > 0)
 			{
@@ -245,7 +246,6 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							$duration = 3600;
 
 							$result = $object->addline(
-								$user,
 								$id,
 								$desc,
 								$date_intervention,
@@ -276,7 +276,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 		}
 		else
 		{
-			$result = $object->create($user);
+			$result = $object->create();
 			if ($result > 0)
 			{
 				$id=$result;      // Force raffraichissement sur fiche venant d'etre cree
@@ -306,7 +306,7 @@ else if ($action == 'update' && $user->rights->ficheinter->creer)
 	$object->description	= GETPOST('description','alpha');
 	$object->ref			= $ref;
 
-	$result=$object->update($user);
+	$result=$object->update();
 	if ($result<0) {
 		setEventMessage($object->error,'errors');
 	}
@@ -427,7 +427,6 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		$duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
 		$result=$object->addline(
-			$user,
 			$id,
 			$desc,
 			$date_intervention,
@@ -503,7 +502,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
 	$objectline->datei		= $date_inter;
 	$objectline->desc		= $desc;
 	$objectline->duration	= $duration;
-	$result = $objectline->update($user);
+	$result = $objectline->update();
 	if ($result < 0)
 	{
 		dol_print_error($db);
@@ -537,7 +536,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		dol_print_error($db);
 		exit;
 	}
-	$result=$objectline->deleteline($user);
+	$result=$objectline->deleteline();
 
 	if ($object->fetch($objectline->fk_fichinter) <= 0)
 	{
