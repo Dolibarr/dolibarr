@@ -26,6 +26,7 @@
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
 /**
@@ -49,7 +50,7 @@ class CommandeStats extends Stats
 	 * @param 	DoliDB	$db		   Database handler
 	 * @param 	int		$socid	   Id third party for filter
 	 * @param 	string	$mode	   Option
-	 * @param   int		$userid    Id user for filter
+	 * @param   int		$userid    Id user for filter (creation user)
 	 */
 	function __construct($db, $socid, $mode, $userid=0)
 	{
@@ -57,7 +58,7 @@ class CommandeStats extends Stats
 
 		$this->db = $db;
 
-		$this->socid = $socid;
+		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
 
 		if ($mode == 'customer')
@@ -100,7 +101,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, count(*) nb";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_commande,'%Y') = '".$year."'";
+		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -143,7 +144,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, sum(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_commande,'%Y') = '".$year."'";
+		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -165,7 +166,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, avg(c.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(c.date_commande,'%Y') = '".$year."'";
+		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');

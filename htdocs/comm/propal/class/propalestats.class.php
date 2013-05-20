@@ -26,6 +26,7 @@
 
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
 /**
@@ -49,14 +50,14 @@ class PropaleStats extends Stats
 	 *
 	 * @param 	DoliDB	$db		   Database handler
 	 * @param 	int		$socid	   Id third party
-     * @param   int		$userid    Id user for filter
+     * @param   int		$userid    Id user for filter (creation user)
 	 */
 	function __construct($db, $socid=0, $userid=0)
 	{
 		global $user, $conf;
 
 		$this->db = $db;
-        $this->socid = $socid;
+        $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
 
 		$object=new Propal($this->db);
@@ -66,7 +67,7 @@ class PropaleStats extends Stats
 
 		$this->field='total_ht';
 
-		$this->where.= " fk_statut > 0";
+		$this->where.= " p.fk_statut > 0";
 		$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->socid)
@@ -79,7 +80,7 @@ class PropaleStats extends Stats
 
 	/**
 	 * Return propals number by month for a year
-	 * 
+	 *
 	 * @param	int		$year	year for stats
 	 * @return	array			array with number by month
 	 */
@@ -90,7 +91,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(p.datep,'%m') as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.datep,'%Y') = '".$year."'";
+		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -100,7 +101,7 @@ class PropaleStats extends Stats
 
 	/**
 	 * Return propals number by year
-	 * 
+	 *
 	 * @return	array	array with number by year
 	 *
 	 */
@@ -117,7 +118,7 @@ class PropaleStats extends Stats
 
 		return $this->_getNbByYear($sql);
 	}
-	
+
 	/**
 	 * Return the propals amount by month for a year
 	 *
@@ -131,14 +132,14 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.datep,'%Y') = '".$year."'";
+		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
 		return $this->_getAmountByMonth($year, $sql);
 	}
-	
+
 	/**
 	 * Return the propals amount average by month for a year
 	 *
@@ -152,7 +153,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.".$this->field.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE date_format(p.datep,'%Y') = '".$year."'";
+		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
@@ -162,7 +163,7 @@ class PropaleStats extends Stats
 
 	/**
 	 *	Return nb, total and average
-	 *	
+	 *
 	 *	@return	array	Array of values
 	 */
 	function getAllByYear()
