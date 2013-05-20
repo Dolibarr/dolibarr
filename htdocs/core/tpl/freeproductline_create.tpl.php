@@ -26,7 +26,7 @@
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
-	
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
@@ -118,13 +118,13 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 </tr>
 
-<?php 
-if (! empty($conf->service->enabled) && $dateSelector) 
+<?php
+if (! empty($conf->service->enabled) && $dateSelector)
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
-	
-	if (! empty($usemargins)) 
+
+	if (! empty($usemargins))
 	{
 		$colspan++; // For the buying price
 		if($conf->global->DISPLAY_MARGIN_RATES)	$colspan++;
@@ -142,7 +142,7 @@ if (! empty($conf->service->enabled) && $dateSelector)
 		$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addline_sl");
 	}
 	else
-	{			
+	{
 		echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 		echo $form->select_date('','date_start',empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?0:1,1,"addproduct");
 		echo ' '.$langs->trans('to').' ';
@@ -151,7 +151,7 @@ if (! empty($conf->service->enabled) && $dateSelector)
 	?>
 	</td>
 </tr>
-<?php 
+<?php
 }
 ?>
 
