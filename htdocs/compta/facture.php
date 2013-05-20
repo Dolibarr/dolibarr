@@ -3292,7 +3292,7 @@ else if ($id > 0 || ! empty($ref))
 				foreach($extrafields->attribute_label as $key=>$label)
 				{
 					if ($action == 'edit_extras') {
-					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+						$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
 					} else {
 						$value=$object->array_options["options_".$key];
 					}

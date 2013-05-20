@@ -44,7 +44,7 @@ abstract class CommonObject
     public $civility_id;
 
     public $array_options=array();
-    
+
     public $linkedObjectsIds;
     public $linkedObjects;
 
@@ -2027,7 +2027,7 @@ abstract class CommonObject
             $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
         }
 
-        
+
         // Request to get complementary values
         if (count($optionsArray) > 0)
         {
@@ -2057,7 +2057,7 @@ abstract class CommonObject
                         }
                     }
                 }
-               
+
                 $this->db->free($resql);
             }
             else
@@ -2712,7 +2712,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs,$hookmanager;
+		global $conf,$langs,$user,$hookmanager;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2735,7 +2735,8 @@ abstract class CommonObject
 		// Reduction short
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
-		if (! empty($conf->margin->enabled)) {
+		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
@@ -3159,11 +3160,16 @@ abstract class CommonObject
 	}
 
 	/**
+	 * displayMarginInfos
 	 *
-	 * @param string $force_price
+	 * @param 	string 	$force_price	Force price
+	 * @return	void
 	 */
-	function displayMarginInfos($force_price=false) {
-		global $langs, $conf;
+	function displayMarginInfos($force_price=false)
+	{
+		global $langs, $conf, $user;
+
+    	if (! empty($user->societe_id)) return;
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
@@ -3215,6 +3221,5 @@ abstract class CommonObject
 		print '</tr>';
 		print '</table>';
 	}
-
 }
 ?>

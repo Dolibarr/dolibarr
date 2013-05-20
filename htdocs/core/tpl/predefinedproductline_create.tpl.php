@@ -60,7 +60,7 @@ jQuery(document).ready(function() {
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
 $colspan = 4;
-if (! empty($usemargins)) 
+if (! empty($usemargins))
 {
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 	if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
@@ -74,7 +74,7 @@ if (! empty($usemargins))
 	?>
 	</td>
 	<?php
-} 
+}
 ?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
@@ -110,7 +110,7 @@ if (! empty($usemargins))
 	<td align="right" nowrap><input type="text" size="1" class="flat" name="remise_percent" value="<?php echo $buyer->remise_client; ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	$colspan = 4;
-	if (! empty($usemargins)) 
+	if (! empty($usemargins))
 	{
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
@@ -127,8 +127,8 @@ if (! empty($usemargins))
 	</td>
 </tr>
 
-<?php 
-if (! empty($conf->service->enabled) && $dateSelector) 
+<?php
+if (! empty($conf->service->enabled) && $dateSelector)
 {
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
@@ -148,7 +148,7 @@ if (! empty($conf->service->enabled) && $dateSelector)
 		print $langs->trans("DateStartPlanned").' ';
 		$form->select_date('',"date_start",$usehm,$usehm,1,"addline");
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-		$form->select_date('',"date_end",$usehm,$usehm,1,"addline");		
+		$form->select_date('',"date_end",$usehm,$usehm,1,"addline");
 	}
 	else
 	{
@@ -161,13 +161,13 @@ if (! empty($conf->service->enabled) && $dateSelector)
 	</td>
 </tr>
 <?php
-} 
+}
 ?>
 
 </form>
 
 <?php
-if (! empty($usemargins)) 
+if (! empty($usemargins))
 {
 ?>
 	<script type="text/javascript">
@@ -204,6 +204,6 @@ if (! empty($usemargins))
 	});
 	</script>
 <?php
-} 
+}
 ?>
 <!-- END PHP TEMPLATE predefinedproductline_create.tpl.php -->

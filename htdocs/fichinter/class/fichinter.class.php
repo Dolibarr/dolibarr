@@ -1,28 +1,28 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+* Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * 	\file       htdocs/fichinter/class/fichinter.class.php
- * 	\ingroup    ficheinter
- * 	\brief      Fichier de la classe des gestion des fiches interventions
- */
+* 	\ingroup    ficheinter
+* 	\brief      Fichier de la classe des gestion des fiches interventions
+*/
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
@@ -61,7 +61,7 @@ class Fichinter extends CommonObject
 	 *	Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
-	 */
+	*/
 	function __construct($db)
 	{
 		$this->db = $db;
@@ -160,22 +160,23 @@ class Fichinter extends CommonObject
 		if ($result)
 		{
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-			
+
 			if ($this->id)
 			{
 				$this->ref='(PROV'.$this->id.')';
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->ref."' WHERE rowid=".$this->id;
-			
+
 				dol_syslog(get_class($this)."::create sql=".$sql);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
-            // Add linked object
-            if (! $error && $this->origin && $this->origin_id)
-            {
-                $ret = $this->add_object_linked();
-                if (! $ret)	dol_print_error($this->db);
-            }
+			// Add linked object
+			if (! $error && $this->origin && $this->origin_id)
+			{
+				$ret = $this->add_object_linked();
+				if (! $ret)	dol_print_error($this->db);
+			}
+
 
             if (! $notrigger)
             {
@@ -240,7 +241,7 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			
+
 			if (! $notrigger)
 			{
 			// Appel des triggers
@@ -252,7 +253,7 @@ class Fichinter extends CommonObject
 			}
 			// Fin appel triggers
 			}
-
+			
 			$this->db->commit();
 			return 1;
 		}
@@ -318,7 +319,7 @@ class Fichinter extends CommonObject
 
 				/*
 				 * Lines
-				 */
+				*/
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -389,7 +390,7 @@ class Fichinter extends CommonObject
 			$this->db->begin();
 
 			$now=dol_now();
-			
+
 			// Define new ref
 			if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
 			{
@@ -669,8 +670,8 @@ class Fichinter extends CommonObject
 		$this->db->begin();
 
 		// Delete linked object
-        $res = $this->deleteObjectLinked();
-        if ($res < 0) $error++;
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) $error++;
 
 		// Delete linked contacts
 		$res = $this->delete_linked_contact();
@@ -735,8 +736,9 @@ class Fichinter extends CommonObject
 					if ($result < 0) {
 						$error++; $this->errors=$interface->errors;
 					}
-				// Fin appel triggers
+					// Fin appel triggers
 				}
+
 				$this->db->commit();
 				return 1;
 			}
@@ -865,11 +867,11 @@ class Fichinter extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{
@@ -894,7 +896,7 @@ class Fichinter extends CommonObject
 			$line->desc=$langs->trans("Description")." ".$xnbp;
 			$line->datei=($now-3600*(1+$xnbp));
 			$line->duration=600;
-            $line->fk_fichinter=0;
+			$line->fk_fichinter=0;
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 
@@ -1021,7 +1023,7 @@ class FichinterLigne
 	function insert($user, $notrigger=0)
 	{
 		global $langs,$conf;
-		
+
 		dol_syslog("FichinterLigne::insert rang=".$this->rang);
 
 		$this->db->begin();
@@ -1064,7 +1066,7 @@ class FichinterLigne
 			if ($result > 0)
 			{
 				$this->rang=$rangToUse;
-				
+
 				if (! $notrigger)
 				{
 					// Appel des triggers
@@ -1077,7 +1079,7 @@ class FichinterLigne
 					// Fin appel triggers
 				}
 			}
-			
+
 			if (!$error) {
 				$this->db->commit();
 				return $result;
@@ -1108,7 +1110,7 @@ class FichinterLigne
 	function update($user,$notrigger=0)
 	{
 		global $langs,$conf;
-		
+
 		$this->db->begin();
 
 		// Mise a jour ligne en base
@@ -1126,7 +1128,7 @@ class FichinterLigne
 			$result=$this->update_total();
 			if ($result > 0)
 			{
-				
+
 				if (! $notrigger)
 				{
 					// Appel des triggers
@@ -1139,9 +1141,9 @@ class FichinterLigne
 					// Fin appel triggers
 				}
 			}
-			
+
 			if (!$error)
-			{	
+			{
 				$this->db->commit();
 				return $result;
 			}
@@ -1224,7 +1226,7 @@ class FichinterLigne
 	function deleteline($user,$notrigger=0)
 	{
 		global $langs,$conf;
-		
+
 		if ($this->statut == 0)
 		{
 			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
@@ -1240,7 +1242,7 @@ class FichinterLigne
 				if ($result > 0)
 				{
 					$this->db->commit();
-					
+
 					if (! $notrigger)
 					{
 						// Appel des triggers
@@ -1252,7 +1254,7 @@ class FichinterLigne
 						}
 						// Fin appel triggers
 					}
-					
+
 					return $result;
 				}
 				else
