@@ -638,6 +638,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
 	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	$predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
@@ -1968,7 +1969,7 @@ else
 	// Show object lines
 	$result = $object->getLinesArray();
 	if (! empty($object->lines))
-		$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid);
+		$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->propal->creer)
