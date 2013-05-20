@@ -68,9 +68,9 @@ $error=0;
 print "***** ".$script_file." (".$version.") *****\n";
 
 $now=dol_now('tzserver');
-$duration_value=$argv[2];
+$duration_value=isset($argv[2])?$argv[2]:'none';
 
-print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
+print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
 $sql  = "SELECT DISTINCT s.nom as name, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, s.email, s.default_lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s";
@@ -79,7 +79,7 @@ $sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product";
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
 
-if ($duration_value) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+if (is_numeric($duration_value)) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 
 $sql .= " ORDER BY cd.date_fin_validite ASC, s.rowid ASC";
 
@@ -179,8 +179,10 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$dura
 {
     global $conf,$langs;
 
+    if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
+
     $newlangs=new Translate('',$conf);
-    $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang); 
+    $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
     $newlangs->load("contracts");
 

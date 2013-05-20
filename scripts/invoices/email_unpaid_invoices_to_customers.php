@@ -68,10 +68,10 @@ $error=0;
 print "***** ".$script_file." (".$version.") *****\n";
 
 $now=dol_now('tzserver');
-$duration_value=isset($argv[3])?$argv[3]:-1;
+$duration_value=isset($argv[3])?$argv[3]:'none';
 
 $error = 0;
-print $script_file." launched with mode ".$mode.($duration_value>=0?" delay=".$duration_value:"")."\n";
+print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
 $sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql.= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
@@ -80,7 +80,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 if ($targettype == 'contacts') $sql.= ", ".MAIN_DB_PREFIX."socpeople as sp";
 $sql.= " WHERE f.fk_statut != 0 AND f.paye = 0";
 $sql.= " AND f.fk_soc = s.rowid";
-if ($duration_value>=0) $sql.= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+if (is_numeric($duration_value)) $sql.= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 if ($targettype == 'contacts') $sql.= " AND s.rowid = sp.fk_soc";
 $sql.= " ORDER BY";
 if ($targettype == 'contacts') $sql.= " sp.email, sp.rowid,";
@@ -203,6 +203,8 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
 {
     global $conf,$langs;
 
+    if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
+
     $newlangs=new Translate('',$conf);
     $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
@@ -229,7 +231,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
     else
     {
     	$allmessage.= "Dear customer".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
-    	$allmessage.= "Please, find a summary of the bills with pending payments from you, with an attachment of invoices.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
+    	$allmessage.= "Please, find a summary of the bills with pending payments from you.".($usehtml?"<br>\n":"\n").($usehtml?"<br>\n":"\n");
     	$allmessage.= "Note: This list contains only unpaid invoices.".($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");

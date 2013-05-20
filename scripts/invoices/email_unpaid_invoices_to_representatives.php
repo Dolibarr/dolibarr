@@ -68,9 +68,9 @@ $error=0;
 print "***** ".$script_file." (".$version.") *****\n";
 
 $now=dol_now('tzserver');
-$duration_value=isset($argv[2])?$argv[2]:-1;
+$duration_value=isset($argv[2])?$argv[2]:'none';
 
-print $script_file." launched with mode ".$mode.($duration_value>=0?" delay=".$duration_value:"")."\n";
+print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
 $sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -79,7 +79,7 @@ $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " , ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE f.fk_statut != 0 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
-if ($duration_value>=0) $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+if (is_numeric($duration_value)) $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.rowid ASC, f.facnumber ASC";	// Order by email to allow one message per email
@@ -178,6 +178,8 @@ else
 function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresentative)
 {
     global $conf,$langs;
+
+    if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
 
     $newlangs=new Translate('',$conf);
     $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
