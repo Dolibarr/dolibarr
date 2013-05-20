@@ -45,8 +45,8 @@ MargeBrute=Marge brute
 MargeNette=Marge nette
 MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge nette : Prix de vente HT - Coût de revient
 
-CostPrice=Prix ​​d'achat
-BuyingCost=Coût de revient
+BuyingPrice=Prix ​​d'achat
+CostPrice=Prix de revient
 UnitCharges=Charge unitaire
 Charges=Charges
 
