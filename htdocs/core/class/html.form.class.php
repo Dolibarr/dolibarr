@@ -3913,6 +3913,11 @@ class Form
             if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
+        }else {
+        	$dir=$conf->$modulepart->dir_output;
+        	if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+        	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
+        	$email=$object->email;
         }
 
         if ($dir)
