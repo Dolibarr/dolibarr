@@ -872,11 +872,11 @@ class DoliDBMysqli
     {
         // cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
         // ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-        $sql = "create table ".$table."(";
+        $sql = "CREATE TABLE ".$table."(";
         $i=0;
         foreach($fields as $field_name => $field_desc)
         {
-        $sqlfields[$i] = $field_name." ";
+        	$sqlfields[$i] = $field_name." ";
 			$sqlfields[$i]  .= $field_desc['type'];
 			if( preg_match("/^[^\s]/i",$field_desc['value'])) {
 				$sqlfields[$i]  .= "(".$field_desc['value'].")";

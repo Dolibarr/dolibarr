@@ -878,7 +878,7 @@ class DoliDBMysql
 	{
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "create table ".$table."(";
+		$sql = "CREATE TABLE ".$table."(";
 		$i=0;
 		foreach($fields as $field_name => $field_desc)
 		{
