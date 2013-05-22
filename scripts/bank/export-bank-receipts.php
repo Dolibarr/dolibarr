@@ -59,7 +59,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 if (! isset($argv[3]) || ! $argv[3]) {
 	print "Usage: $script_file bank_ref bank_receipt_number (csv|tsv|excel|excel2007) [lang=xx_XX]\n";

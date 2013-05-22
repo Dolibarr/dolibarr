@@ -54,7 +54,7 @@ $forcecommit=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 // List of fields to get from LDAP
 $required_fields = array(

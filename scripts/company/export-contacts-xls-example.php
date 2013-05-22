@@ -59,7 +59,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 
