@@ -244,6 +244,11 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     if ($mode == 'confirm')
     {
     	$result=$mail->sendfile();
+    	if (! $result)
+    	{
+    		print "Error sending email ".$mail->error."\n";
+    		dol_syslog("Error sending email ".$mail->error."\n");
+    	}
     }
     else
     {
