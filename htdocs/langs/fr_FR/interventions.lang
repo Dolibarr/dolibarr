@@ -52,3 +52,5 @@ PacificNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est 
 PacificNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimez la ou renommez la pour activer ce module.
 SendInterventionByMail=Envoi de la fiche d'intervention par mail
 SendInterventionRef=Envoi Intervention %s
+PrintProductsOnFichinter=Afficher les produits sur la fiche d'intervention
+PrintProductsOnFichinterDetails=pour les interventions générées à partir des commandes
