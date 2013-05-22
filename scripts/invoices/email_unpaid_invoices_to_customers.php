@@ -73,6 +73,8 @@ $duration_value=isset($argv[3])?$argv[3]:'none';
 $error = 0;
 print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
+if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
 $sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql.= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') $sql.= ", sp.rowid as cid, sp.firstname as cfirstname, sp.lastname as clastname, sp.email as cemail";

@@ -72,6 +72,8 @@ $duration_value=isset($argv[2])?$argv[2]:'none';
 
 print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
+if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
 $sql  = "SELECT DISTINCT s.nom as name, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, s.email, s.default_lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s";
 $sql .= ", ".MAIN_DB_PREFIX."contrat AS c";
