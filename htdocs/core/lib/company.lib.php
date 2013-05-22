@@ -60,15 +60,15 @@ function societe_prepare_head($object)
         $head[$h][2] = 'supplier';
         $h++;
     }
-    if (! empty($conf->agenda->enabled) && !empty($user->right->agenda->lire))
-    {
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
     	$head[$h][1] = $langs->trans("Agenda");
     	$head[$h][2] = 'agenda';
     	$h++;
     }
     //show categorie tab
-    if (! empty($conf->categorie->enabled) && !empty($user->right->categorie->lire))
+    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
     {
         $type = 2;
         if ($object->fournisseur) $type = 1;
