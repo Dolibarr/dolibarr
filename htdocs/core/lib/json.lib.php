@@ -72,15 +72,16 @@ function dol_json_encode($elements)
 		$output = '{';
 		$last = $num - 1;
 		$i = 0;
-		if (is_array($elements) && count($elements)>0) {
-			foreach($elements as $key => $value)
-			{
-				$output .= '"'.$key.'":';
-				if (is_array($value)) $output.= json_encode($value);
-				else $output .= _val($value);
-				if ($i !== $last) $output.= ',';
-				++$i;
-			}
+		$tmpelements=array();
+		if (is_array($elements)) $tmpelements=$elements;
+		if (is_object($elements)) $tmpelements=get_object_vars($elements);
+		foreach($tmpelements as $key => $value)
+		{
+			$output .= '"'.$key.'":';
+			if (is_array($value)) $output.= json_encode($value);
+			else $output .= _val($value);
+			if ($i !== $last) $output.= ',';
+			++$i;
 		}
 		$output.= '}';
 	}
