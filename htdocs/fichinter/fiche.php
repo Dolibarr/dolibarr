@@ -202,12 +202,10 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 					{
 						$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
-						if ($product_type == 1) { //only services
+						if ($product_type == 1 || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
 							// service prédéfini
 							if ($lines[$i]->fk_product > 0)
 							{
-								$product_static = new Product($db);
-
 								// Define output language
 								if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 								{
@@ -230,15 +228,8 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 									$label = $lines[$i]->product_label;
 								}
 
-								$product_static->type=$lines[$i]->fk_product_type;
-								$product_static->id=$lines[$i]->fk_product;
-								$product_static->ref=$lines[$i]->ref;
-								$product_static->libelle=$label;
-								$desc=$product_static->getNomUrl(0);
-								$desc.= ' - '.$label;
+								$desc = $label;
 								$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
-								if ($conf->global->PRODUIT_DESC_IN_FORM)
-									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?'<br>'.dol_htmlentitiesbr($lines[$i]->desc):'';
 							}
 							else {
 								$desc = dol_htmlentitiesbr($lines[$i]->desc);
@@ -246,7 +237,14 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							}
 							$timearray=dol_getdate(mktime());
 							$date_intervention=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-							$duration = 3600;
+							if ($product_type == 1)
+							{ //service
+								$duration = 3600;
+							}
+							else
+							{ //product
+							    $duration = 0;
+							}
 
 		                    $result = $object->addline(
 								$user,
