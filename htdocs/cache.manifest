@@ -1,30 +1,41 @@
-# version 1
-
-# Files listed under CACHE will be cached after they are loaded;
-# while the ones under NETWORK are said to be white-listed.
-# What this means is that they require a live connection to the server.
-# If the user isn't connected to the server, the browser should not use the cached version instead.
-
 CACHE MANIFEST
+# version 2013-05-21 13:30:21
+# Note: If this file is dynamic, it must return MIME text/cache-manifest
+# Note: Order of CACHE, NETWORK and FALLBACK section does not change behaviour
+" Note: 
 
+
+# Files listed under CACHE will be ALWAYS cached after they are loaded.
+# And they will be always used from Cache after (even after refresh).
 CACHE:
-index.php
-main.inc.php
-master.inc.php
-filefunc.inc.php
-core/lib/functions.lib.php
+theme/dolibarr_logo.png
+support/
+support/index.php
+support/online.php
+
+support/background.png
+support/default.css
+support/dolibarr_logo2.png
+support/headbg.jpg
+support/helpcenter.png
+support/internet.png
+support/mail.png
+support/pagemaster.png
+support/redstar.png
+support/sparkangels.png
+support/star.png
+support/who.png
+
 
 # The NETWORK section contains the path to a folder to ensure that requests
-# to load resources contained under /api will bypass the cache and always fetch the resource from the server.
- 
+# to load resources will use internet. 
+# CACHE has priority on NETWORK, so usage is useless
 NETWORK: 
-# search.php 
-# login.php 
-# /api
+/
 
 # The FALLBACK section contains entries that provide a backup strategy.
 # If the browser is unable to retrieve the original content, the fallback resource will be used.
 # In the example above, we display a static image in case the dynamic one is unavailable.
-
 FALLBACK: 
-# images/dynamic.php static_image.png
+#/ public/offline.php
+#theme/amarok/img/* theme/eldy/img/
