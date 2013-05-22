@@ -879,30 +879,33 @@ class DoliDBMysql
 	{
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-		$sql = "create table ".$table."(";
+		$sql = "CREATE TABLE ".$table."(";
 		$i=0;
 		foreach($fields as $field_name => $field_desc)
 		{
 			$sqlfields[$i] = $field_name." ";
 			$sqlfields[$i]  .= $field_desc['type'];
-			if( preg_match("/^[^\s]/i",$field_desc['value']))
+			if( preg_match("/^[^\s]/i",$field_desc['value'])) {
 				$sqlfields[$i]  .= "(".$field_desc['value'].")";
-			if( preg_match("/^[^\s]/i",$field_desc['attribute']))
+			}
+			if( preg_match("/^[^\s]/i",$field_desc['attribute'])) {
 				$sqlfields[$i]  .= " ".$field_desc['attribute'];
+			}
 			if( preg_match("/^[^\s]/i",$field_desc['default']))
 			{
-				if(preg_match("/null/i",$field_desc['default']))
+				if ((preg_match("/null/i",$field_desc['default'])) || (preg_match("/CURRENT_TIMESTAMP/i",$field_desc['default']))) {
 					$sqlfields[$i]  .= " default ".$field_desc['default'];
-				elseif ($field_desc['default'] == 'CURRENT_TIMESTAMP')
-					$sqlfields[$i]  .= " default ".$field_desc['default'];
-				else
+				}
+				else {
 					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+				}
 			}
-			if( preg_match("/^[^\s]/i",$field_desc['null']))
+			if( preg_match("/^[^\s]/i",$field_desc['null'])) {
 				$sqlfields[$i]  .= " ".$field_desc['null'];
-
-			if( preg_match("/^[^\s]/i",$field_desc['extra']))
+			}
+			if( preg_match("/^[^\s]/i",$field_desc['extra'])) {
 				$sqlfields[$i]  .= " ".$field_desc['extra'];
+			}
 			$i++;
 		}
 		if($primary_key != "")
