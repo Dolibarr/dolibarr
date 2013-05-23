@@ -178,7 +178,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 			}
 
-			$id = $object->create();
+			$id = $object->create($user);
 
 			if ($id > 0)
 			{
