@@ -519,7 +519,7 @@ class Task extends CommonObject
             if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         }
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
-        $sql.= " ORDER BY p.ref, t.rang, t.label";
+        $sql.= " ORDER BY p.ref, t.rang, t.datec";
 
         //print $sql;
         dol_syslog(get_class($this)."::getTasksArray sql=".$sql, LOG_DEBUG);
