@@ -479,7 +479,7 @@ class Task extends CommonObject
 
     /**
      * Return list of tasks for all projects or for one particular project
-     * Sort order is on project, then on position of task, and last on title of first level task
+     * Sort order is on project, then on position of task, and last on creation date of first level task
      *
      * @param	User	$usert				Object user to limit tasks affected to a particular user
      * @param	User	$userp				Object user to limit projects of a particular user and public projects
