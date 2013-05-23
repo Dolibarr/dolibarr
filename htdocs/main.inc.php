@@ -412,7 +412,7 @@ if (! defined('NOLOGIN'))
         // If error, we will put error message in session under the name dol_loginmesg
         $goontestloop=false;
         if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
-        if (isset($_SERVER["REMOTE_USER"]) && in_array('ssl',$authmode)) $goontestloop=true;
+        if (isset($_SERVER["DN"]) && in_array('ssl',$authmode)) $goontestloop=true;
         if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
         if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
