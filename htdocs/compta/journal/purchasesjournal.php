@@ -152,9 +152,14 @@ if ($result)
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["lib"] = $obj->libelle;
+		if(!$mysoc->tva_assuj) {
+		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
+		$tabht[$obj->rowid][$compta_prod] += $obj->total_ttc;
+		}else {
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 		if ($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
    		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
 		$tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name);
