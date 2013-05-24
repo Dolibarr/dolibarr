@@ -1113,7 +1113,10 @@ class User extends CommonObject
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->admin        = $this->admin?$this->admin:0;
-
+		$this->address		= empty($this->address)?'':$this->address;
+		$this->zip			= empty($this->zip)?'':$this->zip;
+		$this->town			= empty($this->town)?'':$this->town;
+		
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
 		{
@@ -1133,8 +1136,8 @@ class User extends CommonObject
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
-		$sql.= ", fk_state = ".($this->state_id > 0?"'".$this->db->escape($this->state_id)."'":"null");
-		$sql.= ", fk_country = ".($this->country_id > 0?"'".$this->db->escape($this->country_id)."'":"null");
+		$sql.= ", fk_state = ".((! empty($this->state_id) && $this->state_id > 0)?"'".$this->db->escape($this->state_id)."'":"null");
+		$sql.= ", fk_country = ".((! empty($this->country_id) && $this->country_id > 0)?"'".$this->db->escape($this->country_id)."'":"null");
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
