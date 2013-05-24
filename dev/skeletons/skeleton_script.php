@@ -34,7 +34,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-// Init global variables
+// Global variables
 $version='1.0';
 $error=0;
 
@@ -57,7 +57,7 @@ if (! $result > 0) { dol_print_error('',$user->error); exit; }
 $user->getrights();
 
 
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 if (! isset($argv[1])) {	// Check parameters
     print "Usage: ".$script_file." param1 param2 ...\n";
     exit;

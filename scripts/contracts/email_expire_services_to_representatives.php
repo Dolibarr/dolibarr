@@ -65,12 +65,14 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[2])?$argv[2]:'none';
 
 print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
+
+if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $sql  = "SELECT DISTINCT s.nom, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, c.fk_soc,u.rowid AS uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
@@ -242,6 +244,11 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     if ($mode == 'confirm')
     {
     	$result=$mail->sendfile();
+    	if (! $result)
+    	{
+    		print "Error sending email ".$mail->error."\n";
+    		dol_syslog("Error sending email ".$mail->error."\n");
+    	}
     }
     else
     {

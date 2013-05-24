@@ -65,12 +65,14 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[2])?$argv[2]:'none';
 
 print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
+
+if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -173,7 +175,7 @@ else
  * 	@param	string	$total					Total amount of unpayed invoices
  *  @param	string	$userlang				Code lang to use for email output.
  *  @param	string	$oldsalerepresentative	Old sale representative
- * 	@return	int						<0 if KO, >0 if OK
+ * 	@return	int								<0 if KO, >0 if OK
  */
 function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresentative)
 {
@@ -237,6 +239,11 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     if ($mode == 'confirm')
     {
     	$result=$mail->sendfile();
+    	if (! $result)
+    	{
+    		print "Error sending email ".$mail->error."\n";
+    		dol_syslog("Error sending email ".$mail->error."\n");
+    	}
     }
     else
     {

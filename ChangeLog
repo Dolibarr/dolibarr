@@ -13,6 +13,7 @@ For users:
 - New: Add option "filter=bank" onto script rebuild_merge_pdf.php to merge
   PDF that has one payment on a specific bank account.*
 - New: [ task #901 ] Add Extrafeild on Fiche Inter
+- New: Show process id in all command line scripts
 For developers:
 - New: DolGraph can build graph with three lines.
 

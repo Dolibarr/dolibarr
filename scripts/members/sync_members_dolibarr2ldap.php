@@ -51,7 +51,7 @@ $error=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now\n";

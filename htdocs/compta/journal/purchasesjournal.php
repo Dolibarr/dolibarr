@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Alexandre spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
@@ -225,7 +225,7 @@ foreach ($tabfac as $key => $val)
 			{
 				print "<tr ".$bc[$var]." >";
 				//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-				print "<td>".$val["date"]."</td>";
+				print "<td>".dol_print_date($val["date"])."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
