@@ -153,18 +153,16 @@ $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
-$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c,";
-$sql.= " ".MAIN_DB_PREFIX.'user as u,';
-$sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON a.fk_user_author = u.rowid";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
-$sql.= " WHERE c.id = a.fk_action";
-$sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND a.entity IN ('.getEntity().')';    // To limit to entity
+$sql.= " WHERE a.entity IN (".getEntity().")";    // To limit to entity
 if ($actioncode) $sql.=" AND c.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
