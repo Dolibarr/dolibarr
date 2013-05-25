@@ -75,12 +75,11 @@ class box_actions extends ModeleBoxes
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.rowid as socid";
-			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
-			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta ";
+			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm AS a ON a.fk_action = ta.id ";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-			$sql.= " WHERE a.fk_action = ta.id";
-			$sql.= " AND a.entity = ".$conf->entity;
+			$sql.= " WHERE a.entity = ".$conf->entity;
 			$sql.= " AND a.percent >= 0 AND a.percent < 100";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 			if($user->societe_id)   $sql.= " AND s.rowid = ".$user->societe_id;

@@ -778,11 +778,12 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " u.login, u.rowid";
         if (get_class($object) == 'Adherent') $sql.= ", m.nom as name, m.prenom as firstname";
         if (get_class($object) == 'Societe')  $sql.= ", sp.name, sp.firstname";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c ";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a ON c.id=a.fk_action";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = a.fk_user_author";
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        $sql.= " WHERE u.rowid = a.fk_user_author";
-        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
+        $sql.= " WHERE a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($object) == 'Adherent') {
         	$sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         	if (! empty($object->id))
@@ -790,7 +791,6 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         }
         if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (! empty($objcon->id)) $sql.= " AND a.fk_contact = ".$objcon->id;
-        $sql.= " AND c.id=a.fk_action";
         $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -917,16 +917,16 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " u.login, u.rowid as user_id";
         if (get_class($object) == 'Adherent') $sql.= ", m.nom as name, m.prenom as firstname";
         if (get_class($object) == 'Societe')  $sql.= ", sp.name, sp.firstname";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c ";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a ON c.id=a.fk_action";
+        $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = a.fk_user_author";
         if (get_class($object) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (get_class($object) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-        $sql.= " WHERE u.rowid = a.fk_user_author";
-        $sql.= " AND a.entity IN (".getEntity('agenda', 1).")";
+        $sql.= " WHERE a.entity IN (".getEntity('agenda', 1).")";
         if (get_class($object) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         if (get_class($object) == 'Adherent' && $object->id) $sql.= " AND a.fk_element = ".$object->id;
         if (get_class($object) == 'Societe'  && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
-        $sql.= " AND c.id=a.fk_action";
         $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
