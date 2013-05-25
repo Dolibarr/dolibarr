@@ -134,9 +134,22 @@ else
     $sql.= MAIN_DB_PREFIX.'product as p';
     $sql.= ') ';
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+// multilang
+	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+    {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
+	}
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
     if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
-    if ($sall) $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
+    if ($sall)
+	{
+		// multilang
+		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+	    { 
+			$sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%' OR pl.label LIKE '%".$db->escape($sall)."%' OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%' )";
+		}
+		else $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
+	}
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
     {
@@ -145,7 +158,15 @@ else
     }
     if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
     if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
-    if ($snom)     $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
+    if ($snom)
+	{
+		// multilang
+		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+	    {
+			$sql.= " AND (p.label LIKE '%".$db->escape($snom)."%' OR (pl.label IS NOT null AND pl.label LIKE '%".$db->escape($snom)."%'))";
+		}
+		else $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
+}     
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                   $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
