@@ -588,8 +588,9 @@ class Societe extends CommonObject
 
 		            	if ($result > 0)
 		            	{
-		            		$lmember->firstname=$this->firstname;
-		            		$lmember->lastname=$this->lastname;
+		            		$lmember->company=$this->name;
+		            		//$lmember->firstname=$this->firstname?$this->firstname:$lmember->firstname;	// We keep firstname and lastname of member unchanged
+		            		//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 		            		$lmember->address=$this->address;
 		            		$lmember->email=$this->email;
 		            		$lmember->phone=$this->phone;
