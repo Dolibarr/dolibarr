@@ -659,7 +659,7 @@ class FactureFournisseur extends CommonInvoice
         		}
         	}
         }
-        
+
         // Remove extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
@@ -855,6 +855,45 @@ class FactureFournisseur extends CommonInvoice
                 }
             }
 
+            if (! $error)
+            {
+            	$this->oldref = '';
+
+            	// Rename directory if dir was a temporary ref
+            	if (preg_match('/^[\(]?PROV/i', $this->ref))
+            	{
+            		// On renomme repertoire facture ($this->ref = ancienne ref, $num = nouvelle ref)
+            		// afin de ne pas perdre les fichiers attaches
+            		$facref = dol_sanitizeFileName($this->ref);
+            		$snumfa = dol_sanitizeFileName($num);
+
+            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$facref;
+            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$snumfa;
+            		if (file_exists($dirsource))
+            		{
+            			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+
+            			if (@rename($dirsource, $dirdest))
+            			{
+            				$this->oldref = $facref;
+
+            				dol_syslog("Rename ok");
+            				// Suppression ancien fichier PDF dans nouveau rep
+            				dol_delete_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2).$snumfa.'/'.$facref.'*.*');
+            			}
+            		}
+            	}
+            }
+
+            // Set new ref and define current statut
+            if (! $error)
+            {
+            	$this->ref = $num;
+            	$this->statut=1;
+            	//$this->date_validation=$now; this is stored into log table
+            }
+
+            // Triggers call
             if (! $error)
             {
                 // Appel des triggers
