@@ -588,13 +588,14 @@ class Societe extends CommonObject
 
 		            	if ($result > 0)
 		            	{
-		            		$lmember->firstname=$this->firstname;
-		            		$lmember->lastname=$this->lastname;
+		            		$lmember->societe=$this->name;
+		            		//$lmember->firstname=$this->firstname?$this->firstname:$lmember->firstname;	// We keep firstname and lastname of member unchanged
+		            		//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 		            		$lmember->address=$this->address;
 		            		$lmember->email=$this->email;
 		            		$lmember->phone=$this->phone;
 
-		            		$result=$lmember->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
+		            		$result=$lmember->update($user,0,1,1,1);	// Use nosync to 1 to avoid cyclic updates
 		            		if ($result < 0)
 		            		{
 		            			$this->error=$lmember->error;

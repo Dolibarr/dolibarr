@@ -256,6 +256,7 @@ CREATE TABLE llx_printer_ipp
 ) ENGINE=innodb;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
+ALTER TABLE llx_adherent MODIFY COLUMN ref_ext varchar(128);
 
 create table llx_commande_extrafields
 (
@@ -377,4 +378,7 @@ ALTER TABLE llx_facture_fourn_extrafields ADD INDEX idx_facture_fourn_extrafield
 
 ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255) AFTER fk_user;
 
+
 ALTER TABLE llx_fichinterdet ADD COLUMN fk_parent_line integer NULL AFTER fk_fichinter;
+
+ALTER TABLE llx_societe_address CHANGE COLUMN tel phone varchar(20);

@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2010 Houssin Regis        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2013 Houssin Regis        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ create table llx_societe_address
   zip                varchar(10),                         -- zipcode
   town               varchar(50),                         -- town
   fk_pays            integer        DEFAULT 0,            --
-  tel                varchar(20),                         -- phone number
+  phone              varchar(20),                         -- phone number
   fax                varchar(20),                         -- fax number
   note               text,                                --
   fk_user_creat      integer,
