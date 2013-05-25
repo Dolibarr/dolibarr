@@ -95,7 +95,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         $result=$object->createFromClone($id);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF'].'?action=editfacnumber&id='.$result);
+            header("Location: ".$_SERVER['PHP_SELF'].'?action=editref_supplier&id='.$result);
             exit;
         }
         else
@@ -1158,7 +1158,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
-	
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{

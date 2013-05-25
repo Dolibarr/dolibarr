@@ -68,7 +68,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 
 // Include configuration
-$result=include_once $conffile;
+$result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect
 
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
