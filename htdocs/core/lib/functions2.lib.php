@@ -611,7 +611,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     if ($maskraz > 0)    // A reset is required
     {
-    	if ($maskraz == 99) $maskraz = date('m');
+    	if ($maskraz == 99) {
+			$maskraz = date('m');
+			$resetEveryMonth = true;
+		}
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
         // Define posy, posm and reg
@@ -653,13 +656,13 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         	else if ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset=-1;
         }
         // For backward compatibility
-        else if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+        else if (date("m",$date) < $maskraz && empty($resetEveryMonth)) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
 
         $yearlen = dol_strlen($reg[$posy]);
         if ($yearlen == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
         elseif ($yearlen == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
         elseif ($yearlen == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
-        if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
+        if ($monthcomp > 1 && empty($resetEveryMonth))	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
         {
             if ($yearlen == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
             elseif ($yearlen == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
@@ -680,6 +683,17 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
             $sqlwhere.=')';
         }
+		else if($resetEveryMonth) {
+			$monthlen = dol_strlen($reg[$posm]);
+            $yearpos = (dol_strlen($reg[1])+1);
+            $monthpos = ($yearpos+$yearlen);
+            if ($posy == 3) {
+            	$monthpos = (dol_strlen($reg[1])+1);
+            	$yearpos = ($monthpos+$monthlen);
+            }
+			$sqlwhere.=" SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."' ";
+		}
         else   // reset is done on january
         {
             $sqlwhere.='(SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."')";
