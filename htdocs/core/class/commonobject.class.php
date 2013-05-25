@@ -1068,7 +1068,9 @@ abstract class CommonObject
 			// We frist search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql.= ' AND fk_parent_line IS NULL';
+			if ($this->table_element_line != 'fichinterdet') {
+				$sql.= ' AND fk_parent_line IS NULL';
+			}
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
