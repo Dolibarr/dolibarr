@@ -256,6 +256,7 @@ CREATE TABLE llx_printer_ipp
 ) ENGINE=innodb;
 
 ALTER TABLE llx_socpeople ADD COLUMN ref_ext varchar(128) after entity;
+ALTER TABLE llx_adherent MODIFY COLUMN ref_ext varchar(128);
 
 create table llx_commande_extrafields
 (
