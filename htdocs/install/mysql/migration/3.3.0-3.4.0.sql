@@ -377,3 +377,5 @@ create table llx_facture_fourn_extrafields
 ALTER TABLE llx_facture_fourn_extrafields ADD INDEX idx_facture_fourn_extrafields (fk_object);
 
 ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255) AFTER fk_user;
+
+ALTER TABLE llx_societe_address CHANGE COLUMN tel phone varchar(20);
