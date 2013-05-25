@@ -595,7 +595,7 @@ class Societe extends CommonObject
 		            		$lmember->email=$this->email;
 		            		$lmember->phone=$this->phone;
 
-		            		$result=$lmember->update($user,0,1,1);	// Use nosync to 1 to avoid cyclic updates
+		            		$result=$lmember->update($user,0,1,1,1);	// Use nosync to 1 to avoid cyclic updates
 		            		if ($result < 0)
 		            		{
 		            			$this->error=$lmember->error;
