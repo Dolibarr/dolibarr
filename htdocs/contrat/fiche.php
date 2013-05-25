@@ -433,7 +433,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
            	$desc = $prod->description;
            	$desc.= $prod->description && GETPOST('desc') ? "\n" : "";
-           	$desc.= GETPOST('desc');
+           	$desc.= GETPOST('np_desc');
         }
         else
         {
@@ -871,10 +871,10 @@ if ($action == 'create')
 
     print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
 
-    
+
     $doleditor=new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, 70);
     print $doleditor->Create(1);
-   
+
 
     if (! $user->societe_id)
     {
