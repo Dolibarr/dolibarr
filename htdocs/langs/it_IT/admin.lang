@@ -278,7 +278,7 @@ DownloadPackageFromWebSite=Scaricare il pacchetto dal sito %s.
 UnpackPackageInDolibarrRoot=Scompattare il pacchetto nella directory di root di Dolibarr <b> %s </b>
 SetupIsReadyForUse=Installazione completata. Dolibarr è pronto ad utilizzare questo nuovo componente.
 NotExistsDirect=La directory root alternativa non è stata definita.<br>
-InfDirAlt=A partire dalla versione 3 è possibile definire una directory root alternativa. Ciò permette di archiviare plugin e template personalizzati nello stesso posto.<br>Basta creare una directory nella root di Dolibarr ( per esempio custom).<br> 
+InfDirAlt=A partire dalla versione 3 è possibile definire una directory root alternativa. Ciò permette di archiviare plugin e template personalizzati nello stesso posto.<br>Basta creare una directory nella root di Dolibarr ( per esempio custom).<br>
 # InfDirExample=<br>Then declare it in the file conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*These lines are commented with "#", to uncomment only remove the character.
 YouCanSubmitFile=Seleziona modulo:
 CurrentVersion=Versione attuale di Dolibarr
@@ -517,7 +517,7 @@ Permission32=Creare/modificare  prodotti
 Permission34=Eliminare prodotti
 Permission36=Vedere/gestire prodotti nascosti
 Permission38=Esportare prodotti
-Permission41=Vedere progetti (i progetti condivisi e quelli di cui sono un contatto) 
+Permission41=Vedere progetti (i progetti condivisi e quelli di cui sono un contatto)
 Permission42=Creare/modificare progetti
 Permission44=Eliminare progetti
 Permission61=Vedere gli interventi
