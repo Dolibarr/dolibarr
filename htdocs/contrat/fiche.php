@@ -432,7 +432,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
             }
 
            	$desc = $prod->description;
-           	$desc.= $prod->description && GETPOST('desc') ? "\n" : "";
+           	$desc.= $prod->description && GETPOST('np_desc') ? "\n" : "";
            	$desc.= GETPOST('np_desc');
         }
         else
