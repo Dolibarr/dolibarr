@@ -80,7 +80,7 @@ class modMargin extends DolibarrModules
 		// New pages on tabs
 		$this->tabs = array(
 				'product:+margin:Margins:margins:$conf->margin->enabled:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:$conf->margin->enabled:/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'thirdparty:+margin:Margins:margins:$conf->margin->enabled && empty($user->societe_id):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 

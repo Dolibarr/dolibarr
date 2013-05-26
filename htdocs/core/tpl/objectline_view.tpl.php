@@ -117,7 +117,7 @@
 	<td>&nbsp;</td>
 	<?php }
 
-  if (! empty($conf->margin->enabled)) {
+  if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
   ?>
   	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
