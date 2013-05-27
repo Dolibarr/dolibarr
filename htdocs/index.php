@@ -197,7 +197,7 @@ if ($user->societe_id == 0)
                     "propal",
                     "orders",
                     "bills",
-					"Contracts");
+					"contracts");
 
 
     // Loop and displays each line of table
