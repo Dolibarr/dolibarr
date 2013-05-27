@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - admin 
+# Dolibarr language file - Source file is en_US - admin 
 CHARSET= UTF-8
 WorkflowSetup=Workflow module setup
 WorkflowDesc=This module is desinged to modify the behaviour of automatic actions into application. By default, workflow is opened (you make thing in order you want). You can enabled automatic actions that you are interesting in.

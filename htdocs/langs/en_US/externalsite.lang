@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - externalsite
+# Dolibarr language file - Source file is en_US - externalsite
 CHARSET=UTF-8
 ExternalSiteSetup=Setup link to external website
 ExternalSiteURL=External Site URL
