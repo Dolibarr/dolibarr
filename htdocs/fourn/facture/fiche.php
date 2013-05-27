@@ -114,8 +114,18 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     $object->fetch($id);
     $object->fetch_thirdparty();
 
+    $qualified_for_stock_change=0;
+    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+    {
+    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+    }
+    else
+    {
+    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+    }
+
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
