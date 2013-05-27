@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - mails
 CHARSET=UTF-8
 Mailing=Elekter
 EMailing=Elekter
@@ -47,12 +39,15 @@ MailingStatusDraft=Eelnõu
 MailingStatusValidated=Valideeritud
 MailingStatusApproved=Heaks
 MailingStatusSent=Saadetud
-MailingStatusRead=Lugenud
 MailingStatusSentPartialy=Saadetud partialy
 MailingStatusSentCompletely=Saadetud täielikult
 MailingStatusError=Viga
 MailingStatusNotSent=Ei saadeta
 MailSuccessfulySent=Email edukalt saadetud (alates %s et %s)
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=E-kirja saaja on tühi
 WarningNoEMailsAdded=Pole uusi Saada lisada saaja nimekirja.
 ConfirmValidMailing=Oled sa kindel, et soovid, et kinnitada seda postitada?
@@ -78,15 +73,27 @@ CloneReceivers=Cloner saajad
 DateLastSend=Kuupäev möödunud saatmine
 DateSending=Kuupäev saatmine
 SentTo=Saadetakse <b>%s</b>
+MailingStatusRead=Lugenud
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontaktandmed kõiki kolmandaid isikuid (kliendi väljavaade, tarnija, ...)
 MailingModuleDescDolibarrUsers=Dolibarr kasutajad
 MailingModuleDescFundationMembers=Sihtasutuse liikmed kirju
 MailingModuleDescEmailsFromFile=Kirju tekstifaili (email, perenimi, eesnimi, muu)
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Kolmandate isikute (kategooriate)
 MailingModuleDescDolibarrContractsLinesExpired=Kolmandatele isikutele aegunud leping oma read
 MailingModuleDescContactsByCompanyCategory=Kontaktid kolmandate isikute (kolmandate isikute kategooria)
 MailingModuleDescMembersCategories=Sihtasutuse liikmed (kategooriate)
 MailingModuleDescContactsByFunction=Kontaktid kolmandate isikute (ametikoht / funktsioon)
+
+
 LineInFile=Line %s failis
 RecipientSelectionModules=Määratletud taotluse saaja valik
 MailSelectedRecipients=Valitud saajad
@@ -110,6 +117,12 @@ NbOfEMailingsReceived=Mass emailings saanud
 IdRecord=ID rekord
 DeliveryReceipt=Toimetaja vastuvõtmine
 YouCanUseCommaSeparatorForSeveralRecipients=Võite kasutada <b>koma</b> eraldajana määrata korraga mitmele adressaadile.
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=Teated
 NoNotificationsWillBeSent=Ei emailiga teade on kavas seda sündmust ja firma
 ANotificationsWillBeSent=1 teade saadetakse e-posti teel
@@ -117,4 +130,3 @@ SomeNotificationsWillBeSent=%s teated saadetakse e-posti teel
 AddNewNotification=Aktiveerige uus e-posti teate taotluse
 ListOfActiveNotifications=Loetle kõik aktiivsed e-posti teate taotlused
 ListOfNotificationsDone=Loetle kõik email saadetud teatised
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:22:12).

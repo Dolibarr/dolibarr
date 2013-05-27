@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - other
 CHARSET=UTF-8
-
 SecurityCode=Sicherheitsschlüssel
 Calendar=Kalender
 AddTrip=Reise hinzufügen
@@ -15,10 +8,12 @@ ToolsDesc=Dieser Bereich ist bestimmt für die Gruppe "Verschiedenes" und nicht 
 Birthday=Geburtstag
 BirthdayDate=Geburtstag
 DateToBirth=Geburtstdatum
-BirthdayAlertOn=Geburtstagserinnerung EIN
-BirthdayAlertOff=Geburtstagserinnerung AUS
+BirthdayAlertOn= Geburtstagserinnerung EIN
+BirthdayAlertOff= Geburtstagserinnerung AUS
 Notify_FICHINTER_VALIDATE=Eingriff freigegeben
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Rechnung freigegeben
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
 Notify_ORDER_SUPPLIER_APPROVE=Lieferantenbestellung freigegeben
 Notify_ORDER_SUPPLIER_REFUSE=Lieferantenbestellung abgelehnt
 Notify_ORDER_VALIDATE=Kundenbestellung freigegeben
@@ -29,7 +24,7 @@ Notify_WITHDRAW_EMIT=Ausgabe aussetzen
 Notify_ORDER_SENTBYMAIL=Kundenbestellung mit E-Mail versendet
 Notify_COMPANY_CREATE=Durch Dritte erstellt
 Notify_PROPAL_SENTBYMAIL=Angebot mit E-Mail gesendet
-Notify_ORDER_SENTBYMAIL=Bestellung mit E-Mail versendet
+Notify_ORDER_SENTBYMAIL=Kundenbestellung mit E-Mail versendet
 Notify_BILL_PAYED=Kundenrechnung bezahlt
 Notify_BILL_CANCEL=Kundenrechnung storniert
 Notify_BILL_SENTBYMAIL=Kundenrechnung per E-Mail zugestellt
@@ -110,15 +105,19 @@ SurfaceUnitm2=m²
 SurfaceUnitdm2=dm²
 SurfaceUnitcm2=cm²
 SurfaceUnitmm2=mm²
+# SurfaceUnitfoot2=ft2
+# SurfaceUnitinch2=in2
 Volume=Volumen
 TotalVolume=Gesamtvolumen
 VolumeUnitm3=m³
 VolumeUnitdm3=dm³
 VolumeUnitcm3=cm³
 VolumeUnitmm3=mm³
+# VolumeUnitfoot3=ft3
+# VolumeUnitinch3=in3
 VolumeUnitounce=Unze
 VolumeUnitlitre=Liter
-VolumeUnitgallon=Gallone	
+VolumeUnitgallon=Gallone
 Size=Größe
 SizeUnitm=m
 SizeUnitdm=dm
@@ -126,6 +125,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=Zoll
 SizeUnitfoot=Fuß
+# SizeUnitpoint=point
 BugTracker=Fehlerverfolgung (Bug-Tracker)
 SendNewPasswordDesc=Über dieses Formular können Sie sich ein neues Passwort zusenden lassen.<br>Die Änderungen an Ihrem Passwort werden erst wirksam, wenn Sie auf den im Mail enthaltenen Bestätigungslink klicken. <br> Überprüfen Sie den Posteingang Ihrer E-Mail-Anwendung.
 BackToLoginPage=Zurück zur Anmeldeseite
@@ -152,6 +152,7 @@ EMailTextOrderApproved=Bestellung %s genehmigt
 EMailTextOrderApprovedBy=Bestellung %s wurde von %s genehmigt
 EMailTextOrderRefused=Bestellung %s wurde abgelehnt
 EMailTextOrderRefusedBy=Bestellung %s wurde von %s abgelehnt
+# EMailTextExpeditionValidated=The shipping %s has been validated.
 ImportedWithSet=Import Datensatz
 DolibarrNotification=Automatische Benachrichtigung
 ResizeDesc=Bitte geben Sie eine neue Breite <b>oder</b> Höhe ein. Das Verhältnis wird während des Zuschneidens erhalten...
@@ -163,7 +164,7 @@ CurrentInformationOnImage=Dieses Werzeug hilft Ihnen beim Skalieren und Zuschnei
 ImageEditor=Bildbearbeitung
 YouReceiveMailBecauseOfNotification=Sie erhalten diese Nachricht, weil Ihre E-Mail-Adresse zur Liste der zu benachrichtigenden Kontakte für %s von %s hinzugefügt wurde.
 YouReceiveMailBecauseOfNotification2=Sie erhalten dieses Mail aufgrund folgender Benachrichtigung:
-ThisIsListOfModules=Dies ist eine Liste von ausgewählten Modulen für die Demo (nur die gängigsten Module sind enthalten). Bearbeiten Sie die Auswahl und eine personalisierte Demo zu erhalten und klicken dann bitte auf "Start". 
+ThisIsListOfModules=Dies ist eine Liste von ausgewählten Modulen für die Demo (nur die gängigsten Module sind enthalten). Bearbeiten Sie die Auswahl und eine personalisierte Demo zu erhalten und klicken dann bitte auf "Start".
 ClickHere=Hier klicken
 UseAdvancedPerms=Verwenden Sie die erweiterten Berechtigungen einiger Module
 FileFormat=Dateiformat
@@ -172,10 +173,11 @@ AddFiles=Dateien hinzufügen
 StartUpload=Hochladen starten
 CancelUpload=Hochladen abbrechen
 FileIsTooBig=Dateien sind zu groß
+# PleaseBePatient=Please be patient...
 
 ##### Calendar common #####
 AddCalendarEntry=Neuer Eintrag im Kalender %s
-NewCompanyToDolibarr=Partner %s hinzugefügt 
+NewCompanyToDolibarr=Partner %s hinzugefügt
 ContractValidatedInDolibarr=Vertrag %s freigegeben
 ContractCanceledInDolibarr=Vertrag %s storniert
 ContractClosedInDolibarr=Vertrag %s geschlossen
@@ -193,7 +195,6 @@ MemberResiliatedInDolibarr=Mitglied %s aufgehoben
 MemberDeletedInDolibarr=Mitglied %s gelöscht
 MemberSubscriptionAddedInDolibarr=Abonnement für Mitglied %s hinzugefügt
 ShipmentValidatedInDolibarr=Versand %s in Dolibarr geprüft
-
 ##### Export #####
 Export=Export
 ExportsArea=Exportübersicht
@@ -204,6 +205,5 @@ ExportableDatas=Exportfähige Daten
 NoExportableData=Keine exportfähigen Daten (keine Module mit exportfähigen Dateien oder fehlende Berechtigungen)
 ToExport=Export
 NewExport=Neuer Export
-
 ##### External sites #####
 ExternalSites=Externe Seiten

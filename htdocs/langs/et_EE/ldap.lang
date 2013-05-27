@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - ldap
 CHARSET=UTF-8
 DomainPassword=Salasõna domeeni
 YouMustChangePassNextLogon=Salasõna kasutaja <b>%s</b> domeeni <b>%s</b> tuleb muuta.
@@ -36,4 +28,3 @@ MemberSynchronized=Liikmesriigid sünkroniseeritud
 ContactSynchronized=Võta sünkroniseeritud
 ForceSynchronize=Force sünkroonimine Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Lugemine ebaõnnestus LDAP andmebaasi. Vaata LDAP moodul setup ja andmebaasi kättesaadavust.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:37:34).

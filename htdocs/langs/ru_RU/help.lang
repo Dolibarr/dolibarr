@@ -1,12 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:14:36
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - help
 CHARSET=UTF-8
 CommunitySupport=Поддержка через Форум/Wiki
 EMailSupport=Поддержка по email
@@ -33,5 +25,4 @@ BackToHelpCenter=В противном случае, нажмите здесь, 
 LinkToGoldMember=Вы можете позвонить одному из отобранных тренеров Dolibarr на вашем языке (%s), выбрав его Виджет (статус и максимальная цена звонка обновляются автоматически):
 PossibleLanguages=Поддерживаемые языки
 MakeADonation=Помогите проекту Dolibarr, сделайте пожертвование
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation

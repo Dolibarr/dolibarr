@@ -1,9 +1,4 @@
-* Manually generated
- * Generation date 2012-07-23 21:32:26
-
-// START - Lines manually generated (2012-07-23 21:32:26).
- */
-// Reference language: en_US -> TR – exports
+# Dolibarr language file - Source file is en_US - exports
 CHARSET=UTF-8
 ExportsArea=Dışaaktarma alanı
 ImportArea=İçeaktarma alanı
@@ -117,3 +112,20 @@ SourceExample=Olası veri değeri örneği
 ExampleAnyRefFoundIntoElement=Herhangi bir ilgi öğesi <b>%s</b> bulundu
 ExampleAnyCodeOrIdFoundIntoDictionnary=Herhangi bir kod (veya id) <b>%s</b> sözlük içinde bulundu
 CSVFormatDesc=<b>Virgülle Ayrılmış Değer</b> dosya biçimi(.csv).<br>Bu alanları ayırıcı ile ayrılmış bir metin dosyası biçimidir [ %s ]. Bir alan içeriğinde ayırıcı bulunursa, alan yuvarlatma karakteri ile yuvarlanır [ %s ]. Yuvarlatma karakterinden çıkmak için Escape karakteri kullanılır [%s].
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+# BankCode=Bank code
+# DeskCode=Desk code
+# BankAccountNumber=Account number
+# BankAccountNumberKey=Key
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

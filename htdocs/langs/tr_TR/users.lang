@@ -1,18 +1,9 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-06-28 23:08:00
- */
-
-
-// START - Lines generated manually (2012-06-28 23:08:00).
-// Reference language: en_US - users 
-
+# Dolibarr language file - Source file is en_US - users
 CHARSET=UTF-8
 UserCard=Kullanıcı kartı
 ContactCard=Kişi kartı
 GroupCard=Grup kartı
-NoContactCard=Kişiler arasında kart yok 
+NoContactCard=Kişiler arasında kart yok
 Permission=İzin
 Permissions=İzinler
 EditPassword=Parola düzenle
@@ -47,15 +38,15 @@ NewUser=Yeni kullanıcı
 CreateUser=Kullanıcı oluştur
 SearchAGroup=Bir grup ara
 SearchAUser=Bir kullanıcı ara
-ErrorFailedToSendPassword=Parola gönderilemedi
 LoginNotDefined=Giriş tanımlı değil.
 NameNotDefined=Ad tanımlı değil.
 ListOfUsers=Kullanıcı listesi
 Administrator=Yönetici
 SuperAdministrator=Süper Yönetici
 SuperAdministratorDesc=Yöneticinin tüm hakları
+AdministratorDesc=Yöneticinin varlığı
 DefaultRights=Varsayılan izinler
-DefaultRightsDesc= Burada, otomatik olarak  <u>yeni oluşturulan</u>kullanıcıya hak tanınan <u>varsayılan</u> izinler  tanımlayın (varolan kullanıcının izinlerini değiştirmek için kullanıcı kartına gidin).
+DefaultRightsDesc=Burada, otomatik olarak  <u>yeni oluşturulan</u>kullanıcıya hak tanınan <u>varsayılan</u> izinler  tanımlayın (varolan kullanıcının izinlerini değiştirmek için kullanıcı kartına gidin).
 DolibarrUsers=Dolibarr kullanıcıları
 LastName=Soyadı
 FirstName=Adı
@@ -74,15 +65,15 @@ NonAffectedUsers=Etkilenmemiş kullanıcılar
 UserModified=Kullanıcı başarıyla değiştirildi
 GroupModified=Grup başarıyla değiştirildi
 PhotoFile=Fotoğraf dosyası
-UserWithDolibarrAccess=Dolibarr erişimli kullanıcı 
+UserWithDolibarrAccess=Dolibarr erişimli kullanıcı
 ListOfUsersInGroup=Bu gruptaki kullanıcıların listesi
 ListOfGroupsForUser=Bu kullanıcının gruplarının listesi
 UsersToAdd=Bu gruba eklenecek kullanıcılar
-GroupsToAdd=Bu kullanıcıya eklenecek gruplar 
+GroupsToAdd=Bu kullanıcıya eklenecek gruplar
 NoLogin=Giriş yok
 LinkToCompanyContact=Üçüncü Partiye/kişiye bağlantı
 LinkedToDolibarrMember=Üye bağlantısı
-LinkedToDolibarrUser=Dolibarr kullanıcısı bağlantısı 
+LinkedToDolibarrUser=Dolibarr kullanıcısı bağlantısı
 LinkedToDolibarrThirdParty=Dolibarr Üçüncü parti bağlantısı
 CreateDolibarrLogin=Bir kullanıcı oluştur
 CreateDolibarrThirdParty=Bir üçüncü parti oluştur
@@ -96,11 +87,15 @@ MyInformations=Verilerim
 ExportDataset_user_1=Dolibarr kullanıcıları ve özellikleri
 DomainUser=Etki alanı kullanıcısı %s
 Reactivate=Yeniden etkinleştir
-CreateInternalUserDesc= Bu form firmanıza/kuruluşunuza bir iç kullanıcı oluşturmanızı sağlar. Bir dış kullanıcı oluşturmak için (müşteri, tedarikçi,…) üçüncü parti kişi kartındaki 'Dolibarr kullanıcısı oluştur' düğmesini kullanın.
-InternalExternalDesc= Bir <b>iç</b> kullanıcı firmanızın/kuruluşunuzun bir parçasıdır. <br>Bir<b>dış</b> kullanıcı bir müşteri, tedarikçi veya bir başkasıdır.<br><br>Her iki durumda da, izinler Dolibarr’daki hakları tanımlar, aynı zamanda dış kullanıcı iç kullanıcıdan farklı bir menü yöeticisine sahiptir (Giriş->Kurulum->Görünüm’e bakın)
-PermissionInheritedFromAGroup= İzin hak tanındı çünkü bir kullanıcının grubundan intikal etti.
+CreateInternalUserDesc=Bu form firmanıza/kuruluşunuza bir iç kullanıcı oluşturmanızı sağlar. Bir dış kullanıcı oluşturmak için (müşteri, tedarikçi,…) üçüncü parti kişi kartındaki 'Dolibarr kullanıcısı oluştur' düğmesini kullanın.
+InternalExternalDesc=Bir <b>iç</b> kullanıcı firmanızın/kuruluşunuzun bir parçasıdır. <br>Bir<b>dış</b> kullanıcı bir müşteri, tedarikçi veya bir başkasıdır.<br><br>Her iki durumda da, izinler Dolibarr’daki hakları tanımlar, aynı zamanda dış kullanıcı iç kullanıcıdan farklı bir menü yöeticisine sahiptir (Giriş->Kurulum->Görünüm’e bakın)
+PermissionInheritedFromAGroup=İzin hak tanındı çünkü bir kullanıcının grubundan intikal etti.
+Inherited=Kalan
+UserWillBeInternalUser=Oluşturulacak kullanıcı bir iç kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılı değildir)
+UserWillBeExternalUser=Oluşturulacak kullanıcı bir dış kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılıdır)
 IdPhoneCaller=Kimlik telefonu arayıcı
 UserLogged=Kullanıcı %s bağlı
+UserLogoff=Kullanıcı %s çıkış yaptı
 NewUserCreated=Kullanıcı %s oluşturuldu
 NewUserPassword=Parola %s olarak değiştirildi
 EventUserModified=Kullanıcı %s değiştirildi
@@ -108,20 +103,17 @@ UserDisabled=Kullanıcı %s engellendi
 UserEnabled=Kullanıcı %s etkinleştirildi
 UserDeleted=Kullanıcı %s kaldırıldı
 NewGroupCreated=Grup %s oluşturuldu
-GroupModified=Grubu %s değiştirildi
+GroupModified=Grup başarıyla değiştirildi
 GroupDeleted=Grubu %s kaldırıldı
 ConfirmCreateContact=Bu kişi için bir Dolibarr hesabı oluşturmak istediğinizden emin misiniz?
 ConfirmCreateLogin=Bu üye için Dolibarr hesabı oluşturmak istediğinizden emin misiniz?
 ConfirmCreateThirdParty=Bu üye için bir üçüncü parti oluşturmak istediğinizden emin misiniz?
-LoginToCreate= Oluşturulacak giriş
-NameToCreate= Oluşturulacak Üçüncü Parti Adı 
-Inherited=Kalan
-UserWillBeInternalUser=Oluşturulacak kullanıcı bir iç kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılı değildir) 
-UserWillBeExternalUser=Oluşturulacak kullanıcı bir dış kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılıdır) 
-UserLogoff=Kullanıcı %s çıkış yaptı
+LoginToCreate=Oluşturulacak giriş
+NameToCreate=Oluşturulacak Üçüncü Parti Adı
 YourRole=Sizin rolünüz
 YourQuotaOfUsersIsReached=Aktif kullanıcı kotanıza ulaşıldı!
-AdministratorDesc=Yöneticinin varlığı
 NbOfUsers=Kullanıcıların sayısı
 DontDowngradeSuperAdmin=Yalnızca bir SuperAdmin, bir SuperAdmin’inin derecesini düşürebilir
-
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change

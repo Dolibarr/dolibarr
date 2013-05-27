@@ -1,12 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Project
 Projects=Verkefni
@@ -36,6 +28,7 @@ NoProject=Engin verkefni skilgreind eða í eigu
 NbOpenTasks=ATH að opna verkefni
 NbOfProjects=ATH verkefna
 TimeSpent=Tíma sem fer
+TimesSpent=Tími
 RefTask=Tilv. verkefni
 LabelTask=Merki verkefni
 NewTimeSpent=Nýr tími
@@ -88,6 +81,20 @@ TaskRessourceLinks=Ressources
 ProjectsDedicatedToThisThirdParty=Verkefni hollur til þessa þriðja aðila
 NoTasks=Engin verkefni fyrir þetta verkefni
 LinkedToAnotherCompany=Tengjast öðrum þriðja aðila
+TaskIsNotAffectedToYou=Verkefni úthlutað ekki við þig
+ErrorTimeSpentIsEmpty=Tími er tómur
+ThisWillAlsoRemoveTasks=Þessi aðgerð mun einnig eyða öllum verkefnum verkefnisins <b>(%s</b> verkefni í augnablikinu) og allt inntak tíma varið.
+IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra öðrum þriðja aðila, verður að vera í tengslum við verkefnið til að búa til, halda þessu tóm til að hafa verkefni verði fjölnota þriðja aðila.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leiðtogi
 TypeContact_project_external_PROJECTLEADER=Project leiðtogi
 TypeContact_project_internal_CONTRIBUTOR=Framlög
@@ -96,15 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Verkefni framkvæmdastjóri
 TypeContact_project_task_external_TASKEXECUTIVE=Verkefni framkvæmdastjóri
 TypeContact_project_task_internal_CONTRIBUTOR=Framlög
 TypeContact_project_task_external_CONTRIBUTOR=Framlög
+# Documents models
 DocumentModelBaleine=skýrslu lýkur verkefninu er líkan (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-TimesSpent=Tími
-TaskIsNotAffectedToYou=Verkefni úthlutað ekki við þig
-ErrorTimeSpentIsEmpty=Tími er tómur
-ThisWillAlsoRemoveTasks=Þessi aðgerð mun einnig eyða öllum verkefnum verkefnisins <b>(%s</b> verkefni í augnablikinu) og allt inntak tíma varið.
-IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra öðrum þriðja aðila, verður að vera í tengslum við verkefnið til að búa til, halda þessu tóm til að hafa verkefni verði fjölnota þriðja aðila.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:29:00).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

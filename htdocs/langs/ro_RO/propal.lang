@@ -1,22 +1,15 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Comerciale propuneri
 Proposal=Comerciale propunerea
+ProposalShort=Propunere
 ProposalsDraft=Proiect de propuneri comerciale
 ProposalDraft=Proiect de propunere comerciale
 ProposalsOpened=Deschis comerciale propuneri
 Prop=Comerciale propuneri
 CommercialProposal=Comerciale propunerea
 CommercialProposals=Comerciale propuneri
+ProposalCard=Propunere de carte
 NewProp=Noua propunere comerciale
 NewProposal=Noua propunere comerciale
 NewPropal=Noua propunere
@@ -29,6 +22,7 @@ ConfirmDeleteProp=Sunteţi sigur că doriţi să ştergeţi acest comerciale pro
 ConfirmValidateProp=Sunteţi sigur că doriţi să valideze această propunere comerciale?
 LastPropals=Ultima %s propuneri
 LastClosedProposals=Ultima %s închis propuneri
+LastModifiedProposals=Ultima %s propuneri modificate
 AllPropals=Toate propunerile
 LastProposals=Ultimele propuneri
 SearchAProposal=Cautati o propunere
@@ -66,14 +60,13 @@ FileNotUploaded=Fişierul nu a fost încărcat
 FileUploaded=Fişierul a fost încărcat cu succes
 AssociatedDocuments=Documente asociate cu propunerea:
 ErrorCantOpenDir=Nu se poate deschide directorul
+DatePropal=Data de propunerea
 DateEndPropal=Data sfârşitul valabilitate
 DateEndPropalShort=Data sfârşit
 ValidityDuration=Durata de valabilitate
 CloseAs=Close cu statut
 ClassifyBilled=Clasifica facturat
 BuildBill=Build factură
-RelatedBill=Legate de factură
-RelatedBills=Legate de facturi
 ErrorPropalNotFound=Propal %s nu a fost găsit
 Estimate=Estimare:
 EstimateShort=Estimaţi
@@ -84,42 +77,25 @@ DefaultProposalDurationValidity=Implicit comerciale propunerea valabilitate dura
 UseCustomerContactAsPropalRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte adresa ca propunerea adresa destinatarului
 ClonePropal=Clone comerciale propunerea
 ConfirmClonePropal=Sunteţi sigur că doriţi să clona această propunere <b>comerciale %s?</b>
-DocModelAzurDescription=Un model de propunere (logo. ..)
-DocModelJauneDescription=Jaune propunerea model
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ProposalShort=Propunere
-LastModifiedProposals=Ultima %s propuneri modificate
-DatePropal=Data de propunerea
+ConfirmReOpenProp=Sunteţi sigur că doriţi să deschideţi înapoi <b>%s</b> comerciale propunere?
 ProposalsAndProposalsLines=Comerciale propunerea si a liniilor
 ProposalLine=Propunere linie
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-TypeContact_propal_internal_SALESREPFOLL=Reprezentant urmărirea propunerii
-TypeContact_propal_external_BILLING=Clientul factura de contact
-TypeContact_propal_external_CUSTOMER=lua legatura cu clientul urmărirea propunerii
-DocModelRoigDescription=Un model de propunere completă cu impozit RE spaniolă şi IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:38).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-ProposalCard=Propunere de carte
-ConfirmReOpenProp=Sunteţi sigur că doriţi să deschideţi înapoi <b>%s</b> comerciale propunere?
 AvailabilityPeriod=Disponibilitate întârziere
 SetAvailability=Setaţi întârziere disponibilitatea
 AfterOrder=după comandă
+##### Availability #####
 AvailabilityTypeAV_NOW=Imediat
 AvailabilityTypeAV_1W=1 săptămâni
 AvailabilityTypeAV_2W=2 săptămâni
 AvailabilityTypeAV_3W=3 săptămâni
 AvailabilityTypeAV_1M=1 luna
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:36).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Reprezentant urmărirea propunerii
+TypeContact_propal_external_BILLING=Clientul factura de contact
+TypeContact_propal_external_CUSTOMER=lua legatura cu clientul urmărirea propunerii
+# Document models
+DocModelAzurDescription=Un model de propunere (logo. ..)
+DocModelJauneDescription=Jaune propunerea model
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

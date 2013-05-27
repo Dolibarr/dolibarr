@@ -1,12 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - members
 CHARSET=UTF-8
 MembersArea=会员专区
 PublicMembersArea=市民区
@@ -43,6 +35,7 @@ MenuMembersValidated=验证成员
 MenuMembersUpToDate=到今天为止成员
 MenuMembersNotUpToDate=过时成员
 MenuMembersResiliated=Resiliated成员
+MembersWithSubscriptionToReceive=接收与认购成员
 DateAbonment=认购日期
 DateSubscription=认购日期
 DateNextSubscription=下一步订阅
@@ -81,11 +74,9 @@ NewCotisation=新的贡献
 PaymentSubscription=支付的新贡献
 EditMember=编辑委员
 SubscriptionEndDate=认购的结束日期
-NewAttribute=新的属性
-AttributeCode=属性代码
-OptionalFieldsSetup=安装可选字段
 MembersTypeSetup=成员类型设置
 NewSubscription=新的订阅
+NewSubscriptionDesc=这种形式可以让你记录你的订阅为基础的新成员。如果你想续订（如果已经是会员），请联系，而不是通过电子邮件%s基金会董事会。
 Subscription=订阅
 Subscriptions=订阅
 SubscriptionLate=晚
@@ -119,13 +110,16 @@ ConfirmValidateMember=你确定要验证这个成员？
 FollowingLinksArePublic=下面的链接是没有任何Dolibarr权限保护打开的网页。他们不是格式化网页，提供的例子，说明如何列出成员数据库。
 PublicMemberList=公共成员名单
 BlankSubscriptionForm=认购表格
+BlankSubscriptionFormDesc=dolibarr可以为您提供一个公共URL允许外部访问者问到订阅的基础。如果启用在线支付模块，付款方式也将被自动提供。
+EnablePublicSubscriptionForm=让市民自动认购表格
 MemberPublicLinks=公共林克斯/页
 ExportDataset_member_1=成员和订阅
+ImportDataset_member_1=成员
 LastMembers=上次％s成员
 LastMembersModified=最后％S修饰成员
+LastSubscriptionsModified=最后%s修改订阅
 AttributeName=属性名称
 FieldEdition=外地版 %s
-AlphaNumOnlyCharsAndNoSpace=只有alphanumericals字符没有空间
 String=弦
 Text=文本
 Int=诠释
@@ -137,6 +131,8 @@ AddSubscription=添加订阅
 ShowSubscription=显示订阅
 MemberModifiedInDolibarr=会员修改Dolibarr
 SendAnEMailToMember=向会员发送信息的电子邮件
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=电邮题目会员autosubscription
 DescADHERENT_AUTOREGISTER_MAIL=电子邮箱会员autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=电邮题目会员验证
@@ -147,23 +143,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=电邮题目会员resiliation
 DescADHERENT_MAIL_RESIL=电子邮箱会员resiliation
 DescADHERENT_MAIL_FROM=发件人的电子邮件自动电子邮件
 DescADHERENT_ETIQUETTE_TYPE=标签的格式页
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=卡的格式页
 DescADHERENT_CARD_HEADER_TEXT=文字印在会员卡顶部
 DescADHERENT_CARD_TEXT=文字印在（会员卡，左对齐）
 DescADHERENT_CARD_TEXT_RIGHT=文字印在（会员卡对齐右）
 DescADHERENT_CARD_FOOTER_TEXT=文字印在会员卡的底部
-DescADHERENT_MAILMAN_LISTS=目录（S为一个逗号分隔的新成员（自动insription））
+GlobalConfigUsedIfNotDefined=如果这里没有定义，将用于基础模块设置中定义的文本
+MayBeOverwrited=这段文字可以为成员的类型定义的值overwrited
 ShowTypeCard=显示类型'％s'
 HTPasswordExport=htpassword文件生成
 NoThirdPartyAssociatedToMember=无关联的第三方该会员
 ThirdPartyDolibarr=Dolibarr第三者
-MembersAndSubscriptions=议员和Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
+MembersAndSubscriptions= 议员和Subscriptions
 MoreActions=补充行动记录
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=创建一个直接交易记录的帐户
 MoreActionBankViaInvoice=创建发票和付款帐户
 MoreActionInvoiceOnly=创建一个没有付款发票
@@ -172,19 +166,6 @@ LinkToGeneratedPagesDesc=这个屏幕允许你生成你所有的成员或某成�
 DocForAllMembersCards=成员（名片格式生成所有输出实际上设置<b>：%s）</b>
 DocForOneMemberCards=设置<b>：%s</b>生成名片输出实际上是一个特定的成员（格式）
 DocForLabels=生成报告表（格式输出实际上设置<b>：%s）</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:45).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-MembersWithSubscriptionToReceive=接收与认购成员
-NewSubscriptionDesc=这种形式可以让你记录你的订阅为基础的新成员。如果你想续订（如果已经是会员），请联系，而不是通过电子邮件%s基金会董事会。
-BlankSubscriptionFormDesc=dolibarr可以为您提供一个公共URL允许外部访问者问到订阅的基础。如果启用在线支付模块，付款方式也将被自动提供。
-EnablePublicSubscriptionForm=让市民自动认购表格
-ImportDataset_member_1=成员
-LastSubscriptionsModified=最后%s修改订阅
-GlobalConfigUsedIfNotDefined=如果这里没有定义，将用于基础模块设置中定义的文本
-MayBeOverwrited=这段文字可以为成员的类型定义的值overwrited
 SubscriptionPayment=认购款项
 LastSubscriptionDate=最后认购日期
 LastSubscriptionAmount=最后认购金额
@@ -216,4 +197,9 @@ Collectivités=组织
 Particuliers=个人
 Entreprises=公司
 DOLIBARRFOUNDATION_PAYMENT_FORM=为了使您的订阅使用银行转帐支付，请参阅页<a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> 。 <br>使用信用卡或PayPal支付，点击此页底部的按钮。 <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:32).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

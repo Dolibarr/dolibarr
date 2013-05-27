@@ -1,17 +1,15 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=المشروع
 Projects=المشاريع
 SharedProject=مشاريع مشتركة
+PrivateProject=اتصالات من المشروع
+MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
+ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
+ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
+MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
+TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
+TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
 Myprojects=بلدي المشاريع
 ProjectsArea=مشاريع المنطقة
 NewProject=مشروع جديد
@@ -30,6 +28,7 @@ NoProject=لا يعرف أو المملوكة للمشروع
 NbOpenTasks=ملاحظة : من مهام فتح
 NbOfProjects=ملاحظة : للمشاريع
 TimeSpent=الوقت الذي تستغرقه
+TimesSpent=قضى وقتا
 RefTask=المرجع. مهمة
 LabelTask=علامة مهمة
 NewTimeSpent=جديد الوقت الذي يقضيه
@@ -44,8 +43,9 @@ Activity=النشاط
 Activities=المهام والأنشطة
 MyActivity=نشاط بلدي
 MyActivities=بلدي المهام والأنشطة
-DurationEffective=فعالة لمدة
 MyProjects=بلدي المشاريع
+DurationEffective=فعالة لمدة
+Progress=تقدم
 Time=وقت
 ListProposalsAssociatedProject=قائمة المقترحات التجارية المرتبطة بالمشروع.
 ListOrdersAssociatedProject=قائمة الزبائن المرتبطة بالمشروع.
@@ -54,6 +54,9 @@ ListPredefinedInvoicesAssociatedProject=قائمة العملاء مسبقا و�
 ListSupplierOrdersAssociatedProject=قائمة الموردين الأوامر المرتبطة بالمشروع
 ListSupplierInvoicesAssociatedProject=قائمة الموردين المرتبطة بالمشروع.
 ListContractAssociatedProject=قائمة العقود المرتبطة بالمشروع.
+ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
+ListTripAssociatedProject=قائمة من الرحلات والنفقات المرتبطة بالمشروع
+ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
 ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
 ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
 ActivityOnProjectThisYear=نشاط المشروع هذا العام
@@ -61,23 +64,6 @@ ChildOfTask=طفل من مشروع / مهمة
 NotOwnerOfProject=لا صاحب هذا المشروع من القطاع الخاص
 AffectedTo=إلى المتضررين
 CantRemoveProject=هذا المشروع لا يمكن إزالتها كما هي المرجعية بعض أشياء أخرى (الفاتورة ، أو غيرها من الأوامر). انظر referers تبويبة.
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-PrivateProject=اتصالات من المشروع
-MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
-ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
-ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
-MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
-TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
-TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
-Progress=تقدم
-ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
-ListTripAssociatedProject=قائمة من الرحلات والنفقات المرتبطة بالمشروع
-ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
 ValidateProject=تحقق من مشروع غابة
 ConfirmValidateProject=هل أنت متأكد أنك تريد التحقق من صحة هذا المشروع؟
 CloseAProject=وثيقة المشروع
@@ -95,6 +81,20 @@ TaskRessourceLinks=ملتقيات
 ProjectsDedicatedToThisThirdParty=مشاريع مخصصة لهذا الطرف الثالث
 NoTasks=أية مهام لهذا المشروع
 LinkedToAnotherCompany=ربط طرف ثالث آخر
+TaskIsNotAffectedToYou=مهمة لم تخصص لك
+ErrorTimeSpentIsEmpty=الوقت الذي يقضيه فارغة
+ThisWillAlsoRemoveTasks=وهذا العمل أيضا حذف كافة مهام المشروع <b>(%s</b> المهام في الوقت الحاضر) وجميع المدخلات من الوقت الذي تستغرقه.
+IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فاتورة، والنظام، ...)، الذين ينتمون إلى طرف ثالث آخر، يجب أن تكون مرتبطة بمشروع لإنشاء، والحفاظ على هذا فارغة لديها مشروع كونها متعددة الأطراف الثالثة.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
 TypeContact_project_external_PROJECTLEADER=مشروع زعيم
 TypeContact_project_internal_CONTRIBUTOR=مساهم
@@ -103,15 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=المهمة التنفيذية
 TypeContact_project_task_external_TASKEXECUTIVE=المهمة التنفيذية
 TypeContact_project_task_internal_CONTRIBUTOR=مساهم
 TypeContact_project_task_external_CONTRIBUTOR=مساهم
+# Documents models
 DocumentModelBaleine=وهناك مشروع كامل لنموذج التقرير (logo...)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:14).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-TimesSpent=قضى وقتا
-TaskIsNotAffectedToYou=مهمة لم تخصص لك
-ErrorTimeSpentIsEmpty=الوقت الذي يقضيه فارغة
-ThisWillAlsoRemoveTasks=وهذا العمل أيضا حذف كافة مهام المشروع <b>(%s</b> المهام في الوقت الحاضر) وجميع المدخلات من الوقت الذي تستغرقه.
-IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فاتورة، والنظام، ...)، الذين ينتمون إلى طرف ثالث آخر، يجب أن تكون مرتبطة بمشروع لإنشاء، والحفاظ على هذا فارغة لديها مشروع كونها متعددة الأطراف الثالثة.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:58:20).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

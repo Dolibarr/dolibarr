@@ -1,13 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually translated
- * Generation date 2012-07-07 20:22:49
- */
-
-
-// START - Lines generated manually (2012-07-07 20:22:49).
-// Reference language: en_US -> tr_TR _ companies
-
+# Dolibarr language file - Source file is en_US - companies
 CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firma adı zaten %s var. Başka bir tane seçin.
 ErrorPrefixAlreadyExists=Önek %s zaten var. Başka bir tane seçin.
@@ -46,7 +37,9 @@ ThirdParty=Üçüncü parti
 ThirdParties=Üçüncü partiler
 ThirdPartyAll=Üçüncü partiler (hepsi)
 ThirdPartyProspects=Adaylar
+# ThirdPartyProspectsStats=Prospects
 ThirdPartyCustomers=Müşteriler
+# ThirdPartyCustomersStats=Customers
 ThirdPartyCustomersWithIdProf12=Müşteriler %s veya %s ile
 ThirdPartySuppliers=Tedarikçiler
 ThirdPartyType=Üçüncü parti türü
@@ -82,24 +75,23 @@ Fax=Faksı
 Zip=Posta Kodu
 Town=İlçesi
 Web=Web adresi
-Poste=Durumu
+Poste= Durumu
 DefaultLang=Varsayılan dili
 VATIsUsed=KDV kullanılır
 VATIsNotUsed=KDV kullanılmaz
-
-##### Yerel Vergiler #####
-LocalTax1IsUsedES=RE kullanılır
-LocalTax1IsNotUsedES=RE kullanılmaz
-LocalTax2IsUsedES=IRPF kullanılır
-LocalTax2IsNotUsedES=IRPF kullanılmaz
+# CopyAddressFromSoc=Fill address with thirdparty address
+##### Local Taxes #####
+LocalTax1IsUsedES= RE kullanılır
+LocalTax1IsNotUsedES= RE kullanılmaz
+LocalTax2IsUsedES= IRPF kullanılır
+LocalTax2IsNotUsedES= IRPF kullanılmaz
 ThirdPartyEMail=%s
 WrongCustomerCode=Müşteri kodu geçersiz
 WrongSupplierCode=Tedarikçi kodu geçersiz
 CustomerCodeModel=Müşteri kodu modeli
 SupplierCodeModel=Tedarikçi kodu modeli
 Gencod=Barkod
-
-##### Meslek No #####
+##### Professional ID #####
 ProfId1Short=Tic. sic. no
 ProfId2Short=Oda kay. no
 ProfId3Short=Mesl no3
@@ -264,6 +256,7 @@ EditContact=Kişi düzenle
 EditContactAddress=Kişi/adres düzenle
 Contact=Kişi
 ContactsAddresses=Kişiler/adresler
+# NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=Bu üçüncü parti için kişi tanımlanmamış
 DefaultContact=Varsayılan kişi
 AddCompany=Firma ekle
@@ -344,9 +337,9 @@ TE_RETAIL=Perakendeci
 TE_WHOLE=Toptancı
 TE_PRIVATE=Özel şahıs
 TE_OTHER=Diğer
-StatusProspect1=Görüşülmeyecek
-StatusProspect0=Hiç görüşülmedi
 StatusProspect-1=Görüşülecek
+StatusProspect0=Hiç görüşülmedi
+StatusProspect1=Görüşülmeyecek
 StatusProspect2=Görüşme sürecinde
 StatusProspect3=Görüşme yapıldı
 ChangeDoNotContact=Durumu 'Görüşülmeyecek' olarak değiştir
@@ -369,6 +362,7 @@ ExportDataset_company_1=Üçüncü partiler (firmalar/kuruluşlar) ve özellikle
 ExportDataset_company_2=Kişiler ve özellikleri
 ImportDataset_company_1=Üçüncü partiler (firmalar/kuruluşlar) ve özellikleri
 ImportDataset_company_2=Kişiler (Üçüncü partiye ait ya da değil) ve özellikleri
+# ImportDataset_company_3=Bank details
 PriceLevel=Fiyat seviyesi
 DeliveriesAddress=Teslimat adresi
 DeliveryAddress=Teslimat adresi
@@ -389,7 +383,7 @@ SelectCompany=Bir üçüncü parti seçin
 Organization=Kuruluş
 AutomaticallyGenerated=Otomatikman oluşturulur
 FiscalYearInformation=Mali yıla ait bilgi
-FiscalMonthStart=Mali yılın başlangıç ayı 
+FiscalMonthStart=Mali yılın başlangıç ayı
 YouMustCreateContactFirst=E-posta bildirimleri ekleyebilmek için üçüncü parti e-posta kişsi oluşturmanız gerekir.
 ListSuppliersShort=Tedarikçi listesi
 ListProspectsShort=Aday Listesi
@@ -400,9 +394,9 @@ UniqueThirdParties=Toplam eşsiz üçüncü parti
 InActivity=Açık
 ActivityCeased=Kapalı
 ActivityStateFilter=Etkinlik durumu
+# ProductsIntoElements=List of products into
 
 # Monkey
 MonkeyNumRefModelDesc=Sayı biçimini müşteri için %syymm-nnn, tedarikçi için %syymm-nnn gösterir, yy yıl, mm ay ve nnnn ise 0 olmayan bir dizidir
-
 # Leopard
 LeopardNumRefModelDesc=Müşteri/tedarikçi kodu serbesttir. Bu kod herhangi bir zamanda değiştirilebilir.

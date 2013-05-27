@@ -1,13 +1,5 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:06:43
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
+# Dolibarr language file - Source file is en_US - externalsite
 CHARSET=UTF-8
 ExternalSiteSetup=Oppsett lenke til ekstern nettside
 ExternalSiteURL=Ekstern nettstedadresse
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:08:28).
+# ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.

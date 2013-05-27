@@ -1,17 +1,9 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Ref. trimite
 Sending=Trimiterea
 Sendings=Sendings
+Shipments=Transporturile
 Receivings=Receivings
 SendingsArea=Sendings zona
 ListOfSendings=Lista de sendings
@@ -36,10 +28,14 @@ DateSendingShort=Data de trimitere pentru
 SendingsForSameOrder=Sendings pentru acest ordin
 SendingsAndReceivingForSameOrder=Sendings şi receivings pentru acest ordin
 SendingsToValidate=Trimiterea pentru a valida
+StatusSendingCanceled=Anulat
 StatusSendingDraft=Proiect
 StatusSendingValidated=Validat (produse pentru a navei sau deja livrat)
+# StatusSendingProcessed=Processed
+StatusSendingCanceledShort=Anulat
 StatusSendingDraftShort=Proiect
 StatusSendingValidatedShort=Validat
+# StatusSendingProcessedShort=Processed
 SendingSheet=Trimiterea foaie
 Carriers=Suporti
 Carrier=Transportatorul
@@ -51,40 +47,27 @@ ConfirmCancelSending=Sunteţi sigur că doriţi să anulaţi această expediere?
 GenericTransport=Generic de transport
 Enlevement=Ajuns de către client
 DocumentModelSimple=Simplă documentul model
-WarningNoQtyLeftToSend=Atenţie, nu produse care aşteaptă să fie expediate.
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-StatsOnShipmentsOnlyValidated=Statistici privind transferurile efectuate numai validate
-SendingMethodCATCH=Prinde de către client
-SendingMethodTRANS=Transporter
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Simplă document model pentru livrare încasări
-DocumentModelTyphon=Mai completă, documentul model de livrare încasări (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-Shipments=Transporturile
-StatusSendingCanceled=Anulat
-StatusSendingCanceledShort=Anulat
 DocumentModelMerou=Merou modelul A5
+WarningNoQtyLeftToSend=Atenţie, nu produse care aşteaptă să fie expediate.
+StatsOnShipmentsOnlyValidated=Statistici privind transferurile efectuate numai validate
 DateDeliveryPlanned=geluite data de livrare
 DateReceived=Data de livrare a primit
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:08).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
 SendShippingByEMail=Trimite expediere prin e-mail
 SendShippingRef=Trimite %s expediere
 ActionsOnShipping=Evenimente privind transportul
 LinkToTrackYourPackage=Link pentru a urmări pachetul
 ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unui nou transport se face de pe cartela de ordine.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Prinde de către client
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Simplă document model pentru livrare încasări
+DocumentModelTyphon=Mai completă, documentul model de livrare încasări (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constanta nu este definit
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:54).

@@ -1,11 +1,5 @@
-* Manually generated
- * Generation date 2012-07-08 21:43:26
-
-// START - Lines manually generated (2012-07-08 21:43:26).
- */
-// Reference language: en_US -> TR – workflow
-
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - admin
+CHARSET= UTF-8
 WorkflowSetup=İş Akışı modülü kurulumu
 WorkflowDesc=Bu modül, uygulama içindeki otomatik eylemlerim davranışını değiştirmek için tasarlanmıştır. Varsayılan olarak, iş akışı açıktır (siz istediğiniz şeyi sırayla yaparsınız). İlginç bulduğunuz otomatik eylemleri etkinleştirebilirsiniz.
 ThereIsNoWorkflowToModify=Etkinleştirdiğiniz bu modül için değişitirilecek iş akışı yoktur.
@@ -13,3 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Ticari bir teklif imzalandıktan sonra otom
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Ticari bir teklif imzalandıktan sonra otomatik olarak bir müşteri faturası oluştur
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra otomatik olarak bir müşteri faturası oluştur
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişi kapatıldıktan sonra otomatik olarak bir müşteri faturası oluştur
+# descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order to billed when customer invoice is set to paid

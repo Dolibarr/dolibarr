@@ -1,12 +1,4 @@
-/*
- * Language code: el_GR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:35:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
+# Dolibarr language file - Source file is en_US - shop
 CHARSET=UTF-8
 Shop=Κατάστημα
 ShopWeb=Web Shop
@@ -17,4 +9,3 @@ LastCustomers=Τελευταία πελάτες
 OSCommerceShop=OsCommerce κατάστημα
 OSCommerce=OsCommerce
 AddProd=Πουλήστε online
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:39:57).

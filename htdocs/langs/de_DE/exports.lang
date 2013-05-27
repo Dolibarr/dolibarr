@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - exports
 CHARSET=UTF-8
-
 ExportsArea=Exportübersicht
 ImportArea=Importübersicht
 NewExport=Neuer Export
@@ -38,7 +31,7 @@ FieldsTitle=Feldtitel
 FieldOrder=Feldreihenfolge
 FieldTitle=Feldbezeichnung
 ChooseExportFormat=Wählen Sie das Exportformat
-NowClickToGenerateToBuildExportFile=Wählen Sie das Exportformat aus dem Auswahlfeld und klicken Sie auf "Erstellen" um die Datei zu generieren... 
+NowClickToGenerateToBuildExportFile=Wählen Sie das Exportformat aus dem Auswahlfeld und klicken Sie auf "Erstellen" um die Datei zu generieren...
 AvailableFormats=Verfügbare Formate
 LibraryShort=Bibliothek
 LibraryUsed=Verwendete Bibliothek
@@ -66,7 +59,7 @@ LineTotalVAT=Steuerbetrag der Zeile
 TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Service)
 FileWithDataToImport=Datei mit zu importierenden Daten
 FileToImport=Quelldatei für Import
-FileMustHaveOneOfFollowingFormat=Die Importdatei muss in einem der folgenden Formate vorliegen 
+FileMustHaveOneOfFollowingFormat=Die Importdatei muss in einem der folgenden Formate vorliegen
 DownloadEmptyExample=Leere Beispiel-Quelldatei herunterladen
 ChooseFormatOfFileToImport=Wählen Sie das Format der Importdatei durch einen Klick auf das %s Symbol...
 ChooseFileToImport=Wählen Sie zu importierende Datei und klicken Sie anschließend auf das %s Symbol...
@@ -119,5 +112,20 @@ SourceExample=Beispiel möglicher Datenwerte
 ExampleAnyRefFoundIntoElement=Ein Referenz für das Element <b>%s</b> gefunden
 ExampleAnyCodeOrIdFoundIntoDictionnary=Ein Code (oder eine ID) wurde im Dictionnary <b>%s</b> gefunden
 CSVFormatDesc=<b>Comma Separated Value</b> Format (.csv). <br> Dies ist ein Textdatei-Format, bei dem einzelne Spalten durch ein Trennzeichen [ %s ] getrennt sind. Wird innerhalb eines Feldes das Trennzeichen gefunden, wird der Wert des entsprechenden Feldes über ein Rundungszeichen [ %s ] gerundet. Das Escape-Zeichen für die Rundung ist [ %s ].
-
-
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+# BankCode=Bank code
+# DeskCode=Desk code
+# BankAccountNumber=Account number
+# BankAccountNumberKey=Key
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

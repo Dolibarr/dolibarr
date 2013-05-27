@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - boxes
+# Dolibarr language file - Source file is en_US - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=RSS 信息
 BoxLastProducts=最近的 %s 项产品/服务

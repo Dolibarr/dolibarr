@@ -1,21 +1,15 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Clienţii ordinele zona
 SuppliersOrdersArea=Furnizori ordinele zona
 OrderCard=Comanda carte
+# OrderId=Order Id
 Order=Comanda
 Orders=Comenzi
+OrderLine=Ordinul linie
 OrderFollow=Urmări
 OrderDate=Ordinul data
+OrderToProcess=Pentru a procesa
 NewOrder=Noua ordine
 ToOrder=Asiguraţi pentru
 MakeOrder=Asiguraţi pentru
@@ -30,12 +24,16 @@ OrdersToValid=Comenzi la valabil
 OrdersToBill=Comenzi la factura
 OrdersInProcess=Comenzi în procesul de
 OrdersToProcess=Ordinele de a procesa
+SuppliersOrdersToProcess=Furnizorului de ordine pentru a prelucra
 StatusOrderCanceledShort=Anulat
 StatusOrderDraftShort=Proiect
 StatusOrderValidatedShort=Validat
+StatusOrderSentShort=În procesul de
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=La proces
 StatusOrderProcessedShort=Prelucrate
 StatusOrderToBillShort=Pentru a factura
+# StatusOrderToBill2Short=To bill
 StatusOrderApprovedShort=Aprobat
 StatusOrderRefusedShort=A refuzat
 StatusOrderToProcessShort=Pentru a procesa
@@ -47,13 +45,16 @@ StatusOrderValidated=Validat
 StatusOrderOnProcess=La proces
 StatusOrderProcessed=Prelucrate
 StatusOrderToBill=Pentru a factura
+# StatusOrderToBill2=To bill
 StatusOrderApproved=Aprobat
 StatusOrderRefused=A refuzat
 StatusOrderReceivedPartially=Parţial primit
 StatusOrderReceivedAll=Tot ceea ce a primit
+ShippingExist=Un transport există
 DraftOrWaitingApproved=Proiectul nu a fost încă aprobat sau a ordonat
 DraftOrWaitingShipped=Proiect de validat sau nu au fost încă expediate
 MenuOrdersToBill=Comenzi la factura
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Comanda de cautare
 Sending=Trimiterea
 Sendings=Sendings
@@ -63,6 +64,7 @@ CreateOrder=Creaţi Comanda
 RefuseOrder=Refuza, pentru
 ApproveOrder=Pentru a accepta
 ValidateOrder=Validate pentru
+UnvalidateOrder=Unvalidate pentru
 DeleteOrder=Ştergere pentru
 CancelOrder=Anulare pentru
 AddOrder=Adăugare pentru
@@ -87,9 +89,11 @@ ConfirmCloseOrder=Sunteţi sigur că vreţi să închideţi acest ordin? Odată 
 ConfirmCloseOrderIfSending=Sunteţi sigur că vreţi să închideţi acest ordin? Trebuie să închideţi un ordin doar atunci când toate expediere sunt de facut.
 ConfirmDeleteOrder=Sunteţi sigur că doriţi să ştergeţi acest ordin?
 ConfirmValidateOrder=Sunteţi sigur că doriţi să valideze această ordine sub <b>numele %s?</b>
+ConfirmUnvalidateOrder=Sunteţi sigur că doriţi să restauraţi <b>%s</b> de ordine la statutul de proiect?
 ConfirmCancelOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
 ConfirmMakeOrder=Sunteţi sigur că doriţi să confirme acest lucru, pentru ai face <b>pe %s?</b>
 GenerateBill=Generare factură
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Clasifica "facturat"
 ComptaCard=Contabilitate carte
 DraftOrders=Proiect de ordine de
@@ -107,36 +111,11 @@ AuthorRequest=Cerere de autor
 UseCustomerContactAsOrderRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte, pentru ca adresa destinatarului adresa
 RunningOrders=COMANDA ON proces
 UserWithApproveOrderGrant=Useres acordate cu "aproba ordinele" permisiune.
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nu sunt definite
-Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nu sunt definite
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul " %s"
-Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul " %s"
-OrderSource0=Comerciale propunerea
-OrderSource1=Internet
-OrderSource2=Mail campanie
-OrderSource3=Telefon compain
-OrderSource4=Fax campanie
-OrderSource5=Comerciale
-OrderSource6=Magazin
-QtyOrdered=Cantitate ordonat
-AddDeliveryCostLine=
-PDFEinsteinDescription=Un model complet pentru (logo. ..)
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-OrderLine=Ordinul linie
 PaymentOrderRef=Plata pentru %s
 CloneOrder=Clone pentru
 ConfirmCloneOrder=Sunteţi sigur că doriţi să clona pentru <b>acest %s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-OrderToProcess=Pentru a procesa
+DispatchSupplierOrder=Primirea comenzii furnizorul %s
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reprezentant client următoarele-up pentru
 TypeContact_commande_internal_SHIPPING=Reprezentant urmărire de transport maritim
 TypeContact_commande_external_BILLING=Clientul factura de contact
@@ -147,28 +126,36 @@ TypeContact_order_supplier_internal_SHIPPING=Reprezentant urmărire de transport
 TypeContact_order_supplier_external_BILLING=A lua legatura cu furnizorul factură
 TypeContact_order_supplier_external_SHIPPING=Furnizor de transport maritim de contact
 TypeContact_order_supplier_external_CUSTOMER=A lua legatura ordinea următoare-up
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nu sunt definite
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nu sunt definite
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul " %s"
+Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul " %s"
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
+OrderSource0=Comerciale propunerea
+OrderSource1=Internet
+OrderSource2=Mail campanie
+OrderSource3=Telefon compain
+OrderSource4=Fax campanie
+OrderSource5=Comerciale
+OrderSource6=Magazin
+QtyOrdered=Cantitate ordonat
+# AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
+
+# Documents models
+PDFEinsteinDescription=Un model complet pentru (logo. ..)
 PDFEdisonDescription=Un simplu pentru model
-PDFQuevedoDescription=Un model complet cu scopul de spaniolă RE şi IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:50).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ro_RO
-DispatchSupplierOrder=Primirea comenzii furnizorul %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:24).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-SuppliersOrdersToProcess=Furnizorului de ordine pentru a prelucra
-StatusOrderSentShort=În procesul de
-ShippingExist=Un transport există
-UnvalidateOrder=Unvalidate pentru
-ConfirmUnvalidateOrder=Sunteţi sigur că doriţi să restauraţi <b>%s</b> de ordine la statutul de proiect?
+# Orders modes
 OrderByMail=Poştă
 OrderByFax=Fax
 OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Telefon
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:30).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill

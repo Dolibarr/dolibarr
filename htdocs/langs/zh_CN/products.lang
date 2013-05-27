@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - products
+# Dolibarr language file - Source file is en_US - products
 CHARSET=UTF-8
 ProductRef=产品编号
 ProductLabel=产品名称
@@ -30,7 +30,7 @@ ServicesNotOnSell=淘汰服务
 InternalRef=内部编号
 LastRecorded=最近销售的产品/服务
 LastRecordedProductsAndServices=最近添加的 %s 项产品/服务
-LastModifiedProductsAndServices=最近更新的 %s 项产品/服务 
+LastModifiedProductsAndServices=最近更新的 %s 项产品/服务
 LastRecordedProducts=最后添加的 %s 项产品
 LastRecordedServices=最后添加的 %s 项服务
 LastProducts=最近的产品
@@ -91,7 +91,7 @@ AddToOtherBills=添加到其他账单
 CorrectStock=更新库存数
 AddPhoto=添加照片
 ListOfStockMovements=库存移动清单
-BuiingPrice=购入价格
+# BuyingPrice=Buying price
 SupplierCard=供应商 信息卡
 CommercialCard=交易 信息卡
 AllWays=Path to find your product in stock
@@ -108,7 +108,7 @@ ServiceLimitedDuration=如果产品是有限期的服务：
 MultiPricesAbility=启用多重价格
 MultiPricesNumPrices=价格个数
 MultiPriceLevelsName=价格分类
-AssociatedProductsAbility=启用虚拟产品功能 
+AssociatedProductsAbility=启用虚拟产品功能
 AssociatedProducts=虚拟产品
 AssociatedProductsNumber=组成此虚拟产品的产品数量
 ParentProductsNumber=父虚拟产品的数量
@@ -184,6 +184,8 @@ AlwaysUseFixedPrice=使用固定价格
 PriceByQuantity=按数量定价
 PriceByQuantityRange=定量范围
 ProductsDashboard=产品/服务总结
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
 ### composition fabrication
 Building=生产与项目调度
 Build=生产

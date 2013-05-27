@@ -1,20 +1,16 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=库卡
 Warehouse=仓库
+# Warehouses=Warehouses
 NewWarehouse=新仓库/库存区
+WarehouseEdit=修改仓库
 MenuNewWarehouse=新仓库
 WarehouseOpened=打开仓库
 WarehouseClosed=仓库关闭
 WarehouseSource=来源仓库
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=目标仓库
 ValidateSending=删除发送
 CancelSending=取消发送
@@ -40,8 +36,10 @@ StockCorrection=正确的股票
 StockMovement=转让
 StockMovements=股票转让
 NumberOfUnit=单位数目
+# UnitPurchaseValue=Unit purchase price
 TotalStock=总库存
 StockTooLow=库存过低
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=值
 PMPValue=加权平均价格
 PMPValueShort=的WAP
@@ -57,6 +55,7 @@ DeStockOnShipment=减少对实际装运验证股票（推荐）
 ReStockOnBill=增加对供应商发票的实际库存/信用票据验证（警告在此版本中，它只有在仓库数1，股票被修改）
 ReStockOnValidateOrder=对供应商的订单增加赞许（警告在此版本中，真正的股票，它只有在仓库数1，股票被修改）
 ReStockOnDispatchOrder=增加人工调度到仓库供应商接到订单后，实时股票
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=命令还没有或根本没有更多的地位，使产品在仓库库存调度。
 StockDiffPhysicTeoric=股票差异的原因和理论物理
 NoPredefinedProductToDispatch=此对象没有预定义的产品。因此，没有库存调度是必需的。
@@ -77,26 +76,16 @@ LieuWareHouse=本地化仓库
 WarehousesAndProducts=仓库和产品
 AverageUnitPricePMPShort=投入品平均价格
 AverageUnitPricePMP=投入品平均价格
+SellPriceMin=销售单价
+EstimatedStockValueSellShort=销售值
+EstimatedStockValueSell=销售值
 EstimatedStockValueShort=估计值的股票
 EstimatedStockValue=估计值的股票
 DeleteAWarehouse=删除仓库
 ConfirmDeleteWarehouse=你确定要删除仓库<b>％s吗</b> ？
 PersonalStock=％s的个人股票
 ThisWarehouseIsPersonalStock=这个仓库代表的％s％的个人股票期权
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-WarehouseEdit=修改仓库
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-SellPriceMin=销售单价
-EstimatedStockValueSellShort=销售值
-EstimatedStockValueSell=销售值
 SelectWarehouseForStockDecrease=选择仓库库存减少使用
 SelectWarehouseForStockIncrease=选择使用库存增加的仓库
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:39).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

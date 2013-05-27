@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
-
 Accountancy=Rechnungswesen
 AccountancyCard=Rechnungswesenkarte
 Treasury=Vermögensverwaltung
@@ -25,6 +18,8 @@ AmountToBeCharged=Zu zahlender Gesamtbetrag:
 AccountsGeneral=Konten
 Account=Konto
 Accounts=Konten
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Lieferantenrechnungen
 Income=Einnahmen
 Outcome=Ausgaben
@@ -85,11 +80,11 @@ TotalToPay=Zu zahlender Gesamtbetrag
 TotalVATReceived=Summe vereinnahmte MwSt.
 CustomerAccountancyCode=Kontierungscode Kunde
 SupplierAccountancyCode=Kontierungscode Lieferant
-AlreadyPaid=Bereits bezahlt
 AccountNumberShort=Kontonummer
 AccountNumber=Kontonummer
 NewAccount=Neues Konto
 SalesTurnover=Umsatz
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Durch Partner
 ByUserAuthorOfInvoice=Durch Rechnungsersteller
 AccountancyExport=Rechnungswesen Export
@@ -113,7 +108,8 @@ AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b
 AnnualByCompaniesDueDebtMode=Die Einnahmen/Ausgaben-Bilanz nach Partnern im Modus <b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
 AnnualByCompaniesInputOutputMode=Die Einnahmen/Ausgaben-Bilanz im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
 SeeReportInInputOutputMode=Der <b>%sEinkünfte-Ausgaben%s</b>-Bericht medlet <b>Istbesteuerung</b> für eine Berechnung der tatsächlich erfolgten Zahlungsströme.
-SeeReportInDueDebtMode=Der <b>%sForderungen-Verbindlichkeiten%s</b>-Bericht meldet <b>Kameralistik</b> für eine Berechnung auf Basis der ausgestellten Rechnungen. 
+SeeReportInDueDebtMode=Der <b>%sForderungen-Verbindlichkeiten%s</b>-Bericht meldet <b>Kameralistik</b> für eine Berechnung auf Basis der ausgestellten Rechnungen.
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Die angezeigten Beträge verstehen sich inkl. aller Steuern.<br>- Das Ergebnis beinhaltet ausständige Rechnungen, Ausgaben und MwSt., obgleich bezahlt oder nicht. <br>- Es gilt das Freigabedatum von Rechnungen und MwSt., sowie das Fälligkeitsdatum für Ausgaben.
 RulesResultInOut=- Die angezeigten Beträge verstehen sich inkl. aller Steuern.<br>- Das Ergebnis beinhaltet nur tatsächlich bezahlte Rechnungen, Ausgaben und MwSt. <br>- Es gilt das Zahlungsdatum der Rechnungen, Ausgaben und MwSt.<br>
 RulesCADue=- Beinhaltet die fälligen Kundenrechnungen, unabhängig von ihrem Zahlungsstatus. <br>- Es gilt das Freigabedatum der Rechnungen. <br>
@@ -136,17 +132,25 @@ PercentOfInvoice=%%/Rechnung
 NotUsedForGoods=Nicht für Waren
 ProposalStats=Angebote Statistik
 OrderStats=Bestellungen Statistik
-InvoiceStats=Rechnungen Statistik 
+InvoiceStats=Rechnungen Statistik
 Dispatch=Versenden
 Dispatched=Versendet
 ToDispatch=Zu versenden
 ThirdPartyMustBeEditAsCustomer=Partner muss als Kunde definiert werden
 SellsJournal=Verkaufsjournal
 PurchasesJournal=Einkaufsjournal
-DescSellsJournal=Verkaufsjournal 
+DescSellsJournal=Verkaufsjournal
 DescPurchasesJournal=Einkaufsjournal
 InvoiceRef=Rechnungs-Nr.
 CodeNotDef=Nicht definiert
 AddRemind=Verfügbare Menge zum Versenden
 RemainToDivide= Noch zu Versenden :
 WarningDepositsNotIncluded=Abschlagsrechnungen werden in dieser Version des Rechnungswesens nicht berücksichtigt.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

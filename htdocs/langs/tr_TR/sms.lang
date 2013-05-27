@@ -1,10 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-17 10:05:49
- */
-// START - Lines generated manually (2012-07-17 10:05:49).
-// Reference language: en_US -> tr_TR - sms
+# Dolibarr language file - Source file is en_US - sms
 CHARSET=UTF-8
 Sms=Sms
 SmsSetup=Sms kurulums
@@ -31,7 +25,7 @@ PreviewSms=Sms önizle
 PrepareSms=Sms hazırla
 CreateSms=Sms oluştur
 SmsResult=SMS gönderimi sonucu
-TestSms=Sms Testi 
+TestSms=Sms Testi
 ValidSms=Sms Doğrula
 ApproveSms=Sms onayla
 SmsStatusDraft=Taslak
@@ -54,6 +48,7 @@ NbOfSms=Telefon numaraları sayısı
 ThisIsATestMessage=Bu bir test mesajıdır
 SendSms=SMS gönder
 SmsInfoCharRemain=Kalan karakter sayısı
-SmsInfoNumero=(Uluslar arası biçim örneği: +33899701761)
-DelayBeforeSending=Gönderimden önceki bekletme (Dakika) 
+SmsInfoNumero= (Uluslar arası biçim örneği: +33899701761)
+DelayBeforeSending=Gönderimden önceki bekletme (Dakika)
 SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.
+

@@ -1,15 +1,19 @@
-# Dolibarr language file - el_GR - bills
+# Dolibarr language file - Source file is en_US - bills
 CHARSET=UTF-8
 Bill=Τιμολόγιο
 Bills=Τιμολόγια
 BillsCustomers=Τιμολόγια πελατών
+BillsCustomer=Τιμολόγιο του Πελάτη
 BillsSuppliers=Τιμολόγια προμηθευτών
 BillsCustomersUnpaid=Απλήρωτα τιμολόγια πελατών
 BillsCustomersUnpaidForCompany=Απλήρωτα τιμολόγια για %s
 BillsSuppliersUnpaid=Απλήρωτα τιμολόγια προμηθευτών
+BillsSuppliersUnpaidForCompany=Απλήρωτα τιμολόγια προμηθευτή για %s
 BillsUnpaid=Απλήρωτα
+BillsLate=Η καθυστέρηση των πληρωμών
 BillsStatistics=Στατιστικά Τιμολογιών Πελατών
 BillsStatisticsSuppliers=Στατιστικά Τιμολογιών Προμηθευτών
+DisabledBecauseNotErasable=Άτομα με ειδικές ανάγκες, επειδή δεν μπορούν να διαγραφούν
 InvoiceStandard=Τυπικό Τιμολόγιο
 InvoiceStandardAsk=Τυπικό Τιμολόγιο
 InvoiceStandardDesc=This kind of invoice is the common invoice.
@@ -54,6 +58,7 @@ Payment=Πληρωμή
 PaymentBack=Payment back
 Payments=Πληρωμές
 PaymentsBack=Payments back
+# PaidBack=Paid back
 DatePayment=Ημερομηνία Πληρωμής
 DeletePayment=Διαγραφή Πληρωμής
 ConfirmDeletePayment=Είστε σίγουροι ότι θέλετε να διαγράψετε την πληρωμή;
@@ -65,11 +70,13 @@ ReceivedCustomersPaymentsToValid=Ληφθήσες Πληρωμές από πελ
 PaymentsReportsForYear=Αναφορές Πληρωμών για %s
 PaymentsReports=Αναφορές Πληρωμών
 PaymentsAlreadyDone=Ιστορικό Πληρωμών
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Κανόνας Πληρωμής
 PaymentMode=Τύπος Πληρωμής
 PaymentConditions=Συνθήκη Πληρωμής
 PaymentConditionsShort=Συνθήκες Πληρωμής
 PaymentAmount=Σύνολο πληρωμής
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Η πληρωμή είναι μεγαλύτερη από το υπόλοιπο
 HelpPaymentHigherThanReminderToPay= Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess received for each overpaid invoices.
 ClassifyPaid=Χαρακτηρισμός ως 'Πληρωμένο''
@@ -139,6 +146,7 @@ SuppliersDraftInvoices=Προσχέδια τιμολογίων προμηθευ�
 Unpaid=Απλήρωτο
 ConfirmDeleteBill=Είστε σίγουροι ότι θέλετε να διαγράψετε το τιμολόγιο;
 ConfirmValidateBill=Είστε σίγουροι ότι θέλετε να επικυρώσετε το τιμολόγιο με την αναφορά <b>%s</b> ?
+ConfirmUnvalidateBill=Είστε βέβαιοι ότι θέλετε να αλλάξετε τιμολόγιο <b>%s</b> το καθεστώς σχέδιο;
 ConfirmClassifyPaidBill=Είστε σίγουροι ότι θέλετε να αλλάξετε την κατάσταση τιμολόγιου <b>%s</b> "Πληρωμένο";
 ConfirmCancelBill=Είστε σίγουροι ότι θέλετε να ακυρώσετε το τιμολόγιο <b>%s</b> ?
 ConfirmCancelBillQuestion=Γιατί θέλετε να χαρακτηρίσετε το τιμολόγιο ώς "Εγκαταλειμμένο"
@@ -146,7 +154,7 @@ ConfirmClassifyPaidPartially=Είστε σίγουροι ότι θέλετε ν�
 ConfirmClassifyPaidPartiallyQuestion=Το τιμολόγιο δεν αποπληρώθηκε. Για ποιο λόγο θέλετε να κλείσετε το τιμολόγιο;
 ConfirmClassifyPaidPartiallyReasonAvoir=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. I regularise the VAT with a credit note.
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. I accept to lose the VAT on this discount.
-ConfirmClassifyPaidPartiallyReasonDiscountVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. I recover the VAT on this discount without a credit note. 
+ConfirmClassifyPaidPartiallyReasonDiscountVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. I recover the VAT on this discount without a credit note.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Κακός πελάτης
 ConfirmClassifyPaidPartiallyReasonProductReturned=Τα προϊόντα επιστράφηκαν μερικώς
 ConfirmClassifyPaidPartiallyReasonOther=Ποσό αγκαταλελειμμένο για άλλους λόγους
@@ -161,10 +169,11 @@ ConfirmClassifyAbandonReasonOtherDesc=This choice will be used in all other case
 ConfirmCustomerPayment=Επικυρώση πληρωμής <b>%s</b> %s ?
 ConfirmValidatePayment=Είστε σίγουροι ότι θέλετε να επικυρώσετε την πληρωμή; Δεν μπορούν να γίνουν αλλαγές μετά την επικύρωση.
 ValidateBill=Επικύρωση τιμολογίου
+UnvalidateBill=Unvalidate τιμολόγιο
 NumberOfBills=Πλήθος τιμολογίων
-NumberOfBillsByMonthHT=Πλήθος τιμολογίων ανά μήνα (χωρίς Φ.Π.Α.)
+NumberOfBillsByMonth=Nb των τιμολογίων ανά μήνα
 AmountOfBills=Ποσό τιμολογίων
-AmountOfBillsByMonth=Ποσό τιμολογίων ανά μήνα (χωρίς Φ.Π.Α.)
+AmountOfBillsByMonthHT=Ποσό των τιμολογίων ανά μήνα (μετά από φόρους)
 ShowSocialContribution=Εμφάνιση κοινωνικής εισφοράς
 ShowBill=Εμφάνιση τιμολογίου
 ShowInvoice=Εμφάνιση τιμολογίου
@@ -174,14 +183,16 @@ ShowInvoiceDeposit=Εμφάνιση τιμολογίου κατάθεσης
 ShowPayment=Εμφάνιση πληρωμής
 File=Αρχείο
 AlreadyPaid=Ήδη πληρωμένο
+# AlreadyPaidBack=Already paid back
 AlreadyPaidNoCreditNotesNoDeposits=Ήδη πληρωμένο (χωρίς πίστώσεις ή καταθέσεις)
 Abandoned=Εγκατελελειμμένο
 RemainderToPay=Υπόλοιπο
 RemainderToTake=Υπόλοιπο προς είσπραξη
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Ποσό που ζητήθηκε
 ExcessReceived=Περίσσεια που λήφθηκε
 EscompteOffered=Discount offered (payment before term)
-CreateDraft=Δημιουργία προσχέδιου
 SendBillRef=Αποστολή τιμολογίου %s
 SendReminderBillRef=Αποστολή τιμολογίου %s (υπενθύμιση)
 StandingOrders=Πάγιες Εντολές
@@ -208,7 +219,8 @@ DispenseMontantLettres=The bill drafted by mechanographical are exempt from the 
 NonPercuRecuperable=Non-recoverable
 SetConditions=Set payment conditions
 SetMode=Set payment mode
-SetDate=Καθορισμός Ημερομηνίας
+SetDate= Καθορισμός Ημερομηνίας
+# SelectDate=Select a date
 Billed=Τιμολογημένο
 RepeatableInvoice=Επαναλαμβανόμενο τιμολόγιο
 RepeatableInvoices=Επαναλαμβανόμενα τιμολόγια
@@ -228,7 +240,14 @@ Reductions=Μειώσεις
 ReductionsShort=Μειώσεις
 Discount=Έκπτωση
 Discounts=Εκπτώσεις
+AddDiscount=Δημιουργία απόλυτη έκπτωση
+AddRelativeDiscount=Δημιουργία σχετική έκπτωση
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=Προσθήκη έκπτωσης
+EditGlobalDiscounts=Επεξεργασία απόλυτη εκπτώσεις
+AddCreditNote=Δημιουργία πιστωτικό σημείωμα
 ShowDiscount=Εμφάνιση εκπτώσεων
+# ShowReduc=Show the deduction
 RelativeDiscount=Σχετική εκπτωση
 GlobalDiscount=Συνολική έκπτωση
 CreditNote=Πίστωση
@@ -261,6 +280,7 @@ InvoicePaid=Το τιμολόγιο εξωφλήθηκε
 PaymentNumber=Αριθμός πληρωμής
 RemoveDiscount=Αφαίρεση έκπτωσης
 WatermarkOnDraftBill=Υδατογράφημα σε προσχέδια
+InvoiceNotChecked=Δεν έχει επιλεγεί τιμολόγιο
 CloneInvoice=Κλωνοποίηση τιμολογίου
 ConfirmCloneInvoice=Είστε σίγουροι ότι θέλετε να κλωνοποιήσετε το τιμολόγιο <b>%s</b> ?
 DisabledBecauseReplacedInvoice=Action disabled because invoice has been replaced
@@ -273,7 +293,7 @@ TotalOfTwoDiscountMustEqualsOriginal=Το σύνολο των δύο νέων τ
 ConfirmRemoveDiscount=Είστε σίγουροι ότι θέλετε να αφαιρέσετε την έκπτωση;
 RelatedBill=Σχετιζόμενο τιμολόγιο
 RelatedBills=Σχετιζόμενα τιμολόγια
-=
+
 # PaymentConditions
 PaymentConditionShortRECEP=Άμεση
 PaymentConditionRECEP=Άμεση
@@ -285,6 +305,15 @@ PaymentConditionShort60D=60 ημέρες
 PaymentCondition60D=60 ημέρες
 PaymentConditionShort60DENDMONTH=60 ημέρες (τέλος μήνα)
 PaymentCondition60DENDMONTH=60 ημέρες (τέλος μήνα)
+# PaymentConditionShortPT_DELIVERY=Delivery
+# PaymentConditionPT_DELIVERY=On delivery
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
 # PaymentType
 PaymentTypeVIR=Τραπεζική Κατάθεση
 PaymentTypeShortVIR=Τραπεζική Κατάθεση
@@ -322,9 +351,19 @@ NetToBePaid=Φόρος που πρέπει να πληρωθεί
 PhoneNumber=Τηλ
 FullPhoneNumber=Τηλέφωνο
 TeleFax=Φαξ
+# PrettyLittleSentence=Accept the amount of payments due by checks issued in my name as a Member of an accounting association approved by the Fiscal Administration.
+# IntracommunityVATNumber=Intracommunity number of VAT
+# PaymentByChequeOrderedTo=Check payment (including tax) are payable to %s send to
+# PaymentByChequeOrderedToShort=Check payment (including tax) are payable to
 SendTo=Αποστολή σε
 PaymentByTransferOnThisBankAccount=Πληρωμή με έμβασμα στον ακόλουθο λογαριασμό
 VATIsNotUsedForInvoice=* Non applicable VAT art-293B of CGI
+# LawApplicationPart1=By application of the law 80.335 of 12/05/80
+# LawApplicationPart2=the goods remain the property of
+# LawApplicationPart3=the seller until the complete cashing of
+# LawApplicationPart4=their price.
+# LimitedLiabilityCompanyCapital=SARL with Capital of
+# UseLine=Apply
 UseDiscount=Χρήση έκπτωσης
 UseCredit=Χρήση πίστωσης
 UseCreditNoteInInvoicePayment=Μείωση ποσού πληρωμής με αυτή την πίστωση
@@ -338,6 +377,7 @@ ChequeDeposits=Επιταγές κατάθεσης
 Cheques=Επιταγές
 CreditNoteConvertedIntoDiscount=This credit note or deposit invoice has been converted into %s
 UsBillingContactAsIncoiveRecipientIfExist=Use customer billing contact address instead of third party address as recipient for invoices
+ShowUnpaidAll=Εμφάνιση όλων των απλήρωτων τιμολογίων
 ShowUnpaidLateOnly=Εμφάνιση μόνο των καθυστερημένων απλήρωτων τιμολογίων
 PaymentInvoiceRef=Πληρωμή τιμολογίου %s
 ValidateInvoice=Επικύρωση τιμολογίου
@@ -347,6 +387,14 @@ DisabledBecausePayments=Αδύνατο, αφού υπάρψουν μερικές
 CantRemovePaymentWithOneInvoicePaid=Δεν μπορεί να αφαιρεθεί η πληρωμή αφού υπάρχει τουλάχιστον ένα τιμολόγιο χαρακτηρισμένο ως "πληρωμένο"
 ExpectedToPay=Αναμενόμενη Πληρωμή
 PayedByThisPayment=Πληρώθηκαν με αυτή την πληρωμή
+ClosePaidInvoicesAutomatically=Ταξινομήστε &quot;Πληρωμένες» όλα τα τιμολόγια entirely payed.
+# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=Όλα τιμολόγιο χωρίς παραμένουν να πληρώσουν θα κλείσει αυτόματα σε κατάσταση &quot;Πληρωμένες».
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representative following-up customer invoice
 TypeContact_facture_external_BILLING=Αντιπρόσωπος τιμολογίου πελάτη
@@ -356,79 +404,10 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=Representative following-up s
 TypeContact_invoice_supplier_external_BILLING=Αντιπρόσωπος τιμολογίου προμηθευτή
 TypeContact_invoice_supplier_external_SHIPPING=Αντιπρόσωπος αποστολής προμηθευτή
 TypeContact_invoice_supplier_external_SERVICE=Αντιπρόσωπος υπηρεσίας προμηθευτή
-=
-=
-# oursin PDF model
-Of=από
-=
-# bernique PDF model
-PDFBerniqueDescription=Πρότυπο τιμολογίου Bernique
-=
-# bigorneau PDF Model
-PDFBigorneauDescription=Πρότυπο τιμολογίου Bigorneau
-=
-# bulot PDF Model
-PDFBulotDescription=Πρότυπο τιμολογίου Bulot
-=
 # crabe PDF Model
 PDFCrabeDescription=Πρότυπο τιμολογίου Crabe. Ένα ολοκληρωμένο Πρότυπο τιμολογίου (Υποστηρίζει επιλογές φόρου, εκπτώσεις, τρόπους πληρωμής, λογότυπο, κ.α....)
-=
-# huitre PDF Model
-PDFHuitreDescription=Πρότυπο τιμολογίου Huitre
-=
 # oursin PDF Model
 PDFOursinDescription=Πρότυπο τιμολογίου oursin
-=
-# tourteau PDF Model
-PDFTourteauDescription=Πρότυπο τιμολογίου Tourteau
-=
-=
-=
-=
 # NumRef Modules
-=
 TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
-=
-# Deprecated
-=
-# orion
-OrionNumRefModelDesc1=Return the number under the format FAYYNNNNN where YY is the year and NNNNN the increment number starting at 1.
-OrionNumRefModelDesc2=The year is increased by 1 WITHOUT an initialisation to zero at the start of the fiscal year.
-OrionNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
-OrionNumRefModelDesc4=In this example, we shall have on the 1st of September 2006 an invoice named FA700354.
-# titan
-TitanNumRefModelDesc1=Return the number with format FAYYNNNNN where YY is the year and NNNNN is the increment number starting from 1.
-TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is initialized to zero at the start of the fiscal year. 
-TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
-TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
-# pluton
-PlutonNumRefModelDesc1=Return a customizable invoice number according to a defined mask.
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-BillsCustomer=Τιμολόγιο του Πελάτη
-BillsSuppliersUnpaidForCompany=Απλήρωτα τιμολόγια προμηθευτή για %s
-BillsLate=Η καθυστέρηση των πληρωμών
-DisabledBecauseNotErasable=Άτομα με ειδικές ανάγκες, επειδή δεν μπορούν να διαγραφούν
-NumberOfBillsByMonth=Nb των τιμολογίων ανά μήνα
-AmountOfBillsByMonthHT=Ποσό των τιμολογίων ανά μήνα (μετά από φόρους)
-AddDiscount=Δημιουργία απόλυτη έκπτωση
-AddGlobalDiscount=Προσθήκη έκπτωσης
-AddCreditNote=Δημιουργία πιστωτικό σημείωμα
-InvoiceNotChecked=Δεν έχει επιλεγεί τιμολόγιο
-ShowUnpaidAll=Εμφάνιση όλων των απλήρωτων τιμολογίων
-ClosePaidInvoicesAutomatically=Ταξινομήστε &quot;Πληρωμένες» όλα τα τιμολόγια entirely payed.
-AllCompletelyPayedInvoiceWillBeClosed=Όλα τιμολόγιο χωρίς παραμένουν να πληρώσουν θα κλείσει αυτόματα σε κατάσταση &quot;Πληρωμένες».
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:46).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-ConfirmUnvalidateBill=Είστε βέβαιοι ότι θέλετε να αλλάξετε τιμολόγιο <b>%s</b> το καθεστώς σχέδιο;
-UnvalidateBill=Unvalidate τιμολόγιο
-AddRelativeDiscount=Δημιουργία σχετική έκπτωση
-EditRelativelDiscount=Επεξεργασία relatvie έκπτωση
-EditGlobalDiscounts=Επεξεργασία απόλυτη εκπτώσεις
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:37).

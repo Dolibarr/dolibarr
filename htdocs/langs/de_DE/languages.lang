@@ -1,14 +1,9 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - languages
 CHARSET=UTF-8
 
 Language_ar_AR=Arabisch
 Language_ar_SA=Arabisch
+# Language_bg_BG=Bulgarian
 Language_ca_ES=Katalanisch
 Language_da_DA=Dänisch
 Language_da_DK=Dänisch
@@ -19,6 +14,7 @@ Language_en_AU=Englisch (Australien)
 Language_en_GB=Englisch (Großbritannien)
 Language_en_IN=Englisch (Indien)
 Language_en_NZ=Englisch (Neuseeland)
+# Language_en_SA=English (Saudi Arabia)
 Language_en_US=Englisch (USA)
 Language_es_ES=Spanisch
 Language_es_AR=Spanisch (Argentinien)
@@ -51,4 +47,5 @@ Language_sl_SI=Slowenisch
 Language_sv_SV=Schwedisch
 Language_sv_SE=Schwedisch
 Language_zh_CN=Chinesisch
+# Language_zh_TW=Chinese (Traditional)
 Language_is_IS=Isländisch

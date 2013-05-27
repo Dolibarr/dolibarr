@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - banks
+# Dolibarr language file - Source file is en_US - banks
 CHARSET=UTF-8
 Bank=Τράπεζα
 Banks=Τράπεζες
@@ -20,6 +20,8 @@ SavingAccount=Καταθετικός Λογαριασμός
 SavingAccounts=Καταθετικοί Λογαριασμοί
 ErrorBankLabelAlreadyExists=Η ετικέτα για αυτόν τον Λογιστικό Λογαριασμό, υπάρχει ήδη
 BankBalance=Υπόλοιπο
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Ελάχιστο Επιτρεπτό Υπόλοιπο
 BalanceMinimalDesired=Ελάχιστο Επιθυμητό Υπόλοιπο
 InitialBankBalance=Αρχικό Υπόλοιπο
@@ -103,7 +105,9 @@ ConciliatedBy=Πραγματοποίηση Συναλλαγής από
 DateConciliating=Ημερομ. Πραγματοποίησης Συναλλαγής
 BankLineConciliated=Η Συναλλαγή Πραγματοποιήθηκε
 CustomerInvoicePayment=Πληρωμή Πελάτη
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=Πληρωμή Προμηθευτή
+WithdrawalPayment=Ανάκληση πληρωμής
 SocialContributionPayment=Πληρωμή κοινωνικής εισφοράς
 FinancialAccountJournal=Ημερολόγιο λογιστικού λογαριασμού
 BankTransfer=Τραπεζική Μεταφορά
@@ -119,6 +123,7 @@ DeleteCheckReceipt=Διαγραφή της παραλαβής επιταγής;
 ConfirmDeleteCheckReceipt=Είστε σίγουροι ότι θέλετε να διαγράψετε την παραλαβή επιταγής;
 BankChecks=Τραπεζικές Επιταγές
 BankChecksToReceipt=Επιταγές σε αναμονή
+ShowCheckReceipt=Ελέγχου Εμφάνιση απόδειξη κατάθεσης
 NumberOfCheques=Πλήθος Επιταγών
 DeleteTransaction=Διαγραφή Συναλλαγής
 ConfirmDeleteTransaction=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την συναλλαγή;
@@ -126,6 +131,7 @@ ThisWillAlsoDeleteBankRecord=Θα διαγραφούν επίσης και όλ�
 BankMovements=Κινήσεις
 CashBudget=Προϋπολογισμός Μετρητών
 PlannedTransactions=Προγραμματισμένες Συναλλαγές
+Graph=Γραφικά
 ExportDataset_banque_1=Τραπεζικές συναλλαγές και κίνηση λογαριασμού
 TransactionOnTheOtherAccount=Συναλλαγή στον άλλο λογαριασμό
 TransactionWithOtherAccount=Μεταφορά σε Λογαριασμό
@@ -133,17 +139,15 @@ PaymentNumberUpdateSucceeded=Ο αριθμός πληρωμής ενημερώθ
 PaymentNumberUpdateFailed=Ο αριθμός πληρωμής δεν ενημερώθηκε επιτυχώς
 PaymentDateUpdateSucceeded=Η ημερομηνία πληρωμής ενημερώθηκε επιτυχώς
 PaymentDateUpdateFailed=Η ημερομηνία πληρωμής δεν ενημερώθηκε επιτυχώς
+# Transactions=Transactions
 BankTransactionLine=Τραπεζική Συναλλαγή
 AllAccounts=Όλοι οι Λογαριασμοί
 BackToAccount=Επιστροφή στον λογαριασμό
 ShowAllAccounts=Εμφάνιση Όλων των Λογαριασμών
 FutureTransaction=Συναλλαγή στο μέλλον. Δεν υπάρχει τρόπος συμβιβασμού.
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-WithdrawalPayment=Ανάκληση πληρωμής
-ShowCheckReceipt=Ελέγχου Εμφάνιση απόδειξη κατάθεσης
-Graph=Γραφικά
 SelectChequeTransactionAndGenerate=Επιλογή / φίλτρο ελέγχους για να συμπεριληφθεί στην απόδειξη κατάθεσης ελέγχου και κάντε κλικ στο &quot;Create&quot;.
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:37).
+# InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+# EventualyAddCategory=Eventually, specify a category in which to classify the records
+# ToConciliate=To conciliate?
+# ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+# BankDashboard=Bank accounts summary

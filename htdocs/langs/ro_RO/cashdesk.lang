@@ -1,12 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:23:15
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
+# Language file - Source file is en_US - cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Punctul de vânzare
 CashDesk=Punctul de vânzare
@@ -21,6 +13,7 @@ CashDeskProducts=Produse
 CashDeskStock=Stoc
 CashDeskOn=pe
 CashDeskThirdParty=A treia parte
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Cosul de cumparaturi
 NewSell=Vindem nou
 BackOffice=Back office
@@ -28,7 +21,6 @@ AddThisArticle=Adauga acest articol
 RestartSelling=Du-te inapoi la vânzare
 SellFinished=Vindem terminat
 PrintTicket=Print bilet
-NoResults=Niciun rezultat
 NoProductFound=Nici un articol gasit
 ProductFound=produsul care se găseşte
 ProductsFound=produse găsite
@@ -45,4 +37,3 @@ BankToPay=Taxa de cont
 ShowCompany=Afişare companie
 ShowStock=Arată depozit
 DeleteArticle=Faceţi clic pentru a elimina acest articol
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:17).

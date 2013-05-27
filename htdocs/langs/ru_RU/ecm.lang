@@ -1,13 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Документы
 DocsMine=Мои документы
@@ -29,7 +20,6 @@ ECMSections=Каталоги
 ECMRoot=Корневая
 ECMNewSection=Новый каталог
 ECMAddSection=Добавить руководства каталог
-ECMNewSection=Новое руководство каталога
 ECMNewDocument=Новый документ
 ECMCreationDate=Дата создания
 ECMNbOfFilesInDir=Количество файлов в каталоге
@@ -46,12 +36,14 @@ ECMSearchByEntity=Поиск объекта
 ECMSectionOfDocuments=Справочные документы
 ECMTypeManual=Руководство
 ECMTypeAuto=Автоматическая
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Документы, связанные с третьими сторонами
 ECMDocsByProposals=Документы, связанные с предложениями
 ECMDocsByOrders=Документы, связанные с заказчиками заказов
 ECMDocsByContracts=Документы, связанные с контрактами
 ECMDocsByInvoices=Документы, связанные с заказчиками счетами
 ECMDocsByProducts=Документы, связанные с продуктами
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Нет создали каталог
 ShowECMSection=Показать каталог
 DeleteSection=Удаление директории
@@ -60,5 +52,5 @@ ECMDirectoryForFiles=Относительная каталог файлов
 CannotRemoveDirectoryContainsFiles=Удалена не представляется возможным, поскольку в нем содержатся некоторые файлы
 ECMFileManager=Файловый менеджер
 ECMSelectASection=Выберите каталог на левом дереве ...
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

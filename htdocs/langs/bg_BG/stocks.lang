@@ -1,21 +1,16 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Склад карта
 Warehouse=Склад
+# Warehouses=Warehouses
 NewWarehouse=Нов склад / склад
 WarehouseEdit=Промяна на склад
 MenuNewWarehouse=Нов склад
 WarehouseOpened=Склад отвори
 WarehouseClosed=Склад затворени
 WarehouseSource=Източник склад
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Целева склад
 ValidateSending=Изтриване на изпращане
 CancelSending=Отмени изпращане
@@ -44,6 +39,7 @@ NumberOfUnit=Брой единици
 UnitPurchaseValue=Единичната покупна цена
 TotalStock=Общо в склад
 StockTooLow=Наличност твърде ниска
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Стойност
 PMPValue=Среднопретеглена цена
 PMPValueShort=WAP
@@ -59,6 +55,7 @@ DeStockOnShipment=Намаляване реалните запаси за про
 ReStockOnBill=Увеличаване на реалните запаси на доставчици фактури / кредитни известия за валидиране
 ReStockOnValidateOrder=Увеличаване на реалните запаси на доставчиците поръчки апробиране
 ReStockOnDispatchOrder=Увеличаване на реалните запаси на ръководство за експедиция в складове, след доставчика за получаване на
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Поръчка все още не е или не повече статут, който позволява изпращането на продукти на склад складове.
 StockDiffPhysicTeoric=Причина за разликата наличност физически и теоретични
 NoPredefinedProductToDispatch=Няма предварително определени продукти за този обект. Така че не се изисква експедиция в състав.
@@ -90,5 +87,5 @@ PersonalStock=Лични %s борси
 ThisWarehouseIsPersonalStock=Този склад представлява личен състав на %s %s
 SelectWarehouseForStockDecrease=Изберете склад, да се използва за намаляване на склад
 SelectWarehouseForStockIncrease=Изберете склад, да се използва за увеличение на склад
+# NoStockAction=No stock action
 LastWaitingSupplierOrders=Поръчки чакат за приеми
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:35:30).

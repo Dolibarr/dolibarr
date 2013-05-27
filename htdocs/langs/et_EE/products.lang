@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - products
 CHARSET=UTF-8
 ProductRef=Toote ref.
 ProductLabel=Toote märgistusel
@@ -99,14 +91,12 @@ AddToOtherBills=Lisa muud arved
 CorrectStock=Õige varude
 AddPhoto=Lisa foto
 ListOfStockMovements=List of veeremiliikumiste
-NoPhotoYet=Pilte ei ole veel
 BuyingPrice=Ostes hind
 SupplierCard=Tarnija kaart
 CommercialCard=Commercial kaart
 AllWays=Tee leida oma toote varu
 NoCat=Sinu toode ei ole igas kategoorias
 PrimaryWay=Esmane tee
-DeleteFromCat=Eemalda kategooria
 PriceRemoved=Hind eemaldada
 BarCode=Triipkood
 BarcodeType=Vöötkoodi tüüpi
@@ -122,6 +112,8 @@ AssociatedProductsAbility=Aktiveerige sub-tooted
 AssociatedProducts=Sub-tooted
 AssociatedProductsNumber=Mitmete toodete koostamisel seda toodet
 ParentProductsNumber=Arv vanem toode
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Seostama
 Translation=Tõlge
 KeywordFilter=Märksõna filter
@@ -153,9 +145,12 @@ ProductSpecial=Eriline
 QtyMin=Kogus minimaalne
 PriceQty=Hinda seda kogust
 PriceQtyMin=Hind kogus min.
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=MOQ Discount (by default)
 NoPriceDefinedForThisSupplier=Ei hind / tk määratletud selle tarnija / toote
 NoSupplierPriceDefinedForThisProduct=Ükski tarnija hind / tk määratletud selle toote kohta
 RecordedProducts=Tooted registreerida
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Toote / teenuse registreerida
 GenerateThumb=Loo pöial
 ProductCanvasAbility=Kasutada spetsiaalseid &quot;lõuend&quot; lisad
@@ -176,4 +171,28 @@ SuppliersPrices=Tarnijad hinnad
 CustomCode=Tolliseadustiku
 CountryOrigin=Päritolu riik
 HiddenIntoCombo=Peidetakse valige nimekirjad
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:25:39).
+# Nature=Nature
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+# QtyNeed=Qty
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed

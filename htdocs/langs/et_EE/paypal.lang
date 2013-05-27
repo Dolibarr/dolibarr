@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - paypal
 CHARSET=UTF-8
 PaypalSetup=PayPal moodul setup
 PaypalDesc=See moodul pakkumise leheküljed, mis võimaldab makse <a href="http://www.paypal.com" target="_blank">PayPal</a> kliendid. Seda saab kasutada tasuta makse või makse teatud Dolibarr objekti (arve, et ...)
@@ -18,9 +10,11 @@ PAYPAL_API_USER=API kasutajanimi
 PAYPAL_API_PASSWORD=API parooli
 PAYPAL_API_SIGNATURE=API allkiri
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku makse &quot;lahutamatu&quot; (krediitkaart + Paypal) või &quot;Paypal&quot; ainult
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal Url CSS style sheet tasumise lehele
 ThisIsTransactionId=See on id tehing: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lisa URL Paypal makse, kui saadate dokumendi mail
 PAYPAL_IPN_MAIL_ADDRESS=E-posti aadress instant tasumise teate (IPN)
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Sa oled praegu &quot;liivakasti&quot; režiimis
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:09).

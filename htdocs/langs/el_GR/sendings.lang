@@ -1,12 +1,4 @@
-/*
- * Language code: el_GR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:35:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Ref. αποστολή
 Sending=Αποστολή
@@ -39,9 +31,11 @@ SendingsToValidate=Αποστολές για την επικύρωση
 StatusSendingCanceled=Ακυρώθηκε
 StatusSendingDraft=Σχέδιο
 StatusSendingValidated=Επικυρωμένη (προϊόντα με πλοίο ή που έχουν ήδη αποσταλεί)
+# StatusSendingProcessed=Processed
 StatusSendingCanceledShort=Ακυρώθηκε
 StatusSendingDraftShort=Σχέδιο
 StatusSendingValidatedShort=Επικυρωμένη
+# StatusSendingProcessedShort=Processed
 SendingSheet=Αποστολή φύλλο
 Carriers=Carriers
 Carrier=Μεταφορέας
@@ -62,16 +56,18 @@ SendShippingByEMail=Αποστολή ναυτιλία με Email
 SendShippingRef=Αποστολή %s ναυτιλία
 ActionsOnShipping=Acions στη ναυτιλία
 LinkToTrackYourPackage=Link για να παρακολουθείτε το πακέτο σας
+ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργία ενός νέου αποστολή γίνεται από την κάρτα τάξη.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=Πιάσε από τον πελάτη
 SendingMethodTRANS=Μεταφορέας
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=Απλό μοντέλο έγγραφο για αποδεικτικά παράδοσης
 DocumentModelTyphon=Πληρέστερη πρότυπο έγγραφο για αποδεικτικά παράδοσης (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Σταθερή EXPEDITION_ADDON_NUMBER δεν ορίζεται
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:39:51).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργία ενός νέου αποστολή γίνεται από την κάρτα τάξη.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:36).

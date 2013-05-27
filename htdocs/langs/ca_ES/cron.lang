@@ -1,21 +1,40 @@
-# Dolibarr language file - ca_ES - cron
+# Dolibarr language file - Source file is en_US - cron
 CHARSET=UTF-8
+# Module2310Name=Cron
+# Module2310Desc=Scheduled task management
+
+#
+# About page
+#
+# About = About
+# CronAbout = About Cron
+# CronAboutPage = Cron about page
+
+#
+# Right
+#
+# Permission23101 = Read Scheduled task
+# Permission23102 = Create/update Scheduled task
+# Permission23103 = Delete Scheduled task
+# Permission23104 = Execute Scheduled task
 
 #
 # Admin
 #
-CronSetup=Pàgina de configuració del mòdul - Gestió de tasques planificades
+CronSetup= Pàgina de configuració del mòdul - Gestió de tasques planificades
 URLToLaunchCronJobs=URL per llançar les tasques automàtiques
 OrToLaunchASpecificJob=O per llançar una tasca específica
 KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques automàtiques
 FileToLaunchCronJobs=Ordre per llançar les tasques automàtiques
 CronExplainHowToRunUnix=En un entorn Unix pot parametritzar crontab per executar aquesta comanda cada minut
 CronExplainHowToRunWin=En un entorn Microsoft (tm) Windows pot utilitzar el planificador de tasques per llançar aquesta comanda cada minut
+
+
 #
 # Menu
 #
-CronListActive=Llistat de tasques planificades actives
-CronListInactive=Llistat de tasques planificades inactives
+CronListActive= Llistat de tasques planificades actives
+CronListInactive= Llistat de tasques planificades inactives
 
 
 #
@@ -24,16 +43,17 @@ CronListInactive=Llistat de tasques planificades inactives
 CronDateLastRun=Últim llançament
 CronLastOutput=Última sortida
 CronLastResult=Últim codi tornat
+# CronListOfCronJobs=List of scheduled jobs
 CronCommand=Comando
-CronList=Llistat de tasques planificades
-CronDelete=Eliminar la tasca planificada
-CronConfirmDelete=Està segur que voleu eliminar aquesta tasca planificada?
+CronList= Llistat de tasques planificades
+CronDelete= Eliminar la tasca planificada
+CronConfirmDelete= Està segur que voleu eliminar aquesta tasca planificada?
 CronExecute=Executar aquesta tasca
-CronConfirmExecute=Està segur que voleu executar ara aquesta tasca?
-CronInfo=Els treballs permeten executar les tasques a intervals regulars
+CronConfirmExecute= Està segur que voleu executar ara aquesta tasca?
+CronInfo= Els treballs permeten executar les tasques a intervals regulars
 CronWaitingJobs=Els seus treballs en espera:
 CronTask=Tasca
-CronNone=Ningún
+CronNone= Ningún
 CronDtStart=Data inici
 CronDtEnd=Data fi
 CronDtNextLaunch=Propera execució
@@ -46,20 +66,18 @@ CronAction=Acció
 CronStatus=Estat
 CronStatusActive=Activa
 CronStatusInactive=Inactiva
-CronEach=Cada
 CronNoJobs=Sense treballs actualment
 CronPriority=Prioritat
 CronLabel=Descripció
 CronNbRun=Nº ejec.
-CronDtLastResult=Data de l'últim resultat de l'última execució
 
 #
 #Page card
 #
-CronAdd=Afegir una tasca
-CronHourStart=Dia i hora d'inici de la tasca
-CronEvery=Executar cada
-CronObject=Instància/Objecte a crear
+CronAdd= Afegir una tasca
+CronHourStart= Dia i hora d'inici de la tasca
+CronEvery= Executar cada
+CronObject= Instància/Objecte a crear
 CronArgs=Argument
 CronSaveSucess=Registre guardat
 CronNote=Nota
@@ -68,6 +86,7 @@ CronErrEndDateStartDt=La data de fi no pot ser anterior a la d'inici
 CronStatusActiveBtn=Activar
 CronStatusInactiveBtn=Desactivar
 CronTaskInactive=Aquesta tasca es troba desactivada
+CronDtLastResult=Data de l'últim resultat de l'última execució
 CronId=Id
 CronClassFile=Classe (arxiu)
 CronModuleHelp=Nombre del directorio del módulo Dolibarr (funciona automáticamente con los módulos externos Dolibarr). <BR> Por ejemplo para llamar al método fetch del objeto Product de Dolibarr /htdocs/<u>product</u>/class/product.class.php, el valor del módulo es <i>product</i>
@@ -81,6 +100,7 @@ CronCommandHelp=El comando del sistema a executar
 # Info
 #
 CronInfoPage=Informació
+
 
 #
 # Common

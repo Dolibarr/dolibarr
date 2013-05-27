@@ -1,8 +1,9 @@
-# Dolibarr language file - el_GR - orders
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Περιοχή παραγγελιών πελατών
 SuppliersOrdersArea=Περιοχή παραγγελιών προμηθευτών
 OrderCard=Καρτέλα παραγγελίας
+# OrderId=Order Id
 Order=Παραγγελία
 Orders=Παραγγελίες
 OrderLine=Γραμμή Παραγγελίας
@@ -27,9 +28,12 @@ SuppliersOrdersToProcess=Παραγγελίες προμηθευτών προς 
 StatusOrderCanceledShort=Ακυρωμένη
 StatusOrderDraftShort=Προσχέδιο
 StatusOrderValidatedShort=Επικυρωμένη
+StatusOrderSentShort=Αποστολή στη διαδικασία
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Σε εξέλιξη
 StatusOrderProcessedShort=Ολοκληρωμένη
 StatusOrderToBillShort=Για πληρωμή
+# StatusOrderToBill2Short=To bill
 StatusOrderApprovedShort=Εγγεκριμένη
 StatusOrderRefusedShort=Αρνήθηκε
 StatusOrderToProcessShort=Προς επεξεργασία
@@ -41,13 +45,16 @@ StatusOrderValidated=Επικυρωμένη
 StatusOrderOnProcess=Σε εξέλιξη
 StatusOrderProcessed=Ολοκληρωμένη
 StatusOrderToBill=Προς πληρωμή
+# StatusOrderToBill2=To bill
 StatusOrderApproved=Εγγεκριμένη
 StatusOrderRefused=Αρνήθηκε
 StatusOrderReceivedPartially=Λήφθηκε μερικώς
 StatusOrderReceivedAll=Λήφθηκε πλήρως
+ShippingExist=Μια αποστολή, υπάρχει
 DraftOrWaitingApproved=Draft or approved not yet ordered
 DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Παραγγελίες προς χρέωση
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Εύρεση παραγγελίας
 Sending=Αποστολή
 Sendings=Αποστολές
@@ -57,6 +64,7 @@ CreateOrder=Δημιουργία παραγγελίας
 RefuseOrder=Άρνηση παραγγελίας
 ApproveOrder=Αποδοχή παραγγελίας
 ValidateOrder=Επικύρωση παραγγελίας
+UnvalidateOrder=Για Unvalidate
 DeleteOrder=Διαγραφή παραγγελίας
 CancelOrder=Ακύρωση παραγγελίας
 AddOrder=Προσθήκη παραγγελίας
@@ -66,7 +74,7 @@ ShowOrder=Εμφανιση παραγγελίας
 NoOpenedOrders=Δεν υπάρχουν ανοιχτές παραγγελίες
 NoOtherOpenedOrders=Δεν υπάρχουν άλλες ανοιχτές παραγγελίες
 OtherOrders=Άλλες παραγγελίες
-LastOrders= %s τελευταίες παραγγελίες
+LastOrders=%s τελευταίες παραγγελίες
 LastModifiedOrders=Τελευταίες %s τροποποιημένες παραγγελίες
 LastClosedOrders=Τελυταίες %s κλειστές παραγγελίες
 AllOrders=Όλες οι παραγγελίες
@@ -81,9 +89,11 @@ ConfirmCloseOrder=Είστε σίγουροι ότι θέλετε να κλεί�
 ConfirmCloseOrderIfSending=Είστε σίγουροι ότι θέλετε να κλείσετε την παραγγελία; Μια παραγγελία πρέπει να κλείνει μόλις ολοκληρωθούν όλες οι μεταφορές.
 ConfirmDeleteOrder=Είστε σίγουροι ότι θέλετε να διαγράψετε την παραγγελία;
 ConfirmValidateOrder=Είστε σίγουροι ότι θέλετε να επικυρώσετε την παραγγελία στο όνομα <b>%s</b> ;
+ConfirmUnvalidateOrder=Είστε βέβαιοι ότι θέλετε να επαναφέρετε <b>%s</b> για το καθεστώς του σχεδίου;
 ConfirmCancelOrder=Είστε σίγουροι ότι θέλετε να ακυρώσετε την παραγγελία;
 ConfirmMakeOrder=Are you sure you want to confirm you made this order on <b>%s</b> ?
 GenerateBill=Δημιουργία τιμολογίου
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Χαρακτηρισμός "Τιμολογημένη"
 ComptaCard=Λογιστική κάρτα
 DraftOrders=Προσχέδια παραγγελιών
@@ -116,12 +126,14 @@ TypeContact_order_supplier_internal_SHIPPING=Representative following-up shippin
 TypeContact_order_supplier_external_BILLING=Supplier invoice contact
 TypeContact_order_supplier_external_SHIPPING=Supplier shipping contact
 TypeContact_order_supplier_external_CUSTOMER=Supplier contact following-up order
-=
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON not defined
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file '%s'
-=
+# Error_OrderNotChecked=No orders to invoice selected
+
+
 # Sources
 OrderSource0=Εμπορική πρόταση
 OrderSource1=Internet
@@ -132,26 +144,18 @@ OrderSource5=Commercial
 OrderSource6=Store
 QtyOrdered=Qty ordered
 AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
-=
+
 # Documents models
 PDFEinsteinDescription=Ολοκληρωμένο πρότυπο παραγγελίας (λογότυπο...)
 PDFEdisonDescription=Απλό πρότυπο παραγγελίας
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-StatusOrderSentShort=Αποστολή στη διαδικασία
+# Orders modes
 OrderByMail=Ταχυδρομείο
 OrderByFax=Φαξ
 OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Τηλέφωνο
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:22).
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-ShippingExist=Μια αποστολή, υπάρχει
-UnvalidateOrder=Για Unvalidate
-ConfirmUnvalidateOrder=Είστε βέβαιοι ότι θέλετε να επαναφέρετε <b>%s</b> για το καθεστώς του σχεδίου;
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:17).
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill

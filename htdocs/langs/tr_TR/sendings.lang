@@ -1,12 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-15 11:38:26
- */
-
-
-// START - Lines generated manually (2012-07-15 11:38:26).
-// Reference language: en_US - TR - sendings
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Sevkiyat ilgi.
 Sending=Sevkiyat
@@ -34,7 +26,7 @@ OtherSendingsForSameOrder=Bu sipariş için diğer sevkiyatlar
 DateSending=Sipariş gönderme tarihi
 DateSendingShort=Sipariş gönderme tarihi
 SendingsForSameOrder=Bu sipariş için sevkiyatlar
-SendingsAndReceivingForSameOrder=Bu sipariş için sevkiyatlar ve alımlar 
+SendingsAndReceivingForSameOrder=Bu sipariş için sevkiyatlar ve alımlar
 SendingsToValidate=Doğrulanacak sevkiyatlar
 StatusSendingCanceled=İptal edildi
 StatusSendingDraft=Taslak
@@ -66,13 +58,15 @@ ActionsOnShipping=Sevkiyat eylemleri
 LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyat yaratılması amacıyla kart oluşturulur.
 RelatedShippings=İlgili sevkiyatlar
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
 
-# Sevkiyat yöntemleri
+# Sending methods
 SendingMethodCATCH=Müşteri tarafından alındı
 SendingMethodTRANS=Nakliyeci
 SendingMethodCOLSUI=Colissimo
 
-# Belge Modeli
+# ModelDocument
 DocumentModelSirocco=Teslimat makbuzları için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzları için daha fazla eksiksiz doküman modeli (logo. ..)
 

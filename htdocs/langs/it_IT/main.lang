@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - main
+# Dolibarr language file - Source file is en_US - main
 CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
@@ -140,6 +140,7 @@ ConfirmClone=Scegli i dati che si desidera clonare:
 NoCloneOptionsSpecified=Dati da clonare non definiti
 Of=di
 Go=Vai
+# Run=Run
 CopyOf=Copia di
 Show=Mostra
 ShowCardHere=Visualizza scheda
@@ -326,6 +327,7 @@ FullList=Elenco completo
 Statistics=Statistiche
 OtherStatistics=Altre statistiche
 Status=Stato
+# ShortInfo=Info.
 Ref=Rif.
 RefSupplier=Rif. fornitore
 RefPayment=Rif. pagamento
@@ -545,7 +547,7 @@ GoBack=Torna indietro
 CanBeModifiedIfOk=Può essere modificato se valido
 CanBeModifiedIfKo=Può essere modificato se non valido
 RecordModifiedSuccessfully=Record modificati con successo
-# RecordsModified=%s records modified
+RecordsModified=%s record modificati
 AutomaticCode=Codice automatico
 NotManaged=Non gestito
 FeatureDisabled=Funzionalità disabilitata
@@ -646,6 +648,9 @@ Test=Test
 Element=Elemento
 NoPhotoYet=Nessuna immagine disponibile
 # HomeDashboard=Home summary
+# Deductible=Deductible
+# from=from
+# toward=toward
 
 # Week day
 Monday=Lunedì

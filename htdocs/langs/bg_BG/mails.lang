@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - mails
 CHARSET=UTF-8
 Mailing=Електронната поща
 EMailing=Електронната поща
@@ -87,6 +79,9 @@ YourMailUnsubcribeOK=От пощенския списък на <b>%s</b> име�
 MailtoEMail=Хипер-връзка на приятел
 ActivateCheckRead=Оставя се да се използва за четене тракер получаване и връзката unsubcribe
 ActivateCheckReadKey=Key използване за криптиране на използването на URL адрес за обратна разписка и функция unsubcribe
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Контакти на всички трети лица (клиенти, перспектива, доставчици, ...)
 MailingModuleDescDolibarrUsers=Dolibarr потребители
 MailingModuleDescFundationMembers=Фондация членове с имейли
@@ -97,6 +92,8 @@ MailingModuleDescDolibarrContractsLinesExpired=Трети страни, с из�
 MailingModuleDescContactsByCompanyCategory=Контакти с трети страни (от трети страни категория)
 MailingModuleDescMembersCategories=Фондация членове (по категории)
 MailingModuleDescContactsByFunction=Контакти на трети лица (от позицията / функция)
+
+
 LineInFile=Line %s във файла
 RecipientSelectionModules=Определени искания за подбор на получателя
 MailSelectedRecipients=Избрани получателите
@@ -124,6 +121,8 @@ TagCheckMail=Tracker поща отвори
 TagUnsubscribe=Отписване връзка
 TagSignature=Подпис изпращане на потребителя
 TagMailtoEmail=Имейл на получателя
+
+# Module Notifications
 Notifications=Известия
 NoNotificationsWillBeSent=Не са планирани за това събитие и компания известия по имейл
 ANotificationsWillBeSent=1 уведомление, ще се изпращат по електронна поща
@@ -131,4 +130,3 @@ SomeNotificationsWillBeSent=%s нотификации ще бъдат изпра
 AddNewNotification=Активиране на ново искане за уведомяване имейл
 ListOfActiveNotifications=Списък на всички активни заявки за уведомяване имейл
 ListOfNotificationsDone=Списък на всички имейли, изпратени уведомления
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:48:17).

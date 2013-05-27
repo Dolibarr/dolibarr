@@ -1,12 +1,4 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ftp
 CHARSET=UTF-8
 FTPClientSetup=FTP klient modul oppsett
 NewFTPClient=Ny FTP tilkoblingsoppsettet
@@ -18,4 +10,4 @@ FailedToConnectToFTPServer=Kunne ikke koble til FTP-server (server %s, port %s)
 FailedToConnectToFTPServerWithCredentials=Klarte å logge inn på FTP-server med definert brukernavn og passord
 FTPFailedToRemoveFile=Klarte å fjerne filen <b>%s.</b>
 FTPFailedToRemoveDir=Kunne ikke fjerne katalogen <b>%s</b> (Sjekk tillatelser, og at katalogen er tom).
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:20).
+# FTPPassiveMode=Passive mode

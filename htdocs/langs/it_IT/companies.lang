@@ -1,4 +1,4 @@
-# Dolibarr language file - en_US - companies
+# Dolibarr language file - Source file is en_US - companies
 CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Il nome %s esiste già. Scegline un altro.
 ErrorPrefixAlreadyExists=Prefisso %s già esistente. Scegline un altro.

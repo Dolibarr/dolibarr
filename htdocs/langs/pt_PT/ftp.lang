@@ -1,13 +1,4 @@
-/*
- * Language code: pt_PT
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
- */
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
+# Dolibarr language file - Source file is en_US - ftp
 CHARSET=UTF-8
 FTPClientSetup=FTP Client configuração do módulo
 NewFTPClient=Nova configuração da conexão FTP
@@ -19,4 +10,4 @@ FailedToConnectToFTPServer=Falha ao conectar ao servidor de FTP (%s servidor, %s
 FailedToConnectToFTPServerWithCredentials=Falha de login do servidor de FTP com login definido e senha
 FTPFailedToRemoveFile=Falha ao remover <b>%s</b> arquivo.
 FTPFailedToRemoveDir=Falha ao remover <b>%s</b> diretório (Verifique as permissões do diretório e que está vazia).
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:08).
+# FTPPassiveMode=Passive mode

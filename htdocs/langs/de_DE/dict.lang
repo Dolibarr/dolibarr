@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - dict
 CHARSET=UTF-8
-
 CountryFR=Frankreich
 CountryBE=Belgien
 CountryIT=Italien
@@ -283,14 +276,14 @@ CurrencyMGA=Madagassisches Ariary
 CurrencySingMGA=Madagassisches Ariary
 CurrencyMUR=Mauritius Rupien
 CurrencySingMUR=Mauritius Rupie
-CurrencyNOK=Norwegische Kronen 
+CurrencyNOK=Norwegische Kronen
 CurrencySingNOK=Norwegische Krone
 CurrencyTND=Tunesischer Dinar
 CurrencySingTND=Tunesische Dinar
 CurrencyUSD=US Dollar
 CurrencySingUSD=US Dollar
-CurrencyUAH=Ukrainisches Hryvnia 
-CurrencySingUAH=Ukrainisches Hryvnia 
+CurrencyUAH=Ukrainisches Hryvnia
+CurrencySingUAH=Ukrainisches Hryvnia
 CurrencyXAF=CFA Franc BEAC
 CurrencySingXAF=CFA Franc BEAC
 CurrencyXOF=CFA Francs BCEAO
@@ -309,3 +302,28 @@ DemandReasonTypeSRC_CAMP_PHO=Telefonaktion
 DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
 DemandReasonTypeSRC_COMM=Kaufmännischer Ansprechpartner
 DemandReasonTypeSRC_SHOP=Shop-Kontakt
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+# DemandReasonTypeSRC_EMPLOYEE=Employee
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
+
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

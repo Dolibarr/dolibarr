@@ -1,12 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Auglýsing tillögur
 Proposal=Auglýsing tillögu
@@ -17,6 +9,7 @@ ProposalsOpened=Opnaður auglýsing tillögur
 Prop=Auglýsing tillögur
 CommercialProposal=Auglýsing tillögu
 CommercialProposals=Auglýsing tillögur
+ProposalCard=Tillaga kort
 NewProp=Ný auglýsing tillögu
 NewProposal=Ný auglýsing tillögu
 NewPropal=Ný tillaga
@@ -84,27 +77,25 @@ DefaultProposalDurationValidity=Default auglýsing tillögu Gildistími Lengd (�
 UseCustomerContactAsPropalRecipientIfExist=Nota viðskiptavina samband netfang ef skilgreint í stað þriðja aðila netfang sem tillaga viðtakanda heimilisfang
 ClonePropal=Klóna auglýsing tillögu
 ConfirmClonePropal=Ertu viss um að þú viljir klón þetta auglýsing <b>tillögu %s ?</b>
+ConfirmReOpenProp=Ertu viss um að þú viljir opna aftur auglýsing <b>%s</b> tillögur?
 ProposalsAndProposalsLines=Auglýsing tillögunnar og línur
 ProposalLine=Tillaga línu
-TypeContact_propal_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp tillögu
-TypeContact_propal_external_BILLING=Viðskiptavinur Reikningar samband
-TypeContact_propal_external_CUSTOMER=Viðskiptavinur samband eftirfarandi upp tillögu
-DocModelAzurDescription=A heill tillögu líkan (logo. ..)
-DocModelJauneDescription=Jaune tillögu líkan
-DocModelRoigDescription=A heill tillögu líkan með spænsku skatt RE og IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-ProposalCard=Tillaga kort
-ConfirmReOpenProp=Ertu viss um að þú viljir opna aftur auglýsing <b>%s</b> tillögur?
 AvailabilityPeriod=Framboð töf
 SetAvailability=Setja framboð töf
 AfterOrder=eftir því skyni
+##### Availability #####
 AvailabilityTypeAV_NOW=Strax
 AvailabilityTypeAV_1W=1 viku
 AvailabilityTypeAV_2W=2 vikur
 AvailabilityTypeAV_3W=3 vikur
 AvailabilityTypeAV_1M=1 mánuður
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:44).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp tillögu
+TypeContact_propal_external_BILLING=Viðskiptavinur Reikningar samband
+TypeContact_propal_external_CUSTOMER=Viðskiptavinur samband eftirfarandi upp tillögu
+# Document models
+DocModelAzurDescription=A heill tillögu líkan (logo. ..)
+DocModelJauneDescription=Jaune tillögu líkan
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

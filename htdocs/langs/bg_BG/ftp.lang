@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - ftp
 CHARSET=UTF-8
 FTPClientSetup=FTP Client модул за настройка
 NewFTPClient=Новата връзка настройка на FTP
@@ -18,4 +10,4 @@ FailedToConnectToFTPServer=Не може да се свържете с FTP съ�
 FailedToConnectToFTPServerWithCredentials=Неуспешно да влезете в FTP сървър с определено име / парола
 FTPFailedToRemoveFile=Неуспешно премахване на файлове <b>%s.</b>
 FTPFailedToRemoveDir=Неуспешно премахване на директорията <b>%s</b> (Проверете разрешения и тази директория е празна).
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:40:06).
+# FTPPassiveMode=Passive mode

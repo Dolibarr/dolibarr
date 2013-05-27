@@ -1,19 +1,13 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - donations
 CHARSET=UTF-8
 Donation=Annetus
 Donations=Annetused
+# DonationRef=Donation ref.
 Donor=Annetaja
 Donors=Doonorid
 AddDonation=Lisa annetuse
 NewDonation=New annetuse
+# ShowDonation=Show donation
 DonationPromise=Kingitus lubadus
 PromisesNotValid=Ei kinnitatud lubadusi
 PromisesValid=Valideeritud lubadusi
@@ -29,8 +23,11 @@ DonationStatusPromiseNotValidatedShort=Eelnõu
 DonationStatusPromiseValidatedShort=Valideeritud
 DonationStatusPaidShort=Saanud
 ValidPromess=Kinnitada lubadus
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Ehitada kätte
 DonationsModels=Dokumendid mudelid annetuste laekumine
 LastModifiedDonations=Last %s muutmine annetusi
 SearchADonation=Otsi annetuse
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:42:58).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

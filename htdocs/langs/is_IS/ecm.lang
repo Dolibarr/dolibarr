@@ -1,19 +1,6 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Skjöl
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
 DocsMine=My Documents
 DocsGenerated=Mynda skjöl
 DocsElements=Frumefni skjöl
@@ -33,7 +20,6 @@ ECMSections=Möppur
 ECMRoot=Root
 ECMNewSection=Ný mappa
 ECMAddSection=Bæta við handbók skrá
-ECMNewSection=Ný handbók skrá
 ECMNewDocument=Nýtt skjal
 ECMCreationDate=Creation dagsetning
 ECMNbOfFilesInDir=Fjöldi skrár í möppu
@@ -50,12 +36,14 @@ ECMSearchByEntity=Leita eftir hlut
 ECMSectionOfDocuments=Möppur skjöl
 ECMTypeManual=Handbók
 ECMTypeAuto=Sjálfvirk
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Skjöl sem tengjast þriðju aðila
 ECMDocsByProposals=Skjöl tengd tillögum
 ECMDocsByOrders=Skjöl tengd viðskiptavinum pantanir
 ECMDocsByContracts=Skjöl tengd samningum
 ECMDocsByInvoices=Skjöl tengd viðskiptavinum reikninga
 ECMDocsByProducts=Skjöl sem tengjast vöru
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Engin skrá búin til
 ShowECMSection=Sýna skrá
 DeleteSection=Fjarlægja möppu
@@ -64,4 +52,5 @@ ECMDirectoryForFiles=Hlutfallsleg skrá fyrir skrá
 CannotRemoveDirectoryContainsFiles=Fjarri ekki hægt því það inniheldur nokkrar skrár
 ECMFileManager=File Manager
 ECMSelectASection=Velja möppu á vinstri tré ...
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:18:16).
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

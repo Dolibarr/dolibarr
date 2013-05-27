@@ -1,12 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - banks
 CHARSET=UTF-8
 Bank=银行
 Banks=银行
@@ -28,6 +20,8 @@ SavingAccount=储蓄账户
 SavingAccounts=储蓄帐户
 ErrorBankLabelAlreadyExists=金融帐户标签已存在
 BankBalance=平衡
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=允许的最小平衡
 BalanceMinimalDesired=最低所需的平衡
 InitialBankBalance=初步平衡
@@ -50,8 +44,10 @@ LastAccountStatements=最近帐户报表
 Rapprochement=Reconciliate
 IOMonthlyReporting=每月报告
 BankAccountDomiciliation=帐户地址
+BankAccountCountry=到国家
 BankAccountOwner=帐户持有人姓名
 BankAccountOwnerAddress=帐户持有人地址
+RIBControlError=值的完整性检查失败。这意味着此帐号的信息不完整或错误（检查国家，数字和IBAN）。
 CreateAccount=创建帐户
 NewAccount=新帐户
 NewBankAccount=新的银行帐户
@@ -109,7 +105,9 @@ ConciliatedBy=由调和
 DateConciliating=核对日期
 BankLineConciliated=交易和解
 CustomerInvoicePayment=客户付款
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=供应商付款
+WithdrawalPayment=提款支付
 SocialContributionPayment=社会贡献付款
 FinancialAccountJournal=金融帐日记
 BankTransfer=银行汇款
@@ -125,6 +123,7 @@ DeleteCheckReceipt=删除这张支票收据吗？
 ConfirmDeleteCheckReceipt=你确定要删除这张支票收据吗？
 BankChecks=银行支票
 BankChecksToReceipt=等待支票存款
+ShowCheckReceipt=显示检查存单
 NumberOfCheques=铌检查
 DeleteTransaction=删除交易
 ConfirmDeleteTransaction=你确定要删除这个交易？
@@ -132,6 +131,7 @@ ThisWillAlsoDeleteBankRecord=这也将删除生成的银行交易
 BankMovements=运动
 CashBudget=现金预算
 PlannedTransactions=计划进行的交易
+Graph=图像
 ExportDataset_banque_1=银行交易和帐户的声明
 TransactionOnTheOtherAccount=交易的其他帐户
 TransactionWithOtherAccount=转帐
@@ -139,30 +139,15 @@ PaymentNumberUpdateSucceeded=缴费人数的最新成功
 PaymentNumberUpdateFailed=付款数目无法更新
 PaymentDateUpdateSucceeded=付款日期更新成功
 PaymentDateUpdateFailed=付款日期可能无法更新
+# Transactions=Transactions
 BankTransactionLine=银行交易
 AllAccounts=所有银行/现金帐户
 BackToAccount=回到帐户
 ShowAllAccounts=显示所有帐户
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-BankAccountCountry=到国家
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:43).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> zh_CN
-RIBControlError=值的完整性检查失败。这意味着此帐号的信息不完整或错误（检查国家，数字和IBAN）。
-WithdrawalPayment=提款支付
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:34:47).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-ShowCheckReceipt=显示检查存单
-Graph=图像
 FutureTransaction=在FUTUR的交易。调解没有办法。
 SelectChequeTransactionAndGenerate=选择/过滤器检查纳入支票存款收据，并单击“创建”。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:22).
+# InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+# EventualyAddCategory=Eventually, specify a category in which to classify the records
+# ToConciliate=To conciliate?
+# ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+# BankDashboard=Bank accounts summary
