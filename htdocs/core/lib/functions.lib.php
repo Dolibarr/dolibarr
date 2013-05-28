@@ -223,10 +223,9 @@ function dol_getprefix()
 
 /**
  *	Make an include_once using default root and alternate root if it fails.
- *	WARNING: In most cases, you should not use this function:
  *  To link to a core file, use include(DOL_DOCUMENT_ROOT.'/pathtofile')
  *  To link to a module file from a module file, use include './mymodulefile';
- *  To link to a module file from a core file, then this function can be used
+ *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
  * 	@param	string	$classname	Class name
