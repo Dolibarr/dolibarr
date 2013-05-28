@@ -2494,6 +2494,7 @@ class Product extends CommonObject
 
 		if ($this->finished == '0') return $langs->trans("RowMaterial");
 		if ($this->finished == '1') return $langs->trans("Finished");
+		if ($this->finished == '2') return $langs->trans("Composed");
 		return '';
 	}
 
@@ -3028,5 +3029,53 @@ class Product extends CommonObject
         $this->type=0;
         $this->note='This is a comment (private)';
     }
+    
+    
+    	/**
+	 *	Return number of product buildable in entrepot 
+	  *
+	 * 	@param	int		$entrepotid		id of the entrepot
+	 * 	@param	int		$productid		id of the product to build
+	 *  @return	int						number of product buildable
+	 */
+	function getNbProductBuildable($entrepotid, $productid)
+	{
+		global $db;
+	
+		
+		$this->id=$productid;
+		$this->fetch($productid);
+		
+		$fabricable=0;
+		$this->get_sousproduits_arbo();
+		$prods_arbo = $this->get_arbo_each_prod();
+		if (count($prods_arbo) > 0)
+		{
+			$fabricable=-1;
+			foreach($prods_arbo as $value)
+			{
+				$productstatic = new Product($db);
+				$productstatic->id=$value['id'];
+				$productstatic->fetch($value['id']);
+				if ($value['type']==0)
+				{
+					$productstatic->load_stock();
+					// for the first loop, buildable is the stock divide by number need
+					if ($fabricable==-1)
+					{
+						$fabricable=$productstatic->stock_warehouse[$entrepotid]->real/$value['nb'];
+					}
+					else
+					{
+						// other loop, buildable changed only if the number is smaller
+						if ($fabricable >= $productstatic->stock_reel/$value['nb'])
+							$fabricable=$productstatic->stock_warehouse[$entrepotid]->real/$value['nb'];
+					}
+				}
+			}
+		}
+		// attention buildable product are always an integer
+		return (int) $fabricable;
+	}
 }
 ?>
