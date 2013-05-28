@@ -77,13 +77,17 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('propalcard'));
+$hookmanager->initHooks(array('propallist'));
 
 
 
 /*
  * Actions
  */
+
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))

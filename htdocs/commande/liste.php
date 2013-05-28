@@ -67,9 +67,15 @@ $limit = $conf->liste_limit;
 $viewstatut=GETPOST('viewstatut');
 
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('orderlist'));
+
 /*
  * Actions
  */
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hook
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x"))
