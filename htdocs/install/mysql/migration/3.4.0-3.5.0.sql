@@ -21,6 +21,8 @@
 DELETE FROM llx_menu where module='holiday';
 
 ALTER TABLE llx_projet_task ADD COLUMN planned_workload	real DEFAULT 0 NOT NULL AFTER duration_effective;
+ALTER TABLE llx_projet_task ADD COLUMN total_ht  DOUBLE(24,8) NULL AFTER planned_workload;
+ALTER TABLE llx_projet_task ADD COLUMN subprice  DOUBLE(24,8) NULL AFTER total_ht;
 
 create table llx_fichinter_extrafields
 (
