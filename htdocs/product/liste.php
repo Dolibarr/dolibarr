@@ -151,7 +151,7 @@ else
 		        {
 		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
 		        }
-		        $sql.= ')';	
+		        $sql.= ')';
 		    }
 		}
 		else
@@ -162,7 +162,7 @@ else
 		        {
 		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
 		        }
-		        $sql.= ')';	
+		        $sql.= ')';
 		    }
 		}
     }
@@ -182,7 +182,7 @@ else
 			$sql.= " AND (p.label LIKE '%".$db->escape($snom)."%' OR (pl.label IS NOT null AND pl.label LIKE '%".$db->escape($snom)."%'))";
 		}
 		else $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
-}     
+}
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -482,7 +482,7 @@ else
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
     		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
-    		
+
     		$db->free($resql);
 
     		print "</table>";

@@ -119,7 +119,7 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #866 ] Standing order from an invoice suggests invoice total amount instead of remaining to pay
 - Fix: [ bug #788 ] Date of linked interventions are not shown
 - Fix: external users should not see costprice and margin infos
-
+- Fix: [ bug #806 ] Tasks are ordered alphabetically instead of chronological order
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
 
 - Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
