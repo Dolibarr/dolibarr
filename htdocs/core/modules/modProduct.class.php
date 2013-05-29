@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->stock->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.stock'=>'product','p.pmp'=>'product'));
 		if (! empty($conf->barcode->enabled)) $this->export_entities_array[$r]=array_merge($this->export_entities_array[$r],array('p.barcode'=>'product'));
 		// Add extra fields
-		$sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product'";
+		$sql="SELECT name, label, type FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product'";
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -153,27 +153,27 @@ class modProduct extends DolibarrModules
 		    {
 		        $fieldname='extra.'.$obj->name;
 		        $fieldlabel=ucfirst($obj->label);
-			$typeFilter="Text";
-			switch($obj->type)
-			{
-				case 'int':
-				case 'double':
-				case 'price':
-					$typeFilter="Numeric";
-					break;
-				case 'date':
-				case 'datetime':
-					$typeFilter="Date";
-					break;
-				case 'boolean':
-					$typeFilter="Boolean";
-					break;
-				case 'sellist':
-					$typeFilter="List:".$obj->param;
-					break;
-			}
+				$typeFilter="Text";
+				switch($obj->type)
+				{
+					case 'int':
+					case 'double':
+					case 'price':
+						$typeFilter="Numeric";
+						break;
+					case 'date':
+					case 'datetime':
+						$typeFilter="Date";
+						break;
+					case 'boolean':
+						$typeFilter="Boolean";
+						break;
+					case 'sellist':
+						$typeFilter="List:".$obj->param;
+						break;
+				}
 		        $this->export_fields_array[$r][$fieldname]=$fieldlabel;
-			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+				$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
 		        $this->export_entities_array[$r][$fieldname]='product';
 		    }
 		}
@@ -198,7 +198,7 @@ class modProduct extends DolibarrModules
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
 		$this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.duration'=>"Duration",'p.customcode'=>'CustomCode','p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.datec'=>'DateCreation*');
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product'";
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
