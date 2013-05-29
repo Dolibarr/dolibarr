@@ -1046,6 +1046,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("bills");
 		$outputlangs->load("propal");
 		$outputlangs->load("companies");
+		$outputlangs->load("orders");
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
