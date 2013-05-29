@@ -66,6 +66,13 @@ function contact_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'contact');
 
+    // Notes
+    $head[$h][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Note");
+    $head[$h][2] = 'note';
+    $h++;
+    
+    // Info
     $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
