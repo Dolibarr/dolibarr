@@ -1283,7 +1283,7 @@ if ($action == 'create')
 }
 else
 {
-    if ($id > 0)
+    if ($id > 0 || ! empty($ref))
     {
         /* *************************************************************************** */
         /*                                                                             */
@@ -1295,7 +1295,7 @@ else
 
         $productstatic = new Product($db);
 
-        $object->fetch($id);
+        $object->fetch($id,$ref);
         $result=$object->fetch_thirdparty();
         if ($result < 0) dol_print_error($db);
 
