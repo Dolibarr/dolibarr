@@ -38,7 +38,7 @@ Withdrawal=Reembolso
 AccountStatement=Extrato da Conta
 AccountStatementShort=Extrato
 AccountStatements=Extratos das Contas
-LastAccountStatements=�ltimos Extratos Bancários
+LastAccountStatements=Últimos Extratos Bancários
 Rapprochement=Conciliação
 IOMonthlyReporting=Relatório Mensal E/S
 BankAccountDomiciliation=Domicilio de Conta
@@ -139,5 +139,11 @@ BankTransactionLine=Transação Bancária
 AllAccounts=Todas as Contas bancarias/de Caixa
 BackToAccount=Voltar e a Conta
 ShowAllAccounts=Mostrar para todas as Contas
-
+FutureTransaction=Transação futura. Não pode ser conciliada.
+SelectChequeTransactionAndGenerate=Selecionar / filtrar cheques para incluir no recibo de depósito em cheque e clique em "Criar".
+InputReceiptNumber=Escolha o extrato bancário relacionado com a conciliação. É um valor numérico classificável (tal como, AAAAMM)
+EventualyAddCategory=Eventualmente, especificar uma categoria para classificar os registros
+ToConciliate=Para conciliar?
+ThenCheckLinesAndConciliate=Em seguida, verifique as linhas presentes no extrato bancário e clique
+BankDashboard=Banco resumo de contas
 
