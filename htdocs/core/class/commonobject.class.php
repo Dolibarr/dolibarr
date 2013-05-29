@@ -1078,8 +1078,7 @@ abstract class CommonObject
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			if ($fk_parent_line)
-				$sql.= ' AND fk_parent_line IS NULL';
+			if ($fk_parent_line) $sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
