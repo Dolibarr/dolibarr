@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2013 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,7 +263,7 @@ class modSociete extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('s.nom'=>"Text",'s.status'=>"Number",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.code_compta'=>"Text",'s.code_compta_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'p.libelle'=>"List:c_pays:libelle:rowid",'p.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Number",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.libelle'=>"Text",'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code','s.fk_stcomm'=>'List:c_stcomm:libelle:code','d.nom'=>'Text');
 		$this->export_entities_array[$r]=array();	// We define here only fields that use another picto
         // Add extra fields
-        $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'company'";
+        $sql="SELECT name, label, type FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'company'";
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
@@ -354,7 +354,7 @@ class modSociete extends DolibarrModules
 		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'societe','extra'=>MAIN_DB_PREFIX.'societe_extrafields');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('s.nom'=>"Name*",'s.status'=>"Status",'s.client'=>"Customer*",'s.fournisseur'=>"Supplier*",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.code_compta'=>"CustomerAccountancyCode",'s.code_compta_fournisseur'=>"SupplierAccountancyCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'s.fk_pays'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"ProfId1",'s.siren'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_private'=>"NotePrivate",'s.note_public'=>"NotePublic",'s.fk_typent'=>"ThirdPartyType",'s.fk_effectif'=>"Staff","s.fk_forme_juridique"=>"JuridicalStatus",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus','s.default_lang'=>'DefaultLanguage','s.barcode'=>'BarCode','s.datec'=>"DateCreation");
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'company'";
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'company' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
@@ -389,7 +389,7 @@ class modSociete extends DolibarrModules
 		$this->import_tables_array[$r]=array('s'=>MAIN_DB_PREFIX.'socpeople','extra'=>MAIN_DB_PREFIX.'socpeople_extrafields');	// List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r]=array('s.fk_soc'=>'ThirdPartyName*','s.civilite'=>'UserTitle','s.lastname'=>"Name*",'s.firstname'=>"Firstname",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'s.fk_pays'=>"CountryCode",'s.birthday'=>"BirthdayDate",'s.poste'=>"Role",'s.phone'=>"Phone",'s.phone_perso'=>"PhonePerso",'s.phone_mobile'=>"PhoneMobile",'s.fax'=>"Fax",'s.email'=>"Email",'s.note_private'=>"Note",'s.note_public'=>"Note",'s.datec'=>"DateCreation");
 		// Add extra fields
-		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'contact'";
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'contact' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
 		if ($resql)    // This can fail when class is used on old database (during migration for example)
 		{
