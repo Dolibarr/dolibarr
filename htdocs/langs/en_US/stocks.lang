@@ -89,3 +89,4 @@ SelectWarehouseForStockDecrease=Choose warehouse to use for stock decrease
 SelectWarehouseForStockIncrease=Choose warehouse to use for stock increase
 NoStockAction=No stock action
 LastWaitingSupplierOrders=Orders waiting for receptions
+DesiredStock=Desired stock

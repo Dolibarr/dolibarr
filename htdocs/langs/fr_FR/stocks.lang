@@ -89,3 +89,4 @@ SelectWarehouseForStockDecrease=Sélectionner l'entrepôt à utiliser pour la d�
 SelectWarehouseForStockIncrease=Sélectionner l'entrepôt à utiliser pour l'incrémentation du stock
 NoStockAction=Pas d'action sur l'entrepôt
 LastWaitingSupplierOrders=Commandes en attente de réception
+DesiredStock=Stock désiré
