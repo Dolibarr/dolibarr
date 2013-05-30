@@ -1,5 +1,3 @@
 # Dolibarr language file - es_MX - banks
 CHARSET=UTF-8
-IBAN=CLAVE Interbancaria
-BIC=Sucursal
 BankAccountDomiciliation=Tarjeta
