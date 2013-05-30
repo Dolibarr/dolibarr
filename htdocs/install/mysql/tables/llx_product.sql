@@ -70,5 +70,6 @@ create table llx_product
   canvas					varchar(32)  DEFAULT NULL,
   finished					tinyint      DEFAULT NULL,
   hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
-  import_key				varchar(14)						-- Import key
+  import_key				varchar(14),					-- Import key
+  desiredstock              integer      DEFAULT 0
 )ENGINE=innodb;

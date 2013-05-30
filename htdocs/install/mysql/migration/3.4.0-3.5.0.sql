@@ -31,6 +31,8 @@ create table llx_fichinter_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_fichinter_extrafields ADD INDEX idx_ficheinter_extrafields (fk_object);
+ALTER TABLE llx_product ADD COLUMN desiredstock integer DEFAULT 0;
+
 
 create table llx_commandedet_extrafields
 (
