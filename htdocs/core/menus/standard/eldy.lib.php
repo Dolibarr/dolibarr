@@ -507,7 +507,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
 					$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
 					$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
-					$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionnarySetup"),1);
+					$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionnary"),1);
 					$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
 				}
 
