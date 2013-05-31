@@ -23,5 +23,3 @@ VAT=TPS
 LT1CA=TVQ
 VATRate=Taux TPS
 ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux de taxe défini pour le pays '%s'.
-
-
