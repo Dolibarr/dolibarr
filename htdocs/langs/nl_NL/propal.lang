@@ -28,7 +28,7 @@ LastProposals = Laatste offertes
 SearchAProposal = Zoek een offerte
 ProposalsStatistics = Offertestatistieken
 NumberOfProposalsByMonth = Aantal per maand
-AmountOfProposalsByMonthHT = Bedrag per maand (exclusief belastingen)
+AmountOfProposalsByMonthHT = Bedrag per maand (excl. BTW)
 NbOfProposals = Aantal offertes
 ShowPropal = Toon offerte
 PropalsDraft = Concepten
@@ -61,20 +61,22 @@ FileUploaded = Het bestand is geüpload
 AssociatedDocuments = Documenten gelinkt aan de offerte:
 ErrorCantOpenDir = Kan map niet openen
 DatePropal = Offertedatum
-DateEndPropal = Einddatum geldigheid
-DateEndPropalShort = Einddatum
+DateEndPropal = Vervaldatum
+DateEndPropalShort = Vervaldatum
 ValidityDuration = Geldigheidsduur
 CloseAs = Sluiten met status
 ClassifyBilled = Classificeer als gefactureerd
-BuildBill = Creëer factuur
+BuildBill = Maak factuur
+RelatedBill=Gelinkte factuur
+RelatedBills=Gelinkte facturen
 ErrorPropalNotFound = Offerte %s niet gevonden
 Estimate = Raming:
 EstimateShort = Raming
 OtherPropals = Andere offertes
 CopyPropalFrom = Maak offerte door het kopiëren van een bestaande offerte
-CreateEmptyPropal = Creëer een lege offerte of uit de lijst van producten / diensten
+CreateEmptyPropal = Maak een lege offerte of uit de lijst van producten / diensten
 DefaultProposalDurationValidity = Standaardgeldigheid offerte (in dagen)
-UseCustomerContactAsPropalRecipientIfExist = Gebruik,  indien ingesteld, het afnemerscontactadres als offerteontvangstadres in plaats van het adres van de Klant
+UseCustomerContactAsPropalRecipientIfExist = Gebruik,  indien ingesteld, het afnemercontactadres als offerteontvangstadres in plaats van het adres van de derde partij.
 ClonePropal = Kloon offerte
 ConfirmClonePropal = Weet u zeker dat u deze offerte <b>%s</b> wilt klonen?
 ProposalsAndProposalsLines = Offertes en offerteregels
@@ -86,27 +88,12 @@ TypeContact_propal_external_CUSTOMER = Afnemerscontactpersoon follow-up voorstel
 # Document models = undefined
 DocModelAzurDescription = Een compleet offertemodel (logo, etc)
 DocModelJauneDescription = Jaune offertemodel
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
-// Reference language: en_US -> nl_NL
-AvailabilityPeriod=Beschikbaarheid van vertraging
-SetAvailability=Set beschikbaarheid vertraging
+AvailabilityPeriod=Leveringstermijn
+SetAvailability=Bepaal leveringstermijn
 AvailabilityTypeAV_1M=1 maand
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:21:42).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:25:14).
-// Reference language: en_US -> nl_NL
 AfterOrder=na bestelling
 AvailabilityTypeAV_NOW=Onmiddellijk
 AvailabilityTypeAV_1W=1 week
 AvailabilityTypeAV_2W=2 weken
 AvailabilityTypeAV_3W=3 weken
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:36:28).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
-// Reference language: en_US -> nl_NL
-ConfirmReOpenProp=Weet je zeker dat je wilt openen weer de commerciële voorstel <b>%s?</b>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:42).
+ConfirmReOpenProp=Weet je zeker dat je de offerte <b>%s?</b> wil heropenen
