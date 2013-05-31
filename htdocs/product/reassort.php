@@ -104,6 +104,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte,';
 $sql.= ' SUM(s.reel) as stock_physique';
+$sql .= ', p.desiredstock';
 $sql.= ' FROM ('.MAIN_DB_PREFIX.'product as p';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
@@ -157,6 +158,7 @@ if ($search_categ)
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
+$sql .= ", p.desiredstock";
 if ($toolowstock) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
@@ -242,6 +244,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DesiredStock"),"reassort.php", "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
@@ -267,7 +270,8 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
@@ -319,6 +323,7 @@ if ($resql)
 		}
 		//print '<td align="right">'.$objp->stock_theorique.'</td>';
 		print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
+		print '<td align="right">'.$objp->desiredstock.'</td>';
 		print '<td align="right">';
         if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
