@@ -3032,7 +3032,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
- *  @see get_default_localtax
+ *  @see get_default_npr, get_default_localtax
  */
 function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
@@ -3113,6 +3113,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *  @param  int			$idprod                 Id product
  *  @param	int			$idprodfournprice		Id supplier price for product
  *	@return float       			        	0 or 1
+ *  @see get_default_tva, get_default_localtax
  */
 function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
@@ -3149,7 +3150,7 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
  *	@return float        				       	localtax, -1 si ne peut etre determine
- *  @see get_default_tva
+ *  @see get_default_tva, get_default_npr
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
