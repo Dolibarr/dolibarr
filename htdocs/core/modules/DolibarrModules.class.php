@@ -606,9 +606,11 @@ abstract class DolibarrModules
             foreach ($this->boxes as $key => $value)
             {
                 //$titre = $this->boxes[$key][0];
-                $file  = $this->boxes[$key][1];
+                $file  = $this->boxes[$key]['file'];
                 //$note  = $this->boxes[$key][2];
 
+                if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
+                
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
                 $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
                 $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
