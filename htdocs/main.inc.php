@@ -984,8 +984,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
-            	//$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.css" />'."\n";
             }
 
         }
@@ -1150,10 +1148,21 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
+            	// We must force not using ajax because cache of jquery does not load js of other pages.
+            	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low. 
+            	if (empty($conf->dol_use_jmobile) || $conf->dol_use_jmobile != 2)
+            	{
+	            	print '<script type="text/javascript">
+		            		$(document).bind("mobileinit", function(){
+	           				$.extend(  $.mobile , {
+	           					ajaxFormsEnabled : false,
+	           					ajaxLinksEnabled : false,	/* old param */
+	           					ajaxEnabled : false			/* new param */
+	           				});
+	           				});
+	            			</script>';
+            	}
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
-            	//$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js"></script>'."\n";
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js"></script>'."\n";
             }
         }
 
