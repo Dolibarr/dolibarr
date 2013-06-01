@@ -48,9 +48,10 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $title=$langs->trans("Menu");
 
 // URL http://mydolibarr/core/get_menudiv.php?dol_use_jmobile=1 can be used for tests
+$head='<!-- Menu -->'."\n";
 $arrayofjs=array();
 $arrayofcss=array();
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 
