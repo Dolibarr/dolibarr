@@ -45,12 +45,18 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
  * View
  */
 
+$title=$langs->trans("Search");
+
 // URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+$head='<!-- Quick access -->'."\n";
+$arrayofjs=array();
+$arrayofcss=array();
+top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 
 
-print '<body style="margin: 30px; height: 100%;">'."\n";
+print '<body>'."\n";
+print '<div>';
 //print '<br>';
 
 $nbofsearch=0;
@@ -112,6 +118,7 @@ print '</div>'."\n";
 print '</div>';
 print "<!-- End SearchForm -->\n";
 
+print '</div>';
 print '</body></html>'."\n";
 
 $db->close();

@@ -1685,6 +1685,7 @@ function main_area($title='')
 
     print "\n";
 
+    if (! empty($conf->dol_use_jmobile)) print '<div data-role="page">';
     print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
     if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
@@ -1804,7 +1805,7 @@ if (! function_exists("llxFooter"))
 
         print "\n\n";
         print '</div> <!-- end div class="fiche" -->'."\n";
-
+        if (! empty($conf->dol_use_jmobile)) print '</div>';	// end data-role="page"
 
 		//XXX print "\n".'</td></tr></table> <!-- end right area -->'."\n";
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
