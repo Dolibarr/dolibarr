@@ -135,6 +135,8 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 2,'972','97209',3,'MARTINIQUE','Martinique');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 3,'973','97302',3,'GUYANE','Guyane');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 4,'974','97411',3,'REUNION','Réunion');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 6,'976','97601',3,'MAYOTTE','Mayotte');
+
 
 -- Provinces Belgium (id country=2)
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
