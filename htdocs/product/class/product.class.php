@@ -2157,13 +2157,13 @@ class Product extends CommonObject
 					'fullpath' => $compl_path.$label,			// Label
 					'type'=>$type				// Nb of units that compose parent product
 				);
-			}
 
-			// Recursive call if child is an array
-			if (is_array($desc_pere['childs']))
-			{
-				//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-				$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+				// Recursive call if child is an array
+				if (is_array($desc_pere['childs']))
+				{
+					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
+					$this ->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1]*$multiply, $level+1);
+				}
 			}
 		}
 	}
