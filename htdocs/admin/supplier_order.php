@@ -55,7 +55,7 @@ $specimenthirdparty->initAsSpecimen();
 if ($action == 'updateMask')
 {
     $maskconstorder=GETPOST('maskconstorder','alpha');
-    $maskvalue=GETPOST('maskvalue','alpha');
+    $maskvalue=GETPOST('maskorder','alpha');
 
     if ($maskconstorder)  $res = dolibarr_set_const($db,$maskconstorder,$maskvalue,'chaine',0,'',$conf->entity);
 
