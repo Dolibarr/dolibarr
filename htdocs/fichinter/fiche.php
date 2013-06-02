@@ -49,6 +49,7 @@ $langs->load("interventions");
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref','alpha');
 $socid		= GETPOST('socid','int');
+$contratid	= GETPOST('contratid','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
@@ -137,6 +138,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
     $object->socid			= $socid;
     $object->duree			= GETPOST('duree','int');
     $object->fk_project		= GETPOST('projectid','int');
+    $object->fk_contrat		= GETPOST('contratid','int');
     $object->author			= $user->id;
     $object->description	= GETPOST('description');
     $object->ref			= $ref;
@@ -304,6 +306,7 @@ else if ($action == 'update' && $user->rights->ficheinter->creer)
 
 	$object->socid			= $socid;
 	$object->fk_project		= GETPOST('projectid','int');
+	$object->fk_contrat		= GETPOST('contratid','int');
 	$object->author			= $user->id;
 	$object->description	= GETPOST('description','alpha');
 	$object->ref			= $ref;
@@ -369,6 +372,14 @@ else if ($action == 'classin' && $user->rights->ficheinter->creer)
 {
 	$object->fetch($id);
 	$result=$object->setProject(GETPOST('projectid','int'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+// Set into a contract
+else if ($action == 'setcontrat' && $user->rights->contrat->creer)
+{
+	$object->fetch($id);
+	$result=$object->set_contrat($user,GETPOST('contratid','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1004,6 +1015,19 @@ if ($action == 'create')
             print '</td></tr>';
         }
 
+	// Contrat
+	if ($conf->contrat->enabled)
+	{
+		$langs->load("contrat");
+		print '<tr><td valign="top">'.$langs->trans("Contrat").'</td><td>';
+		$numcontrat=select_contrats($soc->id,GETPOST('contratid','int'),'contratid');
+		if ($numcontrat==0)
+		{
+			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddContract").'</a>';
+		}
+		print '</td></tr>';
+	}
+
         // Model
         print '<tr>';
         print '<td>'.$langs->trans("DefaultModel").'</td>';
@@ -1250,6 +1274,55 @@ else if ($id > 0 || ! empty($ref))
 		print '</tr>';
 	}
 
+	// Contrat
+	if ($conf->contrat->enabled)
+	{
+		$langs->load('contrat');
+		print '<tr>';
+		print '<td>';
+
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Contract');
+		print '</td>';
+		if ($action != 'contrat')
+		{
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+			print img_edit($langs->trans('SetContrat'),1);
+			print '</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'contrat')
+		{
+			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="action" value="setcontrat">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			//print "$socid,$selected,$htmlname";
+			select_contrats($object->socid,$object->fk_contrat,'contratid');
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		}
+		else
+		{
+			if ($object->fk_contrat)
+            {
+                $contratstatic = new Contrat($db);
+                $contratstatic->fetch($object->fk_contrat);
+                //print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
+                print $contratstatic->getNomUrl(0,'',1);
+            }
+            else
+            {
+                print "&nbsp;";
+            }
+		}
+		print '</td>';
+		print '</tr>';
+	}
+	
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
