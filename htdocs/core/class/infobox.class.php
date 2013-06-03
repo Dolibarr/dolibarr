@@ -87,7 +87,7 @@ class InfoBox
                 {
                     if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
                     {
-                        $boxname = $regs[1];
+                        $boxname = preg_replace('/.php$/i','',$regs[1]);
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
                     }
@@ -95,9 +95,9 @@ class InfoBox
                     {
                         $boxname=preg_replace('/.php$/i','',$obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
-                    }
+					}
 
-                    // TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
+					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
                     // the "enabled" condition for modules forbidden for external users and the depends condition can be done.
                     // Goal is to avoid making a new instance for each boxes returned by select.
 
@@ -106,7 +106,7 @@ class InfoBox
                     {
                         $box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
                         //$box=new stdClass();
-
+                        
                         // box properties
                         $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
                         $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
@@ -126,7 +126,7 @@ class InfoBox
                         // box_def properties
                         $box->box_id	= (empty($obj->box_id) ? '' : $obj->box_id);
                         $box->note		= (empty($obj->note) ? '' : $obj->note);
-
+                        
                         // Filter on box->enabled (fused for example by box_comptes) and box->depends
                         //$enabled=1;
                         $enabled=$box->enabled;
@@ -135,14 +135,15 @@ class InfoBox
                             foreach($box->depends as $module)
                             {
                                 //print $boxname.'-'.$module.'<br>';
-                                if (empty($conf->$module->enabled)) $enabled=0;
+                                $tmpmodule=preg_replace('/@[^@]+/','',$module);
+                                if (empty($conf->$tmpmodule->enabled)) $enabled=0;
                             }
                         }
 
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
                         else unset($box);
-                    }
+                        }
                 }
                 $j++;
             }
