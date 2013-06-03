@@ -686,7 +686,7 @@ else
 		$formmail->withtopic=(isset($_POST['subject'])?$_POST['subject']:$langs->trans("Test"));
 		$formmail->withtopicreadonly=0;
 		$formmail->withfile=2;
-		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:($action == 'testhtml'?$langs->trans("PredefinedMailTestHtml"):$langs->trans("PredefinedMailTest")));
+		$formmail->withbody=(isset($_POST['message'])?$_POST['message']:($action == 'testhtml'?$langs->transnoentities("PredefinedMailTestHtml"):$langs->transnoentities("PredefinedMailTest")));
 		$formmail->withbodyreadonly=0;
 		$formmail->withcancel=1;
 		$formmail->withdeliveryreceipt=1;
