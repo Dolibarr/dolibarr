@@ -290,7 +290,7 @@ class modHoliday extends DolibarrModules
 	{
 		$sql = array();
 
-		$result=$this->load_tables();
+		//$result=$this->_load_tables('');
 
 		return $this->_init($sql);
 	}
@@ -309,19 +309,6 @@ class modHoliday extends DolibarrModules
 		return $this->_remove($sql);
 	}
 
-
-	/**
-	 *	Create tables, keys and data required by module
-	 * 	Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * 	and create data commands must be stored in directory /mymodule/sql/
-	 *	This function is called by this->init.
-	 *
-	 * 	@return		int		<=0 if KO, >0 if OK
-	 */
-	function load_tables()
-	{
-		return $this->_load_tables('');
-	}
 }
 
 ?>

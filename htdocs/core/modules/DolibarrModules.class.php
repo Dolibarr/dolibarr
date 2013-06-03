@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,12 @@
 
 /**
  *  \file           htdocs/core/modules/DolibarrModules.class.php
- *  \brief          Fichier de description et activation des modules Dolibarr
+ *  \brief          File of parent class of module descriptor class files
  */
 
 
 /**
- *  \class      DolibarrModules
- *  \brief      Classe mere des classes de description et activation des modules Dolibarr
+ *  Parent class of module descriptor class files
  */
 abstract class DolibarrModules
 {
@@ -420,7 +419,7 @@ abstract class DolibarrModules
 		if (empty($reldir)) return 1;
 
         include_once DOL_DOCUMENT_ROOT .'/core/lib/admin.lib.php';
-
+        
         $ok = 1;
         foreach($conf->file->dol_document_root as $dirroot)
         {
