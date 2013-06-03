@@ -105,9 +105,9 @@ class modExternalRss extends DolibarrModules
 				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i',$obj->name,$reg))
 				{
 					// Definie la boite si on a trouvee une ancienne configuration
-					$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
-					$this->boxes[$reg[1]][1] = "box_external_rss.php";
-					$this->boxes[$reg[1]][2] = $reg[1]." (".$obj->value.")";
+					//$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
+					$this->boxes[$reg[1]]['file'] = "box_external_rss.php";
+					$this->boxes[$reg[1]]['note'] = $reg[1]." (".$obj->value.")";
 				}
 			}
 			$this->db->free($result);
@@ -131,7 +131,7 @@ class modExternalRss extends DolibarrModules
 		$sql = array();
 
 		// Delete old declarations of RSS box
-		$this->boxes[0][1] = "box_external_rss.php";
+		$this->boxes[0]['file'] = "box_external_rss.php";
 
 		return $this->_remove($sql,$options);
     }

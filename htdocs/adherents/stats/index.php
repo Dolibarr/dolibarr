@@ -46,14 +46,14 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+$langs->load("members");
+
 
 /*
  * View
  */
 
 $form=new Form($db);
-
-$langs->load("propal");
 
 llxHeader();
 

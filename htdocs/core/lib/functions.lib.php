@@ -2793,7 +2793,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
-	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller id=".$thirdparty_seller->id);
+	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
 
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
@@ -2819,16 +2819,18 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}
 	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
 
-	$code_country=$thirdparty_seller->country_code;
+	// Do not enabled this. We want localtax that match the vat rate.
+	// If we forced a vat, we must also force local tax
+	/*
 	if (is_object($thirdparty_buyer))
 	{
-		if ($code_country != $thirdparty_buyer->country_code) return 0;
-	}
+		if ($thirdparty_seller->country_code != $thirdparty_buyer->country_code) return 0;
+	}*/
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
 	dol_syslog("get_localtax sql=".$sql);

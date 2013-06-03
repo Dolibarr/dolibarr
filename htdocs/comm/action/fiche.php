@@ -888,7 +888,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -897,7 +897,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -906,7 +906,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
         print '</form>'."\n";
         print '</td>';
 		print '</tr>';

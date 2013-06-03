@@ -44,14 +44,16 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+$langs->load("members");
 
 
 /*
  * View
  */
 
-
-llxHeader('','','','',0,0,array('http://www.google.com/jsapi'));
+$arrayjs=array('http://www.google.com/jsapi');
+if (! empty($conf->dol_use_jmobile)) $arrayjs=array();
+llxHeader('','','','',0,0,$arrayjs);
 
 $title=$langs->trans("Statistics");
 if ($mode == 'memberbycountry') $title=$langs->trans("MembersStatisticsByCountries");
@@ -195,7 +197,7 @@ else
 
 
 // Show graphics
-if ($mode == 'memberbycountry')
+if (count($arrayjs) && $mode == 'memberbycountry')
 {
     $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
     if (is_readable($color_file)) include_once $color_file;

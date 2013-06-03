@@ -66,6 +66,9 @@ else
     //ini_set('default_socket_timeout', $params['response_timeout']);
     //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
 	$soapclient = new nusoap_client($WS_DOL_URL_WSDL,true,$params['proxy_host'],$params['proxy_port'],$params['proxy_login'],$params['proxy_password'],$params['connection_timeout'],$params['response_timeout']);
+	$soapclient->soap_defencoding = 'utf-8';
+	$soapclient->xml_encoding = 'utf-8';
+	$soapclient->decode_utf8 = false;
 
 	// Check for an error
 	$err = $soapclient->getError();
