@@ -127,7 +127,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '223', 'CV
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '224', 'VZW  - Vereniging zonder winstoogmerk');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '225', 'CVOA - Coöperatieve vennootschap met onbeperkte aansprakelijkheid ');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '226', 'GCV  - Gewone commanditaire vennootschap');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '227', 'C.VA - Commanditaire vennootschap op aandelen');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '227', 'Comm.VA - Commanditaire vennootschap op aandelen');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '228', 'VOF  - Vennootschap onder firma');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '229', 'VS0  - Vennootschap met sociaal oogmerk');
 
