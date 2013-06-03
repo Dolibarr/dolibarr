@@ -115,13 +115,13 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 
 			// Buttons
 			print '<td align="center" valign="middle" class="nowrap">';
-			print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" class="button" style="width:120px" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+			print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 			print '<br>';
-			print img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" class="button" style="width:120px" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+			print img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
 			print '<br>';
-            print img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" class="button" style="width:120px" name="viewday" value="'.$langs->trans("ViewDay").'">';
+            print img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewday" value="'.$langs->trans("ViewDay").'">';
 			print '<br>';
-			print img_picto($langs->trans("ViewList"),'object_list','class="hideonsmartphone"').' <input type="submit" class="button" style="width:120px" name="viewlist" value="'.$langs->trans("ViewList").'">';
+			print img_picto($langs->trans("ViewList"),'object_list','class="hideonsmartphone"').' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="'.$langs->trans("ViewList").'">';
 			print '</td>';
 
 			// Legend

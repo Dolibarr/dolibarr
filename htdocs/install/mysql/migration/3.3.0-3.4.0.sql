@@ -381,3 +381,6 @@ ALTER TABLE llx_user_clicktodial ADD COLUMN url varchar(255) AFTER fk_user;
 ALTER TABLE llx_fichinterdet ADD COLUMN fk_parent_line integer NULL AFTER fk_fichinter;
 
 ALTER TABLE llx_societe_address CHANGE COLUMN tel phone varchar(20);
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (143, 14,'5','0','9.975','1','TPS and TVQ rate',1);
+
