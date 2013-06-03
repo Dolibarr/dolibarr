@@ -51,7 +51,6 @@ insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_M
 --
 -- IHM
 --
-
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SIZE_LISTE_LIMIT','25','chaine','Longueur maximum des listes',0,0);
 insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_SHOW_WORKBOARD','1','yesno','Affichage tableau de bord de travail Dolibarr',0,0);
 
@@ -62,7 +61,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT
 
 
 --
--- Delai tolerance
+-- Warning delays
 --
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ACTIONS_TODO','7','chaine','Tolérance de retard avant alerte (en jours) sur actions planifiées non réalisées',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ORDERS_TO_PROCESS','2','chaine','Tolérance de retard avant alerte (en jours) sur commandes clients non traitées',0);
@@ -78,12 +77,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRA
 
 
 --
--- Tiers
---
-insert into llx_const (name, value, type, note, visible, entity) values ('SOCIETE_NOLIST_COURRIER','1','yesno','Liste les fichiers du repertoire courrier',0,0);
-
-
---
 -- Mail Mailing
 --
+insert into llx_const (name, value, type, note, visible) values ('MAIN_FIX_FOR_BUGGED_MTA','1','chaine','Set constant to fix email ending from PHP with some linux ike system',1);
 insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);

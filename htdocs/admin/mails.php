@@ -599,7 +599,7 @@ else
 
 	print '</table>';
 
-    if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+    if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
     {
         print '<br>';
         /*
