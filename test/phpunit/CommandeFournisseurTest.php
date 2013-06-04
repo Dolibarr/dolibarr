@@ -131,12 +131,12 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 
 		// Set supplier and product to use
 		$socid=1;
-		$prodid=1;
 		$societe=new Societe($db);
 		$societe->fetch($socid);
 		$product=new ProductFournisseur($db);
-		$product->fetch($prodid);
-
+		$product->fetch(0,'PIDRESS');
+		if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
+		
 		$quantity=10;
 		$ref_fourn='SUPPLIER_REF_PHPUNIT';
 		$tva_tx=19.6;
