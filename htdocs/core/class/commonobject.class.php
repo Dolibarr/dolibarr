@@ -1527,12 +1527,6 @@ abstract class CommonObject
                     		$obj->localtax1_tx = $localtax1_array[1];
                     	}
                     	//end TODO
-
-						if ($obj->localtax1_type == '7')
-						{
-							$this->total_localtax1 += $obj->localtax1_tx;
-							$this->total_ttc       += $obj->localtax1_tx;
-						}
 					}
                     if ($this->total_localtax2 == 0)
                     {
@@ -1546,12 +1540,6 @@ abstract class CommonObject
                     		$obj->localtax2_tx = $localtax2_array[1];
                     	}
                     	//end TODO
-
-                    	if ($obj->localtax2_type == '7')
-						{
-							$this->total_localtax2 += $obj->localtax2_tx;
-							$this->total_ttc       += $obj->localtax2_tx;
-						}
                     }
                 }
 

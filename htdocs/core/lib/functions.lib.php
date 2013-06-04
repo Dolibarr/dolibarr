@@ -2838,8 +2838,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local==1 && $obj->localtax1_type != '7') return $obj->localtax1;
-		elseif ($local==2 && $obj->localtax2_type != '7') return $obj->localtax2;
+		if ($local==1) return $obj->localtax1;
+		elseif ($local==2) return $obj->localtax2;
 	}
 
 	return 0;

@@ -381,12 +381,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					//end TODO
 
 				    // retrieve global local tax
-					if ($localtax1_type == '7') $localtax1_rate = $localtaxtmp_array[1];
-					if ($localtax2_type == '7') $localtax2_rate = $localtaxtmp_array[3];
-
-					if ($localtax1_type && ($localtax1ligne != 0 || $localtax1_type == '7'))
+					if ($localtax1_type && $localtax1ligne != 0)
 						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
-					if ($localtax2_type && ($localtax2ligne != 0 || $localtax2_type == '7'))
+					if ($localtax2_type && $localtax2ligne != 0)
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
