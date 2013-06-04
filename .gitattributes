@@ -3,7 +3,7 @@
 
 # Explicitly declare text files we want to always be normalized and converted 
 # to native line endings on checkout.
-*.php text
+*.php text eol=lf
 *.sql text
 *.htm text
 *.html text
