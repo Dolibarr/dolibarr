@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
+$langs->load("orders");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
