@@ -91,3 +91,5 @@ NoStockAction=Pas d'action sur l'entrepôt
 LastWaitingSupplierOrders=Commandes en attente de réception
 DesiredStock=Stock désiré
 StockToBuy=Stock à acheter
+Replenishment=Réapprovisionnement
+ReplenishmentOrders=Commandes de réapprovisionnement

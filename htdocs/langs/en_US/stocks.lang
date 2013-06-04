@@ -91,3 +91,5 @@ NoStockAction=No stock action
 LastWaitingSupplierOrders=Orders waiting for receptions
 DesiredStock=Desired stock
 StockToBuy=Stock to buy
+Replenishment=Replenishment
+ReplenishmentOrders=Replenishment orders

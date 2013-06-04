@@ -100,7 +100,7 @@ if($action == 'order'){
             $sql .= ' from '.MAIN_DB_PREFIX.'product_fournisseur_price';
             $sql .= ' where rowid = '.$supplierpriceid;
             $resql = $db->query($sql);
-            if($resql) {
+            if($resql && $db->num_rows($resql) > 0) {
                 //might need some value checks
                 $obj = $db->fetch_object($resql);
                 $line = new CommandeFournisseurLigne($db);
@@ -117,27 +117,25 @@ if($action == 'order'){
             }
         }
     }
-    //At this point we know how many orders we need and what lines they have
+    //we now know how many orders we need and what lines they have
     $i = 0;
     $orders = array();
     $suppliersid = array_keys($suppliers);
     foreach($suppliers as $supplier){
         $order = new CommandeFournisseur($db);
         $order->socid = $suppliersid[$i];
+        //little trick to know which orders have been generated this way
         $order->source = 42;
-        $i++;
         foreach($supplier['lines'] as $line){
             $order->lines[] = $line;
         }
         $id = $order->create($user);
-        if($id) {
-            //emulate what fourn/commande/liste.php does
+        if($id < 0) {
+            //error stuff
         }
+        $i++;
     }
 }
-
-// None
-
 
 /*
  * View
@@ -145,7 +143,7 @@ if($action == 'order'){
 
 $htmlother=new FormOther($db);
 
-$title=$langs->trans("ProductsAndServices");
+$title=$langs->trans("Replenishment");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
@@ -221,17 +219,7 @@ if ($resql)
 
     $helpurl='';
     $helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-
-    if (isset($type))
-    {
-        if ($type==1) { $texte = $langs->trans("Services"); }
-        else { $texte = $langs->trans("Products"); }
-    } else {
-        $texte = $langs->trans("ProductsAndServices");
-    }
-    $texte.=' ('.$langs->trans("Stocks").')';
-
-
+    $texte = $langs->trans('Replenishment');
     llxHeader("",$title,$helpurl,$texte);
 
     if ($sref || $snom || $sall || GETPOST('search'))
@@ -410,11 +398,17 @@ else
 }
 
 $commandestatic=new CommandeFournisseur($db);
+$sref=GETPOST('search_ref');
+$snom=GETPOST('search_nom');
+$suser=GETPOST('search_user');
+$sttc=GETPOST('search_ttc');
+$sall=GETPOST('search_all');
 
-$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');
-if($sortorder == '') $sortorder="DESC";
-if($sortfield == '') $sortfield="cf.date_creation";
+$page  = GETPOST('page','int');
+/*$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');*/
+$sortorder="DESC";
+$sortfield="cf.date_creation";
 $offset = $conf->liste_limit * $page ;
 $sql = "SELECT s.rowid as socid, s.nom, cf.date_creation as dc,";
 $sql.= " cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
@@ -465,16 +459,16 @@ if ($resql)
 	$i = 0;
 
 
-	print_barre_liste($title, $page, "replenishment.php", "", $sortfield, $sortorder, '', $num);
-	print '<form action="replenishment.php" method="GET">';
+	print_barre_liste($langs->trans('ReplenishmentOrders'), $page, "replenish.php", "", $sortfield, $sortorder, '', $num);
+	print '<form action="replenish.php" method="GET">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","","",'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("OrderCreation"),$_SERVER["PHP_SELF"],"","","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
