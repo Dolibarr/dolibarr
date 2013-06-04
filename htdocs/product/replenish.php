@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -84,6 +85,56 @@ if (! empty($_POST["button_removefilter_x"]))
 /*
  * Actions
  */
+ 
+if($action == 'order'){
+    $linecount = GETPOST('linecount', 'int');
+    $suppliers = array();
+    for($i = 0; $i < $linecount; $i++) {
+        if(GETPOST($i, 'alpha') === 'on') { //one line
+            $supplierpriceid = GETPOST('fourn'.$i, 'int');
+            //get all the parameters needed to create a line
+            $qty = GETPOST('tobuy'.$i, 'int');
+            $desc = GETPOST('desc'.$i, 'alpha');
+            $sql = 'Select fk_product, fk_soc, ref_fourn';
+            $sql .= ', tva_tx, unitprice';
+            $sql .= ' from '.MAIN_DB_PREFIX.'product_fournisseur_price';
+            $sql .= ' where rowid = '.$supplierpriceid;
+            $resql = $db->query($sql);
+            if($resql) {
+                //might need some value checks
+                $obj = $db->fetch_object($resql);
+                $line = new CommandeFournisseurLigne($db);
+                $line->qty = $qty;
+                $line->desc = $desc;
+                $line->fk_product = $obj->fk_product;
+                $line->tva_tx = $obj->tva_tx;
+                $line->subprice = $obj->unitprice;
+                $line->total_ht = $obj->unitprice * $qty;
+                $line->total_tva = $line->total_ht * $line->tva_tx / 100;
+                $line->total_ttc = $line->total_ht + $line->total_tva;
+                $line->ref_fourn = $obj->ref_fourn;
+                $suppliers[$obj->fk_soc]['lines'][] = $line;
+            }
+        }
+    }
+    //At this point we know how many orders we need and what lines they have
+    $i = 0;
+    $orders = array();
+    $suppliersid = array_keys($suppliers);
+    foreach($suppliers as $supplier){
+        $order = new CommandeFournisseur($db);
+        $order->socid = $suppliersid[$i];
+        $order->source = 42;
+        $i++;
+        foreach($supplier['lines'] as $line){
+            $order->lines[] = $line;
+        }
+        $id = $order->create($user);
+        if($id) {
+            //emulate what fourn/commande/liste.php does
+        }
+    }
+}
 
 // None
 
@@ -207,6 +258,8 @@ if ($resql)
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<input type="hidden" name="linecount" value="'.$num.'">';
+    print '<input type="hidden" name="action" value="order">';
 
     print '<table class="liste" width="100%">';
 
@@ -239,8 +292,6 @@ if ($resql)
     print_liste_field_titre($langs->trans("PhysicalStock"),"replenish.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("StockToBuy"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Supplier"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
-    // TODO Add info of running suppliers/customers orders
-    //print_liste_field_titre($langs->trans("TheoreticalStock"),"replenish.php", "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
     print '<td>&nbsp;</td>';
     print "</tr>\n";
 
@@ -263,8 +314,6 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    //print '<td class="liste_titre">&nbsp;</td>';
-   // print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
@@ -297,7 +346,7 @@ if ($resql)
 
         $var=!$var;
         print '<tr '.$bc[$var].'>';
-        print '<td><input type="checkbox" name="'.$objp->rowid.'"></td>';
+        print '<td><input type="checkbox" name="'.$i.'"></td>';
         print '<td class="nowrap">';
         $product_static->ref=$objp->ref;
         $product_static->id=$objp->rowid;
@@ -306,6 +355,7 @@ if ($resql)
         //if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
         print '</td>';
         print '<td>'.$objp->label.'</td>';
+        print '<input type="hidden" name="desc'.$i.'" value="'.$objp->label.'" >';
 
         if (! empty($conf->service->enabled) && $type == 1)
         {
@@ -316,8 +366,6 @@ if ($resql)
             else print $objp->duration;
             print '</td>';
         }
-        //print '<td align="right">'.$objp->stock_theorique.'</td>';
-        //print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
         print '<td align="right">'.$objp->desiredstock.'</td>';
         print '<td align="right">';
         if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
@@ -328,8 +376,9 @@ if ($resql)
         ($conf->global->use_theoretical_stock? $stock = $objp->stock_théorique : $stock = $objp->stock_physique);
         $stocktobuy = $objp->desiredstock - $stock;
         print '<td align="right">'.$stocktobuy.'</td>';
+        print '<input type="hidden" name="tobuy'.$i.'" value="'.$stocktobuy.'" >';
         $form = new Form($db);
-        print '<td align="right">'.$form->select_product_fourn_price($product_static->id).'</td>';
+        print '<td align="right">'.$form->select_product_fourn_price($product_static->id, "fourn".$i).'</td>';
         print '<td>&nbsp</td>';
         print "</tr>\n";
         $i++;
@@ -360,6 +409,137 @@ else
     dol_print_error($db);
 }
 
+$commandestatic=new CommandeFournisseur($db);
+
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
+if($sortorder == '') $sortorder="DESC";
+if($sortfield == '') $sortfield="cf.date_creation";
+$offset = $conf->liste_limit * $page ;
+$sql = "SELECT s.rowid as socid, s.nom, cf.date_creation as dc,";
+$sql.= " cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
+$sql.= " u.login";
+$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ")";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
+$sql.= " WHERE cf.fk_soc = s.rowid ";
+$sql.= " AND cf.entity = ".$conf->entity;
+$sql.= " AND cf.source = 42";
+$sql.= " AND cf.fk_statut < 5";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($sref)
+{
+	$sql.= " AND cf.ref LIKE '%".$db->escape($sref)."%'";
+}
+if ($snom)
+{
+	$sql.= " AND s.nom LIKE '%".$db->escape($snom)."%'";
+}
+if ($suser)
+{
+	$sql.= " AND u.login LIKE '%".$db->escape($suser)."%'";
+}
+if ($sttc)
+{
+	$sql .= " AND total_ttc = ".price2num($sttc);
+}
+if ($sall)
+{
+	$sql.= " AND (cf.ref LIKE '%".$db->escape($sall)."%' OR cf.note LIKE '%".$db->escape($sall)."%')";
+}
+if ($socid) $sql.= " AND s.rowid = ".$socid;
+
+if (GETPOST('statut'))
+{
+	$sql .= " AND fk_statut =".GETPOST('statut');
+}
+
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$resql = $db->query($sql);
+if ($resql)
+{
+
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+
+	print_barre_liste($title, $page, "replenishment.php", "", $sortfield, $sortorder, '', $num);
+	print '<form action="replenishment.php" method="GET">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","","",'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+
+	print '<tr class="liste_titre">';
+
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
+	print '<td colspan="2" class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '</td>';
+	print '</tr>';
+
+	$var=true;
+
+	$userstatic = new User($db);
+
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
+
+		print "<tr $bc[$var]>";
+
+		// Ref
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
+
+		// Company
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
+		print $obj->nom.'</a></td>'."\n";
+
+		// Author
+		$userstatic->id=$obj->fk_user_author;
+		$userstatic->login=$obj->login;
+		print "<td>";
+		if ($userstatic->id) print $userstatic->getLoginUrl(1);
+		else print "&nbsp;";
+		print "</td>";
+
+		// Amount
+		print '<td align="right" width="100">'.price($obj->total_ttc)."</td>";
+
+		// Date
+		print "<td align=\"center\" width=\"100\">";
+		if ($obj->dc)
+		{
+			print dol_print_date($db->jdate($obj->dc),"day");
+		}
+		else
+		{
+			print "-";
+		}
+		print '</td>';
+
+		// Statut
+		print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>\n";
+	print "</form>\n";
+
+	$db->free($resql);
+}
 
 llxFooter();
 $db->close();
