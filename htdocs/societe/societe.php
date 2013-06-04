@@ -98,7 +98,7 @@ if ($mode == 'search')
     if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";   // Join for the needed table to filter by categ
 	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 	{
-		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fourn != 1";
+		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
 	}
     // Insert sale filter
     if ($search_sale)
