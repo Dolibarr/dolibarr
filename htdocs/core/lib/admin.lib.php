@@ -1082,6 +1082,7 @@ function form_constantes($tableau,$strictw3c=0)
             	print '<div id="example3" class="hidden">';
             	print 'mymailmanlist<br>';
             	print 'mymailmanlist1,mymailmanlist2<br>';
+            	print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
             	if ($conf->categorie->enabled) print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
             	print '</div>';
             	//print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';

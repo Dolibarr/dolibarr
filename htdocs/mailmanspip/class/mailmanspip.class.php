@@ -395,17 +395,22 @@ class MailmanSpip
 
 	            foreach ($lists as $list)
 	            {
-	                // Filter on type something (ADHERENT_MAILMAN_LISTS = "filtervalue:mailinglist1,filtervalue2:mailinglist2,mailinglist3")
-	                $tmp=explode(':',$list);
-	                if (! empty($tmp[1]))
-	                {
-	                    $list=$tmp[1];
-	                	if ($object->element == 'member' && $object->type != $tmp[1])    // Filter on member type label
-	                    {
-	                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[0], LOG_DEBUG);
-	                    	continue;
-	                    }
-	                }
+	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
+	            	$tmp=explode(':',$list);
+	            	if (! empty($tmp[2]))
+	            	{
+	            		$list=$tmp[2];
+	            		if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
+	            		{
+	            			dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
+	            			continue;
+	            		}
+	            		if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
+	            		{
+	            			dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
+	            			continue;
+	            		}
+	            	}
 
 	                //We call Mailman to unsubscribe the user
 	                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
