@@ -44,7 +44,8 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
-
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
 $type = 'order';
 
 
