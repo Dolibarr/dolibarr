@@ -227,7 +227,9 @@ div.inline-block
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-
+.dolibarrcombobox {
+	height: 22px;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
