@@ -40,6 +40,9 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='invoice';
 
 
 /*
@@ -137,78 +140,40 @@ if ($action == 'setModuleOptions')
     }
 }
 
-if ($action == 'set')
+// Activate a model
+else if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-    $type='invoice';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-    if ($db->query($sql))
-    {
-
-    }
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
-    $type='invoice';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE nom = '".$db->escape($value)."'";
-    $sql.= " AND type = '".$type."'";
-    $sql.= " AND entity = ".$conf->entity;
-
-    if ($db->query($sql))
-    {
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
         if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'FACTURE_ADDON_PDF',$conf->entity);
-    }
+	}
 }
 
-if ($action == 'setdoc')
+// Set default model
+else if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-    $db->begin();
-
-    if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-    {
-        $conf->global->FACTURE_ADDON_PDF = $value;
-    }
-
-    // On active le modele
-    $type='invoice';
-
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$db->escape($value)."'";
-    $sql_del.= " AND type = '".$type."'";
-    $sql_del.= " AND entity = ".$conf->entity;
-    dol_syslog("Delete from model table ".$sql_del);
-    $result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$value."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$scandir."'":"null");
-    $sql.= ")";
-    dol_syslog("Insert into model table ".$sql);
-    $result2=$db->query($sql);
-    if ($result1 && $result2)
-    {
-        $db->commit();
-    }
-    else
-    {
-        dol_syslog("Error ".$db->lasterror(), LOG_ERR);
-        $db->rollback();
-    }
+	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->FACTURE_ADDON_PDF = $value;
+	}
+	
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
