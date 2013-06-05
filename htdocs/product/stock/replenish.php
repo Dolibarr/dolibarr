@@ -201,6 +201,7 @@ $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.pr
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tobuy, p.seuil_stock_alerte";
 $sql .= ", p.desiredstock";
+$sql.= ' HAVING p.desiredstock > SUM(s.reel)';
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
