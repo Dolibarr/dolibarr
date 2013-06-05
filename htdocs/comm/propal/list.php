@@ -203,7 +203,6 @@ if ($result)
 {
 	$objectstatic=new Propal($db);
 	$userstatic=new User($db);
-
 	$num = $db->num_rows($result);
 
  	if ($socid)
@@ -389,6 +388,15 @@ if ($result)
 
 		$i++;
 	}
+
+	if ($total>0)
+			{
+				$var=!$var;
+				print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+				print '<td colspan="5" align="right"">'.price($total).'<td colspan="3"</td>';
+				print '</tr>';
+			}
+	
 	print '</table>';
 
 	print '</form>';
