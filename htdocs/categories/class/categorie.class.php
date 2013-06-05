@@ -372,19 +372,19 @@ class Categorie
 	 * 	Link an object to the category
 	 *
 	 *	@param		Object	$obj	Object to link to category
-	 * 	@param		string	$type	Type of category
-	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id non renseign, -3 : Already linked
+	 * 	@param		string	$type	Type of category (member, supplier, product, customer)
+	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
 	function add_type($obj,$type)
 	{
-		if ($this->id == -1)
-		{
-			return -2;
-		}
+		if ($this->id == -1) return -2;
+		if ($type == 'company')     $type='societe';
+		if ($type == 'fournisseur') $type='societe';
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".($type=='fournisseur'?'societe':$type).")";
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$type.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
+		dol_syslog(get_class($this).'::add_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
 			return 1;
@@ -956,36 +956,43 @@ class Categorie
 	}
 
 	/**
-	 * 		Return list of categories linked to element of type $type with id $typeid
+	 * 	Return list of categories linked to element of id $id and type $typeid
 	 *
-	 * 		@param		int		$id			Id of element
-	 * 		@param		int		$typeid		Type id of link (0,1,2,3...)
-	 * 		@return		array				List of category objects
+	 * 	@param		int		$id			Id of element
+	 * 	@param		int		$typeid		Type of link (0 or 'product', 1 or 'supplier', 2 or 'customer', 3 or 'member', ...)
+	 * 	@param		string	$mode		'object'=Get array of categories, 'label'=Get array of category labels
+	 * 	@return		mixed				Array of category objects or < 0 if KO
 	 */
-	function containing($id,$typeid)
+	function containing($id,$typeid,$mode='object')
 	{
-		$cats = array ();
+		$cats = array();
 
 		$table=''; $type='';
-		if ($typeid == 0)  { $table='product'; $type='product'; }
-		if ($typeid == 1)  { $table='societe'; $type='fournisseur'; }
-		if ($typeid == 2)  { $table='societe'; $type='societe'; }
-		if ($typeid == 3)  { $table='member'; $type='member'; }
+		if ($typeid == 0 || $typeid == 'product')         { $typeid=0; $table='product'; $type='product'; }
+		else if ($typeid == 1 || $typeid == 'supplier')  { $typeid=1; $table='societe'; $type='fournisseur'; }
+		else if ($typeid == 2 || $typeid == 'customer')  { $typeid=2; $table='societe'; $type='societe'; }
+		else if ($typeid == 3 || $typeid == 'member')    { $typeid=3; $table='member';  $type='member'; }
 
-		$sql = "SELECT ct.fk_categorie";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
-		$sql.= " WHERE ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
+		$sql = "SELECT ct.fk_categorie, c.label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";
+		$sql.= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
+		dol_syslog(get_class($this).'::containing sql='.$sql);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			while ($rec = $this->db->fetch_array($res))
+			while ($obj = $this->db->fetch_object($res))
 			{
-				$cat = new Categorie($this->db);
-				$cat->fetch($rec['fk_categorie']);
-				$cats[] = $cat;
+				if ($mode == 'label')
+				{
+					$cats[] = $obj->label;
+				}
+				else {
+					$cat = new Categorie($this->db);
+					$cat->fetch($obj->fk_categorie);
+					$cats[] = $cat;
+				}
 			}
 
 			return $cats;
