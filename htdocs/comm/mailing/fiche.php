@@ -668,7 +668,7 @@ if ($action == 'create')
 	print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor($_POST['bgcolor'],'bgcolor','new_mailing',0);
 	print '</td></tr>';
-	print '<tr><td width="25%" class="fieldrequired" valign="top">'.$langs->trans("MailMessage").'<br>';
+	print '<tr><td width="25%" valign="top"><span class="fieldrequired">'.$langs->trans("MailMessage").'</span><br>';
 	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 	foreach($object->substitutionarray as $key => $val)
 	{

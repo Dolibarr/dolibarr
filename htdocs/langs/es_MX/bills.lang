@@ -23,6 +23,4 @@ TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las f
 AddCreditNote=Crear nota de crédito
 BillTo=Receptor
 Residence=Tarjeta
-IBANNumber=CLAVE Interbancaria
-BICNumber=Sucursal
 PaymentByTransferOnThisBankAccount=Cuenta para depositos y transferencias

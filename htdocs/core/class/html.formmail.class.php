@@ -596,7 +596,7 @@ class FormMail
         			if (!empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
         				$this->withfckeditor=1;
         			}
-        			$doleditor=new DolEditor('message',nl2br($defaultmessage),'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
+        			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
         			$out.= $doleditor->Create(1);
         		}
         		$out.= "</td></tr>\n";
