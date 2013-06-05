@@ -16,6 +16,9 @@ For users:
 - New: Show process id in all command line scripts.
 - New: Module mailman can subscribe/unsubscribe to ML according to categories of member.
 
+For translators:
+- Normalized sort order of all languages files with english ref file.
+
 For developers:
 - New: DolGraph can build graph with three lines.
 
