@@ -366,9 +366,7 @@ if ($resql)
 	// Status	
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '&nbsp; ';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+	
 	print "</tr>\n";
 
 	$var=True;
@@ -383,7 +381,7 @@ if ($resql)
 		$companystatic->canvas=$obj->canvas;
         $companystatic->client=$obj->client;
         $companystatic->status=$obj->status;
-		print $companystatic->getNomUrl(1,'',24);
+		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
 		print "<td>".$obj->ville."</td>\n";
 		print "<td>".$obj->idprof1."</td>\n";
