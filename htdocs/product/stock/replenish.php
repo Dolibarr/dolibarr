@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       htdocs/product/replenish.php
+ *  \file       htdocs/product/stock/replenish.php
  *  \ingroup    produit
- *  \brief      Page to list stocks
+ *  \brief      Page to list stocks to replenish
  */
 
 require '../../main.inc.php';
@@ -86,7 +86,8 @@ if (! empty($_POST["button_removefilter_x"]))
 /*
  * Actions
  */
- 
+
+//orders creation
 if($action == 'order'){
     $linecount = GETPOST('linecount', 'int');
     $suppliers = array();
@@ -277,7 +278,6 @@ if ($resql)
     print_liste_field_titre($langs->trans("Ref"),"replenish.php", "p.ref",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"replenish.php", "p.label",$param,"","",$sortfield,$sortorder);
     if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"),"replenish.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("MininumStock"),"replenish.php", "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DesiredStock"),"replenish.php", "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("PhysicalStock"),"replenish.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("StockToBuy"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
@@ -342,7 +342,6 @@ if ($resql)
         $product_static->id=$objp->rowid;
         $product_static->type=$objp->fk_product_type;
         print $product_static->getNomUrl(1,'',16);
-        //if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
         print '</td>';
         print '<td>'.$objp->label.'</td>';
         print '<input type="hidden" name="desc'.$i.'" value="'.$objp->label.'" >';
@@ -407,8 +406,7 @@ $sttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
 
 $page  = GETPOST('page','int');
-/*$sortorder = GETPOST('sortorder','alpha');
-$sortfield = GETPOST('sortfield','alpha');*/
+
 $sortorder="DESC";
 $sortfield="cf.date_creation";
 $offset = $conf->liste_limit * $page ;
