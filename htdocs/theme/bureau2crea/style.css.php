@@ -182,6 +182,9 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
+.dolibarrcombobox {
+	height: 22px;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
