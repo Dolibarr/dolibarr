@@ -197,7 +197,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldcustomer,$dura
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = 0;
+	$msgishtml = -1;
 
     print "- Send email for ".$oldcustomer."(".$oldemail."), total: ".$total."\n";
     dol_syslog("email_expire_services_to_customers.php: send mail to ".$oldemail);
