@@ -661,16 +661,18 @@ class Form
      *
      *  @param		int			$selected				Preselected products
      *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
-     *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
+     *  @param		int			$filter					Filter on thirdparty
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+     * 	@param		int			$forcecombo				Force to use combo box
      *  @return		void
      */
-    function select_thirdparty($selected='', $htmlname='productid', $filtertype='', $limit=20, $ajaxoptions=array())
+    function select_thirdparty($selected='', $htmlname='productid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
     	global $langs,$conf;
 
-    	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
+    	/* TODO Use ajax autocompletion (not finished)
+    	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
     	{
     		$placeholder='';
 
@@ -698,9 +700,9 @@ class Form
     		}
     	}
     	else
-    	{
-    		print $this->select_thirdparty_list($selected,$htmlname,$filtertype,1,0,1,array(),'',0,$limit);
-    	}
+    	{*/
+    		print $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    	//}
     }
 
     /**
