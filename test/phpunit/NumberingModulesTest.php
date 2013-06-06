@@ -147,7 +147,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertEquals(1, $result);						// Can be deleted
-		
+
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice (there is no reset into mask)
@@ -166,7 +166,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertEquals(0, $result);						// Case 1 can not be deleted (case 2 is more recent)
-		
+
 		// Now we try with a reset
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000@1}';
 		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}-{0000@1}';
@@ -194,7 +194,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertEquals(1, $result);						// Can be deleted
-		
+
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1921);	// we use following year for second invoice (and there is a reset required)
@@ -210,7 +210,11 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->is_erasable();
     	print __METHOD__." is_erasable=".$result."\n";
     	$this->assertEquals(1, $result);						// Case 1 can be deleted (because there was a reset for case 2)
-    	 
+
+    	// Try an offset when an invoice already exists
+    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000+9990}';
+    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000+9990}';
+    	$result=$numbering->getNextValue($mysoc, $localobject2);
 
 		// Now we try with a different fiscal month (forced by mask)
     	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@6}';
