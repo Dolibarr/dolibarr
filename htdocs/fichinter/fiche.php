@@ -1065,7 +1065,6 @@ if ($action == 'create')
 			print $object->showOptionals($extrafields,'edit');
 		}
 
-
         // Show link to origin object
         if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
         {
@@ -1080,56 +1079,6 @@ if ($action == 'create')
 	    {
 	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
-		}
-
-		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td colspan="2">';
-		$liste=ModelePDFFicheinter::liste_modeles($db);
-		print $form->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
-		print "</td></tr>";
-
-		// Public note
-		print '<tr>';
-		print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
-		print '<td valign="top" colspan="2">';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-		print $doleditor->Create(1);
-		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
-		print '</td></tr>';
-
-		// Private note
-		if (!empty($user->societe_id))
-		{
-			print '<tr>';
-			print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-			print '<td valign="top" colspan="2">';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-			print $doleditor->Create(1);
-			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
-			print '</td></tr>';
-		}
-
-		// Other attributes
-		$parameters=array('colspan' => ' colspan="2"');
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
-
-		// Show link to origin object
-		if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
-		{
-			$newclassname=$classname;
-			if ($newclassname=='Propal') $newclassname='CommercialProposal';
-			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
-		}
-
-		print '</table>';
-
-		if (is_object($objectsrc))
-		{
-			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		}
 
 		print '<center><br>';
