@@ -718,9 +718,9 @@ class Form
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
      */
-    function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $event=array())
     {
-		return $this->select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array());
+		return $this->select_thirdparty_list($selected,$htmlname, $filter, $showempty, $showtype, $forcecombo, $event);
     }
 
     /**
