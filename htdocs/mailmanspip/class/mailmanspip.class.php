@@ -314,46 +314,51 @@ class MailmanSpip
             return -1;
         }
 
-        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
+        if ($conf->adherent->enabled)	// Synchro for members
         {
-            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS))
-            {
-                $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-            }
-            else
-            {
-                $lists=explode(',',$listes);
-            }
-            foreach ($lists as $list)
-            {
-                // Filter on type something (ADHERENT_MAILMAN_LISTS = "filtervalue:mailinglist1,filtervalue2:mailinglist2,mailinglist3")
-                $tmp=explode(':',$list);
-                if (! empty($tmp[1]))
-                {
-                    $list=$tmp[1];
-                    if ($object->element == 'member' && $object->type != $tmp[0])    // Filter on member type label
-                    {
-                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[0], LOG_DEBUG);
-                        continue;
-                    }
-                }
+	        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
+	        {
+	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists=explode(',',$listes);
 
-                //We call Mailman to subscribe the user
-                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
+	            $categstatic=new Categorie($this->db);
 
-				if ($result === false)
-				{
-					$this->mladded_ko[$list]=$object->email;
-				    return -2;
-				}
-				else $this->mladded_ok[$list]=$object->email;
-            }
-            return count($lists);
-        }
-        else
-       {
-            $this->error="ADHERENT_MAILMAN_URL not defined";
-            return -1;
+	            foreach ($lists as $list)
+	            {
+	                // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
+	                $tmp=explode(':',$list);
+	                if (! empty($tmp[2]))
+	                {
+	                    $list=$tmp[2];
+	                    if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
+	                    {
+	                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
+	                        continue;
+	                    }
+	                    if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
+	                    {
+	                        dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
+	                        continue;
+	                    }
+	                }
+
+	                //We call Mailman to subscribe the user
+	                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
+
+					if ($result === false)
+					{
+						$this->mladded_ko[$list]=$object->email;
+					    return -2;
+					}
+					else $this->mladded_ok[$list]=$object->email;
+	            }
+	            return count($lists);
+	        }
+	        else
+	       {
+	            $this->error="ADHERENT_MAILMAN_URL not defined";
+	            return -1;
+	        }
         }
     }
 
@@ -381,46 +386,49 @@ class MailmanSpip
             return -1;
         }
 
-        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
+        if ($conf->adherent->enabled)	// Synchro for members
         {
-            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS))
-            {
-                $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-            }
-            else
-            {
-                $lists=explode(',',$listes);
-            }
-            foreach ($lists as $list)
-            {
-                // Filter on type something (ADHERENT_MAILMAN_LISTS = "filtervalue:mailinglist1,filtervalue2:mailinglist2,mailinglist3")
-                $tmp=explode(':',$list);
-                if (! empty($tmp[1]))
-                {
-                    $list=$tmp[1];
-                	if ($object->element == 'member' && $object->type != $tmp[1])    // Filter on member type label
-                    {
-                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[0], LOG_DEBUG);
-                    	continue;
-                    }
-                }
+	        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
+	        {
+	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists=explode(',',$listes);
 
-                //We call Mailman to unsubscribe the user
-                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
+	            foreach ($lists as $list)
+	            {
+	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
+	            	$tmp=explode(':',$list);
+	            	if (! empty($tmp[2]))
+	            	{
+	            		$list=$tmp[2];
+	            		if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
+	            		{
+	            			dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
+	            			continue;
+	            		}
+	            		if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
+	            		{
+	            			dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
+	            			continue;
+	            		}
+	            	}
 
-				if ($result === false)
-				{
-					$this->mlremoved_ko[$list]=$object->email;
-				    return -2;
-				}
-				else $this->mlremoved_ok[$list]=$object->email;
-            }
-            return count($lists);
-        }
-        else
-        {
-            $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
-            return -1;
+	                //We call Mailman to unsubscribe the user
+	                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
+
+					if ($result === false)
+					{
+						$this->mlremoved_ko[$list]=$object->email;
+					    return -2;
+					}
+					else $this->mlremoved_ok[$list]=$object->email;
+	            }
+	            return count($lists);
+	        }
+	        else
+			{
+	            $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
+	            return -1;
+	        }
         }
     }
 

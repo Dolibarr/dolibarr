@@ -193,8 +193,7 @@ if ($action == 'setModuleOptions')
 }
 
 
-
-
+// Activate a model
 if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -359,16 +358,16 @@ print "</table><br>\n";
 
 
 /*
- * Modeles de documents
+ * Document templates generators
  */
 
 print_titre($langs->trans("ProposalsPDFModules"));
 
-// Defini tableau def de modele propal
+// Load array def with activated templates
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = 'propal'";
+$sql.= " WHERE type = '".$type."'";
 $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
@@ -390,7 +389,7 @@ else
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print "  <td width=\"140\">".$langs->trans("Name")."</td>\n";
+print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td align="center" width="40">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="40">'.$langs->trans("Default")."</td>\n";

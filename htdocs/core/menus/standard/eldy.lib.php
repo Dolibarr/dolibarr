@@ -680,7 +680,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
             {
                 $langs->load("orders");
                 $newmenu->add("/commande/index.php?leftmenu=orders", $langs->trans("CustomersOrders"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
-                $newmenu->add("/commande/fiche.php?action=create", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
+                $newmenu->add("/commande/fiche.php?action=create&amp;leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
                 $newmenu->add("/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
@@ -696,7 +696,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("orders");
 				$newmenu->add("/fourn/commande/index.php?leftmenu=orders_suppliers",$langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire, '', $mainmenu, 'orders_suppliers');
-				$newmenu->add("/fourn/commande/fiche.php?action=create", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
+				$newmenu->add("/fourn/commande/fiche.php?action=create&amp;leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
 				$newmenu->add("/fourn/commande/liste.php?leftmenu=orders_suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
 			}
@@ -1213,15 +1213,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			$sql.= " WHERE entity = ".$conf->entity;
 			$sql.= " AND clos = 0";
 			$sql.= " ORDER BY label";
-		
+
 			$resql = $db->query($sql);
 			if ($resql)
 			{
 				$numr = $db->num_rows($resql);
 				$i = 0;
-		
+
 				if ($numr > 0) 	$newmenu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
-		
+
 				while ($i < $numr)
 				{
 					$objp = $db->fetch_object($resql);
@@ -1247,16 +1247,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->global->$paramkey))
 				{
 					$link="/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
-		
+
 					$newmenu->add($link, dol_trunc($conf->global->$paramkey,24));
 				}
 				$i++;
 			}
-		}		
-	
+		}
+
 	}
-	
-	
+
+
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
 	//var_dump($menu_array_before);exit;
 	//var_dump($menu_array_after);exit;

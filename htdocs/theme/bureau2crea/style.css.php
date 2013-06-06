@@ -227,7 +227,9 @@ div.inline-block
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-
+.dolibarrcombobox {
+	height: 22px;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -787,7 +789,7 @@ div.blockvmenusearch div.menu_titre {
 {
 	padding-top: 1px;
 	padding-bottom: 1px;
-	height: 16px;
+	min-height: 14px;
 }
 
 div.blockvmenubookmarks
@@ -1143,20 +1145,6 @@ div.tabs a.tab#active {
 
 }
 
-div.tabs a.tab span {
-	padding: 0px 10px 0px 10px;
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_ssmenu_btnG.jpg',1); ?>);
-    background-position: left;
-    background-repeat: no-repeat;
-    display: block;
-    height: 18px;
-    width: auto;
-}
-
-div.tabs a.tab#active span {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_ssmenusel_btnG.jpg',1); ?>);
-}
-
 div.tabs a.tab:hover {
 	color: #FFFFFF;
     background-color: #505050;
@@ -1174,6 +1162,7 @@ div.tabBar {
     margin: 0px 0px 10px 0px;
     background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
 }
+*/
 
 div.tabsAction {
     margin: 20px 0em 1px 0em;
@@ -1181,7 +1170,7 @@ div.tabsAction {
     text-align: right;
 }
 
-
+/*
 a.tabTitle {
     background: #5088A9;
     color: white;
@@ -1299,8 +1288,7 @@ div.divButAction { margin-bottom: 1.4em; }
 	margin: 0px 10px 0px 10px;
 	text-decoration: none;
 	white-space: nowrap;
-    float: right;
-    font-size: 10px;
+    font-size: 12px;
     height: 18px;
     line-height: 18px;
     cursor: pointer;
@@ -1330,8 +1318,7 @@ div.divButAction { margin-bottom: 1.4em; }
 	margin: 0px 10px 0px 10px;
 	text-decoration: none;
 	white-space: nowrap;
-    float: right;
-    font-size: 10px;
+    font-size: 12px;
     height: 18px;
     line-height: 18px;
     margin-bottom: 10px;
@@ -2117,10 +2104,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-weight: normal;
     font-family:Verdana,Arial,sans-serif;
     font-size:1em;
-}
-
-div.tabsAction {
-	margin-top: 10px;
 }
 
 table.noborder {

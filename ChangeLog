@@ -4,16 +4,21 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.5 compared to 3.4 *****
 For users:
-- New: [ task #877 ] Reorganize menus
-- New: [ task #858 ] Holiday module: note on manual holiday assignation
-- New: [ task #892 ] Add option in thridparty customer/supplier admin to hide non active in select_company method
-- New: [ task #531 ] Add a workload on tasks
+- New: [ task #877 ] Reorganize menus.
+- New: [ task #858 ] Holiday module: note on manual holiday assignation.
+- New: [ task #892 ] Add option in thridparty customer/supplier admin to hide non active in select_company method.
+- New: [ task #531 ] Add a workload on tasks.
 - New: Add graph of bank account input/output into input-output report page.
 - New: Add script export-bank-receipts.
-- New: Add option "filter=bank" onto script rebuild_merge_pdf.php to merge
+- New: Add option "filter=bank" onto script rebuild_merge_pdf.php to merge.
   PDF that has one payment on a specific bank account.*
-- New: [ task #901 ] Add Extrafeild on Fiche Inter
-- New: Show process id in all command line scripts
+- New: [ task #901 ] Add Extrafeild on Fiche Inter.
+- New: Show process id in all command line scripts.
+- New: Module mailman can subscribe/unsubscribe to ML according to categories of member.
+
+For translators:
+- Normalized sort order of all languages files with english ref file.
+
 For developers:
 - New: DolGraph can build graph with three lines.
 
@@ -104,10 +109,12 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - If module use hook pdf_writelinedesc, module may have to add return 1 at end of 
   function to keep same behaviour.
 
-  
+
+
+***** ChangeLog for 3.3.3 compared to 3.3.2 *****
+  - Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
-
 - Fix: Dutch (nl_NL) translation
 - Generalize fix: file with a specific mask not found, again
 - Fix: translations and BILL_SUPPLIER_BUILDDOC trigger
@@ -136,16 +143,14 @@ WARNING: If you used external modules, some of them may need to be upgraded due 
 - Fix: [ bug #788 ] Date of linked interventions are not shown
 - Fix: external users should not see costprice and margin infos
 - Fix: [ bug #806 ] Tasks are ordered alphabetically instead of chronological order
-***** ChangeLog for 3.3.1 compared to 3.3 *****
 
+***** ChangeLog for 3.3.1 compared to 3.3 *****
 - Fix: [ bug #733 ] Mass emailing tools do not support <style HTML tag
 - Fix: Package for launchpad
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
 - Fix: bug dictionnary with wrong prefix table
-
-
 
 ***** ChangeLog for 3.3 compared to 3.2.3 *****
 For users:

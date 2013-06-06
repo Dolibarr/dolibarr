@@ -22,14 +22,15 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/mailman.php
+ *   	\file       htdocs/admin/mailman.php
  *		\ingroup    mailmanspip
  *		\brief      Page to setup the module MailmanSpip (Mailman)
  */
 
-require '../../main.inc.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("admin");
 $langs->load("members");
@@ -58,10 +59,10 @@ if ($action == 'update' || $action == 'add')
 		$consttype=$_POST["consttype"][$key];
 		$constnote=$_POST["constnote"][$key];
 		$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
-	
+
 		if (! $res > 0) $error++;
 	}
-	
+
 	if (! $error)
 	{
 		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
@@ -181,11 +182,12 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     print_fiche_titre($langs->trans('MailmanTitle'), $lien,'');
 
     print '<br>';
-    
+
     // JQuery activity
     print '<script type="text/javascript">
     var i1=0;
     var i2=0;
+    var i3=0;
     jQuery(document).ready(function(){
         jQuery("#exampleclick1").click(function(event){
             if (i1 == 0) { jQuery("#example1").show(); i1=1; }
@@ -195,7 +197,11 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
             if (i2 == 0) { jQuery("#example2").show(); i2=1; }
             else if (i2 == 1)  { jQuery("#example2").hide(); i2=0; }
             });
-    });
+        jQuery("#exampleclick3").click(function(){
+            if (i3 == 0) { jQuery("#example3").show(); i3=1; }
+            else if (i3 == 1)  { jQuery("#example3").hide(); i3=0; }
+            });
+	});
     </script>';
 
     form_constantes($constantes,1);

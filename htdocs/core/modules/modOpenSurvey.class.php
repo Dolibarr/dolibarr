@@ -106,7 +106,7 @@ class modOpenSurvey extends DolibarrModules
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		$this->rights[$r][0] = 55000; 				// Permission id (must not be already used)
+		$this->rights[$r][0] = 55001; 				// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read surveys';	// Permission label
 		$this->rights[$r][2] = 'r'; 					// Permission by default for new user (0/1)
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
@@ -116,7 +116,7 @@ class modOpenSurvey extends DolibarrModules
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		$this->rights[$r][0] = 55001; 				// Permission id (must not be already used)
+		$this->rights[$r][0] = 55002; 				// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify surveys';	// Permission label
 		$this->rights[$r][2] = 'w'; 					// Permission by default for new user (0/1)
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)

@@ -87,13 +87,13 @@ class InfoBox
                 {
                     if (preg_match('/^([^@]+)@([^@]+)$/i',$obj->file,$regs))
                     {
-                        $boxname = preg_replace('/.php$/i','',$regs[1]);
+                        $boxname = preg_replace('/\.php$/i','',$regs[1]);
                         $module = $regs[2];
                         $relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
                     }
                     else
                     {
-                        $boxname=preg_replace('/.php$/i','',$obj->file);
+                        $boxname=preg_replace('/\.php$/i','',$obj->file);
                         $relsourcefile = "/core/boxes/".$boxname.".php";
 					}
 

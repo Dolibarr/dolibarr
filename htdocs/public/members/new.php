@@ -71,7 +71,7 @@ if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);
 
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
-    print $langs->trans("Auto subscription form for public visitors has no been enabled");
+    print $langs->trans("Auto subscription form for public visitors has not been enabled");
     exit;
 }
 
