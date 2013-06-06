@@ -47,8 +47,10 @@ create table llx_commandedet
   date_start					datetime     DEFAULT NULL,       -- date debut si service
   date_end						datetime     DEFAULT NULL,       -- date fin si service
   info_bits						integer      DEFAULT 0,          -- TVA NPR ou non
-  buy_price_ht					double(24,8) DEFAULT 0,          -- prix d'achat HT
-  fk_product_fournisseur_price	integer      DEFAULT NULL,       -- reference prix fournisseur
+
+  buy_price_ht					double(24,8) DEFAULT 0,          -- buying price
+  fk_product_fournisseur_price	integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
+  
   special_code					integer UNSIGNED DEFAULT 0,      -- code pour les lignes speciales
   rang							integer      DEFAULT 0,
   import_key					varchar(14)
