@@ -789,7 +789,7 @@ div.blockvmenusearch div.menu_titre {
 {
 	padding-top: 1px;
 	padding-bottom: 1px;
-	height: 16px;
+	min-height: 14px;
 }
 
 div.blockvmenubookmarks
