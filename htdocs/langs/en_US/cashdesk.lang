@@ -37,3 +37,4 @@ BankToPay=Charge Account
 ShowCompany=Show company
 ShowStock=Show warehouse
 DeleteArticle=Click to remove this article
+FilterRefOrLabelOrBC=Search (Ref/Label)
