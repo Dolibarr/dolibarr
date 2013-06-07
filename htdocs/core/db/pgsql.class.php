@@ -452,6 +452,16 @@ class DoliDBPgsql
 		return explode('.',$this->getVersion());
 	}
 
+	/**
+	 *	Return version of database client driver
+	 *
+	 *	@return	        string      Version string
+	 */
+	function getDriverInfo()
+	{
+		return '';
+	}
+		
     /**
      *  Close database connexion
      *

@@ -252,6 +252,16 @@ class DoliDBMysqli
         return explode('.',$this->getVersion());
     }
 
+    /**
+     *	Return version of database client driver
+     *
+     *	@return	        string      Version string
+     */
+    function getDriverInfo()
+    {
+    	return mysqli_get_client_info($this->db);
+    }
+    
 
     /**
      *  Close database connexion
