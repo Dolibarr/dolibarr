@@ -494,7 +494,11 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (isset($_GET['percentage']) || isset($_POST['percentage']))
+	if (isset($_GET['status']) || isset($_POST['status']))
+	{
+		$percent=GETPOST('status');
+	}
+	else if (isset($_GET['percentage']) || isset($_POST['percentage']))
 	{
 		$percent=GETPOST('percentage');
 	}
