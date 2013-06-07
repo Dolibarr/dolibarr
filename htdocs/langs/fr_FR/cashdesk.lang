@@ -37,3 +37,4 @@ BankToPay=Compte à créditer
 ShowCompany=Voir société
 ShowStock=Voir entrepôt
 DeleteArticle=Cliquez pour enlever cet article
+FilterRefOrLabelOrBC=Recherche (Ref/Lib.)

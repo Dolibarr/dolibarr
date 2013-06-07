@@ -23,5 +23,7 @@
 
 ?>
 <div class="pied">
-
+<?php
+printCommonFooter('private');
+?>
 </div>
