@@ -55,6 +55,7 @@ if ( GETPOST('filtre') ) {
 			}
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -90,6 +91,7 @@ if ( GETPOST('filtre') ) {
 			}
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -147,6 +149,7 @@ if ($res)
 		}
 		$i++;
 	}
+	$db->free($resql);
 }
 else
 {
