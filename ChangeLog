@@ -21,6 +21,7 @@ For translators:
 
 For developers:
 - New: DolGraph can build graph with three lines.
+- New: Can enable tuning info from option MAIN_SHOW_TUNING_INFO.
 
 
 ***** ChangeLog for 3.4 compared to 3.3.2 *****
