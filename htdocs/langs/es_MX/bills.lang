@@ -21,3 +21,6 @@ CreditNoteDepositUse=La factura debe de estar validada para poder utilizar este 
 CreditNoteConvertedIntoDiscount=Esta nota de crédito se convirtió en %s
 TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para las notas de crédito donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 AddCreditNote=Crear nota de crédito
+BillTo=Receptor
+Residence=Tarjeta
+PaymentByTransferOnThisBankAccount=Cuenta para depositos y transferencias

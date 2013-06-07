@@ -2,7 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.3.3 compared to 3.3.2 *****
 
+- Fix: [ bug #903 ] Fatal error: Call to undefined function dol_get_first_day() in htdocs/commande/liste.php
 
 ***** ChangeLog for 3.3.2 compared to 3.3.1 *****
 
@@ -33,6 +35,7 @@ English Dolibarr ChangeLog
 - Fix: [ bug #866 ] Standing order from an invoice suggests invoice total amount instead of remaining to pay
 - Fix: [ bug #788 ] Date of linked interventions are not shown
 - Fix: external users should not see costprice and margin infos
+- Fix: [ bug #806 ] Tasks are ordered alphabetically instead of chronological order
 
 ***** ChangeLog for 3.3.1 compared to 3.3 *****
 
