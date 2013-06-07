@@ -42,7 +42,7 @@ class box_services_contracts extends ModeleBoxes
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
-	
+
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
@@ -139,6 +139,8 @@ class box_services_contracts extends ModeleBoxes
 					$i++;
 				}
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoContractedProducts"));
+
+				$db->free($result);
 			}
 			else
 			{

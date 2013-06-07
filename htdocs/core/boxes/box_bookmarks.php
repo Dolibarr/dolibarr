@@ -74,7 +74,6 @@ class box_bookmarks extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-
 			if ($result)
 			{
 				$num = $db->num_rows($result);
@@ -103,6 +102,8 @@ class box_bookmarks extends ModeleBoxes
 					if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickToAdd");
 					$this->info_box_contents[$i][0] = array('td' => 'align="center" colspan="2"', 'url'=> DOL_URL_ROOT.'/bookmarks/liste.php', 'text'=>$mytxt);
 				}
+
+				$db->free($result);
 			}
 			else
 			{

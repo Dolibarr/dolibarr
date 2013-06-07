@@ -116,6 +116,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				}
 
 				$this->info_box_contents[0][0] = array('td' => 'align="center"','text2'=>'xxxxxxx');
+
+				$db->free($result);
 			}
 			else
 			{

@@ -89,7 +89,7 @@ class box_comptes extends ModeleBoxes
 			$sql.= " ORDER BY label";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("Box_comptes::loadBox sql=".$sql);
+			dol_syslog(get_class($this)."::loadBox sql=".$sql);
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -146,6 +146,8 @@ class box_comptes extends ModeleBoxes
 					'text' => $totalamount
 					);
 				}
+
+				$db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
