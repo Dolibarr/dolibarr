@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
- * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+/* Copyright (C) 2008-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +33,13 @@ function getURLContent($url,$postorget='GET',$param)
 {
     //declaring of global variables
     global $conf, $langs;
-    global $USE_PROXY, $PROXY_HOST, $PROXY_PORT, $PROXY_USER, $PROXY_PASS;
+    $USE_PROXY=empty($conf->global->MAIN_PROXY_USE)?0:$conf->global->MAIN_PROXY_USE;
+    $PROXY_HOST=empty($conf->global->MAIN_PROXY_HOST)?0:$conf->global->MAIN_PROXY_HOST;
+    $PROXY_PORT=empty($conf->global->MAIN_PROXY_PORT)?0:$conf->global->MAIN_PROXY_PORT;
+    $PROXY_USER=empty($conf->global->MAIN_PROXY_USER)?0:$conf->global->MAIN_PROXY_USER;
+    $PROXY_PASS=empty($conf->global->MAIN_PROXY_PASS)?0:$conf->global->MAIN_PROXY_PASS;
 
-    dol_syslog("getURLContent URL=".$url);
+	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
     //setting the curl parameters.
     $ch = curl_init();
@@ -54,6 +56,9 @@ function getURLContent($url,$postorget='GET',$param)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
+    curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+    
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
     if ($postorget == 'POST') curl_setopt($ch, CURLOPT_POST, 1);
     else curl_setopt($ch, CURLOPT_POST, 0);
@@ -66,8 +71,6 @@ function getURLContent($url,$postorget='GET',$param)
         curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
         if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
     }
-
-    dol_syslog("getURLContent param=".$param);
 
     //setting the nvpreq as POST FIELD to curl
     curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
@@ -88,7 +91,7 @@ function getURLContent($url,$postorget='GET',$param)
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-        //Execute the Error handling module to display errors.
+		dol_syslog("getURLContent curl_error array is ".join(',',$rep));
     }
     else
     {
