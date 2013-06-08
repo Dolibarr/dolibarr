@@ -74,7 +74,8 @@ print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" d
 
 if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-$sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
+$sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang,";
+$sql.= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -126,9 +127,13 @@ if ($resql)
                 if (empty($obj->email)) print "Warning: Sal representative ".$salerepresentative." has no email. Notice disabled.\n";
             }
 
+            // Define line content
+            $outputlangs=new Translate('',$conf);
+            $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
+
             if (dol_strlen($obj->email))
             {
-            	$message .= $langs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc)." : ".$obj->name."\n";
+            	$message .= $outputlangs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc,0,$outputlangs)." : ".$obj->name."\n";
             	dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
@@ -136,6 +141,8 @@ if ($resql)
             if (dol_strlen($obj->email)) print "qualified.";
             else print "disqualified (no email).";
 			print "\n";
+
+			unset($outputlangs);
 
             $total += $obj->total_ttc;
             $i++;
