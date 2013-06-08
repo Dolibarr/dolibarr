@@ -112,6 +112,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		'object_ref_customer'=>$object->ref_client,
 		'object_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
 		'object_source_invoice_ref'=>$invoice_source->ref,
+        'object_hour'=>dol_print_date($object->date,'hour'),
 		'object_date'=>dol_print_date($object->date,'day'),
 		'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
 		'object_date_creation'=>dol_print_date($object->date_creation,'day'),
@@ -339,9 +340,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfiletmp=preg_replace('/\.od(t|s)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				
+
 				$newfiletmp=$objectref.'_'.$newfiletmp;
-				
+
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
@@ -524,7 +525,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

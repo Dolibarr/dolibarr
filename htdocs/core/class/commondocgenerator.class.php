@@ -219,8 +219,8 @@ abstract class CommonDocGenerator
 
     	return $array_other;
     }
-    
-    
+
+
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -238,7 +238,8 @@ abstract class CommonDocGenerator
 	    	$array_key.'_ref'=>$object->ref,
 	    	$array_key.'_ref_ext'=>$object->ref_ext,
 	    	$array_key.'_ref_customer'=>$object->ref_client,
-	    	$array_key.'_date'=>dol_print_date($object->date,'day'),
+	    	$array_key.'_hour'=>dol_print_date($object->date,'hour'),
+    		$array_key.'_date'=>dol_print_date($object->date,'day'),
 	    	$array_key.'_date_end'=>dol_print_date($object->fin_validite,'day'),
 	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
 	    	$array_key.'_date_modification'=>dol_print_date($object->date_modification,'day'),
