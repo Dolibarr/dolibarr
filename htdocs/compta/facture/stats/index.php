@@ -233,7 +233,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_company($socid,'socid',$filter,1);
 	print '</td></tr>';
 	// User
-	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
+	print '<tr><td>'.$langs->trans("Author").'</td><td>';
 	print $form->select_users($userid,'userid',1);
 	print '</td></tr>';
 	// Year
