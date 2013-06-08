@@ -54,8 +54,9 @@ $endyear=$year;
  * View
  */
 
-$langs->load("bills");
-$langs->load("companies");
+$langs->load('bills');
+$langs->load('companies');
+$langs->load('other');
 
 $form=new Form($db);
 
@@ -233,7 +234,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_company($socid,'socid',$filter,1);
 	print '</td></tr>';
 	// User
-	print '<tr><td>'.$langs->trans("Author").'</td><td>';
+	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 	print $form->select_users($userid,'userid',1);
 	print '</td></tr>';
 	// Year

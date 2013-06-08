@@ -51,7 +51,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load("orders");
+$langs->load('orders');
+$langs->load('other');
 
 
 /*
