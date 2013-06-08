@@ -162,7 +162,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$dir = $conf->expedition->dir_output."/receipt/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
-			
+
 			if (! file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
@@ -175,7 +175,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (file_exists($dir))
 			{
 				$nblines = count($object->lines);
-				
+
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -288,7 +288,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$curX = $this->posxdesc-1;
 
                     $showpricebeforepagebreak=1;
-                    
+
                     $pdf->startTransaction();
                     pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxcomm-$curX,3,$curX,$curY,$hideref,$hidedesc);
                     $pageposafter=$pdf->getPage();
@@ -320,7 +320,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     {
                     	$pdf->commitTransaction();
                     }
-                    
+
 					$nexY = $pdf->GetY();
                     $pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
@@ -429,11 +429,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
-				
+
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
-				$pdf->AliasNbPages();
-				
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+
 				// Check product remaining to be delivered
 				// TODO doit etre modifie
 				//$waitingDelivery = $object->getRemainingDelivered();
@@ -492,7 +492,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 					$this->_pagefoot($pdf,$object,$outputlangs);
 
-					$pdf->AliasNbPages();
+					if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 				}*/
 
 				$pdf->Close();
@@ -539,20 +539,20 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-	
+
 		$pdf->SetFont('','', $default_font_size);
 		$pdf->SetXY($this->marge_gauche, $posy);
-		
+
 		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
 		$pdf->Rect($this->marge_gauche, $posy + 1, $larg_sign, 25);
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":",'','L');
-		
+
 		$pdf->Rect(2*$larg_sign+$this->marge_gauche, $posy + 1, $larg_sign, 25);
 		$pdf->SetXY(2*$larg_sign+$this->marge_gauche + 2, $posy + 2);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
 	}
-	
+
 	/**
 	 *   Show table for lines
 	 *
@@ -568,13 +568,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf,$mysoc;
-		
+
 		// Force to disable hidetop and hidebottom
 		$hidebottom=0;
 		if ($hidetop) $hidetop=-1;
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
@@ -586,11 +586,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
 		}
-		
+
 		$pdf->SetDrawColor(128,128,128);
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		if (empty($hidetop)) 
+		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell($this->posxcomm - $this->posxdesc,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -634,15 +634,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->COMMANDE_DRAFT_WATERMARK);
 		}
-		
+
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
-		
+
 		$posy=$this->marge_haute;
 		$posx=$this->page_largeur-$this->marge_droite-100;
-		
+
 		$pdf->SetXY($this->marge_gauche,$posy);
-		
+
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
@@ -694,21 +694,21 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 
 		$posy+=2;
-		
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
 			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
-			
+
 			// Show sender
 			$posy=42;
 			$posx=$this->marge_gauche;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
 			$hautcadre=40;
-			
+
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
@@ -728,7 +728,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetXY($posx+2,$posy+8);
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-			
+
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);

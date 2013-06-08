@@ -1,13 +1,13 @@
 <?php
 //============================================================+
-// File name   : 2dbarcodes.php
+// File name   : tcpdf_barcodes_2d.php
 // Version     : 1.0.014
 // Begin       : 2009-04-07
-// Last Update : 2012-04-30
-// Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
+// Last Update : 2013-03-17
+// Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2009-2012  Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2009-2013 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -237,14 +237,14 @@ class TCPDF2DBarcode {
 		$qrtype = strtoupper($mode[0]);
 		switch ($qrtype) {
 			case 'DATAMATRIX': { // DATAMATRIX (ISO/IEC 16022)
-				require_once(dirname(__FILE__).'/datamatrix.php');
+				require_once(dirname(__FILE__).'/include/barcodes/datamatrix.php');
 				$qrcode = new Datamatrix($code);
 				$this->barcode_array = $qrcode->getBarcodeArray();
 				$this->barcode_array['code'] = $code;
 				break;
 			}
 			case 'PDF417': { // PDF417 (ISO/IEC 15438:2006)
-				require_once(dirname(__FILE__).'/pdf417.php');
+				require_once(dirname(__FILE__).'/include/barcodes/pdf417.php');
 				if (!isset($mode[1]) OR ($mode[1] === '')) {
 					$aspectratio = 2; // default aspect ratio (width / height)
 				} else {
@@ -275,7 +275,7 @@ class TCPDF2DBarcode {
 				break;
 			}
 			case 'QRCODE': { // QR-CODE
-				require_once(dirname(__FILE__).'/qrcode.php');
+				require_once(dirname(__FILE__).'/include/barcodes/qrcode.php');
 				if (!isset($mode[1]) OR (!in_array($mode[1],array('L','M','Q','H')))) {
 					$mode[1] = 'L'; // Ddefault: Low error correction
 				}

@@ -25,18 +25,14 @@ Replace call to serialize_val with no bugged value
 
 TCPDF:
 ------
-* To be compatible with FPDF, replace line
-public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $valign='T', $fitcell=false) {
-by
-public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=false, $maxh=0, $valign='T', $fitcell=false) {
-
-* Removed all fonts except dejavu* (used by greek, arab, persan, romanian, turkish), freemono* (russian), stsongstdlight* (chinese), helvetica* (all other) and useless directories (fonts/utils, docs, cache, images)
-
-* Replace in tcpdf_config.php
-define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
-with
-define ('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
-dol_mkdir(K_PATH_CACHE);
+* Removed all fonts except dejavusans* (used by greek, arab, persan, romanian, turkish), freemono* (russian), cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), helvetica* (all other)
+* Removed useless directories (examples, tools)
+* Fix
+ 	// initialize subsetchars
+	$subsetchars = array();
+into
+	// initialize subsetchars
+	$subsetchars = array_fill(0, 256, true);
 
 
 JSGANTT:

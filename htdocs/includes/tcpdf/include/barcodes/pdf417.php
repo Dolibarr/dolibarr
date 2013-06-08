@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : pdf417.php
-// Version     : 1.0.003
+// Version     : 1.0.004
 // Begin       : 2010-06-03
-// Last Update : 2010-12-16
-// Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
+// Last Update : 2012-02-06
+// Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2010-2012  Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2010-2013  Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -817,7 +817,7 @@ class PDF417 {
 		$sequence_array = array(); // array to be returned
 		$numseq = array();
 		// get numeric sequences
-		preg_match_all('/([0-9]{13,})/', $code, $numseq, PREG_OFFSET_CAPTURE);
+		preg_match_all('/([0-9]{13,44})/', $code, $numseq, PREG_OFFSET_CAPTURE);
 		$numseq[1][] = array('', strlen($code));
 		$offset = 0;
 		foreach($numseq[1] as $seq) {

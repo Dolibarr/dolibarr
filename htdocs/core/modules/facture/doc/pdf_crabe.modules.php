@@ -466,8 +466,8 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
-				$pdf->AliasNbPages();
-
+				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+				
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
@@ -729,7 +729,7 @@ class pdf_crabe extends ModelePDFFactures
 				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
 					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
-						
+
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
 						$account = new Account($this->db);
