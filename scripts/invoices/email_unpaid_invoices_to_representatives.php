@@ -70,7 +70,7 @@ print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 $now=dol_now('tzserver');
 $duration_value=isset($argv[2])?$argv[2]:'none';
 
-print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
+print $script_file." launched with mode ".$mode." default lang=".$langs->defaultlang.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
 
 if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -130,6 +130,8 @@ if ($resql)
             // Define line content
             $outputlangs=new Translate('',$conf);
             $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
+            $outputlangs->load("bills");
+            $outputlangs->load("main");
 
             if (dol_strlen($obj->email))
             {
@@ -137,7 +139,7 @@ if ($resql)
             	dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email."): ";
+            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email." lang ".$outputlangs->defaultlang."): ";
             if (dol_strlen($obj->email)) print "qualified.";
             else print "disqualified (no email).";
 			print "\n";
@@ -195,7 +197,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     $newlangs->load("main");
     $newlangs->load("bills");
 
-    $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$newlangs->transnoentities("ListOfYourUnpaidInvoices");
+    $subject = (empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT)?$newlangs->trans("ListOfYourUnpaidInvoices"):$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT);
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
