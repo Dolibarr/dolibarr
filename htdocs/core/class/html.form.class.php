@@ -1307,9 +1307,8 @@ class Form
         }
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         // Add criteria on ref/label
-        if ($filterkey && $filterkey != '')
+        if ($filterkey != '')
         {
-        	$sql.=" AND (";
             if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
             {
                 $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
@@ -1331,7 +1330,6 @@ class Form
             {
                 $sql .= " OR p.barcode LIKE '".$filterkey."'";
             }
-            $sql.=")";
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
