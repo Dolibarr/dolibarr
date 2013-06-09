@@ -698,7 +698,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + (! empty($object->remise)?$object->remise:0), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -739,7 +739,7 @@ class pdf_einstein extends ModelePDFCommandes
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 							}
 						}
 					}
@@ -772,7 +772,7 @@ class pdf_einstein extends ModelePDFCommandes
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 
 							}
 						}
@@ -799,7 +799,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 					}
 				}
 
@@ -830,14 +830,14 @@ class pdf_einstein extends ModelePDFCommandes
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey, 0, $outputlangs), 0, 'R', 1);
 								}
 								else
 								{
 									$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 								}
 							}
 						}
@@ -870,7 +870,7 @@ class pdf_einstein extends ModelePDFCommandes
 								if ($localtax_type == '7') {  // amount on order
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey, 0, $outputlangs), 0, 'R', 1);
 								}
 								else
 								{
@@ -878,7 +878,7 @@ class pdf_einstein extends ModelePDFCommandes
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 								}
 							}
 						}
@@ -893,7 +893,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 			}
 		}
 
@@ -915,7 +915,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle, 0, $outputlangs), 0, 'R', 0);
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
@@ -924,7 +924,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetTextColor(0,0,0);

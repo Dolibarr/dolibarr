@@ -585,7 +585,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($obj->amount_ttc, 0, $outputlangs), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+40, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
@@ -622,7 +622,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, price($sign * $row->amount), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($sign * $row->amount, 0, $outputlangs), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+40, $tab3_top+$y);
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort" . $row->code);
 
@@ -732,7 +732,7 @@ class pdf_crabe extends ModelePDFFactures
 				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
 					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
-						
+
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
 						$account = new Account($this->db);
@@ -831,7 +831,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + (! empty($object->remise)?$object->remise:0))), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -874,7 +874,7 @@ class pdf_crabe extends ModelePDFFactures
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 							}
 						}
 					}
@@ -908,7 +908,7 @@ class pdf_crabe extends ModelePDFFactures
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 
 							}
 						}
@@ -935,7 +935,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 					}
 				}
 
@@ -966,14 +966,14 @@ class pdf_crabe extends ModelePDFFactures
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey, 0, $outputlangs), 0, 'R', 1);
 								}
 								else
 								{
 									$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 								}
 							}
 						}
@@ -1007,7 +1007,7 @@ class pdf_crabe extends ModelePDFFactures
 								if ($localtax_type == '7') {  // amount on order
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey, 0, $outputlangs), 0, 'R', 1);
 								}
 								else
 								{
@@ -1015,7 +1015,7 @@ class pdf_crabe extends ModelePDFFactures
 									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 								}
 							}
 						}
@@ -1041,7 +1041,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 			}
 		}
 
@@ -1060,7 +1060,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Paid"), 0, 'L', 0);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', 0);
 
 			// Credit note
 			if ($creditnoteamount)
@@ -1069,7 +1069,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
 
 			// Escompte
@@ -1081,7 +1081,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount), $useborder, 'R', 1);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
 
 				$resteapayer=0;
 			}
@@ -1092,7 +1092,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 
 			// Fin
 			$pdf->SetFont('','', $default_font_size - 1);

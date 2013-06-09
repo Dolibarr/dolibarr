@@ -53,7 +53,8 @@ $endyear=$year;
 
 $form=new Form($db);
 
-$langs->load("propal");
+$langs->load('propal');
+$langs->load('other');
 
 llxHeader();
 
