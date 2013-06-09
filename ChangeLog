@@ -19,6 +19,7 @@ For users:
 - New: Add object_hour as substitution tag for opendocument generation.
 - New: Add option MEMBER_PAYONLINE_SENDEMAIL to send email when paypal or paybox payment is done.
 - New: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- New: Clone product/service composition
 
 For translators:
 - Normalized sort order of all languages files with english ref file.
