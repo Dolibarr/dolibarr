@@ -31,7 +31,7 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 require_once($path."../../htdocs/master.inc.php");
@@ -89,7 +89,7 @@ print "***** $script_file ($version) *****\n";
 if (! isset($argv[1])) {
 	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
-    exit;
+    exit(-1);
 }
 $groupid=$argv[3];
 if ($argv[1] == 'commitiferror') $forcecommit=1;
@@ -124,7 +124,7 @@ $input = trim(fgets(STDIN));
 if (empty($conf->global->LDAP_USER_DN))
 {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
-	exit(1);
+	exit(-1);
 }
 
 
@@ -158,7 +158,7 @@ if ($resql)
 else
 {
 	dol_print_error($db);
-	exit;
+	exit(-1);
 }
 
 
@@ -296,7 +296,7 @@ else
 }
 
 
-return $error;
+exit($error);
 
 
 /**

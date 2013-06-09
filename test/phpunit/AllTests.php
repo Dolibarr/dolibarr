@@ -159,6 +159,9 @@ class AllTests
         require_once dirname(__FILE__).'/ImportTest.php';
         $suite->addTestSuite('ImportTest');
 
+        require_once dirname(__FILE__).'/ScriptsTest.php';
+        $suite->addTestSuite('ScriptsTest');
+
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');
 

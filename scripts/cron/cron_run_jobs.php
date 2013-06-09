@@ -1,7 +1,8 @@
 #!/usr/bin/php
 <?php
-/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <forian.henry@open-cocnept.pro
+/* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
+ * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,18 +39,18 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit;
+	exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
 	print "Usage: ".$script_file." securitykey userlogin cronjobid(optional)\n";
-	exit;
+	exit(-1);
 }
 $key=$argv[1];
 
 if (! isset($argv[2]) || ! $argv[2]) {
 	print "Usage: ".$script_file." securitykey userlogin cronjobid(optional)\n";
-	exit;
+	exit(-1);
 } else {
 	$userlogin=$argv[2];
 }
@@ -75,7 +76,7 @@ print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 if ($key != $conf->global->CRON_KEY)
 {
 	print "Error: securitykey is wrong\n";
-	exit;
+	exit(-1);
 }
 
 // Check user login
@@ -85,7 +86,7 @@ if ($result < 0)
 {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
-	exit;
+	exit(-1);
 }
 else
 {
@@ -93,7 +94,7 @@ else
 	{
 		echo " User user login: ".$userlogin." do not exists";
 		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
-		exit;
+		exit(-1);
 	}
 }
 
@@ -116,7 +117,7 @@ if ($result<0)
 {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php:: fetch Error ".$object->error, LOG_ERR);
-	exit;
+	exit(-1);
 }
 
 // current date
@@ -135,14 +136,14 @@ if(is_array($object->lines) && (count($object->lines)>0))
 				if ($result<0) {
 					echo "Error:".$cronjob->error;
 					dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
-					exit;
+					exit(-1);
 				}
 				// execute methode
 				$result=$cronjob->run_jobs($userlogin);
 				if ($result<0) {
 					echo "Error:".$cronjob->error;
 					dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
-					exit;
+					exit(-1);
 				}
 
 					// we re-program the next execution and stores the last execution time for this job
@@ -150,7 +151,7 @@ if(is_array($object->lines) && (count($object->lines)>0))
 				if ($result<0) {
 					echo "Error:".$cronjob->error;
 					dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
-					exit;
+					exit(-1);
 				}
 
 			}
@@ -158,4 +159,6 @@ if(is_array($object->lines) && (count($object->lines)>0))
 }
 
 $db->close();
+
+exit(0);
 ?>

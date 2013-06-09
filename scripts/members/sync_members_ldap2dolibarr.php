@@ -31,7 +31,7 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 require_once($path."../../htdocs/master.inc.php");
@@ -98,7 +98,7 @@ print "***** $script_file ($version) *****\n";
 
 if (! isset($argv[2]) || ! is_numeric($argv[2])) {
     print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type [ldapserverhost]\n";
-    exit;
+	exit(-1);
 }
 $typeid=$argv[2];
 if ($argv[1] == 'commitiferror') $forcecommit=1;
@@ -128,12 +128,12 @@ print "\n";
 if (empty($conf->global->LDAP_MEMBER_DN))
 {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr")."\n";
-	exit(1);
+	exit(-1);
 }
 if ($typeid <= 0)
 {
 	print $langs->trans("Error").': Parameter id_member_type is not a valid ref of an existing member type'."\n";
-	exit(2);
+	exit(-2);
 }
 
 
@@ -173,7 +173,7 @@ if ($resql)
 else
 {
 	dol_print_error($db);
-	exit;
+	exit(-1);
 }
 
 
@@ -326,7 +326,7 @@ else
 }
 
 
-return $error;
+exit($error);
 
 
 /**
