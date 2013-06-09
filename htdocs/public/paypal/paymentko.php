@@ -72,7 +72,7 @@ dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_paypal');
 
 
 // Send an email
-if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fulltag))
+if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
 {
 	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
@@ -87,11 +87,11 @@ if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=',$fu
 	$result=$mailfile->sendfile();
 	if ($result)
 	{
-		dol_syslog("EMail sent to ".$sendto);
+		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paypal');
 	}
 	else
 	{
-		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR);
+		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paypal');
 	}
 }
 
