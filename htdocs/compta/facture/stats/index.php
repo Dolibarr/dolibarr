@@ -54,8 +54,9 @@ $endyear=$year;
  * View
  */
 
-$langs->load("bills");
-$langs->load("companies");
+$langs->load('bills');
+$langs->load('companies');
+$langs->load('other');
 
 $form=new Form($db);
 

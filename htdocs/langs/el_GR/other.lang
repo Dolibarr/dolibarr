@@ -178,32 +178,6 @@ FileIsTooBig=Τα αρχεία είναι πολύ μεγάλο
 ##### Calendar common #####
 AddCalendarEntry=Προσθήκη εγγραφής στο ημερολόγιο %s
 NewCompanyToDolibarr=Η εταιρία %s προστέθηκε στο Dolibarr
-ContractValidatedInDolibarr=Contract %s validated in Dolibarr
-ContractCanceledInDolibarr=Contract %s canceled in Dolibarr
-ContractClosedInDolibarr=Contract %s closed in Dolibarr
-PropalClosedSignedInDolibarr=Proposal %s signed in Dolibarr
-PropalClosedRefusedInDolibarr=Proposal %s refused in Dolibarr
-PropalValidatedInDolibarr=Proposal %s validated in Dolibarr
-InvoiceValidatedInDolibarr=Invoice %s validated in Dolibarr
-InvoicePaidInDolibarr=Invoice %s changed to paid in Dolibarr
-InvoiceCanceledInDolibarr=Invoice %s canceled in Dolibarr
-PaymentDoneInDolibarr=Payment %s done in Dolibarr
-CustomerPaymentDoneInDolibarr=Customer payment %s done in Dolibarr
-SupplierPaymentDoneInDolibarr=Supplier payment %s done in Dolibarr
-MemberValidatedInDolibarr=Member %s validated in Dolibarr
-MemberResiliatedInDolibarr=Member %s resiliated in Dolibarr
-MemberDeletedInDolibarr=Member %s deleted from Dolibarr
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added in Dolibarr
 ShipmentValidatedInDolibarr=Αποστολή %s επικυρωθεί Dolibarr
 ##### Export #####
 Export=Εξαγωγή
-ExportsArea=Exports area
-AvailableFormats=Available formats
-LibraryUsed=Librairy used
-LibraryVersion=Version
-ExportableDatas=Exportable data
-NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
-ToExport=Export
-NewExport=New export
-##### External sites #####
-ExternalSites=External sites

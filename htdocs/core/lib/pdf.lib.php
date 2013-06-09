@@ -1375,7 +1375,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string							Return total of line excl tax
  */
 function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1403,6 +1403,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 			if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->total_ht, 0, $outputlangs);
 		}
 	}
+	return '';
 }
 
 /**
@@ -1412,7 +1413,7 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param 	Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
- *  @return	void
+ *  @return	string							Return total of line incl tax
  */
 function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1428,17 +1429,16 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 		{
 			$special_code = $object->lines[$i]->special_code;
 			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			foreach($object->hooks as $modules)
-			{
-				if (method_exists($modules[$special_code],'pdf_getlinetotalwithtax')) return $modules[$special_code]->pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails);
-			}
+			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+			$action='';
+			return $hookmanager->executeHooks('pdf_getlinetotalwithtax',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		}
 		else
 		{
-			if (empty($hidedetails) || $hidedetails > 1) return
-			price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
+			if (empty($hidedetails) || $hidedetails > 1) return price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
 		}
 	}
+	return '';
 }
 
 /**

@@ -1148,7 +1148,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
-            	// Note: We can force not using ajax because cache of jquery does not load js of other pages by setting ajaxEnabled.
+            	// We must force not using ajax because cache of jquery does not load js of other pages.
+            	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
             	if (empty($conf->dol_use_jmobile) || $conf->dol_use_jmobile != 2)
             	{
             		print '<script type="text/javascript">
@@ -1774,10 +1775,11 @@ if (! function_exists("llxFooter"))
      * Show HTML footer
      * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
      *
-     * @param	string	$foot    		A text to add in HTML generated page
+     * @param	string	$comment    A text to add as HTML comment into HTML generated page
+	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($foot='')
+    function llxFooter($comment='',$zone='pivate')
     {
         global $conf, $langs;
 
@@ -1812,9 +1814,9 @@ if (! function_exists("llxFooter"))
 		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
 
         print "\n";
-        if ($foot) print '<!-- '.$foot.' -->'."\n";
+        if ($comment) print '<!-- '.$comment.' -->'."\n";
 
-        printCommonFooter($foot);
+        printCommonFooter($zone);
 
         if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
 
