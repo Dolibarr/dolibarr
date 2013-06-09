@@ -36,6 +36,12 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+if ($conf->contrat->enabled)
+{
+	require_once DOL_DOCUMENT_ROOT."/core/lib/contract.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
+}
+
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
 	require_once DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.'.php';
