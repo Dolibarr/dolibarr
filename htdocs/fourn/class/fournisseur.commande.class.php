@@ -986,8 +986,7 @@ class CommandeFournisseur extends CommonOrder
 	                );
 	                if ($result < 0)
 	                {
-	                    $this->error=$this->db->lasterror();
-	                    dol_print_error($this->db);
+	                    dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);	// do not use dol_print_error here as it may be a functionnal error
 	                    $this->db->rollback();
 	                    return -1;
 	                }
@@ -1022,7 +1021,7 @@ class CommandeFournisseur extends CommonOrder
 	                    }
 	                    else if ($reshook < 0) $error++;
                     }
-					
+
 					if (! $notrigger)
 	                {
 	                    // Appel des triggers
@@ -1209,8 +1208,8 @@ class CommandeFournisseur extends CommonOrder
                     }
                 }
                 else
-                {
-                    $this->error=$this->db->error();
+				{
+                    $this->error=$prod->error;
                     return -1;
                 }
             }
@@ -1441,7 +1440,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $error++;
         }
-        
+
         // Remove extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
