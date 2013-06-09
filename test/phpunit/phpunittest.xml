@@ -47,6 +47,7 @@
 	    <directory suffix=".php">../../htdocs/societe/canvas/</directory>
 	    <directory suffix=".php">../../htdocs/includes/</directory>
 	    <file>../../htdocs/boutique/osc_master.inc.php</file>
+	    <file>../../htdocs/holiday/common.inc.php</file>
 	    </exclude>
 	  </whitelist>
 	</filter>
