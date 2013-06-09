@@ -30,7 +30,7 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 // Include Dolibarr environment
@@ -62,7 +62,7 @@ print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 if (! isset($argv[1]))
 {
 	usage();
-	exit;
+	exit(-1);
 }
 
 $diroutputpdf=$conf->facture->dir_output . '/temp';
@@ -125,7 +125,7 @@ foreach ($argv as $key => $value)
 		if (empty($paymentdateafter) || empty($paymentdatebefore))
 		{
 			print 'Error: Bad date format'."\n";
-			exit;
+			exit(-1);
 		}
 		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
 	}
@@ -151,7 +151,7 @@ foreach ($argv as $key => $value)
 		if ($result <= 0)
 		{
 			print 'Error: Bank account with ref "'.$paymentonbankref.'" not found'."\n";
-			exit;
+			exit(-1);
 		}
 		$paymentonbankid=$bankaccount->id;
 		print 'Rebuild PDF for invoices with at least one payment on financial account '.$bankaccount->ref."\n";
@@ -185,7 +185,7 @@ foreach ($argv as $key => $value)
 	if (! $found && preg_match('/filter=/i',$value))
 	{
 		usage();
-		exit;
+		exit(-1);
 	}
 }
 
@@ -193,18 +193,18 @@ foreach ($argv as $key => $value)
 if (empty($option) && count($filter) <= 0)
 {
 	usage();
-	exit;
+	exit(-1);
 }
 // Check if there is no uncompatible choice
 if (in_array('payments',$filter) && in_array('nopayment',$filter))
 {
 	usage();
-	exit;
+	exit(-1);
 }
 if (in_array('bank',$filter) && in_array('nopayment',$filter))
 {
 	usage();
-	exit;
+	exit(-1);
 }
 
 
@@ -229,7 +229,7 @@ else
 
 $db->close();
 
-return $error;
+exit($error);
 
 
 

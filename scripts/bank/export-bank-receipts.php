@@ -30,7 +30,7 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit;
+	exit(-1);
 }
 
 require_once($path."../../htdocs/master.inc.php");
@@ -62,8 +62,8 @@ $error=0;
 print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 if (! isset($argv[3]) || ! $argv[3]) {
-	print "Usage: $script_file bank_ref bank_receipt_number (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
-	exit;
+	print "Usage: ".$script_file." bank_ref bank_receipt_number (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+	exit(-1);
 }
 $bankref=$argv[1];
 $num=$argv[2];
@@ -120,7 +120,7 @@ $result=$acct->fetch('',$bankref);
 if ($result <= 0)
 {
 	print "Failed to find bank account with ref ".$bankref.".\n";
-	exit;
+	exit(-1);
 }
 else
 {
@@ -135,7 +135,7 @@ $classname = "Export".$model;
 if (! dol_is_file($dir.$file))
 {
 	print "No driver to export with format ".$model."\n";
-	exit;
+	exit(-1);
 }
 require_once $dir.$file;
 $objmodel = new $classname($db);
@@ -247,7 +247,7 @@ if ($resql)
 			else
 			{
 				dol_print_error($db);
-				exit;
+				exit(-1);
 			}
 
 			$total = $balancebefore[$objp->num_releve];
@@ -439,5 +439,5 @@ else
 
 $db->close();
 
-return $ret;
+exit($ret);
 ?>
