@@ -1309,27 +1309,23 @@ class Form
         // Add criteria on ref/label
         if ($filterkey != '')
         {
-            if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
+        	$sql.=' AND (';
+        	$prefix=empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)?'%':'';	// Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+            // For natural search
+            $scrit = explode(' ', $filterkey);
+            $i=0;
+            if (count($scrit) > 1) $sql.="(";
+            foreach ($scrit as $crit)
             {
-                $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
-                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$filterkey."%'";
+            	if ($i > 0) $sql.=" AND ";
+                $sql.="(p.ref LIKE '".$prefix.$crit."%' OR p.label LIKE '".$prefix.$crit."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$prefix.$crit."%'";
                 $sql.=")";
+                $i++;
             }
-            else
-            {
-                // For natural search
-                $scrit = explode(' ', $filterkey);
-                foreach ($scrit as $crit) {
-                    $sql.=" AND (p.ref LIKE '%".$crit."%' OR p.label LIKE '%".$crit."%'";
-                    if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$crit."%'";
-                    $sql.=")";
-                }
-            }
-
-            if (! empty($conf->barcode->enabled))
-            {
-                $sql .= " OR p.barcode LIKE '".$filterkey."'";
-            }
+            if (count($scrit) > 1) $sql.=")";
+          	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$prefix.$filterkey."%'";
+        	$sql.=')';
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
@@ -1656,21 +1652,23 @@ class Form
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         if (! empty($filtre)) $sql.=" ".$filtre;
         // Add criteria on ref/label
-        if ($filterkey && $filterkey != '')
+        if ($filterkey != '')
         {
-            if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
-            {
-                $sql.=" AND (pfp.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
-            }
-            else
-            {
-                $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
-            }
-
-            if (! empty($conf->barcode->enabled))
-            {
-                $sql .= " OR p.barcode LIKE '".$filterkey."'";
-            }
+        	$sql.=' AND (';
+        	$prefix=empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)?'%':'';	// Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+        	// For natural search
+        	$scrit = explode(' ', $filterkey);
+        	$i=0;
+        	if (count($scrit) > 1) $sql.="(";
+        	foreach ($scrit as $crit)
+        	{
+        		if ($i > 0) $sql.=" AND ";
+        		$sql.="(pfp.ref_fourn LIKE '".$prefix.$crit."%' OR p.ref LIKE '".$prefix.$crit."%' OR p.label LIKE '".$prefix.$crit."%')";
+        		$i++;
+        	}
+        	if (count($scrit) > 1) $sql.=")";
+        	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$prefix.$filterkey."%'";
+        	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
 
