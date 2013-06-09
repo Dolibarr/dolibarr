@@ -42,27 +42,4 @@ if (empty($conf->holiday->enabled))
     exit();
 }
 
-
-/*$sql = "SELECT value";
-$sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
-$sql.= " WHERE name = 'userGroup'";
-
-$result = $db->query($sql);
-$obj = $db->fetch_object($result);
-
-if ($obj->value == null || $obj->value < 0)
-{
-    llxHeader('',$langs->trans('CPTitreMenu'));
-
-    $langs->load("errors");
-	$warnpicto=img_error($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<div class="tabBar">';
-	print $warnpicto.' '.$langs->trans("NotConfigModCP");
-	print '</div>';
-
-    llxFooter();
-    exit();
-}
-*/
-
 ?>
