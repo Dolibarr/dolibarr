@@ -65,7 +65,7 @@ if ($action == 'add')
 {
 	if (! GETPOST('titre'))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Title")), 'errors');
+		setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->trans("Title")), 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -138,7 +138,7 @@ if ($action == 'create')
 		print '</td></tr>';
 
 		// Title
-		print '<tr><td>'.$langs->trans("Title").'</td><td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
 		print '<input class="flat" type="text" name="titre" size="24" value="'.$_POST["titre"].'">';
 		print '</td>';
 

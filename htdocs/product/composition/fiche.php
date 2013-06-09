@@ -72,7 +72,6 @@ $cancel <> $langs->trans("Cancel") &&
 	$error=0;
 	for($i=0;$i<$_POST["max_prod"];$i++)
 	{
-		print "<br> : ".$_POST["prod_id_chk".$i];
 		if ($_POST["prod_id_chk".$i] > 0)
 		{
 			if($product->add_sousproduit($id, $_POST["prod_id_".$i],$_POST["prod_qty_".$i]) > 0)

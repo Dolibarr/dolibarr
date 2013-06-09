@@ -132,6 +132,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	}
 	else
 	{
+		$langs->load('errors');
 		setEventMessage($langs->trans($ecmdir->error,$ecmdir->label), 'errors');
 	}
 }
