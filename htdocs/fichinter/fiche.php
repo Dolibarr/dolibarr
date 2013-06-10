@@ -31,10 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
+if ($conf->contrat->enabled)
+{
+	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
+	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
@@ -1248,8 +1255,10 @@ else if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
+			$htmlcontract= new Formcontract($db);
 			//print "$socid,$selected,$htmlname";
-			select_contrats($object->socid,$object->fk_contrat,'contratid');
+			$htmlcontract->select_contract($object->socid,$object->fk_contrat,'contratid');
+
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
