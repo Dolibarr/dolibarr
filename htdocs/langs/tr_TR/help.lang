@@ -1,14 +1,6 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+﻿# Dolibarr language file - tr_TR - help
 CHARSET=UTF-8
-CommunitySupport=Forum/Wiki destek
+CommunitySupport=Forum/Wiki desteği
 EMailSupport=E-posta desteği
 RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
@@ -22,7 +14,7 @@ TypeSupportCommunauty=Genel (ücretsiz)
 TypeSupportCommercial=Ticari
 TypeOfHelp=Tür
 NeedHelpCenter=Yardım veya desteğe mi gereksiniminiz var?
-Efficiency=Verimlilik
+Efficiency=Verim
 TypeHelpOnly=Yalnızca yardım
 TypeHelpDev=Yardım+Geliştirme
 TypeHelpDevForm=Yardım+Geliştirme+Biçimlendirme

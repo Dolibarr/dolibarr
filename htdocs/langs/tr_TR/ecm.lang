@@ -1,14 +1,7 @@
-* Manually generated
- * Generation date 2012-07-08 16:55:26
-
-
-// START - Lines manually generated (2012-07-08 16:55:26).
- */
-// Reference language: en_US -> TR – ecm
-
+﻿*# Dolibarr language file - tr_TR - ecm
 CHARSET=UTF-8
 MenuECM=Belgeler
-DocsMine=Belgelerimi
+DocsMine=Belgelerim
 DocsGenerated=Oluşturulan belgeler
 DocsElements=Belge öğeleri
 DocsThirdParties=Üçüncü parti belgeleri 
@@ -19,7 +12,7 @@ DocsInvoices=Fatura belgeleri
 ECMNbOfDocs=Dizindeki belge sayısı
 ECMNbOfDocsSmall=Belg. Sayısı
 ECMSection=Dizin
-ECMSectionManual=Manuel dizini
+ECMSectionManual=Manuel dizin
 ECMSectionAuto=Otomatik dizin
 ECMSectionsManual=Manuel ağaç
 ECMSectionsAuto=Otomatik ağaç
@@ -31,23 +24,23 @@ ECMNewDocument=Yeni belge
 ECMCreationDate=Oluşturma tarihi
 ECMNbOfFilesInDir=Dizindeki dosya sayısı
 ECMNbOfSubDir=Alt-dizin sayısı
-ECMNbOfFilesInSubDir=Alt dizilerdeki dosya sayısı
+ECMNbOfFilesInSubDir=Alt dizinlerdeki dosya sayısı
 ECMCreationUser=Oluşturan
 ECMArea=ECM alanı
 ECMAreaDesc=ECM (Elektronik İçerik Yönetimi) alanı her çeşit Dolibarr belgesini çabukça saklamanızı, paylaşmanızı ve aramanızı sağlar.
 ECMAreaDesc2=* Otomatik dizinler, bir öğenin kartından belge eklenirken otomatikman doldurulur.<br> * Manuel dizinler, belirli bir öğeye bağlı olmayan belgelerin saklanması için kullanılabilir.
 ECMSectionWasRemoved=<b>%s</b>Dizini silindi.
-ECMDocumentsSection=Belge dizini
+ECMDocumentsSection=Dizin belgesi
 ECMSearchByKeywords=Anahtar kelimelere göre ara
 ECMSearchByEntity=Nesneye göre ara
 ECMSectionOfDocuments=Belgelerin dizinleri
 ECMTypeManual=Manuel
 ECMTypeAuto=Otomatik
-ECMDocsBySocialContributions=Sosyal güvenlik primleri ile bağlantılı belgeler
+ECMDocsBySocialContributions=Sosyal gkatkı paylarıi ile bağlantılı belgeler
 ECMDocsByThirdParties=Üçüncü partiler ile bağlantılı belgeler
 ECMDocsByProposals=Teklifler ile bağlantılı belgeler
 ECMDocsByOrders=Müşteri siparişleri ile bağlantılı belgeler
-ECMDocsByContracts=Sözleşmeler ile bağlantılı Belgeler 
+ECMDocsByContracts=Sözleşmeler ile bağlantılı belgeler 
 ECMDocsByInvoices=Müşteri faturaları ile bağlantılı belgeler
 ECMDocsByProducts=Ürünlere bağlantılı belgeler
 ECMNoDirectoryYet=Hiçbir dizin oluşturulmadı
@@ -55,6 +48,7 @@ ShowECMSection=Dizini göster
 DeleteSection=Dizini kaldır
 ConfirmDeleteSection=<b>%s</b> Dizinini silmek istediğinizi onaylayabilir misiniz?
 ECMDirectoryForFiles=Dosyalar için göreceli dizin
-CannotRemoveDirectoryContainsFiles=Kaldırılamıyor çünkü bazı dosyalar içeriyor
+CannotRemoveDirectoryContainsFiles=Bazı dosyalar içeridiğinden 
 ECMFileManager=Dosya yöneticisi
 ECMSelectASection=Sol ağaçtan bir dizin seçin...
+DirNotSynchronizedSyncFirst=Bu dizin ECM modülü dışından oluşturulmuş ya da değiştirilmiş görünüyor. Bu dizinin içeriğini almak için önce "Yenile" dümesine basarak diski ve veritabanını eşleyin.

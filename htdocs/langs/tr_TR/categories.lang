@@ -1,12 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-07 09:51:00
- */
-
-
-// START - Lines generated manually (2012-07-07 09:51:00).
-// Reference language: en_US -> TR - categories
+﻿# Dolibarr language file - tr_TR - categories
 CHARSET=UTF-8
 Category=Kategori
 Categories=Kategoriler
@@ -16,7 +8,7 @@ categories=kategoriler
 TheCategorie=Kategori
 NoCategoryYet=Bu türde oluşturulan Kategori yok
 In=İçinde
-AddIn=Ekle
+AddIn=Eklenti
 modify=değiştir
 Classify=Sınıflandır
 CategoriesArea=Kategoriler alanı
@@ -64,6 +56,7 @@ CompanyHasNoCategory=Bu firma herhangi bir kategoride yoktur
 MemberHasNoCategory=Bu üye herhangi bir kategoride yoktur
 ClassifyInCategory=Kategoride Sınıflandır
 NoneCategory=Hiçbiri
+NotCategorized=Kategorisiz
 CategoryExistsAtSameLevel=Bu kategori zaten bu ilgi ile var
 ReturnInProduct=Ürün/hizmet kartına geri dön
 ReturnInSupplier=Tedarikçi kartına geri dön
@@ -99,3 +92,11 @@ CatSupList=Tedarikçi kategorileri listesi
 CatCusList=Müşteri/aday kategorileri listesi  
 CatProdList=Ürün kategorileri Listesi
 CatMemberList=Üye kategorileri Listesi
+CatSupLinks=Tedarikçiler ve kategoriler arasındaki bağlantılar
+CatCusLinks=Müşterler/adaylar ve kategoriler arasındaki bağlantılar
+CatProdLinks=Ürünler/hizmetler ve kategoriler arasındaki bağlantılar
+CatMemberLinks=Üyeler ve kategoriler arasındaki bağlantılar
+#İçeaktarma
+CatProdLinks=Ürünler
+CatCusLinks=Müşteriler/Adaylar
+CatSupLinks=Tedarikçiler

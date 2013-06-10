@@ -1,13 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-06-28 23:08:00
- */
-
-
-// START - Lines generated manually (2012-06-28 23:08:00).
-// Reference language: en_US - users 
-
+﻿# Dolibarr language file - tr_TR - users
 CHARSET=UTF-8
 UserCard=Kullanıcı kartı
 ContactCard=Kişi kartı
@@ -47,13 +38,13 @@ NewUser=Yeni kullanıcı
 CreateUser=Kullanıcı oluştur
 SearchAGroup=Bir grup ara
 SearchAUser=Bir kullanıcı ara
-ErrorFailedToSendPassword=Parola gönderilemedi
 LoginNotDefined=Giriş tanımlı değil.
 NameNotDefined=Ad tanımlı değil.
 ListOfUsers=Kullanıcı listesi
 Administrator=Yönetici
 SuperAdministrator=Süper Yönetici
 SuperAdministratorDesc=Yöneticinin tüm hakları
+AdministratorDesc=Yöneticinin varlığı
 DefaultRights=Varsayılan izinler
 DefaultRightsDesc= Burada, otomatik olarak  <u>yeni oluşturulan</u>kullanıcıya hak tanınan <u>varsayılan</u> izinler  tanımlayın (varolan kullanıcının izinlerini değiştirmek için kullanıcı kartına gidin).
 DolibarrUsers=Dolibarr kullanıcıları
@@ -63,11 +54,11 @@ ListOfGroups=Grupların listesi
 NewGroup=Yeni grup
 CreateGroup=Grup oluştur
 RemoveFromGroup=Gruptan kaldır
-PasswordChangedAndSentTo=Şifre değiştirildi ve <b>%s</b> e gönderildi.
+PasswordChangedAndSentTo=Parola değiştirildi ve <b>%s</b> e gönderildi.
 PasswordChangeRequestSent=Parola değiştirildi ve <b>%s</b> e gönderildi.
 MenuUsersAndGroups=Kullanıcılar ve Gruplar
-LastGroupsCreated=Son oluşturulan %s grup
-LastUsersCreated=Son oluşturulan %s kullanıcı
+LastGroupsCreated=Son olarak %s grup oluşturuldu
+LastUsersCreated=Son olarak %s kullanıcı oluşturuldu
 ShowGroup=Grubu göster
 ShowUser=Kullanıcıyı göster
 NonAffectedUsers=Etkilenmemiş kullanıcılar
@@ -99,8 +90,12 @@ Reactivate=Yeniden etkinleştir
 CreateInternalUserDesc= Bu form firmanıza/kuruluşunuza bir iç kullanıcı oluşturmanızı sağlar. Bir dış kullanıcı oluşturmak için (müşteri, tedarikçi,…) üçüncü parti kişi kartındaki 'Dolibarr kullanıcısı oluştur' düğmesini kullanın.
 InternalExternalDesc= Bir <b>iç</b> kullanıcı firmanızın/kuruluşunuzun bir parçasıdır. <br>Bir<b>dış</b> kullanıcı bir müşteri, tedarikçi veya bir başkasıdır.<br><br>Her iki durumda da, izinler Dolibarr’daki hakları tanımlar, aynı zamanda dış kullanıcı iç kullanıcıdan farklı bir menü yöeticisine sahiptir (Giriş->Kurulum->Görünüm’e bakın)
 PermissionInheritedFromAGroup= İzin hak tanındı çünkü bir kullanıcının grubundan intikal etti.
+Inherited=İntikal eden
+UserWillBeInternalUser=Oluşturulacak kullanıcı bir iç kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılı değildir) 
+UserWillBeExternalUser=Oluşturulacak kullanıcı bir dış kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılıdır) 
 IdPhoneCaller=Kimlik telefonu arayıcı
 UserLogged=Kullanıcı %s bağlı
+UserLogoff=Kullanıcı %s çıkış yaptı
 NewUserCreated=Kullanıcı %s oluşturuldu
 NewUserPassword=Parola %s olarak değiştirildi
 EventUserModified=Kullanıcı %s değiştirildi
@@ -115,13 +110,7 @@ ConfirmCreateLogin=Bu üye için Dolibarr hesabı oluşturmak istediğinizden em
 ConfirmCreateThirdParty=Bu üye için bir üçüncü parti oluşturmak istediğinizden emin misiniz?
 LoginToCreate= Oluşturulacak giriş
 NameToCreate= Oluşturulacak Üçüncü Parti Adı 
-Inherited=Kalan
-UserWillBeInternalUser=Oluşturulacak kullanıcı bir iç kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılı değildir) 
-UserWillBeExternalUser=Oluşturulacak kullanıcı bir dış kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılıdır) 
-UserLogoff=Kullanıcı %s çıkış yaptı
 YourRole=Sizin rolünüz
 YourQuotaOfUsersIsReached=Aktif kullanıcı kotanıza ulaşıldı!
-AdministratorDesc=Yöneticinin varlığı
-NbOfUsers=Kullanıcıların sayısı
+NbOfUsers=Kullanıcı sayısı
 DontDowngradeSuperAdmin=Yalnızca bir SuperAdmin, bir SuperAdmin’inin derecesini düşürebilir
-

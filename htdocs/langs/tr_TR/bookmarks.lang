@@ -1,14 +1,21 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-03 23:50:00
- */
-
-// START - Lines generated manually (2012-07-03 23:50:00).
-// Reference language: en_US – bookmarks
-
+﻿# Dolibarr language file - tr_TR - bookmarks
 CHARSET=UTF-8
-Bookm=Yerimleri
-NewBookmark=Yeni yerimi
 AddThisPageToBookmarks=Bu sayfayı yerimlerine ekle
 
+Bookmark=Yerimi
+Bookmarks=Yerimleri
+NewBookmark=Yeni yerimi
+ShowBookmark=Yerimi göster
+OpenANewWindow=Yeni bir pencere aç
+ReplaceWindow=Geçerli pencereyi değiştir
+BookmarkTargetNewWindowShort=Yeni pencere
+BookmarkTargetReplaceWindowShort=Geçerli pencere
+BookmarkTitle=Yerimi başlığı
+UrlOrLink=URL
+BehaviourOnClick=URL tıklandığında oluşacak eylem
+CreateBookmark=Yerimi oluştur
+SetHereATitleForLink=Yerimi için başlık ayarla
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Bir dış http URL ya da göreceli bir Dolibarr URL si kullan
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bir link tarafından bir sayfa açıldığında geçerli pencerede ya da yeni pencerede görüneceğini seç
+BookmarksManagement=Yerimi yönetimi
+ListOfBookmarks=Yerimi listesi

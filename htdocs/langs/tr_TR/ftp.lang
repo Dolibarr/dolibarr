@@ -1,14 +1,7 @@
-/*
- * Language code: tr_TR
- * Manually generated 
- * Generation date 2012-07-23 22:28:26
- */
-
-// START - Lines generated manually (2012-07-23 22:28:26).
-// Reference language: en_US->tr_TR - ftp
+﻿# Dolibarr language file - tr_TR - ftp
 CHARSET=UTF-8
 FTPClientSetup=FTP İstemcisi modülü kurulumu
-NewFTPClient=Yeni bir FTP bağlantısı kurulumu
+NewFTPClient=Yeni bir FTP bağlantısı ayarı
 FTPArea=FTP Alanı
 FTPAreaDesc=Bu ekranda bir FTP sunucusu görünümünün içeriği gösterilir
 SetupOfFTPClientModuleNotComplete=FTP istemcisi modülünün kurulumu tamamlanmaış gibi görünüyor 
@@ -17,3 +10,4 @@ FailedToConnectToFTPServer= FTP sunucusuna bağlanamadı (sunucu %s, port %s)
 FailedToConnectToFTPServerWithCredentials=Tanımlı kullanıcı/parola ile FTP sunucusuna bağlanılamadı 
 FTPFailedToRemoveFile=<b>%s</b> Dosyası kaldırılamadı.
 FTPFailedToRemoveDir==<b>%s</b> Dizini kaldırılamadı (İzinleri o dizinin boş olduğunu denetleyin).
+FTPPassiveMode=Pasif mod

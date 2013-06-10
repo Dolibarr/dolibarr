@@ -1,16 +1,9 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-24 12:07:26
- */
-
-// START - Lines generated manually (2012-07-24 12:07:26).
-// Reference language: en_US->tr_TR - members
+﻿# Dolibarr language file - tr_TR - members
 CHARSET=UTF-8
 MembersArea=Üye alanı
 PublicMembersArea=Genel üye alanı
 MemberCard=Üye kartı
-SubscriptionCard=Abonelik kartı
+SubscriptionCard=Abone kartı
 Member=Üye
 Members=Üyeler
 MemberAccount=Üye girişi
@@ -31,7 +24,7 @@ SetLinkToUser=Bir Dolibarr kullanıcısına bağlantı
 SetLinkToThirdParty=Bir Dolibarr üçüncü partisine bağlantı
 MembersCards=Üye kartvizitleri
 MembersList=Üyelerin listesi
-(MembersListToValid=Taslak üye listesi (doğrulaacak)
+MembersListToValid=Taslak üye listesi (doğrulanacak)
 MembersListValid=Geçerli üye listesi
 MembersListUpToDate=Güncel abonelikleri ile geçerli üye listesi
 MembersListNotUpToDate=Abonelik tarihleri geçmiş geçerli üye listesi
@@ -145,6 +138,8 @@ SendAnEMailToMember=Üyelere bilgi e-postası gönder
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Üye oto-abonelik Eposta konusu
 DescADHERENT_AUTOREGISTER_MAIL=Üye oto-aboneliği Epostası
 DescADHERENT_MAIL_VALID_SUBJECT=Üye doğrulama Epostası konusu
+DescADHERENT_AUTOREGISTER_MAIL=Üye oto aboneliği için eposta
+DescADHERENT_MAIL_VALID_SUBJECT=Üye doğrulaması için eposta konusu
 DescADHERENT_MAIL_VALID=Üye doğrulama Epostası
 DescADHERENT_MAIL_COTIS_SUBJECT=AbonelikEpostası konusu
 DescADHERENT_MAIL_COTIS=Abonelik Epostası
@@ -152,12 +147,12 @@ DescADHERENT_MAIL_RESIL_SUBJECT=Üyelik sonlandırma Epostası konusu
 DescADHERENT_MAIL_RESIL=Üyelik sonlandırma Epostası
 DescADHERENT_MAIL_FROM=Otomatik epostalar için Eposta gönderen
 DescADHERENT_ETIQUETTE_TYPE=Etiket sayfası biçimi
+DescADHERENT_ETIQUETTE_TEXT=Üye adres sayfalarına yazılan metin
 DescADHERENT_CARD_TYPE=Kart sayfası biçimi
 DescADHERENT_CARD_HEADER_TEXT=Üyelik kartlarının en üstüne basılacak metin
 DescADHERENT_CARD_TEXT=Üyelik kartlarına basılacak metin (sola yanaşık)
 DescADHERENT_CARD_TEXT_RIGHT=Üyelik kartlarına basılacak metin (sağa yanaşık)
 DescADHERENT_CARD_FOOTER_TEXT=Üyelik kartlarının en altına basılacak metin
-DescADHERENT_MAILMAN_LISTS=Yeni üyelerin otomatik kayıt listesi (leri) (virgül ile ayrılmış)
 GlobalConfigUsedIfNotDefined=Tanımlanan metin yoksa kurum modülü kurulumunda tanımlanan metin kullanılacaktır
 MayBeOverwrited=Bu metin üyenin türü için tanımlanan değerin üzerine yazılabilir
 ShowTypeCard='%s' türünü göster
@@ -207,3 +202,6 @@ Particuliers=Kişisel
 Entreprises=Firmalar
 "DOLIBARRFOUNDATION_PAYMENT_FORM=Banka havalesi ile abonelik ödemesi yapmak için, <a target=""_blank"" href=""http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer"">http://wiki.dolibarr.org/index.php/Subscribe</a> sayfasına bakın . <br> Kredi Kartı veya Paypal ile ödeme yapmak için, bu sayfanın alt kısmındaki düğmeyi tıklatın. <br>
 "
+ByProperties=Özelliklere göre
+MembersStatisticsByProperties=Özelliklere göre üye istatistikleri
+MembersByNature=Doğal üyeler

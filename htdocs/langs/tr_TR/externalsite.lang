@@ -1,14 +1,5 @@
-/*
- * Language code: tr_TR
- * Manually translated
- * Generation date 2011-07-05 16:52:49
- */
-
-
-// START - Lines generated manually (2011-07-05 16:52:49).
-// Reference language: en_US -> tr_TR _ externalsite
+﻿# Dolibarr language file - tr_TR - externalsite
 CHARSET=UTF-8
-ExternalSiteSetup=Dış web sitesi kurulumu
-ExternalSiteURL=Dış web sitesi URL si
-ExternalSites=Dış siteler
-
+ExternalSiteSetup=Dış Web Sitesi ayarları
+ExternalSiteURL=Dış Web Sitesi URL si
+ExternalSiteModuleNotComplete=Dış Web Sitesi modülü doğru yapılandırılmamış.
