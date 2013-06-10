@@ -31,10 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
+if ($conf->contrat->enabled)
+{
+	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
+	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
@@ -884,12 +891,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheint
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formcontract = new FormContract($db);
 
-llxHeader();
+llxHeader('',$langs->trans("Fichinter"));
 
 if ($action == 'create')
 {
@@ -1015,18 +1023,18 @@ if ($action == 'create')
             print '</td></tr>';
         }
 
-	// Contrat
-	if ($conf->contrat->enabled)
-	{
-		$langs->load("contrat");
-		print '<tr><td valign="top">'.$langs->trans("Contrat").'</td><td>';
-		$numcontrat=select_contrats($soc->id,GETPOST('contratid','int'),'contratid');
-		if ($numcontrat==0)
+		// Contract
+		if ($conf->contrat->enabled)
 		{
-			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddContract").'</a>';
+			$langs->load("contrat");
+			print '<tr><td valign="top">'.$langs->trans("Contract").'</td><td>';
+			$numcontrat=$formcontract->select_contract($soc->id,GETPOST('contratid','int'),'contratid',0,1);
+			if ($numcontrat==0)
+			{
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddContract").'</a>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
-	}
 
         // Model
         print '<tr>';
@@ -1236,7 +1244,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($action != 'contrat')
 		{
 			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
-			print img_edit($langs->trans('SetContrat'),1);
+			print img_edit($langs->trans('SetContract'),1);
 			print '</a></td>';
 		}
 		print '</tr></table>';
@@ -1248,8 +1256,10 @@ else if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
+			$htmlcontract= new Formcontract($db);
 			//print "$socid,$selected,$htmlname";
-			select_contrats($object->socid,$object->fk_contrat,'contratid');
+			$htmlcontract->select_contract($object->socid,$object->fk_contrat,'contratid');
+
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
@@ -1271,7 +1281,7 @@ else if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
