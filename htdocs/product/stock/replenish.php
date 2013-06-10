@@ -93,7 +93,7 @@ if($action == 'order'){
     if($linecount > 0){
         $suppliers = array();
         for($i = 0; $i < $linecount; $i++) {
-            if(GETPOST($i, 'alpha') === 'on') { //one line
+            if(GETPOST($i, 'alpha') === 'on' && GETPOST('fourn'.$i, 'int') > 0) { //one line
                 $supplierpriceid = GETPOST('fourn'.$i, 'int');
                 //get all the parameters needed to create a line
                 $qty = GETPOST('tobuy'.$i, 'int');
