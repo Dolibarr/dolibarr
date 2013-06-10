@@ -123,9 +123,9 @@ if($action == 'order'){
                     dol_print_error($db);
                     dol_syslog("replenish.php: ".$error, LOG_ERROR);
                 }
+                $db->free($resql);
             }
         }
-        $db->free($resql);
         //we now know how many orders we need and what lines they have
         $i = 0;
         $orders = array();
