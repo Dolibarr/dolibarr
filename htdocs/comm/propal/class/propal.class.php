@@ -309,11 +309,12 @@ class Propal extends CommonObject
      *      @param		string		$label				???
      *		@param      timestamp	$date_start       	Start date of the line
      *		@param      timestamp	$date_end         	End date of the line
+     *      @param		array		$array_option		extrafields array
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='')
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
     {
         global $conf;
 
@@ -420,6 +421,10 @@ class Propal extends CommonObject
             $this->line->price=$price;
             $this->line->remise=$remise;
 
+            if (is_array($array_option) && count($array_option)>0) {
+            	$this->line->array_options=$array_option;
+            }
+
             $result=$this->line->insert();
             if ($result > 0)
             {
@@ -473,9 +478,10 @@ class Propal extends CommonObject
      *  @param		int			$type				0/1=Product/service
      *	@param      timestamp	$date_start       	Start date of the line
      *	@param      timestamp	$date_end         	End date of the line
+	 *  @param		array		$array_option		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='')
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
     {
         global $conf,$user,$langs;
 
@@ -560,6 +566,10 @@ class Propal extends CommonObject
             // TODO deprecated
             $this->line->price=$price;
             $this->line->remise=$remise;
+
+            if (is_array($array_option) && count($array_option)>0) {
+            	$this->line->array_options=$array_option;
+            }
 
             $result=$this->line->update();
             if ($result > 0)
@@ -2565,7 +2575,7 @@ class Propal extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->lines[$i]					= new stdClass();
+                $this->lines[$i]					= new PropaleLigne($this->db);
                 $this->lines[$i]->id				= $obj->rowid; // for backward compatibility
                 $this->lines[$i]->rowid				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
@@ -2617,10 +2627,13 @@ class Propal extends CommonObject
  *	\class      PropaleLigne
  *	\brief      Class to manage commercial proposal lines
  */
-class PropaleLigne
+class PropaleLigne  extends CommonObject
 {
     var $db;
     var $error;
+
+    public $element='propaldet';
+    public $table_element='propaldet';
 
     var $oldline;
 
@@ -2837,6 +2850,17 @@ class PropaleLigne
         if ($resql)
         {
             $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
+            
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+            	$this->id=$this->rowid;
+            	$result=$this->insertExtraFields();
+            	if ($result < 0)
+            	{
+            		$error++;
+            	}
+            }
+            
             if (! $notrigger)
             {
                 // Appel des triggers
@@ -2877,6 +2901,19 @@ class PropaleLigne
         dol_syslog("PropaleLigne::delete sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql) )
         {
+        	
+        	// Remove extrafields
+        	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        	{
+        		$this->id=$this->rowid;
+        		$result=$this->deleteExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        		}
+        	}
+        	
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
@@ -2970,6 +3007,16 @@ class PropaleLigne
         $resql=$this->db->query($sql);
         if ($resql)
         {
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$this->id=$this->rowid;
+        		$result=$this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
+        	
             if (! $notrigger)
             {
                 // Appel des triggers
