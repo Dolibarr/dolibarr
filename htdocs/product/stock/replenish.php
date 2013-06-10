@@ -90,52 +90,60 @@ if (! empty($_POST["button_removefilter_x"]))
 //orders creation
 if($action == 'order'){
     $linecount = GETPOST('linecount', 'int');
-    $suppliers = array();
-    for($i = 0; $i < $linecount; $i++) {
-        if(GETPOST($i, 'alpha') === 'on') { //one line
-            $supplierpriceid = GETPOST('fourn'.$i, 'int');
-            //get all the parameters needed to create a line
-            $qty = GETPOST('tobuy'.$i, 'int');
-            $desc = GETPOST('desc'.$i, 'alpha');
-            $sql = 'Select fk_product, fk_soc, ref_fourn';
-            $sql .= ', tva_tx, unitprice';
-            $sql .= ' from '.MAIN_DB_PREFIX.'product_fournisseur_price';
-            $sql .= ' where rowid = '.$supplierpriceid;
-            $resql = $db->query($sql);
-            if($resql && $db->num_rows($resql) > 0) {
-                //might need some value checks
-                $obj = $db->fetch_object($resql);
-                $line = new CommandeFournisseurLigne($db);
-                $line->qty = $qty;
-                $line->desc = $desc;
-                $line->fk_product = $obj->fk_product;
-                $line->tva_tx = $obj->tva_tx;
-                $line->subprice = $obj->unitprice;
-                $line->total_ht = $obj->unitprice * $qty;
-                $line->total_tva = $line->total_ht * $line->tva_tx / 100;
-                $line->total_ttc = $line->total_ht + $line->total_tva;
-                $line->ref_fourn = $obj->ref_fourn;
-                $suppliers[$obj->fk_soc]['lines'][] = $line;
+    if($linecount > 0){
+        $suppliers = array();
+        for($i = 0; $i < $linecount; $i++) {
+            if(GETPOST($i, 'alpha') === 'on') { //one line
+                $supplierpriceid = GETPOST('fourn'.$i, 'int');
+                //get all the parameters needed to create a line
+                $qty = GETPOST('tobuy'.$i, 'int');
+                $desc = GETPOST('desc'.$i, 'alpha');
+                $sql = 'Select fk_product, fk_soc, ref_fourn';
+                $sql .= ', tva_tx, unitprice';
+                $sql .= ' from '.MAIN_DB_PREFIX.'product_fournisseur_price';
+                $sql .= ' where rowid = '.$supplierpriceid;
+                $resql = $db->query($sql);
+                if($resql && $db->num_rows($resql) > 0) {
+                    //might need some value checks
+                    $obj = $db->fetch_object($resql);
+                    $line = new CommandeFournisseurLigne($db);
+                    $line->qty = $qty;
+                    $line->desc = $desc;
+                    $line->fk_product = $obj->fk_product;
+                    $line->tva_tx = $obj->tva_tx;
+                    $line->subprice = $obj->unitprice;
+                    $line->total_ht = $obj->unitprice * $qty;
+                    $line->total_tva = $line->total_ht * $line->tva_tx / 100;
+                    $line->total_ttc = $line->total_ht + $line->total_tva;
+                    $line->ref_fourn = $obj->ref_fourn;
+                    $suppliers[$obj->fk_soc]['lines'][] = $line;
+                }
+                else {
+                    $error=$db->lasterror();
+                    dol_print_error($db);
+                    dol_syslog("replenish.php: ".$error, LOG_ERROR);
+                }
             }
         }
-    }
-    //we now know how many orders we need and what lines they have
-    $i = 0;
-    $orders = array();
-    $suppliersid = array_keys($suppliers);
-    foreach($suppliers as $supplier){
-        $order = new CommandeFournisseur($db);
-        $order->socid = $suppliersid[$i];
-        //little trick to know which orders have been generated this way
-        $order->source = 42;
-        foreach($supplier['lines'] as $line){
-            $order->lines[] = $line;
+        $db->free($resql);
+        //we now know how many orders we need and what lines they have
+        $i = 0;
+        $orders = array();
+        $suppliersid = array_keys($suppliers);
+        foreach($suppliers as $supplier){
+            $order = new CommandeFournisseur($db);
+            $order->socid = $suppliersid[$i];
+            //little trick to know which orders have been generated this way
+            $order->source = 42;
+            foreach($supplier['lines'] as $line){
+                $order->lines[] = $line;
+            }
+            $id = $order->create($user);
+            if($id < 0) {
+                //error stuff
+            }
+            $i++;
         }
-        $id = $order->create($user);
-        if($id < 0) {
-            //error stuff
-        }
-        $i++;
     }
 }
 
@@ -202,7 +210,7 @@ $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.pr
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tobuy, p.seuil_stock_alerte";
 $sql .= ", p.desiredstock";
-$sql.= ' HAVING p.desiredstock > SUM(s.reel)';
+$sql.= ' HAVING p.desiredstock > SUM(s.reel) or SUM(s.reel) is NULL';
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
@@ -357,6 +365,7 @@ if ($resql)
         }
         print '<td align="right">'.$objp->desiredstock.'</td>';
         print '<td align="right">';
+        if(!$objp->stock_physique) $objp->stock_physique = 0;
         if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
         print $objp->stock_physique;
         print '</td>';
