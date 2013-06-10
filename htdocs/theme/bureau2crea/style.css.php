@@ -1803,6 +1803,8 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; padding-bottom: 2px !important; }
+
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -1827,15 +1829,16 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#b3c5cc;
-	color:white;
+	background-color:#BB6644;
+	color:white !important;
 	font-size:11px;
 	cursor:auto;
+	text-align: center;
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;
+	background-color:#BB6644;
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
@@ -1846,16 +1849,14 @@ table.dp {
 .dpExplanation{ font-weight:normal; font-size:11px;}
 .dpWeek td{text-align:center}
 
-.dpToday,.dpReg,.dpSelected{
-	cursor:pointer;
-}
+.dpToday,.dpReg,.dpSelected { cursor:pointer; }
 .dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
 
 /* Jour courant */
-.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+.dpSelected {background-color:#BB6644;color:white;font-weight:bold; }
 
-.tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
+.tpHour {border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
 .tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
 .tpHour td:Hover {background-color:black;color:white;}
 
