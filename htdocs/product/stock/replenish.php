@@ -287,7 +287,12 @@ if ($resql)
     print_liste_field_titre($langs->trans("Label"),"replenish.php", "p.label",$param,"","",$sortfield,$sortorder);
     if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"),"replenish.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DesiredStock"),"replenish.php", "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhysicalStock"),"replenish.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
+    if($conf->global->USE_VIRTUAL_STOCK) {
+        print_liste_field_titre($langs->trans("VirtualStock"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
+    }
+    else {
+        print_liste_field_titre($langs->trans("PhysicalStock"),"replenish.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
+    }
     print_liste_field_titre($langs->trans("StockToBuy"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Supplier"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
     print '<td>&nbsp;</td>';
@@ -366,12 +371,24 @@ if ($resql)
             print '<td align="right">'.$objp->desiredstock.'</td>';
             print '<td align="right">';
             if(!$objp->stock_physique) $objp->stock_physique = 0;
-            if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-            print $objp->stock_physique;
+            if($conf->global->USE_VIRTUAL_STOCK){
+                $product_static->fetch($product_static->id);
+                $result=$product_static->load_stats_commande(0,'1,2');
+                if ($result < 0) dol_print_error($db,$product_static->error);
+                $stock_commande_client = $product_static->stats_commande['qty'];
+                $result=$product_static->load_stats_commande_fournisseur(0,'3');
+                if ($result < 0) dol_print_error($db,$product_static->error);
+                $stock_commande_fournisseur = $product_static->stats_commande_fournisseur['qty'];
+                $stock = $objp->stock_physique - $stock_commande_client + $stock_commande_fournisseur;
+            }
+            else{
+                $stock = $objp->stock_physique;
+            }
+            if ($objp->seuil_stock_alerte && ($stock < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+            print $stock;
             print '</td>';
             //depending on conf, use either physical stock or
-            //theoretical stock to compute the stock to buy value
-            ($conf->global->use_theoretical_stock? $stock = $objp->stock_théorique : $stock = $objp->stock_physique);
+            //virtual stock to compute the stock to buy value
             $stocktobuy = $objp->desiredstock - $stock;
             print '<td align="right">'.$stocktobuy.'</td>';
             print '<input type="hidden" name="tobuy'.$i.'" value="'.$stocktobuy.'" >';
