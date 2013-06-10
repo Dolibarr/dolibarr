@@ -18,14 +18,14 @@
 
 /**
  * \file       htdocs/core/class/html.formcontract.class.php
- *  \ingroup    core
+ * \ingroup    core
  * \brief      File of class with all html predefined components
  */
 
 /**
- *	Class to manage generation of HTML components for bank module
+ *	Class to manage generation of HTML components for contract module
  */
-class Formcontract
+class FormContract
 {
     var $db;
     var $error;
@@ -41,7 +41,7 @@ class Formcontract
         $this->db = $db;
     }
 
-	
+
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -49,32 +49,30 @@ class Formcontract
 	 *	@param  int		$selected   Id contract preselected
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
+	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbre of project if OK, <0 if KO
 	 */
-	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16)
+	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
 		global $db,$user,$conf,$langs;
-	
+
 		$hideunselectables = false;
 		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
-	
+
 		// Search all contacts
-		$sql = 'SELECT c.rowid, c.ref, c.note, c.fk_soc, c.statut';
+		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'contrat as c';
 		$sql.= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
-		if ($socid == 0) 
-			$sql.= " AND (c.fk_soc=0 OR c.fk_soc IS NULL)";
-		else
-			$sql.= " AND c.fk_soc=".$socid;
-		$sql.= " ORDER BY c.note ASC";
-	
-		dol_syslog("contact.lib::select_contrats sql=".$sql);
+		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
+		else $sql.= " AND c.fk_soc = ".$socid;
+
+		dol_syslog(get_class($this)."::select_contract sql=".$sql);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
-			print '<option value="0">&nbsp;</option>';
+			if ($showempty) print '<option value="0">&nbsp;</option>';
 			$num = $db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -102,14 +100,14 @@ class Formcontract
 							if (! $obj->statut > 0)
 							{
 								$disabled=1;
-								$labeltoshow.=' - '.$langs->trans("Draft");
+								$labeltoshow.=' ('.$langs->trans("Draft").')';
 							}
 							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 							}
-	
+
 							if ($hideunselectables && $disabled)
 							{
 								$resultat='';
@@ -121,7 +119,6 @@ class Formcontract
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
 								$resultat.='>'.$labeltoshow;
-								if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
 								$resultat.='</option>';
 							}
 							print $resultat;
