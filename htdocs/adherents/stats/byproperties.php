@@ -44,6 +44,8 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+$langs->load("members");
+$langs->load("companies");
 
 
 /*

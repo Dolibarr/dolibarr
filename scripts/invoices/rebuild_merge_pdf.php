@@ -30,7 +30,7 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 // Include Dolibarr environment
@@ -50,15 +50,19 @@ $version=DOL_VERSION;
 $error=0;
 
 
-// -------------------- START OF YOUR CODE HERE --------------------
+
+/*
+ * Main
+ */
+
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 // Check parameters
 if (! isset($argv[1]))
 {
 	usage();
-	exit;
+	exit(-1);
 }
 
 $diroutputpdf=$conf->facture->dir_output . '/temp';
@@ -118,6 +122,11 @@ foreach ($argv as $key => $value)
 
 		$paymentdateafter=dol_stringtotime($argv[$key+1]);
 		$paymentdatebefore=dol_stringtotime($argv[$key+2]);
+		if (empty($paymentdateafter) || empty($paymentdatebefore))
+		{
+			print 'Error: Bad date format'."\n";
+			exit(-1);
+		}
 		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter,'day')." and ".dol_print_date($paymentdatebefore,'day').".\n";
 	}
 
@@ -130,7 +139,25 @@ foreach ($argv as $key => $value)
 		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
 	}
 
-    if ($value == 'filter=nodeposit')
+	if ($value == 'filter=bank')
+	{
+		$found=true;
+		$option.=(empty($option)?'':'_').'bank_'.$argv[$key+1];
+		$filter[]='bank';
+
+		$paymentonbankref=$argv[$key+1];
+		$bankaccount=new Account($db);
+		$result=$bankaccount->fetch(0,$paymentonbankref);
+		if ($result <= 0)
+		{
+			print 'Error: Bank account with ref "'.$paymentonbankref.'" not found'."\n";
+			exit(-1);
+		}
+		$paymentonbankid=$bankaccount->id;
+		print 'Rebuild PDF for invoices with at least one payment on financial account '.$bankaccount->ref."\n";
+	}
+
+	if ($value == 'filter=nodeposit')
     {
         $found=true;
         $option.=(empty($option)?'':'_').'nodeposit';
@@ -158,7 +185,7 @@ foreach ($argv as $key => $value)
 	if (! $found && preg_match('/filter=/i',$value))
 	{
 		usage();
-		exit;
+		exit(-1);
 	}
 }
 
@@ -166,19 +193,24 @@ foreach ($argv as $key => $value)
 if (empty($option) && count($filter) <= 0)
 {
 	usage();
-	exit;
+	exit(-1);
 }
 // Check if there is no uncompatible choice
 if (in_array('payments',$filter) && in_array('nopayment',$filter))
 {
 	usage();
-	exit;
+	exit(-1);
+}
+if (in_array('bank',$filter) && in_array('nopayment',$filter))
+{
+	usage();
+	exit(-1);
 }
 
 
 // Define SQL and SQL request to select invoices
 // Use $filter, $dateafterdate, datebeforedate, $paymentdateafter, $paymentdatebefore
-$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option);
+$result=rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, 1, $regenerate, $option, $paymentonbankid);
 
 
 
@@ -197,7 +229,7 @@ else
 
 $db->close();
 
-return $error;
+exit($error);
 
 
 
@@ -213,9 +245,11 @@ function usage()
     print "Rebuild PDF files for some invoices and merge PDF files into one.\n";
 	print "\n";
 	print "To build/merge PDF for invoices in a date range:\n";
-	print "Usage:   ".$script_file." filter=date dateafter datebefore [lang=langcode]\n";
+	print "Usage:   ".$script_file." filter=date dateafter datebefore\n";
 	print "To build/merge PDF for invoices with at least one payment in a date range:\n";
-	print "Usage:   ".$script_file." filter=payments dateafter datebefore [lang=langcode]\n";
+	print "Usage:   ".$script_file." filter=payments dateafter datebefore\n";
+	print "To build/merge PDF for invoices with at least one payment onto a bank account:\n";
+	print "Usage:   ".$script_file." filter=bank bankref\n";
 	print "To build/merge PDF for all invoices, use filter=all\n";
 	print "Usage:   ".$script_file." filter=all\n";
 	print "To build/merge PDF for invoices with no payments, use filter=nopayment\n";
@@ -224,9 +258,10 @@ function usage()
     print "To exclude replacement invoices, use filter=noreplacement\n";
     print "To exclude deposit invoices, use filter=nodeposit\n";
     print "To regenerate existing PDF, use regenerate=crabe\n";
+    print "To generate invoices in a language, use lang=xx_XX\n";
     print "\n";
 	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR regenerate=crabe\n";
-	print "Example: ".$script_file." filter=all lang=it_IT\n";
+	print "Example: ".$script_file." filter=all lang=en_US\n";
 	print "\n";
 	print "Note that some filters can be cumulated.\n";
 }

@@ -231,7 +231,9 @@ if ($resql)
 
 		$companystatic->nom=$objp->nom;
 		$companystatic->id=$objp->socid;
-		print '<td>'.$companystatic->getNomUrl(1,'supplier').'</td>';
+		print '<td>';
+		if ($companystatic->id > 0) print $companystatic->getNomUrl(1,'supplier');
+		print '</td>';
 
 		print '<td align="right">'.price($objp->price).'</td>';
 

@@ -986,8 +986,7 @@ class CommandeFournisseur extends CommonOrder
 	                );
 	                if ($result < 0)
 	                {
-	                    $this->error=$this->db->lasterror();
-	                    dol_print_error($this->db);
+	                    dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);	// do not use dol_print_error here as it may be a functionnal error
 	                    $this->db->rollback();
 	                    return -1;
 	                }
@@ -1022,7 +1021,7 @@ class CommandeFournisseur extends CommonOrder
 	                    }
 	                    else if ($reshook < 0) $error++;
                     }
-					
+
 					if (! $notrigger)
 	                {
 	                    // Appel des triggers
@@ -1209,8 +1208,8 @@ class CommandeFournisseur extends CommonOrder
                     }
                 }
                 else
-                {
-                    $this->error=$this->db->error();
+				{
+                    $this->error=$prod->error;
                     return -1;
                 }
             }
@@ -1441,7 +1440,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $error++;
         }
-        
+
         // Remove extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
@@ -1802,7 +1801,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= ",total_localtax1='".price2num($total_localtax1)."'";
             $sql.= ",total_localtax2='".price2num($total_localtax2)."'";
             $sql.= ",total_ttc='".price2num($total_ttc)."'";
-            $sql.= ",product_type='".$type."'";
+            $sql.= ",product_type=".$type;
             $sql.= " WHERE rowid = ".$rowid;
 
             dol_syslog(get_class($this)."::updateline sql=".$sql);
@@ -2063,7 +2062,7 @@ class CommandeFournisseurLigne
         $sql.= ' cd.localtax1_tx, cd.localtax2_tx,';
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
-        $sql.= ' cd.total_localtax1, cd.local_localtax2,';
+        $sql.= ' cd.total_localtax1, cd.total_localtax2,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -2096,10 +2095,12 @@ class CommandeFournisseurLigne
             $this->product_desc     = $objp->product_desc;
 
             $this->db->free($result);
+            return 1;
         }
         else
         {
             dol_print_error($this->db);
+            return -1;
         }
     }
 

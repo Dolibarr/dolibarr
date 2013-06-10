@@ -63,35 +63,35 @@ if ($action == 'confirm_rejet')
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
 		}
-		
+
 		elseif ($daterej > dol_now())
 		{
 			$error++;
 			$langs->load("error");
 			setEventMessage($langs->transnoentities("ErrorDateMustBeBeforeToday"),'errors');
 		}
-		
+
 		if (GETPOST('motif','alpha') == 0)
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefusedReason")),'errors');
 		}
-		
+
 		if ( ! $error )
 		{
 			$lipre = new LignePrelevement($db, $user);
-			
+
 			if ($lipre->fetch($id) == 0)
-			
+
 			{
 				$rej = new RejetPrelevement($db, $user);
-				
+
 				$rej->create($user, $id, GETPOST('motif','alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer','int'));
 
 				header("Location: ligne.php?id=".$id);
 				exit;
 			}
-			
+
 		}
 		else
 		{

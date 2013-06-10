@@ -1,16 +1,9 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=号。装船
 Sending=装船
 Sendings=出货
+Shipments=出货
 Receivings=Receivings
 SendingsArea=出货面积
 ListOfSendings=名单sendings
@@ -38,9 +31,11 @@ SendingsToValidate=发送验证
 StatusSendingCanceled=取消
 StatusSendingDraft=草案
 StatusSendingValidated=验证（产品出货或已经出货）
+# StatusSendingProcessed=Processed
 StatusSendingCanceledShort=取消
 StatusSendingDraftShort=草案
 StatusSendingValidatedShort=验证
+# StatusSendingProcessedShort=Processed
 SendingSheet=发送表
 Carriers=载体
 Carrier=载波
@@ -57,26 +52,22 @@ WarningNoQtyLeftToSend=警告，没有产品等待装运。
 StatsOnShipmentsOnlyValidated=统计出货量仅进行验证
 DateDeliveryPlanned=刨交货日期
 DateReceived=交货日期收到
-SendingMethodCATCH=按客户捕捉
-SendingMethodTRANS=运输车
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=简单的送货单文档模型
-DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-Shipments=出货
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:30).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
 SendShippingByEMail=通过电子邮件发送货物
 SendShippingRef=发送货物%s
 ActionsOnShipping=对装运的事件
 LinkToTrackYourPackage=链接到追踪您的包裹
 ShipmentCreationIsDoneFromOrder=就目前而言，建立一个新的装运完成从订单卡。
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=按客户捕捉
+SendingMethodTRANS=运输车
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=简单的送货单文档模型
+DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:21).

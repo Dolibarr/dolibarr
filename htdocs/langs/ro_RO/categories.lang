@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=Categorie
 Categories=Categorii
@@ -15,6 +6,7 @@ Rubrique=Categorie
 Rubriques=Categorii
 categories=categorii
 TheCategorie=În categoria
+NoCategoryYet=Nici o categorie de acest tip creat
 In=În
 AddIn=Adăugaţi în
 modify=modifica
@@ -24,6 +16,7 @@ ProductsCategoriesArea=Produse / Servicii categorii zona
 SuppliersCategoriesArea=Furnizori categorii zona
 CustomersCategoriesArea=Clienţii categorii zona
 ThirdPartyCategoriesArea=Terţilor categorii zona
+MembersCategoriesArea=Membrii categorii zona
 MainCats=Principalele categorii de
 SubCats=Subcategorii
 CatStatistics=Statistici
@@ -56,11 +49,14 @@ ProductIsInCategories=Produse / servicii pentru a deţine următoarele categorii
 SupplierIsInCategories=Terţă parte de a deţine următoarele categorii de furnizori
 CompanyIsInCustomersCategories=Acest terţ deţine la următoarele clienţi / perspectivele categorii
 CompanyIsInSuppliersCategories=Acest terţ deţine la următoarele categorii de furnizori
+MemberIsInCategories=Acest membru detine la următoarele categorii de membri
 ProductHasNoCategory=Acest produs / serviciu nu este în nici un categorii
 SupplierHasNoCategory=Acest furnizor nu este în nici un categorii
 CompanyHasNoCategory=Aceasta companie nu este în nici un categorii
+MemberHasNoCategory=Acest membru nu este în nicio categorie
 ClassifyInCategory=Clasifica în categoria
 NoneCategory=Niciunul
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Această categorie nu există deja în acelaşi loc
 ReturnInProduct=Inapoi la produs / serviciu de carte
 ReturnInSupplier=Inapoi la furnizor carte
@@ -77,39 +73,30 @@ NoCategoriesDefined=Nu categorie definită
 SuppliersCategoryShort=Furnizori categorie
 CustomersCategoryShort=Clienţii categorie
 ProductsCategoryShort=Produse categorie
+MembersCategoryShort=Membrii categorie
 SuppliersCategoriesShort=Furnizori categorii
 CustomersCategoriesShort=Clienţii categorii
 CustomersProspectsCategoriesShort=Custo. / Prosp. categorii
 ProductsCategoriesShort=Produse Categorii
+MembersCategoriesShort=Membrii categorii
 ThisCategoryHasNoProduct=Această categorie nu conţine nici un produs.
 ThisCategoryHasNoSupplier=Această categorie nu conţine nici un furnizor.
 ThisCategoryHasNoCustomer=Această categorie nu conţine nici un client.
+ThisCategoryHasNoMember=Această categorie nu conţine nici un membru.
 AssignedToCustomer=Angajat într-un client
 AssignedToTheCustomer=Atribuite de client
 InternalCategory=Inernal categorie
 CategoryContents=Categorie conţinutul
 CategId=Id-ul categoriei
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-NoCategoryYet=Nici o categorie de acest tip creat
 CatSupList=Lista de furnizor categorii
 CatCusList=Lista de client / categorii de perspectivă
 CatProdList=Lista de categorii de produse
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-MembersCategoriesArea=Membrii categorii zona
-MemberIsInCategories=Acest membru detine la următoarele categorii de membri
-MemberHasNoCategory=Acest membru nu este în nicio categorie
-MembersCategoryShort=Membrii categorie
-MembersCategoriesShort=Membrii categorii
-ThisCategoryHasNoMember=Această categorie nu conţine nici un membru.
 CatMemberList=Lista membrilor categorii
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:53).
-
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

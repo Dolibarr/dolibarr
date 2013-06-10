@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - members
 CHARSET=UTF-8
 MembersArea=Liikmete ala
 PublicMembersArea=Avalik liikmete ala
@@ -128,7 +120,6 @@ LastMembersModified=Last %s muutmine liikmed
 LastSubscriptionsModified=Last %s muutmine tellimine
 AttributeName=Atribuudi nimi
 FieldEdition=Väljaanne valdkonnas %s
-AlphaNumOnlyCharsAndNoSpace=ainult alphanumericals tähemärki tühikuteta
 String=String
 Text=Tekst
 Int=Int
@@ -140,6 +131,8 @@ AddSubscription=Lisa liitumisleping
 ShowSubscription=Näita liitumisleping
 MemberModifiedInDolibarr=Liikmesriigid muuta Dolibarr
 SendAnEMailToMember=Saada informatsiooni e-posti liige
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-post teema liikme autosubscription
 DescADHERENT_AUTOREGISTER_MAIL=E-post jaoks liikme autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=E-post teema liikme kinnitamine
@@ -150,20 +143,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=E-post teema liikme resiliation
 DescADHERENT_MAIL_RESIL=E-post jaoks liikme resiliation
 DescADHERENT_MAIL_FROM=Saatja e-post automaatse e-mailid
 DescADHERENT_ETIQUETTE_TYPE=Formaat siltide lehele
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=Formaat kaarte lehele
 DescADHERENT_CARD_HEADER_TEXT=Tekst trükitud peal liikmeks kaardid
 DescADHERENT_CARD_TEXT=Tekst trükitakse liige kaardid (viia vasakul)
 DescADHERENT_CARD_TEXT_RIGHT=Tekst trükitakse liige kaardid (viia paremal)
 DescADHERENT_CARD_FOOTER_TEXT=Tekst trükitud põhja liikmeks kaardid
-DescADHERENT_MAILMAN_LISTS=Loetelu (d) automaatse insription uute liikmete (komaga eraldatud)
 GlobalConfigUsedIfNotDefined=Tekst määratletud Foundation moodul setup kasutatakse, kui ei ole määratletud siin
 MayBeOverwrited=Seda teksti saab overwrited väärtuse määratletud liikme liik
 ShowTypeCard=Näita tüüp &quot;%s&quot;
 HTPasswordExport=htpassword fail põlvkonna
 NoThirdPartyAssociatedToMember=Ükski kolmas isik on seotud selle liige
 ThirdPartyDolibarr=Dolibarr kolmanda osapoole
-MembersAndSubscriptions=Liikmete ja Subscriptions
+MembersAndSubscriptions= Liikmete ja Subscriptions
 MoreActions=Täiendav tegevus salvestus
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Loo otseseid tehingukulusid rekord konto
 MoreActionBankViaInvoice=Loo arve ja ettemaks
 MoreActionInvoiceOnly=Koosta arve, millel ei ole makse
@@ -203,4 +197,9 @@ Collectivités=Organisatsioonid
 Particuliers=Isiklik
 Entreprises=Ettevõtted
 DOLIBARRFOUNDATION_PAYMENT_FORM=Et teie liitumisleping makse kasutades pangaülekandega, vt lk <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Tasuda krediitkaardiga või Paypal, klõpsake nuppu selle lehe allosas. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:39:29).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - commercial
 CHARSET=UTF-8
 Commercial=Kaubandus-
 CommercialArea=Äripind
@@ -32,6 +24,7 @@ TaskRDVWith=Kohtumine %s
 ShowTask=Näita ülesanne
 ShowAction=Näita sündmus
 ActionsReport=Sündmused aru
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Müügiagent
 SalesRepresentatives=Müügiesindajad
 SalesRepresentativeFollowUp=Müügiesindaja (järelkontroll)
@@ -88,7 +81,16 @@ ActionAC_SHIP=Saada shipping by mail
 ActionAC_SUP_ORD=Saada tarnija et posti teel
 ActionAC_SUP_INV=Saada tarnija arve posti teel
 ActionAC_OTH=Teine
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect staatus
 DraftPropals=Koostada äri ettepanekud
 SearchPropal=Otsi äri ettepanekut
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:24:50).
+# CommercialDashboard=Commercial summary

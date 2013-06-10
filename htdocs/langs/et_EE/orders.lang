@@ -1,16 +1,9 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Klientide tellimuste ala
 SuppliersOrdersArea=Tarnijatele tellimusi ala
 OrderCard=Selleks kaart
+# OrderId=Order Id
 Order=Et
 Orders=Tellimused
 OrderLine=Et liini
@@ -36,9 +29,11 @@ StatusOrderCanceledShort=Tühistatud
 StatusOrderDraftShort=Eelnõu
 StatusOrderValidatedShort=Valideeritud
 StatusOrderSentShort=Protsessi
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Vastuvõtt
 StatusOrderProcessedShort=Töödeldud
 StatusOrderToBillShort=Arve
+# StatusOrderToBill2Short=To bill
 StatusOrderApprovedShort=Heaks
 StatusOrderRefusedShort=Keeldus
 StatusOrderToProcessShort=Töödelda
@@ -50,6 +45,7 @@ StatusOrderValidated=Valideeritud
 StatusOrderOnProcess=Ootan, et saada
 StatusOrderProcessed=Töödeldud
 StatusOrderToBill=Arve
+# StatusOrderToBill2=To bill
 StatusOrderApproved=Heaks
 StatusOrderRefused=Keeldus
 StatusOrderReceivedPartially=Osaliselt saanud
@@ -58,6 +54,7 @@ ShippingExist=Saadetis on olemas
 DraftOrWaitingApproved=Eelnõu või kinnitatud ei ole veel tellitud
 DraftOrWaitingShipped=Eelnõu või kinnitatud ei ole veel saadetud
 MenuOrdersToBill=Tellimuste bill
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Otsi et
 Sending=Saatmine
 Sendings=Edastuste
@@ -96,6 +93,7 @@ ConfirmUnvalidateOrder=Oled kindel, et soovite taastada, et <b>%s</b> eelnõude 
 ConfirmCancelOrder=Oled sa kindel, et soovite tühistada selle tellimuse?
 ConfirmMakeOrder=Oled sa kindel, et tahad kinnitada tegite seda, et on <b>%s?</b>
 GenerateBill=Loo arve
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Liigitada &quot;Arvelduse&quot;
 ComptaCard=Raamatupidamine kaart
 DraftOrders=Eelnõu tellimusi
@@ -117,6 +115,7 @@ PaymentOrderRef=Maksmise et %s
 CloneOrder=Clone et
 ConfirmCloneOrder=Oled sa kindel, et soovid kloonida selles järjekorras <b>%s?</b>
 DispatchSupplierOrder=Saamist tarnija et %s
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Esindaja järelmeetmeid kliendi tellimuse
 TypeContact_commande_internal_SHIPPING=Esindaja järelmeetmeid laevandus
 TypeContact_commande_external_BILLING=Kliendi arve kontaktandmed
@@ -127,10 +126,15 @@ TypeContact_order_supplier_internal_SHIPPING=Esindaja järelmeetmeid laevandus
 TypeContact_order_supplier_external_BILLING=Tarnija arve kontaktandmed
 TypeContact_order_supplier_external_SHIPPING=Tarnija shipping kontakt
 TypeContact_order_supplier_external_CUSTOMER=Tarnija kontaktandmed järelmeetmeid, et
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Pidev COMMANDE_SUPPLIER_ADDON ole määratletud
 Error_COMMANDE_ADDON_NotDefined=Pidev COMMANDE_ADDON ole määratletud
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Laadimine ebaõnnestus mooduli faili &quot;%s&quot;
 Error_FailedToLoad_COMMANDE_ADDON_File=Laadimine ebaõnnestus mooduli faili &quot;%s&quot;
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
 OrderSource0=Commercial ettepanek
 OrderSource1=Internet
 OrderSource2=Mail kampaania
@@ -140,11 +144,18 @@ OrderSource5=Kaubandus-
 OrderSource6=Hoidke
 QtyOrdered=Kogus tellitud
 AddDeliveryCostLine=Lisa kohaletoimetamise kulu rida näitab kaal, et
+
+# Documents models
 PDFEinsteinDescription=Täielik, et mudel (logo. ..)
 PDFEdisonDescription=Lihtne, et mudel
+# Orders modes
 OrderByMail=Post
 OrderByFax=Faksida
 OrderByEMail=E-post
 OrderByWWW=Online
 OrderByPhone=Telefon
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:23:40).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill

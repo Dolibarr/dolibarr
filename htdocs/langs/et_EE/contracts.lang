@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Lepingud ala
 ListOfContracts=Lepingute loetelu
@@ -47,6 +39,7 @@ ConfirmCloseService=Oled sa kindel, et tahad sulgeda selle teenuse koos kuupäev
 ValidateAContract=Kinnitada leping
 ActivateService=Aktiveeri teenus
 ConfirmActivateService=Oled kindel, et soovite aktiveerida seda teenust koos kuupäeva <b>%s?</b>
+# RefContract=Contract reference
 DateContract=Lepingu kuupäev
 DateServiceActivate=Teenuse aktiveerimine kuupäev
 DateServiceUnactivate=Teenuse deaktiveerimine kuupäev
@@ -61,7 +54,7 @@ ListOfRunningContractsLines=List töötab lepingu read
 ListOfRunningServices=List töötab teenused
 NotActivatedServices=Passiivne teenused (sh kinnitatud lepingud)
 BoardNotActivatedServices=Teenuste aktiveerimiseks seas kinnitatud lepingud
-LastContracts=Viimati% lepingud
+LastContracts=Last %s muutmine lepingud
 LastActivatedServices=Last %s aktiveeritud teenused
 LastModifiedServices=Last %s muutmine teenused
 EditServiceLine=Edit teenuse rida
@@ -93,10 +86,14 @@ PaymentRenewContractId=Pikendada lepingu (number %s)
 ExpiredSince=Aegumistähtaeg
 RelatedContracts=Seotud lepingud
 NoExpiredServices=Ei möödunud aktiivne teenused
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpire=List of Services to expire
+# Service=Service
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Müügiesindaja allkirjastades lepingu
 TypeContact_contrat_internal_SALESREPFOLL=Müügiesindaja järelmeetmeid leping
 TypeContact_contrat_external_BILLING=Arved kliendi kontaktandmed
 TypeContact_contrat_external_CUSTOMER=Järelmeetmete kliendikontakti
 TypeContact_contrat_external_SALESREPSIGN=Allkirjastades lepingu kliendikontakti
 Error_CONTRACT_ADDON_NotDefined=Pidev CONTRACT_ADDON ole määratletud
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:37).

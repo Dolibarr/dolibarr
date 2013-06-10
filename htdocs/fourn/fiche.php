@@ -102,13 +102,14 @@ if ($object->fetch($id))
 
 	if ($object->fournisseur)
 	{
-        print '<tr>';
+		print '<tr>';
         print '<td class="nowrap">'.$langs->trans("SupplierCode"). '</td><td colspan="3">';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td>';
         print '</tr>';
 
+		$langs->load('compta');
         print '<tr>';
         print '<td>';
         print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);

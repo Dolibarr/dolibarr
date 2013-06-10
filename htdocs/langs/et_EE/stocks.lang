@@ -1,21 +1,16 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Warehouse kaart
 Warehouse=Ladu
+# Warehouses=Warehouses
 NewWarehouse=Uus ladu / laopinda
 WarehouseEdit=Muuda ladu
 MenuNewWarehouse=Uus ladu
 WarehouseOpened=Ladu avatud
 WarehouseClosed=Ladu suletud
 WarehouseSource=Allikas ladu
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Target ladu
 ValidateSending=Kustuta saatmine
 CancelSending=Tühista saatmine
@@ -41,8 +36,10 @@ StockCorrection=Õige varude
 StockMovement=Üle
 StockMovements=Stock ülekandeid
 NumberOfUnit=Ühikute arv
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Kokku varude
 StockTooLow=Stock liiga madal
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Väärtus
 PMPValue=Kaalutud keskmine hind
 PMPValueShort=WAP
@@ -58,6 +55,7 @@ DeStockOnShipment=Väheneb reaalne varude vedu kinnitamine
 ReStockOnBill=Suurendada tõeline varud tarnijate arved / kreeditarvete kinnitamine
 ReStockOnValidateOrder=Suurendada tõeline varude tarnijatele tellimusi aprobatsioon
 ReStockOnDispatchOrder=Suurendada tõeline varude käsitsi ekspedeerimine arvesse ladude, pärast tarnija et saavad
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Selleks ei ole veel või enam staatust, mis võimaldab lähetamine toodete varude laod.
 StockDiffPhysicTeoric=Põhjus erinevus varude füüsilise ja teoreetiline
 NoPredefinedProductToDispatch=Ei eelnevalt tooted Selle objekti. Nii ei ekspedeerimine varude vaja.
@@ -89,4 +87,5 @@ PersonalStock=Isiklik varu %s
 ThisWarehouseIsPersonalStock=See ladu esindab isiklikku varu %s %s
 SelectWarehouseForStockDecrease=Vali lattu kasutada varude vähenemine
 SelectWarehouseForStockIncrease=Vali lattu kasutada varude kasv
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:24:04).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

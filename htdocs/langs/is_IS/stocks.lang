@@ -1,20 +1,16 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Lager-kort
 Warehouse=Lager
+# Warehouses=Warehouses
 NewWarehouse=Nýr lager / lager area
+WarehouseEdit=Breyta vörugeymsla
 MenuNewWarehouse=Nýr lager
 WarehouseOpened=Warehouse opna
 WarehouseClosed=Lager lokaður
 WarehouseSource=Heimild vörugeymsla
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Markmál vörugeymsla
 ValidateSending=Eyða sendingu
 CancelSending=Hætta við að senda
@@ -40,8 +36,10 @@ StockCorrection=Rétt lager
 StockMovement=Transfer
 StockMovements=Kauphöll millifærslur
 NumberOfUnit=Fjöldi eininga
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Samtals á lager
 StockTooLow=Stock of lágt
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Gildi
 PMPValue=Vegið meðalverð
 PMPValueShort=WAP
@@ -57,6 +55,7 @@ DeStockOnShipment=Minnka alvöru stofnum á sendingunni löggilding
 ReStockOnBill=Auka raunverulegur birgðir birgja reikningum / kredit athugasemdir löggilding
 ReStockOnValidateOrder=Auka raunverulegur birgðir birgja pantanir approbation
 ReStockOnDispatchOrder=Auka raunverulegur birgðir á handbók dispatching í vöruhús, eftir röð birgja sem fá
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Panta hefur ekki enn eða ekki meira stöðu sem gerir dispatching af vörum í vöruhús lager.
 StockDiffPhysicTeoric=Ástæða fyrir lager munur líkamlega og fræðilegum
 NoPredefinedProductToDispatch=Engar fyrirfram skilgreindum vörum fyrir þennan hlut. Svo neitun dispatching til á lager er krafist.
@@ -77,26 +76,16 @@ LieuWareHouse=Staðsetning lager
 WarehousesAndProducts=Vöruhús og vörur
 AverageUnitPricePMPShort=Meðaltal inntak verð
 AverageUnitPricePMP=Meðaltal inntak verð
+SellPriceMin=Selja Unit verð
+EstimatedStockValueSellShort=Gildi til að selja
+EstimatedStockValueSell=Gildi til að selja
 EstimatedStockValueShort=Áætlað virði hlutabréfa
 EstimatedStockValue=Áætlað virði hlutabréfa
 DeleteAWarehouse=Eyða vörugeymsla
 ConfirmDeleteWarehouse=Ertu viss um að þú viljir eyða <b>lager %s ?</b>
-PersonalStock=Starfsfólk lager %s 
-ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af %s  %s 
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
-WarehouseEdit=Breyta vörugeymsla
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-SellPriceMin=Selja Unit verð
-EstimatedStockValueSellShort=Gildi til að selja
-EstimatedStockValueSell=Gildi til að selja
+PersonalStock=Starfsfólk lager %s
+ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af %s  %s
 SelectWarehouseForStockDecrease=Veldu vöruhús að nota til lækkunar hlutabréfa
 SelectWarehouseForStockIncrease=Veldu vöruhús að nota fyrir hækkun hlutabréfa
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:43).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

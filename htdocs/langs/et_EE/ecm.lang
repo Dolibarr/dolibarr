@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Dokumendid
 DocsMine=Minu dokumendid
@@ -44,12 +36,14 @@ ECMSearchByEntity=Otsida objekti
 ECMSectionOfDocuments=Kataloogid dokumentide
 ECMTypeManual=Käsiraamat
 ECMTypeAuto=Automaatne
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Dokumendid, mis on seotud kolmandate isikute
 ECMDocsByProposals=Dokumendid seotud ettepanekute
 ECMDocsByOrders=Dokumendid, mis on seotud klientide tellimusi
 ECMDocsByContracts=Dokumendid, mis on seotud lepingute
 ECMDocsByInvoices=Dokumendid, mis on seotud klientide arved
 ECMDocsByProducts=Dokumendid seotud tooted
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Ei kataloog loodud
 ShowECMSection=Näita kataloog
 DeleteSection=Eemalda kataloog
@@ -58,4 +52,5 @@ ECMDirectoryForFiles=Suhteline kataloogi faile
 CannotRemoveDirectoryContainsFiles=Eemaldada ei ole võimalik, sest see sisaldab mõningaid faile
 ECMFileManager=Failihaldur
 ECMSelectASection=Vali kataloog vasakul puu ...
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:19:57).
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

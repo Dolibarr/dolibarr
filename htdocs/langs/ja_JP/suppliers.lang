@@ -1,12 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
+# Dolibarr language file - Source file is en_US - suppliers
 CHARSET=UTF-8
 Suppliers=サプライヤー
 Supplier=サプライヤー
@@ -34,6 +26,7 @@ RefSupplierShort=REF。サプライヤー
 Availability=可用性
 ExportDataset_fournisseur_1=サプライヤの請求書のリストと請求書の行
 ExportDataset_fournisseur_2=サプライヤーの請求書と支払い
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=この注文を承認
 ConfirmApproveThisOrder=あなたは、注文<b>%sを</b>承認してもよろしいですか？
 DenyingThisOrder=この順序を否定
@@ -45,4 +38,3 @@ AddSupplierOrder=サプライヤーの順序を作成します。
 AddSupplierInvoice=サプライヤの請求書を作成します。
 ListOfSupplierProductForSupplier=サプライヤー<b>%s</b>の製品と価格の一覧
 NoneOrBatchFileNeverRan=noneまたはバッチ<b>%sは</b>最近走っていない
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:49:42).

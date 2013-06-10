@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Contractele zona
 ListOfContracts=Lista de contracte
@@ -22,7 +13,10 @@ ContractStatusValidated=Validat
 ContractStatusClosed=Închis
 ServiceStatusInitial=Nu rulează
 ServiceStatusRunning=Rularea
+ServiceStatusNotLate=Rularea, nu a expirat
+ServiceStatusNotLateShort=Nu expirat
 ServiceStatusLate=Rularea, expirat
+ServiceStatusLateShort=Expirat
 ServiceStatusClosed=Închis
 ServicesLegend=Servicii de legenda
 Contracts=Contracte
@@ -45,6 +39,7 @@ ConfirmCloseService=Sunteţi sigur că vreţi să închideţi acest serviciu cu 
 ValidateAContract=Validate un contract
 ActivateService=Activare serviciu
 ConfirmActivateService=Sunteţi sigur că doriţi să activaţi acest serviciu cu data <b>de %s?</b>
+# RefContract=Contract reference
 DateContract=Contract de data
 DateServiceActivate=Data de activare a serviciului
 DateServiceUnactivate=Data de serviciu unactivation
@@ -52,11 +47,14 @@ DateServiceStart=Data de inceput de serviciu
 DateServiceEnd=Data de sfârşit de serviciu
 ShowContract=Arata contract
 ListOfServices=Lista de servicii
+ListOfInactiveServices=Lista de servicii nu activă
+ListOfExpiredServices=Lista de servicii active expirat
+ListOfClosedServices=Lista de servicii închis
 ListOfRunningContractsLines=Lista de rularea contractului linii
 ListOfRunningServices=Lista de servicii care rulează
 NotActivatedServices=Nu activat servicii (printre validate de contracte)
 BoardNotActivatedServices=Servicii pentru a activa în rândul validate de contracte
-LastContracts=Ultima% contracte
+LastContracts=Ultima modificare contracte %s
 LastActivatedServices=Ultima %s activat servicii
 LastModifiedServices=Ultima %s modificate servicii
 EditServiceLine=Editare serviciu linie
@@ -72,53 +70,30 @@ DateEndReal=Real data de sfârşit
 DateEndRealShort=Real data de sfârşit
 NbOfServices=Nb de servicii
 CloseService=Inchide serviciu
-ServicesNomberShort= %s serviciu (e)
+ServicesNomberShort=%s serviciu (e)
 RunningServices=Rularea servicii
 BoardRunningServices=Expirat execută servicii
 ServiceStatus=Stare de serviciu
 DraftContracts=Schiţe de contracte
 CloseRefusedBecauseOneServiceActive=Contractul nu poate fi închisă după cum există cel puţin un serviciu deschis pe ea
 CloseAllContracts=Închideţi toate contractele
+DeleteContractLine=Ştergeţi un contract de linie
+ConfirmDeleteContractLine=Sunteţi sigur că doriţi să ştergeţi acest contract de linie?
 MoveToAnotherContract=Mutare serviciu într-un alt contract.
 ConfirmMoveToAnotherContract=Am choosed nou contract de ţintă şi de a confirma Vreau să mutaţi acest serviciu în acest contract.
 ConfirmMoveToAnotherContractQuestion=Alegeţi, în care contract existent (de acelaşi terţ), în care doriţi să mutaţi acest serviciu pentru a?
+PaymentRenewContractId=Reînnoiţi contract linie (numărul %s)
+ExpiredSince=Data expirării
+RelatedContracts=contracte conexe
+NoExpiredServices=Nu expirate servicii active
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpire=List of Services to expire
+# Service=Service
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului
 TypeContact_contrat_internal_SALESREPFOLL=Sales reprezentative următoarele-up contract
 TypeContact_contrat_external_BILLING=Factură client de contact
 TypeContact_contrat_external_CUSTOMER=După-up client de contact
 TypeContact_contrat_external_SALESREPSIGN=Semnarea contractului de client de contact
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ServiceStatusNotLate=Rularea, nu a expirat
-ServiceStatusNotLateShort=Nu expirat
-ServiceStatusLateShort=Expirat
-ListOfInactiveServices=Lista de servicii nu activă
-ListOfExpiredServices=Lista de servicii active expirat
-ListOfClosedServices=Lista de servicii închis
-DeleteContractLine=Ştergeţi un contract de linie
-ConfirmDeleteContractLine=Sunteţi sigur că doriţi să ştergeţi acest contract de linie?
-PaymentRenewContractId=Reînnoiţi contract linie (numărul %s)
-ExpiredSince=Data expirării
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-RelatedContracts=contracte conexe
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:11).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
 Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constanta nu a fost definit
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:16:44).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-NoExpiredServices=Nu expirate servicii active
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:24).

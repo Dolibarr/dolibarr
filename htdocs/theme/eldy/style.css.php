@@ -668,7 +668,7 @@ div.mainmenu.gravatar {
 div.mainmenu.geopipmaxmind {
 }
 
-div.mainmenu.holiday {
+div.mainmenu.hrm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
@@ -854,7 +854,14 @@ div.login a:hover {
 	color: #<?php echo $colortextmain; ?>;
 	text-decoration:underline;
 }
-
+.alogin, .alogin:hover {
+	color: #888 !important;
+	font-weight: normal !important;
+	font-size: <?php echo $fontsizesmaller; ?>px !important;
+}
+.alogin:hover {
+	text-decoration:underline !important;
+}
 img.login, img.printer, img.entity {
 	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
@@ -870,6 +877,8 @@ img.login, img.printer, img.entity {
 
 div.vmenu, td.vmenu {
     margin-<?php print $right; ?>: 2px;
+    position: relative;
+    float: left;
     padding: 0px;
     padding-bottom: 0px;
     padding-top: 1px;
@@ -910,19 +919,20 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
     margin: 1px 0px 8px 2px;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-/*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 90%, rgb(<?php echo $colorbacktab2; ?>) 100%); */
-    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 8px);
+
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -webkit-linear-gradient(right, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab2; ?>) 0px, rgb(<?php echo $colorbacktab1; ?>) 3px);
+
 <?php } else { ?>
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tmenu.jpg',1); ?>);
     background-position:top;
     background-repeat:repeat-x;
 <?php } ?>
     border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #DDDDDD;
+    border-right: 1px solid #D0D0D0;
     border-bottom: 1px solid #DDDDDD;
     border-top: 1px solid #DDDDDD;
     border-radius: 5px;
@@ -1865,19 +1875,20 @@ div.ok {
 }
 
 div.warning {
-  color: #997711;
-  padding: 0.2em 0.2em 0.2em 0.2em;
+  color: #504020;
+  padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #e0e0d0;
+  border: 1px solid #e0d0b0;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  background: #efefd4;
+  background: #FFEF9A;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 div.error {
   color: #550000; font-weight: bold;
-  padding: 0.2em 0.2em 0.2em 0.2em;
+  padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DC9CAB;
   -moz-border-radius:6px;
@@ -1888,14 +1899,15 @@ div.error {
 
 /* Info admin */
 div.info {
-  color: #807050;
+  color: #302010;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DFDFA0;
+  border: 1px solid #DFBF9A;
   -moz-border-radius:6px;
   -webkit-border-radius: 6px;
   border-radius:6px;
-  background: #EFEFBA;
+  background: #EFCFAA;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 

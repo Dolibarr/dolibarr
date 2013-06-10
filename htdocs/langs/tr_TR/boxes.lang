@@ -1,12 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2013-03-09 12:44:00
- */
-
-// START - Lines generated manually (2013-03-09 12:44:00).
-// Reference language: en_US – boxes
-
+# Dolibarr language file - Source file is en_US - boxes
 CHARSET=UTF-8
 BoxLastRssInfos=Rss bilgileri
 BoxLastProducts=Son %s ürün/hizmet
@@ -26,6 +18,7 @@ BoxLastActions=Son eylemler
 BoxLastContracts=Son sözleşmeler
 BoxLastContacts=Son kişiler/adresler
 BoxLastMembers=Son üyeler
+# BoxFicheInter=Last interventions
 BoxCurrentAccounts=Cari hesap bakiyesi
 BoxSalesTurnover=Satış cirosu
 BoxTotalUnpaidCustomerBills=Toplam ödenmemiş müşteri faturaları
@@ -46,8 +39,9 @@ BoxTitleLastCustomerBills=Son %s müşteri faturası
 BoxTitleLastSupplierBills=Kaydedilen son %s tedarikçi faturası
 BoxTitleLastProspects=Kaydedilen son %s aday
 BoxTitleLastModifiedProspects=Değiştirilen son %s aday
-BoxTitleLastProductsInContract=Bir sözleşmedeki son  %s ürün/hizmet 
+BoxTitleLastProductsInContract=Bir sözleşmedeki son  %s ürün/hizmet
 BoxTitleLastModifiedMembers=Değiştirilen son %s üye
+# BoxTitleLastFicheInter=Last %s modified intervention
 BoxTitleOldestUnpaidCustomerBills=En eski ödenmemiş %s müşteri faturası
 BoxTitleOldestUnpaidSupplierBills=En eski ödenmemiş %s tedarikçi faturası
 BoxTitleCurrentAccounts=Cari hesap bakiyeleri
@@ -75,13 +69,16 @@ NoRecordedProposals=Kayıtlı teklif yok
 NoRecordedInvoices=Kayıtlı müşteri faturası yok
 NoUnpaidCustomerBills=Ödenmemiş müşteri faturası yok
 NoRecordedSupplierInvoices=Kayıtlı tedarikçi faturası yok
-Total unpaid customer's invoices
+# NoUnpaidSupplierBills=No unpaid supplier's invoices
 NoModifiedSupplierBills=Değiştirilen tedarikçi faturası yok
 NoRecordedProducts=Kayıtlı ürün/hizmet yok
 NoRecordedProspects=Kayıtlı aday yok
 NoContractedProducts=Sözleşmeli ürün/hizmet yok
 NoRecordedContracts=Kayıtlı sözleşme yok
-# Latest supplier orders
 BoxLatestSupplierOrders=Son tedarikçi siparişleri
 BoxTitleLatestSupplierOrders=Enson %s tedarikçi siparişi
 NoSupplierOrder=Kayıtlı tedarikçi siparişi yok
+# BoxInvoicesPerMonth=Invoices per month
+# BoxOrdersPerMonth=Orders per month
+# BoxProposalsPerMonth=Proposals per month
+# NoTooLowStockProducts=No product under the low stock limit

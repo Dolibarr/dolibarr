@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Language file - Source file is en_US - cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Müügikohas
 CashDesk=Müügikohas
@@ -21,6 +13,7 @@ CashDeskProducts=Tooted
 CashDeskStock=Varu
 CashDeskOn=kohta
 CashDeskThirdParty=Kolmas osapool
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Ostukorv
 NewSell=New müüa
 BackOffice=Tagasi kontor
@@ -28,7 +21,6 @@ AddThisArticle=Lisa see artikkel
 RestartSelling=Mine tagasi müüa
 SellFinished=Müü valmis
 PrintTicket=Trüki pilet
-NoResults=Ei kohteita
 NoProductFound=Ei artikkel leitud
 ProductFound=Toote leitud
 ProductsFound=tooteid leitud
@@ -45,4 +37,3 @@ BankToPay=Charge Account
 ShowCompany=Näita ettevõte
 ShowStock=Näita ladu
 DeleteArticle=Vajuta, et eemaldada see artikkel
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:39:40).

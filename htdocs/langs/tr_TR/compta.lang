@@ -1,11 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-07 10:30:00
- */
-
-// START - Lines generated manually (2012-07-07 10:30:00).
-// Reference language: en_US -> TR - compta 
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
 Accountancy=Muhasebe
 AccountancyCard=Muhasebe kartı
@@ -25,6 +18,8 @@ AmountToBeCharged=Ödenecek toplam tutar:
 AccountsGeneral=Hesaplar
 Account=Hesap
 Accounts=Hesaplar
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Tedarikçi faturaları
 Income=Gelir
 Outcome=Gider
@@ -85,15 +80,15 @@ TotalToPay=Ödenecek toplam
 TotalVATReceived=Alınan toplam KDV
 CustomerAccountancyCode=Müşteri muhasebe kodu
 SupplierAccountancyCode=Tedarikçi muhasebe kodu
-AlreadyPaid=Zaten ödenmiş
 AccountNumberShort=Hesap numarası
 AccountNumber=Hesap numarası
 NewAccount=Yeni hesap
 SalesTurnover=Satış cirosu
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Üçüncü partiye göre
 ByUserAuthorOfInvoice=Faturayı yazana göre
 AccountancyExport=Muhasebe dışaaktarımı
-ErrorWrongAccountancyCodeForCompany=%s için hatalı müşteri muhasebe kodu 
+ErrorWrongAccountancyCodeForCompany=%s için hatalı müşteri muhasebe kodu
 SuppliersProductsSellSalesTurnover=Tedarikçi ürünlerinin satışından oluşan ciro.
 CheckReceipt=Çek hesabı
 CheckReceiptShort=Çek hesabı
@@ -114,6 +109,7 @@ AnnualByCompaniesDueDebtMode=Gelir ve gider bilançosu, üçüncü şahıslara g
 AnnualByCompaniesInputOutputMode=Gelir ve gider bilançosu, üçüncü şahıslara göre ayrıntılı, <b>%sGelirler-Giderler%s</b> söz konusu <b>kasa hesabı</b> modu.
 SeeReportInInputOutputMode=Yapılan gerçek ödemelerin hesaplanması için <b>%sGelirler-Giderler%s</b> söz konusu <b>kasa hesabı</b> raporuna bakın
 SeeReportInDueDebtMode=Verilen faturaların hesaplamaları için söz konusu <b>%sAlacak-Borç%s</b> <b>taahhüt hesabı</b> raporuna bakın
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Gösterilen tutarlara tüm vergiler dahildir<br>- Ödenmemiş faturaları, giderleri ve KDV (ödenmiş ya da ödenmemiş) ni içerir.<br>- Faturaların ve KDV nin doğrulanma tarihleri ve giderlerin ödenme tarihleri baz alınır.
 RulesResultInOut=- Gösterilen tutarlar tüm vergileri içerir<br>- Faturalara, giderler ve KDV ne yapılan gerçek ödemeleri içerir.<br>- Faturaların, giderlerin ve KDV nin ödenme tarihleri baz alınır.
 RulesCADue=- Ödenmiş ya da ödenmemiş müşteri faturalarını içerir.<br> - Faturaların doğrulanma tarihleri tarihleri baz alınır. <br>
@@ -127,7 +123,7 @@ VATReportByQuartersInInputOutputMode=Alınan ve ödenen müşteri KDV oranı rap
 VATReportByQuartersInDueDebtMode=Alınan ve ödenen müşteri KDV oranı raporu (KDV oranı)
 SeeVATReportInInputOutputMode=Standart bir hesaplama için <b>%sKDV kapsamı%s</b> raporuna bak
 SeeVATReportInDueDebtMode=Akış seçenekli bir hesaplama için <b>%sKDV akışı%s</b> raporuna bak
-RulesVATIn=Hizmetler için, rapor ödeme tarihindeki alınan ya da yayınlanam KDV düzenlemelerini içerir.<br>- Maddi varlıklar için, fatura tarihi baz alınarak fatura KDV lerini içerir.
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.<br>- For material assets, it includes the VAT invoices on the basis of the invoice date.
 RulesVATInProducts=- Maddi varlıklar için, fatura tarihi baz alınarak fatura KDV lerini içerir.
 RulesVATDueServices=- Hizmetler için, ödenmiş ya da ödenmemiş fatura tarihini baz alan rapor fatura KDV lerini içerir.
 RulesVATDueProducts=- Maddi varlıklar için, fatura tarihi baz alınarak fatura KDV lerini içerir.
@@ -148,5 +144,13 @@ DescPurchasesJournal=Satınalma Günlüğü
 InvoiceRef=Fatura ref.
 CodeNotDef=Tanımlanmamış
 AddRemind=Sevkedilebilir miktar
-RemainToDivide=Gönderilmek üzere kalır:
+RemainToDivide= Gönderilmek üzere kalır:
 WarningDepositsNotIncluded=Teminat faturaları bu muhasebe modülü ile bu sürümde içerilmez.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

@@ -113,7 +113,7 @@ if ($action == 'add')
 	}
 }
 
-if ($action == 'clear')
+if (GETPOST('clearlist'))
 {
 	// Chargement de la classe
 	$classname = "MailingTargets";
@@ -375,7 +375,7 @@ if ($object->fetch($id) >= 0)
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
 
-		$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">';
+		$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
 
 		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$object->nbemail,'');
 

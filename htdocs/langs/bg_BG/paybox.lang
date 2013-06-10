@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - paybox
 CHARSET=UTF-8
 PayBoxSetup=Paybox модул за настройка
 PayBoxDesc=В този модул се предлагат страници, които да дават възможност за заплащане на <a href="http://www.paybox.com" target="_blank">Paybox</a> от клиентите. Това може да се използва за плащане или за плащане на даден обект Dolibarr (фактура, поръчка, ...)
@@ -41,4 +33,3 @@ VendorName=Име на продавача
 CSSUrlForPaymentForm=CSS URL стил лист за плащане форма
 MessageOK=Съобщение на валидирана страница плащане връщане
 MessageKO=Съобщение за анулиране страница плащане връщане
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:38:14).

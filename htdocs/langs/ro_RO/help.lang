@@ -1,12 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:12:07
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - help
 CHARSET=UTF-8
 CommunitySupport=Forum / wiki sprijin
 EMailSupport=E-mail-uri de sprijin
@@ -33,5 +25,4 @@ BackToHelpCenter=Altfel, faceţi clic aici pentru a merge <a href="%s">înapoi l
 LinkToGoldMember=Aveţi posibilitatea să apelaţi unul dintre antrenor preselected de Dolibarr pentru limba dumneavoastră ( %s), făcând clic pe sale Widget (statutul şi preţul maxim sunt actualizate automat):
 PossibleLanguages=Sprijinită de limbi
 MakeADonation=Ajutor Dolibarr proiect, să facă o donaţie
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation

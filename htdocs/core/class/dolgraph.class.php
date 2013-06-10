@@ -745,7 +745,8 @@ class DolGraph
         $legends=array();
         $nblot=count($this->data[0])-1;    // -1 to remove legend
         $firstlot=0;
-        if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
+        // work with line but not with bars
+        //if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
 
         $i=$firstlot;
         $serie=array();

@@ -33,7 +33,7 @@ $path=dirname(__FILE__).'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')))
@@ -43,7 +43,7 @@ if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm
 	print "Send an email to remind all contracts services to expire, to users that are sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only services with expired date < today + delay are included.\n";
-	exit;
+	exit(-1);
 }
 $mode=$argv[1];
 
@@ -55,15 +55,24 @@ $langs->load('main');
 $langs->load('contracts');
 
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
 /*
  * Main
  */
 
-$now=dol_now('tzserver');
-$duration_value=$argv[2];
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
-$error = 0;
-print $script_file." launched with mode ".$mode.($duration_value?" delay=".$duration_value:"")."\n";
+$now=dol_now('tzserver');
+$duration_value=isset($argv[2])?$argv[2]:'none';
+
+print $script_file." launched with mode ".$mode.(is_numeric($duration_value)?" delay=".$duration_value:"")."\n";
+
+if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $sql  = "SELECT DISTINCT s.nom, c.ref, cd.date_fin_validite, cd.total_ttc, p.label label, c.fk_soc,u.rowid AS uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
@@ -71,7 +80,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product, "
 
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
 
-if ($duration_value) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+if (is_numeric($duration_value)) $sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
 
 $sql .= " AND sc.fk_soc = s.rowid AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY cd.date_fin_validite ASC, s.rowid ASC";
@@ -145,14 +154,18 @@ if ($resql)
         }
     }
     else
-    {
+	{
         print "No services to expire (for companies linked to a particular commercial dolibarr user) found\n";
     }
+
+    exit(0);
 }
 else
 {
     dol_print_error($db);
     dol_syslog("email_expire_services_to_representatives.php: Error");
+
+    exit(-1);
 }
 
 
@@ -172,8 +185,10 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
 {
     global $conf,$langs;
 
+    if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
+
     $newlangs=new Translate('',$conf);
-    $newlangs->setDefaultLang($userlang);
+	$newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
     $newlangs->load("contracts");
 
@@ -181,12 +196,12 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     	$title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
     else
     	$title= $newlangs->transnoentities("ListOfServicesToExpire");
-    
+
     $subject = "[".(empty($conf->global->MAIN_APPLICATION_TITLE)?'Dolibarr':$conf->global->MAIN_APPLICATION_TITLE)."] ".$title;
     $sendto = $oldemail;
     $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
     $errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = 0;
+	$msgishtml = -1;
 
     print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
     dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
@@ -233,6 +248,11 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     if ($mode == 'confirm')
     {
     	$result=$mail->sendfile();
+    	if (! $result)
+    	{
+    		print "Error sending email ".$mail->error."\n";
+    		dol_syslog("Error sending email ".$mail->error."\n");
+    	}
     }
     else
     {
@@ -251,6 +271,5 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
         return -1;
     }
 }
-
 
 ?>

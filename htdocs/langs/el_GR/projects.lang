@@ -1,15 +1,23 @@
-# Dolibarr language file - el_GR - projects
+# Dolibarr language file - Source file is en_US - projects
 CHARSET=UTF-8
 Project=Έργο
 Projects=Έργα
 SharedProject=Όλοι
 PrivateProject=Αντιπρόσωποι του έργου
+MyProjectsDesc=Η άποψη αυτή περιορίζονται σε έργα που είναι σε μια επαφή για την (όποια είναι ο τύπος).
+ProjectsPublicDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα σας επιτρέπεται να διαβάσετε.
+ProjectsDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα (δικαιώματα χρήστη να δώσει δικαίωμα για να δείτε τα πάντα).
+MyTasksDesc=Η άποψη αυτή περιορίζονται σε έργα ή εργασίες που έχουν μια επαφή για την (όποια είναι ο τύπος).
+TasksPublicDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα και τα καθήκοντα που επιτρέπεται να διαβάζουν.
+TasksDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα και τα καθήκοντα (δικαιώματα χρήστη να δώσει δικαίωμα για να δείτε τα πάντα).
 Myprojects=Τα έργα μου
 ProjectsArea=Περιοχή Έργων
 NewProject=Νέο Έργο
 AddProject=Προσθήκη Έργου
 DeleteAProject=Διαγραφή Έργου
 DeleteATask=Διαγραφή Εργασίας
+ConfirmDeleteAProject=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έργο;
+ConfirmDeleteATask=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έργο;
 OfficerProject=Officer project
 LastProjects=%s τελευταία έργα
 AllProjects=Όλα τα έργα
@@ -20,8 +28,11 @@ NoProject=No project defined or owned
 NbOpenTasks=Αριθμός ανοιχτών εργασιών
 NbOfProjects=Αριθμός έργων
 TimeSpent=Χρόνος που δαπανήθηκε
+TimesSpent=Ο χρόνος που δαπανάται
 RefTask=Αναφ. εργασίας
 LabelTask=Ετικέτα εργασίας
+NewTimeSpent=Νέος χρόνος που δαπανάται
+MyTimeSpent=Ο χρόνος μου πέρασε
 MyTasks=Οι Εργασίες μου
 Tasks=Εργασίες
 Task=Εργασία
@@ -33,26 +44,9 @@ Activities=Εργασίες/Δραστηριότητες
 MyActivity=Η δραστηριότητά μου
 MyActivities=Οι εργασίες/δραστηρ. μου
 MyProjects=Τα έργα μου
+DurationEffective=Αποτελεσματική διάρκεια
 Progress=Πρόοδος
 Time=Χρόνος
-ProjectsDedicatedToThisThirdParty=Έργα που αφορούν αυτό το στοιχείο
-NoTasks=Δεν υπάρχουν εργασίες για αυτό το έργο
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-MyProjectsDesc=Η άποψη αυτή περιορίζονται σε έργα που είναι σε μια επαφή για την (όποια είναι ο τύπος).
-ProjectsPublicDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα σας επιτρέπεται να διαβάσετε.
-ProjectsDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα (δικαιώματα χρήστη να δώσει δικαίωμα για να δείτε τα πάντα).
-MyTasksDesc=Η άποψη αυτή περιορίζονται σε έργα ή εργασίες που έχουν μια επαφή για την (όποια είναι ο τύπος).
-TasksPublicDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα και τα καθήκοντα που επιτρέπεται να διαβάζουν.
-TasksDesc=Η άποψη αυτή παρουσιάζει όλα τα έργα και τα καθήκοντα (δικαιώματα χρήστη να δώσει δικαίωμα για να δείτε τα πάντα).
-ConfirmDeleteAProject=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έργο;
-ConfirmDeleteATask=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έργο;
-TimesSpent=Ο χρόνος που δαπανάται
-NewTimeSpent=Νέος χρόνος που δαπανάται
-MyTimeSpent=Ο χρόνος μου πέρασε
-DurationEffective=Αποτελεσματική διάρκεια
 ListProposalsAssociatedProject=Κατάλογος των εμπορικών προτάσεων που σχετίζονται με το έργο
 ListOrdersAssociatedProject=Κατάλογος των ενταλμάτων του πελάτη που σχετίζονται με το έργο
 ListInvoicesAssociatedProject=Κατάλογος των τιμολογίων των πελατών που συνδέονται με το έργο
@@ -84,11 +78,23 @@ ConfirmDeleteATimeSpent=Είστε σίγουροι ότι θέλετε να δ�
 DoNotShowMyTasksOnly=Δείτε επίσης τα καθήκοντα που δεν διατίθενται για μένα
 ShowMyTasksOnly=Προβολή μόνο καθήκοντα που θα μου
 TaskRessourceLinks=Πόροι
+ProjectsDedicatedToThisThirdParty=Έργα που αφορούν αυτό το στοιχείο
+NoTasks=Δεν υπάρχουν εργασίες για αυτό το έργο
 LinkedToAnotherCompany=Συνδέεται με άλλο τρίτο μέρος
 TaskIsNotAffectedToYou=Καθήκον που δεν έχει διατεθεί για σας
 ErrorTimeSpentIsEmpty=Χρόνος που δαπανάται είναι άδειο
 ThisWillAlsoRemoveTasks=Αυτή η ενέργεια θα διαγράψει επίσης όλα τα καθήκοντα του έργου <b>(%s</b> καθηκόντων προς το παρόν) και όλες οι είσοδοι του χρόνου.
 IfNeedToUseOhterObjectKeepEmpty=Εάν ορισμένα αντικείμενα (τιμολόγιο, προκειμένου, ...), που ανήκουν σε άλλο τρίτο μέρος, πρέπει να συνδέεται με το έργο να δημιουργήσει, διατηρήσει αυτό το κενό να έχει το έργο να είναι πολλαπλών τρίτους.
+# CloneProject=Clone project
+# CloneTasks=Clone tasks
+# CloneContacts=Clone contacts
+# CloneNotes=Clone notes
+# CloneFiles=Clone joined files
+# ConfirmCloneProject=Are you sure to clone this project ?
+# ProjectReportDate=Change task date according project start date
+# ErrorShiftTaskDate=Impossible to shift task date according to new project start date
+# ProjectsAndTasksLines=Projects and tasks
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Επικεφαλής του σχεδίου
 TypeContact_project_external_PROJECTLEADER=Επικεφαλής του σχεδίου
 TypeContact_project_internal_CONTRIBUTOR=Συνεισφέρων
@@ -97,5 +103,7 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Εκτελεστική ομάδ�
 TypeContact_project_task_external_TASKEXECUTIVE=Εκτελεστική ομάδα
 TypeContact_project_task_internal_CONTRIBUTOR=Συνεισφέρων
 TypeContact_project_task_external_CONTRIBUTOR=Συνεισφέρων
+# Documents models
 DocumentModelBaleine=Μοντέλο έκθεση Μια πλήρης έργου (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:39:07).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation

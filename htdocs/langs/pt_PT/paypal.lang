@@ -1,13 +1,8 @@
-/*
- * Language code: pt_PT
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pt_PT
+# Dolibarr language file - Source file is en_US - paypal
 CHARSET=UTF-8
+PaypalSetup=Configuração do módulo de PayPal
+PaypalDesc=Esta oferta módulo de páginas para permitir o pagamento em <a href="http://www.paypal.com" target="_blank">PayPal</a> pelos clientes. Isto pode ser utilizado para um pagamento livre ou para um pagamento por um objecto Dolibarr particular (factura, ordem, ...)
+PaypalOrCBDoPayment=Pague com cartão de crédito ou Paypal
 PaypalDoPayment=Pague com Paypal
 PaypalCBDoPayment=Pagar com cartão de crédito
 PAYPAL_API_SANDBOX=Modo de teste / sandbox
@@ -15,17 +10,11 @@ PAYPAL_API_USER=API nome de usuário
 PAYPAL_API_PASSWORD=API senha
 PAYPAL_API_SIGNATURE=Assinatura API
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento &quot;integral&quot; (cartão de crédito + Paypal) ou &quot;Paypal&quot; apenas
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Url Opcional de folhas de estilo CSS na página de pagamento
 ThisIsTransactionId=Este é id da transação: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adicione o url de pagamento Paypal quando você enviar um documento por correio
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:56:19).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-PaypalSetup=Configuração do módulo de PayPal
-PaypalDesc=Esta oferta módulo de páginas para permitir o pagamento em <a href="http://www.paypal.com" target="_blank">PayPal</a> pelos clientes. Isto pode ser utilizado para um pagamento livre ou para um pagamento por um objecto Dolibarr particular (factura, ordem, ...)
-PaypalOrCBDoPayment=Pague com cartão de crédito ou Paypal
 PAYPAL_IPN_MAIL_ADDRESS=E-mail de notificação instantânea de pagamento (IPN)
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Você está atualmente no &quot;sandbox&quot; modo de
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:03).

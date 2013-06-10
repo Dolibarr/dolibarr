@@ -1,8 +1,6 @@
-# Dolibarr language file - en_US - marges
+# Dolibarr language file - Source file is en_US - marges
 CHARSET=UTF-8
 
-Module59000Name=Oranlar
-Module59000Desc=Kar oranı yönetimi
 Margin=Oran
 Margins=Oranlar
 TotalMargin=Toplam Oran
@@ -45,6 +43,7 @@ MargeBrute=Ham oran
 MargeNette=Net oran
 MARGIN_TYPE_DETAILS=Ham oran : Satış fiyatı - Alış fiyatı<br/>Net oran : Satış fiyatı - Maliyet fiyatı
 
+# CostPrice=Cost price
 BuyingCost=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar

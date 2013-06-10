@@ -1,12 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-05 10:49:00
- */
-
-// START - Lines generated manually (2012-07-05 10:49:00).
-// Reference language: en_US ->TR – commercial
-
+# Dolibarr language file - Source file is en_US - commercial
 CHARSET=UTF-8
 Commercial=Ticari
 CommercialArea=Ticari alan
@@ -32,6 +24,7 @@ TaskRDVWith=%s ile toplantı
 ShowTask=Görev göster
 ShowAction=Eylem göster
 ActionsReport=Eylem raporu
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Satış temsilcisi
 SalesRepresentatives=Satış temsilcileri
 SalesRepresentativeFollowUp=Satış temsilcisi (takipçi)
@@ -52,7 +45,7 @@ DoneActions=Tamamlanan eylemler
 DoneActionsFor=%s için tamamlanan eylemler
 ToDoActions=Tamamlanmamış eylemler
 ToDoActionsFor=%s için tamalanmamış eylemler
-SendPropalRef=%s teklifini gönder 
+SendPropalRef=%s teklifini gönder
 SendOrderRef=% siparişini gönder
 StatusNotApplicable=Uygulanamaz
 StatusActionToDo=Yapılacaklar
@@ -88,7 +81,16 @@ ActionAC_SHIP=Sevkiyatı postayla gönder
 ActionAC_SUP_ORD=Tedarikçi siparişini postayla gönder
 ActionAC_SUP_INV=Tedarikçi faturasını postayla gönder
 ActionAC_OTH=Diğer
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Aday durumu
 DraftPropals=Taslak teklifler
 SearchPropal=Bir teklif ara
-OrdersToBill=Faturalanacak müşteri siparişleri
+# CommercialDashboard=Commercial summary

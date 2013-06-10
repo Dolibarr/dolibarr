@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - suppliers
 CHARSET=UTF-8
 Suppliers=Tarnijad
 Supplier=Tarnija
@@ -34,6 +26,7 @@ RefSupplierShort=Ref. tarnija
 Availability=Kättesaadavus
 ExportDataset_fournisseur_1=Tarnija arvete nimekirja ja arve oma read
 ExportDataset_fournisseur_2=Tarnija arved ja maksed
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Kinnitab seda, et
 ConfirmApproveThisOrder=Oled sa kindel, et soovid kinnitab, et <b>%s?</b>
 DenyingThisOrder=Eitada seda, et
@@ -45,4 +38,3 @@ AddSupplierOrder=Loo tarnija et
 AddSupplierInvoice=Loo tarnija arve
 ListOfSupplierProductForSupplier=Toodete nimekirja ja hinnad tarnija <b>%s</b>
 NoneOrBatchFileNeverRan=Puudub või partii <b>%s</b> ole jooksis hiljuti
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:29:29).

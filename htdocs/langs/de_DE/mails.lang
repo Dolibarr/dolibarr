@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - mails
 CHARSET=UTF-8
-
 Mailing=E-Mail
 EMailing=E-Mail-Kampagne
 Mailings=E-Mail-Kampagnen
@@ -51,6 +44,7 @@ MailingStatusSentCompletely=Vollständig gesendet
 MailingStatusError=Fehler beim Versand
 MailingStatusNotSent=Nicht gesendet
 MailSuccessfulySent=E-Mail-Kampagne erfolgreich versandt (von %s an %s)
+# MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Abmelden
 Unsuscribe=Abmelden
 MailingStatusNotContact=Nicht mehr kontaktieren
@@ -82,17 +76,23 @@ SentTo=Versandt an <b>%s</b>
 MailingStatusRead=Lesen
 CheckRead=Lesebestätigung
 YourMailUnsubcribeOK=Die E-Mail-Adresse <b>%s</b> ist korrekt aus der Mailing-Liste ausgetragen.
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakte aller Partner (Kunden, Leads, Lieferanten, ...)
 MailingModuleDescDolibarrUsers=Alle Systembenutzer mit E-Mail-Adresse
 MailingModuleDescFundationMembers=Alle Stiftungsmitglieder mit E-Mail-Adresse
 MailingModuleDescEmailsFromFile=E-Mail-Adressen aus einer Text-Datei (Format: E-Mail, Vorname, Nachname)
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Partnerkontakte (nach Kategorie)
 MailingModuleDescDolibarrContractsLinesExpired=Partner mit abgelaufenen Vertragspositionen
 MailingModuleDescContactsByCompanyCategory=Kontakt über Partner (durch Kategorie)
 MailingModuleDescMembersCategories=Mitglieder der Stiftung (durch Kategorie)
 MailingModuleDescContactsByFunction=Kontakt über Partner (durch Position/Funktion)
+
 
 LineInFile=Zeile %s in der Datei
 RecipientSelectionModules=Definiert Empfängerauswahlen
@@ -117,6 +117,10 @@ NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
 IdRecord=Eintrag-ID
 DeliveryReceipt=Zustellbestätigung
 YouCanUseCommaSeparatorForSeveralRecipients=Trennen Sie mehrere Empfänger mit einem <b>Komma</b>
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
 
 # Module Notifications
 Notifications=Benachrichtigungen

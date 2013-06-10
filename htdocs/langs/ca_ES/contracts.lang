@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - contracts
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Àrea contractes
 ListOfContracts=Llistat de contractes
@@ -54,6 +54,7 @@ ListOfRunningContractsLines=Llistat de línies de contractes en servei
 ListOfRunningServices=Llistat de serveis actius
 NotActivatedServices=Serveis no activats (amb els contractes validats)
 BoardNotActivatedServices=Serveis a activar amb els contractes validats
+LastContracts=Els % darrers contractes
 LastActivatedServices=Els %s darrers serveis activats
 LastModifiedServices=Els  %s darrers serveis modificats
 EditServiceLine=Edició línia del servei
@@ -76,9 +77,9 @@ ServiceStatus=Estat del servei
 DraftContracts=Contractes esborrany
 CloseRefusedBecauseOneServiceActive=El contracte no pot ser tancat ja que conté almenys un servei obert.
 CloseAllContracts=Tancar tots els serveis
-MoveToAnotherContract=Moure el servei a un altre contracte d'aquest tercer.
 DeleteContractLine=Eliminar línia de contracte
 ConfirmDeleteContractLine=Esteu segur de voler eliminar aquesta línia de contracte de servei?
+MoveToAnotherContract=Moure el servei a un altre contracte d'aquest tercer.
 ConfirmMoveToAnotherContract=He triat el contracte i confirmo el canvi de servei en aquest contracte
 ConfirmMoveToAnotherContractQuestion=Escolliu qualsevol altre contracte del mateix tercer, voleu moure aquest servei?
 PaymentRenewContractId=Renovació servei (número %s)

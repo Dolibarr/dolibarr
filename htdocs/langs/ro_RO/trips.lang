@@ -1,17 +1,9 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - trips
 CHARSET=UTF-8
 Trip=Excursie
 Trips=Excursii
 TripsAndExpenses=Excursii si cheltuieli
+TripsAndExpensesStatistics=Excursii şi statistici cheltuieli
 TripCard=Trip carte
 AddTrip=Adauga-intors
 ListOfTrips=Lista de excursii
@@ -25,19 +17,6 @@ ConfirmDeleteTrip=Sunteţi sigur că doriţi să ştergeţi această călătorie
 TF_OTHER=Alt
 TF_LUNCH=Prânz
 TF_TRIP=Excursie
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> ro_RO
-TripsAndExpensesStatistics=Excursii şi statistici cheltuieli
 ListTripsAndExpenses=Lista de excursii şi cheltuieli
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
 ExpensesArea=Excursii şi zona de cheltuieli
 SearchATripAndExpense=Căutaţi o călătorie şi cheltuieli
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:42).

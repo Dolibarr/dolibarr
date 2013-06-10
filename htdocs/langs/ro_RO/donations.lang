@@ -1,20 +1,13 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - donations
 CHARSET=UTF-8
 Donation=Donation
-Donationss=Donatii
+Donations=Donatii
+# DonationRef=Donation ref.
 Donor=Donator
 Donors=Donatori
 AddDonation=Adăugaţi o donatie
 NewDonation=New donatie
+# ShowDonation=Show donation
 DonationPromise=Cadouri promisiune
 PromisesNotValid=Nu este validat promisiuni
 PromisesValid=Validat promisiuni
@@ -29,27 +22,12 @@ DonationStatusPaid=Donatii primite
 DonationStatusPromiseNotValidatedShort=Proiect
 DonationStatusPromiseValidatedShort=Validat
 DonationStatusPaidShort=Primit
-ValidPromise=Validate promisiune
+ValidPromess=Validare promisiune
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Construieste-primirea
 DonationsModels=Documente modele de donare încasări
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-Donations=Donatii
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-ValidPromess=Validare promisiune
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:18).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
 LastModifiedDonations=%s Ultima modificare donaţii
 SearchADonation=Căutaţi o donaţie
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:34).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

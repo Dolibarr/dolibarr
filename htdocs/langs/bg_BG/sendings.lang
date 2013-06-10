@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=Реф. пратка
 Sending=Пратка
@@ -66,10 +58,16 @@ ActionsOnShipping=Събития на пратка
 LinkToTrackYourPackage=Линк за проследяване на вашия пакет
 ShipmentCreationIsDoneFromOrder=За момента се извършва от картата с цел създаване на нова пратка.
 RelatedShippings=Свързани shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=Улов от клиента
 SendingMethodTRANS=Транспортьор
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=Simple образеца на документа за доставка постъпления
 DocumentModelTyphon=Повече целия документ модел за доставка постъпления (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянно EXPEDITION_ADDON_NUMBER не е определен
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:43).

@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - dict
 CHARSET=UTF-8
 CountryFR=Prantsusmaa
 CountryBE=Belgia
@@ -254,10 +246,15 @@ CountryJE=Kampsun
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+
+##### Civilities #####
 CivilityMME=Pr.
 CivilityMR=Hr.
 CivilityMLE=Proua
 CivilityMTRE=Kapten
+# CivilityDR=Doctor
+
+##### Currencies #####
 Currencyeuros=Krooni
 CurrencyAUD=AU dollarit
 CurrencySingAUD=AU Dollar
@@ -293,6 +290,11 @@ CurrencyXOF=CFA frank BCEAO
 CurrencySingXOF=CFA frank BCEAO
 CurrencyXPF=CFP frank
 CurrencySingXPF=CFP frank
+
+# CurrencyCentSingEUR=cent
+# CurrencyThousandthSingTND=thousandth
+
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing kampaania
 DemandReasonTypeSRC_CAMP_EMAIL=Elekter kampaania
@@ -300,4 +302,28 @@ DemandReasonTypeSRC_CAMP_PHO=Telefon kampaania
 DemandReasonTypeSRC_CAMP_FAX=Faks kampaania
 DemandReasonTypeSRC_COMM=Commercial kontakt
 DemandReasonTypeSRC_SHOP=Pood Kontakt
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:19:42).
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+# DemandReasonTypeSRC_EMPLOYEE=Employee
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
+
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

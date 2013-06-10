@@ -1,25 +1,31 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - bills
 CHARSET=UTF-8
 Bill=Factură
 Bills=Facturi
 BillsCustomers=Clienţii "facturi
+BillsCustomer=Clientului factura
 BillsSuppliers=Furnizori-facturi
+BillsCustomersUnpaid=Neplătite clientilor facturi
+BillsCustomersUnpaidForCompany=Neplătite clientilor facturile pentru %s
+BillsSuppliersUnpaid=Neachitate furnizorilor facturi
+BillsSuppliersUnpaidForCompany=Furnizorul de facturi neplătite pentru %s
+BillsUnpaid=Neachitate
+BillsLate=Întârzierea efectuării plăţilor
 BillsStatistics=Clienţii "facturi statistici
 BillsStatisticsSuppliers=Furnizori-facturi statistici
+DisabledBecauseNotErasable=Dezactivate, deoarece nu pot fi şterse
 InvoiceStandard=Standard factură
 InvoiceStandardAsk=Standard factură
 InvoiceStandardDesc=Acest tip de factură este comun factură.
+InvoiceDeposit=Depozit de factură
+InvoiceDepositAsk=Depozit de factură
+InvoiceDepositDesc=Acest tip de factură se face în cazul în care un depozit a fost primit.
+InvoiceProForma=Proforma factură
+InvoiceProFormaAsk=Proforma factură
+InvoiceProFormaDesc=<b>Proforma factură</b> este o imagine de o adevărată factură, dar nu are nici o valoare contabilă.
 InvoiceReplacement=Înlocuirea factură
 InvoiceReplacementAsk=Înlocuirea factura de factură
+InvoiceReplacementDesc=<b>Înlocuirea factură</b> este utilizat pentru a anula şi înlocuiţi complet o factură fără plată primit deja. <br><br> Notă: Doar factura de plată pe care nu poate fi înlocuit. În cazul în care nu sa încheiat, acesta va fi închis în mod automat pentru a "abandonat".
 InvoiceAvoir=Nota de credit
 InvoiceAvoirAsk=Nota de credit pentru a corecta factura
 InvoiceAvoirDesc=De <b>note de credit</b> este o factură negative folosite pentru a rezolva o factură faptul că are o sumă pe care diferă foarte mult de suma de plata (pentru ca clientul plateste prea mult de eroare, sau nu vor fi platite de când a revenit complet, anumite produse, de exemplu). <br><br> Notă: Original factură trebuie să fi fost deja închise ( "plata" sau "platite partial"), pentru a permite crearea unei note de credit pe ea.
@@ -30,6 +36,9 @@ ReplacementByInvoice=Înlocuit de factură
 CorrectInvoice=Corect factura %s
 CorrectInvoice=Corect factura %s
 CorrectionInvoice=Rectificarea facturii
+UsedByInvoice=Folosite pentru a plăti factura %s
+ConsumedBy=Consumat de către
+NotConsumed=Nu consumaţi
 NoReplacableInvoice=Nu replacable facturi
 NoInvoiceToCorrect=Nu factură pentru a corecta
 InvoiceHasAvoir=Corectată de către unul sau mai multe facturi
@@ -49,6 +58,7 @@ Payment=Plata
 PaymentBack=Plata înapoi
 Payments=Plăţi
 PaymentsBack=Plăţi înapoi
+# PaidBack=Paid back
 DatePayment=Plata data
 DeletePayment=Ştergere plată
 ConfirmDeletePayment=Sunteţi sigur că doriţi să ştergeţi această plată?
@@ -60,14 +70,18 @@ ReceivedCustomersPaymentsToValid=Primit plăţile clienţilor, pentru a valida
 PaymentsReportsForYear=Rapoarte de Plăţi pentru %s
 PaymentsReports=Plăţi rapoarte
 PaymentsAlreadyDone=Plăţi făcut deja
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Plata regulă
 PaymentMode=De plată de tip
 PaymentConditions=Termen de plată
 PaymentConditionsShort=Termen de plată
 PaymentAmount=Sumă de plată
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Plata mai mare decât memento să plătească
+HelpPaymentHigherThanReminderToPay= Atentie, la plata sumei de una sau mai multe proiecte de lege este mai mare decât în restul să plătească. <br> Editaţi-vă de intrare, altfel confirma si gandeste-te la crearea unei note de credit a primit în exces, pentru fiecare overpaid facturilor.
 ClassifyPaid=Clasifica "platite"
 ClassifyPaidPartially=Clasifica "platite partial"
+ClassifyCanceled=Clasifica "abandonaţi"
 ClassifyClosed=Clasifica "închis"
 CreateBill=Creaţi Factură
 AddBill=Adauga facturii sau a notei de credit
@@ -75,7 +89,6 @@ DeleteBill=Ştergere factură
 SearchACustomerInvoice=Cautati un client factură
 SearchASupplierInvoice=Cautati un furnizor pe factură
 CancelBill=Anula o factură
-SendByMail=EMail
 SendRemindByMail=EMail memento
 DoPayment=Fă-plată
 DoPaymentBack=Fa plata înapoi
@@ -89,16 +102,22 @@ BillStatus=Starea Facturii
 BillStatusDraft=Proiect (trebuie să fie validate)
 BillStatusPaid=Platite
 BillStatusPaidBackOrConverted=Platite sau transformate în reducere
+BillStatusConverted=Convertite în reducere
+BillStatusCanceled=Abandonat
 BillStatusValidated=Validat (trebuie sa fie platite)
 BillStatusStarted=Started
 BillStatusNotPaid=Nu platite
+BillStatusClosedUnpaid=Închis (fără plată)
 BillStatusClosedPaidPartially=Platite (parţial)
 BillShortStatusDraft=Proiect
 BillShortStatusPaid=Platite
 BillShortStatusPaidBackOrConverted=Prelucrate
+BillShortStatusConverted=Prelucrate
+BillShortStatusCanceled=Abandonat
 BillShortStatusValidated=Validat
 BillShortStatusStarted=Started
 BillShortStatusNotPaid=Nu platite
+BillShortStatusClosedUnpaid=Închis
 BillShortStatusClosedPaidPartially=Platite (parţial)
 PaymentStatusToValidShort=Pentru a valida
 ErrorVATIntraNotConfigured=Intracommunautary numărul de TVA nu sunt încă definite
@@ -114,8 +133,8 @@ BillFrom=De la
 BillTo=Bill a
 ActionsOnBill=Acţiunile de pe factură
 NewBill=Noua factură
-Pr�l�vements=Permanent pentru
-Pr�l�vements=Ordine de plată
+Prélèvements=Permanent pentru
+Prélèvements=Permanent pentru
 LastBills=Ultima %s facturi
 LastCustomersBills=Ultima %s facturi clienţi
 LastSuppliersBills=Ultima %s furnizori facturi
@@ -124,10 +143,13 @@ OtherBills=Alte facturi
 DraftBills=Proiect de facturi
 CustomersDraftInvoices=Clienţii proiect facturi
 SuppliersDraftInvoices=Furnizori proiect facturi
+Unpaid=Neachitate
 ConfirmDeleteBill=Sunteţi sigur că doriţi să ştergeţi această factură?
 ConfirmValidateBill=Sunteţi sigur că doriţi să valideze această factură cu <b>referire %s?</b>
+ConfirmUnvalidateBill=Sunteţi sigur că doriţi să schimbaţi <b>%s</b> factura la statutul de proiect?
 ConfirmClassifyPaidBill=Sunteţi sigur că vreţi să schimbaţi <b>factura %s</b> la statutul de plata?
 ConfirmCancelBill=Sunteţi sigur că doriţi să anulaţi <b>factura %s?</b>
+ConfirmCancelBillQuestion=De ce vrei pentru a clasifica această factură "abandonat"?
 ConfirmClassifyPaidPartially=Sunteţi sigur că vreţi să schimbaţi <b>factura %s</b> la statutul de plata?
 ConfirmClassifyPaidPartiallyQuestion=Aceasta factura nu a fost complet platite. Care sunt motivele pentru care vă pentru a închide această factură?
 ConfirmClassifyPaidPartiallyReasonAvoir=Restul de plată <b>( %s %s)</b> este un discount acordat de plată, pentru că a fost făcută înainte de termen. Am regularizarea TVA-ului, cu o nota de credit.
@@ -135,6 +157,8 @@ ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Restul de plată <b>( %s %s)</b>
 ConfirmClassifyPaidPartiallyReasonDiscountVat=Restul de plată <b>( %s %s)</b> este un discount acordat de plată, pentru că a fost făcută înainte de termen. Am recupera TVA-ul de pe această reducere fără o notă de credit.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Bad client
 ConfirmClassifyPaidPartiallyReasonProductReturned=Produse parţial returnate
+ConfirmClassifyPaidPartiallyReasonOther=Suma abandonat pentru alte motive
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Această alegere este posibilă în cazul în care factura dvs. au fost prevăzute cu comentariul adecvat. (Exemplu «Numai impozitul corespunzător preţului care au fost plătite efectiv dă dreptul la deducere»)
 ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=În unele ţări, această alegere ar putea fi posibilă numai dacă factura dumneavoastră conţine nota corecta.
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Utilizaţi această opţiune dacă toate celelalte nu se potrivesc
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=Un <b>client de rau</b> este un client care refuză să plătească datoria lui.
@@ -145,25 +169,30 @@ ConfirmClassifyAbandonReasonOtherDesc=Această opţiune va fi folosit în toate 
 ConfirmCustomerPayment=Ai confirma acest lucru paiement de intrare <b>pentru %s %s?</b>
 ConfirmValidatePayment=Etes-vous sur de vouloir valider ce paiment, aucune modificarea posibil n'est une fois le paiement valabil?
 ValidateBill=Validate factură
+UnvalidateBill=Unvalidate factura
 NumberOfBills=Nb de facturi
-NumberOfBillsByMonthHT=Nb de facturi de luna (net de impozite)
+NumberOfBillsByMonth=NB a facturilor de către luni
 AmountOfBills=Suma de facturi
-AmountOfBillsByMonth=Suma de facturi de luni
+AmountOfBillsByMonthHT=Valoarea facturilor de către luna (net de impozit)
 ShowSocialContribution=Arata contribuţiilor sociale
 ShowBill=Afişare factură
 ShowInvoice=Afişare factură
 ShowInvoiceReplace=Arata de înlocuire a facturii
 ShowInvoiceAvoir=Arata nota de credit
+ShowInvoiceDeposit=Arata depozit factură
 ShowPayment=Arata plată
 File=Dosar
 AlreadyPaid=Deja platite
+# AlreadyPaidBack=Already paid back
+AlreadyPaidNoCreditNotesNoDeposits=Deja plătite (fără notele de credit şi depozite)
 Abandoned=Abandonat
 RemainderToPay=Restul de a plăti
 RemainderToTake=Restul de a lua
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Suma a susţinut
 ExcessReceived=Trop Peru
 EscompteOffered=Reducere oferite (de plată înainte de termen)
-CreateDraft=Creaţi proiect
 SendBillRef=Trimiteţi factură %s
 SendReminderBillRef=Trimiteţi factură %s (memento)
 StandingOrders=Ordine de plată
@@ -182,12 +211,16 @@ DateEcheance=Datorită data limită
 DateInvoice=Data facturii
 NoInvoice=Nu factură
 ClassifyBill=Clasifica factură
+NoSupplierBillsUnpaid=Nu furnizori facturi neachitate
 SupplierBillsToPay=Furnizori de la plata facturilor
+CustomerBillsUnpaid=Neachitate facturi clienţi
 DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont dispensează de l'arrt en lettres
-DispenseMontantLettres=Facturi, în scris, prin intermediul procedurilor mecanographic sunt înlăturată de ordinea în litere
+DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont dispensează de l'arrt en lettres
 NonPercuRecuperable=Nerecuperabilă
 SetConditions=Setare conditiile de plata
 SetMode=Setaţi modul de plată
+SetDate= Setaţi data
+# SelectDate=Select a date
 Billed=Facturat
 RepeatableInvoice=Pre-definite factură
 RepeatableInvoices=Pre-definite facturi
@@ -207,17 +240,28 @@ Reductions=Reducerile
 ReductionsShort=De reducere.
 Discount=Reducere
 Discounts=Reduceri
+AddDiscount=Adauga discount
+AddRelativeDiscount=Crearea reducere relativă
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=Adauga discount
+EditGlobalDiscounts=Editare reduceri absolute
+AddCreditNote=Creaţi note de credit
 ShowDiscount=Arata discount
+# ShowReduc=Show the deduction
 RelativeDiscount=Relativă reducere
 GlobalDiscount=Global discount
 CreditNote=Nota de credit
 CreditNotes=Credit note
+Deposit=Garantie
+Deposits=Depozite
 DiscountFromCreditNote=Reducere de la nota de credit %s
+DiscountFromDeposit=Plăţile efectuate de depozit factura %s
+AbsoluteDiscountUse=Acest tip de credit poate fi utilizat pe factură înainte de validarea acestuia
+CreditNoteDepositUse=Factură trebuie să fie validate pentru a utiliza acest rege de credite
 NewGlobalDiscount=Noua reducere
+NewRelativeDiscount=Noua reducere relativă
 NoteReason=Notă / Motiv
 ReasonDiscount=Motiv
-AddDiscount=Adauga discount
-AddGlobalDiscount=Adauga discount
 DiscountOfferedBy=Acordate de către
 DiscountStillRemaining=Reducere rămânând
 DiscountAlreadyCounted=Reducere deja numărate
@@ -225,6 +269,8 @@ BillAddress=Bill adresa
 HelpEscompte=Această reducere este un discount acordat clientului său paiement pentru că a fost făcută înainte de termen.
 HelpAbandonBadCustomer=Această sumă a fost abandonată (client a declarat a fi un client de rău) şi este considerat ca fiind un exceptionnal libertate.
 HelpAbandonOther=Această sumă a fost abandonat, deoarece acesta a fost o eroare (greşit client sau factură înlocuită cu o altă de exemplu)
+IdSocialContribution=Social contribuţie id
+PaymentId=Plata id
 InvoiceId=Factura id
 InvoiceRef=Factura ref.
 InvoiceDateCreation=Factura crearea data
@@ -234,10 +280,21 @@ InvoicePaid=Facturii platite
 PaymentNumber=Plata numărul
 RemoveDiscount=Eliminaţi discount
 WatermarkOnDraftBill=Filigran cu privire la proiectele de facturi (nimic dacă gol)
+InvoiceNotChecked=Nu factură selectat
 CloneInvoice=Clone factură
-CloneMainAttributes=Clone obiect cu principalele sale atribute
 ConfirmCloneInvoice=Sunteţi sigur că doriţi să clona această <b>factură %s?</b>
 DisabledBecauseReplacedInvoice=Acţiunea cu handicap, pentru că factura a fost înlocuit
+DescTaxAndDividendsArea=Această zonă a prezentat un rezumat al tuturor plăţilor efectuate de impozit sau a contribuţiilor sociale. Numai de înregistrări cu plată în cursul fix an sunt incluse aici.
+NbOfPayments=Nb de plăţi
+SplitDiscount=Split reducere în două
+ConfirmSplitDiscount=Sunteţi sigur că doriţi să împărţim această reducere <b>a %s %s</b> în 2 mai mici reduceri?
+TypeAmountOfEachNewDiscount=Valoarea de intrare, pentru fiecare din două părţi:
+TotalOfTwoDiscountMustEqualsOriginal=Total a două noi reduceri trebuie să fie egal cu suma iniţială de reduceri.
+ConfirmRemoveDiscount=Sunteţi sigur că doriţi să eliminaţi acest discount?
+RelatedBill=Legate de factura
+RelatedBills=facturi corelate
+
+# PaymentConditions
 PaymentConditionShortRECEP=Imediat
 PaymentConditionRECEP=Imediat
 PaymentConditionShort30D=30 zile
@@ -248,6 +305,16 @@ PaymentConditionShort60D=60 zile
 PaymentCondition60D=60 zile
 PaymentConditionShort60DENDMONTH=60 zile sfârşitul lunii
 PaymentCondition60DENDMONTH=60 zile sfârşitul lunii
+# PaymentConditionShortPT_DELIVERY=Delivery
+# PaymentConditionPT_DELIVERY=On delivery
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=Banca de depozit
 PaymentTypeShortVIR=Banca de depozit
 PaymentTypePRE=Băncii pentru
@@ -296,7 +363,9 @@ LawApplicationPart2=de mărfuri rămân în proprietatea
 LawApplicationPart3=vânzătorului, până la completa de incasare
 LawApplicationPart4=preţul lor.
 LimitedLiabilityCompanyCapital=SARL cu capitalul de
+# UseLine=Apply
 UseDiscount=Utilizarea discount
+UseCredit=Utilizarea de credit
 UseCreditNoteInInvoicePayment=Reducerea de plată cu acest act de credit
 MenuChequeDeposits=Cecuri depozite
 MenuCheques=Cecuri
@@ -308,94 +377,9 @@ ChequeDeposits=Cecuri depozite
 Cheques=Cecuri
 CreditNoteConvertedIntoDiscount=Această notă de credit a fost transformată în %s
 UsBillingContactAsIncoiveRecipientIfExist=Utilizaţi client facturare, adresa de contact în loc de o terţă parte ca adresa destinatarului pentru facturile
-Of=du
-PDFBerniqueDescription=Model de factură Bernique
-PDFBigorneauDescription=Model de factură Bigorneau
-PDFBulotDescription=Model de factură Bulot
-PDFCrabeDescription=Model de factură Crabe. Un model de factură (Sprijin TVA opţiune, reduceri, plăţi condiţii, logo-ul, etc ..)
-PDFHuitreDescription=Model de factură Huitre
-PDFOursinDescription=Model de factură oursin
-PDFTourteauDescription=Model de factură Tourteau
-TerreNumRefModelDesc1=Întoarceţi-vă cu NUMERO format %syymm-NNNN standard pentru facturi şi %syymm-NNNN de credit, în cazul în care constată aa este ani, mm este luna şi NNNN este o secvenţă fără nici o pauză şi a reveni la 0
-TerreNumRefModelError=Un proiect de lege incepand cu $ syymm există deja şi nu este compatibilă cu acest model de succesiune. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.
-OrionNumRefModelDesc1=Întoarceţi-vă la numărul în format FAYYNNNNN unde YY este NNNNN an şi de creşterea numărului începând de la 1.
-OrionNumRefModelDesc2=De ani este crescut cu 1, fără o initialisation la zero la începutul anului fiscal.
-OrionNumRefModelDesc3=Definiţi variabilă SOCIETE_FISCAL_MONTH_START cu luni de la începutul anului fiscal, de exemplu: pentru 9 septembrie.
-OrionNumRefModelDesc4=În acest exemplu, vom avea pe 1 septembrie 2006 o factură numit FA700354.
-TitanNumRefModelDesc1=Întoarceţi-vă la numărul de format FAYYNNNNN unde YY este NNNNN an şi este în creştere numărul incepand de la 1.
-TitanNumRefModelDesc2=În anul incremented este de 1, precum şi creşterea numărului este iniţializată la zero la începutul anului fiscal.
-TitanNumRefModelDesc3=Definiţi variabilă SOCIETE_FISCAL_MONTH_START cu luni de la începutul anului fiscal, de exemplu: pentru 9 septembrie.
-TitanNumRefModelDesc4=În acest exemplu, vom avea pe 1 septembrie 2006 o factură numit FA0700001
-PlutonNumRefModelDesc1=Întoarceţi-vă un personalizabile numărul facturii în conformitate cu o mască de definit.
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-InvoiceDeposit=Depozit de factură
-InvoiceDepositAsk=Depozit de factură
-InvoiceDepositDesc=Acest tip de factură se face în cazul în care un depozit a fost primit.
-InvoiceProForma=Proforma factură
-InvoiceProFormaAsk=Proforma factură
-InvoiceProFormaDesc=<b>Proforma factură</b> este o imagine de o adevărată factură, dar nu are nici o valoare contabilă.
-UsedByInvoice=Folosite pentru a plăti factura %s
-ConsumedBy=Consumat de către
-NotConsumed=Nu consumaţi
-HelpPaymentHigherThanReminderToPay=Atentie, la plata sumei de una sau mai multe proiecte de lege este mai mare decât în restul să plătească. <br> Editaţi-vă de intrare, altfel confirma si gandeste-te la crearea unei note de credit a primit în exces, pentru fiecare overpaid facturilor.
-BillStatusConverted=Convertite în reducere
-BillShortStatusConverted=Prelucrate
-Prélèvements=Permanent pentru
-Prélèvements=Ordine de plată
-ShowInvoiceDeposit=Arata depozit factură
-SetDate=Setaţi data
-Deposit=Garantie
-Deposits=Depozite
-DiscountFromDeposit=Plăţile efectuate de depozit factura %s
-AbsoluteDiscountUse=Acest tip de credit poate fi utilizat pe factură înainte de validarea acestuia
-CreditNoteDepositUse=Factură trebuie să fie validate pentru a utiliza acest rege de credite
-NewRelativeDiscount=Noua reducere relativă
-IdSocialContribution=Social contribuţie id
-PaymentId=Plata id
-DescTaxAndDividendsArea=Această zonă a prezentat un rezumat al tuturor plăţilor efectuate de impozit sau a contribuţiilor sociale. Numai de înregistrări cu plată în cursul fix an sunt incluse aici.
-NbOfPayments=Nb de plăţi
-SplitDiscount=Split reducere în două
-ConfirmSplitDiscount=Sunteţi sigur că doriţi să împărţim această reducere <b>a %s %s</b> în 2 mai mici reduceri?
-TypeAmountOfEachNewDiscount=Valoarea de intrare, pentru fiecare din două părţi:
-TotalOfTwoDiscountMustEqualsOriginal=Total a două noi reduceri trebuie să fie egal cu suma iniţială de reduceri.
-ConfirmRemoveDiscount=Sunteţi sigur că doriţi să eliminaţi acest discount?
-UseCredit=Utilizarea de credit
+ShowUnpaidAll=Arata toate facturile neachitate
 ShowUnpaidLateOnly=Arata târziu unpaid factura numai
 PaymentInvoiceRef=Plata facturii %s
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-// Reference language: en_US
-BillsCustomersUnpaid=Neplătite clientilor facturi
-BillsCustomersUnpaidForCompany=Neplătite clientilor facturile pentru %s
-BillsSuppliersUnpaid=Neachitate furnizorilor facturi
-BillsUnpaid=Neachitate
-InvoiceReplacementDesc=<b>Înlocuirea factură</b> este utilizat pentru a anula şi înlocuiţi complet o factură fără plată primit deja. <br><br> Notă: Doar factura de plată pe care nu poate fi înlocuit. În cazul în care nu sa încheiat, acesta va fi închis în mod automat pentru a "abandonat".
-BillStatusClosedUnpaid=Închis (fără plată)
-BillShortStatusClosedUnpaid=Închis
-Unpaid=Neachitate
-ConfirmCancelBillQuestion=De ce vrei pentru a clasifica această factură "abandonat"?
-ConfirmClassifyPaidPartiallyReasonOther=Suma abandonat pentru alte motive
-NoSupplierBillsUnpaid=Nu furnizori facturi neachitate
-CustomerBillsUnpaid=Neachitate facturi clienţi
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-ClassifyCanceled=Clasifica "abandonaţi"
-BillStatusCanceled=Abandonat
-BillShortStatusCanceled=Abandonat
-ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Această alegere este posibilă în cazul în care factura dvs. au fost prevăzute cu comentariul adecvat. (Exemplu «Numai impozitul corespunzător preţului care au fost plătite efectiv dă dreptul la deducere»)
-AlreadyPaidNoCreditNotesNoDeposits=Deja plătite (fără notele de credit şi depozite)
-RelatedBill=Legate de factura
-RelatedBills=facturi corelate
 ValidateInvoice=Validare factură
 Cash=Numerar
 Reported=Întârziat
@@ -403,6 +387,15 @@ DisabledBecausePayments=Nu este posibil, deoarece nu există anumite plăţi
 CantRemovePaymentWithOneInvoicePaid=nu se poate elimina de plată, deoarece nu există, cel puţin pe factură clasificate platite
 ExpectedToPay=Preconizate de plată
 PayedByThisPayment=Plătită de către această plată
+ClosePaidInvoicesAutomatically=Clasifica &quot;platiti&quot;, toate facturile standard sau de înlocuire entirely platite.
+# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=Toate cu factura nu rămân la plata vor fi închise automat la statutul de &quot;platite&quot;.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Reprezentant client urmărirea factura
 TypeContact_facture_external_BILLING=Clientul factura de contact
 TypeContact_facture_external_SHIPPING=Clientul de transport maritim de contact
@@ -411,27 +404,10 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=Reprezentant furnizorul urmă
 TypeContact_invoice_supplier_external_BILLING=A lua legatura cu furnizorul factură
 TypeContact_invoice_supplier_external_SHIPPING=Furnizor de transport maritim de contact
 TypeContact_invoice_supplier_external_SERVICE=Furnizor de servicii de contact
-PDFLinceDescription=Un model de factura complet, cu RE şi spaniolă IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:32).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-BillsCustomer=Clientului factura
-BillsSuppliersUnpaidForCompany=Furnizorul de facturi neplătite pentru %s
-BillsLate=Întârzierea efectuării plăţilor
-DisabledBecauseNotErasable=Dezactivate, deoarece nu pot fi şterse
-ConfirmUnvalidateBill=Sunteţi sigur că doriţi să schimbaţi <b>%s</b> factura la statutul de proiect?
-UnvalidateBill=Unvalidate factura
-NumberOfBillsByMonth=NB a facturilor de către luni
-AmountOfBillsByMonthHT=Valoarea facturilor de către luna (net de impozit)
-AddRelativeDiscount=Crearea reducere relativă
-EditRelativelDiscount=Editare relatvie reducere
-EditGlobalDiscounts=Editare reduceri absolute
-AddCreditNote=Creaţi note de credit
-InvoiceNotChecked=Nu factură selectat
-ShowUnpaidAll=Arata toate facturile neachitate
-ClosePaidInvoicesAutomatically=Clasifica &quot;platiti&quot;, toate facturile standard sau de înlocuire entirely platite.
-AllCompletelyPayedInvoiceWillBeClosed=Toate cu factura nu rămân la plata vor fi închise automat la statutul de &quot;platite&quot;.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:55).
+# crabe PDF Model
+PDFCrabeDescription=Model de factură Crabe. Un model de factură (Sprijin TVA opţiune, reduceri, plăţi condiţii, logo-ul, etc ..)
+# oursin PDF Model
+PDFOursinDescription=Model de factură oursin
+# NumRef Modules
+TerreNumRefModelDesc1=Întoarceţi-vă cu NUMERO format %syymm-NNNN standard pentru facturi şi %syymm-NNNN de credit, în cazul în care constată aa este ani, mm este luna şi NNNN este o secvenţă fără nici o pauză şi a reveni la 0
+TerreNumRefModelError=Un proiect de lege incepand cu $ syymm există deja şi nu este compatibilă cu acest model de succesiune. Eliminaţi-o sau redenumiţi-o pentru a activa acest modul.

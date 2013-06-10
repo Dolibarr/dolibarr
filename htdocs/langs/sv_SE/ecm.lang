@@ -1,12 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 09:14:50
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Dokument
 DocsMine=Mina dokument
@@ -44,12 +36,14 @@ ECMSearchByEntity=Sök på objektet
 ECMSectionOfDocuments=Register över handlingar
 ECMTypeManual=Manuell
 ECMTypeAuto=Automatisk
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Dokument med koppling till tredje part
 ECMDocsByProposals=Dokument med koppling till förslagen
 ECMDocsByOrders=Dokument med koppling till kunderna order
 ECMDocsByContracts=Handlingar som är kopplade till kontrakt
 ECMDocsByInvoices=Dokument med koppling till kunderna fakturor
 ECMDocsByProducts=Dokument med koppling till produkter
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Ingen katalog skapas
 ShowECMSection=Visa katalog
 DeleteSection=Ta bort katalog
@@ -58,4 +52,5 @@ ECMDirectoryForFiles=Relativ katalog för filer
 CannotRemoveDirectoryContainsFiles=Flyttat inte möjligt eftersom det innehåller några filer
 ECMFileManager=Filhanteraren
 ECMSelectASection=Välj en katalog på vänster träd ...
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:19:39).
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

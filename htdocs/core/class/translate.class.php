@@ -194,7 +194,7 @@ class Translate
 
 		// Redefine alt
 		$langarray=explode('_',$langofdir);
-		if ($alt < 1 && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
+		if ($alt < 1 && isset($langarray[1]) && strtolower($langarray[0]) == strtolower($langarray[1])) $alt=1;
 		if ($alt < 2 && (strtolower($langofdir) == 'en_us' || strtolower($langofdir) == 'fr_fr' || strtolower($langofdir) == 'es_es')) $alt=2;
 
 		foreach($this->dir as $keydir => $searchdir)
@@ -643,13 +643,15 @@ class Translate
 	 *      Store key-label found into cache variable $this->cache_labels to save SQL requests to get labels.
 	 *
 	 * 		@param	DoliBD	$db				Database handler
-	 * 		@param	string	$key			Key to get label (key in language file)
+	 * 		@param	string	$key			Translation key to get label (key in language file)
 	 * 		@param	string	$tablename		Table name without prefix
 	 * 		@param	string	$fieldkey		Field for key
 	 * 		@param	string	$fieldlabel		Field for label
+	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @return string					Label in UTF8 (but without entities)
+	 *      @see dol_getIdFromCode
 	 */
-	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
+	function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel,$keyforselect='')
 	{
 		// If key empty
 		if ($key == '') return '';
@@ -670,7 +672,7 @@ class Translate
 
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
-		$sql.= " WHERE ".$fieldkey." = '".$key."'";
+		$sql.= " WHERE ".$fieldkey." = '".($keyforselect?$keyforselect:$key)."'";
 		dol_syslog(get_class($this).'::getLabelFromKey sql='.$sql,LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)

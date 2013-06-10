@@ -1,12 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-07 10:30:00
- */
-
-// START - Lines generated manually (2012-07-07 10:30:00).
-// Reference language: en_US -> TR - contracts
-
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Sözleşmeler alanı
 ListOfContracts=Sözleşme Listesi
@@ -47,6 +39,7 @@ ConfirmCloseService=<b>%s</b> Tarihli bu hizmeti kapatmak istediğiniz emin?
 ValidateAContract=Bir sözleşme doğrula
 ActivateService=Hizmet etkinleştir
 ConfirmActivateService=<b>%s</b> Tarihli bu hizmeti etkinleştirmek istediğiniz eminmisiniz?
+# RefContract=Contract reference
 DateContract=Sözleşme tarihi
 DateServiceActivate=Hizmet etkinleştirme tarihi
 DateServiceUnactivate=Hizmet devre dışı bırakma tarihi
@@ -61,7 +54,7 @@ ListOfRunningContractsLines=Yürülükte olan hizmet satırları
 ListOfRunningServices=Yürülükteki hizmetler listesi
 NotActivatedServices=Etkin olmayan hizmetler (doğrulanmış sözleşmeler arasından)
 BoardNotActivatedServices=Doğrulanmış sözleşmeler arasındaki etkinleştirilecek hizmetler
-LastContracts=Son %s sözleşme
+LastContracts=Değiştirilen son %s sözleşme
 LastActivatedServices=Etkinleştirilen son %s hizmet
 LastModifiedServices=Değiştirilen son %s hizmet
 EditServiceLine=Hizmet satırı düzenle
@@ -93,7 +86,11 @@ PaymentRenewContractId=Sözleşme satırını yenile (sayı %s)
 ExpiredSince=Süre doluş tarihi
 RelatedContracts=İlgili sözleşmeler
 NoExpiredServices=Süresi dolmamış etkin hizmetler
-##### Kişi türleri #####
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpire=List of Services to expire
+# Service=Service
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşme imzalalayacak satış temsilcisi
 TypeContact_contrat_internal_SALESREPFOLL=Sözleşmeyi izleyecek satış temsilcisi
 TypeContact_contrat_external_BILLING=Müşteri fatura ilgilisi

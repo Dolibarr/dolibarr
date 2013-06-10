@@ -1,21 +1,16 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Warehouse-kortti
 Warehouse=Warehouse
+# Warehouses=Warehouses
 NewWarehouse=Uusi varasto / Kanta-alue
+WarehouseEdit=Muokkaa varasto
 MenuNewWarehouse=Uusi varasto
 WarehouseOpened=Warehouse avattu
 WarehouseClosed=Warehouse suljettu
 WarehouseSource=Lähde varasto
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Kohdekieli varasto
 ValidateSending=Poista lähettäminen
 CancelSending=Peruuta lähettäminen
@@ -41,10 +36,13 @@ StockCorrection=Oikea varastossa
 StockMovement=Siirto
 StockMovements=Kanta siirrot
 NumberOfUnit=Kappalemäärä
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Yhteensä varastossa
 StockTooLow=Kanta liian alhainen
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Value
 PMPValue=Value
+PMPValueShort=WAP
 EnhancedValueOfWarehouses=Varastot arvo
 UserWarehouseAutoCreate=Luo varastossa automaattisesti luoda käyttäjä
 QtyDispatched=Määrä lähetysolosuhteita
@@ -53,8 +51,15 @@ RuleForStockManagementDecrease=Sääntö varaston hallintaan lasku
 RuleForStockManagementIncrease=Sääntö varaston hallintaan lisätä
 DeStockOnBill=Decrease todellinen varastot laskuista / hyvityslaskuja
 DeStockOnValidateOrder=Decrease todellinen varastot tilaukset toteaa
+DeStockOnShipment=Otto real varastojen siirtoa validointi
 ReStockOnBill=Lisäys todellinen varastot laskuista / hyvityslaskuja
 ReStockOnValidateOrder=Lisäys todellinen varastot tilaukset toteaa
+ReStockOnDispatchOrder=Lisäys real varastot käsikirja lähettämistä osaksi varastot, kun toimittaja voidaan vastaanottaa
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Tilaa ei ole vielä tai enää asema, joka mahdollistaa lähettäminen varastossa olevista tuotteista varastoissa.
+StockDiffPhysicTeoric=Syy ero kannan fyysinen ja teoreettinen
+NoPredefinedProductToDispatch=Ei ennalta tuotteet tämän objektin. Joten ei lähettämistä varastossa on.
+DispatchVerb=Lähettäminen
 StockLimitShort=Limit
 StockLimit=Kanta raja hälytykset
 PhysicalStock=Varasto
@@ -69,41 +74,18 @@ IdWarehouse=Id-varasto
 DescWareHouse=Kuvaus varasto
 LieuWareHouse=Lokalisointi varasto
 WarehousesAndProducts=Varastot ja tuotteet
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-PMPValueShort=WAP
 AverageUnitPricePMPShort=Keskimääräiset tulohintajärjestelmää
 AverageUnitPricePMP=Keskimääräiset tulohintajärjestelmää
+SellPriceMin=Myynnin Yksikköhinta
+EstimatedStockValueSellShort=Arvo myydä
+EstimatedStockValueSell=Arvo Myy
 EstimatedStockValueShort=Arvioitu arvo varastossa
 EstimatedStockValue=Arvioitu arvo varastossa
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-WarehouseEdit=Muokkaa varasto
-DeStockOnShipment=Otto real varastojen siirtoa validointi
-ReStockOnDispatchOrder=Lisäys real varastot käsikirja lähettämistä osaksi varastot, kun toimittaja voidaan vastaanottaa
-OrderStatusNotReadyToDispatch=Tilaa ei ole vielä tai enää asema, joka mahdollistaa lähettäminen varastossa olevista tuotteista varastoissa.
-StockDiffPhysicTeoric=Syy ero kannan fyysinen ja teoreettinen
-NoPredefinedProductToDispatch=Ei ennalta tuotteet tämän objektin. Joten ei lähettämistä varastossa on.
-DispatchVerb=Lähettäminen
 DeleteAWarehouse=Poista varasto
 ConfirmDeleteWarehouse=Oletko varma että haluat poistaa varastoon <b>%s?</b>
 PersonalStock=Henkilökohtainen varastossa %s
 ThisWarehouseIsPersonalStock=Tämä varasto edustaa henkilökohtainen kanta %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:30).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-SellPriceMin=Myynnin Yksikköhinta
-EstimatedStockValueSellShort=Arvo myydä
-EstimatedStockValueSell=Arvo Myy
 SelectWarehouseForStockDecrease=Valitse varasto käyttää varastossa laskua
 SelectWarehouseForStockIncrease=Valitse varasto käyttää varastossa lisätä
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:46).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

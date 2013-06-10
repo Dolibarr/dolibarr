@@ -520,7 +520,7 @@ class Export
 				$objmodel->write_header($outputlangs);
 
 				// Genere ligne de titre
-				$objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs);
+				$objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs,$this->array_export_TypeFields[$indice]);
 
 				$var=true;
 

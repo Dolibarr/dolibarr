@@ -336,10 +336,11 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
  */
 else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
-    $product=new Product($db);
     if ($_POST["elrowid"])
     {
-        if ($product->fetch($_POST["elrowid"]) < 0) dol_print_error($db);
+        $line = new CommandeFournisseurLigne($db);
+        $res = $line->fetch($_POST["elrowid"]); 
+        if (!$res) dol_print_error($db);
     }
 
     $localtax1_tx=get_localtax($_POST['tva_tx'],1,$mysoc,$object->thirdparty);
@@ -356,9 +357,18 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
         $localtax2_tx,
         'HT',
         0,
-        isset($_POST["type"])?$_POST["type"]:$product->type
+        isset($_POST["type"])?$_POST["type"]:$line->product_type
     );
-
+    unset($_POST['qty']);
+    unset($_POST['type']);
+    unset($_POST['idprodfournprice']);
+    unset($_POST['remmise_percent']);
+    unset($_POST['dp_desc']);
+    unset($_POST['np_desc']);
+    unset($_POST['pu']);
+    unset($_POST['tva_tx']);
+    unset($localtax1_tx);
+    unset($localtax2_tx);
     if ($result	>= 0)
     {
         $outputlangs = $langs;
@@ -1099,7 +1109,7 @@ elseif (! empty($object->id))
 					//'text' => $langs->trans("ConfirmClone"),
 					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 					//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
+					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
 			);
 		}
 

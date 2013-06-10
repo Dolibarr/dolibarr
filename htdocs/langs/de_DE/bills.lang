@@ -1,12 +1,5 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - bills
 CHARSET=UTF-8
-
 Bill=Rechnung
 Bills=Rechnungen
 BillsCustomers=Kundenrechnungen
@@ -65,6 +58,7 @@ Payment=Zahlung
 PaymentBack=Rückzahlung
 Payments=Zahlungen
 PaymentsBack=Rückzahlungen
+# PaidBack=Paid back
 DatePayment=Zahlungsdatum
 DeletePayment=Lösche Zahlung
 ConfirmDeletePayment=Möchten Sie diese Zahlung wirklich löschen?
@@ -76,13 +70,15 @@ ReceivedCustomersPaymentsToValid=Erhaltene Kundenzahlungen zur Freigabe
 PaymentsReportsForYear=Zahlungsbericht für %s
 PaymentsReports=Zahlungsberichte
 PaymentsAlreadyDone=Bereits getätigte Zahlungen
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Zahlungsregel
 PaymentMode=Zahlungsart
 PaymentConditions=Zahlungskonditionen
 PaymentConditionsShort=Konditionen
 PaymentAmount=Zahlungsbetrag
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Zahlungsbetrag übersteigt Zahlungserinnerung
-HelpPaymentHigherThanReminderToPay=Achtung, die Zahlung eines oder mehrerer Rechnungen ist höher als der Rest zu zahlen. <br> Bearbeiten Sie Ihre Eingabe, sonst bestätigen und denken über die Schaffung einer Gutschrift von mehr als der für jede overpaid Rechnungen.
+HelpPaymentHigherThanReminderToPay= Achtung, die Zahlung eines oder mehrerer Rechnungen ist höher als der Rest zu zahlen. <br> Bearbeiten Sie Ihre Eingabe, sonst bestätigen und denken über die Schaffung einer Gutschrift von mehr als der für jede overpaid Rechnungen.
 ClassifyPaid=Als 'bezahlt' markieren
 ClassifyPaidPartially=Als 'teilweise bezahlt' markieren
 ClassifyCanceled=Als 'storniert' markieren
@@ -138,7 +134,7 @@ BillTo=An
 ActionsOnBill=Maßnahmen zu dieser Rechnung
 NewBill=Neue Rechnung
 Prélèvements=Dauerauftrag
-Prélèvements=Daueraufträge
+Prélèvements=Dauerauftrag
 LastBills=%s neueste Rechnungen
 LastCustomersBills=%s neueste Kundenrechnungen
 LastSuppliersBills=Letzte %s Lieferantenrechnungen
@@ -187,10 +183,13 @@ ShowInvoiceDeposit=Show Anzahlung Rechnung
 ShowPayment=Zeige Zahlung
 File=Datei
 AlreadyPaid=Bereits bezahlt
+# AlreadyPaidBack=Already paid back
 AlreadyPaidNoCreditNotesNoDeposits=Bereits bezahlte (ohne Gutschriften und Einlagen)
-Abandoned=Weggefallen                     
+Abandoned=Weggefallen
 RemainderToPay=Zu zahlender Restbetrag
 RemainderToTake=Einzuhebender Restbetrag
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Höhe der Forderung
 ExcessReceived=Erhaltener Überschuss
 EscompteOffered=Rabatt angeboten (Skonto)
@@ -220,7 +219,8 @@ DispenseMontantLettres=Automatisch generierte Dokumente unterliegen nicht den Fo
 NonPercuRecuperable=Nicht erstattungsfähig
 SetConditions=Zahlungskonditionen einstellen
 SetMode=Definiere Zahlungsart
-SetDate=Datum
+SetDate= Datum
+# SelectDate=Select a date
 Billed=In Rechnung gestellt
 RepeatableInvoice=Rechnungsvorlage
 RepeatableInvoices=Rechnungsvorlagen
@@ -228,7 +228,7 @@ Repeatable=Vorlage
 Repeatables=Vorlagen
 ChangeIntoRepeatableInvoice=In Rechnungsvorlage umwandeln
 CreateRepeatableInvoice=Erstelle Rechnungsvorlage
-CreateFromRepeatableInvoice=Aus Rechnungsvorlage erstellen 
+CreateFromRepeatableInvoice=Aus Rechnungsvorlage erstellen
 CustomersInvoicesAndInvoiceLines=Kundenrechnungen und -positionen
 CustomersInvoicesAndPayments=Kundenrechnungen und -zahlungen
 ExportDataset_invoice_1=Kundenrechnungen und -positionen
@@ -247,6 +247,7 @@ AddGlobalDiscount=Rabattregel hinzufügen
 EditGlobalDiscounts=Absolute Rabatte bearbeiten
 AddCreditNote=Gutschrift erstellen
 ShowDiscount=Zeige Rabatt
+# ShowReduc=Show the deduction
 RelativeDiscount=Relativer Rabatt
 GlobalDiscount=Rabattregel
 CreditNote=Gutschrift
@@ -304,6 +305,15 @@ PaymentConditionShort60D=60 Tage
 PaymentCondition60D=60 Tage
 PaymentConditionShort60DENDMONTH=60 Tage ab Monatsende
 PaymentCondition60DENDMONTH=60 Tage ab Ende des Monats
+# PaymentConditionShortPT_DELIVERY=Delivery
+# PaymentConditionPT_DELIVERY=On delivery
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
 # PaymentType
 PaymentTypeVIR=Banküberweisung
 PaymentTypeShortVIR=Banküberweisung
@@ -353,6 +363,7 @@ LawApplicationPart2=Die Ware bleibt Eigentum der
 LawApplicationPart3=der Verkäufer bis zur vollständigen Einlösung des
 LawApplicationPart4=ihren Preis.
 LimitedLiabilityCompanyCapital=SARL mit einem Kapital von
+# UseLine=Apply
 UseDiscount=Verwenden
 UseCredit=Verwenden Sie diese Gutschrift
 UseCreditNoteInInvoicePayment=Reduzieren Sie die Zahlung mit dieser Gutschrift
@@ -377,7 +388,13 @@ CantRemovePaymentWithOneInvoicePaid=Kann die Zahlung nicht entfernen, da es zumi
 ExpectedToPay=Erwartete Zahlung
 PayedByThisPayment=Bezahlt durch diese Zahlung
 ClosePaidInvoicesAutomatically=Makiert alle Standard- oder Ersatzrechnungen als "bezahlt" wenn diese vollständig beglichen sind.
+# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Alle Rechnungen ohne ausstehende Zahlungen werden automatisch geschlossen und als "bezahlt" makiert.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Kundenrechnung
 TypeContact_facture_external_BILLING=Kundenrechnung Kontakt

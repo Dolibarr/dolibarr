@@ -1,15 +1,6 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:14:36
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - marque pages
 CHARSET=UTF-8
 AddThisPageToBookmarks=Добавить эту страницу в закладки
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 
 Bookmark=Закладка
 Bookmarks=Закладки

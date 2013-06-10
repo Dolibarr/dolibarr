@@ -31,18 +31,8 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
-
-
-
-
-// Main
-
-$version='1.14';
-@set_time_limit(0);
-$error=0;
-$forcecommit=0;
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
@@ -51,6 +41,20 @@ require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
 $langs->load("main");
 $langs->load("errors");
+
+
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+$forcecommit=0;
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -85,7 +89,7 @@ print "***** $script_file ($version) *****\n";
 if (! isset($argv[1])) {
 	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
-    exit;
+    exit(-1);
 }
 $groupid=$argv[3];
 if ($argv[1] == 'commitiferror') $forcecommit=1;
@@ -120,7 +124,7 @@ $input = trim(fgets(STDIN));
 if (empty($conf->global->LDAP_USER_DN))
 {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for users not defined inside Dolibarr");
-	exit(1);
+	exit(-1);
 }
 
 
@@ -154,7 +158,7 @@ if ($resql)
 else
 {
 	dol_print_error($db);
-	exit;
+	exit(-1);
 }
 
 
@@ -178,7 +182,7 @@ if ($result >= 0)
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			$fuser = new User($db);
-			
+
 			if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
 				$fuser->fetch('','',$ldapuser[$conf->global->LDAP_KEY_USERS]); // Chargement du user concerné par le SID
 			} else if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
@@ -226,11 +230,11 @@ if ($result >= 0)
 			//if ($fuser->statut > 1) $fuser->statut=1;
 
 			//print_r($ldapuser);
-			
+
 			if($fuser->id > 0) { // User update
 				print $langs->transnoentities("UserUpdate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
 				$res=$fuser->update($user);
-				
+
 				if ($res < 0)
 				{
 					$error++;
@@ -243,7 +247,7 @@ if ($result >= 0)
 			} else { // User creation
 				print $langs->transnoentities("UserCreate").' # '.$key.': login='.$fuser->login.', fullname='.$fuser->getFullName($langs);
 				$res=$fuser->create($user);
-				
+
 				if ($res > 0)
 				{
 					print ' --> Created user id='.$fuser->id.' login='.$fuser->login;
@@ -256,7 +260,7 @@ if ($result >= 0)
 			}
 			print "\n";
 			//print_r($fuser);
-			
+
 			// Gestion des groupes
 			// TODO : revoir la gestion des groupes (ou script de sync groupes)
 			/*if(!$error) {
@@ -292,7 +296,7 @@ else
 }
 
 
-return $error;
+exit($error);
 
 
 /**

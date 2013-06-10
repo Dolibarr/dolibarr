@@ -287,6 +287,16 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
 	{
 		$sTime=dol_print_date($iSecond,'%H',true);
 	}
+	else if ($format == 'fullhour')
+	{
+		if (!empty($iSecond)) {
+			$iSecond=$iSecond/3600;
+		}
+		else {
+			$iSecond=0;
+		}
+		$sTime=$iSecond;
+	}
 	else if ($format == 'min')
 	{
 		$sTime=dol_print_date($iSecond,'%M',true);

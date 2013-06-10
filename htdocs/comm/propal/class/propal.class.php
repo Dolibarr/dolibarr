@@ -2554,6 +2554,7 @@ class Propal extends CommonObject
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
         $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 
+        dol_syslog(get_class($this).'::getLinesArray sql='.$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

@@ -24,7 +24,7 @@
  */
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
-if ( $_GET['filtre'] ) {
+if ( GETPOST('filtre') ) {
 
 	// Avec filtre
 	$ret=array(); $i=0;
@@ -36,17 +36,18 @@ if ( $_GET['filtre'] ) {
 	$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
 	$sql.= " AND p.tosell = 1";
 	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
-	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' ";
-	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '%".$_GET['filtre']."%')";
+	$sql.= " AND (p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
+	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '%".$db->escape(GETPOST('filtre'))."%')";
 	else $sql.= ")";
-
 	$sql.= " ORDER BY label";
 
 	dol_syslog("facturation.php sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		while ( $tab = $db->fetch_array($resql) )
+		$nbr_enreg = $db->num_rows($resql);
+
+		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql) )
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
@@ -54,6 +55,7 @@ if ( $_GET['filtre'] ) {
 			}
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -79,7 +81,9 @@ if ( $_GET['filtre'] ) {
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		while ( $tab = $db->fetch_array($resql) )
+		$nbr_enreg = $db->num_rows($resql);
+
+		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql))
 		{
 			foreach ( $tab as $cle => $valeur )
 			{
@@ -87,6 +91,7 @@ if ( $_GET['filtre'] ) {
 			}
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -95,7 +100,7 @@ if ( $_GET['filtre'] ) {
 	$tab_designations=$ret;
 }
 
-$nbr_enreg = count($tab_designations);
+//$nbr_enreg = count($tab_designations);
 
 if ( $nbr_enreg > 1 )
 {
@@ -144,6 +149,7 @@ if ($res)
 		}
 		$i++;
 	}
+	$db->free($resql);
 }
 else
 {

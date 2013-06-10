@@ -102,6 +102,8 @@ class box_fournisseurs extends ModeleBoxes
                 }
 
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedSuppliers"));
+
+				$db->free($result);
             }
             else {
                 $this->info_box_contents[0][0] = array( 'td' => 'align="left"',

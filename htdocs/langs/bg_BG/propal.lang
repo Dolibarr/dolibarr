@@ -1,12 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Търговски предложения
 Proposal=Търговско предложение
@@ -91,14 +83,19 @@ ProposalLine=Предложение линия
 AvailabilityPeriod=Наличност закъснение
 SetAvailability=Незабавно наличността
 AfterOrder=по поръчка
+##### Availability #####
 AvailabilityTypeAV_NOW=Непосредствен
 AvailabilityTypeAV_1W=1 седмица
 AvailabilityTypeAV_2W=2 седмици
 AvailabilityTypeAV_3W=3 седмици
 AvailabilityTypeAV_1M=1 месец
+##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Представител следното предложение
 TypeContact_propal_external_BILLING=Контакта с клиентите фактура
 TypeContact_propal_external_CUSTOMER=Контакт с клиентите следното предложение
+# Document models
 DocModelAzurDescription=Цялостен модел за предложение (logo. ..)
 DocModelJauneDescription=Jaune предложение модел
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:43:54).
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

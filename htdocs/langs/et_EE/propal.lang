@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Commercial ettepanekuid
 Proposal=Commercial ettepanek
@@ -91,14 +83,19 @@ ProposalLine=Ettepanek rida
 AvailabilityPeriod=Saadavus viivitusega
 SetAvailability=Määra kättesaadavus viivitusega
 AfterOrder=pärast, et
+##### Availability #####
 AvailabilityTypeAV_NOW=Vahetu
 AvailabilityTypeAV_1W=1 nädal
 AvailabilityTypeAV_2W=2 nädalat
 AvailabilityTypeAV_3W=3 nädalat
 AvailabilityTypeAV_1M=1 kuu
+##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Esindaja järelmeetmeid ettepanek
 TypeContact_propal_external_BILLING=Kliendi arve kontaktandmed
 TypeContact_propal_external_CUSTOMER=Klientide kontaktandmeid järelmeetmeid ettepanek
+# Document models
 DocModelAzurDescription=Täielikku ettepanekut mudel (logo. ..)
 DocModelJauneDescription=Jaune ettepaneku mudel
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:43:26).
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

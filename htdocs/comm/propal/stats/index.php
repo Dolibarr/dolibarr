@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
+$userid=GETPOST('userid','int');
+$socid=GETPOST('socid','int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -53,7 +53,8 @@ $endyear=$year;
 
 $form=new Form($db);
 
-$langs->load("propal");
+$langs->load('propal');
+$langs->load('other');
 
 llxHeader();
 
@@ -63,7 +64,7 @@ $dir=$conf->propal->dir_temp;
 
 dol_mkdir($dir);
 
-$stats = new PropaleStats($db, $socid, $userid);
+$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0));
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -233,12 +234,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_company($socid,'socid',$filter,1);
 	print '</td></tr>';
 	// User
-	print '<tr><td align="left">'.$langs->trans("User").'/'.$langs->trans("SalesRepresentative").'</td><td align="left">';
+	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
 	print $form->select_users($userid,'userid',1);
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
 	print $form->selectarray('year',$arrayyears,$year,0);
 	print '</td></tr>';

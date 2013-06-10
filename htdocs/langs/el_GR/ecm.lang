@@ -1,4 +1,4 @@
-# Dolibarr language file - el_GR - ecm
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Έγγραφα
 DocsMine=Τα Έγγραφά Μου
@@ -36,12 +36,14 @@ ECMSearchByEntity=Search by object
 ECMSectionOfDocuments=Directories of documents
 ECMTypeManual=Χειροκίνητα
 ECMTypeAuto=Αυτόματα
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Έγγραφα συνδεδεμένα με στοιχεία
-ECMDocsByProposal=Έγγραφα συνδεδεμένα με προτάσεις
+ECMDocsByProposals=Έγγραφα που σχετίζονται με τις προτάσεις
 ECMDocsByOrders=Έγγραφα συνδεδεμένα με παραγγελίες πελατών
 ECMDocsByContracts=Έγγραφα συνδεδεμένα με συμβόλαια
 ECMDocsByInvoices=Έγγραφα συνδεδεμένα με τιμολόγια πελατών
 ECMDocsByProducts=Έγγραφα συνδεδεμένα με προϊόντα
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Δεν δημιουργήθηκε φάκελος
 ShowECMSection=Εμφάνιση φακέλου
 DeleteSection=Διαγραφή φακέλου
@@ -50,9 +52,5 @@ ECMDirectoryForFiles=Relative directory for files
 CannotRemoveDirectoryContainsFiles=Removed not possible because it contains some files
 ECMFileManager=Διαχειριστής Αρχείων
 ECMSelectASection=Select a directory on left tree...
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
 
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-ECMDocsByProposals=Έγγραφα που σχετίζονται με τις προτάσεις
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:32).

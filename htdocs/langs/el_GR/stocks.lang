@@ -1,21 +1,16 @@
-/*
- * Language code: el_GR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:35:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Αποθήκη κάρτα
 Warehouse=Αποθήκη
+# Warehouses=Warehouses
 NewWarehouse=Νέα αποθήκη / Χρηματιστήριο περιοχή
 WarehouseEdit=Τροποποίηση αποθήκη
 MenuNewWarehouse=Νέα αποθήκη
 WarehouseOpened=Αποθήκη άνοιξε
 WarehouseClosed=Αποθήκη κλειστό
 WarehouseSource=Αποθήκη Πηγή
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Στόχος αποθήκη
 ValidateSending=Διαγραφή αποστολή
 CancelSending=Ακύρωση αποστολής
@@ -41,8 +36,10 @@ StockCorrection=Σωστή απόθεμα
 StockMovement=Μεταφορά
 StockMovements=Μεταφορές Χρηματιστήριο
 NumberOfUnit=Αριθμός μονάδων
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Σύνολο σε απόθεμα
 StockTooLow=Χρηματιστήριο πολύ χαμηλή
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Αξία
 PMPValue=Μέση σταθμική τιμή
 PMPValueShort=WAP
@@ -58,6 +55,7 @@ DeStockOnShipment=Μείωση πραγματικών αποθεμάτων γι�
 ReStockOnBill=Αύξηση πραγματικού αποθέματα για τους προμηθευτές τιμολόγια / πιστωτικά επικύρωση σημειώσεις
 ReStockOnValidateOrder=Αύξηση πραγματικού αποθεμάτων σχετικά με τις παραγγελίες τους προμηθευτές επιδοκιμασίας
 ReStockOnDispatchOrder=Αύξηση των αποθεμάτων σε πραγματικό εγχειρίδιο αποστολή σε αποθήκες, μετά από σειρά προμηθευτής που λαμβάνει
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Παραγγελία δεν έχει ακόμη ή όχι περισσότερο μια κατάσταση που επιτρέπει την αποστολή των προϊόντων σε αποθήκες αποθεμάτων.
 StockDiffPhysicTeoric=Λόγος αποθεμάτων διαφορά φυσική και θεωρητική
 NoPredefinedProductToDispatch=Δεν προκαθορισμένα προϊόντα για αυτό το αντικείμενο. Έτσι, δεν έχει αποστολή σε απόθεμα είναι απαραίτητη.
@@ -87,11 +85,7 @@ DeleteAWarehouse=Διαγραφή μιας αποθήκης
 ConfirmDeleteWarehouse=Είστε σίγουροι ότι θέλετε να διαγράψετε το <b>%s</b> αποθήκη;
 PersonalStock=Προσωπικά %s απόθεμα
 ThisWarehouseIsPersonalStock=Αυτή η αποθήκη αποτελεί προσωπική απόθεμα %s %s
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:40:45).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
 SelectWarehouseForStockDecrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για μείωση αποθεμάτων
 SelectWarehouseForStockIncrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για αύξηση των αποθεμάτων
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:18).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

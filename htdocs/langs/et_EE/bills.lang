@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - bills
 CHARSET=UTF-8
 Bill=Arve
 Bills=Arved
@@ -66,6 +58,7 @@ Payment=Makse
 PaymentBack=Makse tagasi
 Payments=Maksed
 PaymentsBack=Makse tagasi
+# PaidBack=Paid back
 DatePayment=Maksekuupäev
 DeletePayment=Kustuta makse
 ConfirmDeletePayment=Oled sa kindel, et soovite kustutada selle makse?
@@ -77,13 +70,15 @@ ReceivedCustomersPaymentsToValid=Saanud kliendid makseid kinnitada
 PaymentsReportsForYear=Maksed aruanded %s
 PaymentsReports=Maksed aruanded
 PaymentsAlreadyDone=Maksed juba teinud
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Maksmine reegel
 PaymentMode=Makse liik
 PaymentConditions=Maksetähtaeg
 PaymentConditionsShort=Maksetähtaeg
 PaymentAmount=Makse summa
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Makse kõrgem meeldetuletus maksta
-HelpPaymentHigherThanReminderToPay=Tähelepanu, makse summa ühe või mitme arved on suurem kui ülejäänud maksma. <br> Muuda oma kanne, muidu kinnitada ja mõelda luua kreeditarve ülejäägi sai iga enammakstud arved.
+HelpPaymentHigherThanReminderToPay= Tähelepanu, makse summa ühe või mitme arved on suurem kui ülejäänud maksma. <br> Muuda oma kanne, muidu kinnitada ja mõelda luua kreeditarve ülejäägi sai iga enammakstud arved.
 ClassifyPaid=Liigitada &quot;Paide&quot;
 ClassifyPaidPartially=Liigitada &quot;Paide osaliselt&quot;
 ClassifyCanceled=Liigitada &quot;Hüljatud&quot;
@@ -139,7 +134,7 @@ BillTo=Bill
 ActionsOnBill=Meetmeid arve
 NewBill=Uus arve
 Prélèvements=Reglement
-Prélèvements=Püsikorraldused
+Prélèvements=Reglement
 LastBills=Last %s arved
 LastCustomersBills=Last %s klientidele arveid
 LastSuppliersBills=Last %s tarnijate arved
@@ -188,10 +183,13 @@ ShowInvoiceDeposit=Näita tagatisraha arve
 ShowPayment=Näita makse
 File=Fail
 AlreadyPaid=Juba makstud
+# AlreadyPaidBack=Already paid back
 AlreadyPaidNoCreditNotesNoDeposits=Juba makstud (ilma krediidi ja hoiused)
 Abandoned=Mahajäetud
 RemainderToPay=Ülejäänud maksma
 RemainderToTake=Ülejäänud võtta
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Hüvitatud
 ExcessReceived=Liigne saanud
 EscompteOffered=Soodus pakutakse (tasumine enne tähtaja)
@@ -217,11 +215,12 @@ NoSupplierBillsUnpaid=Ei tarnijate arved tasumata
 SupplierBillsToPay=Tarnijate arved maksta
 CustomerBillsUnpaid=Tasumata klientidele arveid
 DispenseMontantLettres=Arve koostatud masinakirja on vabastatud selleks tähtedega
-DispenseMontantLettres=Kirjutatud arveid läbi mecanographic protseduurid loobuda poolt selleks tähtedega
+DispenseMontantLettres=Arve koostatud masinakirja on vabastatud selleks tähtedega
 NonPercuRecuperable=Tagastamatu
 SetConditions=Määra maksetingimusi
 SetMode=Määra makse ¾
-SetDate=Määra kuupäev
+SetDate= Määra kuupäev
+# SelectDate=Select a date
 Billed=Arve
 RepeatableInvoice=Ettemääratud arve
 RepeatableInvoices=Ettemääratud arved
@@ -243,11 +242,12 @@ Discount=Allahindlus
 Discounts=Allahindlused
 AddDiscount=Loo allahindlust
 AddRelativeDiscount=Loo suhteline allahindlust
-EditRelativelDiscount=Muuda relatvie allahindlust
+# EditRelativeDiscount=Edit relative discount
 AddGlobalDiscount=Loo absoluutne allahindlust
 EditGlobalDiscounts=Muuda absoluutne allahindlusi
 AddCreditNote=Koosta kreeditarve
 ShowDiscount=Näita allahindlust
+# ShowReduc=Show the deduction
 RelativeDiscount=Suhteline allahindlust
 GlobalDiscount=Global allahindlust
 CreditNote=Kreeditaviis
@@ -293,6 +293,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Kokku kaks uut soodustust peab olema võrdn
 ConfirmRemoveDiscount=Oled sa kindel, et soovite kustutada selle allahindlust?
 RelatedBill=Seotud arve
 RelatedBills=Related arved
+
+# PaymentConditions
 PaymentConditionShortRECEP=Vahetu
 PaymentConditionRECEP=Vahetu
 PaymentConditionShort30D=30 päeva
@@ -303,6 +305,16 @@ PaymentConditionShort60D=60 päeva
 PaymentCondition60D=60 päeva
 PaymentConditionShort60DENDMONTH=60 päeva kuu lõpuni
 PaymentCondition60DENDMONTH=60 päeva kuu lõpuni
+# PaymentConditionShortPT_DELIVERY=Delivery
+# PaymentConditionPT_DELIVERY=On delivery
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=Pangahoius
 PaymentTypeShortVIR=Pangahoius
 PaymentTypePRE=Panga et
@@ -351,6 +363,7 @@ LawApplicationPart2=kaup jääb vara
 LawApplicationPart3=Müüja kuni täieliku lunastamine
 LawApplicationPart4=oma hind.
 LimitedLiabilityCompanyCapital=SARL koos pealinn
+# UseLine=Apply
 UseDiscount=Kasuta allahindlust
 UseCredit=Kasutage krediidi
 UseCreditNoteInInvoicePayment=Vähendada summa maksma selle krediidi
@@ -375,7 +388,14 @@ CantRemovePaymentWithOneInvoicePaid=Ei saa eemaldada makse sest seal on vähemal
 ExpectedToPay=Oodatud makse
 PayedByThisPayment=Payed selle makse
 ClosePaidInvoicesAutomatically=Liigitada &quot;payed&quot; kõik standard või asendamine arved entirely payed.
+# ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Kõik arve, millel ei ole veel maksma automaatselt suletud olek &quot;payed&quot;.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Esindaja järelmeetmeid kliendi arve
 TypeContact_facture_external_BILLING=Kliendi arve kontaktandmed
 TypeContact_facture_external_SHIPPING=Kliendi shipping kontakt
@@ -384,8 +404,10 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=Esindaja järelmeetmeid tarni
 TypeContact_invoice_supplier_external_BILLING=Tarnija arve kontaktandmed
 TypeContact_invoice_supplier_external_SHIPPING=Tarnija shipping kontakt
 TypeContact_invoice_supplier_external_SERVICE=Tarnija teenuse kontakt
+# crabe PDF Model
 PDFCrabeDescription=Arve PDF malli Crabe. Täieliku arve malli (mall soovitatud,)
+# oursin PDF Model
 PDFOursinDescription=Arve PDF malli Oursin. Täieliku arve malli (mall alternatiiv)
+# NumRef Modules
 TerreNumRefModelDesc1=Tagasi numero koos formaadis %syymm-nnnn välja standardsete arvete ja %syymm-nnnn kreeditarvete kus YY aastat, KK kuud ja nnnn on jada, millel ei ole katki ja ei ole tagasi 0
 TerreNumRefModelError=Bill alates $ syymm juba olemas ja ei sobi see mudel jada. Eemaldada või ümber nimetada aktiveerimiseks mooduli.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:29:16).

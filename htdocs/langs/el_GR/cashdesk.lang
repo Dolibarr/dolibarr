@@ -1,4 +1,4 @@
-# Language file - en_US - cashdesk
+# Language file - Source file is en_US - cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Point of sale
 CashDesk=Point of sale
@@ -8,7 +8,12 @@ CashDeskBankCash=Bank account (cash)
 CashDeskBankCB=Bank account (card)
 CashDeskBankCheque=Bank account (cheque)
 CashDeskWarehouse=Warehouse
+CashdeskShowServices=Πώληση υπηρεσιών
+CashDeskProducts=Προϊόντα
+CashDeskStock=Χρηματιστήριο
+CashDeskOn=επί
 CashDeskThirdParty=Third party
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Shopping cart
 NewSell=New sell
 BackOffice=Back office
@@ -16,17 +21,10 @@ AddThisArticle=Add this article
 RestartSelling=Go back on sell
 SellFinished=Sell finished
 PrintTicket=Print ticket
-NoResults=No results
 NoProductFound=No article found
 ProductFound=product found
 ProductsFound=products found
 NoArticle=No article
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
-// Reference language: en_US -> el_GR
-CashDeskProducts=Προϊόντα
-CashDeskStock=Χρηματιστήριο
-CashDeskOn=επί
 Identification=Αναγνώριση
 Article=Άρθρο
 Difference=Διαφορά
@@ -35,14 +33,7 @@ NoVAT=Δεν ΦΠΑ για την πώληση αυτή
 Change=Περίσσεια λάβει
 CalTip=Κάντε κλικ για να δείτε το ημερολόγιο
 CashDeskSetupStock=Ρωτάτε για να μειώσετε απόθεμα στο τιμολόγιο δημιουργία αποθήκης αλλά για αυτό είναι δεν ορίζεται <br> Αλλαγή απόθεμα εγκατάστασης μονάδας, ή επιλέξτε μια αποθήκη
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:58).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
-// Reference language: en_US -> el_GR
-CashdeskShowServices=Πώληση υπηρεσιών
 BankToPay=Πιστωτικός λογαριασμός
 ShowCompany=Εμφάνιση εταιρείας
 ShowStock=Εμφάνιση αποθήκη
 DeleteArticle=Κάντε κλικ για να καταργήσετε αυτό το άρθρο
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:15).

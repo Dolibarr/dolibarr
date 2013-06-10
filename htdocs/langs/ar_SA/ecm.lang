@@ -1,13 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=وثائق
 DocsMine=بلدي وثائق
@@ -29,7 +20,6 @@ ECMSections=أدلة
 ECMRoot=جذور
 ECMNewSection=دليل جديد
 ECMAddSection=إضافة دليل دليل
-ECMNewSection=الدليل الجديد ودليل
 ECMNewDocument=وثيقة جديدة
 ECMCreationDate=تاريخ الإنشاء
 ECMNbOfFilesInDir=عدد من الملفات في دليل
@@ -46,12 +36,14 @@ ECMSearchByEntity=بحث عن وجوه
 ECMSectionOfDocuments=أدلة وثائق
 ECMTypeManual=دليل
 ECMTypeAuto=التلقائي
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=وثائق مرتبطة أطراف ثالثة
 ECMDocsByProposals=وثائق مرتبطة مقترحات
 ECMDocsByOrders=وثائق مرتبطة أوامر العملاء
 ECMDocsByContracts=وثائق مرتبطة بعقود
 ECMDocsByInvoices=وثائق مرتبطة عملاء الفواتير
 ECMDocsByProducts=الوثائق المرتبطة بالمنتجات
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=لا الدليل
 ShowECMSection=وتظهر الدليل
 DeleteSection=إزالة الدليل
@@ -60,5 +52,5 @@ ECMDirectoryForFiles=دليل النسبي للملفات
 CannotRemoveDirectoryContainsFiles=لا يمكن إزالتها لأنه يحتوي على بعض الملفات
 ECMFileManager=مدير الملفات
 ECMSelectASection=اختر دليل على ترك شجرة...
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

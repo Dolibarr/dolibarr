@@ -3203,6 +3203,7 @@ class Facture extends CommonInvoice
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 		$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
+		dol_syslog(get_class($this).'::getLinesArray sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

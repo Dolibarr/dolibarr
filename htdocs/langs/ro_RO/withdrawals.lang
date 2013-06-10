@@ -1,19 +1,12 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - withdrawals
 CHARSET=UTF-8
 StandingOrdersArea=Permanent comenzi zona
 CustomersStandingOrdersArea=Clienţii ordine de plată zona
 StandingOrders=Ordine de plată
 StandingOrder=Ordine de plată
 NewStandingOrder=New permanent pentru
+StandingOrderToProcess=Pentru a procesa
+StandingOrderProcessed=Prelucrate
 Withdrawals=Retrageri
 Withdrawal=Retragerea
 WithdrawalsReceipts=Retragerile încasări
@@ -27,6 +20,7 @@ RequestStandingOrderTreated=Cerere de ordine de plată trataţi
 CustomersStandingOrders=Clientul ordine de plată
 CustomerStandingOrder=Client permanent pentru
 NbOfInvoiceToWithdraw=Nb de factură cu retrage cererea
+NbOfInvoiceToWithdrawWithInfo=NB de factură cu retragă cererea pentru clienţii care au definit de informaţii de cont bancar
 InvoiceWaitingWithdraw=Factura de aşteptare pentru al retrage
 AmountToWithdraw=Suma de a se retrage
 WithdrawsRefused=Retrage refuzat
@@ -42,19 +36,12 @@ ThirdPartyDeskCode=A treia parte birou cod
 NoInvoiceCouldBeWithdrawed=Nu withdrawed factură cu succes. Verificaţi dacă factura sunt pe companii cu un valide BAN.
 ClassCredited=Clasifica creditat
 ClassCreditedConfirm=Sunteţi sigur că doriţi pentru a clasifica această retragere primirea ca creditate pe contul bancar?
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-StandingOrderToProcess=Pentru a procesa
-StandingOrderProcessed=Prelucrate
 TransData=Data transmiterii
 TransMetod=Metodei de transmisie
 Send=Trimite
 Lines=Linii
 StandingOrderReject=Emită o respinge
+InvoiceRefused=Încărcaţi respingere la client
 WithdrawalRefused=Retragerile Refuseds
 WithdrawalRefusedConfirm=Sunteţi sigur că doriţi să introduceţi un respingere de retragere pentru societate
 RefusedData=Data respingerii
@@ -65,6 +52,7 @@ InvoiceRefused=Încărcaţi respingere la client
 Status=Status
 StatusUnknown=Necunoscut
 StatusWaiting=Aşteptare
+StatusTrans=Transmise
 StatusCredited=Creditate
 StatusRefused=A refuzat
 StatusMotif0=Nespecificat
@@ -84,14 +72,6 @@ NotifyTransmision=Retragerea Transmitere
 NotifyEmision=Retragerea de emisie
 NotifyCredit=Retragerea de credit
 NumeroNationalEmetter=Numărul naţional transmiţător
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:21).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-NbOfInvoiceToWithdrawWithInfo=NB de factură cu retragă cererea pentru clienţii care au definit de informaţii de cont bancar
-StatusTrans=Transmise
 PleaseSelectCustomerBankBANToWithdraw=Selectaţi informaţii despre contul bancar client de a se retrage
 WithBankUsingRIB=Pentru conturile bancare folosind RIB
 WithBankUsingBANBIC=Pentru conturile bancare folosind codul IBAN / BIC / SWIFT
@@ -101,6 +81,11 @@ WithdrawalFileNotCapable=Imposibil de a genera primirea fişier de retragere pen
 ShowWithdraw=Arată Retragere
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Cu toate acestea, în cazul în care factura nu a cel puţin o plată de retragere încă prelucrate, aceasta nu va fi setat ca platiti pentru a permite retragerea înainte de a gestiona.
 DoStandingOrdersBeforePayments=Acest file vă permite să solicite pentru un ordin de plată. Odată ce va fi terminat, aveţi posibilitatea să tastaţi de plată pentru a închide factura.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also create payments onto invoices and will classify them to paid
+
+### Notifications
 InfoCreditSubject=Plata %s comandă în picioare de către bancă
 InfoCreditMessage=%s pentru picioare a fost plătit de către bancă <br> Datele de plata: %s
 InfoTransSubject=Transmiterea %s ordine permanente la banca
@@ -110,4 +95,3 @@ InfoFoot=Acesta este un mesaj automat trimis de Dolibarr
 InfoRejectSubject=Pentru a refuzat permanent
 InfoRejectMessage=Buna ziua, <br><br> standig ordinea de %s factură referitoare la %s companiei, cu o valoare de %s a fost refuzat de banca. <br><br> - <br> % $
 ModeWarning=Opţiunea pentru modul real, nu a fost stabilit, ne oprim după această simulare
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:42).

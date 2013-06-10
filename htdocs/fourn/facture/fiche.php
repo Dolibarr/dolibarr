@@ -95,7 +95,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         $result=$object->createFromClone($id);
         if ($result > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF'].'?action=editfacnumber&id='.$result);
+            header("Location: ".$_SERVER['PHP_SELF'].'?action=editref_supplier&id='.$result);
             exit;
         }
         else
@@ -114,8 +114,18 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     $object->fetch($id);
     $object->fetch_thirdparty();
 
+    $qualified_for_stock_change=0;
+    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+    {
+    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+    }
+    else
+    {
+    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+    }
+
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
@@ -1158,7 +1168,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
     $form->select_date($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
-	
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1273,7 +1283,7 @@ if ($action == 'create')
 }
 else
 {
-    if ($id > 0)
+    if ($id > 0 || ! empty($ref))
     {
         /* *************************************************************************** */
         /*                                                                             */
@@ -1285,7 +1295,7 @@ else
 
         $productstatic = new Product($db);
 
-        $object->fetch($id);
+        $object->fetch($id,$ref);
         $result=$object->fetch_thirdparty();
         if ($result < 0) dol_print_error($db);
 
@@ -1334,7 +1344,8 @@ else
                 if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
                 {
                     $object->date=dol_now();
-                    $object->date_lim_reglement=$object->calculate_date_lim_reglement();
+                    //TODO: Possibly will have to control payment information into suppliers
+                    //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
                 }
                 $numref = $object->getNextNumRef($soc);
             }

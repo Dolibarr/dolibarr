@@ -557,6 +557,15 @@ img.login, img.printer, img.entity {
 	font-weight:bold;
 }
 
+.alogin {
+	color: #FFF;
+	font-weight: normal;
+}
+.alogin:hover {
+	color: #FFF;
+	text-decoration:underline;
+}
+
 div.login_main_home {
 	color: #000000;
 }

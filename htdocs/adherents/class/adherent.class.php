@@ -392,7 +392,7 @@ class Adherent extends CommonObject
         $nbrowsaffected=0;
         $error=0;
 
-        dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass.", email=".$this->email);
+        dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
         // Clean parameters
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
@@ -1013,7 +1013,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.ref_ext, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1050,6 +1050,7 @@ class Adherent extends CommonObject
                 $this->entity			= $obj->entity;
                 $this->ref				= $obj->rowid;
                 $this->id				= $obj->rowid;
+                $this->ref_ext			= $obj->ref_ext;
                 $this->civilite_id		= $obj->civilite;
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
@@ -1493,19 +1494,17 @@ class Adherent extends CommonObject
 
 
     /**
-     *    Return civility label of a contact
+     *    Return civility label of a member
      *
-     *    @param	int		$nohtmlentities     0=Encode with htmlentities for HTML output, 1=No htmlentities for memory translation
-     *    @return   string              		Name translated of civility
+     *    @return   string              	Translated name of civility
      */
-    function getCivilityLabel($nohtmlentities=0)
+    function getCivilityLabel()
     {
         global $langs;
         $langs->load("dict");
 
         $code=$this->civilite_id;
-        if ($nohtmlentities) return $langs->transnoentities("Civility".$code)!="Civility".$code ? $langs->transnoentities("Civility".$code) : $code;
-        else return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;
+        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
     }
 
     /**

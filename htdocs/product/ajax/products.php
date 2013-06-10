@@ -157,11 +157,11 @@ else
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1)
 	{
-		$arrayresult=$form->select_produits_do("",$htmlname,$type,"",$price_level,$searchkey,$status,2,$outjson);
+		$arrayresult=$form->select_produits_list("",$htmlname,$type,"",$price_level,$searchkey,$status,2,$outjson);
 	}
 	elseif ($mode == 2)
 	{
-		$arrayresult=$form->select_produits_fournisseurs_do($socid,"",$htmlname,$type,"",$searchkey,$status,$outjson);
+		$arrayresult=$form->select_produits_fournisseurs_list($socid,"",$htmlname,$type,"",$searchkey,$status,$outjson);
 	}
 
 	$db->close();

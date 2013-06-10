@@ -380,6 +380,8 @@ class PaiementFourn extends Paiement
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
+
+		dol_syslog(get_class($this).'::getBillsArray sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -399,7 +401,7 @@ class PaiementFourn extends Paiement
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('PaiementFourn::getBillsArray Error '.$this->error.' - sql='.$sql);
+			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error);
 			return -1;
 		}
 	}

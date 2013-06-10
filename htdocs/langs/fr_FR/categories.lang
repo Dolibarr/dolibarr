@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - categories
+# Dolibarr language file - en_US - categories
 CHARSET=UTF-8
 Category=Catégorie
 Categories=Catégories
@@ -87,7 +87,7 @@ AssignedToCustomer=Attribuer à un client
 AssignedToTheCustomer=Attribué au client
 InternalCategory=Catégorie interne
 CategoryContents=Contenu de la catégorie
-CategId=Id catégorie
+CategId=Identifiant catégorie
 CatSupList=Liste des catégories fournisseurs
 CatCusList=Liste des catégories clients/prospects
 CatProdList=Liste des catégories produits
@@ -95,8 +95,8 @@ CatMemberList=Liste des catégories adhérents
 CatSupLinks=Liens entre les fournisseurs et les catégories
 CatCusLinks=Liens entre les clients/prospects et les catégories
 CatProdLinks=Liens entre les produits/services et les catégories
-CatMemberLinks=Links entre les adhérents et les catégories
-CatProdLinks=Produits
-CatCusLinks=Clients/Prospects
-CatSupLinks=Fournisseurs
+CatMemberLinks=Liens entre les adhérents et les catégories
+CatProdLinks=Liens entre les produits/services et les catégories
+CatCusLinks=Liens entre les clients/prospects et les catégories
+CatSupLinks=Liens entre les fournisseurs et les catégories
 DeleteFromCat=Supprimer de la catégorie

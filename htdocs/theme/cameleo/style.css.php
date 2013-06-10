@@ -473,14 +473,18 @@ div.mainmenu.ecm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
 }
 
-div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
-}
-
 div.mainmenu.gravatar {
 }
 
 div.mainmenu.geopipmaxmind {
+}
+
+div.mainmenu.home{
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
+}
+
+div.mainmenu.hrm {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
 div.mainmenu.members {
@@ -649,6 +653,15 @@ div.login a {
 div.login a:hover {
 	color: black;
 	text-decoration:underline;
+}
+
+.alogin, .alogin:hover {
+	color: #888 !important;
+	font-weight: normal !important;
+	font-size: <?php echo $fontsizesmaller; ?>px !important;
+}
+.alogin:hover {
+	text-decoration:underline !important;
 }
 
 img.login, img.printer, img.entity {

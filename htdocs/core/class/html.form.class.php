@@ -655,6 +655,56 @@ class Form
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
+
+    /**
+     *  Return list of company for customer in Ajax if Ajax activated or go to select_thirparty_list
+     *
+     *  @param		int			$selected				Preselected products
+     *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		int			$filter					Filter on thirdparty
+     *  @param		int			$limit					Limit on number of returned lines
+     *  @param		array		$ajaxoptions			Options for ajax_autocompleter
+     * 	@param		int			$forcecombo				Force to use combo box
+     *  @return		void
+     */
+    function select_thirdparty($selected='', $htmlname='productid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
+    {
+    	global $langs,$conf;
+
+    	/* TODO Use ajax autocompletion (not finished)
+    	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+    	{
+    		$placeholder='';
+
+    		if ($selected && empty($selected_input_value))
+    		{
+    			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+    			$societe = new Societe($this->db);
+    			$societe->fetch($selected);
+    			$selected_input_value=$societe->ref;
+    		}
+    		// mode=1 means customers products
+    		$urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
+    		print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+    		if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
+    		else if ($hidelabel > 1) {
+    			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
+    			else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+    			if ($hidelabel == 2) {
+    				print img_picto($langs->trans("Search"), 'search');
+    			}
+    		}
+    		print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+    		if ($hidelabel == 3) {
+    			print img_picto($langs->trans("Search"), 'search');
+    		}
+    	}
+    	else
+    	{*/
+    		print $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0,$limit);
+    	//}
+    }
+
     /**
      *  Output html form to select a third party
      *
@@ -666,12 +716,34 @@ class Form
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      * 	@return	string					HTML string with
+	 *  @deprecated						Use select_thirdparty instead
      */
-    function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $event=array())
+    {
+		return $this->select_thirdparty_list($selected,$htmlname, $filter, $showempty, $showtype, $forcecombo, $event);
+    }
+
+    /**
+     *  Output html form to select a third party
+     *
+     *	@param	string	$selected       Preselected type
+     *	@param  string	$htmlname       Name of field in form
+     *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
+     *	@param	int		$showempty		Add an empty field
+     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 	@param	int		$forcecombo		Force to use combo box
+     *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @param	string	$filterkey		Filter on key value
+     *  @param	int		$outputmode		0=HTML select string, 1=Array
+     *  @param	int		$limit			Limit number of answers
+     * 	@return	string					HTML string with
+     */
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
     {
         global $conf,$user,$langs;
 
         $out='';
+        $outarray=array();
 
         // On recherche les societes
         $sql = "SELECT s.rowid, s.nom, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
@@ -681,9 +753,34 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
         if ($filter) $sql.= " AND (".$filter.")";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status<>0 ";
+        // Add criteria
+        if ($filterkey && $filterkey != '')
+        {
+			$sql.=" AND (";
+        	if (! empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
+        	{
+        		$sql.="(s.name LIKE '".$filterkey."%'";
+        		$sql.=")";
+        	}
+        	else
+        	{
+        		// For natural search
+        		$scrit = explode(' ', $filterkey);
+        		foreach ($scrit as $crit) {
+        			$sql.=" AND (s.name LIKE '%".$crit."%'";
+        			$sql.=")";
+        		}
+        	}
+        	if (! empty($conf->barcode->enabled))
+        	{
+        		$sql .= " OR s.barcode LIKE '".$filterkey."'";
+        	}
+        	$sql.=")";
+        }
         $sql.= " ORDER BY nom ASC";
 
-        dol_syslog(get_class($this)."::select_company sql=".$sql);
+        dol_syslog(get_class($this)."::select_thirdparty_list sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -691,34 +788,11 @@ class Form
             {
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
                 $out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
-				/*
-<<<<<<< HEAD
-				if ($selected && empty($selected_input_value))
-                {
-                	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-                	$product = new Product($this->db);
-                	$product->fetch($selected);
-                	$selected_input_value=$product->ref;
-                }
-=======
-				if ($selected && empty($selected_input_value))
-                {
-                	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-                	$product = new Product($this->db);
-                	$product->fetch($selected);
-                	$selected_input_value=$product->ref;
-                }
->>>>>>> refs/remotes/origin/3.3
-                // mode=1 means customers products
-                $ajaxoptions=array();
-                $urloption='htmlname='.$htmlname.'&outjson=1&filter='.urlencode($filter).'&showtype='.$showtype;
-				$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-                $out.='<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
-				*/
             }
 
-            $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
-            if ($showempty) $out.= '<option value="-1"></option>';
+            // Construct $out and $outarray
+            $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
+            if ($showempty) $out.= '<option value="-1"></option>'."\n";
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -740,19 +814,24 @@ class Form
                         $out.= '<option value="'.$obj->rowid.'" selected="selected">'.$label.'</option>';
                     }
                     else
-                    {
+					{
                         $out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
                     }
+
+                    array_push($outarray, array('key'=>$obj->rowid, 'value'=>$obj->name, 'label'=>$obj->name));
+
                     $i++;
+                    if (($i % 10) == 0) $out.="\n";
                 }
             }
-            $out.= '</select>';
+            $out.= '</select>'."\n";
         }
         else
         {
             dol_print_error($this->db);
         }
 
+        if ($outputmode) return $outarray;
         return $out;
     }
 
@@ -1113,7 +1192,7 @@ class Form
 
 
     /**
-     *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_do
+     *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
      *
      *  @param		int			$selected				Preselected products
      *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
@@ -1161,8 +1240,8 @@ class Form
             }
         }
         else
-        {
-            $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
+		{
+            print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
     }
 
@@ -1177,12 +1256,15 @@ class Form
      * 	@param      string	$filterkey      Filter on product
      *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param      int		$finished       Filter on finished field: 2=No filter
-     *  @param      int		$disableout     Disable print output
+     *  @param      int		$outputmode     0=HTML select string, 1=Array
      *  @return     array    				Array of keys for json
      */
-    function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$disableout=0)
+    function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0)
     {
         global $langs,$conf,$user,$db;
+
+        $out='';
+        $outarray=array();
 
         $sql = "SELECT ";
         $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock";
@@ -1225,45 +1307,38 @@ class Form
         }
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         // Add criteria on ref/label
-        if ($filterkey && $filterkey != '')
+        if ($filterkey != '')
         {
-            if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
+        	$sql.=' AND (';
+        	$prefix=empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)?'%':'';	// Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+            // For natural search
+            $scrit = explode(' ', $filterkey);
+            $i=0;
+            if (count($scrit) > 1) $sql.="(";
+            foreach ($scrit as $crit)
             {
-                $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
-                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$filterkey."%'";
+            	if ($i > 0) $sql.=" AND ";
+                $sql.="(p.ref LIKE '".$prefix.$crit."%' OR p.label LIKE '".$prefix.$crit."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$prefix.$crit."%'";
                 $sql.=")";
+                $i++;
             }
-            else
-            {
-                // For natural search
-                $scrit = explode(' ', $filterkey);
-                foreach ($scrit as $crit) {
-                    $sql.=" AND (p.ref LIKE '%".$crit."%' OR p.label LIKE '%".$crit."%'";
-                    if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$crit."%'";
-                    $sql.=")";
-                }
-            }
-
-            if (! empty($conf->barcode->enabled))
-            {
-                $sql .= " OR p.barcode LIKE '".$filterkey."'";
-            }
+            if (count($scrit) > 1) $sql.=")";
+          	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$prefix.$filterkey."%'";
+        	$sql.=')';
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
 
         // Build output string
-        $outselect='';
-        $outjson=array();
-
-        dol_syslog(get_class($this)."::select_produits_do search product sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_list search product sql=".$sql, LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
 
-            $outselect.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-            $outselect.='<option value="0" selected="selected">&nbsp;</option>';
+            $out.='<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+            $out.='<option value="0" selected="selected">&nbsp;</option>';
 
             $i = 0;
             while ($num && $i < $num)
@@ -1272,13 +1347,14 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if(!empty($objp->price_by_qty) && $objp->price_by_qty == 1) { // Price by quantity will return many prices for the same product
+				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1)
+				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql.= " ORDER BY quantity ASC";
 
-					dol_syslog(get_class($this)."::select_produits_do search price by qty sql=".$sql);
+					dol_syslog(get_class($this)."::select_produits_list search price by qty sql=".$sql);
 					$result2 = $this->db->query($sql);
 					if ($result2)
 					{
@@ -1301,46 +1377,48 @@ class Form
 							// Add new entry
 							// "key" value of json key array is used by jQuery automatically as selected value
 							// "label" value of json key array is used by jQuery automatically as text for combo box
-							$outselect.=$opt;
-							array_push($outjson, $optJson);
+							$out.=$opt;
+							array_push($outarray, $optJson);
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$this->_construct_product_list_option($objp, $opt, $optJson, $price_level, $selected);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
 					// "label" value of json key array is used by jQuery automatically as text for combo box
-					$outselect.=$opt;
-					array_push($outjson, $optJson);
+					$out.=$opt;
+					array_push($outarray, $optJson);
 				}
 
                 $i++;
             }
 
-            $outselect.='</select>';
+            $out.='</select>';
 
             $this->db->free($result);
 
-            if (empty($disableout)) print $outselect;
-            return $outjson;
+            if (empty($outputmode)) return $out;
+            return $outarray;
         }
         else
-        {
+		{
             dol_print_error($db);
         }
     }
 
     /**
      * _construct_product_list_option
-     * 
+     *
      * @param 	resultset		&$objp			Resultset of fetch
      * @param 	string		$opt			Option
      * @param 	string		$optJson		Option
      * @param 	int			$price_level	Price level
      * @param 	string		$selected		Preselected value
-     * @return	
+     * @return
      */
-	private function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected) 
+	private function _construct_product_list_option(&$objp, &$opt, &$optJson, $price_level, $selected)
 	{
 		global $langs,$conf,$user,$db;
 
@@ -1398,7 +1476,7 @@ class Form
             $sql.= " ORDER BY date_price";
             $sql.= " DESC LIMIT 1";
 
-            dol_syslog(get_class($this)."::select_produits_do search price for level '.$price_level.' sql=".$sql);
+            dol_syslog(get_class($this)."::_construct_product_list_option search price for level '.$price_level.' sql=".$sql);
             $result2 = $this->db->query($sql);
             if ($result2)
             {
@@ -1429,7 +1507,8 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1) {
+		if (!empty($objp->quantity) && $objp->quantity >= 1)
+		{
 			$found = 1;
 			$outqty=$objp->quantity;
 			$outdiscount=$objp->remise_percent;
@@ -1510,7 +1589,7 @@ class Form
 	}
 
     /**
-     *	Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_do)
+     *	Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
      *
      *	@param	int		$socid			Id third party
      *	@param  string	$selected       Preselected product
@@ -1535,7 +1614,7 @@ class Form
         }
         else
         {
-            $this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
+            print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
         }
     }
 
@@ -1549,12 +1628,15 @@ class Form
      *	@param  string	$filtre         Pour filtre sql
      *	@param  string	$filterkey      Filtre des produits
      *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  @param  int		$disableout     Disable print output
+     *  @param  int		$outputmode     0=HTML select string, 1=Array
      *  @return array           		Array of keys for json
      */
-    function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$disableout=0)
+    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0)
     {
         global $langs,$conf;
+
+        $out='';
+        $outarray=array();
 
         $langs->load('stocks');
 
@@ -1570,39 +1652,39 @@ class Form
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         if (! empty($filtre)) $sql.=" ".$filtre;
         // Add criteria on ref/label
-        if ($filterkey && $filterkey != '')
+        if ($filterkey != '')
         {
-            if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
-            {
-                $sql.=" AND (pfp.ref_fourn LIKE '".$filterkey."%' OR p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%')";
-            }
-            else
-            {
-                $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
-            }
-
-            if (! empty($conf->barcode->enabled))
-            {
-                $sql .= " OR p.barcode LIKE '".$filterkey."'";
-            }
+        	$sql.=' AND (';
+        	$prefix=empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)?'%':'';	// Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+        	// For natural search
+        	$scrit = explode(' ', $filterkey);
+        	$i=0;
+        	if (count($scrit) > 1) $sql.="(";
+        	foreach ($scrit as $crit)
+        	{
+        		if ($i > 0) $sql.=" AND ";
+        		$sql.="(pfp.ref_fourn LIKE '".$prefix.$crit."%' OR p.ref LIKE '".$prefix.$crit."%' OR p.label LIKE '".$prefix.$crit."%')";
+        		$i++;
+        	}
+        	if (count($scrit) > 1) $sql.=")";
+        	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '".$prefix.$filterkey."%'";
+        	$sql.=')';
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
 
         // Build output string
-        $outselect='';
-        $outjson=array();
 
-        dol_syslog(get_class($this)."::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_fournisseurs_list sql=".$sql,LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
 
             $num = $this->db->num_rows($result);
 
-            //$outselect.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-            $outselect.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-            if (! $selected) $outselect.='<option value="0" selected="selected">&nbsp;</option>';
-            else $outselect.='<option value="0">&nbsp;</option>';
+            //$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
+            $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+            if (! $selected) $out.='<option value="0" selected="selected">&nbsp;</option>';
+            else $out.='<option value="0">&nbsp;</option>';
 
             $i = 0;
             while ($i < $num)
@@ -1658,7 +1740,7 @@ class Form
     	                $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
 	                    $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
                     	$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
-                        $outval.=$langs->transnoentities("Units");
+                        $outval.= $langs->transnoentities("Units");
                     }
 
                     if ($objp->quantity >= 1)
@@ -1693,9 +1775,9 @@ class Form
                 // Add new entry
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
-                $outselect.=$opt;
-                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
-				// Exemple of var_dump $outjson
+                $out.=$opt;
+                array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'discount'=>$outdiscount, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
+				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
 				//      	 ["qty"]=>string(1) "1" ["discount"]=>string(1) "0" ["disabled"]=>bool(false)
@@ -1706,12 +1788,12 @@ class Form
 
                 $i++;
             }
-            $outselect.='</select>';
+            $out.='</select>';
 
             $this->db->free($result);
 
-            if (empty($disableout)) print $outselect;
-            return $outjson;
+            if (empty($outputmode)) return $out;
+            return $outarray;
         }
         else
         {
@@ -3517,10 +3599,13 @@ class Form
      *	@param	string	$prefix   	prefix
      *	@param  int		$iSecond  	Default preselected duration (number of seconds)
      * 	@param	int		$disabled	Disable the combo box
+     * 	@param	string	$typehour	if select then hour in select if text input in text
      *  @return	void
      */
-    function select_duration($prefix,$iSecond='',$disabled=0)
+    function select_duration($prefix,$iSecond='',$disabled=0,$typehour='select')
     {
+    	global $langs;
+
         if ($iSecond)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -3529,18 +3614,26 @@ class Form
             $minSelected = convertSecondToTime($iSecond,'min');
         }
 
-        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
-        for ($hour = 0; $hour < 24; $hour++)
+        if ($typehour=='select')
         {
-            print '<option value="'.$hour.'"';
-            if ($hourSelected == $hour)
-            {
-                print " selected=\"true\"";
-            }
-            print ">".$hour."</option>";
+	        print '<select class="flat" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').'>';
+	        for ($hour = 0; $hour < 24; $hour++)
+	        {
+	            print '<option value="'.$hour.'"';
+	            if ($hourSelected == $hour)
+	            {
+	                print " selected=\"true\"";
+	            }
+	            print ">".$hour."</option>";
+	        }
+	        print "</select>";
         }
-        print "</select>";
-        print "H &nbsp;";
+        elseif ($typehour=='text')
+        {
+        	$fullhours=convertSecondToTime($iSecond,'fullhour');
+        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.$fullhours.'">';
+        }
+        print $langs->trans('Hours'). "&nbsp;";
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
         for ($min = 0; $min <= 55; $min=$min+5)
         {
@@ -3549,7 +3642,7 @@ class Form
             print '>'.$min.'</option>';
         }
         print "</select>";
-        print "M&nbsp;";
+        print $langs->trans('Minutes'). "&nbsp;";
     }
 
 
@@ -3901,6 +3994,11 @@ class Form
             if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
+        }else {
+        	$dir=$conf->$modulepart->dir_output;
+        	if ($object->photo) $file=get_exdir($id, 2).'photos/'.$object->photo;
+        	if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
+        	$email=$object->email;
         }
 
         if ($dir)

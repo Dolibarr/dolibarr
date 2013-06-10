@@ -1,15 +1,13 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
+# Dolibarr language file - Source file is en_US - errors
 CHARSET=UTF-8
+
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
 # Errors
 Error=Fehler
 Errors=Fehler
+# ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=E-Mail %s ist nicht korrekt
 ErrorBadUrl=URL %s ist nicht korrekt
 ErrorLoginAlreadyExists=Login %s existiert bereits.
@@ -27,6 +25,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Dieser Kontakt ist bereits als Kontak
 ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kasse) und akzeptiert deshalb nur Bargeldtransaktionen.
 ErrorFromToAccountsMustDiffers=Quell- und Zielbankkonto müssen unterschiedlich sein.
 ErrorBadThirdPartyName=Der für den Partner eingegebene Name ist ungültig.
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Die eingegebene Kundennummer ist unzulässig.
 ErrorCustomerCodeRequired=Kunden Nr. erforderlich
 ErrorCustomerCodeAlreadyUsed=Diese Kunden-Nr. ist bereits vergeben.
@@ -59,6 +58,10 @@ ErrorUploadBlockedByAddon=Der Upload wurde durch ein PHP Apache-Plugin blockiert
 ErrorFileSizeTooLarge=Die Größe der gewählten Datei übersteigt den zulässigen Maximalwert.
 ErrorSizeTooLongForIntType=Die Größe überschreitet das Maximum für den Typ 'int' (%s Ziffern maximal)
 ErrorSizeTooLongForVarcharType=Die Größe überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
 ErrorExportDuplicateProfil=Dieses Exportprofil existiert bereits.
@@ -109,8 +112,21 @@ ErrorBadValueForCode=Unzulässiger Code-Wert. Versuchen Sie es mit einem anderen
 ErrorBothFieldCantBeNegative=Die Felder %s und %s können nicht gleichzeitig negativ sein
 ErrorWebServerUserHasNotPermission=Der Benutzerkonto <b>%s</b> wurde verwendet um auf dem Webserver etwas auszuführen, hat aber keine Rechte dafür.
 ErrorNoActivatedBarcode=Kein Barcode aktiviert
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
 
 # Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=Achtung: Der PHP-Option <b>safe_mode</b> ist aktiviert, entsprechend müssen Befehle in einem mit <b>safe_mode_exec_dir</b> gekennzeichneten Verzeichnis ausgeführt werden.
 WarningAllowUrlFopenMustBeOn=Der Parameter <b>allow_url_fopen</b> muss in der php.ini-Datei auf <b>ON</b> stehen, damit dieses Modul funktioniert. Bitte passen Sie die Datei manuell an.
 WarningBuildScriptNotRunned=Das Skript <b>%s</b> wurde noch nicht zur Grafikerstellung ausgeführt oder es existieren keine anzuzeigenden Daten.
@@ -121,3 +137,7 @@ WarningsOnXLines=Warnhinweise in <b>%s</b> Quellzeilen
 WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmäßig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.
 WarningLockFileDoesNotExists=Warnung, wenn Setup abgeschlossen ist, müssen Sie die Installations- und Migration-Tools deaktivieren. Dazu fügen Sie die Datei <b>install.lock</b> dem Verzeichnis <b> %s</b> hinzu. Das fehlend dieser Datei stelle eine Sicherheitslücke dar.
 WarningUntilDirRemoved=Diese Warnung bleibt so lange bestehen, bis die Sicherheitslücke geschlossen wurde (nur für Administratoren sichtbar).
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

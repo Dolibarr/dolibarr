@@ -1,12 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=カテゴリ
 Categories=カテゴリー
@@ -64,6 +56,7 @@ CompanyHasNoCategory=この会社は、任意のカテゴリではありませ�
 MemberHasNoCategory=このメンバは、任意のカテゴリではありません
 ClassifyInCategory=カテゴリに分類する
 NoneCategory=なし
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=このカテゴリには、このrefで既に存在している
 ReturnInProduct=戻る製品/サービスカード
 ReturnInSupplier=サプライヤーカードにバックアップする
@@ -99,4 +92,11 @@ CatSupList=サプライヤーカテゴリの一覧
 CatCusList=顧客/見込み客のカテゴリのリスト
 CatProdList=製品カテゴリの一覧
 CatMemberList=メンバーカテゴリの一覧
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:47:01).
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

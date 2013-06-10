@@ -445,7 +445,7 @@ class ExtraFields
 
 			if(is_array($param) && count($param) > 0)
 			{
-				$param = serialize($param);
+				$param = $this->db->escape(serialize($param));
 			}
 
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
@@ -622,7 +622,7 @@ class ExtraFields
 			$out = $formstat->select_date($value, 'options_'.$key, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
 			//$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
-		elseif (in_array($type,array('int','double')))
+		elseif (in_array($type,array('int')))
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
@@ -659,6 +659,10 @@ class ExtraFields
 		elseif ($type == 'price')
 		{
 			$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
+		}
+		elseif ($type == 'double')
+		{
+			$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> ';
 		}
 		elseif ($type == 'select')
 		{
@@ -790,6 +794,10 @@ class ExtraFields
 		{
 			$showsize=10;
 		}
+		elseif ($type == 'double')
+		{
+			$value=price($value);
+		}
 		elseif ($type == 'boolean')
 		{
 			$checked='';
@@ -825,7 +833,7 @@ class ExtraFields
 			
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
-			$sql.= ' WHERE '.$keyList.'="'.$this->db->escape($value).'"';
+			$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
 			//$sql.= ' AND entity = '.$conf->entity;
 			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
@@ -899,6 +907,11 @@ class ExtraFields
 				{
 					$value_arr=GETPOST("options_".$key);
 					$value_key=implode($value_arr,',');
+				}
+				else if (in_array($key_type,array('price','double')))
+				{
+					$value_arr=GETPOST("options_".$key);
+					$value_key=price2num($value_arr);
 				}
 				else
 				{

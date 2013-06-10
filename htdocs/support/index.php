@@ -41,7 +41,7 @@ $langs->load("help");
  * View
  */
 
-pHeader($langs->trans("DolibarrHelpCenter").' '.DOL_VERSION, $_SERVER["PHP_SELF"]);
+pHeader($langs->trans("DolibarrHelpCenter"), $_SERVER["PHP_SELF"]);
 
 print $langs->trans("HelpCenterDesc1")."<br>\n";
 print $langs->trans("HelpCenterDesc2")."<br>\n";

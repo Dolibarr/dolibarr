@@ -5,6 +5,7 @@
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,19 +132,39 @@ else
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+// multilang
+	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+    {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
+	}
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
     if ($sall)
     {
         // For natural search
         $scrit = explode(' ', $sall);
-        foreach ($scrit as $crit) {
-            $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
-            if (! empty($conf->barcode->enabled))
-            {
-                $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
-            }
-            $sql.= ')';
-        }
+		// multilang
+		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+	    {
+			foreach ($scrit as $crit) {
+		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'  OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
+		        if (! empty($conf->barcode->enabled))
+		        {
+		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
+		        }
+		        $sql.= ')';
+		    }
+		}
+		else
+		{
+		    foreach ($scrit as $crit) {
+		        $sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
+		        if (! empty($conf->barcode->enabled))
+		        {
+		            $sql.= " OR p.barcode LIKE '%".$db->escape($crit)."%'";
+		        }
+		        $sql.= ')';
+		    }
+		}
     }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -153,7 +174,15 @@ else
     }
     if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
     if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
-    if ($snom)     $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
+    if ($snom)
+	{
+		// multilang
+		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+	    {
+			$sql.= " AND (p.label LIKE '%".$db->escape($snom)."%' OR (pl.label IS NOT null AND pl.label LIKE '%".$db->escape($snom)."%'))";
+		}
+		else $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
+}
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
@@ -453,7 +482,7 @@ else
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
     		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
-    		
+
     		$db->free($resql);
 
     		print "</table>";

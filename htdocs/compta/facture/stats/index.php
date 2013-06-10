@@ -54,8 +54,9 @@ $endyear=$year;
  * View
  */
 
-$langs->load("bills");
-$langs->load("companies");
+$langs->load('bills');
+$langs->load('companies');
+$langs->load('other');
 
 $form=new Form($db);
 
@@ -233,12 +234,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_company($socid,'socid',$filter,1);
 	print '</td></tr>';
 	// User
-	print '<tr><td>'.$langs->trans("User").'/'.$langs->trans("SalesRepresentative").'</td><td>';
+	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 	print $form->select_users($userid,'userid',1);
 	print '</td></tr>';
 	// Year
 	print '<tr><td>'.$langs->trans("Year").'</td><td>';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
+	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
 	print $form->selectarray('year',$arrayyears,$year,0);
 	print '</td></tr>';

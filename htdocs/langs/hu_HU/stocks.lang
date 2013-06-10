@@ -1,13 +1,16 @@
-# Dolibarr language file - hu_HU - stocks
+# Dolibarr language file - Source file is en_US - stocks
 CHARSET=UTF-8
 WarehouseCard=Raktár kártya
 Warehouse=Raktár
+# Warehouses=Warehouses
 NewWarehouse=Új raktár
 WarehouseEdit=Raktár módosítása
 MenuNewWarehouse=Új raktár
 WarehouseOpened=Raktár nyitva
 WarehouseClosed=Raktár zárva
 WarehouseSource=Forrás raktár
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Cél raktár
 ValidateSending=Törlése jóváhagyása
 CancelSending=Küldés megszakítása
@@ -33,8 +36,10 @@ StockCorrection=Jelenlegi készlet
 StockMovement=Átadás
 StockMovements=Készlet átadás
 NumberOfUnit=Egységek száma
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Összes készlet
 StockTooLow=Készlet alacsony
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Érték
 PMPValue=Súlyozott árlak érték
 PMPValueShort=SÁÉ
@@ -50,6 +55,7 @@ DeStockOnShipment=Tényleges készlet csökkentése szállítás jóváhagyásak
 ReStockOnBill=Tényleges készlet növelése számla/hitel jóváhagyásakor
 ReStockOnValidateOrder=Tényleges készlet növelése beszállítótól való rendelés jóváhagyásakor
 ReStockOnDispatchOrder=Tényleges készlet növelése manuális raktárba való feladáskor miután a beszállítói rendelés beérkezett
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=A rendelés még nincs olyan állapotban, hogy kiküldhető legyen a raktárba.
 StockDiffPhysicTeoric=Az eltérés oka a gyakorlati és az elméleti készlet
 NoPredefinedProductToDispatch=Nincs előredefiniált termék ehhez az objektumhoz. Tehát nincs szükség raktárba küldésre.
@@ -70,18 +76,16 @@ LieuWareHouse=Raktár helye
 WarehousesAndProducts=Raktárak és termékek
 AverageUnitPricePMPShort=Súlyozott átlag beviteli ár
 AverageUnitPricePMP=Súlyozott átlag beviteli ár
+SellPriceMin=Értékesítés Egységár
+EstimatedStockValueSellShort=Érték eladni
+EstimatedStockValueSell=Érték Eladás
 EstimatedStockValueShort=Készlet becsült értéke
 EstimatedStockValue=Készlet becsült értéke
 DeleteAWarehouse=Raktár törlése
 ConfirmDeleteWarehouse=Biztos törölni akarja a(z) <b>%s</b> raktárat?
 PersonalStock=Személyes készlet %s
 ThisWarehouseIsPersonalStock=Ez a raktár %s %s személyes készletet képvisel
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-SellPriceMin=Értékesítés Egységár
-EstimatedStockValueSellShort=Érték eladni
-EstimatedStockValueSell=Érték Eladás
 SelectWarehouseForStockDecrease=Válassza ki a raktár használni állomány csökkenése
 SelectWarehouseForStockIncrease=Válassza ki a raktár használni állomány növekedése
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:18).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions

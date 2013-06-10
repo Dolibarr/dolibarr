@@ -31,28 +31,31 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
-
-// Main
-$version='1.11';
-$path=str_replace($script_file,'',$_SERVER["PHP_SELF"]);
-@set_time_limit(0);
-$error=0;
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
-
 $langs->load("main");
 
+// Global variables
+$version=DOL_VERSION;
+$error=0;
 
-print "***** $script_file ($version) *****\n";
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now\n";
-    exit;
+	exit(-1);
 }
 $now=$argv[1];
 
@@ -85,7 +88,7 @@ $input = trim(fgets(STDIN));
 if (! $conf->global->LDAP_MEMBER_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;
+	exit(-1);
 }
 */
 
@@ -112,13 +115,13 @@ if ($resql)
 		if ($result < 0)
 		{
 			dol_print_error($db,$member->error);
-			exit;
+			exit(-1);
 		}
 		$result=$member->fetch_subscriptions();
 		if ($result < 0)
 		{
 			dol_print_error($db,$member->error);
-			exit;
+			exit(-1);
 		}
 
 		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->getFullName($langs);
@@ -155,5 +158,5 @@ else
 	dol_print_error($db);
 }
 
-return $error;
+exit($error);
 ?>

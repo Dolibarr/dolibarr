@@ -1,12 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - mails
 CHARSET=UTF-8
 Mailing=发送电子邮件
 EMailing=发送电子邮件
@@ -52,6 +44,10 @@ MailingStatusSentCompletely=发送完全
 MailingStatusError=错误
 MailingStatusNotSent=不发送
 MailSuccessfulySent=电子邮件发送成功从％（s到％s）
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=电子邮件收件人是空的
 WarningNoEMailsAdded=没有新的电子邮件添加到收件人的名单。
 ConfirmValidMailing=你确定要验证这个电子邮件？
@@ -77,12 +73,27 @@ CloneReceivers=克隆者
 DateLastSend=去年发送日期
 DateSending=发送日期
 SentTo=发送到<b>％s</b>
+MailingStatusRead=阅读
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（联系客户，潜在客户，供应商，...）
 MailingModuleDescDolibarrUsers=用户与邮件全部Dolibarr
 MailingModuleDescFundationMembers=基金会成员与电子邮件
 MailingModuleDescEmailsFromFile=从一个文本文件（电子邮件电子邮件，姓名或名称;姓;评论）
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=第三方的电子邮件（按类别）
 MailingModuleDescDolibarrContractsLinesExpired=与合同到期的路线第三方
+MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
+MailingModuleDescMembersCategories=基金会的成员（按类别）
+MailingModuleDescContactsByFunction=第三方联系（职位/职务）
+
+
 LineInFile=在文件％s的线
 RecipientSelectionModules=为收件人的选择定义的要求
 MailSelectedRecipients=选择收件人
@@ -106,6 +117,12 @@ NbOfEMailingsReceived=收到群众emailings
 IdRecord=编号记录
 DeliveryReceipt=送达回执
 YouCanUseCommaSeparatorForSeveralRecipients=您可以使用<b>逗号</b>分隔符指定多个收件人。
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=通知
 NoNotificationsWillBeSent=没有电子邮件通知此事件的计划和公司
 ANotificationsWillBeSent=1通知将通过电子邮件发送
@@ -113,13 +130,3 @@ SomeNotificationsWillBeSent=％s的通知将通过电子邮件发送
 AddNewNotification=启动一个新的电子邮件通知的要求
 ListOfActiveNotifications=列出所有有效的电子邮件通知要求
 ListOfNotificationsDone=列出所有发送电子邮件通知
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-MailingStatusRead=阅读
-MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
-MailingModuleDescMembersCategories=基金会的成员（按类别）
-MailingModuleDescContactsByFunction=第三方联系（职位/职务）
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:31).

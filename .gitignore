@@ -13,3 +13,5 @@ doxygen_warnings.log
 .DS_Store
 htdocs/custom/concatpdf
 htdocs/repair_business.php
+.idea
+*.iml

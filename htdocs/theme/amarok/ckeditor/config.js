@@ -79,4 +79,12 @@ CKEDITOR.editorConfig = function( config )
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['SpecialChar']
 	];
+	
+	// Used for mailing fields
+	config.toolbar_dolibarr_readonly =
+	[
+	 	['Source','Maximize'],
+	 	['Find']
+	];	
+	
 };

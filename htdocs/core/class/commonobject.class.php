@@ -45,6 +45,9 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    public $linkedObjectsIds;
+    public $linkedObjects;
+
     // No constructor as it is an abstract class
 
 
@@ -184,7 +187,7 @@ abstract class CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
         $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
-        $sql.= $this->db->idate($datecreate);
+        $sql.= "'".$this->db->idate($datecreate)."'";
         $sql.= ", 4, '". $id_type_contact . "' ";
         $sql.= ")";
         dol_syslog(get_class($this)."::add_contact sql=".$sql);
@@ -1075,8 +1078,7 @@ abstract class CommonObject
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-			if ($fk_parent_line)
-				$sql.= ' AND fk_parent_line IS NULL';
+			if ($fk_parent_line) $sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
@@ -1525,12 +1527,6 @@ abstract class CommonObject
                     		$obj->localtax1_tx = $localtax1_array[1];
                     	}
                     	//end TODO
-
-						if ($obj->localtax1_type == '7')
-						{
-							$this->total_localtax1 += $obj->localtax1_tx;
-							$this->total_ttc       += $obj->localtax1_tx;
-						}
 					}
                     if ($this->total_localtax2 == 0)
                     {
@@ -1544,12 +1540,6 @@ abstract class CommonObject
                     		$obj->localtax2_tx = $localtax2_array[1];
                     	}
                     	//end TODO
-
-                    	if ($obj->localtax2_type == '7')
-						{
-							$this->total_localtax2 += $obj->localtax2_tx;
-							$this->total_ttc       += $obj->localtax2_tx;
-						}
                     }
                 }
 
@@ -1649,7 +1639,7 @@ abstract class CommonObject
 	}
 
     /**
-     *	Fetch array of objects linked to current object. Links are loaded into this->linked_object array.
+     *	Fetch array of objects linked to current object. Links are loaded into this->linkedObjects array.
      *
      *	@param	int		$sourceid		Object source id
      *	@param  string	$sourcetype		Object source type
@@ -1708,6 +1698,7 @@ abstract class CommonObject
             $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
             $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
         }
+        $sql .= ' ORDER BY sourcetype';
         //print $sql;
 
         dol_syslog(get_class($this)."::fetchObjectLink sql=".$sql);
@@ -2023,7 +2014,7 @@ abstract class CommonObject
             $optionsArray = $extrafields->fetch_name_optionals_label($this->table_element);
         }
 
-        
+
         // Request to get complementary values
         if (count($optionsArray) > 0)
         {
@@ -2053,7 +2044,7 @@ abstract class CommonObject
                         }
                     }
                 }
-               
+
                 $this->db->free($resql);
             }
             else
@@ -2236,7 +2227,7 @@ abstract class CommonObject
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
-						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->array_options['options_'.$key];
+						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					$out .= '<td>'.$label.'</td>';
 					$out .='<td colspan="'.$colspan.'">';
@@ -2513,6 +2504,9 @@ abstract class CommonObject
         if ($objecttype == 'cabinetmed_cons') {
             $classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
         }
+        if ($objecttype == 'fichinter') {
+        	$classpath = 'fichinter/class'; $module='ficheinter'; $subelement='fichinter';
+        }
 
         //print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
@@ -2705,7 +2699,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs,$hookmanager;
+		global $conf,$langs,$user,$hookmanager;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2728,7 +2722,8 @@ abstract class CommonObject
 		// Reduction short
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 
-		if (! empty($conf->margin->enabled)) {
+		if (! empty($conf->margin->enabled) && empty($user->societe_id))
+		{
 			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
@@ -3152,11 +3147,16 @@ abstract class CommonObject
 	}
 
 	/**
+	 * displayMarginInfos
 	 *
-	 * @param string $force_price
+	 * @param 	string 	$force_price	Force price
+	 * @return	void
 	 */
-	function displayMarginInfos($force_price=false) {
-		global $langs, $conf;
+	function displayMarginInfos($force_price=false)
+	{
+		global $langs, $conf, $user;
+
+    	if (! empty($user->societe_id)) return;
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
@@ -3208,6 +3208,5 @@ abstract class CommonObject
 		print '</tr>';
 		print '</table>';
 	}
-
 }
 ?>

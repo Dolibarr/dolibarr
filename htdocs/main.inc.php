@@ -360,7 +360,7 @@ if (! defined('NOLOGIN'))
         // If in demo mode, we check we go to home page through the public/demo/index.php page
         if (! empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
         {
-            if (! preg_match('/public/',$_SERVER['HTTP_REFERER']))
+            if (empty($_SERVER['HTTP_REFERER']) || ! preg_match('/public/',$_SERVER['HTTP_REFERER']))
             {
                 dol_syslog("Call index page from another url than demo page");
 				$url='';
@@ -925,13 +925,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
     //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     //print '<!DOCTYPE HTML>';
     print "\n";
-    if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html manifest="cache.manifest">'."\n";
+    if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
     else print '<html>'."\n";
     //print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
     if (empty($disablehead))
     {
         print "<head>\n";
-
+		if (GETPOST('dol_basehref')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref')).'">'."\n";
         // Displays meta
         print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
         print '<meta name="author" content="Dolibarr Development Team">'."\n";
@@ -984,8 +984,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />'."\n";
-            	//$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
-            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.css" />'."\n";
             }
 
         }
@@ -1150,10 +1148,24 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery jMobile
             if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
             {
+            	// We must force not using ajax because cache of jquery does not load js of other pages.
+            	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
+            	if (empty($conf->dol_use_jmobile) || $conf->dol_use_jmobile != 2)
+            	{
+            		print '<script type="text/javascript">
+	            		$(document).bind("mobileinit", function(){
+           				$.extend(  $.mobile , {
+           					autoInitializePage : true,	/* We need this to run jmobile */
+           					/* loadingMessage : \'xxxxx\', */
+           					touchOverflowEnabled : true,
+           					defaultPageTransition : \'none\',
+           					defaultDialogTransition : \'none\',
+           					ajaxEnabled : false			/* old param was ajaxFormsEnabled and ajaxLinksEnabled */
+           					});
+           				});
+            			</script>';
+            	}
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>'."\n";
-            	//$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js"></script>'."\n";
-            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js"></script>'."\n";
             }
         }
 
@@ -1674,6 +1686,7 @@ function main_area($title='')
 
     print "\n";
 
+    if (! empty($conf->dol_use_jmobile)) print '<div data-role="page">';
     print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
     if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode",$conf->global->MAIN_ONLY_LOGIN_ALLOWED));
 }
@@ -1762,10 +1775,11 @@ if (! function_exists("llxFooter"))
      * Show HTML footer
      * Close div /DIV data-role=page + /DIV class=fiche + /DIV /DIV main layout + /BODY + /HTML.
      *
-     * @param	string	$foot    		A text to add in HTML generated page
+     * @param	string	$comment    A text to add as HTML comment into HTML generated page
+	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($foot='')
+    function llxFooter($comment='',$zone='pivate')
     {
         global $conf, $langs;
 
@@ -1793,16 +1807,16 @@ if (! function_exists("llxFooter"))
 
         print "\n\n";
         print '</div> <!-- end div class="fiche" -->'."\n";
-
+        if (! empty($conf->dol_use_jmobile)) print '</div>';	// end data-role="page"
 
 		//XXX print "\n".'</td></tr></table> <!-- end right area -->'."\n";
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
 		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
 
         print "\n";
-        if ($foot) print '<!-- '.$foot.' -->'."\n";
+        if ($comment) print '<!-- '.$comment.' -->'."\n";
 
-        printCommonFooter($foot);
+        printCommonFooter($zone);
 
         if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
 

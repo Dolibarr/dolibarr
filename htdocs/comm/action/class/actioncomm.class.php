@@ -188,8 +188,8 @@ class ActionComm extends CommonObject
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
         $sql.= (isset($this->durationp) && $this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";
-        $sql.= " '".$this->type_id."',";
-        $sql.= " '".$this->code."',";
+        $sql.= (isset($this->type_id)?$this->type_id:"null").",";
+        $sql.= (isset($this->code)?" '".$this->code."'":"null").",";
         $sql.= (isset($this->societe->id) && $this->societe->id > 0?" '".$this->societe->id."'":"null").",";
         $sql.= (isset($this->fk_project) && $this->fk_project > 0?" '".$this->fk_project."'":"null").",";
         $sql.= " '".$this->db->escape($this->note)."',";

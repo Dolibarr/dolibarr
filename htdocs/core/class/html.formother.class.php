@@ -544,68 +544,73 @@ class FormOther
      */
     function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
-        global $langs;
+        global $langs,$conf;
 
         $out='';
 
         if (! is_array($arrayofcolors) || count($arrayofcolors) < 1)
         {
             $langs->load("other");
-            $out.= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
-            $out.= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
-            $out.= '<script type="text/javascript">
-             jQuery(document).ready(function(){
-                $(\'#colorpicker'.$prefix.'\').jPicker( {
-                window: {
-                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
-                  effects:
-                    {
-                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
-                    speed:
-                    {
-                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
-                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
-                    }
-                    },
-                  position:
-                    {
-                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
-                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
-                    },
-                },
-                images: {
-                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
-                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
-          		},
-                localization: // alter these to change the text presented by the picker (e.g. different language)
-                  {
-                    text:
-                    {
-                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
-                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
-                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
-                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
-                    }
-                  }
-		        } ); });
-             </script>';
+            if (empty($conf->dol_use_jmobile))
+            {
+	            $out.= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
+	            $out.= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+	            $out.= '<script type="text/javascript">
+	             jQuery(document).ready(function(){
+	                $(\'#colorpicker'.$prefix.'\').jPicker( {
+	                window: {
+	                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
+	                  effects:
+	                    {
+	                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
+	                    speed:
+	                    {
+	                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
+	                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
+	                    }
+	                    },
+	                  position:
+	                    {
+	                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
+	                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
+	                    },
+	                },
+	                images: {
+	                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
+	                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
+	          		},
+	                localization: // alter these to change the text presented by the picker (e.g. different language)
+	                  {
+	                    text:
+	                    {
+	                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
+	                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
+	                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
+	                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+	                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
+	                    }
+	                  }
+			        } ); });
+	             </script>';
+            }
             $out.= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss?' '.$morecss:'').'" type="text" value="'.$set_color.'" />';
         }
         else  // In most cases, this is not used. We used instead function with no specific list of colors
         {
-            $out.= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-            $out.= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-            $out.= '<script type="text/javascript">
-             jQuery(document).ready(function(){
-                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
-                     size: 14,
-                     label: \'\',
-                     hide: true
-                 });
-             });
-             </script>';
-
+            if (empty($conf->dol_use_jmobile))
+            {
+	        	$out.= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
+	            $out.= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+	            $out.= '<script type="text/javascript">
+	             jQuery(document).ready(function(){
+	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
+	                     size: 14,
+	                     label: \'\',
+	                     hide: true
+	                 });
+	             });
+	             </script>';
+            }
             $out.= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss?' '.$morecss:'').'" name="'.$prefix.'">';
             //print '<option value="-1">&nbsp;</option>';
             foreach ($arrayofcolors as $val)
@@ -1005,7 +1010,7 @@ class FormOther
             }
 
             if (empty($conf->browser->phone))
-            {	
+            {
             	$emptybox->box_id='A';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();
@@ -1036,7 +1041,7 @@ class FormOther
             }
 
             if (empty($conf->browser->phone))
-            {	
+            {
             	$emptybox->box_id='B';
             	$emptybox->info_box_head=array();
             	$emptybox->info_box_contents=array();

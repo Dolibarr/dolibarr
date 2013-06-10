@@ -1,12 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - compta
 CHARSET=UTF-8
 Accountancy=Bókhalds
 AccountancyCard=Bókhalds-kort
@@ -14,21 +6,20 @@ Treasury=Ríkissjóðs
 MenuFinancial=Financial
 TaxModuleSetupToModifyRules=Fara til <a href="%s">mát skipulag</a> til að breyta reglunum fyrir útreikning
 OptionMode=Valkostur fyrir bókhalds
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
 OptionModeTrue=Valkostur Input-Output
 OptionModeVirtual=Valkostur Credits-skuldfærslur
-OptionModeTrueDesc=Í þessu samhengi er velta reiknuð yfir greiðslur (dagsetning greiðslur). \ NThe gildi tölum er tryggt aðeins ef bókhaldi er yfirfarið með inntak og úttak á reikninga í reikningum.
+OptionModeTrueDesc=Í þessu samhengi er velta reiknuð yfir greiðslur (dagsetning greiðslur). \\ NThe gildi tölum er tryggt aðeins ef bókhaldi er yfirfarið með inntak og úttak á reikninga í reikningum.
 OptionModeVirtualDesc=Í þessu samhengi er velta reiknuð á reikningum (dagsetning fullgildingar). Þegar þessir reikningar eru vegna, hvort sem þeir hafa verið greidd eða ekki, þeir eru skráðir í veltu framleiðsla.
 FeatureIsSupportedInInOutModeOnly=Lögun aðeins í boði í Credits-skuldir bókhalds ham (Sjá bókhalds mát uppsetning)
 VATReportBuildWithOptionDefinedInModule=Upphæðir sem sýnt er hér er reiknað með því að nota reglur skilgreindar eftir Tax mát skipulag.
 Param=Skipulag
+RemainingAmountPayment=Upphæð greiðslu eftir:
+AmountToBeCharged=Heildarupphæð sem greiða:
 AccountsGeneral=Reikningar
 Account=Reikningur
 Accounts=Reikningar
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Víxlar til birgja
 Income=Tekjur
 Outcome=Kostnað
@@ -48,7 +39,11 @@ VATToPay=VSK selur
 VATReceived=VSK móttekin
 VATToCollect=VSK innkaup
 VATSummary=VSK Jafnvægi
+LT2SummaryES=IRPF Efnahagsreikningur
 VATPaid=VSK greiddur
+LT2PaidES=IRPF Greiddur
+LT2CustomerES=IRPF sölu
+LT2SupplierES=IRPF kaup
 VATCollected=VSK safnað
 ToPay=Til að borga
 ToGet=Til að fá til baka
@@ -74,6 +69,9 @@ ListOfCustomerPayments=Listi yfir greiðslur viðskiptavina
 ListOfSupplierPayments=Listi yfir greiðslur birgir
 DatePayment=Gjalddagi
 NewVATPayment=Ný VSK greiðslu
+newLT2PaymentES=Nýtt IRPF greiðslu
+LT2PaymentES=IRPF Greiðsla
+LT2PaymentsES=IRPF Greiðslur
 VATPayment=VSK Greiðsla
 VATPayments=VSK Greiðslur
 SocialContributionsPayments=Tryggingagjöld greiðslur
@@ -82,21 +80,21 @@ TotalToPay=Samtals borga
 TotalVATReceived=Samtals VSK móttekin
 CustomerAccountancyCode=Viðskiptavinur bókhalds kóða
 SupplierAccountancyCode=Birgir bókhalds kóða
-AlreadyPaid=Þegar greitt
 AccountNumberShort=Reikningsnúmer
 AccountNumber=Reikningsnúmer
 NewAccount=Nýr reikningur
 SalesTurnover=Velta Velta
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu þriðja aðila
 ByUserAuthorOfInvoice=Eftir nótum Höfundur
 AccountancyExport=Bókhalds útflutningur
-ErrorWrongAccountancyCodeForCompany=Bad viðskiptavina bókhalds kóðann fyrir %s 
+ErrorWrongAccountancyCodeForCompany=Bad viðskiptavina bókhalds kóðann fyrir %s
 SuppliersProductsSellSalesTurnover=The mynda veltu af sölu á vörum birgis.
 CheckReceipt=Athugaðu innborgun
 CheckReceiptShort=Athugaðu innborgun
 NewCheckReceipt=New afsláttur
 NewCheckDeposit=New stöðva afhendingu
-NewCheckDepositOn=Búa til kvittun fyrir innborgun á reikning: %s 
+NewCheckDepositOn=Búa til kvittun fyrir innborgun á reikning: %s
 NoWaitingChecks=Engar athuganir sem bíður fyrir afhendingu.
 DateChequeReceived=Athugaðu móttöku inntak dagsetningu
 NbOfCheques=ATH eftirlit
@@ -111,61 +109,48 @@ AnnualByCompaniesDueDebtMode=Jafnvægi á tekjur og gjöld, smáatriði af þri�
 AnnualByCompaniesInputOutputMode=Jafnvægi á tekjur og gjöld, smáatriði af þriðja aðila, <b>mótun %s Revenues-Útgjöld %s </b> sagði <b>reiðufé bókhald.</b>
 SeeReportInInputOutputMode=Sjá <b>skýrslu %s Incomes-Útgjöld %s </b> segir <b>reiðufé bókhald</b> um útreikning á raunverulegum greiðslum
 SeeReportInDueDebtMode=Sjá <b>skýrslu %s Claims-Skuldir %s </b> segir <b>skuldbinding bókhald</b> um útreikning á útgefnum reikningum
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Upphæðir sýnd eru með öllum sköttum innifalinn <br> - Það eru útistandandi reikningum, kostnað og virðisaukaskatt hvort sem þær eru greiddar eða ekki. <br> - Þetta er byggt á löggilding dagsetningu reikninga og virðisaukaskatt og á gjalddaga fyrir kostnaði.
 RulesResultInOut=- Upphæðir sýnd eru með öllum sköttum innifalinn <br> - Það felur í sér raunverulegt greiðslur á reikningum, kostnað og virðisaukaskatt. <br> - Þetta er byggt á greiðslu dagsetningu reikninga, gjöld anf virðisaukaskatt. <br>
 RulesCADue=- Það eru vegna reikninga viðskiptavina hvort sem þeir eru greiddir eða ekki. <br> - Þetta er byggt á löggilding dagsetningu þessara reikninga. <br>
 RulesCAIn=- Það innheldur alla virka greiðslur reikninga sem berast frá viðskiptavini. <br> - Þetta er byggt á gjalddagi þessara reikninga <br>
+DepositsAreNotIncluded=- Innlánsstofnanir reikningar eru né með
+DepositsAreIncluded=- Innlánsstofnanir reikningar eru
+LT2ReportByCustomersInInputOutputModeES=Skýrsla um þriðja aðila IRPF
 VATReportByCustomersInInputOutputMode=Skýrsla viðskiptavinarins VSK safnað saman og greidd (VSK kvittun)
 VATReportByCustomersInDueDebtMode=Skýrsla viðskiptavinarins VSK safnað saman og greidd (VSK)
 VATReportByQuartersInInputOutputMode=Skýrsla hlutfall af VSK safnað saman og greidd (VSK kvittun)
 VATReportByQuartersInDueDebtMode=Skýrsla hlutfall af VSK safnað saman og greidd (VSK)
 SeeVATReportInInputOutputMode=Sjá <b>skýrslu %s VAT encasement %s </b> fyrir venjulega útreikninga
 SeeVATReportInDueDebtMode=Sjá <b>skýrslu %s VAT á% rennsli s</b> fyrir útreikninga með möguleika á rennsli
-RulesVATIn=Fyrir þjónustu, í skýrslunni eru VSK reglugerðir fékk í raun eða gefin út á grundvelli dagsetningu greiðslu. <br> - Fyrir eignir efni, nær það VSK reikningur á the undirstaða af the löggilding dagsetningu reiknings.
-RulesVATDue=Fyrir þjónustu, í skýrslunni eru VSK reikningur vegna, sem greidd eða ekki, byggt á þeim degi sem löggilding þessara reikninga. <br> - Fyrir eignir efni, nær það VSK reikningar, byggt á þeim degi er staðfesting á kvittuninni.
-OptionVatInfoModuleComptabilite=Ath: Til að eign efni, ætti það að nota fæðingardag að vera fleiri sanngjarn.
-PercentOfInvoice=%%/Reikningar
-NotUsedForGoods=Ekki nota á vörur
-Dispatch=Dispatching
-Dispatched=Send
-ToDispatch=Til að senda
-ThirdPartyMustBeEditAsCustomer=Þriðji aðili verður að vera skilgreint sem viðskiptavinur
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:51).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> is_IS
-RemainingAmountPayment=Upphæð greiðslu eftir:
-AmountToBeCharged=Heildarupphæð sem greiða:
-ProposalStats=Tölur um tillögur
-DescPurchasesJournal=Kaup Journal
-InvoiceRef=Invoice tilv.
-CodeNotDef=Ekki skilgreint
-AddRemind=Senda boði fjárhæð
-RemainToDivide=Verið að senda:
-WarningDepositsNotIncluded=Innlán reikningar eru ekki með í þessari útgáfu með þessari endurskoðun áfanga.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:58:52).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-LT2SummaryES=IRPF Efnahagsreikningur
-LT2PaidES=IRPF Greiddur
-LT2CustomerES=IRPF sölu
-LT2SupplierES=IRPF kaup
-newLT2PaymentES=Nýtt IRPF greiðslu
-LT2PaymentES=IRPF Greiðsla
-LT2PaymentsES=IRPF Greiðslur
-DepositsAreNotIncluded=- Innlánsstofnanir reikningar eru né með
-DepositsAreIncluded=- Innlánsstofnanir reikningar eru
-LT2ReportByCustomersInInputOutputModeES=Skýrsla um þriðja aðila IRPF
 RulesVATInServices=- Fyrir þjónustu, skýrsla inniheldur VSK reglur í raun fengið eða gefið út á grundvelli dagsetningu greiðslu. <br> - Fyrir eignir efni, nær það VSK reikninga á grundvelli dagsetningu reiknings.
 RulesVATInProducts=- Fyrir eignir efni, nær það VSK reikninga á grundvelli dagsetningu reiknings.
 RulesVATDueServices=- Fyrir þjónustu í skýrslunni eru VSK reikninga vegna, greitt eða ekki, byggt á dagsetningu reiknings.
 RulesVATDueProducts=- Fyrir eignir efni, nær það VSK reikninga, byggt á dagsetningu reiknings.
+OptionVatInfoModuleComptabilite=Ath: Til að eign efni, ætti það að nota fæðingardag að vera fleiri sanngjarn.
+PercentOfInvoice=%%/Reikningar
+NotUsedForGoods=Ekki nota á vörur
+ProposalStats=Tölur um tillögur
 OrderStats=Tölur um pantanir
 InvoiceStats=Tölur um reikninga
+Dispatch=Dispatching
+Dispatched=Send
+ToDispatch=Til að senda
+ThirdPartyMustBeEditAsCustomer=Þriðji aðili verður að vera skilgreint sem viðskiptavinur
 SellsJournal=Sala Journal
 PurchasesJournal=Kaup Journal
 DescSellsJournal=Sala Journal
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:29).
+DescPurchasesJournal=Kaup Journal
+InvoiceRef=Invoice tilv.
+CodeNotDef=Ekki skilgreint
+AddRemind=Senda boði fjárhæð
+RemainToDivide= Verið að senda:
+WarningDepositsNotIncluded=Innlán reikningar eru ekki með í þessari útgáfu með þessari endurskoðun áfanga.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services

@@ -1,12 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
+# Dolibarr language file - Source file is en_US - install
 CHARSET=UTF-8
 InstallEasy=Lihtsalt järgige samm-sammult.
 MiscellaneousChecks=Eeldused kontrollida
@@ -34,6 +26,7 @@ ErrorGoBackAndCorrectParameters=Mine tagasi ja parandada valesti parameetrid.
 ErrorWrongValueForParameter=Teil võib olla kirjutatud vale hinna parameeter &quot;%s&quot;.
 ErrorFailedToCreateDatabase=Suutnud luua andmebaasi '%s &quot;.
 ErrorFailedToConnectToDatabase=Ei suutnud ühendada andmebaas &quot;%s&quot;.
+# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP versioon liiga vana. Version %s on vaja.
 WarningPHPVersionTooLow=PHP versioon liiga vana. Version %s või rohkem oodata. See versioon peaks võimaldama paigaldada, kuid ei toetata.
 ErrorConnectedButDatabaseNotFound=Ühendus server eduka kuid andmebaas &quot;%s&quot; ei leitud.
@@ -162,6 +155,11 @@ MigrationShippingDelivery2=Upgrade ladustamiseks shipping 2
 MigrationFinished=Ränne lõppenud
 LastStepDesc=<strong>Viimane samm:</strong> Määra siin kasutajanimi ja parool te kavatsete kasutada ühenduda tarkvara. Ära kaota seda on konto haldab kõiki teisi.
 ActivateModule=Aktiveerige moodul %s
+# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+
+#########
+# upgrade
+#########
 MigrationFixData=Määrama denormalized andmed
 MigrationOrder=Andmed migratsiooni kliendi korralduste
 MigrationSupplierOrder=Andmed migratsiooni tarnija tellimuste
@@ -209,4 +207,4 @@ MigrationProjectUserResp=Andmed migratsiooni valdkonnas fk_user_resp of llx_proj
 MigrationProjectTaskTime=Värskenda aega sekundites
 MigrationActioncommElement=Värskenda andmed meetmete kohta
 MigrationPaymentMode=Andmete migratsioon maksmise režiim
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:03).
+# MigrationCategorieAssociation=Migration of categories

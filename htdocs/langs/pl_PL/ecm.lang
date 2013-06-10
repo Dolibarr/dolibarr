@@ -1,15 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Dokumenty
 DocsMine=Moje dokumenty
@@ -31,7 +20,6 @@ ECMSections=Katalogi
 ECMRoot=Root
 ECMNewSection=Nowy katalog
 ECMAddSection=Dodaj podręcznik katalog
-ECMNewSection=Nowy podręcznik katalog
 ECMNewDocument=Nowy dokument
 ECMCreationDate=Data utworzenia
 ECMNbOfFilesInDir=Liczba plików w katalogu
@@ -48,12 +36,14 @@ ECMSearchByEntity=Szukaj wg obiektu
 ECMSectionOfDocuments=Katalogi dokumentów
 ECMTypeManual=Podręcznik
 ECMTypeAuto=Automatyczne
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Dokumenty związane z trzecim
 ECMDocsByProposals=Dokumenty związane z wnioskami
 ECMDocsByOrders=Dokumenty związane z zamówień klientów
 ECMDocsByContracts=Dokumenty związane z umowami
 ECMDocsByInvoices=Dokumenty związane z odbiorców faktur
 ECMDocsByProducts=Dokumenty związane z produktami
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Nr katalogu stworzonym
 ShowECMSection=Pokaż katalog
 DeleteSection=Usuwanie katalogu
@@ -62,5 +52,5 @@ ECMDirectoryForFiles=Względna katalog plików
 CannotRemoveDirectoryContainsFiles=Usuwane nie możliwe, ponieważ zawiera ona pewne pliki
 ECMFileManager=Menedżer plików
 ECMSelectASection=Wybierz katalog na lewym drzewa ...
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

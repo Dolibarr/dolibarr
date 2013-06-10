@@ -50,12 +50,12 @@ class box_ficheinter extends ModeleBoxes
 	function loadBox($max=10)
 	{
 		global $user, $langs, $db, $conf;
-		
+
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$ficheinterstatic=new Fichinter($db);
-		
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
 
 		if ($user->rights->ficheinter->lire)
@@ -92,7 +92,7 @@ class box_ficheinter extends ModeleBoxes
 
 					$ficheinterstatic->statut=$objp->fk_statut;
 					$ficheinterstatic->id=$objp->rowid;
-					
+
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => $this->boximg,
 					'url' => DOL_URL_ROOT."/ficheinter/fiche.php?id=".$objp->rowid);
@@ -121,6 +121,8 @@ class box_ficheinter extends ModeleBoxes
 				}
 
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedContracts"));
+
+				$db->free($resql);
 			}
 			else
 			{

@@ -504,22 +504,6 @@ else
             print $form->selectarray('priv',$selectarray,(isset($_POST["priv"])?$_POST["priv"]:$object->priv),0);
             print '</td></tr>';
 
-            // Note Public
-            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-            print '<td colspan="3" valign="top">';
-            $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);
-            //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
-            print '</td></tr>';
-
-            // Note Private
-            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-            print '<td colspan="3" valign="top">';
-            $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);
-            //print '<textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea>';
-            print '</td></tr>';
-
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -721,24 +705,6 @@ else
             print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
-            // Note Public
-            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
-            $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);
-           // print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
-           // print isset($_POST["note"])?$_POST["note"]:$object->note;
-           // print '</textarea></td></tr>';
-           print '</td></tr>';
-
-           // Note Private
-           print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
-           $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-           print $doleditor->Create(1);
-           // print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
-           // print isset($_POST["note"])?$_POST["note"]:$object->note;
-           // print '</textarea></td></tr>';
-           print '</td></tr>';
-
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -936,16 +902,6 @@ else
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
         print $object->LibPubPriv($object->priv);
-        print '</td></tr>';
-
-        // Note Public
-        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
-        print nl2br($object->note_public);
-        print '</td></tr>';
-
-        // Note Private
-        print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
-        print nl2br($object->note_private);
         print '</td></tr>';
 
         // Other attributes

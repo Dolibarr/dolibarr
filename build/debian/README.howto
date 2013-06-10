@@ -55,3 +55,15 @@ See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests conten
 - Once package is uploaded, following URL are available:
 http://packages.qa.debian.org/package.html
 http://bugs.debian.org/package
+
+
+
+##########################################################
+To use Alioth.debian.org
+Create a login
+Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
+Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
+Then you can git clone tcpdf
+git clone git.debian.org:/git/collab-maint/tcpdf.git
+
+

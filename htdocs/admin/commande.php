@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville	        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur          <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
@@ -44,6 +44,10 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type = 'order';
+
 
 /*
  * Actions
@@ -114,7 +118,7 @@ else if ($action == 'specimen')
 }
 
 // Activate a model
-else if ($action == 'set')
+if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
@@ -260,14 +264,14 @@ foreach ($dirmodels as $reldir)
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file($db);
+
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
 					{
-						// Show modules according to features level
-						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-					
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
@@ -319,7 +323,7 @@ foreach ($dirmodels as $reldir)
 						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
-						print '</tr>';
+						print "</tr>\n";
 					}
 				}
 			}
@@ -327,17 +331,16 @@ foreach ($dirmodels as $reldir)
 		}
 	}
 }
-
-print '</table><br>';
+print "</table><br>\n";
 
 
 /*
  * Document templates generators
  */
+
 print_titre($langs->trans("OrdersModelModule"));
 
 // Load array def with activated templates
-$type='order';
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";

@@ -1,16 +1,9 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - orders
 CHARSET=UTF-8
 OrdersArea=Viðskiptavinir pantanir area
 SuppliersOrdersArea=Birgjar pantanir area
 OrderCard=Panta kort
+# OrderId=Order Id
 Order=Panta
 Orders=Pantanir
 OrderLine=Pöntunarlína
@@ -31,12 +24,16 @@ OrdersToValid=Pantanir til að sannreyna
 OrdersToBill=Pantanir við reikning
 OrdersInProcess=Pantanir í vinnslu
 OrdersToProcess=Pantanir á ferli
+SuppliersOrdersToProcess=Pantanir birgðasala til að ganga
 StatusOrderCanceledShort=Hætt við
 StatusOrderDraftShort=Víxill
 StatusOrderValidatedShort=Staðfestar
+StatusOrderSentShort=Í ferli
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Á ferli
 StatusOrderProcessedShort=Afgreitt
 StatusOrderToBillShort=Við reikning
+# StatusOrderToBill2Short=To bill
 StatusOrderApprovedShort=Samþykkt
 StatusOrderRefusedShort=Neitaði
 StatusOrderToProcessShort=Til að ganga frá
@@ -48,13 +45,16 @@ StatusOrderValidated=Staðfestar
 StatusOrderOnProcess=Á ferli
 StatusOrderProcessed=Afgreitt
 StatusOrderToBill=Við reikning
+# StatusOrderToBill2=To bill
 StatusOrderApproved=Samþykkt
 StatusOrderRefused=Neitaði
 StatusOrderReceivedPartially=Að hluta til fékk
 StatusOrderReceivedAll=Allt hlaut
+ShippingExist=A sendingunni til
 DraftOrWaitingApproved=Víxill eða samþykkt ekki enn pantað
 DraftOrWaitingShipped=Drög eða viðurkennd ekki enn flutt
 MenuOrdersToBill=Pantanir við reikning
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Leita röð
 Sending=Senda
 Sendings=Sendings
@@ -64,6 +64,7 @@ CreateOrder=Búa Order
 RefuseOrder=Neita röð
 ApproveOrder=Samþykkja röð
 ValidateOrder=Staðfesta röð
+UnvalidateOrder=Unvalidate röð
 DeleteOrder=Eyða röð
 CancelOrder=Hætta við röð
 AddOrder=Bæta við röð
@@ -88,9 +89,11 @@ ConfirmCloseOrder=Ertu viss um að þú viljir loka þessari röð? Einu sinni �
 ConfirmCloseOrderIfSending=Ertu viss um að þú viljir loka þessari röð? Þú verður að loka að panta aðeins þegar öll siglinga ert.
 ConfirmDeleteOrder=Ertu viss um að þú viljir eyða þessari röð?
 ConfirmValidateOrder=Ertu viss um að þú viljir setja í gildi í þessari röð undir <b>nafninu %s ?</b>
+ConfirmUnvalidateOrder=Ertu viss um að þú viljir endurheimta röð <b>%s</b> að drög stöðu?
 ConfirmCancelOrder=Ertu viss um að þú viljir hætta í þessari röð?
 ConfirmMakeOrder=Ertu viss um að þú viljir að staðfesta sem þú gerðir í þessari röð <b>á %s ?</b>
 GenerateBill=Búa til reikning
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Flokka "borgað"
 ComptaCard=Bókhalds-kort
 DraftOrders=Drög að fyrirmælum
@@ -111,6 +114,8 @@ UserWithApproveOrderGrant=Notendur veitt með "samþykkja pantanir" leyfi.
 PaymentOrderRef=Greiðsla %s kyni s
 CloneOrder=Klóna röð
 ConfirmCloneOrder=Ertu viss um að þú viljir klón þessari <b>röð %s ?</b>
+DispatchSupplierOrder=Móttaka birgir röð %s
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp viðskiptavina röð
 TypeContact_commande_internal_SHIPPING=Fulltrúi eftirfarandi upp siglinga
 TypeContact_commande_external_BILLING=Viðskiptavinur Reikningar samband
@@ -121,10 +126,15 @@ TypeContact_order_supplier_internal_SHIPPING=Fulltrúi eftirfarandi upp siglinga
 TypeContact_order_supplier_external_BILLING=Birgir Reikningar samband
 TypeContact_order_supplier_external_SHIPPING=Birgir siglinga samband
 TypeContact_order_supplier_external_CUSTOMER=Birgir samband eftirfarandi upp röð
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON skilgreind ekki
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON skilgreind ekki
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Ekki tókst að hlaða module skrána ' %s '
 Error_FailedToLoad_COMMANDE_ADDON_File=Ekki tókst að hlaða module skrána ' %s '
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
 OrderSource0=Auglýsing tillögu
 OrderSource1=Internet
 OrderSource2=Póstur herferð
@@ -134,28 +144,18 @@ OrderSource5=Auglýsing
 OrderSource6=Store
 QtyOrdered=Magn röð
 AddDeliveryCostLine=Bæta við kostnað sending línu sem gefur til kynna að þyngd þess
+
+# Documents models
 PDFEinsteinDescription=A heill til líkan (logo. ..)
 PDFEdisonDescription=Einföld röð líkan
-PDFQuevedoDescription=A heill til líkan með spænsku RE og IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> is_IS
-DispatchSupplierOrder=Móttaka birgir röð %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:03).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-SuppliersOrdersToProcess=Pantanir birgðasala til að ganga
-StatusOrderSentShort=Í ferli
-ShippingExist=A sendingunni til
-UnvalidateOrder=Unvalidate röð
-ConfirmUnvalidateOrder=Ertu viss um að þú viljir endurheimta röð <b>%s</b> að drög stöðu?
+# Orders modes
 OrderByMail=Póstur
 OrderByFax=Fax
 OrderByEMail=Tölvupóstur
 OrderByWWW=Online
 OrderByPhone=Sími
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:42).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill

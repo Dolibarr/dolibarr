@@ -30,6 +30,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("admin");
@@ -188,6 +189,23 @@ else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
     }
 }
 
+elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
+{
+	$val = GETPOST('FICHINTER_PRINT_PRODUCTS','alpha');
+	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS",($val == 'on'),'bool',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
 
 /*
  * View
@@ -204,15 +222,9 @@ print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
 
 print "<br>";
 
-$h = 0;
+$head=fichinter_admin_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
-$head[$h][1] = $langs->trans("Interventions");
-$head[$h][2] = 'Ficheinter';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'ficheinter', $langs->trans("ModuleSetup"));
 
 // Interventions numbering model
 
@@ -474,6 +486,22 @@ print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+// print products on fichinter
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
+print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
+if ($conf->global->FICHINTER_PRINT_PRODUCTS)
+	print 'checked="checked" ';
+print '/>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+
 print '</form>';
 
 

@@ -24,24 +24,13 @@
  *	\brief      File that define environment for support pages
  */
 
-// Just to define version DOL_VERSION
-if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
-require_once '../filefunc.inc.php';
-
-// Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
+// Define DOL_DOCUMENT_ROOT
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
-if (! defined('ADODB_PATH'))
-{
-    $foundpath=DOL_DOCUMENT_ROOT .'/includes/adodbtime/';
-    if (! is_dir($foundpath)) $foundpath='/usr/share/php/adodb/';
-    define('ADODB_PATH', $foundpath);
-}
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once ADODB_PATH.'adodb-time.inc.php';
 
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
@@ -216,7 +205,7 @@ function pHeader($soutitre,$next,$action='none')
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
-	print '<html>'."\n";
+	print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	print '<head>'."\n";
 	print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
 	print '<meta name="robots" content="index,follow">'."\n";

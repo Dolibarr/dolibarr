@@ -1,12 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
+# Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
 RefSending=REF。出荷
 Sending=出荷
@@ -39,9 +31,11 @@ SendingsToValidate=検証するために出荷
 StatusSendingCanceled=キャンセル
 StatusSendingDraft=ドラフト
 StatusSendingValidated=検証（製品が出荷する、またはすでに出荷されます）
+# StatusSendingProcessed=Processed
 StatusSendingCanceledShort=キャンセル
 StatusSendingDraftShort=ドラフト
 StatusSendingValidatedShort=検証
+# StatusSendingProcessedShort=Processed
 SendingSheet=シートを送信する
 Carriers=キャリア
 Carrier=キャリア
@@ -63,10 +57,17 @@ SendShippingRef=出荷%sを送る
 ActionsOnShipping=出荷のイベント
 LinkToTrackYourPackage=あなたのパッケージを追跡するためのリンク
 ShipmentCreationIsDoneFromOrder=現時点では、新たな出荷の作成は、注文カードから行われます。
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=顧客がキャッチ
 SendingMethodTRANS=トランスポーター
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=配信確認のためのシンプルなドキュメントモデル
 DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル（logo. ..）
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていません
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:02:52).

@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent.class.php';
+require_once dirname(__FILE__).'/../../htdocs/adherents/class/adherent_type.class.php';
 
 if (empty($user->id))
 {
@@ -115,11 +116,39 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testAdherentCreate
+     * testAdherentTypeCreate
      *
      * @return void
      */
-    public function testAdherentCreate()
+    public function testAdherentTypeCreate()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new AdherentType($this->savdb);
+    	$localobject->statut=1;
+    	$localobject->libelle='Adherent type test';
+    	$localobject->cotisation=1;
+    	$localobject->vote=1;
+     	$result=$localobject->create($user);
+        print __METHOD__." result=".$result."\n";
+    	$this->assertLessThan($result, 0);
+
+    	return $localobject->id;
+    }
+    
+    /**
+     * testAdherentCreate
+     *
+     * @return void
+     * 
+     * @depends	testAdherentTypeCreate
+     * The depends says test is run only if previous is ok
+     */
+    public function testAdherentCreate($fk_adherent_type)
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -129,6 +158,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Adherent($this->savdb);
     	$localobject->initAsSpecimen();
+    	$localobject->typeid=$fk_adherent_type;
      	$result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);

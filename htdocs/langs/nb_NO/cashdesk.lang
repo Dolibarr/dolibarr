@@ -1,12 +1,4 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:06:43
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
+# Language file - Source file is en_US - cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Point of sale
 CashDesk=Point of sale
@@ -21,6 +13,7 @@ CashDeskProducts=Produkter
 CashDeskStock=Lager
 CashDeskOn=på
 CashDeskThirdParty=Tredjepart
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Handlekurv
 NewSell=Ny selger
 BackOffice=Tilbake kontor
@@ -28,7 +21,6 @@ AddThisArticle=Legg denne artikkelen
 RestartSelling=Gå tilbake på selger
 SellFinished=Selg ferdig
 PrintTicket=Skriv billett
-NoResults=Ingen resultater
 NoProductFound=Ingen artikkelen funnet
 ProductFound=Produktet funnet
 ProductsFound=produkter funnet
@@ -45,4 +37,3 @@ BankToPay=Debiteringskonto
 ShowCompany=Vis selskap
 ShowStock=Vis lager
 DeleteArticle=Klikk for å fjerne denne artikkelen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:08:47).

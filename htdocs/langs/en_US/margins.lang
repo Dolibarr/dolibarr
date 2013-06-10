@@ -1,8 +1,6 @@
-# Dolibarr language file - en_US - marges
+# Dolibarr language file - Source file is en_US - marges
 CHARSET=UTF-8
 
-Module59000Name=Margins
-Module59000Desc=Profit margins management
 Margin=Margin
 Margins=Margins
 TotalMargin=Total Margin

@@ -125,6 +125,8 @@ class box_factures_imp extends ModeleBoxes
 				}
 
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+
+				$db->free($result);
 			}
 			else
 			{

@@ -1,12 +1,4 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:13:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
+# Dolibarr language file - Source file is en_US - propal
 CHARSET=UTF-8
 Proposals=Üzleti ajánlatok
 Proposal=Üzleti ajánlat
@@ -91,14 +83,19 @@ ProposalLine=Javaslat vonal
 AvailabilityPeriod=Elérhetőség késleltetés
 SetAvailability=Állítsa be a rendelkezésre álló késedelem
 AfterOrder=rendezés után
+##### Availability #####
 AvailabilityTypeAV_NOW=Azonnali
 AvailabilityTypeAV_1W=1 hét
 AvailabilityTypeAV_2W=2 hét
 AvailabilityTypeAV_3W=3 hét
 AvailabilityTypeAV_1M=1 hónap
+##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Képviselő-up a következő javaslatot
 TypeContact_propal_external_BILLING=Ügyfél számla Kapcsolat
 TypeContact_propal_external_CUSTOMER=Ügyfélkapcsolati nyomon követése javaslat
+# Document models
 DocModelAzurDescription=A javaslat teljes modell (logo. ..)
 DocModelJauneDescription=Jaune javaslat modell
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:24:18).
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

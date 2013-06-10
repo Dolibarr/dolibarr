@@ -243,6 +243,7 @@ if ($action == 'add_action')
 				$db->rollback();
 				$langs->load("errors");
 				$error=$langs->trans($actioncomm->error);
+				setEventMessage($error,'errors');
 				$action = 'create';
 			}
 		}
@@ -251,6 +252,7 @@ if ($action == 'add_action')
 			$db->rollback();
 			$langs->load("errors");
 			$error=$langs->trans($actioncomm->error);
+			setEventMessage($error,'errors');
 			$action = 'create';
 		}
 	}
@@ -277,6 +279,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 		else
 		{
 			$mesg=$actioncomm->error;
+			setEventMessage($mesg,'errors');
 		}
 	}
 }
@@ -491,7 +494,11 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (isset($_GET['percentage']) || isset($_POST['percentage']))
+	if (isset($_GET['status']) || isset($_POST['status']))
+	{
+		$percent=GETPOST('status');
+	}
+	else if (isset($_GET['percentage']) || isset($_POST['percentage']))
 	{
 		$percent=GETPOST('percentage');
 	}
@@ -885,7 +892,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterweek" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -894,7 +901,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
         print '</form>'."\n";
         print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -903,7 +910,7 @@ if ($id > 0)
         print '<input type="hidden" name="month" value="'.dol_print_date($act->datep,'%m').'">';
         print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
         //print '<input type="hidden" name="day" value="'.dol_print_date($act->datep,'%d').'">';
-        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
         print '</form>'."\n";
         print '</td>';
 		print '</tr>';
@@ -932,7 +939,7 @@ if ($id > 0)
 
 		// Busy
 		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
-		print yn(($act->transparency > 0)?1:0);
+		if ($act->usertodo->id > 0) print yn(($act->transparency > 0)?1:0);	// We show nothing if event is assigned to nobody
 		print '</td></tr>';
 
 		// Done by
