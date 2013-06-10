@@ -324,61 +324,62 @@ if ($resql)
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
-
-        // Multilangs
-        if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-        {
-            $sql = "SELECT label";
-            $sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-            $sql.= " WHERE fk_product=".$objp->rowid;
-            $sql.= " AND lang='". $langs->getDefaultLang() ."'";
-            $sql.= " LIMIT 1";
-
-            $result = $db->query($sql);
-            if ($result)
+        if($conf->global->STOCK_SUPPORTS_SERVICES || $objp->fk_product_type == 0){
+            // Multilangs
+            if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
             {
-                $objtp = $db->fetch_object($result);
-                if (! empty($objtp->label)) $objp->label = $objtp->label;
+                $sql = "SELECT label";
+                $sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
+                $sql.= " WHERE fk_product=".$objp->rowid;
+                $sql.= " AND lang='". $langs->getDefaultLang() ."'";
+                $sql.= " LIMIT 1";
+
+                $result = $db->query($sql);
+                if ($result)
+                {
+                    $objtp = $db->fetch_object($result);
+                    if (! empty($objtp->label)) $objp->label = $objtp->label;
+                }
             }
-        }
 
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
-        print '<td><input type="checkbox" name="'.$i.'"></td>';
-        print '<td class="nowrap">';
-        $product_static->ref=$objp->ref;
-        $product_static->id=$objp->rowid;
-        $product_static->type=$objp->fk_product_type;
-        print $product_static->getNomUrl(1,'',16);
-        print '</td>';
-        print '<td>'.$objp->label.'</td>';
-        print '<input type="hidden" name="desc'.$i.'" value="'.$objp->label.'" >';
-
-        if (! empty($conf->service->enabled) && $type == 1)
-        {
-            print '<td align="center">';
-            if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-            elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-            elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-            else print $objp->duration;
+            $var=!$var;
+            print '<tr '.$bc[$var].'>';
+            print '<td><input type="checkbox" name="'.$i.'"></td>';
+            print '<td class="nowrap">';
+            $product_static->ref=$objp->ref;
+            $product_static->id=$objp->rowid;
+            $product_static->type=$objp->fk_product_type;
+            print $product_static->getNomUrl(1,'',16);
             print '</td>';
+            print '<td>'.$objp->label.'</td>';
+            print '<input type="hidden" name="desc'.$i.'" value="'.$objp->label.'" >';
+
+            if (! empty($conf->service->enabled) && $type == 1)
+            {
+                print '<td align="center">';
+                if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+                elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+                elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+                else print $objp->duration;
+                print '</td>';
+            }
+            print '<td align="right">'.$objp->desiredstock.'</td>';
+            print '<td align="right">';
+            if(!$objp->stock_physique) $objp->stock_physique = 0;
+            if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+            print $objp->stock_physique;
+            print '</td>';
+            //depending on conf, use either physical stock or
+            //theoretical stock to compute the stock to buy value
+            ($conf->global->use_theoretical_stock? $stock = $objp->stock_théorique : $stock = $objp->stock_physique);
+            $stocktobuy = $objp->desiredstock - $stock;
+            print '<td align="right">'.$stocktobuy.'</td>';
+            print '<input type="hidden" name="tobuy'.$i.'" value="'.$stocktobuy.'" >';
+            $form = new Form($db);
+            print '<td align="right">'.$form->select_product_fourn_price($product_static->id, "fourn".$i).'</td>';
+            print '<td>&nbsp</td>';
+            print "</tr>\n";
         }
-        print '<td align="right">'.$objp->desiredstock.'</td>';
-        print '<td align="right">';
-        if(!$objp->stock_physique) $objp->stock_physique = 0;
-        if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-        print $objp->stock_physique;
-        print '</td>';
-        //depending on conf, use either physical stock or
-        //theoretical stock to compute the stock to buy value
-        ($conf->global->use_theoretical_stock? $stock = $objp->stock_théorique : $stock = $objp->stock_physique);
-        $stocktobuy = $objp->desiredstock - $stock;
-        print '<td align="right">'.$stocktobuy.'</td>';
-        print '<input type="hidden" name="tobuy'.$i.'" value="'.$stocktobuy.'" >';
-        $form = new Form($db);
-        print '<td align="right">'.$form->select_product_fourn_price($product_static->id, "fourn".$i).'</td>';
-        print '<td>&nbsp</td>';
-        print "</tr>\n";
         $i++;
     }
     print "</table>";
