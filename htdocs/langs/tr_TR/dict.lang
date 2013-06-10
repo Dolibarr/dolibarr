@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - dict
+# Dolibarr language file - Source file is en_US - dict
 CHARSET=UTF-8
 CountryFR=Fransa
 CountryBE=Belçika
@@ -247,14 +247,14 @@ CountryME=Karadağ
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
 
-##### Hitap #####
+##### Civilities #####
 CivilityMME=Mrs.
 CivilityMR=Mr.
 CivilityMLE=Ms.
 CivilityMTRE=Master
 CivilityDR=Doctor
 
-##### Para birimleri #####
+##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=AU Doları
 CurrencySingAUD=AU Doları
@@ -290,11 +290,11 @@ CurrencyXOF=CFA Frangı BCEAO
 CurrencySingXOF=CFA Frangı BCEAO
 CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
-CurrencyTRL=Türk Lirası
-CurrencySingTRL=Türk Lirası
+
 CurrencyCentSingEUR=cent
 CurrencyThousandthSingTND=thousandth
-#### Giriş nedenleri #####
+
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
 DemandReasonTypeSRC_CAMP_EMAIL=E-posta kampanyası
@@ -307,7 +307,7 @@ DemandReasonTypeSRC_PARTNER=İş Ortağı
 DemandReasonTypeSRC_EMPLOYEE=Çalışan
 DemandReasonTypeSRC_SPONSORING=Destekçi
 
-#### Kağıt biçimleri ####
+#### Paper formats ####
 PaperFormatEU4A0=Biçim 4A0
 PaperFormatEU2A0=Biçim 2A0
 PaperFormatEUA0=Biçim A0

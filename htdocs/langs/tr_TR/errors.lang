@@ -1,10 +1,10 @@
-﻿# Dolibarr language file - tr_TR - errors
+# Dolibarr language file - Source file is en_US - errors
 CHARSET=UTF-8
 
-# Hata yok
+# No errors
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
 
-# Hatalar
+# Errors
 Error=Hata
 Errors=Hatalar
 ErrorButCommitIsDone=Hatalar bulundu, buna rağmen doğruluyoruz
@@ -58,6 +58,10 @@ ErrorUploadBlockedByAddon=Dosya gönderme PHP/Apache eklentisi tarafından bloke
 ErrorFileSizeTooLarge=Dosya boyutu çok büyük.
 ErrorSizeTooLongForIntType=Tam sayı türü için boyut çok uzun (ençok %s ondalık)
 ErrorSizeTooLongForVarcharType=Dize türü için boyut çok uzun (ençok %s karakter)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içermemelidir.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
 ErrorExportDuplicateProfil=Bu profil adı zaten bu dışaaktarım ayarı için var.
@@ -114,11 +118,14 @@ ErrorFileMustBeADolibarrPackage=Bu %s dosyası bir Dolibarr zip paketi olmalıd�
 ErrorFileRequired=Bir Dolibar dosyası paketi alıyor
 ErrorPhpCurlNotInstalled=PHP CURL kurulu değil, Bu PayPal ile iletişim kurmak için gereklidir
 ErrorFailedToAddToMailmanList=Mailman listesine ya da SPIP tabanına kayıt eklenemiyor
-ErrorNewVaueCantMatchOldValue=Yeni değer eskisiyle aynı olamaz
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
 ErrorFailedToValidatePasswordReset=Parola yenilenemiyor. Belki yenileme zaten yapılmış olabilir (bu bağlantı yalnızca bir kez kullanılabilir). Aksi durumda yenileme işlemi tekrar başlatın.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
 ErrorDateMustBeBeforeToday=Tarih bugünden büyük olamaz
 
-# Uyarılar
+# Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.
 WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> Parametresi <b>php.ini</b> dosyalayıcısında bu modülün tam olarak çalışması için <b>on</b> ye ayarlanmalıdır. Bu dosyayı el ile değiştirmeniz gerekir.
@@ -131,3 +138,6 @@ WarningNoDocumentModelActivated=Hiçbir model, belge üretimi için aktive edilm
 WarningLockFileDoesNotExists=Uyarı, kurulum bir kez tamalanırsa,  <b>install.lock</b> dosyasını <b>%s</b> dizinine ekleyerek kur/taşıma aracını devre dışı bırakmalısınız. Bu dosyanın olmaması ciddi bir güvenlik açığıdır.
 WarningUntilDirRemoved=Tüm güvenlik uyarıları (sadece admin kullanıcıları tarafından görülebilir) savunmasızlık olduğu sürece etkin olur (ya da MAIN_REMOVE_INSTALL_WARNING değişmezi Kurulum->Diğer menüsünde kuruluma eklenir).
 WarningCloseAlways=Uyarı, kaynak ve hedef öğeleri arasında tutar farklı da olsa kapanış yapılır. Bu özelliği dikkatlice etkinleştirin.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

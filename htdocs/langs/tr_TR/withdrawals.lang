@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - withdrawals
+# Dolibarr language file - Source file is en_US - withdrawals
 CHARSET=UTF-8
 StandingOrdersArea=Ödeme talimatları alanı
 CustomersStandingOrdersArea=Müşteri ödeme talimatları alanı
@@ -29,7 +29,7 @@ ResponsibleUser=Sorumlu kullanıcı
 WithdrawalsSetup=Para çekme kurulumu
 WithdrawStatistics=Para çekme istatistikleri
 WithdrawRejectStatistics=Para çekme reddedilme istatistikleri
-LastWithdrawalReceipt= Son %s para çekme makbuzu
+LastWithdrawalReceipt=Son %s para çekme makbuzu
 MakeWithdrawRequest=Bir para çekme isteği oluştur
 ThirdPartyBankCode=Üçüncü parti banka kodu
 ThirdPartyDeskCode=Üçüncü parti şube kodu
@@ -48,7 +48,7 @@ RefusedData=Ret Tarihi
 RefusedReason=Ret nedeni
 RefusedInvoicing=Rettin faturalandırılması
 NoInvoiceRefused=Reddi borç yazmayın
-InvoiceRefused=Reddedileni müşteriye borç yazın
+InvoiceRefused=Fatura reddedildi
 Status=Durum
 StatusUnknown=Bilinmeyen
 StatusWaiting=Bekliyor
@@ -85,7 +85,7 @@ WithdrawalFile=Para çekme dosyası
 SetToStatusSent="Dosya Gönderildi" durumuna ayarla
 ThisWillAlsoAddPaymentOnInvoice=Bu aynı zamanda faturalara ödeme oluşturur ve onları ödendi olarak sınıflandırı
 
-### Bildirimler
+### Notifications
 InfoCreditSubject=Banka tarafından ödenen %s ödeme talimatı
 InfoCreditMessage=%s Ödeme talimatı banka tarafından ödenmiştir<br>Ödeme tarihi: %s
 InfoTransSubject=%s Ödeme talimatının bankaya iletilmesi

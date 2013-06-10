@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - categories
+# Dolibarr language file - Source file is en_US - categories
 CHARSET=UTF-8
 Category=Kategori
 Categories=Kategoriler
@@ -41,7 +41,7 @@ ErrForgotField=Alanlara bilgi girmeyi unuttunuz
 ErrCatAlreadyExists=Bu ad zaten kullanılıyor
 AddProductToCat=Bu ürünü bir kategoriye mi ekleyeceksiniz?
 ImpossibleAddCat=Kategori eklemek olanaksız
-ImpossibleAssociateCategory=Kategoriyle ilişkilendirmek olanaksız 
+ImpossibleAssociateCategory=Kategoriyle ilişkilendirmek olanaksız
 WasAddedSuccessfully=<b>%s</b> başarıyla eklendi.
 ObjectAlreadyLinkedToCategory=Öğe zaten bu kategoriye bağlıdır.
 CategorySuccessfullyCreated=Bu kategoriye %s başarı ile eklendi.
@@ -89,14 +89,14 @@ InternalCategory=İç kategori
 CategoryContents=Kategori içeriği
 CategId=Kategori kimliği
 CatSupList=Tedarikçi kategorileri listesi
-CatCusList=Müşteri/aday kategorileri listesi  
+CatCusList=Müşteri/aday kategorileri listesi
 CatProdList=Ürün kategorileri Listesi
 CatMemberList=Üye kategorileri Listesi
 CatSupLinks=Tedarikçiler ve kategoriler arasındaki bağlantılar
 CatCusLinks=Müşterler/adaylar ve kategoriler arasındaki bağlantılar
 CatProdLinks=Ürünler/hizmetler ve kategoriler arasındaki bağlantılar
 CatMemberLinks=Üyeler ve kategoriler arasındaki bağlantılar
-#İçeaktarma
-CatProdLinks=Ürünler
-CatCusLinks=Müşteriler/Adaylar
-CatSupLinks=Tedarikçiler
+CatProdLinks=Ürünler/hizmetler ve kategoriler arasındaki bağlantılar
+CatCusLinks=Müşterler/adaylar ve kategoriler arasındaki bağlantılar
+CatSupLinks=Tedarikçiler ve kategoriler arasındaki bağlantılar
+# DeleteFromCat=Remove from category

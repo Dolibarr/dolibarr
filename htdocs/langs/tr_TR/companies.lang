@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - companies
+# Dolibarr language file - Source file is en_US - companies
 CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firma adı zaten %s var. Başka bir tane seçin.
 ErrorPrefixAlreadyExists=Önek %s zaten var. Başka bir tane seçin.
@@ -37,7 +37,9 @@ ThirdParty=Üçüncü parti
 ThirdParties=Üçüncü partiler
 ThirdPartyAll=Üçüncü partiler (hepsi)
 ThirdPartyProspects=Adaylar
+# ThirdPartyProspectsStats=Prospects
 ThirdPartyCustomers=Müşteriler
+# ThirdPartyCustomersStats=Customers
 ThirdPartyCustomersWithIdProf12=Müşteriler %s veya %s ile
 ThirdPartySuppliers=Tedarikçiler
 ThirdPartyType=Üçüncü parti türü
@@ -73,16 +75,16 @@ Fax=Faks
 Zip=Posta Kodu
 Town=Şehir
 Web=Web
-Poste=Durumu
+Poste= Durumu
 DefaultLang=Varsayılan dili
 VATIsUsed=KDV kullanılır
 VATIsNotUsed=KDV kullanılmaz
 CopyAddressFromSoc=Adresi üçüncü parti adreslerinden doldur
-##### Yerel Vergiler #####
-LocalTax1IsUsedES=RE kullanılır
-LocalTax1IsNotUsedES=RE kullanılmaz
-LocalTax2IsUsedES=IRPF kullanılır
-LocalTax2IsNotUsedES=IRPF kullanılmaz
+##### Local Taxes #####
+LocalTax1IsUsedES= RE kullanılır
+LocalTax1IsNotUsedES= RE kullanılmaz
+LocalTax2IsUsedES= IRPF kullanılır
+LocalTax2IsNotUsedES= IRPF kullanılmaz
 ThirdPartyEMail=%s
 WrongCustomerCode=Müşteri kodu geçersiz
 WrongSupplierCode=Tedarikçi kodu geçersiz
@@ -335,9 +337,9 @@ TE_RETAIL=Perakendeci
 TE_WHOLE=Toptancı
 TE_PRIVATE=Özel şahıs
 TE_OTHER=Diğer
-StatusProspect1=Görüşülmeyecek
-StatusProspect0=Hiç görüşülmedi
 StatusProspect-1=Görüşülecek
+StatusProspect0=Hiç görüşülmedi
+StatusProspect1=Görüşülmeyecek
 StatusProspect2=Görüşme sürecinde
 StatusProspect3=Görüşme yapıldı
 ChangeDoNotContact=Durumu 'Görüşülmeyecek' olarak değiştir
@@ -381,7 +383,7 @@ SelectCompany=Bir üçüncü parti seçin
 Organization=Kuruluş
 AutomaticallyGenerated=Otomatikman oluşturulur
 FiscalYearInformation=Mali yıla ait bilgi
-FiscalMonthStart=Mali yılın başlangıç ayı 
+FiscalMonthStart=Mali yılın başlangıç ayı
 YouMustCreateContactFirst=Eposta bildirimleri ekleyebilmek için üçüncü parti e-posta kişsi oluşturmanız gerekir.
 ListSuppliersShort=Tedarikçi listesi
 ListProspectsShort=Aday Listesi
@@ -392,6 +394,7 @@ UniqueThirdParties=Toplam eşsiz üçüncü parti
 InActivity=Açık
 ActivityCeased=Kapalı
 ActivityStateFilter=Etkinlik durumu
+# ProductsIntoElements=List of products into
 
 # Monkey
 MonkeyNumRefModelDesc=Sayı biçimini müşteri için %syymm-nnn, tedarikçi için %syymm-nnn gösterir, yy yıl, mm ay ve nnnn ise 0 olmayan bir dizidir

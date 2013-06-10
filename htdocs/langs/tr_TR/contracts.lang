@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - contracts
+# Dolibarr language file - Source file is en_US - contracts
 CHARSET=UTF-8
 ContractsArea=Sözleşmeler alanı
 ListOfContracts=Sözleşme Listesi
@@ -54,7 +54,7 @@ ListOfRunningContractsLines=Yürülükte olan hizmet kalemleri
 ListOfRunningServices=Yürülükteki hizmetler listesi
 NotActivatedServices=Etkin olmayan hizmetler (doğrulanmış sözleşmeler arasından)
 BoardNotActivatedServices=Doğrulanmış sözleşmeler arasındaki etkinleştirilecek hizmetler
-LastContracts=Son %s sözleşme
+LastContracts=Değiştirilen son %s sözleşme
 LastActivatedServices=Etkinleştirilen son %s hizmet
 LastModifiedServices=Değiştirilen son %s hizmet
 EditServiceLine=Hizmet kalemi düzenle
@@ -86,7 +86,11 @@ PaymentRenewContractId=Sözleşme satırını yenile (sayı %s)
 ExpiredSince=Süre bitiş tarihi
 RelatedContracts=İlgili sözleşmeler
 NoExpiredServices=Süresi dolmamış etkin hizmetler
-##### Kişi türleri #####
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpire=List of Services to expire
+# Service=Service
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşme imzalalayacak satış temsilcisi
 TypeContact_contrat_internal_SALESREPFOLL=Sözleşmeyi izleyecek satış temsilcisi
 TypeContact_contrat_external_BILLING=Müşteri fatura ilgilisi

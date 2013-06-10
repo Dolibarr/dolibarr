@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - commercial
+# Dolibarr language file - Source file is en_US - commercial
 CHARSET=UTF-8
 Commercial=Ticari
 CommercialArea=Ticari alan
@@ -45,7 +45,7 @@ DoneActions=Tamamlanan etkinlikler
 DoneActionsFor=%s için tamamlanan etkinlikler
 ToDoActions=Tamamlanmamış etkinlikler
 ToDoActionsFor=%s için tamalanmamış etkinlikler
-SendPropalRef=%s teklifini gönder 
+SendPropalRef=%s teklifini gönder
 SendOrderRef=% siparişini gönder
 StatusNotApplicable=Uygulanamaz
 StatusActionToDo=Yapılacaklar
@@ -93,3 +93,4 @@ NoData=Veri yok
 StatusProsp=Aday durumu
 DraftPropals=Taslak teklifler
 SearchPropal=Bir teklif ara
+# CommercialDashboard=Commercial summary

@@ -1,4 +1,4 @@
-﻿# Language file - tr_TR - cashdesk
+# Language file - Source file is en_US - cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Satış Noktası
 CashDesk=Satış Noktası
@@ -13,12 +13,13 @@ CashDeskProducts=Ürünler
 CashDeskStock=Stok
 CashDeskOn=açık
 CashDeskThirdParty=Üçüncü parti
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Alışveriş sepeti
 NewSell=Yeni satış
 BackOffice=Arka ofis
 AddThisArticle=Bu maddeyi ekle
 RestartSelling=Satışa geri dön
-SellFinished=Satış bitti 
+SellFinished=Satış bitti
 PrintTicket=Fiş yazdır
 NoProductFound=Hiç madde bulunamadı
 ProductFound=ürün bulundu
@@ -36,3 +37,4 @@ BankToPay=Açık hesap
 ShowCompany=Firma göster
 ShowStock=Depo göster
 DeleteArticle=Bu maddeyi kaldırmak için tıkla
+# FilterRefOrLabelOrBC=Search (Ref/Label)

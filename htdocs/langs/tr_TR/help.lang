@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - help
+# Dolibarr language file - Source file is en_US - help
 CHARSET=UTF-8
 CommunitySupport=Forum/Wiki desteği
 EMailSupport=E-posta desteği
@@ -24,5 +24,5 @@ ToGetHelpGoOnSparkAngels2=Bazen, arama yaptığınız sırada bir firma bulunmaz
 BackToHelpCenter=Aksi durumda yardım merkezine geri gitmek için <a href="%s">burayı </a>.
 LinkToGoldMember=Bo parçaçcığı (widget) tıklayarak Dolibar tarafından sizin için dilinizde önseçilen eğitmeni arayabilirsiniz (durumu ve ençok ücreti otomatikmen güncellenir):
 PossibleLanguages=Desteklenen diller
-MakeADonation= Dolibarr projesine bağış yapın
+MakeADonation=Dolibarr projesine bağış yapın
 SubscribeToFoundation=Dolibarr projesine yardım edin, vakıfa abone olun

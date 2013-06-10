@@ -1,7 +1,8 @@
-# Dolibarr language file - tr_TR - holiday
+# Dolibarr language file - Source file is en_US - holiday
 CHARSET= UTF-8
 
-CPTitreMenu=Tatiller
+# HRM=HRM
+# Holidays=Holidays
 CPTitreMenu=Tatiller
 MenuReportMonth=Aylık özet
 MenuAddCP=Tatil için başvur
@@ -15,7 +16,7 @@ DateDebCP=Başlama tarihi
 DateFinCP=Bitiş tarihi
 DateCreateCP=Oluşturma tarihi
 DraftCP=Taslak
-ToApproveCP=Onay bekliyor
+# ToReviewCP=Awaiting approval
 ApprovedCP=Onaylandı
 CancelCP=Şptal edildi
 RefuseCP=Reddedildi
@@ -79,7 +80,6 @@ MenuLogCP=Tatil kayıtlarını gör
 LogCP=Tatil güncellemeleri kayıtı
 ActionByCP=Uygulayan
 UserUpdateCP=Kullanıcı için
-ActionTypeCP=Türü
 PrevSoldeCP=Önceki Bakiye
 NewSoldeCP=Yeni Bakiye
 alreadyCPexist=Bu dönem için bir tatil isteği zaten yapılmış.
@@ -90,7 +90,7 @@ LastDayOfHoliday=Tatilin son günü
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
 
-## Modül yapılandırması ##
+## Configuration du Module ##
 ConfCP=Tatil modülünün yapılandırılması
 DescOptionCP=Seçeneğin tanımı
 ValueOptionCP=Değer
@@ -102,6 +102,7 @@ ErrorUpdateConfCP=Güncelleme sırasında bir hata oluştu, lütfen yeniden dene
 AddCPforUsers=Kullanıcıların tatil bakiyelerini eklemek için lütfen <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">buraya tıklayın</a>.
 DelayForSubmitCP=Tatil için son başvuru tarihi
 AlertapprobatortorDelayCP=Eğer tatil istekleri son tarihle eşleşmezse onaylayanı uyar
+AlertValidatorDelayCP=Eğer tatil istekleri son tarihle eşleşmezse onaylayanı uyar
 AlertValidorSoldeCP=Eğer tatil istekleri bakiyeyi aşarsa onayalayanı uyar
 nbUserCP=Tatil modülünde desteklenen kullanıcı sayısı
 nbHolidayDeductedCP=Alınan tatilden düşülecek tatil günü sayısı
@@ -128,11 +129,10 @@ DeleteEventOptionCP=Sil
 UpdateEventOptionCP=Güncelle
 ErrorMailNotSend=Eposta gönderilirken bir hata oluştu:
 NoCPforMonth=Bu ay hiç izin yok.
-Jours=gün
 nbJours=Gün sayısı
 TitleAdminCP=Tatillerin Yapılandırması
 
-#İletiler
+#Messages
 Hello=Merhaba
 HolidaysToValidate=Tatil doğrula
 HolidaysToValidateBody=Aşağıda doğrulanacak bir tatil isteği var

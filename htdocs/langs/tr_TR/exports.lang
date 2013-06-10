@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - tr_TR - exports
+# Dolibarr language file - Source file is en_US - exports
 CHARSET=UTF-8
 ExportsArea=Dışaaktarma alanı
 ImportArea=İçeaktarma alanı
@@ -124,7 +124,7 @@ BankCode=Banka kodu
 DeskCode=Sıra kodu
 BankAccountNumber=Hesap numarası
 BankAccountNumberKey=Anahtar
-## süzgeçler
+## filters
 SelectFilterFields=Bazı değerlere göre süzme yapmak istiyorsanız, yalnızca değerleri buraya girin.
 FilterableFields=Süzülebilir Champs
 FilteredFields=Süzülmüş alanlar

@@ -1,10 +1,10 @@
-﻿# Dolibarr language file - tr_TR - mails
+# Dolibarr language file - Source file is en_US - mails
 CHARSET=UTF-8
 Mailing=Eposta
 EMailing=Eposta
 Mailings=Epostalar
-EMailings=Epostalar 
-AllEMailings=Tüm Epostalar 
+EMailings=Epostalar
+AllEMailings=Tüm Epostalar
 MailCard=Eposta kartı
 MailTargets=Hedefler
 MailRecipients=Alıcılar
@@ -63,7 +63,7 @@ RemoveRecipient=Alıcı kaldır
 CommonSubstitutions=Ortak yedekler
 YouCanAddYourOwnPredefindedListHere=Eposta seçim modülünüzü oluşturmak için htdocs/core/modules/mailings/README dosyasına bakın.
 EMailTestSubstitutionReplacedByGenericValues=Test modunu kullanırken, yedek değişkenler genel değerleriyle değiştirilir
-MailingAddFile= Bu dosyayı ekle
+MailingAddFile=Bu dosyayı ekle
 NoAttachedFiles=Ekli dosya yok
 BadEMail=EPosta için yanlış değer
 CloneEMailing=Epostayı klonla
@@ -81,7 +81,7 @@ ActivateCheckRead="Alıcı oku" izleyicisini ve "Aboneliği kaldır" linkinin ku
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
 
-# Alıcılar listesi Libelle modülü
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Tüm üçüncü partilerin kişileri (müşteri, aday, tedarikçi, ...)
 MailingModuleDescDolibarrUsers=Dolibarr kullanıcıları
 MailingModuleDescFundationMembers=Epostaları ile kurum üyeleri
@@ -91,7 +91,7 @@ MailingModuleDescContactsCategories=Üçüncü partiler (kategoriye göre)
 MailingModuleDescDolibarrContractsLinesExpired=Süresi dolmuş sözleşme kalemleri ile üçüncü partiler
 MailingModuleDescContactsByCompanyCategory=Üçüncü parti kişileri (üçüncü parti kategorilerine göre)
 MailingModuleDescMembersCategories=Kurum üyeleri (kategoriye göre)
-MailingModuleDescContactsByFunction= Üçüncü parti kişileri (konumuna/görevine göre)
+MailingModuleDescContactsByFunction=Üçüncü parti kişileri (konumuna/görevine göre)
 
 
 LineInFile=Satır %s dosyası
@@ -107,22 +107,22 @@ SendMailing=E-posta gönder
 SendMail=E-posta gönder
 SentBy=Gönderen
 MailingNeedCommand=Güvenlik nedeni ile, Eposta gönderimi sadece komut satırından yapılmalıdır. Bütün posta alıcılarında eposta göndermek için yönetciden aşağıdaki komutu başlatmasını isteyin:
-MailingNeedCommand2= Bunula birlikte, oturum tarafından gönderilecek ençok Eposta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.
+MailingNeedCommand2=Bunula birlikte, oturum tarafından gönderilecek ençok Eposta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.
 ConfirmSendingEmailing=Epostayı komut satırı dışından ve web modundan göndermek istediğinizden emin misiniz?
-LimitSendingEmailing= Epostaların çevrimiçi gönderimi güvenlik ve süre aşımı nedenleriyle gönderme oturumu tarafından <b>%s</b> kadar alıcıyla sınırlandırılmıştır.
+LimitSendingEmailing=Epostaların çevrimiçi gönderimi güvenlik ve süre aşımı nedenleriyle gönderme oturumu tarafından <b>%s</b> kadar alıcıyla sınırlandırılmıştır.
 TargetsReset=Listeyi temizle
 ToClearAllRecipientsClickHere=Bu e-posta Alıcı listesini temizlemek için burayı tıkla
 ToAddRecipientsChooseHere=Listeden seçerek alıcıları ekle
 NbOfEMailingsReceived=Alınan toplu Epostalar
 IdRecord=Kimlik kayıtı
 DeliveryReceipt=Teslim makbuzu
-YouCanUseCommaSeparatorForSeveralRecipients= Birçok alıcı belirtmek için <b>virgül</b> ayırıcısını kullanabilirsiniz.
+YouCanUseCommaSeparatorForSeveralRecipients=Birçok alıcı belirtmek için <b>virgül</b> ayırıcısını kullanabilirsiniz.
 TagCheckMail=Eposta açılışlarını izle
 TagUnsubscribe=Aboneliğini kaldır bağlantısı
 TagSignature=Gönderen kullanıcı imzası
 TagMailtoEmail=Alıcı epostası
 
-# Bildirimler modülü
+# Module Notifications
 Notifications=Bildirimler
 NoNotificationsWillBeSent=Bu eylem ve firma için hiçbir Eposta bildirimi planlanmamış
 ANotificationsWillBeSent=Eposta ile 1 bildirim gönderilecektir

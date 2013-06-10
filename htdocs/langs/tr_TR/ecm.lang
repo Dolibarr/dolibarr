@@ -1,10 +1,10 @@
-﻿*# Dolibarr language file - tr_TR - ecm
+# Dolibarr language file - Source file is en_US - ecm
 CHARSET=UTF-8
 MenuECM=Belgeler
 DocsMine=Belgelerim
 DocsGenerated=Oluşturulan belgeler
 DocsElements=Belge öğeleri
-DocsThirdParties=Üçüncü parti belgeleri 
+DocsThirdParties=Üçüncü parti belgeleri
 DocsContracts=Sözleşme belgeleri
 DocsProposals=Tekli belgeleri
 DocsOrders=Sipariş belgeleri
@@ -40,15 +40,17 @@ ECMDocsBySocialContributions=Sosyal gkatkı paylarıi ile bağlantılı belgeler
 ECMDocsByThirdParties=Üçüncü partiler ile bağlantılı belgeler
 ECMDocsByProposals=Teklifler ile bağlantılı belgeler
 ECMDocsByOrders=Müşteri siparişleri ile bağlantılı belgeler
-ECMDocsByContracts=Sözleşmeler ile bağlantılı belgeler 
+ECMDocsByContracts=Sözleşmeler ile bağlantılı belgeler
 ECMDocsByInvoices=Müşteri faturaları ile bağlantılı belgeler
 ECMDocsByProducts=Ürünlere bağlantılı belgeler
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Hiçbir dizin oluşturulmadı
 ShowECMSection=Dizini göster
 DeleteSection=Dizini kaldır
 ConfirmDeleteSection=<b>%s</b> Dizinini silmek istediğinizi onaylayabilir misiniz?
 ECMDirectoryForFiles=Dosyalar için göreceli dizin
-CannotRemoveDirectoryContainsFiles=Bazı dosyalar içeridiğinden 
+CannotRemoveDirectoryContainsFiles=Bazı dosyalar içeridiğinden
 ECMFileManager=Dosya yöneticisi
 ECMSelectASection=Sol ağaçtan bir dizin seçin...
 DirNotSynchronizedSyncFirst=Bu dizin ECM modülü dışından oluşturulmuş ya da değiştirilmiş görünüyor. Bu dizinin içeriğini almak için önce "Yenile" dümesine basarak diski ve veritabanını eşleyin.
+
