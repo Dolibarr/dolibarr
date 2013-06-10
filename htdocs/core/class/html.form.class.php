@@ -1829,7 +1829,7 @@ class Form
      *  @param      string	$htmlname        Name of HTML field
      *  @return		void
      */
-    function select_product_fourn_price($productid,$htmlname='productfournpriceid')
+    function select_product_fourn_price($productid,$htmlname='productfournpriceid', $showempty=0)
     {
         global $langs,$conf;
 
@@ -1860,9 +1860,15 @@ class Form
             {
                 $form.= '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
             }
+            else if ($num == 1) {
+                $objp = $this->db->fetch_object($result);
+                $form = $objp->nom;
+                $form .= '<input type="hidden" name="'.$htmlname.'" value="'.$objp->idprodfournprice.'">';
+            }
             else
             {
-                $form.= '<option value="0">&nbsp;</option>';
+                $form = '<select class="flat" name="'.$htmlname.'">';
+                if($showempty) $form.= '<option value="0">&nbsp;</option>';
 
                 $i = 0;
                 while ($i < $num)
