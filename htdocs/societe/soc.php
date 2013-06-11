@@ -1550,7 +1550,7 @@ else
         }
 
         // Customer code
-        if ($object->client)
+        if (!empty($conf->code_client->enabled))
         {
             print '<tr><td>';
             print $langs->trans('CustomerCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
@@ -1562,7 +1562,7 @@ else
         }
 
         // Supplier code
-        if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
+        if (! empty($conf->code_fournisseur->enabled))
         {
             print '<tr><td>';
             print $langs->trans('SupplierCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
@@ -1592,38 +1592,48 @@ else
         print '</tr>';
 
         // Address
+       if(!empty($object->address)){
         print "<tr><td valign=\"top\">".$langs->trans('Address').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         dol_print_address($object->address,'gmap','thirdparty',$object->id);
-        print "</td></tr>";
+        print "</td></tr>";}
 
         // Zip / Town
+        if(!empty($object->town) || !empty($object->zip)){
         print '<tr><td width="25%">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print $object->zip.($object->zip && $object->town?" / ":"").$object->town;
         print "</td>";
-        print '</tr>';
+        print '</tr>';}
 
         // Country
-        print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" nowrap="nowrap">';
-        $img=picto_from_langcode($object->country_code);
-        if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-        else print ($img?$img.' ':'').$object->country;
-        print '</td></tr>';
+        if(!empty($object->country))
+        {
+			print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" nowrap="nowrap">';
+			$img=picto_from_langcode($object->country_code);
+			if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+			else print ($img?$img.' ':'').$object->country;
+			print '</td></tr>';
+		}
 
         // State
-        if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
+        if (!empty($conf->state->enabled)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
-        print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
-
+		if(!empty($conf->phone->enabled) || !empty($conf->fax->enabled))
+		{
+			print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+			print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
+		}
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td width="25%">';
-        print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
-        print '</td>';
+        if(!empty($conf->email->enabled) || !empty($conf->url->enabled))
+        {
+			print '<tr><td>'.$langs->trans('EMail').'</td><td width="25%">';
+			print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
+			print '</td>';
 
-        // Web
-        print '<td>'.$langs->trans('Web').'</td><td>';
-        print dol_print_url($object->url);
-        print '</td></tr>';
+			// Web
+			print '<td>'.$langs->trans('Web').'</td><td>';
+			print dol_print_url($object->url);
+			print '</td></tr>';
+		}
 
         // Prof ids
         $i=1; $j=0;
@@ -1729,17 +1739,23 @@ else
         // Type + Staff
         $arr = $formcompany->typent_array(1);
         $object->typent= $arr[$object->typent_code];
-        print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
-
+        if(!empty($conf->typent->enabled) || !empty($conf->effectif->enabled))
+        {
+			print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'.$object->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
+		}
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$object->forme_juridique.'</td></tr>';
-
+        if(!empty($conf->forme_juridique->enabled))
+        {
+			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$object->forme_juridique.'</td></tr>';
+		}
         // Capital
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
-        if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->currency);
-        else print '&nbsp;';
-        print '</td></tr>';
-
+        if(!empty($conf->capital->enabled))
+        {
+			print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
+			if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->currency);
+			else print '&nbsp;';
+			print '</td></tr>';
+		}
         // Default language
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1756,14 +1772,16 @@ else
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook) && !empty($extrafields->attribute_label))
         {
             foreach($extrafields->attribute_label as $key=>$label)
             {
                 $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
-                print '<tr><td>'.$label.'</td><td colspan="3">';
-                print $extrafields->showOutputField($key,$value);
-                print "</td></tr>\n";
+                if(!empty($value)){
+					print '<tr><td>'.$label.'</td><td colspan="3">';
+					print $extrafields->showOutputField($key,$value);
+					print "</td></tr>\n";
+				}
             }
         }
 
