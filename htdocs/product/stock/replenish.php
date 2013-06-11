@@ -266,7 +266,14 @@ if ($resql) {
     $helpurl .= 'ES:M&oacute;dulo_Stocks';
     $texte = $langs->trans('Replenishment');
     llxHeader('', $title, $helpurl, $texte);
-
+    $head = array();
+    $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
+    $head[0][1] = $title;
+    $head[0][2] = 'replenish';
+    $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
+    $head[1][1] = $langs->trans("ReplenishmentOrders");
+    $head[1][2] = 'replenishorders';
+    dol_fiche_head($head, 'replenish', $title, 0, 'stock');
     if ($sref || $snom || $sall || GETPOST('search')) {
         print_barre_liste($texte, 
                           $page, 
@@ -305,7 +312,7 @@ if ($resql) {
     print '<input type="hidden" name="type" value="' . $type . '">';
     print '<input type="hidden" name="linecount" value="' . $num . '">';
     print '<input type="hidden" name="action" value="order">';
-
+    //print '</div>';
     print '<table class="liste" width="100%">';
 
     // Filter on categories
@@ -587,220 +594,6 @@ if ($resql) {
 }
 else {
     dol_print_error($db);
-}
-
-$commandestatic = new CommandeFournisseur($db);
-$sref = GETPOST('search_ref');
-$snom = GETPOST('search_nom');
-$suser = GETPOST('search_user');
-$sttc = GETPOST('search_ttc');
-$sall = GETPOST('search_all');
-
-$page = GETPOST('page', 'int');
-
-$sortorder = 'DESC';
-$sortfield = 'cf.date_creation';
-$offset = $conf->liste_limit * $page ;
-$sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
-$sql .= ' cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc';
-$sql .= ", cf.fk_user_author, u.login";
-$sql .= ' FROM (' . MAIN_DB_PREFIX . 'societe as s,';
-$sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
-if (!$user->rights->societe->client->voir && !$socid) {
-    $sql.= ', ' . MAIN_DB_PREFIX . 'societe_commerciaux as sc';
-}
-$sql .= ') LEFT JOIN ' . MAIN_DB_PREFIX . 'user as u ';
-$sql .= 'ON cf.fk_user_author = u.rowid';
-$sql .= ' WHERE cf.fk_soc = s.rowid ';
-$sql .= ' AND cf.entity = ' . $conf->entity;
-$sql .= ' AND cf.source = 42';
-$sql .= ' AND cf.fk_statut < 5';
-
-if (!$user->rights->societe->client->voir && !$socid) {
-    $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
-}
-if ($sref) {
-    $sql .= ' AND cf.ref LIKE "%' . $db->escape($sref) . '%"';
-}
-if ($snom) {
-    $sql .= ' AND s.nom LIKE "%' . $db->escape($snom) . '%"';
-}
-if ($suser) {
-    $sql .= ' AND u.login LIKE "%' . $db->escape($suser) . '%"';
-}
-if ($sttc) {
-    $sql .= ' AND total_ttc = ' . price2num($sttc);
-}
-if ($sall) {
-    $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
-    $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
-}
-if ($socid) {
-    $sql .= ' AND s.rowid = ' . $socid;
-}
-
-if (GETPOST('statut'))
-{
-	$sql .= ' AND fk_statut = ' . GETPOST('statut');
-}
-
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
-$resql = $db->query($sql);
-if ($resql) {
-
-    $num = $db->num_rows($resql);
-    $i = 0;
-
-
-    print_barre_liste($langs->trans('ReplenishmentOrders'), 
-                      $page, 
-                      'replenish.php', 
-                      '', 
-                      $sortfield, 
-                      $sortorder, 
-                      '', 
-                      $num
-                      );
-    print '<form action="replenish.php" method="GET">';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Ref'), 
-                            $_SERVER['PHP_SELF'], 
-                            '', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('Company'), 
-                            $_SERVER['PHP_SELF'], 
-                            '', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('Author'), 
-                            $_SERVER['PHP_SELF'], 
-                            '', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('AmountTTC'), 
-                            $_SERVER['PHP_SELF'], 
-                            '', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('OrderCreation'), 
-                            $_SERVER['PHP_SELF'], 
-                            '', 
-                            '', 
-                            '', 
-                            'align="center"', 
-                            $sortfield, 
-                            $sortorder
-                            );
-    print_liste_field_titre($langs->trans('Status'), 
-                            $_SERVER['PHP_SELF'], 
-                            '', 
-                            '', 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
-                            $sortorder
-                            );
-    print '</tr>';
-
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_ref" value="' . $sref . '">';
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_nom" value="' . $snom . '">';
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_user" value="' . $suser . '">';
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_ttc" value="' . $sttc . '">';
-    print '</td>';
-    print '<td colspan="2" class="liste_titre" align="right">';
-    $src = DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png';
-    $value = dol_escape_htmltag($langs->trans('Search'));
-    print '<input type="image" class="liste_titre" name="button_search" src="' . $src . '" value="'.$value.'" title="'.$value.'">';
-    print '</td>';
-    print '</tr>';
-
-    $var = true;
-    $userstatic = new User($db);
-
-    while($i < min($num,$conf->liste_limit)) {
-        $obj = $db->fetch_object($resql);
-        $var = !$var;
-
-        print "<tr $bc[$var]>";
-        // Ref
-        print '<td>';
-        $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
-        print '<a href="' . $href . '">';
-        print img_object($langs->trans('ShowOrder'), 'order') . ' ' . $obj->ref;
-        print '</a></td>'."";
-
-        // Company
-        print '<td>';
-        $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
-        print '<a href="' . $href .'">';
-        print img_object($langs->trans('ShowCompany'), 'company') . ' ' . $obj->nom;
-        print '</a></td>'."";
-
-        // Author
-        $userstatic->id = $obj->fk_user_author;
-        $userstatic->login = $obj->login;
-        print '<td>';
-        if ($userstatic->id) {
-            print $userstatic->getLoginUrl(1);
-        }
-        else {
-            print '&nbsp;';
-        }
-        print '</td>';
-
-        // Amount
-        print '<td align="right" width="100">';
-        print price($obj->total_ttc);
-        print '</td>';
-
-        // Date
-        print '<td align="center" width="100">';
-        if ($obj->dc) {
-            print dol_print_date($db->jdate($obj->dc), 'day');
-        }
-        else {
-            print '-';
-        }
-        print '</td>';
-
-        // Statut
-        print '<td align="right">';
-        print $commandestatic->LibStatut($obj->fk_statut, 5);
-        print '</td>';
-
-        print '</tr>';
-        $i++;
-    }
-    print '</table>';
-    print '</form>';
-
-    $db->free($resql);
 }
 
 llxFooter();
