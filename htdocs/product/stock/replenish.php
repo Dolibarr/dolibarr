@@ -326,7 +326,7 @@ if ($resql) {
     }
 
     $param = (isset($type)? '&type=$type' : '');
-    $param .= '&fourn_id=$fourn_id&snom=$snom&sref=$sref';
+    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&sref=' . $sref;
 
     // Lignes des titres
     print '<tr class="liste_titre">';
