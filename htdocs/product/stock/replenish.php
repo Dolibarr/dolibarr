@@ -39,17 +39,19 @@ $result=restrictedArea($user,'produit|service');
 
 function ordered($product_id) {
     global $db;
-    $sql = 'SELECT DISTINCT cfd.fk_product from ';
+    $sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) from ';
     $sql .= MAIN_DB_PREFIX.'commande_fournisseurdet as cfd LEFT JOIN '; 
     $sql .= MAIN_DB_PREFIX.'commande_fournisseur as cf ON '; 
     $sql .= 'cfd.fk_commande = cf.rowid WHERE cf.source = 42 '; 
     $sql .= 'AND cf.fk_statut < 5 AND cfd.fk_product = '.$product_id;
+    $sql .= ' GROUP BY cfd.fk_product';
     
     $resql = $db->query($sql);
     if($resql) {
         $exists = $db->num_rows($resql);
         if($exists) {
-            return img_picto('','tick');
+            $obj = $db->fetch_array($resql);
+            return $obj['SUM(cfd.qty)'].' '.img_picto('','tick');
         }
         else {
             return img_picto('', 'stcomm-1');
