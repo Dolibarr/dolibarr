@@ -732,7 +732,7 @@ else
         {
             print '<tr><td>'.$langs->trans("Nature").'</td><td>';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print $form->selectarray('finished',$statutarray,GETPOST('finished'));
+            print $form->selectarray('finished',$statutarray,GETPOST('finished'),1);
             print '</td></tr>';
         }
 
