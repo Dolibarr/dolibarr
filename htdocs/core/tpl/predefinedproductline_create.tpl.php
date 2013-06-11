@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +81,12 @@ if (! empty($usemargins))
 </tr>
 
 <tr <?php echo $bcnd[$var]; ?>>
+<?php 
+if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		$coldisplay=4; }
+else {
+		$coldisplay=3; }
+?>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
 
@@ -112,8 +119,14 @@ if (! empty($usemargins))
 	$colspan = 4;
 	if (! empty($usemargins))
 	{
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			$colspan++;
+			$coldisplay++;
+		}
+		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+			$colspan++;
+			$coldisplay++;
+		}
 		?>
 		<td align="right">
 			<select id="fournprice" name="fournprice" class="flat" style="display: none;"></select>
@@ -125,6 +138,22 @@ if (! empty($usemargins))
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>" name="addline">
 	</td>
+	<?php
+	//Line extrafield
+	if (!empty($extrafieldsline)) {
+		if ($this->table_element_line=='commandedet') {
+			$newline = new OrderLine($this->db);
+		}elseif ($this->table_element_line=='propaldet') {
+			$newline = new PropaleLigne($this->db);
+		}
+		elseif ($this->table_element_line=='facturedet') {
+			$newline = new FactureLigne($this->db);
+		}
+		if (is_object($newline)) {
+			print $newline->showOptionals($extrafieldsline,'edit',array('style'=>$bcnd[$var],'colspan'=>$coldisplay+5));
+		}
+	}
+	?>
 </tr>
 
 <?php

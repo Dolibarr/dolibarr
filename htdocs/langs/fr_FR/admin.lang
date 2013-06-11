@@ -955,6 +955,7 @@ MAIN_PROXY_USER=Identifiant pour passer le serveur proxy mandataire
 MAIN_PROXY_PASS=Mot de passe pour passer le serveur proxy mandataire
 DefineHereComplementaryAttributes=Définissez ici la liste des attributs supplémentaires, non disponibles en standard, et que vous voulez voir gérer sur les %s.
 ExtraFields=Attributs supplémentaires
+ExtraFieldsLines=Attributs supplémentaires (lignes)
 ExtraFieldsThirdParties=Attributs supplémentaires (tiers)
 ExtraFieldsContacts=Attributs supplémentaires (contacts/adresses)
 ExtraFieldsMember=Attributs supplémentaires (adhérents)
