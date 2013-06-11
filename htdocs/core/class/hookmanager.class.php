@@ -188,6 +188,9 @@ class HookManager
 
                     //print "method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction;
                 }
+                
+                unset($actionclassinstance->results);
+                unset($actionclassinstance->resprints);
             }
         }
 
