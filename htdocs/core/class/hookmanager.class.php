@@ -188,10 +188,10 @@ class HookManager
                     	if (! is_array($result) && ! is_numeric($result)) $this->resPrint.=$result;
                     }
 
-                    $actionclassinstance->results='';
-                    $actionclassinstance->resprints='';
-                    
                     //print "After hook  ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
+
+                    unset($actionclassinstance->results);
+                    unset($actionclassinstance->resprints);
                 }
             }
         }
