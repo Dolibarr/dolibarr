@@ -37,6 +37,31 @@ $langs->load("orders");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
+function ordered($product_id) {
+    global $db;
+    $sql = 'SELECT DISTINCT cfd.fk_product from ';
+    $sql .= MAIN_DB_PREFIX.'commande_fournisseurdet as cfd LEFT JOIN '; 
+    $sql .= MAIN_DB_PREFIX.'commande_fournisseur as cf ON '; 
+    $sql .= 'cfd.fk_commande = cf.rowid WHERE cf.source = 42 '; 
+    $sql .= 'AND cf.fk_statut < 5 AND cfd.fk_product = '.$product_id;
+    
+    $resql = $db->query($sql);
+    if($resql) {
+        $exists = $db->num_rows($resql);
+        if($exists) {
+            return img_picto('','tick');
+        }
+        else {
+            return img_picto('', 'stcomm-1');
+        }
+    }
+    else {
+        $error=$db->lasterror();
+        dol_print_error($db);
+        dol_syslog("replenish.php: ".$error, LOG_ERROR);
+        return $langs->trans('error');
+    }
+}
 
 $action=GETPOST('action','alpha');
 $sref=GETPOST("sref");
@@ -294,6 +319,7 @@ if ($resql)
         print_liste_field_titre($langs->trans("PhysicalStock"),"replenish.php", "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
     }
     print_liste_field_titre($langs->trans("StockToBuy"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ordered"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Supplier"),"replenish.php", "",$param,"",'align="right"',$sortfield,$sortorder);
     print '<td>&nbsp;</td>';
     print "</tr>\n";
@@ -316,6 +342,7 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
@@ -392,6 +419,9 @@ if ($resql)
             $stocktobuy = $objp->desiredstock - $stock;
             print '<td align="right">'.$stocktobuy.'</td>';
             print '<input type="hidden" name="tobuy'.$i.'" value="'.$stocktobuy.'" >';
+            print '<td align="right">';
+            print ordered($product_static->id);
+            print '</td>';
             $form = new Form($db);
             print '<td align="right">'.$form->select_product_fourn_price($product_static->id, "fourn".$i).'</td>';
             print '<td>&nbsp</td>';
