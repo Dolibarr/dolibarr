@@ -2682,7 +2682,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);
 	}
-	$output.=$cursymbolbefore.$end.$cursymbolafter;
+	$output=$cursymbolbefore.$output.$end.$cursymbolafter;
 
 	return $output;
 }

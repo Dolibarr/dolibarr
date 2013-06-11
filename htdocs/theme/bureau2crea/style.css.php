@@ -371,63 +371,8 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) {
 
-/*
-div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
-}
-
-div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
-}
-
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
-	margin-left: 10px;
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
-}
-
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
-}
-
-div.mainmenu.bank {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1); ?>);
-}
-
-div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
-}
-
-div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
-}
-
-div.mainmenu.shop {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
-}
-*/
-<?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
@@ -1803,6 +1748,8 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; padding-bottom: 2px !important; }
+
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -1827,15 +1774,16 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#b3c5cc;
-	color:white;
+	background-color:#BB6644;
+	color:white !important;
 	font-size:11px;
 	cursor:auto;
+	text-align: center;
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;
+	background-color:#BB6644;
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
@@ -1846,16 +1794,14 @@ table.dp {
 .dpExplanation{ font-weight:normal; font-size:11px;}
 .dpWeek td{text-align:center}
 
-.dpToday,.dpReg,.dpSelected{
-	cursor:pointer;
-}
+.dpToday,.dpReg,.dpSelected { cursor:pointer; }
 .dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
 
 /* Jour courant */
-.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+.dpSelected {background-color:#BB6644;color:white;font-weight:bold; }
 
-.tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
+.tpHour {border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
 .tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
 .tpHour td:Hover {background-color:black;color:white;}
 
