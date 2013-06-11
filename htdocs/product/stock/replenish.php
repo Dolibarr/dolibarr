@@ -171,8 +171,13 @@ if($action == 'order') {
             $id = $order->create($user);
             if($id < 0) {
                 //error stuff
+                $fail++;
+                setEventMessage($langs->trans('OrderFail'), 'errors');
             }
             $i++;
+        }
+        if(!$fail) {
+            setEventMessage($langs->trans('OrderCreated'), 'mesgs');
         }
     }
 }
@@ -180,7 +185,6 @@ if($action == 'order') {
 /*
  * View
  */
-
 $htmlother=new FormOther($db);
 
 $title=$langs->trans('Replenishment');
