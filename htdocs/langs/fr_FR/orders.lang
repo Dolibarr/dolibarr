@@ -163,3 +163,5 @@ CloseProcessedOrdersAutomatically=Classer automatiquement à "Traitées" les com
 MenuOrdersToBill2=Commandes à facturer
 OrderCreation=Date de création
 Ordered=Commandé
+OrderCreated=Vos commandes ont été générées
+OrderFail=Une erreur s'est produite pendant la création de vos commandes
