@@ -115,6 +115,7 @@ if (! empty($_POST['button_removefilter_x'])) {
 //orders creation
 if($action == 'order') {
     $linecount = GETPOST('linecount', 'int');
+    unset($_POST['linecount']);
     if($linecount > 0) {
         $suppliers = array();
         for($i = 0; $i < $linecount; $i++) {
@@ -151,7 +152,9 @@ if($action == 'order') {
                     dol_syslog('replenish.php: '.$error, LOG_ERROR);
                 }
                 $db->free($resql);
+                unset($_POST['fourn' . $i]);
             }
+            unset($_POST[$i]);
         }
         //we now know how many orders we need and what lines they have
         $i = 0;
@@ -535,7 +538,7 @@ if ($resql) {
             $form = new Form($db);
             print '<td align="right">';
             print $form->select_product_fourn_price($prod->id, 
-                                                    "fourn".$i);
+                                                    'fourn' . $i);
             print '</td>';
             print '<td>&nbsp</td>';
             print "</tr>";
