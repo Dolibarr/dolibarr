@@ -47,7 +47,8 @@ $head[0][2] = 'replenish';
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
-dol_fiche_head($head, 'replenishorders', 
+dol_fiche_head($head, 
+               'replenishorders', 
                $langs->trans("Replenishment"), 
                0, 
                'stock');
@@ -72,6 +73,7 @@ if(!$sortfield) {
 }
 
 $offset = $conf->liste_limit * $page ;
+
 $sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
 $sql .= ' cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc';
 $sql .= ", cf.fk_user_author, u.login";
@@ -106,8 +108,10 @@ if($sttc) {
     $sql .= ' AND cf.total_ttc = ' . price2num($sttc);
 }
 if($sdate) {
-    $datearray = explode('/', $sdate);
-    $date = date('Y-m-d', mktime(0,0,0, $datearray[1], $datearray[0], $datearray[2]));
+    $elts = explode('/', $sdate);
+    $date = date('Y-m-d', 
+                 mktime(0, 0, 0, $elts[1], $elts[0], $elts[2])
+                );
     $sql .= ' AND cf.date_creation LIKE "' . $date . '%"';
 }
 if($sall) {
