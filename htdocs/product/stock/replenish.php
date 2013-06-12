@@ -574,10 +574,11 @@ if ($resql) {
         $i++;
     }
     print "</table>";
+    print '</div>';
     print '<table width="100%">';
     print '<tr><td align="right">';
-    $valid = $langs->trans("Validate");
-    print '<input class="button" type="submit" value="' . $valid . '">';
+    $value = $langs->trans("CreateOrders");
+    print '<input class="butAction" type="submit" value="' . $value . '">';
     print '</td></tr></table>';
     print '</form>';
 
