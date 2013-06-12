@@ -220,8 +220,10 @@ if ($object->fetch($id) >= 0)
 
 	$var=!$var;
 
+	$allowaddtarget=($object->statut == 0 || $object->statut == 1);
+
 	// Show email selectors
-	if ($object->statut == 0 && $user->rights->mailing->creer)
+	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
 		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
 
@@ -291,7 +293,7 @@ if ($object->fetch($id) >= 0)
 					$var = !$var;
 					print '<tr '.$bc[$var].'>';
 
-					if ($object->statut == 0)
+					if ($allowaddtarget)
 					{
 						print '<form name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -326,7 +328,7 @@ if ($object->fetch($id) >= 0)
 					print '</td>';
 
 					print '<td align="right">';
-					if ($object->statut == 0)
+					if ($allowaddtarget)
 					{
 						print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					}
@@ -337,7 +339,7 @@ if ($object->fetch($id) >= 0)
 					}
 					print '</td>';
 
-					if ($object->statut == 0) print '</form>';
+					if ($allowaddtarget) print '</form>';
 
 					print "</tr>\n";
 				}
@@ -349,13 +351,6 @@ if ($object->fetch($id) >= 0)
 	}
 
 	// List of selected targets
-	print "\n<!-- Liste destinataires selectionnes -->\n";
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
@@ -375,9 +370,25 @@ if ($object->fetch($id) >= 0)
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
 
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+
 		$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
 
 		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$object->nbemail,'');
+
+		print '</form>';
+
+		print "\n<!-- Liste destinataires selectionnes -->\n";
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+
 
 		if ($page)			$param.= "&amp;page=".$page;
 		print '<table class="noborder" width="100%">';
@@ -510,6 +521,8 @@ if ($object->fetch($id) >= 0)
 		}
 		print "</table><br>";
 
+		print '</form>';
+
 		$db->free($resql);
 	}
 	else
@@ -517,7 +530,6 @@ if ($object->fetch($id) >= 0)
 		dol_print_error($db);
 	}
 
-	print '</form>';
 	print "\n<!-- Fin liste destinataires selectionnes -->\n";
 
 }
