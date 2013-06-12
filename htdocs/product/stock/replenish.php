@@ -34,9 +34,12 @@ $langs->load("stocks");
 $langs->load("orders");
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->societe_id) {
+    $socid = $user->societe_id;
+}
 $result=restrictedArea($user,'produit|service');
 
+//checks if a product has been ordered
 function ordered($product_id) {
     global $db;
     $sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) from ';
@@ -58,7 +61,7 @@ function ordered($product_id) {
         }
     }
     else {
-        $error=$db->lasterror();
+        $error = $db->lasterror();
         dol_print_error($db);
         dol_syslog('replenish.php: ' . $error, LOG_ERROR);
         return $langs->trans('error');
@@ -77,8 +80,14 @@ $tobuy = GETPOST('tobuy');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if (! $sortfield) $sortfield = 'stock_physique';
-if (! $sortorder) $sortorder = 'ASC';
+
+if (!$sortfield) {
+    $sortfield = 'stock_physique';
+}
+
+if (!$sortorder) {
+    $sortorder = 'ASC';
+}
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
@@ -279,10 +288,12 @@ if ($resql) {
     $head[1][2] = 'replenishorders';
     dol_fiche_head($head, 'replenish', $title, 0, 'stock');
     if ($sref || $snom || $sall || GETPOST('search')) {
+        $filters = '&sref=' . $sref . '&snom=' . $snom;
+        $filters .= '&amp;sall=' . $sall;
         print_barre_liste($texte, 
                           $page, 
                           'replenish.php', 
-                          '&sref=' . $sref . '&snom=' . $snom . '&amp;sall=' . $sall, 
+                          $filters, 
                           $sortfield, 
                           $sortorder,
                           '',
@@ -290,10 +301,13 @@ if ($resql) {
                           );
     }
     else {
+        $filters = '&sref=' . $sref . '&snom=' . $snom;
+        $filters .= '&fourn_id=' . $fourn_id;
+        $filters .= (isset($type)?'&amp;type=' . $type:'');
         print_barre_liste($texte, 
                           $page, 
                           'replenish.php', 
-                          '&sref=$sref&snom=$snom&fourn_id=$fourn_id' . (isset($type)?'&amp;type=$type':''), 
+                          $filters, 
                           $sortfield, 
                           $sortorder, 
                           '', 
@@ -336,8 +350,9 @@ if ($resql) {
         print '</td></tr>';
     }
 
-    $param = (isset($type)? '&type=$type' : '');
-    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&sref=' . $sref;
+    $param = (isset($type)? '&type=' . $type : '');
+    $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom;
+    $param .= '&sref=' . $sref;
 
     // Lignes des titres
     print '<tr class="liste_titre">';
@@ -566,10 +581,12 @@ if ($resql) {
 
     if ($num > $conf->liste_limit) {
         if ($sref || $snom || $sall || GETPOST('search')) {
+            $filters = '&sref=' . $sref . '&snom=' . $snom;
+            $filters .= '&amp;sall=' . $sall;
             print_barre_liste('', 
                               $page, 
                               'replenish.php', 
-                              '&sref=' . $sref . '&snom=' . $snom . '&amp;sall=' . $sall, 
+                              $filters, 
                               $sortfield, 
                               $sortorder, 
                               '', 
@@ -579,10 +596,13 @@ if ($resql) {
                               );
         }
         else {
+            $filters = '&sref=' . $sref . '&snom=' . $snom;
+            $filters .= '&fourn_id=' . $fourn_id;
+            $filters .= (isset($type)? '&amp;type=' . $type : '');
             print_barre_liste('', 
                               $page, 
                               'replenish.php', 
-                              "&sref=$sref&snom=$snom&fourn_id=$fourn_id" . (isset($type)?"&amp;type=$type":""), 
+                              $filters, 
                               $sortfield, 
                               $sortorder, 
                               '', 

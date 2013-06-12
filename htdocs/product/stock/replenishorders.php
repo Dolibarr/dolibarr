@@ -47,7 +47,10 @@ $head[0][2] = 'replenish';
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
-dol_fiche_head($head, 'replenishorders', $langs->trans("Replenishment"), 0, 'stock');
+dol_fiche_head($head, 'replenishorders', 
+               $langs->trans("Replenishment"), 
+               0, 
+               'stock');
 $commandestatic = new CommandeFournisseur($db);
 $sref = GETPOST('search_ref');
 $snom = GETPOST('search_nom');
@@ -59,17 +62,27 @@ $page = GETPOST('page', 'int');
 
 $sortorder = GETPOST('sortorder');
 $sortfield = GETPOST('sortfield');
-if(!$sortorder) $sortorder = 'DESC';
-if(!$sortfield) $sortfield = 'cf.date_creation';
+
+if(!$sortorder) {
+    $sortorder = 'DESC';
+}
+
+if(!$sortfield) {
+    $sortfield = 'cf.date_creation';
+}
+
 $offset = $conf->liste_limit * $page ;
 $sql = 'SELECT s.rowid as socid, s.nom, cf.date_creation as dc,';
 $sql .= ' cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc';
 $sql .= ", cf.fk_user_author, u.login";
 $sql .= ' FROM (' . MAIN_DB_PREFIX . 'societe as s,';
 $sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
+
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql.= ', ' . MAIN_DB_PREFIX . 'societe_commerciaux as sc';
+
 }
+
 $sql .= ') LEFT JOIN ' . MAIN_DB_PREFIX . 'user as u ';
 $sql .= 'ON cf.fk_user_author = u.rowid';
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
@@ -100,18 +113,17 @@ if ($socid) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
-if (GETPOST('statut'))
-{
-	$sql .= ' AND fk_statut = ' . GETPOST('statut');
+if (GETPOST('statut')) {
+    $sql .= ' AND fk_statut = ' . GETPOST('statut');
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
+$sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
-if ($resql) {
 
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
-
 
     print_barre_liste($langs->trans('ReplenishmentOrders'), 
                       $page, 
@@ -197,7 +209,7 @@ if ($resql) {
     print '<td colspan="2" class="liste_titre" align="right">';
     $src = DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png';
     $value = dol_escape_htmltag($langs->trans('Search'));
-    print '<input type="image" class="liste_titre" name="button_search" src="' . $src . '" value="'.$value.'" title="'.$value.'">';
+    print '<input type="image" class="liste_titre" name="button_search" src="' . $src . '" value="' . $value . '" title="' . $value . '">';
     print '</td>';
     print '</tr>';
 
@@ -214,32 +226,32 @@ if ($resql) {
         $href = DOL_URL_ROOT . '/fourn/commande/fiche.php?id=' . $obj->rowid;
         print '<a href="' . $href . '">';
         print img_object($langs->trans('ShowOrder'), 'order') . ' ' . $obj->ref;
-        print '</a></td>'."";
+        print '</a></td>';
 
         // Company
         print '<td>';
         $href = DOL_URL_ROOT . '/fourn/fiche.php?socid=' . $obj->socid;
         print '<a href="' . $href .'">';
-        print img_object($langs->trans('ShowCompany'), 'company') . ' ' . $obj->nom;
-        print '</a></td>'."";
+        print img_object($langs->trans('ShowCompany'), 'company') . ' ';
+        print $obj->nom . '</a></td>';
 
         // Author
         $userstatic->id = $obj->fk_user_author;
         $userstatic->login = $obj->login;
         print '<td>';
+        
         if ($userstatic->id) {
             print $userstatic->getLoginUrl(1);
         }
         else {
             print '&nbsp;';
         }
+        
         print '</td>';
-
         // Amount
         print '<td align="right" width="100">';
         print price($obj->total_ttc);
         print '</td>';
-
         // Date
         print '<td align="center" width="100">';
         if ($obj->dc) {
@@ -249,12 +261,10 @@ if ($resql) {
             print '-';
         }
         print '</td>';
-
         // Statut
         print '<td align="right">';
         print $commandestatic->LibStatut($obj->fk_statut, 5);
         print '</td>';
-
         print '</tr>';
         $i++;
     }
