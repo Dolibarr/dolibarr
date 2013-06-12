@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,6 +321,19 @@ if (empty($reshook))
                     $id = $object->create($user);
                     if ($id > 0)
                     {
+                        if (GETPOST('clone_composition'))
+                        {
+                            $result = $object->clone_associations($originalId, $id);
+
+                            if ($result < 1)
+                            {
+                                $db->rollback();
+                                setEventMessage($langs->trans('ErrorProductClone'), 'errors');
+                                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
+                                exit;
+                            }
+                        }
+
                         // $object->clone_fournisseurs($originalId, $id);
 
                         $db->commit();
@@ -1234,7 +1248,8 @@ $formquestionclone=array(
 	'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => $langs->trans("CopyOf").' '.$object->ref, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
+    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
+    array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1)
 );
 
 // Confirm delete product
@@ -1246,7 +1261,7 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 // Clone confirmation
 if ($action == 'clone' && empty($conf->use_javascript_ajax))
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
 
 
@@ -1270,7 +1285,7 @@ if ($action == '' || $action == 'view')
             if (! empty($conf->use_javascript_ajax))
             {
                 print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-                print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
+                print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
             }
             else
             {
