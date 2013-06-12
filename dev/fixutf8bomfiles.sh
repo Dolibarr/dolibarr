@@ -18,7 +18,7 @@ fi
 # To detec
 if [ "x$1" = "xlist" ]
 then
-	#find . -iname '*.php' -print0 -o -iname '*.sh' -print0 -o -iname '*.pl' -print0 -o -iname '*.lang' -print0 -o -iname '*.txt' -print0 | xargs -0 awk '/^\xEF\xBB\xBF/ {print FILENAME} {nextfile}'
+	#find . \( -iname '*.php' -print0 -o -iname '*.sh' -print0 -o -iname '*.pl' -print0 -o -iname '*.lang' -print0 -o -iname '*.txt' \) -print0 | xargs -0 awk '/^\xEF\xBB\xBF/ {print FILENAME} {nextfile}'
 	grep -rlIZ --include='*.php' --include='*.sh' --include='*.pl' --include='*.lang' --include='*.txt' --exclude-dir='.git' --exclude-dir='includes' --exclude-dir='custom' . . | xargs -0 awk '/^\xEF\xBB\xBF/ {print FILENAME} {nextfile}'
 fi
 
