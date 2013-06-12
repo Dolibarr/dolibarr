@@ -564,7 +564,7 @@ if ($resql) {
             $form = new Form($db);
             print '<td align="right">';
             print $form->select_product_fourn_price($prod->id, 
-                                                    'fourn' . $i);
+                                                    'fourn' . $i, 1);
             print '</td>';
             print '<td>&nbsp</td>';
             print "</tr>";

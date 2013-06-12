@@ -1860,15 +1860,9 @@ class Form
             {
                 $form.= '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
             }
-            else if ($num == 1) {
-                $objp = $this->db->fetch_object($result);
-                $form = $objp->nom;
-                $form .= '<input type="hidden" name="'.$htmlname.'" value="'.$objp->idprodfournprice.'">';
-            }
             else
             {
-                $form = '<select class="flat" name="'.$htmlname.'">';
-                if($showempty) $form.= '<option value="0">&nbsp;</option>';
+                if($showempty && $num > 1) $form.= '<option value="0">&nbsp;</option>';
 
                 $i = 0;
                 while ($i < $num)
