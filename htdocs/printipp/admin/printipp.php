@@ -44,6 +44,12 @@ if (!$mode) $mode='config';
 if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
+    if (GETPOST('PRINTIPP_ENABLED','alpha') == '1') $result=dolibarr_set_const($db, "PRINTIPP_ENABLED",1,'yesno',0,'',$conf->entity);
+    else
+    {
+        $result=dolibarr_del_const($db, "PRINTIPP_ENABLED",$conf->entity);
+    }
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PRINTIPP_HOST",GETPOST('PRINTIPP_HOST','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PRINTIPP_PORT",GETPOST('PRINTIPP_PORT','alpha'),'chaine',0,'',$conf->entity);
@@ -103,6 +109,27 @@ if ($mode=='config'&& $user->admin)
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired">';
+    print $langs->trans("PRINTIPP_ENABLED").'</td><td colspan="2" align="left">';
+
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('PRINTIPP_ENABLED');
+    }
+    else
+    {
+        if (empty($conf->global->PRINTIPP_ENABLED))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_PRINTIPP_ENABLED">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+         }
+         else
+         {
+             print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_PRINTIPP_ENABLED">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+         }
+    }
+    print '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td class="fieldrequired">';
     print $langs->trans("PRINTIPP_HOST").'</td><td>';
     print '<input size="64" type="text" name="PRINTIPP_HOST" value="'.$conf->global->PRINTIPP_HOST.'">';
     print ' &nbsp; '.$langs->trans("Example").': localhost';
@@ -145,10 +172,39 @@ if ($mode=='test'&& $user->admin)
     print '<table class="nobordernopadding" width="100%">';
     $printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
     $var=true;
+    print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("TestConnect").'</td>';
-    print print_r($printer->getlist_available_printers(),true);
+    print '<td>Uri</td>';
+    print '<td>Name</td>';
+    print '<td>State</td>';
+    print '<td>State_reason</td>';
+    print '<td>State_reason1</td>';
+    print '<td>BW</td>';
+    print '<td>Color</td>';
+    //print '<td>Device</td>';
+    print '<td>Media</td>';
+    print '<td>Supported</td>';
     print "</tr>\n";
+    $list = $printer->getlist_available_printers();
+    $var = True;
+    foreach ($list as $value )
+    {
+        $var=!$var;
+        $printer_det = $printer->get_printer_detail($value);
+        print "<tr $bc[$var]>";
+        print '<td>'.$value.'</td>';
+        //print '<td><pre>'.print_r($printer_det,true).'</pre></td>';
+        print '<td>'.$printer_det->printer_name->_value0.'</td>';
+        print '<td>'.$printer_det->printer_state->_value0.'</td>';
+        print '<td>'.$printer_det->printer_state_reasons->_value0.'</td>';
+        print '<td>'.$printer_det->printer_state_reasons->_value1.'</td>';
+        print '<td>'.$printer_det->printer_type->_value2.'</td>';
+        print '<td>'.$printer_det->printer_type->_value3.'</td>';
+        //print '<td>'.$printer_det->device_uri->_value0.'</td>';
+        print '<td>'.$printer_det->media_default->_value0.'</td>';
+        print '<td>'.$printer_det->media_type_supported->_value1.'</td>';
+        print "</tr>\n";
+    }
     print '</table>';
 }
 

@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('invoicecard'));
 
 /*
  * Actions
-*/
+ */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1829,6 +1829,16 @@ else if ($action == 'remove_file')
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 		$action='';
 	}
+}
+
+// Print file
+else if ($action == 'print_file' AND $user->rights->printipp->read)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
+	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
+	$printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
+    setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
+    $action='';
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
