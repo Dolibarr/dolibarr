@@ -187,6 +187,8 @@ if($action == 'order') {
         }
         if(!$fail && $id) {
             setEventMessage($langs->trans('OrderCreated'), 'mesgs');
+            header('Location: replenishorders.php');
+            exit;
         }
     }
 }
