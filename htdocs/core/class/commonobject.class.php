@@ -2189,10 +2189,11 @@ abstract class CommonObject
      *
      * @param	object	$extrafields	extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield
+	 * @param	array	$params			optionnal parameters
      *
      * @return string
      */
-    function showOptionals($extrafields,$mode='view')
+    function showOptionals($extrafields,$mode='view',$params=0)
     {
 		global $_POST;
 
@@ -2207,7 +2208,13 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				$colspan='3';
+				if (is_array($params) && count($params)>0) {
+					if (array_key_exists('colspan',$params)) {
+						$colspan=$params['colspan'];
+					}
+				}else {
+					$colspan='3';
+				}
 				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$this->array_options["options_".$key]);
 				if ($extrafields->attribute_type[$key] == 'separate')
 				{
@@ -2215,14 +2222,20 @@ abstract class CommonObject
 				}
 				else
 				{
+					$csstyle='';
+					if (is_array($params) && count($params)>0) {
+						if (array_key_exists('style',$params)) {
+							$csstyle=$params['style'];
+						}
+					}
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
-						$out .= '<tr>';
+						$out .= '<tr '.$csstyle.'>';
 						$colspan='0';
 					}
 					else
 					{
-						$out .= '<tr>';
+						$out .= '<tr '.$csstyle.'>';
 					}
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
@@ -2623,6 +2636,10 @@ abstract class CommonObject
     {
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
+    	//Line extrafield
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    	$extrafieldsline = new ExtraFields($this->db);
+    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
 
     	// Use global variables + $dateSelector + $seller and $buyer
     	include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
@@ -2644,6 +2661,11 @@ abstract class CommonObject
     	global $conf,$langs,$object,$hookmanager;
     	global $form,$bcnd,$var;
 
+    	//Line extrafield
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    	$extrafieldsline = new ExtraFields($this->db);
+    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line); 	 
+
     	// Use global variables + $dateSelector + $seller and $buyer
     	include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
     }
@@ -2663,6 +2685,11 @@ abstract class CommonObject
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
+
+		//Line extrafield
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline = new ExtraFields($this->db);
+		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
         // Use global variables + $dateSelector + $seller and $buyer
@@ -2750,8 +2777,16 @@ abstract class CommonObject
 		$var = true;
 		$i	 = 0;
 
+		//Line extrafield
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafieldsline = new ExtraFields($this->db);
+		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
+		
 		foreach ($this->lines as $line)
 		{
+			//Line extrafield
+			$line->fetch_optionals($line->id,$extralabelslines);
+
 			$var=!$var;
 
 			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
@@ -2764,7 +2799,7 @@ abstract class CommonObject
 			}
 			else
 			{
-				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$extrafieldsline);
 			}
 
 			$i++;
@@ -2784,9 +2819,10 @@ abstract class CommonObject
 	 *	@param  string	    $seller            	Object of seller third party
 	 *	@param  string	    $buyer             	Object of buyer third party
 	 *	@param	string		$selected		   	Object line selected
+	 *  @param  object		$extrafieldline		Object of extrafield line attribute
 	 *	@return	void
 	 */
-	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$hookmanager;
 		global $form,$bc,$bcdd;

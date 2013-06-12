@@ -954,6 +954,7 @@ MAIN_PROXY_USER=Login to use the proxy server
 MAIN_PROXY_PASS=Password to use the proxy server
 DefineHereComplementaryAttributes=Define here all attributes, not already available by default, and that you want to be supported for %s.
 ExtraFields=Complementary attributes
+ExtraFieldsLines=Complementary attributes (lines)
 ExtraFieldsThirdParties=Complementary attributes (thirdparty)
 ExtraFieldsContacts=Complementary attributes (contact/address)
 ExtraFieldsMember=Complementary attributes (member)

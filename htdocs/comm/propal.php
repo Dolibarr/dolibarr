@@ -640,6 +640,20 @@ else if ($action == "addline" && $user->rights->propal->creer)
 	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	$predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
@@ -809,7 +823,8 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				$buyingprice,
 				$label,
 				$date_start,
-				$date_end
+				$date_end,
+				$array_option
 			);
 
 			if ($result > 0)
@@ -877,6 +892,20 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+	
 	// Define special_code for special lines
 	$special_code=0;
 	if (! GETPOST('qty')) $special_code=3;
@@ -935,7 +964,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			$label,
 			$type,
 			$date_start,
-			$date_end
+			$date_end,
+			$array_option
 		);
 
 		if ($result >= 0)
