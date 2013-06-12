@@ -33,6 +33,7 @@ CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Schedul
 #
 # Menu
 #
+CronJobs=Scheduled jobs
 CronListActive= List of active jobs
 CronListInactive= List of disabled jobs
 

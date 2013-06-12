@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,11 +44,7 @@ if (!$mode) $mode='config';
 if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
-    if (GETPOST('PRINTIPP_ENABLED','alpha') == '1') $result=dolibarr_set_const($db, "PRINTIPP_ENABLED",1,'yesno',0,'',$conf->entity);
-    else
-    {
-        $result=dolibarr_del_const($db, "PRINTIPP_ENABLED",$conf->entity);
-    }
+
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PRINTIPP_HOST",GETPOST('PRINTIPP_HOST','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
@@ -89,8 +85,7 @@ dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"));
 
 print $langs->trans("PrintIPPDesc")."<br>\n";
 
-
-    print '<br>';
+print '<br>';
 
 if ($mode=='config'&& $user->admin)
 {
@@ -103,7 +98,7 @@ if ($mode=='config'&& $user->admin)
 
     $var=true;
     print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("AccountParameter").'</td>';
+    print '<td>'.$langs->trans("Parameters").'</td>';
     print '<td>'.$langs->trans("Value").'</td>';
     print "</tr>\n";
 
@@ -191,7 +186,7 @@ if ($mode=='test'&& $user->admin)
     {
         $var=!$var;
         $printer_det = $printer->get_printer_detail($value);
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         print '<td>'.$value.'</td>';
         //print '<td><pre>'.print_r($printer_det,true).'</pre></td>';
         print '<td>'.$printer_det->printer_name->_value0.'</td>';
@@ -206,6 +201,8 @@ if ($mode=='test'&& $user->admin)
         print "</tr>\n";
     }
     print '</table>';
+    
+    if (count($list) == 0) print $langs->trans("NoPrinterFound");
 }
 
 dol_fiche_end();
