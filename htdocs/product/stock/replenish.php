@@ -185,7 +185,7 @@ if($action == 'order') {
             }
             $i++;
         }
-        if(!$fail) {
+        if(!$fail && $id) {
             setEventMessage($langs->trans('OrderCreated'), 'mesgs');
         }
     }
