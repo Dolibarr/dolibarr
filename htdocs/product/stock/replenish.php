@@ -26,7 +26,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 $langs->load("products");
@@ -73,8 +72,6 @@ $sref = GETPOST('sref');
 $snom = GETPOST('snom');
 $sall = GETPOST('sall');
 $type = GETPOST('type','int');
-$sbarcode = GETPOST('sbarcode');
-$catid = GETPOST('catid','int');
 $tobuy = GETPOST('tobuy');
 
 $sortfield = GETPOST('sortfield','alpha');
@@ -82,7 +79,7 @@ $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 
 if (!$sortfield) {
-    $sortfield = 'stock_physique';
+    $sortfield = 'p.ref';
 }
 
 if (!$sortorder) {
@@ -90,32 +87,6 @@ if (!$sortorder) {
 }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
-// Load sale and categ filters
-$search_sale = GETPOST('search_sale');
-$search_categ = GETPOST('search_categ');
-
-// Get object canvas 
-//(By default, this is not defined, so standard usage of dolibarr)
-$canvas = GETPOST('canvas');
-$objcanvas = '';
-if (! empty($canvas)) {
-    require_once DOL_DOCUMENT_ROOT . '/core/class/canvas.class.php';
-    $objcanvas = new Canvas($db,$action);
-    $objcanvas->getCanvas('product', 'list', $canvas);
-}
-
-if (! empty($_POST['button_removefilter_x'])) {
-    $sref = '';
-    $snom = '';
-    $sall = '';
-    $search_sale = '';
-    $search_categ = '';
-    $type = '';
-    $catid = '';
-}
-
-
 
 /*
  * Actions
@@ -179,7 +150,6 @@ if($action == 'order') {
             }
             $id = $order->create($user);
             if($id < 0) {
-                //error stuff
                 $fail++;
                 setEventMessage($langs->trans('OrderFail'), 'errors');
             }
@@ -196,29 +166,20 @@ if($action == 'order') {
 /*
  * View
  */
-$htmlother=new FormOther($db);
+$title = $langs->trans('Replenishment');
 
-$title=$langs->trans('Replenishment');
-
-$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type';
 $sql .= ', p.tms as datem, p.duration, p.tobuy, p.seuil_stock_alerte,';
 $sql .= ' SUM(s.reel) as stock_physique';
 $sql .= ', p.desiredstock';
-$sql .= ' FROM (' . MAIN_DB_PREFIX . 'product as p';
-// need this table joined to the select in order to filter by categ
-if ($search_categ) {
-    $sql.= ", " . MAIN_DB_PREFIX . "categorie_product as cp";
-}
-$sql .= ') LEFT JOIN ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pf';
+$sql .= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
+$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pf';
 $sql .= ' ON p.rowid = pf.fk_product';
 $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
 $sql .= ' ON p.rowid = s.fk_product';
-
 $sql.= ' WHERE p.entity IN (' . getEntity("product", 1) . ')';
-if ($search_categ) { // Join for the needed table to filter by categ
-    $sql .= ' AND p.rowid = cp.fk_product';
-}
+
 if ($sall) {
     $sql .= ' AND (p.ref LIKE "%'.$db->escape($sall).'%" ';
     $sql .= 'OR p.label LIKE "%'.$db->escape($sall).'%" ';
@@ -237,9 +198,6 @@ if (dol_strlen($type)) {
 if ($sref) {
     $sql .= ' AND p.ref LIKE "%' . $sref . '%"';
 }
-if ($sbarcode) {
-    $sql .= ' AND p.barcode LIKE "%' . $sbarcode . '%"';
-}
 if ($snom) {
     $sql .= ' AND p.label LIKE "%' . $db->escape($snom) . '%"';
 }
@@ -249,17 +207,10 @@ $sql .= ' AND p.tobuy = 1';
 if (!empty($canvas)) {
     $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
 }
-if($catid) {
-    $sql .= ' AND cp.fk_categorie = ' . $catid;
-}
 
     $sql .= ' AND p.rowid = pf.fk_product';
 
-// Insert categ filter
-if ($search_categ) {
-    $sql .= ' AND cp.fk_categorie = ' . $db->escape($search_categ);
-}
-$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price';
+$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql .= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql .= ', p.duration, p.tobuy, p.seuil_stock_alerte';
 $sql .= ', p.desiredstock';
@@ -279,8 +230,7 @@ if ($resql) {
 
     $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
     $helpurl .= 'ES:M&oacute;dulo_Stocks';
-    $texte = $langs->trans('Replenishment');
-    llxHeader('', $title, $helpurl, $texte);
+    llxHeader('', $title, $helpurl, $title);
     $head = array();
     $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
     $head[0][1] = $title;
@@ -316,15 +266,6 @@ if ($resql) {
                           $num);
     }
 
-    if (!empty($catid)) {
-        print '<div id="ways">';
-        $c = new Categorie($db);
-        $c->fetch($catid);
-        $ways = $c->print_all_ways(' &gt; ', 'product/replenish.php');
-        print ' &gt; ' . $ways[0] . '<br>';
-        print '</div><br>';
-    }
-
     print '<form action="replenish.php" method="post" name="formulaire">';
     print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
     print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
@@ -332,25 +273,8 @@ if ($resql) {
     print '<input type="hidden" name="type" value="' . $type . '">';
     print '<input type="hidden" name="linecount" value="' . $num . '">';
     print '<input type="hidden" name="action" value="order">';
-    //print '</div>';
-    print '<table class="liste" width="100%">';
 
-    // Filter on categories
-    $moreforfilter = '';
-    if (!empty($conf->categorie->enabled)) {
-        $moreforfilter .= $langs->trans('Categories') . ': ';
-        $moreforfilter .= $htmlother->select_categories(0, 
-                                                        $search_categ, 
-                                                        'search_categ'
-                                                        );
-        $moreforfilter .= ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ';
-    }
-    if ($moreforfilter) {
-        print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="9">';
-        print $moreforfilter;
-        print '</td></tr>';
-    }
+    print '<table class="liste" width="100%">';
 
     $param = (isset($type)? '&type=' . $type : '');
     $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom;
@@ -398,27 +322,20 @@ if ($resql) {
                             $sortorder
                             );
     if($conf->global->USE_VIRTUAL_STOCK) {
-        print_liste_field_titre($langs->trans('VirtualStock'), 
-                                'replenish.php', 
-                                '', 
-                                $param, 
-                                '', 
-                                'align="right"', 
-                                $sortfield, 
-                                $sortorder
-                                );
+        $stocklabel = $langs->trans('VirtualStock');
     }
     else {
-        print_liste_field_titre($langs->trans('PhysicalStock'), 
-                                'replenish.php', 
-                                'stock_physique', 
-                                $param, 
-                                '', 
-                                'align="right"', 
-                                $sortfield, 
-                                $sortorder
-                                );
+        $stocklabel = $langs->trans('PhysicalStock');
     }
+    print_liste_field_titre($stocklabel, 
+                            'replenish.php', 
+                            'stock_physique', 
+                            $param, 
+                            '', 
+                            'align="right"', 
+                            $sortfield, 
+                            $sortorder
+                            );
     print_liste_field_titre($langs->trans('StockToBuy'), 
                             'replenish.php', 
                             '', 
@@ -470,7 +387,6 @@ if ($resql) {
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">';
-    print '<input type="image" class="liste_titre" name="button_removefilter" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/searchclear.png" alt="' . $langs->trans("RemoveFilter") . '">';
     print '</td>';
     print '</tr>';
 
@@ -532,6 +448,7 @@ if ($resql) {
                 $objp->stock_physique = 0;
             }
             if($conf->global->USE_VIRTUAL_STOCK) {
+                //compute virtual stock
                 $prod->fetch($prod->id);
                 $result=$prod->load_stats_commande(0, '1,2');
                 if ($result < 0) {
@@ -566,7 +483,9 @@ if ($resql) {
             $form = new Form($db);
             print '<td align="right">';
             print $form->select_product_fourn_price($prod->id, 
-                                                    'fourn' . $i, 1);
+                                                    'fourn' . $i, 
+                                                    1
+                                                   );
             print '</td>';
             print '<td>&nbsp</td>';
             print "</tr>";
