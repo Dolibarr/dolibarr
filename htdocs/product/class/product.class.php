@@ -6,6 +6,7 @@
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2069,6 +2070,24 @@ class Product extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		$this->db->commit();
+		return 1;
+	}
+
+	function clone_associations($fromId, $toId)
+	{
+		$this->db->begin();
+
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association (rowid, fk_product_pere, fk_product_fils, qty)';
+		$sql.= " SELECT null, $toId, fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
+		$sql.= " WHERE fk_product_pere = '".$fromId."'";
+
+		if (! $this->db->query($sql))
+		{
+			$this->db->rollback();
+			return -1;
+		}
+
 		$this->db->commit();
 		return 1;
 	}

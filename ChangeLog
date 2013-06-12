@@ -19,6 +19,7 @@ For users:
 - New: Add object_hour as substitution tag for opendocument generation.
 - New: Add option MEMBER_PAYONLINE_SENDEMAIL to send email when paypal or paybox payment is done.
 - New: Implement same rule for return value of all command line scripts (0 when success, <>0 if error).
+- New: Clone product/service composition
 - New: [ task #926 ] Add extrafield feature on order lines
 - New: [ task #927 ] Add extrafield feature on Proposal lines
 - New: [ task #928 ] Add extrafield feature on invoice lines
