@@ -1102,12 +1102,11 @@ div.tabs a.tab:hover {
     text-align: <?php print $left; ?>;
 }
 
-div.tabBar {
-    color: #234046;
-    margin: 0px 0px 10px 0px;
-    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
-}
 */
+
+div.tabBar {
+    margin: 0px 0px 10px 0px;
+}
 
 div.tabsAction {
     margin: 20px 0em 1px 0em;
