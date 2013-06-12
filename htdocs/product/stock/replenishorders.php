@@ -45,11 +45,11 @@ $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
 $head[0][1] = $langs->trans('Replenishment');
 $head[0][2] = 'replenish';
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
-$head[1][1] = $langs->trans("ReplenishmentOrders");
+$head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
 dol_fiche_head($head, 
                'replenishorders', 
-               $langs->trans("Replenishment"), 
+               $langs->trans('Replenishment'), 
                0, 
                'stock');
 $commandestatic = new CommandeFournisseur($db);
