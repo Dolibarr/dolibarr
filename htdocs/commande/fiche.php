@@ -80,7 +80,6 @@ $result=restrictedArea($user,'commande',$id);
 $object = new Commande($db);
 $extrafields = new ExtraFields($db);
 
-
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -315,6 +314,13 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$fk_parent_line = 0;
 						}
 
+						//Extrafields
+						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+						{
+							$lines[$i]->fetch_optionals($lines[$i]->rowid);
+							$array_option=$lines[$i]->array_options;
+						}
+						
 						$result = $object->addline(
 							$object_id,
 							$desc,
@@ -337,7 +343,8 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$fk_parent_line,
 							$lines[$i]->fk_fournprice,
 							$lines[$i]->pa_ht,
-							$label
+							$label,
+							$array_option
 						);
 
 						if ($result < 0)
@@ -558,6 +565,20 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	$price_ht = GETPOST('price_ht');
 	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
@@ -739,7 +760,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				GETPOST('fk_parent_line'),
 				$fournprice,
 				$buyingprice,
-				$label
+				$label,
+				$array_option
 			);
 
 			if ($result > 0)
@@ -813,6 +835,19 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
 	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
+	//Extrafields Lines
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield POST Data
+	if (is_array($extralabelsline))
+	{
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
 	// Check minimum price
 	$productid = GETPOST('productid', 'int');
 	if (! empty($productid))
@@ -866,7 +901,9 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 			0,
 			$fournprice,
 			$buyingprice,
-			$label
+			$label,
+			0,
+			$array_option
 		);
 
 		if ($result >= 0)
@@ -1117,11 +1154,13 @@ else if ($action == 'remove_file')
 }
 
 // Print file
-else if ($action == 'print_file' AND $user->rights->printipp->use)
+else if ($action == 'print_file' AND $user->rights->printipp->read)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
 	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
 	$printer->print_file(GETPOST('file','alpha'),GETPOST('printer','alpha'));
+    setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
+    $action='';
 }
 
 else if ($action == 'update_extras')
@@ -2456,9 +2495,7 @@ else
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed=$user->rights->commande->creer;
 			$delallowed=$user->rights->commande->supprimer;
-			$printer = false;
-			if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
-			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
+			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 			 * Linked object block

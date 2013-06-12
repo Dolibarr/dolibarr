@@ -111,6 +111,7 @@ class dolprintIPP
                 $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
             }
         }
+        // Set number of copy
         $ipp->setCopies($obj->copy);
         $ipp->setData(DOL_DATA_ROOT.'/'.$module.'/'.$file);
         $ipp->printJob();
@@ -148,10 +149,52 @@ class dolprintIPP
                 $ipp->setPrinterURI("ipp://localhost:631/printers/");
             }
         }
-        echo 'Jobs for    : '.$this->userid.' module : '.$module.' Printer : '.$obj->printer_name.'<br />';
-        echo "Getting Jobs: ".$ipp->getJobs(true,3,"completed",true)."<br />";
+        // Getting Jobs
+        $ipp->getJobs(false,0,'completed',false);
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre">';
+        print "<td>Id</td>";
+        print "<td>Owner</td>";
+        print "<td>Printer</td>";
+        print "<td>File</td>";
+        print "<td>Status</td>";
+        print "<td>Cancel</td>";
+        print "</tr>\n";
+        $jobs = $ipp->jobs_attributes;
+        $var = True;
+        //print '<pre>'.print_r($jobs,true).'</pre>';
+        foreach ($jobs as $value )
+        {
+            $var=!$var;
+            print "<tr $bc[$var]>";
+            print '<td>'.$value->job_id->_value0.'</td>';
+            print '<td>'.$value->job_originating_user_name->_value0.'</td>';
+            print '<td>'.$value->printer_uri->_value0.'</td>';
+            print '<td>'.$value->job_name->_value0.'</td>';
+            print '<td>'.$value->job_state->_value0.'</td>';
+            print '<td>'.$value->job_uri->_value0.'</td>';
+            print '</tr>';
+        }
+        print "</table>";
+    }
 
-        echo "<pre>";print_r($ipp->jobs_attributes); echo "</pre>";
+    /**
+     *  Get printer detail
+     *
+     */
+    function get_printer_detail($uri)
+    {
+        global $conf,$db;
+
+        include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
+        $ipp = new CupsPrintIPP();
+        $ipp->setLog(DOL_DATA_ROOT.'/printipp.log','file',3); // logging very verbose
+        $ipp->setHost($this->host);
+        $ipp->setPort($this->port);
+        $ipp->setUserName($this->userid);
+        $ipp->setPrinterURI($uri);
+        $ipp->getPrinterAttributes();
+        return $ipp->printer_attributes;
     }
 }
 ?>

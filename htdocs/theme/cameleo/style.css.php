@@ -473,14 +473,18 @@ div.mainmenu.ecm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
 }
 
-div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
-}
-
 div.mainmenu.gravatar {
 }
 
 div.mainmenu.geopipmaxmind {
+}
+
+div.mainmenu.home{
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
+}
+
+div.mainmenu.hrm {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 
 div.mainmenu.members {

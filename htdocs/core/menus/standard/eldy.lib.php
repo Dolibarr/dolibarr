@@ -421,8 +421,8 @@ function print_end_menu_array()
  * Core function to output left menu eldy
  *
  * @param	DoliDB		$db                 Database handler
- * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
- * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
+ * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
+ * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
  * @param	array		&$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	array		&$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).

@@ -1740,7 +1740,7 @@ class Form
     	                $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
 	                    $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
                     	$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
-                        $outval.=$langs->transnoentities("Units");
+                        $outval.= $langs->transnoentities("Units");
                     }
 
                     if ($objp->quantity >= 1)

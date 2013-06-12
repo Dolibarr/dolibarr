@@ -163,13 +163,12 @@ class FormFile
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
-     *      @param      boolean             $printer            Printer Icon
      * 		@return		int										<0 if KO, number of shown files if OK
      */
-    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$printer=false)
+    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
     {
         $this->numoffiles=0;
-        print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang,$printer);
+        print $this->showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed,$modelselected,$allowgenifempty,$forcenomultilang,$iconPDF,$maxfilenamelength,$noform,$param,$title,$buttonlabel,$codelang);
         return $this->numoffiles;
     }
 
@@ -193,22 +192,22 @@ class FormFile
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
-     *      @param      boolean             $printer            Printer Icon
      * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
-    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$printer=false)
+    function showdocuments($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
     {
-        // filedir = conf->...dir_ouput."/".get_exdir(id)
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
         global $langs,$conf,$hookmanager;
         global $bc;
 
+        // filedir = $conf->...->dir_ouput."/".get_exdir(id)
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        
         // For backward compatibility
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $filename, $filedir);
         }
-
+        $printer = ($user->rights->printipp->read && $conf->printipp->enabled)?true:false;
+        
         $forname='builddoc';
         $out='';
         $var=true;

@@ -1,13 +1,16 @@
-# Dolibarr language file - Source file is en_US - donations
+* Manually generated
+ * Generation date 2012-07-17 19:54:26
+
+// START - Lines manually generated (2012-07-17 19:54:26).
+ */
+// Reference language: en_US -> TR – donations
 CHARSET=UTF-8
 Donation=Bağış
 Donations=Bağışlar
-# DonationRef=Donation ref.
 Donor=Bağışçı
 Donors=Bağışçılar
 AddDonation=Bir bağış ekle
 NewDonation=Yeni bağış
-# ShowDonation=Show donation
 DonationPromise=Hibe sözü
 PromisesNotValid=Doğrulanmamış sözler
 PromisesValid=Doğrulanmış sözler
@@ -23,11 +26,7 @@ DonationStatusPromiseNotValidatedShort=Taslak
 DonationStatusPromiseValidatedShort=Doğrulanmış
 DonationStatusPaidShort=Alınan
 ValidPromess=Söz doğrula
-# DonationReceipt=Donation receipt
 BuildDonationReceipt=Makbuz oluştur
 DonationsModels=Bağış makbuzları belge modelleri
 LastModifiedDonations=Düzenlenen son %s bağış
 SearchADonation=Bağış ara
-# DonationRecipient=Donation recipient
-# ThankYou=Thank You
-# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

@@ -2,12 +2,12 @@
 CHARSET=UTF-8
 
 # No errors
-# NoErrorCommitIsDone=No error, we commit
+NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
 
 # Errors
 Error=Hata
 Errors=Hatalar
-# ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorButCommitIsDone=Hatalar bulundu, buna rağmen doğruluyoruz
 ErrorBadEMail=%s EPostası yanlış
 ErrorBadUrl=URL %s yanlış
 ErrorLoginAlreadyExists=%s girişi zaten var.
@@ -25,7 +25,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Bu kişi zaten bu tür için kişi ol
 ErrorCashAccountAcceptsOnlyCashMoney=Bu banka hesabı kasa hesabı lduğundan yalnızca nakit ödemeleri kabul eder.
 ErrorFromToAccountsMustDiffers=Kaynak ve hedef banka hesapları farklı olmalıdır.
 ErrorBadThirdPartyName=Üçüncü parti adı için hatalı değer
-# ErrorProdIdIsMandatory=The %s is mandatory
+ErrorProdIdIsMandatory=Bu %s zorunludur
 ErrorBadCustomerCodeSyntax=Hatalı müşteri kodu
 ErrorCustomerCodeRequired=Müşteri kodu gereklidir
 ErrorCustomerCodeAlreadyUsed=Müşteri kodu zaten kullanılmış
@@ -37,7 +37,7 @@ ErrorSupplierCodeAlreadyUsed=Tedarikçi kodu zaten kullanılmaktadır
 ErrorBadParameters=Hatalı parametreler
 ErrorBadValueForParameter=Hatalı '%s' parametresi için yanlış '%s' değeri
 ErrorBadImageFormat=Görüntü dosyası desteklenen bir biçimde değil.
-ErrorBadDateFormat=%s Değeri yanlış tarih biçiminde
+ErrorBadDateFormat=%s değeri yanlış tarih biçiminde
 ErrorFailedToWriteInDir=%s dizinine yazılamadı
 ErrorFoundBadEmailInFile=Dosyada %s satır hatalı e-posta sözdizimi bulundu (örneğin eposta=%s teki satır %s)
 ErrorUserCannotBeDelete=Kullanıcı silinemez. Belki Dolibarr öğeleri ile ilişkili olabilir.
@@ -112,21 +112,21 @@ ErrorBadValueForCode=Güvenlik kodu için hatalı değer. Yeni değer ile tekrar
 ErrorBothFieldCantBeNegative=%s ve %s alanlarının ikisi birden eksi olamaz
 ErrorWebServerUserHasNotPermission=Web sunucusunu çalıştırmak için kullanılan <b>%s</b> kullanıcı hesabnın bunun için izni yok
 ErrorNoActivatedBarcode=Etkinleştirilmiş barkod türü yok
-# ErrUnzipFails=Failed to unzip %s with ZipArchive
-# ErrNoZipEngine=No engine to unzip %s file in this PHP
-# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
-# ErrorFileRequired=It takes a package Dolibarr file
-# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
-# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+ErrUnzipFails=% ZipArchive ile sıkıştırılamıyor
+ErrNoZipEngine=Bu PHP deki %s dosyası ayıklamak için motor yok
+ErrorFileMustBeADolibarrPackage=Bu %s dosyası bir Dolibarr zip paketi olmalıdır
+ErrorFileRequired=Bir Dolibar dosyası paketi alıyor
+ErrorPhpCurlNotInstalled=PHP CURL kurulu değil, Bu PayPal ile iletişim kurmak için gereklidir
+ErrorFailedToAddToMailmanList=Mailman listesine ya da SPIP tabanına kayıt eklenemiyor
 # ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
 # ErrorNewValueCantMatchOldValue=New value can't be equal to old one
-# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+ErrorFailedToValidatePasswordReset=Parola yenilenemiyor. Belki yenileme zaten yapılmış olabilir (bu bağlantı yalnızca bir kez kullanılabilir). Aksi durumda yenileme işlemi tekrar başlatın.
 # ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
 # ErrorFailedToAddContact=Failed to add contact
-# ErrorDateMustBeBeforeToday=The date can not be greater than today
+ErrorDateMustBeBeforeToday=Tarih bugünden büyük olamaz
 
 # Warnings
-# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.
 WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> Parametresi <b>php.ini</b> dosyalayıcısında bu modülün tam olarak çalışması için <b>on</b> ye ayarlanmalıdır. Bu dosyayı el ile değiştirmeniz gerekir.
 WarningBuildScriptNotRunned=<b>%s</b> komut dizisi henüz grafik oluşturmak için çalıştırılmadı ya da gösterilecek veri yok.
@@ -135,9 +135,9 @@ WarningPassIsEmpty=Uyarı, veritabanı parolası boş. Bu bir güvenlik açığ�
 WarningConfFileMustBeReadOnly=Uyarı, web sunucusu tarafından yapılandırma dosyanızın (<b>htdocs/conf/conf.php</b>)  üzerine üzerine yazılabilir.Bu ciddi bir güvenlik açığıdır. Web sunucusun kullandığı sistem kullanıcısının çalışması için dosyadaki izinleri sadece okumaya değiştirin. Windows ve disk için FAT biçimini kullanıyorsanız, bu dosya sisteminin dosya izinleri eklemek izin vermediğini bilmelisiniz, bu nedenle tamamen güvenli olamaz.
 WarningsOnXLines=<b>%s</b> kaynak satırlarındaki uyarılar
 WarningNoDocumentModelActivated=Hiçbir model, belge üretimi için aktive edilmemiştir. Modül kurulumunuzu kontrol edene kadar bir model varsayılan olarak seçilecektir.
-# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningLockFileDoesNotExists=Uyarı, kurulum bir kez tamalanırsa,  <b>install.lock</b> dosyasını <b>%s</b> dizinine ekleyerek kur/taşıma aracını devre dışı bırakmalısınız. Bu dosyanın olmaması ciddi bir güvenlik açığıdır.
 WarningUntilDirRemoved=Tüm güvenlik uyarıları (sadece admin kullanıcıları tarafından görülebilir) savunmasızlık olduğu sürece etkin olur (ya da MAIN_REMOVE_INSTALL_WARNING değişmezi Kurulum->Diğer menüsünde kuruluma eklenir).
-# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+WarningCloseAlways=Uyarı, kaynak ve hedef öğeleri arasında tutar farklı da olsa kapanış yapılır. Bu özelliği dikkatlice etkinleştirin.
 # WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
 # WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
 # WarningNotRelevant=Irrelevant operation for this dataset

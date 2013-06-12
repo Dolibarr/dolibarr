@@ -33,6 +33,7 @@ CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez uti
 #
 # Menu
 #
+CronJobs=Travaux planifiés
 CronListActive= Liste des travaux actifs
 CronListInactive= Liste des travaux inactifs
 
@@ -50,7 +51,7 @@ CronDelete= Supprimer les travaux cron
 CronConfirmDelete= Êtes-vous sûr de vouloir supprimer ces travaux cron ?
 CronExecute=Lancer cette tâche
 CronConfirmExecute= Êtes-vous sûr de vouloir lancer ce travail maintenant?
-CronInfo= Les travaux permettent d'exécuter des tâches à intervales réguliers
+CronInfo= Les travaux planifiés permettent d'exécuter des tâches à intervales réguliers
 CronWaitingJobs=Travaux en attente
 CronTask=Tâche
 CronNone= Aucun(e)

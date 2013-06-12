@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - help
 CHARSET=UTF-8
-CommunitySupport=Forum/Wiki destek
+CommunitySupport=Forum/Wiki desteği
 EMailSupport=E-posta desteği
 RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
@@ -14,7 +14,7 @@ TypeSupportCommunauty=Genel (ücretsiz)
 TypeSupportCommercial=Ticari
 TypeOfHelp=Tür
 NeedHelpCenter=Yardım veya desteğe mi gereksiniminiz var?
-Efficiency=Verimlilik
+Efficiency=Verim
 TypeHelpOnly=Yalnızca yardım
 TypeHelpDev=Yardım+Geliştirme
 TypeHelpDevForm=Yardım+Geliştirme+Biçimlendirme

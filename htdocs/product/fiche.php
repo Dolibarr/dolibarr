@@ -1432,7 +1432,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	$langs->load("bills");
 
     	$html .= '<tr class="liste_titre">';
-    	$html .= '<td class="liste_titre">'.$langs->trans("AddToOtherOrders").'</td>';
+    	$html .= '<td class="liste_titre">'.$langs->trans("AddToOtherBills").'</td>';
         $html .= '</tr><tr>';
     	$html .= '<td valign="top">';
 

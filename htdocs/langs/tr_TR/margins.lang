@@ -31,19 +31,19 @@ EndDate=Son tarih
 Launch=Başlat
 
 ForceBuyingPriceIfNull=Boşsa alış fiyatına zorla
-ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
-MARGIN_METHODE_FOR_DISCOUNT=Genel indirimle için oran yöntemi
+ForceBuyingPriceIfNullDetails=eğr "AÇIK" sa, if "ON", oran satırda sıfır olacaktır (alış fiyatı = Satış fiyatı), aksi durumda ("KAPALI"), oran satış fiyatına eşit olacaktır (alış fiyatı = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için oran yöntemi
 UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
 UseDiscountOnTotal=Ara toplamla
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, oran hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
 
 MARGIN_TYPE=Oran türü
 MargeBrute=Ham oran
 MargeNette=Net oran
 MARGIN_TYPE_DETAILS=Ham oran : Satış fiyatı - Alış fiyatı<br/>Net oran : Satış fiyatı - Maliyet fiyatı
 
-# CostPrice=Cost price
+CostPrice=Maliyet fiyatı
 BuyingCost=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar

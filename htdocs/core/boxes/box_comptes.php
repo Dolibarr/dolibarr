@@ -122,7 +122,7 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => price($solde).' '.$langs->trans("Currency".$objp->currency_code)
+					'text' => price($solde, 1, $langs, 0, -1, 0, $objp->currency_code)
 					);
 
 					$listofcurrencies[$objp->currency_code]=1;

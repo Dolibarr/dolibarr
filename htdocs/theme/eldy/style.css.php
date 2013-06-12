@@ -668,7 +668,7 @@ div.mainmenu.gravatar {
 div.mainmenu.geopipmaxmind {
 }
 
-div.mainmenu.holiday {
+div.mainmenu.hrm {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png',1) ?>);
 }
 

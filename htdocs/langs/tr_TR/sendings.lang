@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - sendings
 CHARSET=UTF-8
-RefSending=Sevkiyat ilgi.
+RefSending=Sevkiyat ref.
 Sending=Sevkiyat
 Sendings=Sevkiyatlar
 Shipments=Sevkiyatlar
@@ -47,7 +47,7 @@ ConfirmCancelSending=Bu sevkiyatı iptal etmek istediğinizden emin misiniz?
 GenericTransport=Genel nakliye
 Enlevement=Müşteri tarafından alındı
 DocumentModelSimple=Basit belge modeli
-DocumentModelMerou=Mérou A5 modeli
+DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Uyarı, sevkiyat için bekleyen herhangi bir ürün yok.
 StatsOnShipmentsOnlyValidated=Yalnızca doğrulanmış sevkiyatlara ait istatistikler
 DateDeliveryPlanned=Planlanan teslim tarihi
@@ -58,12 +58,12 @@ ActionsOnShipping=Sevkiyat eylemleri
 LinkToTrackYourPackage=Paketinizi izleyeceğiniz bağlantı
 ShipmentCreationIsDoneFromOrder=Şu an için, yeni bir sevkiyat yaratılması amacıyla kart oluşturulur.
 RelatedShippings=İlgili sevkiyatlar
-# ShipmentLine=Shipment line
+ShipmentLine=Sevkiyat kalemi
 # CarrierList=List of transporters
 
 # Sending methods
-SendingMethodCATCH=Müşteri tarafından alındı
-SendingMethodTRANS=Nakliyeci
+SendingMethodCATCH=Müşteri tarafından
+SendingMethodTRANS=Nakliyeci tarafından
 SendingMethodCOLSUI=Colissimo
 
 # ModelDocument

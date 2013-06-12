@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('invoicecard'));
 
 /*
  * Actions
-*/
+ */
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1006,6 +1006,13 @@ else if ($action == 'add' && $user->rights->facture->creer)
 										$fk_parent_line = 0;
 									}
 
+								//Extrafields
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+								{
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_option=$lines[$i]->array_options;
+								}
+
 									$result = $object->addline(
 										$id,
 										$desc,
@@ -1031,7 +1038,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 										$fk_parent_line,
 										$lines[$i]->fk_fournprice,
 										$lines[$i]->pa_ht,
-										$label
+										$label,
+										$array_option
 									);
 
 									if ($result > 0)
@@ -1117,6 +1125,19 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
 	$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value) {
+			unset($_POST["options_".$key]);
+		}
+	}
 
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
 	{
@@ -1312,7 +1333,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				GETPOST('fk_parent_line'),
 				$fournprice,
 				$buyingprice,
-				$label
+				$label,
+				$array_option
 			);
 
 			if ($result > 0)
@@ -1387,6 +1409,21 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
 	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
 	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+	
+
 	// Check minimum price
 	$productid = GETPOST('productid', 'int');
 	if (! empty($productid))
@@ -1441,7 +1478,9 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
 			0,
 			$fournprice,
 			$buyingprice,
-			$label
+			$label,
+			0,
+			$array_option
 		);
 
 		if ($result >= 0)
@@ -1790,6 +1829,16 @@ else if ($action == 'remove_file')
 		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 		$action='';
 	}
+}
+
+// Print file
+else if ($action == 'print_file' AND $user->rights->printipp->read)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
+	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
+	$printer->print_file(GETPOST('file',alpha),GETPOST('printer',alpha));
+    setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
+    $action='';
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture->creer)
