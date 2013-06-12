@@ -57,7 +57,7 @@ $snom = GETPOST('search_nom');
 $suser = GETPOST('search_user');
 $sttc = GETPOST('search_ttc');
 $sall = GETPOST('search_all');
-
+$sdate = GETPOST('search_date');
 $page = GETPOST('page', 'int');
 
 $sortorder = GETPOST('sortorder');
@@ -78,7 +78,7 @@ $sql .= ", cf.fk_user_author, u.login";
 $sql .= ' FROM (' . MAIN_DB_PREFIX . 'societe as s,';
 $sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
 
-if (!$user->rights->societe->client->voir && !$socid) {
+if(!$user->rights->societe->client->voir && !$socid) {
     $sql.= ', ' . MAIN_DB_PREFIX . 'societe_commerciaux as sc';
 
 }
@@ -90,30 +90,35 @@ $sql .= ' AND cf.entity = ' . $conf->entity;
 $sql .= ' AND cf.source = 42';
 $sql .= ' AND cf.fk_statut < 5';
 
-if (!$user->rights->societe->client->voir && !$socid) {
+if(!$user->rights->societe->client->voir && !$socid) {
     $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
 }
-if ($sref) {
+if($sref) {
     $sql .= ' AND cf.ref LIKE "%' . $db->escape($sref) . '%"';
 }
-if ($snom) {
+if($snom) {
     $sql .= ' AND s.nom LIKE "%' . $db->escape($snom) . '%"';
 }
-if ($suser) {
+if($suser) {
     $sql .= ' AND u.login LIKE "%' . $db->escape($suser) . '%"';
 }
-if ($sttc) {
+if($sttc) {
     $sql .= ' AND cf.total_ttc = ' . price2num($sttc);
 }
-if ($sall) {
+if($sdate) {
+    $datearray = explode('/', $sdate);
+    $date = date('Y-m-d', mktime(0,0,0, $datearray[1], $datearray[0], $datearray[2]));
+    $sql .= ' AND cf.date_creation LIKE "' . $date . '%"';
+}
+if($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
     $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
 }
-if ($socid) {
+if($socid) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
-if (GETPOST('statut')) {
+if(GETPOST('statut')) {
     $sql .= ' AND fk_statut = ' . GETPOST('statut');
 }
 
@@ -121,7 +126,7 @@ $sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 
-if ($resql) {
+if($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
@@ -178,7 +183,7 @@ if ($resql) {
                             'cf.date_creation', 
                             '', 
                             '', 
-                            'align="center"', 
+                            '', 
                             $sortfield, 
                             $sortorder
                             );
@@ -206,7 +211,10 @@ if ($resql) {
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_ttc" value="' . $sttc . '">';
     print '</td>';
-    print '<td colspan="2" class="liste_titre" align="right">';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" name="search_date" value="' . $sdate . '">';
+    print '</td>';
+    print '<td class="liste_titre" align="right">';
     $src = DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png';
     $value = dol_escape_htmltag($langs->trans('Search'));
     print '<input type="image" class="liste_titre" name="button_search" src="' . $src . '" value="' . $value . '" title="' . $value . '">';
@@ -240,7 +248,7 @@ if ($resql) {
         $userstatic->login = $obj->login;
         print '<td>';
         
-        if ($userstatic->id) {
+        if($userstatic->id) {
             print $userstatic->getLoginUrl(1);
         }
         else {
@@ -249,11 +257,11 @@ if ($resql) {
         
         print '</td>';
         // Amount
-        print '<td align="right" width="100">';
+        print '<td>';
         print price($obj->total_ttc);
         print '</td>';
         // Date
-        print '<td align="center" width="100">';
+        print '<td>';
         if ($obj->dc) {
             print dol_print_date($db->jdate($obj->dc), 'day');
         }
