@@ -134,7 +134,7 @@ if ($resql) {
                       '', 
                       $num
                       );
-    print '<form action="replenish.php" method="GET">';
+    print '<form action="replenishorders.php" method="GET">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'), 
