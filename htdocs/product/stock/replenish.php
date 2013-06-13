@@ -39,30 +39,31 @@ if ($user->societe_id) {
 $result=restrictedArea($user,'produit|service');
 
 //checks if a product has been ordered
-function ordered($product_id) {
+function ordered($product_id)
+{
     global $db;
     $sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) from ';
-    $sql .= MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd '; 
-    $sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf'; 
-    $sql .= ' ON cfd.fk_commande = cf.rowid WHERE cf.source = 42 '; 
+    $sql .= MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd ';
+    $sql .= 'LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
+    $sql .= ' ON cfd.fk_commande = cf.rowid WHERE cf.source = 42 ';
     $sql .= 'AND cf.fk_statut < 5 AND cfd.fk_product = ' . $product_id;
     $sql .= ' GROUP BY cfd.fk_product';
-    
+
     $resql = $db->query($sql);
-    if($resql) {
+    if ($resql) {
         $exists = $db->num_rows($resql);
-        if($exists) {
+        if ($exists) {
             $obj = $db->fetch_array($resql);
+
             return $obj['SUM(cfd.qty)'] . ' ' . img_picto('','tick');
-        }
-        else {
+        } else {
             return img_picto('', 'stcomm-1');
         }
-    }
-    else {
+    } else {
         $error = $db->lasterror();
         dol_print_error($db);
         dol_syslog('replenish.php: ' . $error, LOG_ERROR);
+
         return $langs->trans('error');
     }
 }
@@ -93,13 +94,13 @@ $offset = $limit * $page ;
  */
 
 //orders creation
-if($action == 'order') {
+if ($action == 'order') {
     $linecount = GETPOST('linecount', 'int');
     unset($_POST['linecount']);
-    if($linecount > 0) {
+    if ($linecount > 0) {
         $suppliers = array();
-        for($i = 0; $i < $linecount; $i++) {
-            if(GETPOST($i, 'alpha') === 'on' 
+        for ($i = 0; $i < $linecount; $i++) {
+            if(GETPOST($i, 'alpha') === 'on'
               && GETPOST('fourn' . $i, 'int') > 0) { //one line
                 $supplierpriceid = GETPOST('fourn'.$i, 'int');
                 //get all the parameters needed to create a line
@@ -110,7 +111,7 @@ if($action == 'order') {
                 $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
                 $sql .= ' WHERE rowid = ' . $supplierpriceid;
                 $resql = $db->query($sql);
-                if($resql && $db->num_rows($resql) > 0) {
+                if ($resql && $db->num_rows($resql) > 0) {
                     //might need some value checks
                     $obj = $db->fetch_object($resql);
                     $line = new CommandeFournisseurLigne($db);
@@ -125,8 +126,7 @@ if($action == 'order') {
                     $line->total_ttc = $line->total_ht + $line->total_tva;
                     $line->ref_fourn = $obj->ref_fourn;
                     $suppliers[$obj->fk_soc]['lines'][] = $line;
-                }
-                else {
+                } else {
                     $error=$db->lasterror();
                     dol_print_error($db);
                     dol_syslog('replenish.php: '.$error, LOG_ERROR);
@@ -140,22 +140,22 @@ if($action == 'order') {
         $i = 0;
         $orders = array();
         $suppliersid = array_keys($suppliers);
-        foreach($suppliers as $supplier) {
+        foreach ($suppliers as $supplier) {
             $order = new CommandeFournisseur($db);
             $order->socid = $suppliersid[$i];
             //trick to know which orders have been generated this way
             $order->source = 42;
-            foreach($supplier['lines'] as $line) {
+            foreach ($supplier['lines'] as $line) {
                 $order->lines[] = $line;
             }
             $id = $order->create($user);
-            if($id < 0) {
+            if ($id < 0) {
                 $fail++;
                 setEventMessage($langs->trans('OrderFail'), 'errors');
             }
             $i++;
         }
-        if(!$fail && $id) {
+        if (!$fail && $id) {
             setEventMessage($langs->trans('OrderCreated'), 'mesgs');
             header('Location: replenishorders.php');
             exit;
@@ -190,8 +190,7 @@ if ($sall) {
 if (dol_strlen($type)) {
     if ($type == 1) {
         $sql .= ' AND p.fk_product_type = 1';
-    }
-    else {
+    } else {
         $sql .= ' AND p.fk_product_type != 1';
     }
 }
@@ -242,27 +241,26 @@ if ($resql) {
     if ($sref || $snom || $sall || GETPOST('search')) {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&amp;sall=' . $sall;
-        print_barre_liste($texte, 
-                          $page, 
-                          'replenish.php', 
-                          $filters, 
-                          $sortfield, 
+        print_barre_liste($texte,
+                          $page,
+                          'replenish.php',
+                          $filters,
+                          $sortfield,
                           $sortorder,
                           '',
                           $num
                           );
-    }
-    else {
+    } else {
         $filters = '&sref=' . $sref . '&snom=' . $snom;
         $filters .= '&fourn_id=' . $fourn_id;
         $filters .= (isset($type)?'&amp;type=' . $type:'');
-        print_barre_liste($texte, 
-                          $page, 
-                          'replenish.php', 
-                          $filters, 
-                          $sortfield, 
-                          $sortorder, 
-                          '', 
+        print_barre_liste($texte,
+                          $page,
+                          'replenish.php',
+                          $filters,
+                          $sortfield,
+                          $sortorder,
+                          '',
                           $num);
     }
 
@@ -283,84 +281,83 @@ if ($resql) {
     // Lignes des titres
     print '<tr class="liste_titre">';
     print '<td>&nbsp;</td>';
-    print_liste_field_titre($langs->trans('Ref'), 
-                            'replenish.php', 
-                            'p.ref', 
-                            $param, 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Ref'),
+                            'replenish.php',
+                            'p.ref',
+                            $param,
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Label'), 
-                            'replenish.php', 
-                            'p.label', 
-                            $param, 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Label'),
+                            'replenish.php',
+                            'p.label',
+                            $param,
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
     if (!empty($conf->service->enabled) && $type == 1) {
-        print_liste_field_titre($langs->trans('Duration'), 
-                                'replenish.php', 
-                                'p.duration', 
-                                $param, 
-                                '', 
-                                'align="center"', 
-                                $sortfield, 
+        print_liste_field_titre($langs->trans('Duration'),
+                                'replenish.php',
+                                'p.duration',
+                                $param,
+                                '',
+                                'align="center"',
+                                $sortfield,
                                 $sortorder
                                 );
     }
-    print_liste_field_titre($langs->trans('DesiredStock'), 
-                            'replenish.php', 
-                            'p.desiredstock', 
-                            $param, 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('DesiredStock'),
+                            'replenish.php',
+                            'p.desiredstock',
+                            $param,
+                            '',
+                            'align="right"',
+                            $sortfield,
                             $sortorder
                             );
-    if($conf->global->USE_VIRTUAL_STOCK) {
+    if ($conf->global->USE_VIRTUAL_STOCK) {
         $stocklabel = $langs->trans('VirtualStock');
-    }
-    else {
+    } else {
         $stocklabel = $langs->trans('PhysicalStock');
     }
-    print_liste_field_titre($stocklabel, 
-                            'replenish.php', 
-                            'stock_physique', 
-                            $param, 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
+    print_liste_field_titre($stocklabel,
+                            'replenish.php',
+                            'stock_physique',
+                            $param,
+                            '',
+                            'align="right"',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('StockToBuy'), 
-                            'replenish.php', 
-                            '', 
-                            $param, 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('StockToBuy'),
+                            'replenish.php',
+                            '',
+                            $param,
+                            '',
+                            'align="right"',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Ordered'), 
-                            'replenish.php', 
-                            '', 
-                            $param, 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Ordered'),
+                            'replenish.php',
+                            '',
+                            $param,
+                            '',
+                            'align="right"',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Supplier'), 
-                            'replenish.php', 
-                            '', 
-                            $param, 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Supplier'),
+                            'replenish.php',
+                            '',
+                            $param,
+                            '',
+                            'align="right"',
+                            $sortfield,
                             $sortorder
                             );
     print '<td>&nbsp;</td>';
@@ -395,10 +392,10 @@ if ($resql) {
     $var = True;
     while ($i < min($num, $limit)) {
         $objp = $db->fetch_object($resql);
-        if($conf->global->STOCK_SUPPORTS_SERVICES 
+        if ($conf->global->STOCK_SUPPORTS_SERVICES
            || $objp->fk_product_type == 0) {
             // Multilangs
-            if(! empty($conf->global->MAIN_MULTILANGS)) {
+            if (! empty($conf->global->MAIN_MULTILANGS)) {
                 $sql = 'SELECT label';
                 $sql .= ' FROM ' . MAIN_DB_PREFIX . 'product_lang';
                 $sql .= ' WHERE fk_product = ' . $objp->rowid;
@@ -406,7 +403,7 @@ if ($resql) {
                 $sql .= ' LIMIT 1';
 
                 $result = $db->query($sql);
-                if($result) {
+                if ($result) {
                     $objtp = $db->fetch_object($result);
                     if (!empty($objtp->label)) {
                         $objp->label = $objtp->label;
@@ -426,28 +423,25 @@ if ($resql) {
             print '<td>' . $objp->label . '</td>';
             print '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
 
-            if(!empty($conf->service->enabled) && $type == 1) {
+            if (!empty($conf->service->enabled) && $type == 1) {
                 print '<td align="center">';
-                if(preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
+                if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
                      print $regs[1] . ' ' . $langs->trans('DurationYear');
-                }
-                else if(preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
+                } elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
                     print $regs[1] . ' ' . $langs->trans('DurationMonth');
-                }
-                else if(preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
+                } elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
                     print $regs[1] . ' ' . $langs->trans('DurationDay');
-                }
-                else {
+                } else {
                     print $objp->duration;
                 }
                 print '</td>';
             }
             print '<td align="right">' . $objp->desiredstock . '</td>';
             print '<td align="right">';
-            if(!$objp->stock_physique) {
+            if (!$objp->stock_physique) {
                 $objp->stock_physique = 0;
             }
-            if($conf->global->USE_VIRTUAL_STOCK) {
+            if ($conf->global->USE_VIRTUAL_STOCK) {
                 //compute virtual stock
                 $prod->fetch($prod->id);
                 $result=$prod->load_stats_commande(0, '1,2');
@@ -461,11 +455,10 @@ if ($resql) {
                 }
                 $stock_commande_fournisseur = $prod->stats_commande_fournisseur['qty'];
                 $stock = $objp->stock_physique - $stock_commande_client + $stock_commande_fournisseur;
-            }
-            else {
+            } else {
                 $stock = $objp->stock_physique;
             }
-            if ($objp->seuil_stock_alerte 
+            if ($objp->seuil_stock_alerte
                 && ($stock < $objp->seuil_stock_alerte)) {
                     $warn = $langs->trans('StockTooLow');
                     print img_warning($warn) . ' ';
@@ -482,8 +475,8 @@ if ($resql) {
             print '</td>';
             $form = new Form($db);
             print '<td align="right">';
-            print $form->select_product_fourn_price($prod->id, 
-                                                    'fourn' . $i, 
+            print $form->select_product_fourn_price($prod->id,
+                                                    'fourn' . $i,
                                                     1
                                                    );
             print '</td>';
@@ -505,31 +498,30 @@ if ($resql) {
         if ($sref || $snom || $sall || GETPOST('search')) {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&amp;sall=' . $sall;
-            print_barre_liste('', 
-                              $page, 
-                              'replenish.php', 
-                              $filters, 
-                              $sortfield, 
-                              $sortorder, 
-                              '', 
-                              $num, 
-                              0, 
+            print_barre_liste('',
+                              $page,
+                              'replenish.php',
+                              $filters,
+                              $sortfield,
+                              $sortorder,
+                              '',
+                              $num,
+                              0,
                               ''
                               );
-        }
-        else {
+        } else {
             $filters = '&sref=' . $sref . '&snom=' . $snom;
             $filters .= '&fourn_id=' . $fourn_id;
             $filters .= (isset($type)? '&amp;type=' . $type : '');
-            print_barre_liste('', 
-                              $page, 
-                              'replenish.php', 
-                              $filters, 
-                              $sortfield, 
-                              $sortorder, 
-                              '', 
-                              $num, 
-                              0, 
+            print_barre_liste('',
+                              $page,
+                              'replenish.php',
+                              $filters,
+                              $sortfield,
+                              $sortorder,
+                              '',
+                              $num,
+                              0,
                               ''
                               );
         }
@@ -537,11 +529,9 @@ if ($resql) {
 
     $db->free($resql);
 
-}
-else {
+} else {
     dol_print_error($db);
 }
 
 llxFooter();
 $db->close();
-?>
