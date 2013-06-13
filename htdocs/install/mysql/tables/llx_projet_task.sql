@@ -31,6 +31,8 @@ create table llx_projet_task
   description			text,
   duration_effective			real DEFAULT 0 NOT NULL,
   planned_workload			real DEFAULT 0 NOT NULL,
+  total_ht  		DOUBLE(24,8) NULL DEFAULT NULL,
+  subprice  		DOUBLE(24,8) NULL DEFAULT NULL,  
   progress				integer	DEFAULT 0,				-- percentage increase
   priority				integer	DEFAULT 0,				-- priority
   fk_user_creat			integer,						-- user who created the task
