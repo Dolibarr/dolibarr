@@ -1,10 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually generated
- * Generation date 2012-07-17 10:05:49
- */
-// START - Lines generated manually (2012-07-17 10:05:49).
-// Reference language: en_US -> tr_TR - sms
+# Dolibarr language file - Source file is en_US - sms
 CHARSET=UTF-8
 Sms=Sms
 SmsSetup=Sms kurulums
@@ -14,7 +8,7 @@ AllSms=Tüm SMS kampanyaları
 SmsTargets=Hedefler
 SmsRecipients=Hedefler
 SmsRecipient=Hedef
-SmsTitle=Tanım
+SmsTitle=Açıklama
 SmsFrom=Gönderen
 SmsTo=Hedef
 SmsTopic=SMS Konusu
@@ -31,7 +25,7 @@ PreviewSms=Sms önizle
 PrepareSms=Sms hazırla
 CreateSms=Sms oluştur
 SmsResult=SMS gönderimi sonucu
-TestSms=Sms Testi 
+TestSms=Sms Testi
 ValidSms=Sms Doğrula
 ApproveSms=Sms onayla
 SmsStatusDraft=Taslak
@@ -49,11 +43,12 @@ ConfirmValidSms=Bu kampanyayı doğrulamayı onaylıyor musunuz?
 ConfirmResetMailing=Uyarı, Sms <b>%s</b> kampanyasını  yeniden başlatırsanız, ikinci kez toplu gönderimine izin verirsiniz. Bu gerçekten yapmak istediğiniz işlem midir?
 ConfirmDeleteMailing=Kampanyayı kaldırmayı onaylıyor musunuz?
 NbOfRecipients=Hedef sayısı
-NbOfUniqueSms=Benzersiz telefon numaraları sayısı
+NbOfUniqueSms=Eşsiz telefon numaraları sayısı
 NbOfSms=Telefon numaraları sayısı
 ThisIsATestMessage=Bu bir test mesajıdır
 SendSms=SMS gönder
 SmsInfoCharRemain=Kalan karakter sayısı
-SmsInfoNumero=(Uluslar arası biçim örneği: +33899701761)
-DelayBeforeSending=Gönderimden önceki bekletme (Dakika) 
+SmsInfoNumero= (Uluslar arası biçim örneği: +33899701761)
+DelayBeforeSending=Gönderimden önceki süre (Dakika)
 SmsNoPossibleRecipientFound=Hedef yok. SMS sağlayıcı kurulumu kontrol edin.
+

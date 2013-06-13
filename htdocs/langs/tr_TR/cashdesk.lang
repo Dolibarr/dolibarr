@@ -1,12 +1,4 @@
-/*
- * Language code: tr_TR
- * Manually translated
- * Generation date 2012-07-05 22:52:49
- */
-
-
-// START - Lines generated manually (2012-07-05 22:52:49).
-// Reference language: en_US -> tr_TR _ cashdesk
+# Language file - Source file is en_US - cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Satış Noktası
 CashDesk=Satış Noktası
@@ -21,14 +13,14 @@ CashDeskProducts=Ürünler
 CashDeskStock=Stok
 CashDeskOn=açık
 CashDeskThirdParty=Üçüncü parti
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Alışveriş sepeti
 NewSell=Yeni satış
 BackOffice=Arka ofis
 AddThisArticle=Bu maddeyi ekle
 RestartSelling=Satışa geri dön
-SellFinished=Satış bitti 
+SellFinished=Satış bitti
 PrintTicket=Fiş yazdır
-NoResults=Sonuç yok
 NoProductFound=Hiç madde bulunamadı
 ProductFound=ürün bulundu
 ProductsFound=ürünler bulundu
@@ -37,7 +29,7 @@ Identification=Kimlik saptama
 Article=Madde
 Difference=Fark
 TotalTicket=Toplam fiş
-NoVAT=Bu satış için herhangi bir KDV yok
+NoVAT=Bu satış için KDV yok
 Change=Fazla alındı
 CalTip=Takvimi görmek için tıkla
 CashDeskSetupStock=Fatura oluştururken stok eksiltmeniz isteniyor, ancak bunun için depo tanımlanmamış<br>Stok modülü kurulumunu değiştirin veya bir depo seçin
@@ -45,3 +37,4 @@ BankToPay=Açık hesap
 ShowCompany=Firma göster
 ShowStock=Depo göster
 DeleteArticle=Bu maddeyi kaldırmak için tıkla
+# FilterRefOrLabelOrBC=Search (Ref/Label)
