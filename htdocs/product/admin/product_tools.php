@@ -104,7 +104,7 @@ if ($action == 'convert')
 					if (! empty($price_base_type))
 					{
 						print "$newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-						$ret=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+						$ret=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
 					}
 					// Update multiprice
 					foreach ($objectstatic->multiprices as $level => $multiprices)
@@ -128,7 +128,7 @@ if ($action == 'convert')
 						$newlevel=$level;
 
 						print "$newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
-						$retm=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+						$retm=$objectstatic->updatePrice($newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
 						if ($retm < 0)
 						{
 							$error++;
