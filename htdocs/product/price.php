@@ -88,6 +88,16 @@ if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->
 		$newpsq = empty($newpsq) ? 0 : $newpsq;
 	}
 
+	//save level and multiprices for trigger
+	$object->pricelevel = $level;
+	if ($level)
+	{
+		$object->multiprices[$level]=$newprice;
+		$object->multiprices_base_type[$level]=$newpricebase;
+		$object->multiprices_tva_tx[$level]=$newvat;
+		$object->multiprices_min[$level]=$newprice_min;
+	}
+
 	if ($object->updatePrice($object->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
 	{
 		$action = '';
