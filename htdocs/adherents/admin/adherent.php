@@ -138,7 +138,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
     print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-    print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?$conf->global->ADHERENT_LOGIN_NOT_REQUIRED:1),1);
+    print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
     print '</td><td align="center" width="80">';
     print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
     print "</td></tr>\n";

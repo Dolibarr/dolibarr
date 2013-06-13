@@ -46,8 +46,10 @@ if (! empty($conf->commande->enabled)) 	$langs->load("orders");
 if (! empty($conf->propal->enabled))   	$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 
-$projectid=GETPOST('id');
-$ref=GETPOST('ref');
+$projectid=GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+
 if ($projectid == '' && $ref == '')
 {
 	dol_print_error('','Bad parameter');
@@ -62,6 +64,8 @@ if ($ref)
 {
     $project->fetch(0,$ref);
     $projectid=$project->id;
+}else {
+	$project->fetch($projectid);
 }
 
 // Security check
@@ -82,7 +86,7 @@ $form = new Form($db);
 $userstatic=new User($db);
 
 $project = new Project($db);
-$project->fetch($_GET["id"],$_GET["ref"]);
+$project->fetch($projectid,$ref);
 $project->societe->fetch($project->societe->id);
 
 // To verify role of users
@@ -191,7 +195,10 @@ if ($action=="addelement")
 {
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
-	$project->update_element($tablename, $elementselectid);
+	$result=$project->update_element($tablename, $elementselectid);
+	if ($result<0) {
+		setEventMessage($mailchimp->error,'errors');
+	}
 }
 
 foreach ($listofreferent as $key => $value)
