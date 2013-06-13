@@ -125,8 +125,8 @@ class FactureRec extends Facture
 			$sql.= ", '".$facsrc->socid."'";
 			$sql.= ", ".$conf->entity;
 			$sql.= ", ".$this->db->idate($now);
-			$sql.= ", '".$facsrc->amount."'";
-			$sql.= ", '".$facsrc->remise."'";
+			$sql.= ", ".(!empty($facsrc->amount)?$facsrc->amount:'0');
+			$sql.= ", ".(!empty($facsrc->remise)?$this->remise:'0');
 			$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 			$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 			$sql.= ", '".$user->id."'";
