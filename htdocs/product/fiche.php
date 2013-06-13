@@ -312,7 +312,6 @@ if (empty($reshook))
                 $object->ref = GETPOST('clone_ref');
                 $object->status = 0;
                 $object->status_buy = 0;
-                $object->finished = 1;
                 $object->id = null;
 
                 if ($object->check())
