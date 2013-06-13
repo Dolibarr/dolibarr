@@ -57,7 +57,6 @@ class Product extends CommonObject
 	//! Base price ('TTC' for price including tax or 'HT' for net price)
 	var $price_base_type;
 	//! Arrays for multiprices
-	var $pricelevel;
 	var $multiprices=array();
 	var $multiprices_ttc=array();
 	var $multiprices_base_type=array();
