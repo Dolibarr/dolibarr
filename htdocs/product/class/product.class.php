@@ -1061,7 +1061,9 @@ class Product extends CommonObject
 				// Price by quantity
 				$this->price_by_qty = $newpsq;
 
-				$this->_log_price($user,$level);
+				$this->_log_price($user,$level);	// Save price for level into table product_price
+
+				$this->level = $level;				// Store level of price edited for trigger
 
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
