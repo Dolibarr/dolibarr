@@ -98,12 +98,46 @@ if ($action == 'convert')
 					$newnpr=$objectstatic->recuperableonly;
 					$newlevel=0;
 
-					$ret=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
-					if ($ret < 0) $error++;
+					$ret=0; $retm=0;
+
+					// Update single price
+					if (! empty($price_base_type))
+					{
+						print "$newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
+						$ret=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+					}
+					// Update multiprice
+					foreach ($objectstatic->multiprices as $level => $multiprices)
+					{
+						$price_base_type = $objectstatic->multiprices_base_type[$level];	// Get price_base_type of product/service to keep the same for update
+						if (empty($price_base_type)) continue;	// Discard not defined price levels
+
+						if ($price_base_type == 'TTC')
+						{
+							$newprice=price2num($objectstatic->multiprices_ttc[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice=$objectstatic->multiprices_min_ttc[$level];
+						}
+						else
+						{
+							$newprice=price2num($objectstatic->multiprices[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newminprice=$objectstatic->multiprices_min[$level];
+						}
+						if ($newminprice > $newprice) $newminprice=$newprice;
+						$newvat=str_replace('*','',$newvatrate);
+						$newnpr=$objectstatic->multiprices_recuperableonly[$level];
+						$newlevel=$level;
+
+						print "$newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
+						$retm=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
+						if ($retm < 0)
+						{
+							$error++;
+							break;
+						}
+					}
+
+					if ($ret < 0 || $retm < 0) $error++;
 					else $nbrecordsmodified++;
-
-					// FIXME Now update all price levels. Call $objectstatic->updatePrice( as many times than exisitng price_level
-
 				}
 
 				$i++;

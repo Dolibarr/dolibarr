@@ -63,6 +63,7 @@ class Product extends CommonObject
 	var $multiprices_ttc=array();
 	var $multiprices_base_type=array();
 	var $multiprices_tva_tx=array();
+	var $multiprices_recuperableonly=array();
 	//! Price by quantity arrays
 	var $price_by_qty;
 	var $prices_by_qty=array();
@@ -1197,7 +1198,7 @@ class Product extends CommonObject
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
 						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
-						$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid";
+						$sql.= " price_base_type, tva_tx, tosell, price_by_qty, rowid, recuperableonly";
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
 						$sql.= " WHERE price_level=".$i;
 						$sql.= " AND fk_product = '".$this->id."'";
@@ -1214,6 +1215,7 @@ class Product extends CommonObject
 							$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
 							$this->multiprices_base_type[$i]=$result["price_base_type"];
 							$this->multiprices_tva_tx[$i]=$result["tva_tx"];
+							$this->multiprices_recuperableonly[$i]=$result["recuperableonly"];
 
 							// Price by quantity
 							$this->prices_by_qty[$i]=$result["price_by_qty"];
