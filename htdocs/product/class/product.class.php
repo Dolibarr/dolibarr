@@ -959,7 +959,6 @@ class Product extends CommonObject
 	/**
 	 *	Modify price of a product/Service
 	 *
-	 *	@param  	int		$id          	Id of product/service to change
 	 *	@param  	double	$newprice		New price
 	 *	@param  	string	$newpricebase	HT or TTC
 	 *	@param  	User	$user        	Object user that make change
@@ -970,9 +969,11 @@ class Product extends CommonObject
 	 *  @param     	int		$newpsq         1 if it has price by quantity
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function updatePrice($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0)
 	{
 		global $conf,$langs;
+
+		$id=$this->id;
 
 		dol_syslog(get_class($this)."update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
 
