@@ -47,10 +47,10 @@ $head[0][2] = 'replenish';
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
-dol_fiche_head($head, 
-               'replenishorders', 
-               $langs->trans('Replenishment'), 
-               0, 
+dol_fiche_head($head,
+               'replenishorders',
+               $langs->trans('Replenishment'),
+               0,
                'stock');
 $commandestatic = new CommandeFournisseur($db);
 $sref = GETPOST('search_ref');
@@ -64,11 +64,11 @@ $page = GETPOST('page', 'int');
 $sortorder = GETPOST('sortorder');
 $sortfield = GETPOST('sortfield');
 
-if(!$sortorder) {
+if (!$sortorder) {
     $sortorder = 'DESC';
 }
 
-if(!$sortfield) {
+if (!$sortfield) {
     $sortfield = 'cf.date_creation';
 }
 
@@ -80,7 +80,7 @@ $sql .= ", cf.fk_user_author, u.login";
 $sql .= ' FROM (' . MAIN_DB_PREFIX . 'societe as s,';
 $sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
 
-if(!$user->rights->societe->client->voir && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
     $sql.= ', ' . MAIN_DB_PREFIX . 'societe_commerciaux as sc';
 
 }
@@ -92,37 +92,37 @@ $sql .= ' AND cf.entity = ' . $conf->entity;
 $sql .= ' AND cf.source = 42';
 $sql .= ' AND cf.fk_statut < 5';
 
-if(!$user->rights->societe->client->voir && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . $user->id;
 }
-if($sref) {
+if ($sref) {
     $sql .= ' AND cf.ref LIKE "%' . $db->escape($sref) . '%"';
 }
-if($snom) {
+if ($snom) {
     $sql .= ' AND s.nom LIKE "%' . $db->escape($snom) . '%"';
 }
-if($suser) {
+if ($suser) {
     $sql .= ' AND u.login LIKE "%' . $db->escape($suser) . '%"';
 }
-if($sttc) {
+if ($sttc) {
     $sql .= ' AND cf.total_ttc = ' . price2num($sttc);
 }
-if($sdate) {
+if ($sdate) {
     $elts = explode('/', $sdate);
-    $date = date('Y-m-d', 
+    $date = date('Y-m-d',
                  mktime(0, 0, 0, $elts[1], $elts[0], $elts[2])
                 );
     $sql .= ' AND cf.date_creation LIKE "' . $date . '%"';
 }
-if($sall) {
+if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
     $sql .= 'OR cf.note LIKE "%' . $db->escape($sall) . '%")';
 }
-if($socid) {
+if ($socid) {
     $sql .= ' AND s.rowid = ' . $socid;
 }
 
-if(GETPOST('statut')) {
+if (GETPOST('statut')) {
     $sql .= ' AND fk_statut = ' . GETPOST('statut');
 }
 
@@ -130,74 +130,74 @@ $sql .= ' ORDER BY ' . $sortfield . ' ' . $sortorder  . ' ';
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 
-if($resql) {
+if ($resql) {
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_barre_liste($langs->trans('ReplenishmentOrders'), 
-                      $page, 
-                      'replenishorders.php', 
-                      '', 
-                      $sortfield, 
-                      $sortorder, 
-                      '', 
+    print_barre_liste($langs->trans('ReplenishmentOrders'),
+                      $page,
+                      'replenishorders.php',
+                      '',
+                      $sortfield,
+                      $sortorder,
+                      '',
                       $num
                       );
     print '<form action="replenishorders.php" method="GET">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Ref'), 
-                            $_SERVER['PHP_SELF'], 
-                            'cf.ref', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Ref'),
+                            $_SERVER['PHP_SELF'],
+                            'cf.ref',
+                            '',
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Company'), 
-                            $_SERVER['PHP_SELF'], 
-                            's.nom', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Company'),
+                            $_SERVER['PHP_SELF'],
+                            's.nom',
+                            '',
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Author'), 
-                            $_SERVER['PHP_SELF'], 
-                            'u.login', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Author'),
+                            $_SERVER['PHP_SELF'],
+                            'u.login',
+                            '',
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('AmountTTC'), 
-                            $_SERVER['PHP_SELF'], 
-                            'cf.total_ttc', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('AmountTTC'),
+                            $_SERVER['PHP_SELF'],
+                            'cf.total_ttc',
+                            '',
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('OrderCreation'), 
-                            $_SERVER['PHP_SELF'], 
-                            'cf.date_creation', 
-                            '', 
-                            '', 
-                            '', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('OrderCreation'),
+                            $_SERVER['PHP_SELF'],
+                            'cf.date_creation',
+                            '',
+                            '',
+                            '',
+                            $sortfield,
                             $sortorder
                             );
-    print_liste_field_titre($langs->trans('Status'), 
-                            $_SERVER['PHP_SELF'], 
-                            'cf.fk_statut', 
-                            '', 
-                            '', 
-                            'align="right"', 
-                            $sortfield, 
+    print_liste_field_titre($langs->trans('Status'),
+                            $_SERVER['PHP_SELF'],
+                            'cf.fk_statut',
+                            '',
+                            '',
+                            'align="right"',
+                            $sortfield,
                             $sortorder
                             );
     print '</tr>';
@@ -228,7 +228,7 @@ if($resql) {
     $var = true;
     $userstatic = new User($db);
 
-    while($i < min($num,$conf->liste_limit)) {
+    while ($i < min($num,$conf->liste_limit)) {
         $obj = $db->fetch_object($resql);
         $var = !$var;
 
@@ -251,14 +251,13 @@ if($resql) {
         $userstatic->id = $obj->fk_user_author;
         $userstatic->login = $obj->login;
         print '<td>';
-        
-        if($userstatic->id) {
+
+        if ($userstatic->id) {
             print $userstatic->getLoginUrl(1);
-        }
-        else {
+        } else {
             print '&nbsp;';
         }
-        
+
         print '</td>';
         // Amount
         print '<td>';
@@ -268,8 +267,7 @@ if($resql) {
         print '<td>';
         if ($obj->dc) {
             print dol_print_date($db->jdate($obj->dc), 'day');
-        }
-        else {
+        } else {
             print '-';
         }
         print '</td>';
@@ -288,4 +286,3 @@ if($resql) {
 
 llxFooter();
 $db->close();
-?>
