@@ -1452,9 +1452,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
 
-    print "<!-- End top horizontal menu -->\n";
+    print "<!-- End top horizontal menu -->\n\n";
 
-	//XXX if (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<table width="100%" class="notopnoleftnoright" summary="leftmenutable" id="undertopmenu"><tr>';
     if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
 }
 
@@ -1486,7 +1485,6 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (empty($conf->dol_hide_leftmenu))
     {
 	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-		//XXX else print '<td class="vmenu" valign="top">';
 		else print '<div id="id-left">';
 
 	    print "\n";
@@ -1545,7 +1543,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    // Left column
 	    print '<!-- Begin left menu -->'."\n";
 
-	    print '<div class="vmenu">'."\n";
+	    print '<div class="vmenu">'."\n\n";
 
 	    $menumanager->menu_array = $menu_array_before;
     	$menumanager->menu_array_after = $menu_array_after;
