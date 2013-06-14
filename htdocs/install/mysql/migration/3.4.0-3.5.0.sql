@@ -63,3 +63,7 @@ create table llx_propaldet_extrafields
 ALTER TABLE llx_propaldet_extrafields ADD INDEX idx_propaldet_extrafields (fk_object);
 
 
+DROP table llx_adherent_options;
+DROP table llx_adherent_options_label;
+
+
