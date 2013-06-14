@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("companies");
 $langs->load("donations");
@@ -317,9 +319,12 @@ if ($action == 'create')
 
 	if (! empty($conf->projet->enabled))
     {
+    	
+    	$formproject=new FormProjets($db);
+    	
         // Si module projet actif
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        select_projects('',$_POST["projectid"],"projectid");
+        $formproject->select_projects('',$_POST["projectid"],"projectid");
         print "</td></tr>\n";
     }
 
@@ -414,9 +419,11 @@ if (! empty($id) && $action == 'edit')
     // Project
     if (! empty($conf->projet->enabled))
     {
+    	$formproject=new FormProjets($db);
+    	
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-        select_projects(-1, (isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project), 'projectid');
+        $formproject->select_projects(-1, (isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project), 'projectid');
         print '</td></tr>';
     }
 

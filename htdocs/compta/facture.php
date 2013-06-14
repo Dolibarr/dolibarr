@@ -42,8 +42,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled))   {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load('bills');
@@ -2266,9 +2268,11 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
+		$formproject=new FormProjets($db);
+		
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		select_projects($soc->id, $projectid, 'projectid');
+		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
 

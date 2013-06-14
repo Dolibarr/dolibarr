@@ -38,7 +38,7 @@ if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  requi
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 $langs->load("contracts");
@@ -864,8 +864,10 @@ if ($action == 'create')
 
     if (! empty($conf->projet->enabled))
     {
+    	$formproject=new FormProjets($db);
+    	
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
-        select_projects($soc->id,$projectid,"projectid");
+        $formproject->select_projects($soc->id,$projectid,"projectid");
         print "</td></tr>";
     }
 

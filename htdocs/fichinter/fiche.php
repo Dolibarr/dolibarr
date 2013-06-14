@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 if ($conf->contrat->enabled)
@@ -1006,6 +1006,8 @@ if ($action == 'create')
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
+			$formproject=new FormProjets($db);
+			
 			$langs->load("project");
 
             print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
@@ -1015,7 +1017,7 @@ if ($action == 'create')
             else
             	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
             	*/
-            $numprojet=select_projects($soc->id,GETPOST('projectid','int'),'projectid');
+            $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
             if ($numprojet==0)
             {
                 print ' &nbsp; <a href="'.DOL_DOCUMENT_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';

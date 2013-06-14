@@ -420,11 +420,11 @@ else
 	//print 'mode='.$_REQUEST["mode"].' $nboftaskshown='.$nboftaskshown.' count($tasksarray)='.count($tasksarray).' count($tasksrole)='.count($tasksrole).'<br>';
 	if ($mode=='mine')
 	{
-		if ($nboftaskshown < count($tasksrole)) clean_orphelins($db);
+		if ($nboftaskshown < count($tasksrole)) $object->clean_orphelins();
 	}
 	else
 	{
-		if ($nboftaskshown < count($tasksarray)) clean_orphelins($db);
+		if ($nboftaskshown < count($tasksarray)) $object->clean_orphelins();
 	}
 }
 
