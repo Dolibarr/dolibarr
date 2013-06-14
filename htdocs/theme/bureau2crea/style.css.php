@@ -1157,12 +1157,11 @@ div.tabs a.tab:hover {
     text-align: <?php print $left; ?>;
 }
 
-div.tabBar {
-    color: #234046;
-    margin: 0px 0px 10px 0px;
-    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/tab_background.png',1); ?>) repeat-x;
-}
 */
+
+div.tabBar {
+    margin: 0px 0px 10px 0px;
+}
 
 div.tabsAction {
     margin: 20px 0em 1px 0em;
@@ -1803,6 +1802,8 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; padding-bottom: 2px !important; }
+
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -1827,15 +1828,16 @@ table.dp {
 /* Barre titre */
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
-	background-color:#b3c5cc;
-	color:white;
+	background-color:#BB6644;
+	color:white !important;
 	font-size:11px;
 	cursor:auto;
+	text-align: center;
 }
 /* Barre navigation */
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;
+	background-color:#BB6644;
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
@@ -1846,16 +1848,14 @@ table.dp {
 .dpExplanation{ font-weight:normal; font-size:11px;}
 .dpWeek td{text-align:center}
 
-.dpToday,.dpReg,.dpSelected{
-	cursor:pointer;
-}
+.dpToday,.dpReg,.dpSelected { cursor:pointer; }
 .dpToday{font-weight:bold; color:black; background-color:#DDDDDD;}
 .dpReg:Hover,.dpToday:Hover{background-color:black;color:white}
 
 /* Jour courant */
-.dpSelected{background-color:#0B63A2;color:white;font-weight:bold; }
+.dpSelected {background-color:#BB6644;color:white;font-weight:bold; }
 
-.tpHour{border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
+.tpHour {border-top:1px solid #DDDDDD; border-right:1px solid #DDDDDD;}
 .tpHour td {border-left:1px solid #DDDDDD; border-bottom:1px solid #DDDDDD; cursor:pointer;}
 .tpHour td:Hover {background-color:black;color:white;}
 
@@ -2427,44 +2427,65 @@ div.ecmjqft {
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
+li.ui-li-divider .ui-link {
+	color: #FFF !important;
+}
+a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
+	text-decoration: none !important;
+}
+
 .ui-btn-inner {
 	padding-left: 10px;
 	padding-right: 10px;
-	white-space: normal;
+	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
-
-div.ui-controlgroup
+.ui-select .ui-btn-icon-right .ui-btn-inner {
+	padding-right: 36px;
+}
+.fiche .ui-controlgroup {
+	margin: 0px;
+	padding-bottom: 0px;
+}
+div.ui-controlgroup-controls div.tabsElem
 {
-	height: auto;
-	background-image: none;
+	margin-top: 2px;
 }
-
-div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
+div.ui-controlgroup-controls div.tabsElem a
 {
-	height: auto;
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	border: none;
 }
-
 a.tab span.ui-btn-inner
 {
 	border: none;
 	padding: 0;
-}
-div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
-	background-image: none;
-	color: #D45416;
-	height: auto;
 }
 
 .ui-body-c {
 	border: none;
 	text-shadow: none;
 }
-
-.ui-btn-icon-left .ui-icon {
-	left: 8px;
+.ui-link {
+	color: rgb(<?php print $colortext; ?>) !important;
 }
-.ui-btn-icon-right .ui-icon {
-	right: 8px;
+
+a.ui-link {
+	word-wrap: break-word;
+}
+
+/* force wrap possible onto field overflow does not works */
+.formdoc .ui-btn-inner
+{
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: hidden;
+}
+
+/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+.ui-body-c {
+	background: #fff;
 }
 
 div.ui-radio
