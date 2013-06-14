@@ -264,23 +264,23 @@ if ($resql) {
                           $num);
     }
 
-    print '<form action="replenish.php" method="post" name="formulaire">';
-    print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
-    print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-    print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-    print '<input type="hidden" name="type" value="' . $type . '">';
-    print '<input type="hidden" name="linecount" value="' . $num . '">';
-    print '<input type="hidden" name="action" value="order">';
+    echo '<form action="replenish.php" method="post" name="formulaire">',
+         '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">',
+         '<input type="hidden" name="sortfield" value="' . $sortfield . '">',
+         '<input type="hidden" name="sortorder" value="' . $sortorder . '">',
+         '<input type="hidden" name="type" value="' . $type . '">',
+         '<input type="hidden" name="linecount" value="' . $num . '">',
+         '<input type="hidden" name="action" value="order">',
 
-    print '<table class="liste" width="100%">';
+         '<table class="liste" width="100%">';
 
     $param = (isset($type)? '&type=' . $type : '');
     $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom;
     $param .= '&sref=' . $sref;
 
     // Lignes des titres
-    print '<tr class="liste_titre">';
-    print '<td>&nbsp;</td>';
+    echo '<tr class="liste_titre">',
+         '<td>&nbsp;</td>';
     print_liste_field_titre($langs->trans('Ref'),
                             'replenish.php',
                             'p.ref',
@@ -360,32 +360,32 @@ if ($resql) {
                             $sortfield,
                             $sortorder
                             );
-    print '<td>&nbsp;</td>';
-    print '</tr>';
+    echo '<td>&nbsp;</td>',
+         '</tr>',
 
     // Lignes des champs de filtre
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="sref" value="' . $sref . '">';
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="snom" value="' . $snom . '">';
-    print '</td>';
+         '<tr class="liste_titre">',
+         '<td class="liste_titre">&nbsp;</td>',
+         '<td class="liste_titre">',
+         '<input class="flat" type="text" name="sref" value="' . $sref . '">',
+         '</td>',
+         '<td class="liste_titre">',
+         '<input class="flat" type="text" name="snom" value="' . $snom . '">',
+         '</td>';
     if (!empty($conf->service->enabled) && $type == 1) {
-        print '<td class="liste_titre">';
-        print '&nbsp;';
-        print '</td>';
+        echo '<td class="liste_titre">',
+             '&nbsp;',
+             '</td>';
     }
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">';
-    print '</td>';
-    print '</tr>';
+    echo '<td class="liste_titre">&nbsp;</td>',
+         '<td class="liste_titre">&nbsp;</td>',
+         '<td class="liste_titre" align="right">&nbsp;</td>',
+         '<td class="liste_titre">&nbsp;</td>',
+         '<td class="liste_titre">&nbsp;</td>',
+         '<td class="liste_titre" align="right">',
+         '<input type="image" class="liste_titre" name="button_search" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" alt="' . $langs->trans("Search") . '">',
+         '</td>',
+         '</tr>';
 
     $prod = new Product($db);
 
@@ -410,34 +410,34 @@ if ($resql) {
                     }
                 }
             }
-
+            $form = new Form($db);
             $var =! $var;
-            print '<tr ' . $bc[$var] . '>';
-            print '<td><input type="checkbox" name="' . $i . '"></td>';
-            print '<td class="nowrap">';
             $prod->ref = $objp->ref;
             $prod->id = $objp->rowid;
             $prod->type = $objp->fk_product_type;
-            print $prod->getNomUrl(1, '', 16);
-            print '</td>';
-            print '<td>' . $objp->label . '</td>';
-            print '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
+            echo '<tr ' . $bc[$var] . '>',
+                 '<td><input type="checkbox" name="' . $i . '"></td>',
+                 '<td class="nowrap">',
+                 $prod->getNomUrl(1, '', 16),
+                 '</td>',
+                 '<td>' . $objp->label . '</td>',
+                 '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
 
             if (!empty($conf->service->enabled) && $type == 1) {
-                print '<td align="center">';
                 if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
-                     print $regs[1] . ' ' . $langs->trans('DurationYear');
+                    $duration =  $regs[1] . ' ' . $langs->trans('DurationYear');
                 } elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
-                    print $regs[1] . ' ' . $langs->trans('DurationMonth');
+                    $duration =  $regs[1] . ' ' . $langs->trans('DurationMonth');
                 } elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
-                    print $regs[1] . ' ' . $langs->trans('DurationDay');
+                    $duration =  $regs[1] . ' ' . $langs->trans('DurationDay');
                 } else {
-                    print $objp->duration;
+                    $duration = $objp->duration;
                 }
-                print '</td>';
+                echo '<td align="center">',
+                     $duration,
+                     '</td>';
             }
-            print '<td align="right">' . $objp->desiredstock . '</td>';
-            print '<td align="right">';
+
             if (!$objp->stock_physique) {
                 $objp->stock_physique = 0;
             }
@@ -461,38 +461,39 @@ if ($resql) {
             if ($objp->seuil_stock_alerte
                 && ($stock < $objp->seuil_stock_alerte)) {
                     $warn = $langs->trans('StockTooLow');
-                    print img_warning($warn) . ' ';
+                    $stock = img_warning($warn) . ' ' . $stock;
             }
-            print $stock;
-            print '</td>';
             //depending on conf, use either physical stock or
             //virtual stock to compute the stock to buy value
             $stocktobuy = $objp->desiredstock - $stock;
-            print '<td align="right">'.$stocktobuy.'</td>';
-            print '<input type="hidden" name="tobuy' . $i . '" value="' . $stocktobuy . '" >';
-            print '<td align="right">';
-            print ordered($prod->id);
-            print '</td>';
-            $form = new Form($db);
-            print '<td align="right">';
-            print $form->select_product_fourn_price($prod->id,
+            echo '<td align="right">' . $objp->desiredstock . '</td>',
+                 '<td align="right">',
+                 $stock,
+                 '</td>',
+                 '<td align="right">'.$stocktobuy.'</td>',
+                 '<input type="hidden" name="tobuy' . $i . '" value="' . $stocktobuy . '" >',
+                 '<td align="right">',
+                 ordered($prod->id),
+                 '</td>',
+                 '<td align="right">',
+                 $form->select_product_fourn_price($prod->id,
                                                     'fourn' . $i,
                                                     1
-                                                   );
-            print '</td>';
-            print '<td>&nbsp</td>';
-            print "</tr>";
+                                                   ),
+                 '</td>',
+                 '<td>&nbsp</td>',
+                 '</tr>';
         }
         $i++;
     }
-    print "</table>";
-    print '</div>';
-    print '<table width="100%">';
-    print '<tr><td align="right">';
     $value = $langs->trans("CreateOrders");
-    print '<input class="butAction" type="submit" value="' . $value . '">';
-    print '</td></tr></table>';
-    print '</form>';
+    echo '</table>',
+         '</div>',
+         '<table width="100%">',
+         '<tr><td align="right">',
+         '<input class="butAction" type="submit" value="' . $value . '">',
+         '</td></tr></table>',
+         '</form>';
 
     if ($num > $conf->liste_limit) {
         if ($sref || $snom || $sall || GETPOST('search')) {
