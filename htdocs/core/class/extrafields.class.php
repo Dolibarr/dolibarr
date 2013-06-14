@@ -559,7 +559,7 @@ class ExtraFields
 					$this->attribute_pos[$tab->name]=$tab->pos;
 				}
 			}
-			
+
 			return $array_name_label;
 		}
 		else
@@ -626,11 +626,11 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
@@ -646,27 +646,27 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat" name="options_'.$key.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'mail')
 		{
-			$out='<input type="text" name="options_'.$key.'" size="32" value="'.$value.'">';
+			$out='<input type="text" class="flat" name="options_'.$key.'" size="32" value="'.$value.'">';
 		}
 		elseif ($type == 'phone')
 		{
-			$out='<input type="text" name="options_'.$key.'"  size="20" value="'.$value.'">';
+			$out='<input type="text" class="flat" name="options_'.$key.'"  size="20" value="'.$value.'">';
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat" name="options_'.$key.'"  size="6" value="'.price($value).'"> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
-			$out='<input type="text" name="options_'.$key.'"  size="6" value="'.price($value).'"> ';
+			$out='<input type="text" class="flat" name="options_'.$key.'"  size="6" value="'.price($value).'"> ';
 		}
 		elseif ($type == 'select')
 		{
-			$out='<select name="options_'.$key.'">';
+			$out='<select class="flat" name="options_'.$key.'">';
 			foreach ($param['options'] as $key=>$val )
 			{
 				$out.='<option value="'.$key.'"';
@@ -677,10 +677,10 @@ class ExtraFields
 		}
 		elseif ($type == 'sellist')
 		{
-			$out='<select name="options_'.$key.'">';
+			$out='<select class="flat" name="options_'.$key.'">';
 			$param_list=array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
-			
+
 			// 0 1 : tableName
 			// 1 2 : label field name Nom du champ contenant le libelle
 			// 2 3 : key fields name (if differ of rowid)
@@ -694,7 +694,7 @@ class ExtraFields
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			//$sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).':showInputField:$type=sellist sql='.$sql);
+			dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
 			$resql = $this->db->query($sql);
 
 			if ($resql)
@@ -731,7 +731,7 @@ class ExtraFields
 			foreach ($param['options'] as $keyopt=>$val )
 			{
 
-				$out.='<input type="checkbox" name="options_'.$key.'[]"';
+				$out.='<input class="flat" type="checkbox" name="options_'.$key.'[]"';
 				$out.=' value="'.$keyopt.'"';
 
 				if ((is_array($value_arr)) && in_array($keyopt,$value_arr)) {
@@ -748,7 +748,7 @@ class ExtraFields
 			$out='';
 			foreach ($param['options'] as $keyopt=>$val )
 			{
-				$out.='<input type="radio" name="options_'.$key.'"';
+				$out.='<input class="flat" type="radio" name="options_'.$key.'"';
 				$out.=' value="'.$keyopt.'"';
 				$out.= ($value==$keyopt?'checked="checked"':'');
 				$out.='/>'.$val.'<br>';
@@ -830,7 +830,7 @@ class ExtraFields
 			if (count($InfoFieldList)==3)
 				$keyList=$InfoFieldList[2];
 
-			
+
 			$sql = 'SELECT '.$InfoFieldList[1];
 			$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 			$sql.= ' WHERE '.$keyList.'=\''.$this->db->escape($value).'\'';
@@ -890,7 +890,7 @@ class ExtraFields
 	function setOptionalsFromPost($extralabels,&$object)
 	{
 		global $_POST;
-		
+
 		if (is_array($extralabels))
 		{
 			// Get extra fields
