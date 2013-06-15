@@ -106,7 +106,7 @@ else {
 
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $nbrows=ROWS_2;
+    $nbrows=ROWS_9;
     $enabled=(! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
     $doleditor=new DolEditor('np_desc',GETPOST('np_desc"'),'',100,'dolibarr_details','',false,true,$enabled,$nbrows,70);
