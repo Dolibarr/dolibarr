@@ -1343,7 +1343,6 @@ class Project extends CommonObject
 	  */
 	function select_element($Tablename)
 	{
-		global $db;
 
 		$projectkey="fk_projet";
 		switch ($Tablename)
@@ -1373,25 +1372,27 @@ class Project extends CommonObject
 		} 
 		$sql.= " ORDER BY ref DESC";
 
-		dol_syslog("Project.Lib::select_element sql=".$sql);
+		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
 
-		$resql=$db->query($sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num > 0)
 			{
 				$sellist = '<select class="flat" name="elementselect">';
 				while ($i < $num)
 				{
-					$obj = $db->fetch_object($resql);
+					$obj = $this->db->fetch_object($resql);
 					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
 					$i++;
 				}
 				$sellist .='</select>';
 			}
 			return $sellist ;
+			
+			$this->db->free($resql);
 		}
 	}
 	
@@ -1404,8 +1405,8 @@ class Project extends CommonObject
 	  */
 	function update_element($TableName, $ElementSelectId)
 	{
-		global $db;
-		$sql="update ".MAIN_DB_PREFIX.$TableName;
+		$sql="UPDATE ".MAIN_DB_PREFIX.$TableName;
+		
 		if ($TableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
@@ -1416,7 +1417,17 @@ class Project extends CommonObject
 			$sql.= " SET fk_projet=".$this->id;
 			$sql.= " WHERE rowid=".$ElementSelectId;
 		}
-		$resql=$db->query($sql);
+		
+		dol_syslog(get_class($this)."::update_element sql=" . $sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (!$resql) {
+			$this->error=$this->db->lasterror();	
+			dol_syslog(get_class($this)."::update_element error : " . $this->error, LOG_ERR);
+			return -1;
+		}else {
+			return 1;
+		}
+			
 	}
 }
 

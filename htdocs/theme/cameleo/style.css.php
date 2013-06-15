@@ -579,7 +579,7 @@ foreach($mainmenuusedarray as $val)
 /* Login */
 
 form#login {
-	margin-top: 70px;
+	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
 	font-size: 13px;
 }
@@ -2281,38 +2281,65 @@ div.ecmjqft {
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
-.ui-body-c {
+li.ui-li-divider .ui-link {
+	color: #FFF !important;
+}
+a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
+	text-decoration: none !important;
+}
+
+.ui-btn-inner {
+	padding-left: 10px;
+	padding-right: 10px;
+	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
+}
+.ui-select .ui-btn-icon-right .ui-btn-inner {
+	padding-right: 36px;
+}
+.fiche .ui-controlgroup {
+	margin: 0px;
+	padding-bottom: 0px;
+}
+div.ui-controlgroup-controls div.tabsElem
+{
+	margin-top: 2px;
+}
+div.ui-controlgroup-controls div.tabsElem a
+{
+	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
+	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	border: none;
-	text-shadow: none;
 }
-
-div.ui-controlgroup
-{
-	height: auto;
-	background-image: none;
-}
-
-div.ui-controlgroup-controls div.tabsElem, div.ui-controlgroup-controls div.tabsElem a.tab
-{
-	height: auto;
-}
-
 a.tab span.ui-btn-inner
 {
 	border: none;
 	padding: 0;
 }
-div.tabs a.tab#active span.ui-btn-inner, div.tabs a.tab#active span.ui-btn-text, div.tabs a.tab span.ui-btn-inner, div.tabs a.tab span.ui-btn-text {
-	background-image: none;
-	color: #D45416;
-	height: auto;
+
+.ui-body-c {
+	border: none;
+	text-shadow: none;
+}
+.ui-link {
+	color: rgb(<?php print $colortext; ?>) !important;
 }
 
-.ui-btn-icon-left .ui-icon {
-	left: 8px;
+a.ui-link {
+	word-wrap: break-word;
 }
-.ui-btn-icon-right .ui-icon {
-	right: 8px;
+
+/* force wrap possible onto field overflow does not works */
+.formdoc .ui-btn-inner
+{
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: hidden;
+}
+
+/* Warning: setting this may make screen not beeing refreshed after a combo selection */
+.ui-body-c {
+	background: #fff;
 }
 
 div.ui-radio
@@ -2325,6 +2352,7 @@ div.ui-radio
 	margin: 0;
 	position: static;
 }
+
 
 <?php
 if (is_object($db)) $db->close();

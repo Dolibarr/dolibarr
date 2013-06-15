@@ -23,6 +23,7 @@ For users:
 - New: [ task #926 ] Add extrafield feature on order lines
 - New: [ task #927 ] Add extrafield feature on Proposal lines
 - New: [ task #928 ] Add extrafield feature on invoice lines
+- New: Add option ADHERENT_LOGIN_NOT_REQUIRED
 
 For translators:
 - Normalized sort order of all languages files with english ref file.
