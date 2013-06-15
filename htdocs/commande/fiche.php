@@ -43,7 +43,7 @@ if (! empty($conf->propal->enabled))
 	require DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
 	require DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -1626,8 +1626,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
+		$formproject=new FormProjets($db);
+		
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$numprojet=select_projects($soc->id,$projectid);
+		$numprojet=$formproject->select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';

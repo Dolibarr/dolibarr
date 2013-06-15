@@ -2695,6 +2695,9 @@ class Form
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+        
+        $formproject=new FormProjets($this->db);
 
         $langs->load("project");
         if ($htmlname != "none")
@@ -2705,7 +2708,7 @@ class Form
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
             //print "$socid,$selected,$htmlname";
-            select_projects($socid,$selected,$htmlname);
+            $formproject->select_projects($socid,$selected,$htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
