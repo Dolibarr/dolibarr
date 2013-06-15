@@ -1278,6 +1278,63 @@ class Project extends CommonObject
 	    return $result;
 	}
 	
+	/**
+	 * Clean task not linked to a parent
+	 *
+	 * @param	DoliDB	$db     Database handler
+	 * @return	int				Nb of records deleted
+	 */
+	function clean_orphelins()
+	{
+		$nb=0;
+	
+		// There is orphelins. We clean that
+		$listofid=array();
+	
+		// Get list of id in array listofid
+		$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num && $i < 100)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$listofid[]=$obj->rowid;
+				$i++;
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	
+		if (count($listofid))
+		{
+			// Removed orphelins records
+			print 'Some orphelins were found and restored to be parents so records are visible again: ';
+			print join(',',$listofid);
+	
+			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
+			$sql.= " SET fk_task_parent = 0";
+			$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
+	
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$nb=$this->db->affected_rows($sql);
+	
+				return $nb;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+	}
+	
+	
 	 /**
 	  *    Build Select List of element associable to a project
 	  *
