@@ -61,12 +61,14 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 	$param_chain = '';
 	foreach ($param['options'] as $key => $value)
 	{
-		if(strlen($key)) 
+		if(strlen($key))
 		{
-			$param_chain .= $key.', '.$value."\n";
+			$param_chain .= $key.','.$value."\n";
 		}
 	}
-}elseif ($type== 'sellist') {
+}
+elseif ($type== 'sellist')
+{
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
 }
@@ -83,8 +85,8 @@ if((($type == 'select') || ($type == 'checkbox') ||(($type == 'radio'))) && is_a
 <input type="hidden" name="type" id="type" value="<?php print $type; ?>">
 </td></tr>
 <!--  Value (for select list / radio) -->
-<?php 
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio'))) 
+<?php
+if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($type == 'radio')))
 {
 ?>
 <tr id="value_choice">
@@ -99,7 +101,7 @@ if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') ||(($typ
 </table>
 </td>
 </tr>
-<?php 
+<?php
 }
 ?>
 <!-- Size -->

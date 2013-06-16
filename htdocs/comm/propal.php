@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 $langs->load('companies');
@@ -1369,13 +1369,16 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
+		
+		$formproject=new FormProjets($db);
+		
 		$projectid = 0;
 		if ($origin == 'project') $projectid = ($originid?$originid:0);
 
 		print '<tr>';
 		print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 
-		$numprojet=select_projects($soc->id,$projectid);
+		$numprojet=$formproject->select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
 			$langs->load("projects");

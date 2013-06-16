@@ -391,7 +391,7 @@ if ($resql)
 		$companystatic->canvas=$obj->canvas;
         $companystatic->client=$obj->client;
         $companystatic->status=$obj->status;
-		print $companystatic->getNomUrl(1,'',24);
+		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
 		print "<td>".$obj->town."</td>\n";
 		print "<td>".$obj->idprof1."</td>\n";

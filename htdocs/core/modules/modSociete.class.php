@@ -267,33 +267,33 @@ class modSociete extends DolibarrModules
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {
-            while ($obj=$this->db->fetch_object($resql))
-            {
-                $fieldname='extra.'.$obj->name;
-                $fieldlabel=ucfirst($obj->label);
-		$typeFilter="Text";
-		switch($obj->type)
-		{
-			case 'int':
-			case 'double':
-			case 'price':
-				$typeFilter="Numeric";
-				break;
-			case 'date':
-			case 'datetime':
-				$typeFilter="Date";
-				break;
-			case 'boolean':
-				$typeFilter="Boolean";
-				break;
-			case 'sellist':
-				$typeFilter="List:".$obj->param;
-				break;
-		}
-                $this->export_fields_array[$r][$fieldname]=$fieldlabel;
-		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-                $this->export_entities_array[$r][$fieldname]='company';
-            }
+        	while ($obj=$this->db->fetch_object($resql))
+        	{
+        		$fieldname='extra.'.$obj->name;
+        		$fieldlabel=ucfirst($obj->label);
+        		$typeFilter="Text";
+        		switch($obj->type)
+        		{
+        			case 'int':
+        			case 'double':
+        			case 'price':
+        				$typeFilter="Numeric";
+        				break;
+        			case 'date':
+        			case 'datetime':
+        				$typeFilter="Date";
+        				break;
+        			case 'boolean':
+        				$typeFilter="Boolean";
+        				break;
+        			case 'sellist':
+        				$typeFilter="List:".$obj->param;
+        				break;
+        		}
+        		$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+        		$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+        		$this->export_entities_array[$r][$fieldname]='company';
+        	}
         }
         // End add axtra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
