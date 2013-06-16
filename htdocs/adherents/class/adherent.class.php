@@ -1101,12 +1101,10 @@ class Adherent extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+                $this->fetch_optionals($this->id,$extralabels);
 
                 // Load other properties
                 $result=$this->fetch_subscriptions();
@@ -1662,6 +1660,7 @@ class Adherent extends CommonObject
             {
                 $this->nb["members"]=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else

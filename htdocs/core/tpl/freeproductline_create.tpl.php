@@ -69,13 +69,13 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 </tr>
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<?php 
+	<?php
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 			$coldisplay=2; }
 	else {
 			$coldisplay=0; }
 	?>
-	
+
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 		<?php
 
@@ -109,7 +109,7 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 	<td align="right"><input type="text" size="5" name="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 	</td>
 	<td align="right"><input type="text" size="2" name="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo $buyer->remise_client; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
+	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo $buyer->remise_percent; ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
 	<?php
 	$colspan = 4;
 	if (! empty($usemargins))

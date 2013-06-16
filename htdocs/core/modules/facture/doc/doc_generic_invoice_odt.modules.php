@@ -145,8 +145,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Retrieve extrafields
 		if(is_array($object->array_options) && count($object->array_options))
 		{
-			if(!class_exists('Extrafields'))
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
 			$object->fetch_optionals($object->id,$extralabels);

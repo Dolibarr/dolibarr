@@ -909,7 +909,6 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->mode_reglement_id = $id;
-    			$this->mode_reglement = $id;	// for compatibility
     			return 1;
     		}
     		else
@@ -2664,7 +2663,7 @@ abstract class CommonObject
     	//Line extrafield
     	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafieldsline = new ExtraFields($this->db);
-    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line); 	 
+    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
 
     	// Use global variables + $dateSelector + $seller and $buyer
     	include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
@@ -2781,7 +2780,7 @@ abstract class CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline = new ExtraFields($this->db);
 		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
-		
+
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield

@@ -181,9 +181,7 @@ class Facture extends CommonInvoice
 			$result=$_facrec->fetch($this->fac_rec);
 
 			$this->fk_project        = $_facrec->fk_project;
-			$this->cond_reglement    = $_facrec->cond_reglement_id;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
-			$this->mode_reglement    = $_facrec->mode_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
@@ -437,7 +435,7 @@ class Facture extends CommonInvoice
 
 			if (! $error)
 			{
-            	           	
+
 				$result=$this->update_price(1);
 				if ($result > 0)
 				{
@@ -877,13 +875,10 @@ class Facture extends CommonInvoice
 
 				// Retreive all extrafield for invoice
 				// fetch optionals attributes and labels
-				if(!class_exists('Extrafields'))
-					require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields=new ExtraFields($this->db);
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				if (count($extralabels)>0) {
-					$this->fetch_optionals($this->id,$extralabels);
-				}
+				$this->fetch_optionals($this->id,$extralabels);
 
 				/*
 				 * Lines
@@ -2859,17 +2854,18 @@ class Facture extends CommonInvoice
 	{
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
-		$soc = new Societe($this->db);
-		$soc->id = $this->socid;
-		$soc->load_ban();
-
 		if ($this->statut > 0 && $this->paye == 0)
 		{
-			$sql = 'SELECT count(*)';
+	        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+	        $bac = new CompanyBankAccount($this->db);
+	        $bac->fetch(0,$this->socid);
+
+        	$sql = 'SELECT count(*)';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
 			$sql.= ' WHERE fk_facture = '.$this->id;
 			$sql.= ' AND traite = 0';
 
+			dol_syslot(get_clas($this)."::demande_prelevement sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -2893,11 +2889,12 @@ class Facture extends CommonInvoice
                     $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
                     $sql .= ' VALUES ('.$this->id;
                     $sql .= ",'".price2num($resteapayer)."'";
-                    $sql .= ",".$this->db->idate($now).",".$user->id;
-                    $sql .= ",'".$soc->bank_account->code_banque."'";
-                    $sql .= ",'".$soc->bank_account->code_guichet."'";
-                    $sql .= ",'".$soc->bank_account->number."'";
-                    $sql .= ",'".$soc->bank_account->cle_rib."')";
+                    $sql .= ",'".$this->db->idate($now)."',";
+                    $sql .= ",".$user->id;
+                    $sql .= ",'".$bac->code_banque."'";
+                    $sql .= ",'".$bac->code_guichet."'";
+                    $sql .= ",'".$bac->number."'";
+                    $sql .= ",'".$bac->cle_rib."')";
                     if ( $this->db->query($sql))
                     {
                         return 1;
@@ -3185,6 +3182,7 @@ class Facture extends CommonInvoice
 			{
 				$this->nb["invoices"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else
@@ -3522,7 +3520,7 @@ class FactureLigne  extends CommonInvoiceLine
             		$error++;
             	}
             }
-            
+
 			// Si fk_remise_except defini, on lie la remise a la facture
 			// ce qui la flague comme "consommee".
 			if ($this->fk_remise_except)
@@ -3679,7 +3677,7 @@ class FactureLigne  extends CommonInvoiceLine
         			$error++;
         		}
         	}
-        	
+
 			if (! $notrigger)
 			{
 				// Appel des triggers

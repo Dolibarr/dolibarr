@@ -187,6 +187,25 @@ class CompanyBankAccount extends Account
         }
     }
 
+    /**
+     * Return RIB
+     *
+     * @return	string		RIB
+     */
+    function getRibLabel()
+    {
+    	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
+    	{
+    		$rib = $this->code_banque." ".$this->code_guichet." ".$this->number;
+    		$rib.=($this->cle_rib?" (".$this->cle_rib.")":"");
+    	}
+    	else
+    	{
+    		$rib=$langs->trans("NoRIB");
+    	}
+
+    	return $rib;
+    }
 }
 
 ?>

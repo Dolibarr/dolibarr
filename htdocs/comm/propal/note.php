@@ -113,7 +113,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-			if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+			if ($societe->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_percent);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$societe->getAvailableDiscounts();
 			print '. ';

@@ -320,7 +320,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 							$lines[$i]->fetch_optionals($lines[$i]->rowid);
 							$array_option=$lines[$i]->array_options;
 						}
-						
+
 						$result = $object->addline(
 							$object_id,
 							$desc,
@@ -1535,7 +1535,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
-	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
+	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 
@@ -1579,7 +1579,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts();
@@ -1627,7 +1627,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
 		$formproject=new FormProjets($db);
-		
+
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		$numprojet=$formproject->select_projects($soc->id,$projectid);
 		if ($numprojet==0)
@@ -1739,7 +1739,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 					print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-				print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td></tr>';
+				print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_percent.'">%</td></tr>';
 			}
 
 			print '</table>';
@@ -1993,7 +1993,7 @@ else
 		$addcreditnote='<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
 
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');

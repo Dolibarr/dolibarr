@@ -838,7 +838,7 @@ if ($action == 'create')
 	{
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts();
@@ -865,7 +865,7 @@ if ($action == 'create')
     if (! empty($conf->projet->enabled))
     {
     	$formproject=new FormProjets($db);
-    	
+
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
         $formproject->select_projects($soc->id,$projectid,"projectid");
         print "</td></tr>";
@@ -1012,7 +1012,7 @@ else
 
         // Ligne info remises tiers
         print '<tr><td>'.$langs->trans('Discount').'</td><td colspan="3">';
-        if ($object->thirdparty->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_client);
+        if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
         $absolute_discount=$object->thirdparty->getAvailableDiscounts();
         print '. ';

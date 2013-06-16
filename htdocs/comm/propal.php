@@ -905,7 +905,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			unset($_POST["options_".$key]);
 		}
 	}
-	
+
 	// Define special_code for special lines
 	$special_code=0;
 	if (! GETPOST('qty')) $special_code=3;
@@ -1302,7 +1302,7 @@ if ($action == 'create')
 
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$soc->getAvailableDiscounts();
 		print '. ';
@@ -1322,12 +1322,12 @@ if ($action == 'create')
 
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
+	$form->select_conditions_paiements($soc->cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+	$form->select_types_paiements($soc->mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
 	// What trigger creation
@@ -1369,9 +1369,9 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
-		
+
 		$formproject=new FormProjets($db);
-		
+
 		$projectid = 0;
 		if ($origin == 'project') $projectid = ($originid?$originid:0);
 
@@ -1476,7 +1476,7 @@ if ($action == 'create')
 					$form->select_produits('',"idprod".$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_client.'">%</td>';
+				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_percent.'">%</td>';
 				print '</tr>';
 			}
 
@@ -1624,7 +1624,7 @@ else
 
 	// Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+	if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
 	$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');

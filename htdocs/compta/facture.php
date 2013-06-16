@@ -1127,7 +1127,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
 	$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
-	
+
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
@@ -1424,7 +1424,7 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
 			unset($_POST["options_".$key]);
 		}
 	}
-	
+
 
 	// Check minimum price
 	$productid = GETPOST('productid', 'int');
@@ -2238,7 +2238,7 @@ if ($action == 'create')
 	{
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.$soc->remise_client.'</a>');
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">'.$soc->remise_percent.'</a>');
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print ' <a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action='.$action.'&origin='.GETPOST('origin').'&originid='.GETPOST('originid')).'">('.$langs->trans("EditRelativeDiscount").')</a>';
 		print '. ';
@@ -2269,7 +2269,7 @@ if ($action == 'create')
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
 		$formproject=new FormProjets($db);
-		
+
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		$formproject->select_projects($soc->id, $projectid, 'projectid');
@@ -2390,7 +2390,7 @@ if ($action == 'create')
 					$form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
-				print '<td class="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
+				print '<td class="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_percent.'">%</td>';
 				print '<td>&nbsp;</td>';
 				// Si le module service est actif, on propose des dates de debut et fin a la ligne
 				if (! empty($conf->service->enabled))
@@ -2855,7 +2855,7 @@ else if ($id > 0 || ! empty($ref))
 
 		print '<tr><td>'.$langs->trans('Discounts');
 		print '</td><td colspan="5">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		//print ' ('.$addrelativediscount.')';
 

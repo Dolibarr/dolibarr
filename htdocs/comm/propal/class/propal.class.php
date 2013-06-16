@@ -408,7 +408,7 @@ class Propal extends CommonObject
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-            
+
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
@@ -1109,13 +1109,10 @@ class Propal extends CommonObject
 
                 // Retreive all extrafield for invoice
                 // fetch optionals attributes and labels
-                if(!class_exists('Extrafields'))
-                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+                $this->fetch_optionals($this->id,$extralabels);
 
                 $this->db->free($resql);
 
@@ -1202,13 +1199,11 @@ class Propal extends CommonObject
 
                 // Retreive all extrafield for propal
                 // fetch optionals attributes and labels
-                if(!class_exists('Extrafields'))
-                	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+                $this->fetch_optionals($this->id,$extralabels);
+
                 return 1;
             }
 
@@ -2449,6 +2444,7 @@ class Propal extends CommonObject
             {
                 $this->nb["proposals"]=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else
@@ -2850,7 +2846,7 @@ class PropaleLigne  extends CommonObject
         if ($resql)
         {
             $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-            
+
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
             	$this->id=$this->rowid;
@@ -2860,7 +2856,7 @@ class PropaleLigne  extends CommonObject
             		$error++;
             	}
             }
-            
+
             if (! $notrigger)
             {
                 // Appel des triggers
@@ -2901,7 +2897,7 @@ class PropaleLigne  extends CommonObject
         dol_syslog("PropaleLigne::delete sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql) )
         {
-        	
+
         	// Remove extrafields
         	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         	{
@@ -2913,7 +2909,7 @@ class PropaleLigne  extends CommonObject
         			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         		}
         	}
-        	
+
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
@@ -3016,7 +3012,7 @@ class PropaleLigne  extends CommonObject
         			$error++;
         		}
         	}
-        	
+
             if (! $notrigger)
             {
                 // Appel des triggers

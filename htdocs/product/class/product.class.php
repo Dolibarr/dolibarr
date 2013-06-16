@@ -2983,6 +2983,7 @@ class Product extends CommonObject
 			{
 				$this->nb["products"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else

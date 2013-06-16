@@ -149,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 
         print '<tr><td>'.$langs->trans('Discounts');
         print '</td><td colspan="5">';
-        if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+        if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
 
         if ($absolute_discount > 0)

@@ -793,7 +793,11 @@ class BonPrelevement extends CommonObject
 
         if (! $error)
         {
-            // Check RIB
+            require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+            $soc = new Societe($this->db);
+            $bac = new CompanyBankAccount($this->db);
+
+        	// Check RIB
             $i = 0;
             dol_syslog("Start RIB check");
 
@@ -802,13 +806,12 @@ class BonPrelevement extends CommonObject
                 foreach ($factures as $fac)
                 {
                     $fact = new Facture($this->db);
-
                     if ($fact->fetch($fac[0]) >= 0)
                     {
-                        $soc = new Societe($this->db);
                         if ($soc->fetch($fact->socid) >= 0)
                         {
-                            if ($soc->verif_rib() == 1)
+                        	$bac->fetch(0,$soc->id);
+                            if ($bac->verif() >= 1)
                             {
                                 $factures_prev[$i] = $fac;
                                 /* second tableau necessaire pour BonPrelevement */
@@ -816,24 +819,24 @@ class BonPrelevement extends CommonObject
                                 $i++;
                             }
                             else
-                            {
-                                dol_syslog("Error on third party bank number RIB/IBAN $fact->socid $soc->nom", LOG_ERR);
-                                $facture_errors[$fac[0]]="Error on third party bank number RIB/IBAN $fact->socid $soc->nom";
+							{
+                                dol_syslog("Error on third party bank number RIB/IBAN ".$fact->socid." ".$soc->nom, LOG_ERR);
+                                $facture_errors[$fac[0]]="Error on third party bank number RIB/IBAN ".$fact->socid." ".$soc->nom;
                             }
                         }
                         else
-                        {
+						{
                             dol_syslog("Failed to read company", LOG_ERR);
                         }
                     }
                     else
-                    {
+					{
                         dol_syslog("Failed to read invoice", LOG_ERR);
                     }
                 }
             }
             else
-            {
+			{
                 dol_syslog("No invoice to process");
             }
         }
@@ -1252,7 +1255,7 @@ class BonPrelevement extends CommonObject
                     $num = $this->db->num_rows($resql);
 
 					$client = new Societe($this->db);
-                        
+
                     while ($i < $num)
                     {
                     	$obj = $this->db->fetch_object($resql);

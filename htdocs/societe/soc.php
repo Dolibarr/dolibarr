@@ -1707,10 +1707,8 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('RIB');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer)
-            print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
-            else
-            print '&nbsp;';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
+            else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
             print '<td colspan="3">';
