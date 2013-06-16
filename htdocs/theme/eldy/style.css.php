@@ -1668,11 +1668,17 @@ table.liste td {
 	padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
 	height: 20px !important;
 }
-div.liste_titre, tr.liste_titre, tr.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
