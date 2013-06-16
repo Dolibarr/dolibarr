@@ -4325,12 +4325,15 @@ function printCommonFooter($zone='private')
 	// End of tuning
 	if (! empty($_SERVER['DOL_TUNING']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 	{
-		$micro_end_time=dol_microtime_float(true);
 		print "\n".'<script type="text/javascript">'."\n";
 		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
-		print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		if ($micro_start_time)
+		{
+			$micro_end_time=dol_microtime_float(true);
+			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		}
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Mem: '.memory_get_usage();
