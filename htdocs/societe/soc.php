@@ -1793,7 +1793,6 @@ else
         }
 
         print '</div>'."\n";
-        print '<br>';
 
         if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
         {
@@ -1820,6 +1819,8 @@ else
 
             print '<br>';
         }
+
+        print '<div class="fichecenter"><br></div>';
 
         // Subsidiaries list
         $result=show_subsidiaries($conf,$langs,$db,$object);
