@@ -1354,11 +1354,17 @@ table.liste td {
 	padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
     height: 24px;
 }
-div.liste_titre, tr.liste_titre
+div.liste_titre, tr.liste_titre, form.liste_titre
 {
     background: #7699A9;
     background-image: url(<?php echo $img_liste_titre ?>);

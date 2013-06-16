@@ -1204,11 +1204,17 @@ table.liste {
 
 table.liste td {padding:1px 2px 1px 0px;}
 
-tr.liste_titre, tr.liste_titre_sel
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
 	height: 22px;
 }
-div.liste_titre, tr.liste_titre, tr.box_titre {
+div.liste_titre, tr.liste_titre, form.liste_titre, tr.box_titre {
 	padding:4px;
 	background-color:rgba(0,0,0,.2);
 	background-image:linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -1230,7 +1236,7 @@ tr.box_titre td.boxclose {
 	width: 36px;
 }
 
-tr.liste_titre td, tr.liste_titre th {
+tr.liste_titre td, tr.liste_titre th, form.liste_titre div {
 	padding:2px;
 	padding-left:2px !important;
 	white-space:nowrap;

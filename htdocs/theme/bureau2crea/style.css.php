@@ -1469,7 +1469,13 @@ table.noborder {
     vertical-align: text-top;
 }
 
-tr.liste_titre {
+.tagtable { display: table; }
+.tagtable form { display: table-row; }
+.tagtable form div { display: table-cell; }
+.tagtr { display: table-row; }
+.tagtd { display: table-cell; }
+
+tr.liste_titre, form.liste_titre {
     height: 25px;
     background-repeat: no-repeat;
     background-color: #C8C8C8;
@@ -1478,19 +1484,12 @@ tr.liste_titre {
     font-weight: normal;
     /* text-decoration: underline; */
     /* border-bottom: 1px solid #FDFFFF; */
-}
-
-tr.liste_titre {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title.jpg',1); ?>);
+    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title2.jpg',1); ?>);
     background-position: top right;
 }
 
 th.liste_titre_sel, td.liste_titre_sel, th.liste_titre {
     color: #FFFFFF !important;
-}
-
-tr.liste_titre {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title2.jpg',1); ?>);
 }
 
 tr.liste_total {
@@ -1501,16 +1500,16 @@ border-top: 1px solid #333;
 div#stats {
 }
 
-div.liste_titre, tr.liste_titre {
+div.liste_titre, tr.liste_titre, form.liste_titre {
     text-align: <?php echo $left; ?>;
 }
 
-div.liste_titre a, tr.liste_titre a {
+div.liste_titre a, tr.liste_titre a, form.liste_titre a {
 	color: #333333;
 	margin: 0px 5px;
 }
 
-div.liste_titre td, tr.liste_titre td {
+div.liste_titre td, tr.liste_titre td, form.liste_titre div {
 	padding: 0px 5px;
     vertical-align: middle;
     background: none !important;
@@ -1526,7 +1525,7 @@ div.liste_titre, th.liste_titre, td.liste_titre
     background: none;
 }
 
-div.liste_titre input.button, tr.liste_titre input.button {
+div.liste_titre input.button, tr.liste_titre input.button, form.liste_titre input.button {
 	float: left;
     position: relative;
     /*margin: 30px 10px 10px 0px;*/
