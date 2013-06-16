@@ -24,6 +24,10 @@
  *					This file contains all rare functions.
  */
 
+// Enable this line to trace path when function is called.
+//print xdebug_print_function_stack('Functions2.lib was called');exit;
+
+
 /**
  * Same function than javascript unescape() function but in PHP.
  *
@@ -1417,4 +1421,89 @@ function getSoapParams()
         );
     }
     return $params;
+}
+
+
+/**
+ * List urls of element
+ *
+ * @param 	int		$objectid		Id of record
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', ...)
+ * @param 	int		$withpicto		Picto to show
+ * @param 	string	$option			More options
+ * @return	string					URL of link to object id/type
+ */
+function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
+{
+	global $db,$conf;
+
+	$ret='';
+
+	// Parse element/subelement (ex: project_task)
+	$module = $element = $subelement = $objecttype;
+	if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+	{
+		$module = $element = $regs[1];
+		$subelement = $regs[2];
+	}
+
+	$classpath = $element.'/class';
+
+	// To work with non standard path
+	if ($objecttype == 'facture' || $objecttype == 'invoice') {
+		$classpath = 'compta/facture/class'; $module='facture'; $subelement='facture';
+	}
+	if ($objecttype == 'commande' || $objecttype == 'order') {
+		$classpath = 'commande/class'; $module='commande'; $subelement='commande';
+	}
+	if ($objecttype == 'propal')  {
+		$classpath = 'comm/propal/class';
+	}
+	if ($objecttype == 'shipping') {
+		$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
+	}
+	if ($objecttype == 'delivery') {
+		$classpath = 'livraison/class'; $subelement = 'livraison'; $module = 'livraison_bon';
+	}
+	if ($objecttype == 'invoice_supplier') {
+		$classpath = 'fourn/class';
+	}
+	if ($objecttype == 'order_supplier')   {
+		$classpath = 'fourn/class';
+	}
+	if ($objecttype == 'contract') {
+		$classpath = 'contrat/class'; $module='contrat'; $subelement='contrat';
+	}
+	if ($objecttype == 'member') {
+		$classpath = 'adherents/class'; $module='adherent'; $subelement='adherent';
+	}
+	if ($objecttype == 'cabinetmed_cons') {
+		$classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
+	}
+	if ($objecttype == 'fichinter') {
+		$classpath = 'fichinter/class'; $module='ficheinter'; $subelement='fichinter';
+	}
+
+	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
+
+	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	if ($objecttype == 'invoice_supplier') {
+		$classfile = 'fournisseur.facture'; $classname='FactureFournisseur';
+	}
+	if ($objecttype == 'order_supplier')   {
+		$classfile = 'fournisseur.commande'; $classname='CommandeFournisseur';
+	}
+
+	if (! empty($conf->$module->enabled))
+	{
+		$res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+		if ($res)
+		{
+			$object = new $classname($db);
+			$res=$object->fetch($objectid);
+			if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+			unset($object);
+		}
+	}
+	return $ret;
 }

@@ -577,14 +577,14 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
-		
+
 		$formproject=new FormProjets($db);
-		
+
 		// Projet associe
 		$langs->load("project");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-		
+
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
 		{
@@ -808,9 +808,9 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			
+
 			$formproject=new FormProjets($db);
-			
+
 			// Projet associe
 			$langs->load("project");
 
@@ -831,8 +831,9 @@ if ($id > 0)
 		// Object linked
 		if (! empty($act->fk_element) && ! empty($act->elementtype))
 		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.$act->getElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
+			print '<td colspan="3">'.dolGetElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
 		}
 
         // Description
@@ -1015,8 +1016,9 @@ if ($id > 0)
 		// Object linked
 		if (! empty($act->fk_element) && ! empty($act->elementtype))
 		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.$act->getElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
+			print '<td colspan="3">'.dolGetElementUrl($act->fk_element,$act->elementtype,1).'</td></tr>';
 		}
 
 		// Description

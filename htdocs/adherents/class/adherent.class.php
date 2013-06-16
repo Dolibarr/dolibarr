@@ -27,8 +27,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
@@ -1138,6 +1136,8 @@ class Adherent extends CommonObject
     {
         global $langs;
 
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+
         $sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
         $sql.= " c.tms as datem,";
         $sql.= " c.datec as datec,";
@@ -1206,6 +1206,8 @@ class Adherent extends CommonObject
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
 		$error=0;
 
