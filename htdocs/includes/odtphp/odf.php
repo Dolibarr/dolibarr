@@ -458,7 +458,7 @@ IMG;
 		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
 		
 		$name=str_replace('.odt', '', $name);
-		$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name;
+		$command = '../../scripts/odt2pdf/odt2pdf.sh '.$name;
 		
 		//$dirname=dirname($name);
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
