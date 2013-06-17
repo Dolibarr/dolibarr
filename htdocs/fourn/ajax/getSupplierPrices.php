@@ -76,8 +76,7 @@ if (! empty($idprod))
 
 				if ($objp->quantity == 1)
 				{
-					$title.= price($objp->fprice);
-					$title.= $langs->getCurrencySymbol($conf->currency)."/";
+					$title.= price($objp->fprice,0,$langs,0,0,-1,$conf->currency)."/";
 
 					$price = $objp->fprice;
 				}
@@ -95,18 +94,18 @@ if (! empty($idprod))
 				if ($objp->quantity > 1)
 				{
 					$title.=" - ";
-					$title.= price($objp->unitprice).$langs->getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
+					$title.= price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 
 					$price = $objp->unitprice;
 				}
 				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2")) {
 					$title.=" + ";
-					$title.= price($objp->unitcharges).$langs->getCurrencySymbol($conf->currency);
+					$title.= price($objp->unitcharges,0,$langs,0,0,-1,$conf->currency);
 					$price += $objp->unitcharges;
 				}
 				if ($objp->duration) $label .= " - ".$objp->duration;
 
-				$label = price($price).$langs->getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
+				$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 
 				$prices[] = array("id" => $objp->idprodfournprice, "price" => price($price,0,'',0), "label" => $label, "title" => $title);
 				$i++;

@@ -482,7 +482,7 @@ if (! empty($id) && $action != 'edit')
     print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
 	print nl2br($don->note_private).'</td></tr>';
 
-    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount,0,$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
 	print yn($don->public);
