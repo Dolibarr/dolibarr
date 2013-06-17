@@ -156,5 +156,67 @@ class FormProjets
 			return -1;
 		}
 	}
+	
+	/**
+	 *    Build Select List of element associable to a project
+	 *
+	 *    @param	TableName		Table of the element to update
+	 *    @return	string			The HTML select list of element
+	 */
+	function select_element($table_element)
+	{
+	
+		$projectkey="fk_projet";
+		switch ($table_element)
+		{
+			case "facture":
+				$sql = "SELECT rowid, facnumber as ref";
+				break;
+			case "facture_fourn":
+				$sql = "SELECT rowid, ref";
+				break;
+			case "facture_rec":
+				$sql = "SELECT rowid, titre as ref";
+				break;
+			case "actioncomm":
+				$sql = "SELECT id as rowid, label as ref";
+				$projectkey="fk_project";
+				break;
+			default:
+				$sql = "SELECT rowid, ref";
+				break;
+		}
+	
+		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
+		$sql.= " WHERE ".$projectkey." is null";
+		if (!empty($this->societe->id)) {
+			$sql.= " AND fk_soc=".$this->societe->id;
+		}
+		$sql.= " ORDER BY ref DESC";
+	
+		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num > 0)
+			{
+				$sellist = '<select class="flat" name="elementselect">';
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$sellist .='<option value="'.$obj->rowid.'">'.$obj->ref.'</option>';
+					$i++;
+				}
+				$sellist .='</select>';
+			}
+			return $sellist ;
+				
+			$this->db->free($resql);
+		}
+	}
+	
 
 }
