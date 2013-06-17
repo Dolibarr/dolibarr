@@ -828,7 +828,7 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$value=price($value).' '.$langs->getCurrencySymbol($conf->currency);
+			$value=price($value,0,$langs,0,0,-1,$conf->currency);
 		}
 		elseif ($type == 'select')
 		{

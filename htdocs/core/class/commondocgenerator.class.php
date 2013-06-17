@@ -185,7 +185,7 @@ abstract class CommonDocGenerator
         	{
         		if($extrafields->attribute_type[$key] == 'price')
         		{
-        			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key]).' '.$outputlangs->getCurrencySymbol($conf->currency);
+        			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
         		}
         		else if($extrafields->attribute_type[$key] == 'select')
         		{
@@ -322,8 +322,8 @@ abstract class CommonDocGenerator
 		{
 			if($extrafields->attribute_type[$key] == 'price')
 			{
-				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key],2);
-				$object->array_options['options_'.$key.'_currency'] = $object->array_options['options_'.$key].' '.$outputlangs->getCurrencySymbol($conf->currency);
+				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
+				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key],0,$outputlangs,0,0,-1,$conf->currency);
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}

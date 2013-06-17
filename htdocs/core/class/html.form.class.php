@@ -1461,10 +1461,6 @@ class Form
         $outval.=$objRef.' - '.dol_trunc($label,32).' - ';
 
         $found=0;
-        $currencytext=$langs->trans("Currency".$conf->currency);
-        $currencytextnoent=$langs->transnoentities("Currency".$conf->currency);
-        if (dol_strlen($currencytext) > 10) $currencytext=$conf->currency;	// If text is too long, we use the short code
-        if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->currency;   // If text is too long, we use the short code
 
         // Multiprice
         if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
@@ -1486,13 +1482,13 @@ class Form
                     $found=1;
                     if ($objp2->price_base_type == 'HT')
                     {
-                        $opt.= price($objp2->price,1).' '.$currencytext.' '.$langs->trans("HT");
-                        $outval.= price($objp2->price,1).' '.$currencytextnoent.' '.$langs->transnoentities("HT");
+                        $opt.= price($objp2->price,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
+                        $outval.= price($objp2->price,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
                     }
                     else
                     {
-                        $opt.= price($objp2->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
-                        $outval.= price($objp2->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
+                        $opt.= price($objp2->price_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
+                        $outval.= price($objp2->price_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
                     }
                     $outprice_ht=price($objp2->price);
                     $outprice_ttc=price($objp2->price_ttc);
@@ -1514,15 +1510,15 @@ class Form
 			$outdiscount=$objp->remise_percent;
 			if ($objp->quantity == 1)
 			{
-				$opt.= price($objp->unitprice).' '.$currencytext."/";
-				$outval.= price($objp->unitprice).' '.$currencytextnoent."/";
+				$opt.= price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/";
+				$outval.= price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/";
 				$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Unit");
 			}
 			else
 			{
-				$opt.= price($objp->price).' '.$currencytext."/".$objp->quantity;
-				$outval.= price($objp->price).' '.$currencytextnoent."/".$objp->quantity;
+				$opt.= price($objp->price,1,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
+				$outval.= price($objp->price,0,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
 				$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 				$outval.=$langs->transnoentities("Units");
 			}
@@ -1534,8 +1530,8 @@ class Form
 		}
 		if (!empty($objp->quantity) && $objp->quantity >= 1)
 		{
-			$opt.=" (".price($objp->unitprice).' '.$currencytext."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
-			$outval.=" (".price($objp->unitprice).' '.$currencytextnoent."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+			$opt.=" (".price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+			$outval.=" (".price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 		}
 		if (!empty($objp->remise_percent) && $objp->remise_percent >= 1)
 		{
@@ -1548,13 +1544,13 @@ class Form
         {
             if ($objp->price_base_type == 'HT')
             {
-                $opt.= price($objp->price,1).' '.$currencytext.' '.$langs->trans("HT");
-                $outval.= price($objp->price,1).' '.$currencytextnoent.' '.$langs->transnoentities("HT");
+                $opt.= price($objp->price,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
+                $outval.= price($objp->price,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
             }
             else
             {
-                $opt.= price($objp->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
-                $outval.= price($objp->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
+                $opt.= price($objp->price_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
+                $outval.= price($objp->price_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
             }
             $outprice_ht=price($objp->price);
             $outprice_ttc=price($objp->price_ttc);
@@ -1720,33 +1716,27 @@ class Form
 
                 if (! empty($objp->idprodfournprice))
                 {
-                    $currencytext=$langs->trans("Currency".$conf->currency);
-                    $currencytextnoent=$langs->transnoentities("Currency".$conf->currency);
-                    if (dol_strlen($currencytext) > 10) $currencytext=$conf->currency;   // If text is too long, we use the short code
-                    if (dol_strlen($currencytextnoent) > 10) $currencytextnoent=$conf->currency;   // If text is too long, we use the short code
-
-
                     $outqty=$objp->quantity;
 					$outdiscount=$objp->remise_percent;
                     if ($objp->quantity == 1)
                     {
-	                    $opt.= price($objp->fprice).' '.$currencytext."/";
-                    	$outval.= price($objp->fprice).' '.$currencytextnoent."/";
+	                    $opt.= price($objp->fprice,1,$langs,0,0,-1,$conf->currency)."/";
+                    	$outval.= price($objp->fprice,0,$langs,0,0,-1,$conf->currency)."/";
                     	$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
                         $outval.=$langs->transnoentities("Unit");
                     }
                     else
                     {
-    	                $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
-	                    $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
+    	                $opt.= price($objp->fprice,1,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
+	                    $outval.= price($objp->fprice,0,$langs,0,0,-1,$conf->currency)."/".$objp->quantity;
                     	$opt.= $langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
                         $outval.= $langs->transnoentities("Units");
                     }
 
                     if ($objp->quantity >= 1)
                     {
-                        $opt.=" (".price($objp->unitprice).' '.$currencytext."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
-                        $outval.=" (".price($objp->unitprice).' '.$currencytextnoent."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+                        $opt.=" (".price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+                        $outval.=" (".price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
                     }
 					if ($objp->remise_percent >= 1)
                     {
@@ -1853,24 +1843,23 @@ class Form
 
                     if ($objp->quantity == 1)
                     {
-                        $opt.= price($objp->fprice);
-                        $opt.= $langs->trans("Currency".$conf->currency)."/";
+                        $opt.= price($objp->fprice,1,$langs,0,0,-1,$conf->currency)."/";
                     }
 
                     $opt.= $objp->quantity.' ';
 
                     if ($objp->quantity == 1)
                     {
-                        $opt.= strtolower($langs->trans("Unit"));
+                        $opt.= $langs->trans("Unit");
                     }
                     else
                     {
-                        $opt.= strtolower($langs->trans("Units"));
+                        $opt.= $langs->trans("Units");
                     }
                     if ($objp->quantity > 1)
                     {
                         $opt.=" - ";
-                        $opt.= price($objp->unitprice).$langs->trans("Currency".$conf->currency)."/".strtolower($langs->trans("Unit"));
+                        $opt.= price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
                     }
                     if ($objp->duration) $opt .= " - ".$objp->duration;
                     $opt .= "</option>\n";
@@ -2987,13 +2976,13 @@ class Form
             print '<tr><td class="nowrap">';
             if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
             {
-                if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
-                else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';
+                if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,1,$langs,0,0,-1,$conf->currency)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
+                else print $langs->trans("CompanyHasCreditNote",price($amount,1,$langs,0,0,-1,$conf->currency)).': ';
             }
             else
             {
-                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';
-                else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->currency)).': ';
+                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,1,$langs,0,0,-1,$conf->currency)).': ';
+                else print $langs->trans("CompanyHasCreditNote",price($amount,1,$langs,0,0,-1,$conf->currency)).': ';
             }
             $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
             if ($filter) $newfilter.=' AND ('.$filter.')';
