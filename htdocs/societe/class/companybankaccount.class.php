@@ -194,6 +194,8 @@ class CompanyBankAccount extends Account
      */
     function getRibLabel()
     {
+    	global $langs;
+    	
     	if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib)
     	{
     		$rib = $this->code_banque." ".$this->code_guichet." ".$this->number;
