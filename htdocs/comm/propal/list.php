@@ -391,10 +391,20 @@ if ($result)
 
 	if ($total>0)
 			{
-				$var=!$var;
-				print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
-				print '<td colspan="5" align="right"">'.price($total).'<td colspan="3"</td>';
-				print '</tr>';
+				if($num<$limit){
+					$var=!$var;
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+					print '<td colspan="5" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '</tr>';
+				}
+				else
+				{
+					$var=!$var;
+					print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT for this page").'</td>';
+					print '<td colspan="5" align="right"">'.price($total).'<td colspan="3"</td>';
+					print '</tr>';
+				}
+					
 			}
 	
 	print '</table>';
