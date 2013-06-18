@@ -1476,18 +1476,18 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $searchform='';
     $bookmarks='';
 
-    // Instantiate hooks of thirdparty module
-    $hookmanager->initHooks(array('searchform','leftblock'));
-
     if (empty($conf->dol_hide_leftmenu))
     {
-	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
+	    // Instantiate hooks of thirdparty module
+	    $hookmanager->initHooks(array('searchform','leftblock'));
+
+    	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 		else print '<div id="id-left">';
 
 	    print "\n";
 
 	    // Define $searchform
-	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
 	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
