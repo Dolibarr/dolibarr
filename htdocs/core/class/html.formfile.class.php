@@ -450,7 +450,9 @@ class FormFile
                	$langs->load("errors");
                	$genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
+
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
+
             $out.= $genbutton;
             $out.= '</th>';
 
