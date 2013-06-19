@@ -207,7 +207,7 @@ if ($action == 'refreshmanual') {
             $relativepathmissing=str_replace($diroutputslash,'',$dirdesc['fullname']);
             $relativepathtosearchparent=$relativepathmissing;
             //dol_syslog("Try to find parent id for directory ".$relativepathtosearchparent);
-            if (preg_match('/\//',$relativepathtosearchparent))
+            if (preg_match('/\//',$relativepathtosearchparent)) {
             //while (preg_match('/\//',$relativepathtosearchparent)) {
                 $relativepathtosearchparent=preg_replace('/\/[^\/]*$/','',$relativepathtosearchparent);
                 $txt="Is relative parent path ".$relativepathtosearchparent." for ".$relativepathmissing." found in sql tree ?";

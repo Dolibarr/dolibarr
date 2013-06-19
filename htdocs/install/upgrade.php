@@ -179,7 +179,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action'))) {
                 if ($resql) {
                     $num=$db->num_rows($resql);
                     while ($obj=$db->fetch_object($resql)) {
-                        if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent) {.
+                        if (! isset($filles[$obj->fk_categorie_fille])) { // Only one record as child (a child has only on parent).
                             if ($obj->fk_categorie_mere != $obj->fk_categorie_fille) {
                                 $filles[$obj->fk_categorie_fille]=1;	// Set record for this child
                                 $couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
@@ -328,7 +328,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action'))) {
                 $handlemodule=@opendir($dirroot);		// $dirroot may be '..'
                 if (is_resource($handlemodule)) {
                     while (($filemodule = readdir($handlemodule))!==false) {
-                        if (! preg_match('/\./',$filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql'))	// We exclude filemodule that contains . (are not directories) { and are not directories.
+                        if (! preg_match('/\./',$filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql')) { // We exclude filemodule that contains . (are not directories) and are not directories.
                             //print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
                             if (is_file($dirroot . '/' . $filemodule . '/sql/'.$file)) {
                                 $modulesfile[$dirroot . '/' . $filemodule . '/sql/'.$file] = '/' . $filemodule . '/sql/'.$file;

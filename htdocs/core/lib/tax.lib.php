@@ -243,7 +243,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
     // Define sql request
     $sql='';
-    if ($modetax == 1)  // Option vat on delivery for goods (payment) { and debit invoice for services
+    if ($modetax == 1) { // Option vat on delivery for goods (payment) and debit invoice for services
         if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
             // TODO a ce jour on se sait pas la compter car le montant tva d'un payment
             // n'est pas stocke dans la table des payments.
@@ -382,7 +382,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
 
     // Define sql request
     $sql='';
-    if ($modetax == 1)  // Option vat on delivery for goods (payment) { and debit invoice for services
+    if ($modetax == 1) { // Option vat on delivery for goods (payment) and debit invoice for services
         if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
             // Count on invoice date
             // TODO a ce jour on se sait pas la compter car le montant tva d'un payment

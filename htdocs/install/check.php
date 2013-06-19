@@ -65,10 +65,10 @@ if (! empty($useragent)) {
 }
 
 // Check PHP version
-if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to use (error if lower) {
+if (versioncompare(versionphparray(),array(4,3,10)) < 0) { // Minimum to use (error if lower)
     print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.3.10');
     $checksok=0;
-} elseif (versioncompare(versionphparray(),array(5,2,0)) < 0)    // Minimum supported (warning if lower) {
+} elseif (versioncompare(versionphparray(),array(5,2,0)) < 0) { // Minimum supported (warning if lower)
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.2.0');
     $checksok=1;
 } else {

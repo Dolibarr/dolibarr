@@ -148,7 +148,7 @@ class Notify
         if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
-            while ($i < $num)	// For each notification couple defined (third party/actioncode) {
+            while ($i < $num) { // For each notification couple defined (third party/actioncode)
                 $obj = $this->db->fetch_object($result);
 
                 $sendto = $obj->firstname . " " . $obj->lastname . " <".$obj->email.">";

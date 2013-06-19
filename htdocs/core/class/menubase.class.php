@@ -539,7 +539,7 @@ class Menubase
                         if (preg_match("/\//",$menu['titre'])) { // To manage translation when title is string1/string2
                             $tab_titre = explode("/",$menu['titre']);
                             $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
-                        } elseif (preg_match('/\|\|/',$menu['titre'])) // To manage different translation (Title||AltTitle@ConditionForAltTitle) {
+                        } elseif (preg_match('/\|\|/',$menu['titre'])) { // To manage different translation (Title||AltTitle@ConditionForAltTitle)
                             $tab_title = explode("||",$menu['titre']);
                             $alt_title = explode("@",$tab_title[1]);
                             $title_enabled = verifCond($alt_title[1]);

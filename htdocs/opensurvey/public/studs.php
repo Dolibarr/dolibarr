@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 $action=GETPOST('action');
 $numsondage = $numsondageadmin = '';
 if (GETPOST('sondage')) {
-    if (strlen(GETPOST('sondage')) == 24)	// recuperation du numero de sondage admin (24 car.) { dans l'URL
+    if (strlen(GETPOST('sondage')) == 24) { // recuperation du numero de sondage admin (24 car.) dans l'URL
         $numsondageadmin=GETPOST("sondage",'alpha');
         $numsondage=substr($numsondageadmin, 0, 16);
     } else {

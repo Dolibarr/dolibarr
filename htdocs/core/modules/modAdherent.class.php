@@ -213,7 +213,7 @@ class modAdherent extends DolibarrModules
         // Add extra fields
         $sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity = ".$conf->entity;
         $resql=$this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example) {
+        if ($resql) { // This can fail when class is used on old database (during migration for example)
             while ($obj=$this->db->fetch_object($resql)) {
                 $fieldname='extra.'.$obj->name;
                 $fieldlabel=ucfirst($obj->label);

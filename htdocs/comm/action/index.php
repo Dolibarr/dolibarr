@@ -590,7 +590,7 @@ if (count($listofextcals)) {
                     //print dol_print_date($dateend,'dayhour','gmt');
                     $event->fulldayevent=true;
                     $addevent=true;
-                } elseif (!is_array($icalevent['DTSTART'])) // not fullday event (DTSTART is not array) {
+                } elseif (!is_array($icalevent['DTSTART'])) { // not fullday event (DTSTART is not array)
                     $datestart=$icalevent['DTSTART'];
                     $dateend=$icalevent['DTEND'];
                     $addevent=true;

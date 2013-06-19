@@ -126,7 +126,7 @@ if (file_exists($fullpathselecteddir)) {
 
                 //print 'modulepart='.$modulepart.' fullpathselecteddir='.$fullpathselecteddir.' - val[fullrelativename] (in database)='.$val['fullrelativename'].' - val[id]='.$val['id'].' - is_dir='.dol_is_dir($fullpathselecteddir . $file).' - file='.$file."\n";
                 if ($file != '.' && $file != '..' && ((! empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir . (preg_match('/\/$/',$fullpathselecteddir)?'':'/') . $file))) {
-                    if (empty($val['fullrelativename']))	// If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test) {
+                    if (empty($val['fullrelativename'])) { // If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test)
                         $val['fullrelativename']=$file; $val['id']=0;
                         $val['label']=$file;
                         $val['description']='';

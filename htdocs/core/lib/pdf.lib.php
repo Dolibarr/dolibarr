@@ -217,7 +217,7 @@ function pdf_getPDFFont($outputlangs)
     if (! empty($conf->global->MAIN_PDF_FORCE_FONT)) return $conf->global->MAIN_PDF_FORCE_FONT;
 
     $font='Helvetica'; // By default, for FPDI, or ISO language on TCPDF
-    if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower) {
+    if (class_exists('TCPDF')) { // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
         if ($outputlangs->trans('FONTFORPDF')!='FONTFORPDF') {
             $font=$outputlangs->trans('FONTFORPDF');
         }
@@ -235,7 +235,7 @@ function pdf_getPDFFont($outputlangs)
 function pdf_getPDFFontSize($outputlangs)
 {
     $size=10;                   // By default, for FPDI or ISO language on TCPDF
-    if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower) {
+    if (class_exists('TCPDF')) { // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
         if ($outputlangs->trans('FONTSIZEFORPDF')!='FONTSIZEFORPDF') {
             $size = (int) $outputlangs->trans('FONTSIZEFORPDF');
         }
@@ -378,7 +378,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
         }
     }
 
-    if ($mode == 'delivery')	// for a delivery address (address + phone/fax) {
+    if ($mode == 'delivery') { // for a delivery address (address + phone/fax)
         $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($deliverycompany))."\n";
 
         // Tel

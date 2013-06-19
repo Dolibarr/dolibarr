@@ -97,12 +97,12 @@ if ($resql) {
     while ($i < $num) {
         $row = $db->fetch_row($resql);
         if ($row) {
-            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1)) {
+            /*if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1)) {
                 $bool=(! empty($row[2])?true:false);
                 if (! isset($vals[$row[1].$bool])) $vals[$row[1].$bool]=0;
                 $vals[$row[1].$bool]+=$row[0];
                 $totalinprocess+=$row[0];
-            }
+            }*/
             $total+=$row[0];
         }
         $i++;

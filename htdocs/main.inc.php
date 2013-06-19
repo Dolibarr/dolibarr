@@ -250,7 +250,7 @@ if (! defined('NOTOKENRENEWAL')) {
     if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
     $_SESSION['newtoken'] = $token;
 }
-if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only if option enabled (this option breaks some features sometimes) {
+if (! empty($conf->global->MAIN_SECURITY_CSRF)) { // Check validity of token, only if option enabled (this option breaks some features sometimes)
     if (isset($_POST['token']) && isset($_SESSION['token'])) {
         if (($_POST['token'] != $_SESSION['token'])) {
             dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action').", _POST['token']=".GETPOST('token').", _SESSION['token']=".$_SESSION['token'],LOG_WARNING);
@@ -488,7 +488,7 @@ if (! defined('NOLOGIN')) {
             header('Location: '.DOL_URL_ROOT.'/index.php');
             exit;
         } else {
-            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming) {
+            if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER)) { // We do not execute such trigger at each page load by default (triggers are time consuming)
                 // Call triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
@@ -758,7 +758,7 @@ if (! function_exists("llxHeader")) {
      * @param  string $morequerystring Query string to add to the link "print" to get same parameters (use only if autodetect fails)
      * @return void
      */
-    public function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
+    function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
     {
         global $conf;
 
@@ -1059,7 +1059,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
             // JS forced by modules (relative url starting with /)
-            if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2')) {
+            if (! empty($conf->modules_parts['js'])) { // $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
                 $arrayjs=(array) $conf->modules_parts['js'];
                 foreach ($arrayjs as $modjs => $filesjs) {
                     $filesjs=(array) $filesjs;	// To be sure filejs is an array
@@ -1599,7 +1599,7 @@ if (! function_exists("llxFooter")) {
      * @param  string $zone    'private' (for private pages) or 'public' (for public pages)
      * @return void
      */
-    public function llxFooter($comment='',$zone='pivate')
+    function llxFooter($comment='',$zone='pivate')
     {
         global $conf, $langs;
 

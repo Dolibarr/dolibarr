@@ -188,7 +188,7 @@ if ($action=='downfield' || $action=='upfield') {
         }
     }
     //print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-    if ($newcode)   // Si newcode trouve (protection contre resoumission de page) {
+    if ($newcode) {  // Si newcode trouve (protection contre resoumission de page)
         $array_selected[$_GET["field"]]=$newpos;
         $array_selected[$newcode]=$pos;
         $_SESSION["export_selected_fields"]=$array_selected;

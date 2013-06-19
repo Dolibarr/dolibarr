@@ -2798,11 +2798,11 @@ if ($action == 'create') {
             print '</tr>';
 
             // Amount Local Taxes
-            if ($mysoc->localtax1_assuj=="1" && $mysoc->useLocalTax(1)) //Localtax1 (example RE) {
+            if ($mysoc->localtax1_assuj=="1" && $mysoc->useLocalTax(1)) { //Localtax1 (example RE)
                 print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
                 print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax1,1,'',1,-1,-1,$conf->currency).'</td></tr>';
             }
-            if ($mysoc->localtax2_assuj=="1" && $mysoc->useLocalTax(2)) //Localtax2 (example IRPF) {
+            if ($mysoc->localtax2_assuj=="1" && $mysoc->useLocalTax(2)) { //Localtax2 (example IRPF)
                 print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
                 print '<td align="right" colspan="3" nowrap>'.price($object->total_localtax2,1,'',1,-1,-1,$conf->currency).'</td></tr>';
             }
@@ -2997,7 +2997,7 @@ if ($action == 'create') {
                     }
 
                     // Reopen a standard paid invoice
-                    if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely) {
+                    if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3)) { // A paid invoice (partially or completely)
                         if (! $objectidnext && $object->close_code != 'replaced') {	// Not replaced by another invoice
                             print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
                         } else {

@@ -750,7 +750,7 @@ class FactureFournisseur extends CommonInvoice
         $error=0;
 
         // Protection
-        if ($this->statut > 0)	// This is to avoid to validate twice (avoid errors on logs and stock management) {
+        if ($this->statut > 0) { // This is to avoid to validate twice (avoid errors on logs and stock management)
             dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
 
             return 0;

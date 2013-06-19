@@ -118,7 +118,7 @@ if ($action=='downfield' || $action=='upfield') {
         }
     }
     //print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-    if ($newcode)   // Si newcode trouve (protection contre resoumission de page) {
+    if ($newcode) { // Si newcode trouve (protection contre resoumission de page)
         $array_match_file_to_database[$_GET["field"]]=$newpos;
         $array_match_file_to_database[$newcode]=$pos;
         $_SESSION["dol_array_match_file_to_database"]=$serialized_array_match_file_to_database;

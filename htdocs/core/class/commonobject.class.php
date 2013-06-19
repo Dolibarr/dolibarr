@@ -1991,7 +1991,7 @@ abstract class CommonObject
             foreach ($this->array_options as $key => $value) {
                 $attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field o fattribut
-                if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate) {
+                if ($extrafields->attribute_type[$attributeKey] != 'separate') { // Only for other type of separate)
                     if ($this->array_options[$key] != '') {
                         $sql.=",'".$this->db->escape($this->array_options[$key])."'";
                     } else {

@@ -229,7 +229,7 @@ class Translate
                                 $tab=explode('=',$line,2);
                                 $key=trim($tab[0]);
                                 //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                                if ((! empty($conf->global->MAIN_USE_CUSTOM_TRANSLATION) || empty($this->tab_translate[$key])) && isset($tab[1]))    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries) {
+                                if ((! empty($conf->global->MAIN_USE_CUSTOM_TRANSLATION) || empty($this->tab_translate[$key])) && isset($tab[1])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
                                     $value=trim(preg_replace('/\\n/',"\n",$tab[1]));
 
                                     if ($key == 'DIRECTION') {	// This is to declare direction of language

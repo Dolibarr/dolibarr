@@ -69,7 +69,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     $result=array();
 
     if (empty($seller) || ! is_object($seller)) {
-        if (! is_object($mysoc))	// mysoc may be not defined (during migration process) {
+        if (! is_object($mysoc)) { // mysoc may be not defined (during migration process)
             $mysoc=new Societe($db);
             $mysoc->setMysoc($conf);
         }

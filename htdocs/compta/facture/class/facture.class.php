@@ -2864,20 +2864,20 @@ class Facture extends CommonInvoice
                 $line->localtax1_tx=0;
                 $line->localtax2_tx=0;
                 $line->remise_percent=0;
-                if ($xnbp == 1)        // Qty is negative (product line) {
+                if ($xnbp == 1) { // Qty is negative (product line)
                     $prodid = rand(1, $num_prods);
                     $line->fk_product=$prodids[$prodid];
                     $line->qty=-1;
                     $line->total_ht=-100;
                     $line->total_ttc=-119.6;
                     $line->total_tva=-19.6;
-                } elseif ($xnbp == 2)    // UP is negative (free line) {
+                } elseif ($xnbp == 2) { // UP is negative (free line)
                     $line->subprice=-100;
                     $line->total_ht=-100;
                     $line->total_ttc=-119.6;
                     $line->total_tva=-19.6;
                     $line->remise_percent=0;
-                } elseif ($xnbp == 3)    // Discount is 50% (product line) {
+                } elseif ($xnbp == 3) { // Discount is 50% (product line)
                     $prodid = rand(1, $num_prods);
                     $line->fk_product=$prodids[$prodid];
                     $line->total_ht=50;

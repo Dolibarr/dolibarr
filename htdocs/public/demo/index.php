@@ -331,7 +331,7 @@ foreach ($demoprofiles as $profilearray) {
             print '<table width="100%">';
             $listofdisabledmodules=explode(',',$profilearray['disablemodules']);
             $j=0;$nbcolsmod=4;
-            foreach ($modules as $val) // Loop on qualified (enabled) { modules
+            foreach ($modules as $val) { // Loop on qualified (enabled) modules
                 $modulekeyname=strtolower($val->name);
 
                 $modulequalified=1;

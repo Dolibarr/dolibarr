@@ -141,7 +141,7 @@ $real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_d
 $pathroot=$_SERVER["DOCUMENT_ROOT"];															// B) Ex: C:/Program Files/wamp/www/
 $paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 $concatpath='';
-foreach ($paths as $tmppath)	// We check to find (B+start of C) {=A
+foreach ($paths as $tmppath) { // We check to find (B+start of C)=A
     if ($tmppath) $concatpath.='/'.$tmppath;
     //print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
     if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath)) {    // @ avoid warning when safe_mode is on.
