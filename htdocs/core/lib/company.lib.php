@@ -92,10 +92,13 @@ function societe_prepare_head($object)
         $head[$h][2] = 'note';
         $h++;
 
-        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Referers");
-        $head[$h][2] = 'consumption';
-        $h++;
+        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled))
+        {
+	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
+	        $head[$h][1] = $langs->trans("Referers");
+	        $head[$h][2] = 'consumption';
+	        $h++;
+        }
 
         // Attached files
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
