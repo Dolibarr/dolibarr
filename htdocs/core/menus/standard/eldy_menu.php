@@ -140,7 +140,7 @@ class MenuManager
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
-        		print '<ul data-role="listview" data-inset="true">';
+        		print '<ul class="ulmenu" data-role="listview" data-inset="true">';
         		print '<li data-role="list-divider">';
         		if ($val['enabled'] == 1)
         		{

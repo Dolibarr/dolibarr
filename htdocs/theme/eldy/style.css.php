@@ -2695,6 +2695,10 @@ div.ui-radio
 	padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid #AAAAAA !important;
 }
 
+ul.ulmenu {
+	border-radius: 0;
+	-webkit-border-radius: 0;
+}
 
 <?php
 if (is_object($db)) $db->close();
