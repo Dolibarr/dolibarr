@@ -216,8 +216,10 @@ body {
 	background: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile)) { ?>
 	font-size: <?php print $fontsize ?>px;
-    font-family: <?php print $fontlist ?>;
+	<?php } ?>
+	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -229,9 +231,12 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; fo
 
 a:hover { text-decoration: underline; color: #000000;}
 
+<?php if (empty($dol_use_jmobile)) { ?>
+
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
 }
+
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
@@ -242,6 +247,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     margin: 0px 0px 0px 0px;
     <?php } ?>
 }
+
 input, textarea, select {
 	border-radius:4px;
 	border:solid 1px rgba(0,0,0,.3);
@@ -253,6 +259,8 @@ input, textarea, select {
 	margin-bottom:1px;
 	margin-top:1px;
 	}
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -279,6 +287,7 @@ input[type=image] { background-color: transparent; border: none; box-shadow: non
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
 <?php } ?>
+
 
 .button {
     font-family: <?php print $fontlist ?>;
@@ -2647,7 +2656,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {

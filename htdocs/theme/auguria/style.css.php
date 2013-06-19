@@ -102,7 +102,9 @@ body {
 	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile)) { ?>
 	font-size: <?php print $fontsize ?>px;
+	<?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -112,6 +114,8 @@ body {
 }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: #000000; text-decoration: none; }
+
+<?php if (empty($dol_use_jmobile)) { ?>
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -125,6 +129,9 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
+
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -2230,7 +2237,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
