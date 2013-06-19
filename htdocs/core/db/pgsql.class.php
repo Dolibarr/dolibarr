@@ -177,6 +177,10 @@ class DoliDBPgsql
 		}
 		if ($line != "")
 		{
+			// group_concat support (PgSQL >= 9.1)
+			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
+			$line = preg_replace('/ SEPARATOR/i', ',', $line);
+
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
