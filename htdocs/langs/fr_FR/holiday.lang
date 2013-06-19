@@ -85,8 +85,8 @@ NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.
 UserName=Nom Prénom
 Employee=Salarié
-FirstDayOfHoliday=Premier jour de congès
-LastDayOfHoliday=Dernier jour de congès
+FirstDayOfHoliday=Premier jour de congés
+LastDayOfHoliday=Dernier jour de congés
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
 
