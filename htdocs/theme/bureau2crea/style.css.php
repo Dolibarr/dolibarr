@@ -57,7 +57,7 @@ $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
 $fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
 $fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
-$fontlist='arial,tahoma,verdana,helvetica';
+$fontlist='arial, sans-serif, verdana, helvetica';
 //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -79,8 +79,10 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 body {
 /*	background-color: #FFFFFF; */
 	color: #101010;
-	font-size: 12px;
-    font-family: arial, sans-serif, verdana, helvetica;
+	<?php if (empty($dol_use_jmobile)) { ?>
+	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
+    font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -2466,7 +2468,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {

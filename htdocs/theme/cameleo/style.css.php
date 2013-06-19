@@ -83,7 +83,9 @@ body {
 	/*background: #ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1); ?>) 0 0 no-repeat;*/
 <?php } ?>
 	color: #101010;
+	<?php if (empty($dol_use_jmobile)) { ?>
 	font-size: <?php print $fontsize ?>px;
+    <?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -95,6 +97,8 @@ body {
 
 a:link, a:visited, a:active { font-family: <?php print $fontlist ?>; font-weight: bold; color: blue; text-decoration: none; }
 a:hover { font-family: <?php print $fontlist ?>; font-weight: bold; color: #A51B00; text-decoration: none; }
+
+<?php if (empty($dol_use_jmobile)) { ?>
 
 input:focus, textarea:focus, button:focus, select:focus {
     box-shadow: 0 0 4px #8091BF;
@@ -108,6 +112,8 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
+<?php } ?>
+
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -117,6 +123,7 @@ input:disabled {
 textarea:disabled {
 	background:#ddd;
 }
+
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=image] { background-color: transparent; border: none; box-shadow: none; }
 input.button[type=submit] {
@@ -135,7 +142,7 @@ input.button[type=submit] {
     /*display: block;
     height: 18px;*/
     vertical-align: top;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     line-height: 14px;
     cursor: pointer;
     font-size: 11px;
@@ -354,7 +361,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 10px 0px 10px;
 	/*margin: 0px 1px 0px 1px;*/
 	font-weight: bold;
-        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+        font-family: <?php print $fontlist ?>;
 	white-space: nowrap;
         height: 20px;
     -moz-border-radius-topleft:8px;
@@ -394,7 +401,7 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
         color: #FFF;
         font-weight: bold;
         height: 20px;
-        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+        font-family: <?php print $fontlist ?>;
         padding: 0px 10px 0px 10px;
         -moz-border-radius-topleft:8px;
     -moz-border-radius-topright:8px;
@@ -771,7 +778,7 @@ div.menu_titre
 
 div.menu_titre a.vmenu {
 	font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     font-size: 12px;
 }
 
@@ -1150,7 +1157,7 @@ div.tabs a.tab {
 	width: auto;
     font-size: 11px;
     font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     height: 18px;
     background-position: right;
     line-height: 18px;
@@ -1259,7 +1266,7 @@ span.tabspan {
 div.divButAction { margin-bottom: 1.4em; }
 
 .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-	font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
         background: #A81E00;
@@ -1456,7 +1463,7 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 div.liste_titre, tr.liste_titre, form.liste_titre {
     color: #842F00;
     font-weight: bold;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    font-family: <?php print $fontlist ?>;
     /*border-bottom: 1px solid #FDFFFF;*/
     border-radius: 8px;
     padding-left: 10px;
@@ -1544,7 +1551,7 @@ tr.box_titre {
 	background-repeat: repeat-x;
 	color: #842F00;
 	font-weight: normal;
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	white-space: nowrap;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
@@ -1656,12 +1663,14 @@ border: 0px;
 }
 
 div.titre {
-	font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	color: #842F00;
     font-size: 20px;
 	text-decoration: none;
-    margin-left: 20px;
+	<?php if (empty($dol_use_jmobile)) { ?>
+	margin-left: 12px;
+	<?php } ?>
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }
@@ -1971,7 +1980,7 @@ li.cal_event       { border: none; list-style-type: none; }
 {
 	background:#F0F0F0;
 	font-weight:normal;
-	font-family:sans-serif;
+	font-family: <?php print $fontlist ?>;
 	border-style:ridge;
 	border: 1px solid;
 	border-spacing: 0px;
@@ -2324,7 +2333,7 @@ a.tab span.ui-btn-inner
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {

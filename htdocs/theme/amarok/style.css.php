@@ -196,7 +196,9 @@ body {
 	background-color: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color:#232323;
+	<?php if (empty($dol_use_jmobile)) { ?>
 	font-size:<?php print $fontsize ?>px;
+	<?php } ?>
    	font-family:<?php print $fontlist ?>;
     <?php print 'direction:'.$langs->trans("DIRECTION").";\n"; ?>
 }
@@ -212,6 +214,8 @@ a:hover, a:active {
 	color:rgba(0,0,0,.6);
 }
 
+<?php if (empty($dol_use_jmobile)) { ?>
+
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	padding: 1px;
 }
@@ -224,6 +228,8 @@ input, textarea {
     border-bottom:solid 1px rgba(0,0,0,.2);
     box-shadow:1px 1px 2px rgba(0,0,0,.2) inset;
 }
+
+<?php } ?>
 
 input[type="image"] {
 	border-radius:0px;
@@ -2091,7 +2097,7 @@ a.tab span.ui-btn-inner, a.tab span.ui-btn-inner span.ui-btn-text
 }
 
 .ui-body-c {
-	border: none;
+	border: 1px solid #CCC;
 	text-shadow: none;
 }
 .ui-link {
